@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="10dip">
+    <AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:padding="25dip">
+   		<ImageButton
+   			android:id="@+id/NavLeftButton"
+   			android:layout_width="wrap_content"
+   			android:layout_height="wrap_content"
+   			android:layout_y="80dip"
+   			android:src="@drawable/goprevious" />
+		<ImageButton
+		    android:id="@+id/NavUpButton"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_x="80dip"
+		    android:src="@drawable/goup" />	
+		<Button
+		    android:id="@+id/NavSelectButton"
+		    android:layout_width="82dip"
+		    android:layout_height="82dip"
+		    android:layout_x="80dip"
+		    android:layout_y="80dip"
+		    android:text="OK" />
+		<ImageButton
+		    android:id="@+id/NavDownButton"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_x="80dip"
+		    android:layout_y="160dip"
+		    android:src="@drawable/godown" />
+		<ImageButton
+			android:id="@+id/NavRightButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_x="160dip"
+		    android:layout_y="80dip"
+			android:src="@drawable/gonext" />
+    </AbsoluteLayout>
+</LinearLayout>
