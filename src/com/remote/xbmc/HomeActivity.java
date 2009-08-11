@@ -112,7 +112,6 @@ public class HomeActivity extends Activity {
 		final EditText HostText = (EditText) findViewById(R.id.HostText);
 		String host = HostText.getText().toString();
 
-		XBMCControl.createInstance(new XBMC(host));
 		SharedPreferences settings = getSharedPreferences(XBMCControl.PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString("host", host);

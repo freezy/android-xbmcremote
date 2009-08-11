@@ -37,8 +37,4 @@ public class XBMCControl {
 		}
 		return instance;
 	}
-
-	public static void createInstance(XBMC xbmc) {
-		instance = xbmc;
-	}
 }
