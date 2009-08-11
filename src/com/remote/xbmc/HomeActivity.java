@@ -27,8 +27,10 @@ import org.xbmc.httpapi.XBMC;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -36,7 +38,7 @@ public class HomeActivity extends Activity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.main_portrait);
         
 	    final Button GoMusicButton = (Button) findViewById(R.id.GoMusicButton);
 	    GoMusicButton.setOnClickListener(new View.OnClickListener() {
@@ -80,12 +82,27 @@ public class HomeActivity extends Activity {
                 startActivityForResult(myIntent, 0);
 			}
 		});
-	    
+	}
+	
+	@Override
+	protected void onResume() {
 		SharedPreferences settings = getSharedPreferences(XBMCControl.PREFS_NAME, 0);
 		String host = settings.getString("host", "");
 		
 		final EditText HostText = (EditText) findViewById(R.id.HostText);
 		HostText.setText(host);
+		
+		super.onResume();
+	}
+
+	@Override
+	public void onWindowAttributesChanged(LayoutParams params) {
+		if (params.screenOrientation ==  ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+			setContentView(R.layout.main_portrait);
+		else if (params.screenOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+			setContentView(R.layout.main_landscape);
+		
+		super.onWindowAttributesChanged(params);
 	}
 	
 	@Override

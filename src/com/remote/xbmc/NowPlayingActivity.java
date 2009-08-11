@@ -24,8 +24,11 @@ package com.remote.xbmc;
 import org.xbmc.httpapi.MediaControl;
 
 import android.app.Activity;
+import android.app.LauncherActivity;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 
@@ -34,7 +37,7 @@ public class NowPlayingActivity extends Activity {
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.nowplaying);
+        setContentView(R.layout.nowplaying_portrait);
         
   	  	control = XBMCControl.getInstance(getSharedPreferences(XBMCControl.PREFS_NAME, 0)).getMediaControls();
   	  	
@@ -61,5 +64,15 @@ public class NowPlayingActivity extends Activity {
 				control.playNext();
 			}
 		});
+	}
+	
+	@Override
+	public void onWindowAttributesChanged(LayoutParams params) {
+		if (params.screenOrientation ==  ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+			setContentView(R.layout.nowplaying_portrait);
+		else if (params.screenOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+			setContentView(R.layout.nowplaying_landscape);
+		
+		super.onWindowAttributesChanged(params);
 	}
 }
