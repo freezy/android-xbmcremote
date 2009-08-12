@@ -21,12 +21,7 @@
 
 package com.remote.xbmc;
 
-import java.io.IOException;
-
-import org.xbmc.eventclient.XBMCClient;
 import org.xbmc.httpapi.MediaType;
-import org.xbmc.httpapi.XBMC;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
