@@ -21,20 +21,37 @@
 
 package com.remote.xbmc;
 
+import java.net.Inet4Address;
+import org.xbmc.eventclient.XBMCClient;
 import org.xbmc.httpapi.XBMC;
-import android.content.SharedPreferences;
+import android.app.Activity;
 
 public class XBMCControl {
-	private static XBMC instance;
-	
+	private static XBMC httpApiInstance;
+	private static XBMCClient eventClientInstance;
 	public static final String PREFS_NAME = "XBMCRemotePrefsFile";
 	
-	static public XBMC getInstance(SharedPreferences settings) {
-		if (instance == null)
+	static public XBMC getHttpApiInstance(Activity activity) {
+		if (httpApiInstance == null)
 		{
-			String host = settings.getString("host", "");
-			instance = new XBMC(host);
+			String host = activity.getSharedPreferences(XBMCControl.PREFS_NAME, 0).getString("host", "");
+			int port = activity.getSharedPreferences(XBMCControl.PREFS_NAME, 0).getInt("httpPort", 80);
+			httpApiInstance = new XBMC(host, port);
 		}
-		return instance;
+		return httpApiInstance;
+	}
+	
+	static public XBMCClient getEventClientInstance(Activity activity) {
+		if (eventClientInstance == null)
+		{
+			String host = activity.getSharedPreferences(XBMCControl.PREFS_NAME, 0).getString("host", "");
+			int port = activity.getSharedPreferences(XBMCControl.PREFS_NAME, 0).getInt("eventClientPort", 9777);
+			try {
+				eventClientInstance = new XBMCClient(Inet4Address.getByName(host), port, "Android XBMC Remote");
+			} catch (Exception e) {
+				return null;
+			}
+		}
+		return eventClientInstance;
 	}
 }

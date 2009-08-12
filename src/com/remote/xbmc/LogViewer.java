@@ -12,7 +12,7 @@ public class LogViewer extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		XBMC instance = XBMCControl.getInstance(getSharedPreferences(XBMCControl.PREFS_NAME, 0));
+		XBMC instance = XBMCControl.getHttpApiInstance(this);
 		
 		ArrayList<Message> log = new ArrayList<Message>();
 		for (Message m : instance.getMessenger())

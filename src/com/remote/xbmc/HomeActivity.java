@@ -21,6 +21,9 @@
 
 package com.remote.xbmc;
 
+import java.io.IOException;
+
+import org.xbmc.eventclient.XBMCClient;
 import org.xbmc.httpapi.MediaType;
 import org.xbmc.httpapi.XBMC;
 
@@ -88,6 +91,9 @@ public class HomeActivity extends Activity {
 	protected void onResume() {
 		SharedPreferences settings = getSharedPreferences(XBMCControl.PREFS_NAME, 0);
 		String host = settings.getString("host", "");
+		int port = settings.getInt("httpPort", 80); 
+		if (port != 80)
+			host += ":" + port;
 		
 		final EditText HostText = (EditText) findViewById(R.id.HostText);
 		HostText.setText(host);
@@ -110,11 +116,13 @@ public class HomeActivity extends Activity {
 		super.onStop();
 		
 		final EditText HostText = (EditText) findViewById(R.id.HostText);
-		String host = HostText.getText().toString();
+		String[] sa = HostText.getText().toString().split(":");
 
 		SharedPreferences settings = getSharedPreferences(XBMCControl.PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("host", host);
+		editor.putString("host", sa[0]);
+		if (sa.length > 1)
+			editor.putInt("httpPort", Integer.parseInt(sa[1]));
 		
 		editor.commit();
 	}

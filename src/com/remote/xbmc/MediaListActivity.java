@@ -75,7 +75,7 @@ public class MediaListActivity extends ListActivity {
 		}
 		else
 		{
-			XBMCControl.getInstance(getSharedPreferences(XBMCControl.PREFS_NAME, 0)).getMediaControls().playFile(item.url);
+			XBMCControl.getHttpApiInstance(this).getMediaControls().playFile(item.url);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class MediaListActivity extends ListActivity {
 		
 		if (url.length() == 0)
 		{
-			for (Item item : XBMCControl.getInstance(getSharedPreferences(XBMCControl.PREFS_NAME, 0)).getShares(mediaType))
+			for (Item item : XBMCControl.getHttpApiInstance(this).getShares(mediaType))
 			{
 				presentationList.add(item.getName());
 				fileItems.add(new FileItem(item.getURL()));
@@ -93,7 +93,7 @@ public class MediaListActivity extends ListActivity {
 		}
 		else
 		{
-			for (String s : XBMCControl.getInstance(getSharedPreferences(XBMCControl.PREFS_NAME, 0)).getDirectory(url))
+			for (String s : XBMCControl.getHttpApiInstance(this).getDirectory(url))
 			{
 				FileItem currentItem = new FileItem(s);
 				fileItems.add(currentItem);
