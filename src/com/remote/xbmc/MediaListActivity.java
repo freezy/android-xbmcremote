@@ -76,6 +76,8 @@ public class MediaListActivity extends ListActivity {
 		else
 		{
 			XBMCControl.getHttpApiInstance(this).getMediaControls().playFile(item.url);
+            Intent myIntent = new Intent(v.getContext(), NowPlayingActivity.class);
+            startActivityForResult(myIntent, 0);
 		}
 	}
 
