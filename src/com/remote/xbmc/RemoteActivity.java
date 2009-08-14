@@ -30,104 +30,42 @@ import org.xbmc.httpapi.UrgancyLevel;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
 public class RemoteActivity extends Activity {
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		char key = (char)event.getUnicodeChar();
-		
-		if (key > 'A' && key < 'z')
-		{
-			try
-			{
-				XBMCControl.getEventClientInstance(this).sendButton("KB", "" + key, false, true, true, (short)0, (byte)0);
-				return true;
-			} catch (IOException e) {
-				XBMCControl.getHttpApiInstance(this).getMessenger().add(new Message(UrgancyLevel.error, e.getMessage()));
-			}
-		}
-		
-		return super.onKeyDown(keyCode, event);
-	}
+	MediaControl control;
 
-	private MediaControl control;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.remotemain);
-
-  	  	control = XBMCControl.getHttpApiInstance(this).getMediaControls();
+        
+        control = XBMCControl.getHttpApiInstance(this).getMediaControls();
   	  	
-		setupMediaControlButtons();
-		setupNavButtons();
+		setupButtons();
     }
-    
-	private void setupNavButtons() {
-		final Button NavSelectButton = (Button) findViewById(R.id.NavSelectButton);
-		NavSelectButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				try {
-					XBMCControl.getEventClientInstance(RemoteActivity.this).sendButton("KB", "enter", false, true, true, (short)0, (byte)0);
-				} catch (IOException e) { }
-			}
-		});
-		
-		final ImageButton NavUpButton = (ImageButton) findViewById(R.id.NavUpButton);
-		NavUpButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				try {
-					XBMCControl.getEventClientInstance(RemoteActivity.this).sendButton("KB", "up", false, true, true, (short)0, (byte)0);
-				} catch (IOException e) { }
-			}
-		});
-		final ImageButton NavDownButton = (ImageButton) findViewById(R.id.NavDownButton);
-		NavDownButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				try {
-					XBMCControl.getEventClientInstance(RemoteActivity.this).sendButton("KB", "down", false, true, true, (short)0, (byte)0);
-				} catch (IOException e) { }
-			}
-		});
-		final ImageButton NavLeftButton = (ImageButton) findViewById(R.id.NavLeftButton);
-		NavLeftButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				try {
-					XBMCControl.getEventClientInstance(RemoteActivity.this).sendButton("KB", "left", false, true, true, (short)0, (byte)0);
-				} catch (IOException e) { }
-			}
-		});
-		final ImageButton NavRightButton = (ImageButton) findViewById(R.id.NavRightButton);
-		NavRightButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				try {
-					XBMCControl.getEventClientInstance(RemoteActivity.this).sendButton("KB", "right", false, true, true, (short)0, (byte)0);
-				} catch (IOException e) { }
-			}
-		});
-	}
 
-	private void setupMediaControlButtons() {
-/*		final ImageButton PlayPrevButton = (ImageButton) findViewById(R.id.MediaPreviousButton);
+	private void setupButtons() {
+		
+		final Button GoBackButton = (Button) findViewById(R.id.GoBackButton);
+		GoBackButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				KeyboardAction("backspace");
+			}
+		});
+		final ImageButton PlayPrevButton = (ImageButton) findViewById(R.id.MediaPreviousButton);
 		PlayPrevButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				control.playPrevious();
 			}
 		});
-		final ImageButton PlayButton = (ImageButton) findViewById(R.id.MediaPlayButton);
+		final ImageButton PlayButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
 		PlayButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				control.pause();
-			}
-		});
-		
-		final ImageButton StopButton = (ImageButton) findViewById(R.id.MediaStopButton);
-		StopButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				control.stop();
 			}
 		});
 		
@@ -136,6 +74,37 @@ public class RemoteActivity extends Activity {
 			public void onClick(View v) {
 				control.playNext();
 			}
-		});*/
+		});
+	}
+	
+	@Override
+	public boolean onTrackballEvent(MotionEvent event) {
+		if (event.getAction() == MotionEvent.ACTION_DOWN)
+			return KeyboardAction("enter");
+		else if (Math.abs(event.getX()) > 0.1f)
+			return KeyboardAction(event.getX() < 0 ? "left" : "right");
+		else if (Math.abs(event.getY()) > 0.1f)
+			return KeyboardAction(event.getY() < 0 ? "up" : "down");
+		
+		return false;
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		char key = (char)event.getUnicodeChar();
+		
+		if (key > 'A' && key < 'z')
+			return KeyboardAction("" + key);
+		
+		return super.onKeyDown(keyCode, event);
+	}
+	
+	private boolean KeyboardAction(String button) {
+		try {
+			XBMCControl.getEventClientInstance(RemoteActivity.this).sendButton("KB", button, false, true, true, (short)0, (byte)0);
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
 	}
 }
