@@ -41,7 +41,11 @@ public class NowPlayingActivity extends Activity {
         
   	  	control = XBMCControl.getHttpApiInstance(this).getMediaControls();
   	  	
-  	  	final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
+  	  	setupButtons();
+	}
+
+	private void setupButtons() {
+		final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
   	  	int progress = control.getPercentage();
   	  	seekBar.setProgress(progress);
   	  	

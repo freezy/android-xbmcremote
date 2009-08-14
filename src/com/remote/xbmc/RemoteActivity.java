@@ -28,6 +28,7 @@ import org.xbmc.httpapi.Message;
 import org.xbmc.httpapi.UrgancyLevel;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -73,6 +74,14 @@ public class RemoteActivity extends Activity {
 		PlayNextButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				control.playNext();
+			}
+		});
+		
+	    final Button GoNowPlayingButton = (Button) findViewById(R.id.GoNowPlayingButton);
+	    GoNowPlayingButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+                Intent myIntent = new Intent(v.getContext(), LogViewer.class);
+                startActivityForResult(myIntent, 0);
 			}
 		});
 	}
