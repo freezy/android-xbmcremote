@@ -22,7 +22,11 @@
 package org.xbmc.httpapi;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.PriorityQueue;
+
+import org.xbmc.httpapi.data.Album;
+import org.xbmc.httpapi.data.Song;
 
 public class MusicDatabase extends Database {
 
@@ -58,27 +62,149 @@ public class MusicDatabase extends Database {
 	}
 	
 	/**
-	 * Get all albums in database
-	 * @return list of album names
+	 * Get all albums from database
+	 * @return All albums
 	 */
-	public ArrayList<DatabaseItem> getAlbums() {
-		return getMergedList("idAlbum", "SELECT idAlbum, strAlbum from album ORDER BY strAlbum");
+	public ArrayList<Album> getAlbums() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT a.idAlbum, a.strAlbum, i.strArtist");
+		sb.append("  FROM album AS a, artist AS i");
+		sb.append("  WHERE a.idArtist = i.idArtist");
+		sb.append("  ORDER BY i.strArtist DESC");
+		sb.append("  LIMIT 300");
+		return parseAlbums(instance.getString("QueryMusicDatabase", sb.toString()));
 	}
 	
 	/**
-	 * Get songs from given database root
-	 * @param artist
-	 * @return list of song names
+	 * Updates the album object with additional data from the albuminfo table
+	 * @param album
+	 * @return Updated album
 	 */
-	public ArrayList<DatabaseItem> getSongs(DatabaseItem root) {
-		return getMergedList("idSong", "SELECT idSong, strTitle from song WHERE " + root.formatSQL() + " ORDER BY iTrack");
+	public Album updateAlbumInfo(Album album) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT g.strGenre, a.strExtraGenres, a.iYear, ai.strLabel, ai.iRating");
+		sb.append("  FROM album a, genre g");
+		sb.append("  LEFT JOIN albuminfo AS ai ON ai.idAlbumInfo = a.idAlbum");
+		sb.append("  WHERE a.idGenre = g.idGenre");
+		sb.append("  AND a.idAlbum = " + album.id);
+		return parseAlbumInfo(album, instance.getString("QueryMusicDatabase", sb.toString()));
 	}
 	
 	/**
-	 * Get all songs in database
-	 * @return list of song names
+	 * Returns a list containing all tracks of an album. The list is sorted by filename.
+	 * @param album
+	 * @return Tracks of an album
 	 */
-	public ArrayList<DatabaseItem> getSongs() {
-		return getMergedList("idSong", "SELECT idSong, strTitle from song ORDER BY iTrack");
+	public ArrayList<Song> getSongs(Album album) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT s.strTitle, a.StrArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("  FROM song AS s, path AS p, artist a");
+		sb.append("  WHERE s.idPath = p.idPath");
+		sb.append("  AND s.idArtist = a.idArtist");
+		sb.append("  AND s.idAlbum = " + album.id);
+		sb.append("  ORDER BY s.iTrack");
+		return parseSongs(instance.getString("QueryMusicDatabase", sb.toString()));
 	}
+	
+	/**
+	 * Returns album thumbnail as base64-encoded string
+	 * @param album
+	 * @return Base64-encoded content of thumb
+	 */
+	public String getAlbumThumb(Album album) {
+		return instance.getString("FileDownload", album.getThumbUri());
+	}
+
+	/**
+	 * Converts query response from HTTP API to a list of Album objects. Each
+	 * row must return the following attributes in the following order:
+	 * 	1. idAlbum
+	 * 	2. strAlbum
+	 * 	3. strArtist
+	 * @param response
+	 * @return List of albums
+	 */
+	private ArrayList<Album> parseAlbums(String response) {
+		ArrayList<Album> albums = new ArrayList<Album>();
+		String[] fields = response.split("<field>");
+		try {
+			for (int row = 1; row < fields.length; row += 3) {
+				albums.add(new Album(
+						trimInt(fields[row]), 
+						trim(fields[row + 1]), 
+						trim(fields[row + 2])
+				));
+			}
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e.getMessage());
+		}
+		return albums;
+	}
+	
+	/**
+	 * Updates an album with info from HTTP API query response. One row is 
+	 * expected, with the following columns:
+	 * 	1. strGenre
+	 * 	2. strExtraGenres
+	 * 	3. iYear
+	 * 	4. strLabel
+	 * 	5. iRating  
+	 * @param album
+	 * @param response
+	 * @return Updated album
+	 */
+	private Album parseAlbumInfo(Album album, String response) {
+		String[] fields = response.split("<field>");
+		try {
+			if (trim(fields[2]).length() > 0) {
+				album.genres = trim(fields[1]) + trim(fields[2]);
+			}	
+			if (trim(fields[3]).length() > 0) {
+				album.year = trimInt(fields[3]);
+			}
+			if (trim(fields[4]).length() > 0) {
+				album.label = trim(fields[4]);
+			}
+			if (trim(fields[5]).length() > 0) {
+				album.rating = trimInt(fields[5]);
+			}
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e.getMessage());
+		}
+		return album;
+	}
+	
+	/**
+	 * Converts query response from HTTP API to a list of Song objects. Each
+	 * row must return the following columns in the following order:
+	 * 	1. strTitle
+	 * 	2. StrArtist
+	 * 	3. iTrack
+	 * 	4. iDuration
+	 * 	5. strPath
+	 * 	6. strFileName
+	 * @param response
+	 * @return List of Songs
+	 */
+	private ArrayList<Song> parseSongs(String response) {
+		ArrayList<Song> songs = new ArrayList<Song>();
+		String[] fields = response.split("<field>");
+		try { 
+			for (int row = 1; row < fields.length; row += 6) { 
+				songs.add(new Song( // String title, String artist, int track, int duration, String path
+						trim(fields[row]), 
+						trim(fields[row + 1]), 
+						trimInt(fields[row + 2]), 
+						trimInt(fields[row + 3]), 
+						trim(fields[row + 4]),
+						trim(fields[row + 5]) 
+				));
+			}
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e.getMessage());
+		}
+		Collections.sort(songs);
+		return songs;		
+	}
+
 }

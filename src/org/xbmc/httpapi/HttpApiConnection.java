@@ -22,7 +22,9 @@
 package org.xbmc.httpapi;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -32,11 +34,17 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
+import org.xbmc.android.util.Base64;
+
+import android.content.Context;
+
 class HttpApiConnection {
 	private String baseURL;
 	private PriorityQueue<Message> messenger;
+	private Context context;
 	
-	public HttpApiConnection(String host, int port, String username, String password, PriorityQueue<Message> messenger) {
+	public HttpApiConnection(String host, int port, String username, String password, PriorityQueue<Message> messenger, Context context) {
+		this.context = context;
 		baseURL = "http://";
 		if (username != null) {
 			baseURL += username + (password != null ? ":" + password : "") + "@";
@@ -66,7 +74,7 @@ class HttpApiConnection {
 	
 	private ArrayList<String> parseList(String response) {
 		if (response == null || response.length() == 0 || response.contains("Error")) {
-			messenger.offer(new Message(UrgancyLevel.error, "ERROR in response"));
+			messenger.offer(new Message(UrgencyLevel.error, "ERROR in response"));
 			return new ArrayList<String>();
 		}
 		
@@ -77,11 +85,9 @@ class HttpApiConnection {
 		for (String row : rows) {
 			System.out.println("parsing: " + row);
 			String verify = row.trim().toLowerCase();
-			
 			if (verify.length() > 0 && !verify.contains("error"))
 				returnList.add(row.trim());
 		}
-		
 		return returnList;
 	}
 	
@@ -95,9 +101,18 @@ class HttpApiConnection {
 	}
 	
 	public String getString(String method, String parameter) {
-		ArrayList<String> stringList = getList(method, parameter);
-		
-		return stringList.size() > 0 ? stringList.get(0) : "";
+		try {
+			String result = executeCommand(method, parameter);
+			if (result.startsWith("<html>")) {
+				return result.substring(6, result.length() - 6 - 7);
+			} else {
+				return result;
+			}
+		} catch (IOException e) {
+			return "";
+		} 
+//		ArrayList<String> stringList = getList(method, parameter);
+//		return stringList.size() > 0 ? stringList.get(0) : "";
 	}
 	
 	public int getInt(String method) {
@@ -108,7 +123,7 @@ class HttpApiConnection {
 		try {
 			return Integer.parseInt(getString(method, parameter));
 		} catch (NumberFormatException e) {
-			messenger.offer(new Message(UrgancyLevel.warning, "Parse exception: " + e.getMessage()));
+			messenger.offer(new Message(UrgencyLevel.warning, "Parse exception: " + e.getMessage()));
 			return 0;
 		}
 	}
@@ -123,31 +138,45 @@ class HttpApiConnection {
 			boolean b = s.matches("OK");
 			return b;
 		} catch (IOException e) {
-			messenger.offer(new Message(UrgancyLevel.error, e.getMessage()));
+			messenger.offer(new Message(UrgencyLevel.error, e.getMessage()));
 			return false;
 		}
 	}
-	
 	private String executeCommand(String method, String parameter) throws IOException {
+		return executeCommand(method, parameter, null);
+	}
+	
+	private String executeCommand(String method, String parameter, String dumpToFile) throws IOException {
 		try {
 			URL query = formatQueryString(method, parameter);
 			URLConnection conn = query.openConnection();
-			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			  
+			
+			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()), 8192);
 			StringBuilder sb = new StringBuilder();
 			String line = "";
-			while ((line = rd.readLine()) != null)      
+			System.out.println("DOWNLOAD: start (" + query + ")");
+			while ((line = rd.readLine()) != null) {    
 				sb.append(line);
-
+			}
+			System.out.println("DOWNLOAD: end (" + query + ")");
 			rd.close();
 			String response = sb.toString();
-			return response.replace("<html>", "").replace("</html>", "");
+			
+			if (dumpToFile == null) {
+				return response.replace("<html>", "").replace("</html>", "");
+			} else {
+				FileOutputStream wr = context.openFileOutput(dumpToFile, Context.MODE_WORLD_READABLE);
+				wr.write(Base64.decode(response.replace("<html>", "").replace("</html>", "")));
+				wr.close();
+				return dumpToFile;
+			}
+			  
 		} catch (MalformedURLException e) {
-			messenger.offer(new Message(UrgancyLevel.error, "Malformed URL Exception: " + e.getMessage()));
+			messenger.offer(new Message(UrgencyLevel.error, "Malformed URL Exception: " + e.getMessage()));
 			throw new IOException("Malformed URL Exception " + e.getMessage());
 		} catch (URISyntaxException e) {
 			String message = "URL Encode Exception: " + e.getMessage();
-			messenger.offer(new Message(UrgancyLevel.error, message));
+			messenger.offer(new Message(UrgencyLevel.error, message));
 			throw new IOException("URL Encode Exception " + e.getMessage());
 		}
 	}
@@ -155,12 +184,23 @@ class HttpApiConnection {
 	/**
 	 * Will download a given file on XBMC server, this method will return a full array so it's not memory efficient on large files
 	 * @param fileName to download
-	 * @return char array of file
+	 * @return location of the file saved (locally)
 	 * @throws IOException
 	 */
-	// TODO Test if this actually work
-	public char[] FileDownload(String fileName) throws IOException {
-		String data = executeCommand("FileDownload", fileName);
-		return data.toCharArray();
+	public String download(String uri, String saveTo) {
+		try {
+			try {
+				long size = context.openFileInput(saveTo).getChannel().size();
+				if (size > 0) {
+					return saveTo;
+				} else {
+					return executeCommand("FileDownload", uri, saveTo);
+				}
+			} catch (FileNotFoundException e) {
+				return executeCommand("FileDownload", uri, saveTo);
+			}
+		} catch (IOException e) {
+			return null;
+		}
 	}
 }

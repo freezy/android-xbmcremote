@@ -34,13 +34,11 @@ abstract class Database {
 
 	protected ArrayList<DatabaseItem> getMergedList(String nameID, String sqlQuery) {
 		ArrayList<String> list = instance.getList(queryString, sqlQuery);
-		
 		ArrayList<DatabaseItem> returnList = new ArrayList<DatabaseItem>();
 		
 		for (String s : list) {
 			if (s.startsWith("<field>")) {
 				s = s.substring(7);
-				
 				String[] data = s.split("<field>");
 				if (data.length >= 2)
 					returnList.add(new DatabaseItem(data[0], nameID,  data[1], data.length > 2 ? data[2] : ""));
@@ -48,5 +46,34 @@ abstract class Database {
 		}
 		
 		return returnList;
+	}
+	
+	
+	/**
+	 * Removes the trailing "</field>" string from the value
+	 * @param value
+	 * @return Trimmed value
+	 */
+	protected static String trim(String value) {
+		return value.substring(0, value.length() - 8);
+	}	
+	
+	/**
+	 * Removes the trailing "</field>" string from the value and tries to
+	 * parse an integer from it. On error, returns -1.
+	 * @param value
+	 * @return Parsed integer from field value
+	 */
+	protected static int trimInt(String value) {
+		String trimmed = trim(value);
+		if (trimmed.length() > 0) {
+			try {
+				return Integer.parseInt(trimmed);
+			} catch (NumberFormatException e) {
+				return -1;
+			}
+		} else {
+			return -1;
+		}
 	}
 }

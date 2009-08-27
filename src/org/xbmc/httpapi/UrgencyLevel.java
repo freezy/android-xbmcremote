@@ -21,27 +21,8 @@
 
 package org.xbmc.httpapi;
 
-import java.util.Date;
-
-public class Message implements Comparable<Message> {
-	private UrgencyLevel level;
-	private String message;
-	private Date time;
-
-	public Message(UrgencyLevel level, String message) {
-		this.level = level;
-		this.message = message;
-		time = new Date();
-	}
-	
-	public String toString() {
-		return level.toString() + ": " + message;
-	}
-	
-	public int compareTo(Message arg) {
-		if (arg.level == level)
-			return time.compareTo(arg.time);
-		else
-			return arg.level.compareTo(level);
-	}
+public enum UrgencyLevel {
+	info,
+	warning,
+	error
 }

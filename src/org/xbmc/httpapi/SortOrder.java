@@ -21,8 +21,7 @@
 
 package org.xbmc.httpapi;
 
-public enum UrgancyLevel {
-	info,
-	warning,
-	error
+public enum SortOrder {
+	ascending,
+	descending
 }

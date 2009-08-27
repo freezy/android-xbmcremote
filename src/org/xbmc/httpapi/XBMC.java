@@ -24,26 +24,28 @@ package org.xbmc.httpapi;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
+import android.content.Context;
+
 
 public class XBMC {
 	HttpApiConnection instance;
 	PriorityQueue<Message> messenger;
 	
-	public XBMC(String host) {
-		this(host, -1, null, null);
+	public XBMC(String host, Context context) {
+		this(host, -1, null, null, context);
 	}
 	
-	public XBMC(String host, int port) {
-		this(host, port, null, null);
+	public XBMC(String host, int port, Context context) {
+		this(host, port, null, null, context);
 	}
 
-	public XBMC(String host, String username, String password) {
-		this(host, -1, username, password);
+	public XBMC(String host, String username, String password, Context context) {
+		this(host, -1, username, password, context);
 	}
 
-	public XBMC(String host, int port, String username, String password) {		
+	public XBMC(String host, int port, String username, String password, Context context) {		
 		messenger = new PriorityQueue<Message>();
-		instance = new HttpApiConnection(host, port, username, password, messenger);
+		instance = new HttpApiConnection(host, port, username, password, messenger, context);
 	}
 	
 	public ArrayList<Item> getShares(MediaType type) {
