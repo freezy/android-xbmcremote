@@ -165,6 +165,8 @@ class HttpApiConnection {
 			if (dumpToFile == null) {
 				return response.replace("<html>", "").replace("</html>", "");
 			} else {
+				// for now we write to the internal media.
+				// @TODO look for sdcard and store it there (then we don't need the context anymore)
 				FileOutputStream wr = context.openFileOutput(dumpToFile, Context.MODE_WORLD_READABLE);
 				wr.write(Base64.decode(response.replace("<html>", "").replace("</html>", "")));
 				wr.close();
@@ -182,7 +184,7 @@ class HttpApiConnection {
 	}
 	
 	/**
-	 * Will download a given file on XBMC server, this method will return a full array so it's not memory efficient on large files
+	 * Will download a given file from the XBMC server, this method will return a full array so it's not memory efficient on large files
 	 * @param fileName to download
 	 * @return location of the file saved (locally)
 	 * @throws IOException

@@ -71,7 +71,7 @@ public class MusicDatabase extends Database {
 		sb.append("  FROM album AS a, artist AS i");
 		sb.append("  WHERE a.idArtist = i.idArtist");
 		sb.append("  ORDER BY i.strArtist DESC");
-		sb.append("  LIMIT 300");
+		sb.append("  LIMIT 300"); // let's keep it at 300 for now
 		return parseAlbums(instance.getString("QueryMusicDatabase", sb.toString()));
 	}
 	
