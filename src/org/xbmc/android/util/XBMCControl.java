@@ -36,7 +36,7 @@ public class XBMCControl {
 		{
 			String host = activity.getSharedPreferences(XBMCControl.PREFS_NAME, 0).getString("host", "");
 			int port = activity.getSharedPreferences(XBMCControl.PREFS_NAME, 0).getInt("httpPort", 80);
-			httpApiInstance = new XBMC(host, port);
+			httpApiInstance = new XBMC(host, port, activity);
 		}
 		return httpApiInstance;
 	}
