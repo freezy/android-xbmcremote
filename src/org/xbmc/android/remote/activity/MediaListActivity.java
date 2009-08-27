@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import org.xbmc.android.remote.util.XBMCControl;
+import org.xbmc.android.util.XBMCControl;
 import org.xbmc.httpapi.Item;
 import org.xbmc.httpapi.MediaType;
 import android.app.ListActivity;

@@ -1,13 +1,15 @@
-package org.xbmc.android.remote.util;
+package org.xbmc.android.remote.activity;
 
 import java.util.ArrayList;
+
+import org.xbmc.android.util.XBMCControl;
 import org.xbmc.httpapi.Message;
 import org.xbmc.httpapi.XBMC;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 
-public class LogViewer extends ListActivity {
+public class LogViewerActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

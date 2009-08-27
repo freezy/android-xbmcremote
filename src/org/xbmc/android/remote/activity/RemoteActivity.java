@@ -24,10 +24,8 @@ package org.xbmc.android.remote.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.util.XBMCControl;
+import org.xbmc.android.util.XBMCControl;
 import org.xbmc.httpapi.MediaControl;
-import org.xbmc.httpapi.Message;
-import org.xbmc.httpapi.UrgancyLevel;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -82,8 +80,8 @@ public class RemoteActivity extends Activity {
 	    final Button GoNowPlayingButton = (Button) findViewById(R.id.GoNowPlayingButton);
 	    GoNowPlayingButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-//                Intent myIntent = new Intent(v.getContext(), LogViewer.class);
-//                startActivityForResult(myIntent, 0);
+                Intent myIntent = new Intent(v.getContext(), LogViewerActivity.class);
+                startActivityForResult(myIntent, 0);
 			}
 		});
 	}

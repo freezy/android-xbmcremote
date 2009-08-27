@@ -22,7 +22,7 @@
 package org.xbmc.android.remote.activity;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.util.XBMCControl;
+import org.xbmc.android.util.XBMCControl;
 import org.xbmc.httpapi.MediaType;
 import android.app.Activity;
 import android.content.Intent;
