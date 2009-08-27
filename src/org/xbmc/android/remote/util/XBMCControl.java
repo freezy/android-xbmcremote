@@ -19,7 +19,7 @@
  *
  */
 
-package com.remote.xbmc;
+package org.xbmc.android.remote.util;
 
 import java.net.Inet4Address;
 import org.xbmc.eventclient.XBMCClient;

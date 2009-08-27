@@ -19,12 +19,13 @@
  *
  */
 
-package com.remote.xbmc;
+package org.xbmc.android.remote.activity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.xbmc.android.remote.util.XBMCControl;
 import org.xbmc.httpapi.Item;
 import org.xbmc.httpapi.MediaType;
 import android.app.ListActivity;

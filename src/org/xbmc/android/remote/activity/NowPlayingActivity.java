@@ -19,12 +19,13 @@
  *
  */
 
-package com.remote.xbmc;
+package org.xbmc.android.remote.activity;
 
+import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.util.XBMCControl;
 import org.xbmc.httpapi.MediaControl;
 
 import android.app.Activity;
-import android.app.LauncherActivity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;

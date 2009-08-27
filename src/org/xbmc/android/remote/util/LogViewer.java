@@ -1,4 +1,4 @@
-package com.remote.xbmc;
+package org.xbmc.android.remote.util;
 
 import java.util.ArrayList;
 import org.xbmc.httpapi.Message;
