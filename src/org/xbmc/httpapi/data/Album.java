@@ -29,7 +29,7 @@ import org.xbmc.android.util.Crc32;
  * 
  * @author freezy <f3k@hosts.ch>
  */
-public class Album {
+public class Album implements ICoverArt {
 
 	/**
 	 * Points to where the album thumbs are stored
@@ -47,6 +47,10 @@ public class Album {
 		this.name = name;
 		this.artist = artist;
 	}
+	
+	public String getArtFolder() {
+		return "/Music";
+	}
 
 	/**
 	 * Composes the complete path to the album's thumbnail
@@ -57,14 +61,20 @@ public class Album {
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
 	
+	public static String getThumbUri(ICoverArt art) {
+		String hex = art.getCrc();
+		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+	}
+	
 	/**
 	 * Returns the CRC of the album on which the thumb name is based upon.
 	 * @return 8-char CRC32
 	 */
 	public String getCrc() {
-		Crc32 crc = new Crc32();
-		crc.computeFromLowerCase(name + artist);
-		return crc.getHexValue();
+		if (thumbID == null) {
+			thumbID = Crc32.computeAsHex((name + artist).toLowerCase());
+		}
+		return thumbID;
 	}
 	
 	/**
@@ -116,4 +126,8 @@ public class Album {
 	 * Music label
 	 */
 	public String label = null;	
+	/**
+	 * Save this once it's calculated
+	 */
+	public String thumbID = null;
 }

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.PriorityQueue;
 
 import org.xbmc.httpapi.data.Album;
+import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Song;
 
 public class MusicDatabase extends Database {
@@ -70,7 +71,7 @@ public class MusicDatabase extends Database {
 		sb.append("SELECT a.idAlbum, a.strAlbum, i.strArtist");
 		sb.append("  FROM album AS a, artist AS i");
 		sb.append("  WHERE a.idArtist = i.idArtist");
-		sb.append("  ORDER BY i.strArtist DESC");
+		sb.append("  ORDER BY i.strArtist ASC");
 		sb.append("  LIMIT 300"); // let's keep it at 300 for now
 		return parseAlbums(instance.getString("QueryMusicDatabase", sb.toString()));
 	}
@@ -111,8 +112,8 @@ public class MusicDatabase extends Database {
 	 * @param album
 	 * @return Base64-encoded content of thumb
 	 */
-	public String getAlbumThumb(Album album) {
-		return instance.getString("FileDownload", album.getThumbUri());
+	public String getAlbumThumb(ICoverArt art) {
+		return instance.getString("FileDownload", Album.getThumbUri(art));
 	}
 
 	/**

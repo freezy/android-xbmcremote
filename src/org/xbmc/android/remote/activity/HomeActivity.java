@@ -43,6 +43,7 @@ public class HomeActivity extends Activity {
 	    final Button GoMusicButton = (Button) findViewById(R.id.GoMusicButton);
 	    GoMusicButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+//                Intent myIntent = new Intent(v.getContext(), AlbumGridActivity.class);
                 Intent myIntent = new Intent(v.getContext(), MediaListActivity.class);
                 myIntent.putExtra("shareType", MediaType.music.toString());
                 startActivityForResult(myIntent, 0);

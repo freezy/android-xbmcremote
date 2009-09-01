@@ -29,41 +29,32 @@ import java.io.UnsupportedEncodingException;
  */
 public class Crc32 {
 	
-	private int mCrc;
-
-	public Crc32() {
-		reset();
-	}
-	public String getHexValue() {
-		return String.format("%08x", mCrc);
-	}
-	public void reset() {
-		mCrc = 0xFFFFFFFF;
-	}
-	public void compute(byte[] buffer) {
+	public static int compute(byte[] buffer, int crc) {
 		int count = buffer.length;
 		while (count-- > 0) {
-			compute(buffer[buffer.length - count - 1]);
+			crc = compute(buffer[buffer.length - count - 1], crc);
 		}
+		return crc;
 	}
-	public void compute(byte value) {
-		mCrc ^= (value << 24);
+	public static int compute(byte value, int crc) {
+		crc ^= (value << 24);
 		for (int i = 0; i < 8; i++) {
-			if ((mCrc & 0x80000000) != 0) {
-				mCrc = (mCrc << 1) ^ 0x04C11DB7;
+			if ((crc & 0x80000000) != 0) {
+				crc = (crc << 1) ^ 0x04C11DB7;
 			} else {
-				mCrc <<= 1;
+				crc <<= 1;
 			}
 		}
+		return crc;
 	}
-	public void compute(String strValue) {
+	public static int compute(String strValue) {
 		try {
-			compute(strValue.getBytes("UTF-8"));
+			return compute(strValue.getBytes("UTF-8"), 0xFFFFFFFF);
 		} catch (UnsupportedEncodingException e) {
-			compute(strValue.getBytes());
+			return compute(strValue.getBytes(), 0xFFFFFFFF);
 		}
 	}
-	public void computeFromLowerCase(String strValue) {
-		compute(strValue.toLowerCase());
+	public static String computeAsHex(String strValue) {
+		return String.format("%08x", compute(strValue));
 	}
 }

@@ -28,12 +28,10 @@ import org.xbmc.android.util.XBMCControl;
 import org.xbmc.httpapi.MediaControl;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 public class RemoteActivity extends Activity {
@@ -42,7 +40,7 @@ public class RemoteActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.remotemain);
+        setContentView(R.layout.remote_xbox);
         
         control = XBMCControl.getHttpApiInstance(this).getMediaControls();
   	  	
@@ -50,19 +48,121 @@ public class RemoteActivity extends Activity {
     }
 
 	private void setupButtons() {
+
+		// seek back
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnSeekBack)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				KeyboardAction("reverse");
+			}
+		});
+		// play
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnPlay)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				KeyboardAction("p");
+			}
+		});
+		// seek forward
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnSeekForward)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				KeyboardAction("forward");
+			}
+		});
 		
-		final Button GoBackButton = (Button) findViewById(R.id.GoBackButton);
-		GoBackButton.setOnClickListener(new View.OnClickListener() {
+		
+		// previous
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnPrevious)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				control.playPrevious();
+			}
+		});
+		// stop
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnStop)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				control.stop();
+			}
+		});
+		
+		// pause
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnPause)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				control.pause();
+			}
+		});
+		// next
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnNext)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				control.playNext();
+			}
+		});
+		
+		// title
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnTitle)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				KeyboardAction("title");
+			}
+		});
+		// up
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnUp)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				KeyboardAction("up");
+			}
+		});
+		// info
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnInfo)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				KeyboardAction("i");
+			}
+		});
+		
+		
+		// left
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnLeft)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				KeyboardAction("left");
+			}
+		});
+		// select
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnSelect)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				KeyboardAction("enter");
+			}
+		});
+		// right
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnRight)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				KeyboardAction("right");
+			}
+		});
+
+		// menu
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnDown)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				KeyboardAction("down");
+			}
+		});
+		// down
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnMenu)).setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				KeyboardAction("menu");
+			}
+		});
+		// back 
+		((ImageButton)findViewById(R.id.RemoteXboxImgBtnBack)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				KeyboardAction("backspace");
 			}
 		});
+		
+		
+		
+/*		
 		final ImageButton PlayPrevButton = (ImageButton) findViewById(R.id.MediaPreviousButton);
 		PlayPrevButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				control.playPrevious();
 			}
 		});
+		
 		final ImageButton PlayButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
 		PlayButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -80,10 +180,10 @@ public class RemoteActivity extends Activity {
 	    final Button GoNowPlayingButton = (Button) findViewById(R.id.GoNowPlayingButton);
 	    GoNowPlayingButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-                Intent myIntent = new Intent(v.getContext(), LogViewerActivity.class);
+                Intent myIntent = new Intent(v.getContext(), LogViewer.class);
                 startActivityForResult(myIntent, 0);
 			}
-		});
+		});*/
 	}
 	
 	@Override

@@ -154,11 +154,11 @@ class HttpApiConnection {
 			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()), 8192);
 			StringBuilder sb = new StringBuilder();
 			String line = "";
-			System.out.println("DOWNLOAD: start (" + query + ")");
+			System.out.println("HTTP: start (" + query + ")");
 			while ((line = rd.readLine()) != null) {    
 				sb.append(line);
 			}
-			System.out.println("DOWNLOAD: end (" + query + ")");
+			System.out.println("HTTP: end (" + query + ")");
 			rd.close();
 			String response = sb.toString();
 			
