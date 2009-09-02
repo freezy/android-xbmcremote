@@ -39,7 +39,7 @@ public class XBMCControl {
 		if (httpApiInstance == null) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 			String host = prefs.getString("setting_ip", "");
-			int port = prefs.getInt("setting_http_port", 80);
+			int port = Integer.parseInt(prefs.getString("setting_http_port", "80"));
 			String user = prefs.getString("setting_http_user", "");
 			String pass = prefs.getString("setting_http_pass", "");
 			if (port > 0 && user != null && user.length() > 0) {
@@ -59,7 +59,7 @@ public class XBMCControl {
 		if (eventClientInstance == null) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 			String host = prefs.getString("setting_ip", "");
-			int port = prefs.getInt("setting_eventserver_port", 9777);
+			int port = Integer.parseInt(prefs.getString("setting_eventserver_port", "9777"));
 			try {
 				eventClientInstance = new XBMCClient(Inet4Address.getByName(host), port, "Android XBMC Remote");
 			} catch (Exception e) {

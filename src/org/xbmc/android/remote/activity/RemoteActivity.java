@@ -28,21 +28,26 @@ import org.xbmc.android.util.XBMCControl;
 import org.xbmc.httpapi.MediaControl;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 
 public class RemoteActivity extends Activity {
-	MediaControl control;
+	private MediaControl mControl;
+	private Vibrator mVibrator;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.remote_xbox);
         
-        control = XBMCControl.getHttpApiInstance(this).getMediaControls();
+        mControl = XBMCControl.getHttpApiInstance(this).getMediaControls();
+        mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
   	  	
 		setupButtons();
     }
@@ -52,18 +57,21 @@ public class RemoteActivity extends Activity {
 		// seek back
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnSeekBack)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				vibrate();
 				KeyboardAction("reverse");
 			}
 		});
 		// play
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnPlay)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				vibrate();
 				KeyboardAction("p");
 			}
 		});
 		// seek forward
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnSeekForward)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				vibrate();
 				KeyboardAction("forward");
 			}
 		});
@@ -72,44 +80,51 @@ public class RemoteActivity extends Activity {
 		// previous
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnPrevious)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.playPrevious();
+				vibrate();
+				mControl.playPrevious();
 			}
 		});
 		// stop
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnStop)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.stop();
+				vibrate();
+				mControl.stop();
 			}
 		});
 		
 		// pause
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnPause)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.pause();
+				vibrate();
+				mControl.pause();
 			}
 		});
 		// next
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnNext)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.playNext();
+				vibrate();
+				mControl.playNext();
 			}
 		});
 		
 		// title
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnTitle)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				vibrate();
 				KeyboardAction("title");
 			}
 		});
 		// up
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnUp)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				vibrate();
 				KeyboardAction("up");
 			}
 		});
 		// info
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnInfo)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				vibrate();
 				KeyboardAction("i");
 			}
 		});
@@ -118,18 +133,21 @@ public class RemoteActivity extends Activity {
 		// left
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnLeft)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				vibrate();
 				KeyboardAction("left");
 			}
 		});
 		// select
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnSelect)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				vibrate();
 				KeyboardAction("enter");
 			}
 		});
 		// right
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnRight)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				vibrate();
 				KeyboardAction("right");
 			}
 		});
@@ -137,18 +155,21 @@ public class RemoteActivity extends Activity {
 		// menu
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnDown)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				vibrate();
 				KeyboardAction("down");
 			}
 		});
 		// down
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnMenu)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				vibrate();
 				KeyboardAction("menu");
 			}
 		});
 		// back 
 		((ImageButton)findViewById(R.id.RemoteXboxImgBtnBack)).setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				vibrate();
 				KeyboardAction("backspace");
 			}
 		});
@@ -215,5 +236,9 @@ public class RemoteActivity extends Activity {
 		} catch (IOException e) {
 			return false;
 		}
+	}
+	
+	private void vibrate() {
+		mVibrator.vibrate(45);
 	}
 }
