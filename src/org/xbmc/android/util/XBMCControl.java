@@ -25,7 +25,10 @@ import java.net.Inet4Address;
 import org.xbmc.eventclient.XBMCClient;
 import org.xbmc.httpapi.XBMC;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
 public class XBMCControl {
@@ -65,4 +68,16 @@ public class XBMCControl {
 		}
 		return eventClientInstance;
 	}
+	
+	/**
+	 * Checks whether the device is able to connect to the network
+	 * @param context
+	 * @return
+	 */
+	public static boolean isNetworkAvailable(Context context) {
+		ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo info = connMgr.getActiveNetworkInfo();
+		return(info!=null && info.isConnected());
+	}
+	
 }
