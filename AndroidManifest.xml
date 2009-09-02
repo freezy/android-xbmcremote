@@ -16,6 +16,7 @@
         <activity android:name=".activity.NowPlayingActivity" />
         <activity android:name=".activity.LogViewerActivity" />
         <activity android:name=".activity.AlbumGridActivity" />
+        <activity android:name=".activity.SettingsActivity" />
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-sdk android:minSdkVersion="3" />

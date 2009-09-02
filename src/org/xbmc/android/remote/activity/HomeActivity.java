@@ -29,6 +29,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Button;
@@ -84,20 +86,6 @@ public class HomeActivity extends Activity {
 			}
 		});
 	}
-	
-	@Override
-	protected void onResume() {
-		SharedPreferences settings = getSharedPreferences(XBMCControl.PREFS_NAME, 0);
-		String host = settings.getString("host", "");
-		int port = settings.getInt("httpPort", 80); 
-		if (port != 80)
-			host += ":" + port;
-		
-		final EditText HostText = (EditText) findViewById(R.id.HostText);
-		HostText.setText(host);
-		
-		super.onResume();
-	}
 
 	@Override
 	public void onWindowAttributesChanged(LayoutParams params) {
@@ -108,20 +96,25 @@ public class HomeActivity extends Activity {
 		
 		super.onWindowAttributesChanged(params);
 	}
+
 	
 	@Override
-	protected void onPause() {
-		super.onStop();
-		
-		final EditText HostText = (EditText) findViewById(R.id.HostText);
-		String[] sa = HostText.getText().toString().split(":");
-
-		SharedPreferences settings = getSharedPreferences(XBMCControl.PREFS_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("host", sa[0]);
-		if (sa.length > 1)
-			editor.putInt("httpPort", Integer.parseInt(sa[1]));
-		
-		editor.commit();
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, 1, 0, "Settings").setIcon(R.drawable.icon_menu_settings);
+		menu.add(0, 2, 0, "Exit").setIcon(R.drawable.icon_menu_exit);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case 1:
+				startActivity(new Intent(this, SettingsActivity.class));
+				return true;
+			case 2:
+				this.finish();
+				return true;
+		}
+		return false;
 	}
 }

@@ -44,10 +44,6 @@
 	    	android:layout_width="200dip"
 	    	android:layout_height="75dip"
 	    	android:text="Now Playing" />
-	    <EditText
-	    	android:id="@+id/HostText"
-	    	android:layout_width="fill_parent"
-	    	android:layout_height="wrap_content"
-	    	android:hint="@string/IPSetup" />
+	    
    	</LinearLayout>
 </LinearLayout>

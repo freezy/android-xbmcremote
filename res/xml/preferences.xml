@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="XBMCRemotePrefsFile">
+	<EditTextPreference
+		android:key="setting_ip"
+		android:title="XBMC IP Address / Host"
+		android:defaultValue="10.10.10.10" 
+		android:summary="Connect to address %value%" />
+	<PreferenceCategory android:title="Web Server">
+		<EditTextPreference
+			android:key="setting_http_port"
+			android:title="Web Server Port"
+			android:numeric="decimal"
+			android:defaultValue="8080" 
+			android:summary="Connect to port %value%" />
+		<EditTextPreference
+			android:key="setting_http_user"
+			android:title="Web Server User"
+			android:defaultValue="xbmc" 
+			android:summary="User '%value%'" />
+		<EditTextPreference
+			android:key="setting_http_pass"
+			android:title="Web Server Password"
+			android:password="true"
+			android:defaultValue="xbmc" 
+			android:summary="Password (not displayed)" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="Event Server">
+		<EditTextPreference
+			android:key="setting_eventserver_port"
+			android:title="XBMC Event Server Port"
+			android:numeric="decimal"
+			android:defaultValue="9777" 
+			android:summary="Connect to port %value%" />
+	</PreferenceCategory>
+</PreferenceScreen>
