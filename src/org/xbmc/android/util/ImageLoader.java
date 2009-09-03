@@ -252,7 +252,7 @@ public class ImageLoader extends Thread {
 	 * This class reads the image from XBMC via network
 	 */
 	private static class DownloadRequest implements ImageRequest {
-		private final static MusicDatabase sMdb = XBMCControl.getHttpApiInstance(null).getMusicDatabase();
+		private final static MusicDatabase sMdb = ConnectionManager.getHttpApiInstance(null).getMusicDatabase();
 		private final ICoverArt mArt;
 		private ImageView mImage;
 		private Bitmap mBitmap;

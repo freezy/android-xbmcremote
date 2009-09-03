@@ -22,7 +22,7 @@
 package org.xbmc.android.remote.activity;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.util.XBMCControl;
+import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.httpapi.MediaType;
 import android.app.Activity;
 import android.content.Intent;
@@ -39,6 +39,7 @@ import android.widget.EditText;
 public class HomeActivity extends Activity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
+		
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_portrait);
         

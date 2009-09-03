@@ -22,8 +22,8 @@
 package org.xbmc.android.util;
 
 import java.net.Inet4Address;
-import org.xbmc.eventclient.XBMCClient;
-import org.xbmc.httpapi.XBMC;
+import org.xbmc.eventclient.EventClient;
+import org.xbmc.httpapi.HttpClient;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -31,42 +31,76 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
-public class XBMCControl {
-	private static XBMC httpApiInstance;
-	private static XBMCClient eventClientInstance;
+/**
+ * Globally returns the control objects. 
+ */
+public class ConnectionManager {
 	
-	static public XBMC getHttpApiInstance(Activity activity) {
-		if (httpApiInstance == null) {
+	private static HttpClient sHttpApiInstance;
+	private static EventClient sEventClientInstance;
+	
+	/**
+	 * Returns an instance of the HTTP Client. Instantiation takes place only
+	 * once, otherwise the first instance is returned.
+	 * 
+	 * @param activity
+	 * @return Client for XBMC's HTTP API
+	 */
+	public static HttpClient getHttpApiInstance(Activity activity) {
+		if (sHttpApiInstance == null) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 			String host = prefs.getString("setting_ip", "");
 			int port = Integer.parseInt(prefs.getString("setting_http_port", "80"));
 			String user = prefs.getString("setting_http_user", "");
 			String pass = prefs.getString("setting_http_pass", "");
 			if (port > 0 && user != null && user.length() > 0) {
-				httpApiInstance = new XBMC(host, port, activity);
+				sHttpApiInstance = new HttpClient(host, port, activity);
 			} else if (user != null && user.length() > 0) {
-				httpApiInstance = new XBMC(host, user, pass, activity);
+				sHttpApiInstance = new HttpClient(host, user, pass, activity);
 			} else if (port > 0) {
-				httpApiInstance = new XBMC(host, port, activity);
+				sHttpApiInstance = new HttpClient(host, port, activity);
 			} else {
-				httpApiInstance = new XBMC(host, activity);
+				sHttpApiInstance = new HttpClient(host, activity);
 			}
 		}
-		return httpApiInstance;
+		return sHttpApiInstance;
 	}
 	
-	static public XBMCClient getEventClientInstance(Activity activity) {
-		if (eventClientInstance == null) {
+	/**
+	 * Once instantiated with the activity we can use this one.
+	 * @return Client for XBMC's HTTP API
+	 */
+	public static HttpClient getHttpApiInstance() {
+		return sHttpApiInstance;
+	}
+	
+	/**
+	 * Returns an instance of the Event Server Client. Instantiation takes
+	 * plave only once, otherwise the first instance is returned.
+	 * 
+	 * @param activity
+	 * @return Client for XBMC's Event Server
+	 */
+	public static EventClient getEventClientInstance(Activity activity) {
+		if (sEventClientInstance == null) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 			String host = prefs.getString("setting_ip", "");
 			int port = Integer.parseInt(prefs.getString("setting_eventserver_port", "9777"));
 			try {
-				eventClientInstance = new XBMCClient(Inet4Address.getByName(host), port, "Android XBMC Remote");
+				sEventClientInstance = new EventClient(Inet4Address.getByName(host), port, "Android XBMC Remote");
 			} catch (Exception e) {
 				return null;
 			}
 		}
-		return eventClientInstance;
+		return sEventClientInstance;
+	}
+	
+	/**
+	 * Once instantiated with the activity we can use this one.
+	 * @return Client for XBMC's Event Server
+	 */
+	public static EventClient getEventClientInstance() {
+		return sEventClientInstance;
 	}
 	
 	/**

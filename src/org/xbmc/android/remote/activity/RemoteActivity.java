@@ -24,7 +24,7 @@ package org.xbmc.android.remote.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.util.XBMCControl;
+import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.httpapi.MediaControl;
 
 import android.app.Activity;
@@ -37,21 +37,66 @@ import android.view.View;
 import android.widget.ImageButton;
 
 public class RemoteActivity extends Activity {
+	
 	private MediaControl mControl;
 	private Vibrator mVibrator;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.remote_xbox);
         
-        mControl = XBMCControl.getHttpApiInstance(this).getMediaControls();
+        mControl = ConnectionManager.getHttpApiInstance(this).getMediaControls();
         mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
   	  	
 		setupButtons();
     }
-
+    
+	@Override
+	public boolean onTrackballEvent(MotionEvent event) {
+		if (event.getAction() == MotionEvent.ACTION_DOWN)
+			return KeyboardAction("enter");
+		else if (Math.abs(event.getX()) > 0.1f)
+			return KeyboardAction(event.getX() < 0 ? "left" : "right");
+		else if (Math.abs(event.getY()) > 0.1f)
+			return KeyboardAction(event.getY() < 0 ? "up" : "down");
+		
+		return false;
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		char key = (char)event.getUnicodeChar();
+		
+		if (key > 'A' && key < 'z')
+			return KeyboardAction("" + key);
+		
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+			
+		}
+		
+		return super.onKeyDown(keyCode, event);
+	}
+	
+	private boolean KeyboardAction(String button) {
+		try {
+			ConnectionManager.getEventClientInstance(RemoteActivity.this).sendButton("KB", button, false, true, true, (short)0, (byte)0);
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
+	}
+	
+	/**
+	 * Shortly vibrates in order to give the "click" impression
+	 */
+	private void vibrate() {
+		mVibrator.vibrate(45);
+	}
+	
+	/**
+	 * Assigns the button events to the views.
+	 */
 	private void setupButtons() {
 
 		// seek back
@@ -79,7 +124,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_play);
 				}
-				return false;
+				return true;
 			}
 		});
 		// seek forward
@@ -93,7 +138,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_seek_forward);
 				}
-				return false;
+				return true;
 			}
 		});
 		
@@ -108,7 +153,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_previous);
 				}
-				return false;
+				return true;
 			}
 		});
 		// stop
@@ -122,7 +167,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_stop);
 				}
-				return false;
+				return true;
 			}
 		});
 		// pause
@@ -136,7 +181,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_pause);
 				}
-				return false;
+				return true;
 			}
 		});
 		// next
@@ -150,7 +195,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_next);
 				}
-				return false;
+				return true;
 			}
 		});
 		
@@ -165,7 +210,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_title);
 				}
-				return false;
+				return true;
 			}
 		});
 		// up
@@ -179,7 +224,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_up);
 				}
-				return false;
+				return true;
 			}
 		});
 		// info
@@ -193,7 +238,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_info);
 				}
-				return false;
+				return true;
 			}
 		});
 		
@@ -208,7 +253,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_left);
 				}
-				return false;
+				return true;
 			}
 		});
 		// select
@@ -222,7 +267,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_select);
 				}
-				return false;
+				return true;
 			}
 		});
 		// right
@@ -236,7 +281,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_right);
 				}
-				return false;
+				return true;
 			}
 		});
 		
@@ -251,7 +296,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_menu);
 				}
-				return false;
+				return true;
 			}
 		});
 		// down
@@ -265,7 +310,7 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_down);
 				}
-				return false;
+				return true;
 			}
 		});
 		// back 
@@ -279,73 +324,9 @@ public class RemoteActivity extends Activity {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 					((ImageButton)v).setImageResource(R.drawable.remote_xbox_back);
 				}
-				return false;
+				return true;
 			}
 		});
 		
-/*		
-		final ImageButton PlayPrevButton = (ImageButton) findViewById(R.id.MediaPreviousButton);
-		PlayPrevButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				control.playPrevious();
-			}
-		});
-		
-		final ImageButton PlayButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
-		PlayButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				control.pause();
-			}
-		});
-		
-		final ImageButton PlayNextButton = (ImageButton) findViewById(R.id.MediaNextButton);
-		PlayNextButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				control.playNext();
-			}
-		});
-		
-	    final Button GoNowPlayingButton = (Button) findViewById(R.id.GoNowPlayingButton);
-	    GoNowPlayingButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-                Intent myIntent = new Intent(v.getContext(), LogViewer.class);
-                startActivityForResult(myIntent, 0);
-			}
-		});*/
-	}
-	
-	@Override
-	public boolean onTrackballEvent(MotionEvent event) {
-		if (event.getAction() == MotionEvent.ACTION_DOWN)
-			return KeyboardAction("enter");
-		else if (Math.abs(event.getX()) > 0.1f)
-			return KeyboardAction(event.getX() < 0 ? "left" : "right");
-		else if (Math.abs(event.getY()) > 0.1f)
-			return KeyboardAction(event.getY() < 0 ? "up" : "down");
-		
-		return false;
-	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		char key = (char)event.getUnicodeChar();
-		
-		if (key > 'A' && key < 'z')
-			return KeyboardAction("" + key);
-		
-		return super.onKeyDown(keyCode, event);
-	}
-	
-	private boolean KeyboardAction(String button) {
-		try {
-			XBMCControl.getEventClientInstance(RemoteActivity.this).sendButton("KB", button, false, true, true, (short)0, (byte)0);
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
-	}
-	
-	private void vibrate() {
-		mVibrator.vibrate(45);
 	}
 }

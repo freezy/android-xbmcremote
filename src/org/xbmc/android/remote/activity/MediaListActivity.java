@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import org.xbmc.android.util.XBMCControl;
+import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.httpapi.Item;
 import org.xbmc.httpapi.MediaType;
 import android.app.ListActivity;
@@ -76,7 +76,7 @@ public class MediaListActivity extends ListActivity {
 		}
 		else
 		{
-			XBMCControl.getHttpApiInstance(this).getMediaControls().playFile(item.url);
+			ConnectionManager.getHttpApiInstance(this).getMediaControls().playFile(item.url);
             Intent myIntent = new Intent(v.getContext(), NowPlayingActivity.class);
             startActivityForResult(myIntent, 0);
 		}
@@ -88,7 +88,7 @@ public class MediaListActivity extends ListActivity {
 		
 		if (url.length() == 0)
 		{
-			for (Item item : XBMCControl.getHttpApiInstance(this).getShares(mediaType))
+			for (Item item : ConnectionManager.getHttpApiInstance(this).getShares(mediaType))
 			{
 				presentationList.add(item.getName());
 				fileItems.add(new FileItem(item.getURL()));
@@ -96,7 +96,7 @@ public class MediaListActivity extends ListActivity {
 		}
 		else
 		{
-			for (String s : XBMCControl.getHttpApiInstance(this).getDirectory(url))
+			for (String s : ConnectionManager.getHttpApiInstance(this).getDirectory(url))
 			{
 				FileItem currentItem = new FileItem(s);
 				fileItems.add(currentItem);

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ImageLoader;
 import org.xbmc.android.util.ImportUtilities;
-import org.xbmc.android.util.XBMCControl;
+import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.httpapi.MusicDatabase;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Song;
@@ -71,7 +71,7 @@ public class AlbumGridActivity extends Activity {
 		coverInit = BitmapFactory.decodeResource(res, R.drawable.cover_init);
 		
 		// local is faster..
-		final MusicDatabase mdb = XBMCControl.getHttpApiInstance(this).getMusicDatabase();
+		final MusicDatabase mdb = ConnectionManager.getHttpApiInstance(this).getMusicDatabase();
 		sMdb = mdb;
 		
 		// fetch the albums so we can give it to the adapter

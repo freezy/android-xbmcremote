@@ -22,7 +22,7 @@
 package org.xbmc.android.remote.activity;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.util.XBMCControl;
+import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.httpapi.MediaControl;
 
 import android.app.Activity;
@@ -40,7 +40,7 @@ public class NowPlayingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nowplaying_portrait);
         
-  	  	control = XBMCControl.getHttpApiInstance(this).getMediaControls();
+  	  	control = ConnectionManager.getHttpApiInstance(this).getMediaControls();
   	  	
   	  	setupButtons();
 	}
