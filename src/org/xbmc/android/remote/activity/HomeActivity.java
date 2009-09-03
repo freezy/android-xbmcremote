@@ -23,7 +23,8 @@ package org.xbmc.android.remote.activity;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.httpapi.MediaType;
+import org.xbmc.httpapi.type.MediaType;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;

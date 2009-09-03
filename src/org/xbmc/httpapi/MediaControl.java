@@ -23,6 +23,8 @@ package org.xbmc.httpapi;
 
 import java.util.Queue;
 
+import org.xbmc.httpapi.type.SeekType;
+
 public class MediaControl {
 	private HttpApiConnection instance;
 	

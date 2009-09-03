@@ -54,13 +54,13 @@ public class ConnectionManager {
 			String user = prefs.getString("setting_http_user", "");
 			String pass = prefs.getString("setting_http_pass", "");
 			if (port > 0 && user != null && user.length() > 0) {
-				sHttpApiInstance = new HttpClient(host, port, activity);
+				sHttpApiInstance = new HttpClient(host, port);
 			} else if (user != null && user.length() > 0) {
-				sHttpApiInstance = new HttpClient(host, user, pass, activity);
+				sHttpApiInstance = new HttpClient(host, user, pass);
 			} else if (port > 0) {
-				sHttpApiInstance = new HttpClient(host, port, activity);
+				sHttpApiInstance = new HttpClient(host, port);
 			} else {
-				sHttpApiInstance = new HttpClient(host, activity);
+				sHttpApiInstance = new HttpClient(host);
 			}
 		}
 		return sHttpApiInstance;

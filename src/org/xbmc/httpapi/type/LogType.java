@@ -19,9 +19,9 @@
  *
  */
 
-package org.xbmc.httpapi;
+package org.xbmc.httpapi.type;
 
-public enum UrgencyLevel {
+public enum LogType {
 	info,
 	warning,
 	error

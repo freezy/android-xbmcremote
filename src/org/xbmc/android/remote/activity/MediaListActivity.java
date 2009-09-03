@@ -27,7 +27,8 @@ import java.util.Stack;
 
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.httpapi.Item;
-import org.xbmc.httpapi.MediaType;
+import org.xbmc.httpapi.type.MediaType;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;

@@ -19,9 +19,11 @@
  *
  */
 
-package org.xbmc.httpapi;
+package org.xbmc.httpapi.type;
 
-public enum SeekType {
-	relative,
-	absolute
+public enum MediaType {
+	music,
+	video,
+	pictures,
+	files 
 }

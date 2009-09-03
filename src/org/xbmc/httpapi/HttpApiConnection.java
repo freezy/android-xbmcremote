@@ -35,31 +35,29 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 import org.xbmc.android.util.Base64;
+import org.xbmc.httpapi.type.LogType;
 
 import android.content.Context;
 
 class HttpApiConnection {
-	private String baseURL;
-	private PriorityQueue<Message> messenger;
-	private Context context;
 	
-	public HttpApiConnection(String host, int port, String username, String password, PriorityQueue<Message> messenger, Context context) {
-		this.context = context;
-		baseURL = "http://";
+	private String mBaseURL;
+	private PriorityQueue<Message> mMessenger;
+	
+	public HttpApiConnection(String host, int port, String username, String password, PriorityQueue<Message> messenger) {
+		mBaseURL = "http://";
 		if (username != null) {
-			baseURL += username + (password != null ? ":" + password : "") + "@";
+			mBaseURL += username + (password != null ? ":" + password : "") + "@";
 		}
-	
-		baseURL += host;
+		mBaseURL += host;
 		if (port > 0)
-			baseURL += ":" + port;
-		
-		this.messenger = messenger;
+			mBaseURL += ":" + port;
+		mMessenger = messenger;
 	}
 
 	private URL formatQueryString(String method, String parameter) throws MalformedURLException, URISyntaxException {
 		String encodedParameter = URLEncoder.encode(parameter);
-		return new URL(baseURL + "/xbmcCmds/xbmcHttp?command=" + method + "(" + encodedParameter + ")");
+		return new URL(mBaseURL + "/xbmcCmds/xbmcHttp?command=" + method + "(" + encodedParameter + ")");
 	}
 	
 	public ArrayList<String> getList(String method, String parameter) {
@@ -74,7 +72,7 @@ class HttpApiConnection {
 	
 	private ArrayList<String> parseList(String response) {
 		if (response == null || response.length() == 0 || response.contains("Error")) {
-			messenger.offer(new Message(UrgencyLevel.error, "ERROR in response"));
+			mMessenger.offer(new Message(LogType.error, "ERROR in response"));
 			return new ArrayList<String>();
 		}
 		
@@ -123,7 +121,7 @@ class HttpApiConnection {
 		try {
 			return Integer.parseInt(getString(method, parameter));
 		} catch (NumberFormatException e) {
-			messenger.offer(new Message(UrgencyLevel.warning, "Parse exception: " + e.getMessage()));
+			mMessenger.offer(new Message(LogType.warning, "Parse exception: " + e.getMessage()));
 			return 0;
 		}
 	}
@@ -138,7 +136,7 @@ class HttpApiConnection {
 			boolean b = s.matches("OK");
 			return b;
 		} catch (IOException e) {
-			messenger.offer(new Message(UrgencyLevel.error, e.getMessage()));
+			mMessenger.offer(new Message(LogType.error, e.getMessage()));
 			return false;
 		}
 	}
@@ -166,19 +164,19 @@ class HttpApiConnection {
 				return response.replace("<html>", "").replace("</html>", "");
 			} else {
 				// for now we write to the internal media.
-				// @TODO look for sdcard and store it there (then we don't need the context anymore)
-				FileOutputStream wr = context.openFileOutput(dumpToFile, Context.MODE_WORLD_READABLE);
-				wr.write(Base64.decode(response.replace("<html>", "").replace("</html>", "")));
-				wr.close();
+				// TODO look for sdcard and store it there (then we don't need the context anymore)
+//				FileOutputStream wr = context.openFileOutput(dumpToFile, Context.MODE_WORLD_READABLE);
+//				wr.write(Base64.decode(response.replace("<html>", "").replace("</html>", "")));
+//				wr.close();
 				return dumpToFile;
 			}
 			  
 		} catch (MalformedURLException e) {
-			messenger.offer(new Message(UrgencyLevel.error, "Malformed URL Exception: " + e.getMessage()));
+			mMessenger.offer(new Message(LogType.error, "Malformed URL Exception: " + e.getMessage()));
 			throw new IOException("Malformed URL Exception " + e.getMessage());
 		} catch (URISyntaxException e) {
 			String message = "URL Encode Exception: " + e.getMessage();
-			messenger.offer(new Message(UrgencyLevel.error, message));
+			mMessenger.offer(new Message(LogType.error, message));
 			throw new IOException("URL Encode Exception " + e.getMessage());
 		}
 	}
@@ -190,19 +188,20 @@ class HttpApiConnection {
 	 * @throws IOException
 	 */
 	public String download(String uri, String saveTo) {
-		try {
-			try {
-				long size = context.openFileInput(saveTo).getChannel().size();
-				if (size > 0) {
-					return saveTo;
-				} else {
-					return executeCommand("FileDownload", uri, saveTo);
-				}
-			} catch (FileNotFoundException e) {
-				return executeCommand("FileDownload", uri, saveTo);
-			}
-		} catch (IOException e) {
-			return null;
-		}
+//		try {
+//			try {
+//				long size = context.openFileInput(saveTo).getChannel().size();
+//				if (size > 0) {
+//					return saveTo;
+//				} else {
+//					return executeCommand("FileDownload", uri, saveTo);
+//				}
+				return null; // TODO fix
+//			} catch (FileNotFoundException e) {
+//				return executeCommand("FileDownload", uri, saveTo);
+//			}
+//		} catch (IOException e) {
+//			return null;
+//		}
 	}
 }

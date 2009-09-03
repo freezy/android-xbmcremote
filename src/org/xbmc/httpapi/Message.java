@@ -23,12 +23,14 @@ package org.xbmc.httpapi;
 
 import java.util.Date;
 
+import org.xbmc.httpapi.type.LogType;
+
 public class Message implements Comparable<Message> {
-	private UrgencyLevel level;
+	private LogType level;
 	private String message;
 	private Date time;
 
-	public Message(UrgencyLevel level, String message) {
+	public Message(LogType level, String message) {
 		this.level = level;
 		this.message = message;
 		time = new Date();
