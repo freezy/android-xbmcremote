@@ -24,6 +24,7 @@ package org.xbmc.httpapi;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
+import org.xbmc.httpapi.type.Mask;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.content.Context;

@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.httpapi;
+package org.xbmc.httpapi.type;
 
 public enum Mask {
 	Directories,

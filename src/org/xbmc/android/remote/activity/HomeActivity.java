@@ -44,6 +44,8 @@ public class HomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_portrait);
         
+        ConnectionManager.checkConnectivity(this);
+        
 	    final Button GoMusicButton = (Button) findViewById(R.id.GoMusicButton);
 	    GoMusicButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {

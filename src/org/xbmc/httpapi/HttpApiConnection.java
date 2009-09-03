@@ -41,6 +41,8 @@ import android.content.Context;
 
 class HttpApiConnection {
 	
+	private static final String XBMC_HTTP_BOOTSTRAP =  "/xbmcCmds/xbmcHttp";
+	
 	private String mBaseURL;
 	private PriorityQueue<Message> mMessenger;
 	
@@ -57,7 +59,7 @@ class HttpApiConnection {
 
 	private URL formatQueryString(String method, String parameter) throws MalformedURLException, URISyntaxException {
 		String encodedParameter = URLEncoder.encode(parameter);
-		return new URL(mBaseURL + "/xbmcCmds/xbmcHttp?command=" + method + "(" + encodedParameter + ")");
+		return new URL(mBaseURL + XBMC_HTTP_BOOTSTRAP + "?command=" + method + "(" + encodedParameter + ")");
 	}
 	
 	public ArrayList<String> getList(String method, String parameter) {
@@ -148,6 +150,8 @@ class HttpApiConnection {
 		try {
 			URL query = formatQueryString(method, parameter);
 			URLConnection conn = query.openConnection();
+			conn.setConnectTimeout(1000);
+			conn.setReadTimeout(1000);
 			
 			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()), 8192);
 			StringBuilder sb = new StringBuilder();

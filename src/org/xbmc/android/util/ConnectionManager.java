@@ -22,14 +22,23 @@
 package org.xbmc.android.util;
 
 import java.net.Inet4Address;
+
+import org.xbmc.android.remote.activity.RemoteActivity;
+import org.xbmc.android.remote.activity.SettingsActivity;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.HttpClient;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnClickListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
+import android.view.View;
 
 /**
  * Globally returns the control objects. 
@@ -38,6 +47,34 @@ public class ConnectionManager {
 	
 	private static HttpClient sHttpApiInstance;
 	private static EventClient sEventClientInstance;
+	
+	/**
+	 * Verifies that there is a connection and XBMC's HTTP API and Event Server
+	 * is enabled
+	 * @param activity
+	 */
+	public static void checkConnectivity(final Activity activity) {
+		if (!isNetworkAvailable(activity)) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+			builder.setTitle("Connection failed");
+			builder.setMessage("This application requires network access. Enable mobile network or Wi-Fi to download data.");
+			builder.setCancelable(true);
+			builder.setNeutralButton("Settings", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					activity.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+				}
+			});
+			builder.setNegativeButton("Close", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			AlertDialog alert = builder.create();
+			alert.show();
+		} else {
+			
+		}
+	}
 	
 	/**
 	 * Returns an instance of the HTTP Client. Instantiation takes place only
@@ -108,10 +145,10 @@ public class ConnectionManager {
 	 * @param context
 	 * @return
 	 */
-	public static boolean isNetworkAvailable(Context context) {
+	private static boolean isNetworkAvailable(Context context) {
 		ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo info = connMgr.getActiveNetworkInfo();
-		return(info!=null && info.isConnected());
+		return info != null && info.isConnected();
 	}
 	
 }
