@@ -21,7 +21,7 @@
 
 package org.xbmc.httpapi.type;
 
-public enum Mask {
+public enum DirectoryMask {
 	Directories,
 	AllFiles,
 	All,

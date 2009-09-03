@@ -13,6 +13,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.util.ErrorHandler;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	

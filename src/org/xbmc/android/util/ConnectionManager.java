@@ -23,10 +23,10 @@ package org.xbmc.android.util;
 
 import java.net.Inet4Address;
 
-import org.xbmc.android.remote.activity.RemoteActivity;
-import org.xbmc.android.remote.activity.SettingsActivity;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.HttpClient;
+import org.xbmc.httpapi.NoNetworkException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -37,8 +37,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
-import android.view.View;
 
 /**
  * Globally returns the control objects. 
@@ -49,41 +47,13 @@ public class ConnectionManager {
 	private static EventClient sEventClientInstance;
 	
 	/**
-	 * Verifies that there is a connection and XBMC's HTTP API and Event Server
-	 * is enabled
-	 * @param activity
-	 */
-	public static void checkConnectivity(final Activity activity) {
-		if (!isNetworkAvailable(activity)) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-			builder.setTitle("Connection failed");
-			builder.setMessage("This application requires network access. Enable mobile network or Wi-Fi to download data.");
-			builder.setCancelable(true);
-			builder.setNeutralButton("Settings", new OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					activity.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
-				}
-			});
-			builder.setNegativeButton("Close", new OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
-			AlertDialog alert = builder.create();
-			alert.show();
-		} else {
-			
-		}
-	}
-	
-	/**
 	 * Returns an instance of the HTTP Client. Instantiation takes place only
 	 * once, otherwise the first instance is returned.
 	 * 
 	 * @param activity
 	 * @return Client for XBMC's HTTP API
 	 */
-	public static HttpClient getHttpApiInstance(Activity activity) {
+	public static HttpClient getHttpClient(Activity activity) {
 		if (sHttpApiInstance == null) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 			String host = prefs.getString("setting_ip", "");
@@ -91,13 +61,13 @@ public class ConnectionManager {
 			String user = prefs.getString("setting_http_user", "");
 			String pass = prefs.getString("setting_http_pass", "");
 			if (port > 0 && user != null && user.length() > 0) {
-				sHttpApiInstance = new HttpClient(host, port);
+				sHttpApiInstance = new HttpClient(host, port, new ErrorHandler(activity));
 			} else if (user != null && user.length() > 0) {
-				sHttpApiInstance = new HttpClient(host, user, pass);
+				sHttpApiInstance = new HttpClient(host, user, pass, new ErrorHandler(activity));
 			} else if (port > 0) {
-				sHttpApiInstance = new HttpClient(host, port);
+				sHttpApiInstance = new HttpClient(host, port, new ErrorHandler(activity));
 			} else {
-				sHttpApiInstance = new HttpClient(host);
+				sHttpApiInstance = new HttpClient(host, new ErrorHandler(activity));
 			}
 		}
 		return sHttpApiInstance;
@@ -107,7 +77,7 @@ public class ConnectionManager {
 	 * Once instantiated with the activity we can use this one.
 	 * @return Client for XBMC's HTTP API
 	 */
-	public static HttpClient getHttpApiInstance() {
+	public static HttpClient getHttpClient() {
 		return sHttpApiInstance;
 	}
 	
@@ -118,7 +88,7 @@ public class ConnectionManager {
 	 * @param activity
 	 * @return Client for XBMC's Event Server
 	 */
-	public static EventClient getEventClientInstance(Activity activity) {
+	public static EventClient getEventClient(Activity activity) {
 		if (sEventClientInstance == null) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 			String host = prefs.getString("setting_ip", "");
@@ -136,7 +106,7 @@ public class ConnectionManager {
 	 * Once instantiated with the activity we can use this one.
 	 * @return Client for XBMC's Event Server
 	 */
-	public static EventClient getEventClientInstance() {
+	public static EventClient getEventClient() {
 		return sEventClientInstance;
 	}
 	
@@ -145,10 +115,9 @@ public class ConnectionManager {
 	 * @param context
 	 * @return
 	 */
-	private static boolean isNetworkAvailable(Context context) {
+	public static boolean isNetworkAvailable(Context context) {
 		ConnectivityManager connMgr = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo info = connMgr.getActiveNetworkInfo();
 		return info != null && info.isConnected();
 	}
-	
 }

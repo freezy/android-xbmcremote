@@ -19,14 +19,26 @@
  *
  */
 
-package org.xbmc.httpapi;
+package org.xbmc.httpapi.client;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-public class VideoDatabase extends Database {
-	protected VideoDatabase(HttpApiConnection instance, PriorityQueue<Message> messenger) {
-		super(instance, "QueryVideoDatabase");
+import org.xbmc.httpapi.Connection;
+import org.xbmc.httpapi.Database;
+import org.xbmc.httpapi.DatabaseItem;
+
+public class VideoClient extends Database {
+	
+	private final Connection mConnection;
+
+	/**
+	 * Class constructor needs reference to HTTP client connection
+	 * @param connection
+	 */
+	public VideoClient(Connection connection) {
+		super(connection, null); // TODO fix
+		mConnection = connection;
 	}
 	
 	/**
@@ -34,7 +46,7 @@ public class VideoDatabase extends Database {
 	 * @return list of TV Show names
 	 */
 	public ArrayList<DatabaseItem> getTVShows() {
-		return getMergedList("idShow", "SELECT idShow, c00 from tvshow ORDER BY c00");
+		return null;// getMergedList("idShow", "SELECT idShow, c00 from tvshow ORDER BY c00");
 	}
 	
 	/**
@@ -42,6 +54,6 @@ public class VideoDatabase extends Database {
 	 * @return list of Movie names
 	 */
 	public ArrayList<DatabaseItem> getMovies() {
-		return getMergedList("idMovie", "SELECT idMovie, c00 from movie ORDER BY c00");
+		return null;//getMergedList("idMovie", "SELECT idMovie, c00 from movie ORDER BY c00");
 	}
 }

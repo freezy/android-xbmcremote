@@ -19,20 +19,30 @@
  *
  */
 
-package org.xbmc.httpapi;
+package org.xbmc.httpapi.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.PriorityQueue;
 
+import org.xbmc.httpapi.Connection;
+import org.xbmc.httpapi.Database;
+import org.xbmc.httpapi.DatabaseItem;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Song;
 
-public class MusicDatabase extends Database {
+public class MusicClient extends Database {
+	
+	private final Connection mConnection;
 
-	protected MusicDatabase(HttpApiConnection instance, PriorityQueue<Message> messenger) {
-		super(instance, "QueryMusicDatabase");
+	/**
+	 * Class constructor needs reference to HTTP client connection
+	 * @param connection
+	 */
+	public MusicClient(Connection connection) {
+		super(connection, null); // TODO fix
+		mConnection = connection;
 	}
 	
 	/**
@@ -42,7 +52,7 @@ public class MusicDatabase extends Database {
 	 * @return list of artist names
 	 */
 	public ArrayList<DatabaseItem> getArtists(String like) {
-		 return getMergedList("idArtist", "SELECT idAlbum, strAlbum FROM artist WHERE strArtist LIKE %%" + like + "%%" + " ORDER BY strArtist");
+		 return null; // getMergedList("idArtist", "SELECT idAlbum, strAlbum FROM artist WHERE strArtist LIKE %%" + like + "%%" + " ORDER BY strArtist");
 	}
 
 	/**
@@ -50,7 +60,7 @@ public class MusicDatabase extends Database {
 	 * @return list of artist names
 	 */
 	public ArrayList<DatabaseItem> getArtists() {
-		return getMergedList("idArtist", "SELECT idArtist, strArtist FROM artist ORDER BY strArtist");
+		return null; // getMergedList("idArtist", "SELECT idArtist, strArtist FROM artist ORDER BY strArtist");
 	}
 	
 	/**
@@ -59,7 +69,7 @@ public class MusicDatabase extends Database {
 	 * @return list of album names
 	 */
 	public ArrayList<DatabaseItem> getAlbums(DatabaseItem root) {
-		return getMergedList("idAlbum", "SELECT idAlbum, strAlbum from album WHERE " + root.formatSQL() + " ORDER BY strAlbum");
+		return null; // getMergedList("idAlbum", "SELECT idAlbum, strAlbum from album WHERE " + root.formatSQL() + " ORDER BY strAlbum");
 	}
 	
 	/**
@@ -73,7 +83,7 @@ public class MusicDatabase extends Database {
 		sb.append("  WHERE a.idArtist = i.idArtist");
 		sb.append("  ORDER BY i.strArtist ASC");
 		sb.append("  LIMIT 300"); // let's keep it at 300 for now
-		return parseAlbums(instance.getString("QueryMusicDatabase", sb.toString()));
+		return parseAlbums(mConnection.getString("QueryMusicDatabase", sb.toString()));
 	}
 	
 	/**
@@ -88,7 +98,7 @@ public class MusicDatabase extends Database {
 		sb.append("  LEFT JOIN albuminfo AS ai ON ai.idAlbumInfo = a.idAlbum");
 		sb.append("  WHERE a.idGenre = g.idGenre");
 		sb.append("  AND a.idAlbum = " + album.id);
-		return parseAlbumInfo(album, instance.getString("QueryMusicDatabase", sb.toString()));
+		return null; // parseAlbumInfo(album, instance.getString("QueryMusicDatabase", sb.toString()));
 	}
 	
 	/**
@@ -104,7 +114,7 @@ public class MusicDatabase extends Database {
 		sb.append("  AND s.idArtist = a.idArtist");
 		sb.append("  AND s.idAlbum = " + album.id);
 		sb.append("  ORDER BY s.iTrack");
-		return parseSongs(instance.getString("QueryMusicDatabase", sb.toString()));
+		return null; // parseSongs(instance.getString("QueryMusicDatabase", sb.toString()));
 	}
 	
 	/**
@@ -113,7 +123,7 @@ public class MusicDatabase extends Database {
 	 * @return Base64-encoded content of thumb
 	 */
 	public String getAlbumThumb(ICoverArt art) {
-		return instance.getString("FileDownload", Album.getThumbUri(art));
+		return null; // instance.getString("FileDownload", Album.getThumbUri(art));
 	}
 
 	/**

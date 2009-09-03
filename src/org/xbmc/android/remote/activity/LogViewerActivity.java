@@ -14,7 +14,7 @@ public class LogViewerActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		HttpClient instance = ConnectionManager.getHttpApiInstance(this);
+		HttpClient instance = ConnectionManager.getHttpClient(this);
 		
 		ArrayList<Message> log = new ArrayList<Message>();
 		for (Message m : instance.getMessenger())

@@ -34,7 +34,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.xbmc.android.remote.activity.AlbumAdapter;
 import org.xbmc.android.remote.activity.AlbumGridActivity;
 import org.xbmc.android.remote.activity.AlbumHolder;
-import org.xbmc.httpapi.MusicDatabase;
+import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.data.ICoverArt;
 
 import android.graphics.Bitmap;
@@ -252,7 +252,7 @@ public class ImageLoader extends Thread {
 	 * This class reads the image from XBMC via network
 	 */
 	private static class DownloadRequest implements ImageRequest {
-		private final static MusicDatabase sMdb = ConnectionManager.getHttpApiInstance(null).getMusicDatabase();
+		private final static MusicClient sMdb = ConnectionManager.getHttpClient().music;
 		private final ICoverArt mArt;
 		private ImageView mImage;
 		private Bitmap mBitmap;

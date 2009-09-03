@@ -23,16 +23,16 @@ package org.xbmc.httpapi;
 
 import java.util.ArrayList;
 
-abstract class Database {
-	HttpApiConnection instance;
+public abstract class Database {
+	Connection instance;
 	String queryString;
 
-	public Database(HttpApiConnection instance, String queryString) {
+	public Database(Connection instance, String queryString) {
 		this.instance = instance;
 		this.queryString = queryString;
 	}
 
-	protected ArrayList<DatabaseItem> getMergedList(String nameID, String sqlQuery) {
+/*	protected ArrayList<DatabaseItem> getMergedList(String nameID, String sqlQuery) {
 		ArrayList<String> list = instance.getList(queryString, sqlQuery);
 		ArrayList<DatabaseItem> returnList = new ArrayList<DatabaseItem>();
 		
@@ -47,7 +47,7 @@ abstract class Database {
 		
 		return returnList;
 	}
-	
+	*/
 	
 	/**
 	 * Removes the trailing "</field>" string from the value

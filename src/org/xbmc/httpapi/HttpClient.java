@@ -24,86 +24,53 @@ package org.xbmc.httpapi;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-import org.xbmc.httpapi.type.Mask;
+import org.xbmc.httpapi.client.ControlClient;
+import org.xbmc.httpapi.client.InfoClient;
+import org.xbmc.httpapi.client.MusicClient;
+import org.xbmc.httpapi.client.VideoClient;
+import org.xbmc.httpapi.type.DirectoryMask;
 import org.xbmc.httpapi.type.MediaType;
 
+import android.app.Activity;
 import android.content.Context;
 
-
+/**
+ * Wrapper class for our HTTP clients
+ */
 public class HttpClient {
-	HttpApiConnection instance;
-	PriorityQueue<Message> messenger;
 	
-	public HttpClient(String host) {
-		this(host, -1, null, null);
+	public final InfoClient info;
+	public final MusicClient music;
+	public final VideoClient video;
+	public final ControlClient control;
+	
+	private final Connection mConnection;
+
+	public HttpClient(String host, IErrorHandler errorHandler) {
+		this(host, -1, null, null, errorHandler);
 	}
 	
-	public HttpClient(String host, int port) {
-		this(host, port, null, null);
+	public HttpClient(String host, int port, IErrorHandler errorHandler) {
+		this(host, port, null, null, errorHandler);
 	}
 
-	public HttpClient(String host, String username, String password) {
-		this(host, -1, username, password);
+	public HttpClient(String host, String username, String password, IErrorHandler errorHandler) {
+		this(host, -1, username, password, errorHandler);
 	}
 
-	public HttpClient(String host, int port, String username, String password) {		
-		messenger = new PriorityQueue<Message>();
-		instance = new HttpApiConnection(host, port, username, password, messenger);
-	}
-	
-	public ArrayList<Item> getShares(MediaType type) {
-		ArrayList<String> stringList = instance.getList("GetShares", type.toString());
-		ArrayList<Item> returnList = new ArrayList<Item>();
-		for (String share : stringList) {
-			String[] sl = share.split(";");
-			if (sl.length < 2)
-				continue;
-			returnList.add(new SimpleItem(sl[0], sl[1]));
-		}
-		
-		return returnList;
-	}
-	
-	public ArrayList<String> getDirectory(String path, Mask mask) {
-		if (mask.equals(Mask.All))
-			return getDirectory(path);
-		else
-			return getDirectory(path, mask.toString());
-	}
-	
-	public ArrayList<String> getDirectory(String path) {
-		return instance.getList("getDirectory", path);
-	}
-	
-	public ArrayList<String> getDirectory(String path, String mask) {
-		return instance.getList("getDirectory", path + ";" + mask);
-	}
-	
-	public String getCurrentPlaylist() {
-		return instance.getString("GetCurrentPlaylist");
-	}
-	
-	public MediaControl getMediaControls() {
-		return new MediaControl(instance, messenger);
-	}
-	
-	public VideoDatabase getVideoDatabase() {
-		return new VideoDatabase(instance, messenger);
-	}
-	
-	public MusicDatabase getMusicDatabase() {
-		return new MusicDatabase(instance, messenger);
-	}
-	
-	public boolean isAvailable() {
-		return instance.isAvailable();
+	public HttpClient(String host, int port, String username, String password, IErrorHandler errorHandler) {		
+		mConnection= new Connection(host, port, username, password, errorHandler);
+		info = new InfoClient(mConnection);
+		music = new MusicClient(mConnection);
+		video = new VideoClient(mConnection);
+		control = new ControlClient(mConnection);
 	}
 
 	public PriorityQueue<Message> getMessenger() {
-		return messenger;
+		return null;//messenger;
 	}
 	
 	public boolean hasMessages() {
-		return !messenger.isEmpty();
+		return false;// !messenger.isEmpty();
 	}
 }

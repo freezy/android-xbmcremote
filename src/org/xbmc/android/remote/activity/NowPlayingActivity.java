@@ -23,7 +23,8 @@ package org.xbmc.android.remote.activity;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.httpapi.MediaControl;
+import org.xbmc.android.util.ErrorHandler;
+import org.xbmc.httpapi.client.ControlClient;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -34,39 +35,40 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 
 public class NowPlayingActivity extends Activity {
-	private MediaControl control;
+	private ControlClient control;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ErrorHandler.setActivity(this);
         setContentView(R.layout.nowplaying_portrait);
         
-  	  	control = ConnectionManager.getHttpApiInstance(this).getMediaControls();
+  	  	control = ConnectionManager.getHttpClient(this).control;
   	  	
   	  	setupButtons();
 	}
 
 	private void setupButtons() {
 		final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
-  	  	int progress = control.getPercentage();
-  	  	seekBar.setProgress(progress);
+ // 	  	int progress = control.getPercentage();
+  //	  	seekBar.setProgress(progress);
   	  	
         final ImageButton PlayPrevButton = (ImageButton) findViewById(R.id.MediaPreviousButton);
 		PlayPrevButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.playPrevious();
+//				control.playPrevious();
 			}
 		});
 		final ImageButton PlayButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
 		PlayButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.pause();
+//				control.pause();
 			}
 		});
 		
 		final ImageButton PlayNextButton = (ImageButton) findViewById(R.id.MediaNextButton);
 		PlayNextButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.playNext();
+//				control.playNext();
 			}
 		});
 	}

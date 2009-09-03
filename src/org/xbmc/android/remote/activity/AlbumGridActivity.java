@@ -25,10 +25,11 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.util.ImageLoader;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.httpapi.MusicDatabase;
+import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Song;
 
@@ -56,11 +57,12 @@ import android.widget.TextView;
 public class AlbumGridActivity extends Activity {
 	
 	public static Bitmap coverQueued, coverDownloading, coverError, coverInit;
-	private static MusicDatabase sMdb;
+	private final MusicClient mdb = ConnectionManager.getHttpClient(this).music;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ErrorHandler.setActivity(this);
 		setContentView(R.layout.albumgrid);
 		final GridView gridview = (GridView)findViewById(R.id.albumgrid_grid);
 		
@@ -69,10 +71,6 @@ public class AlbumGridActivity extends Activity {
 		coverQueued = BitmapFactory.decodeResource(res, R.drawable.cover_queued);
 		coverError = BitmapFactory.decodeResource(res, R.drawable.cover_error);
 		coverInit = BitmapFactory.decodeResource(res, R.drawable.cover_init);
-		
-		// local is faster..
-		final MusicDatabase mdb = ConnectionManager.getHttpApiInstance(this).getMusicDatabase();
-		sMdb = mdb;
 		
 		// fetch the albums so we can give it to the adapter
 		final ArrayList<Album> albums = mdb.getAlbums(); 
@@ -107,7 +105,7 @@ public class AlbumGridActivity extends Activity {
 				Dialog dialog = new Dialog(v.getContext());
 				dialog.setContentView(R.layout.albuminfo);
 				
-				sMdb.updateAlbumInfo(album);
+				ConnectionManager.getHttpClient().music.updateAlbumInfo(album);
 				dialog.setTitle(album.name);
 
 				// get controls
@@ -174,7 +172,7 @@ public class AlbumGridActivity extends Activity {
 		        
 				trackTable.setScrollContainer(true);
 				
-				ArrayList<Song> songs = sMdb.getSongs(album);
+				ArrayList<Song> songs = ConnectionManager.getHttpClient().music.getSongs(album);
 				numTrackText.setText(songs.size() + " Tracks");
 				
 				

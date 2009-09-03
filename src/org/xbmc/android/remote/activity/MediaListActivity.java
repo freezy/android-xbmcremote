@@ -26,7 +26,9 @@ import java.util.List;
 import java.util.Stack;
 
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.httpapi.Item;
+import org.xbmc.android.util.ErrorHandler;
+import org.xbmc.httpapi.HttpClient;
+import org.xbmc.httpapi.data.MediaLocation;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.app.ListActivity;
@@ -37,74 +39,49 @@ import android.view.View;
 import android.widget.*;
 
 public class MediaListActivity extends ListActivity {
-	private List<FileItem> fileItems;
-	private Stack<String> history;
-	private String currentUrl;
-	MediaType mediaType;
 	
-	private class FileItem
-	{
-		public String name, url;
-		public boolean isDirectory;
-		
-		public FileItem(String url) {
-			this.url = url;
-			this.isDirectory = url.endsWith("/");
-			
-			String s = isDirectory ? url.substring(0, url.length() - 1) : url;
-			name = s.substring(s.lastIndexOf('/') + 1);
-		}
-	}
+	private final Stack<String> mHistory = new Stack<String>();;
+	private final HttpClient mClient = ConnectionManager.getHttpClient(this);
+
+	private List<MediaLocation> fileItems;
+	private String currentUrl;
+	private MediaType mMediaType;
+
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Intent intent = getIntent();
-		String s = intent.getStringExtra("shareType");
-		mediaType = s != null ? MediaType.valueOf(s) : MediaType.music;
-		history = new Stack<String>();
+		ErrorHandler.setActivity(this);
+		final String st = getIntent().getStringExtra("shareType");
+		mMediaType = st != null ? MediaType.valueOf(st) : MediaType.music;
 		fillUp("");
 	}
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		
-		FileItem item = fileItems.get(position);
-		if (item.isDirectory)
-		{
-			history.add(currentUrl);
-			fillUp(item.url);
-		}
-		else
-		{
-			ConnectionManager.getHttpApiInstance(this).getMediaControls().playFile(item.url);
-            Intent myIntent = new Intent(v.getContext(), NowPlayingActivity.class);
-            startActivityForResult(myIntent, 0);
+
+		MediaLocation item = fileItems.get(position);
+		if (item.isDirectory) {
+			mHistory.add(currentUrl);
+			fillUp(item.path);
+		} else {
+			if (mClient.control.playFile(item.path)) {
+				startActivityForResult(new Intent(v.getContext(), NowPlayingActivity.class), 0);
+			}
 		}
 	}
 
 	private void fillUp(String url) {
-		List<String> presentationList = new ArrayList<String>();
-		fileItems = new ArrayList<FileItem>();
-		
-		if (url.length() == 0)
-		{
-			for (Item item : ConnectionManager.getHttpApiInstance(this).getShares(mediaType))
-			{
-				presentationList.add(item.getName());
-				fileItems.add(new FileItem(item.getURL()));
-			}
+		final List<String> presentationList = new ArrayList<String>();
+		if (url.length() == 0) {
+			fileItems = mClient.info.getShares(mMediaType);
+		} else {
+			fileItems =  mClient.info.getDirectory(url);
 		}
-		else
-		{
-			for (String s : ConnectionManager.getHttpApiInstance(this).getDirectory(url))
-			{
-				FileItem currentItem = new FileItem(s);
-				fileItems.add(currentItem);
-				presentationList.add(currentItem.name);
-			}
-		}	
-
+		for (MediaLocation item : fileItems) {
+			presentationList.add(item.name);
+		}
 		currentUrl = url;
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, presentationList));
 		getListView().setTextFilterEnabled(true);
@@ -112,12 +89,10 @@ public class MediaListActivity extends ListActivity {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK && !history.isEmpty())
-		{
-			fillUp(history.pop());
+		if (keyCode == KeyEvent.KEYCODE_BACK && !mHistory.isEmpty()) {
+			fillUp(mHistory.pop());
 			return true;
-		}
-		else
+		} else
 			return super.onKeyDown(keyCode, event);
 	}
 }
