@@ -105,7 +105,8 @@ public class HomeActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, 1, 0, "Settings").setIcon(R.drawable.icon_menu_settings);
-		menu.add(0, 2, 0, "Exit").setIcon(R.drawable.icon_menu_exit);
+		menu.add(0, 2, 0, "Log").setIcon(android.R.drawable.ic_menu_view);
+		menu.add(0, 3, 0, "Exit").setIcon(R.drawable.icon_menu_exit);
 		return true;
 	}
 	
@@ -116,6 +117,9 @@ public class HomeActivity extends Activity {
 				startActivity(new Intent(this, SettingsActivity.class));
 				return true;
 			case 2:
+				startActivity(new Intent(this, LogViewerActivity.class));
+				return true;
+			case 3:
 				this.finish();
 				return true;
 		}
