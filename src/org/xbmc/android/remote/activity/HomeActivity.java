@@ -24,6 +24,7 @@ package org.xbmc.android.remote.activity;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
+import org.xbmc.httpapi.HttpClient;
 import org.xbmc.httpapi.NoNetworkException;
 import org.xbmc.httpapi.info.SystemInfo;
 import org.xbmc.httpapi.type.MediaType;
@@ -32,10 +33,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager.LayoutParams;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -44,7 +46,13 @@ public class HomeActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_portrait);
+        WindowManager wm = getWindowManager(); 
+        Display d = wm.getDefaultDisplay();
+
+        if (d.getWidth() > d.getHeight())
+        	setContentView(R.layout.main_landscape);
+        else
+        	setContentView(R.layout.main_portrait);
 
 		// check if connection is available
 		try {
@@ -106,20 +114,9 @@ public class HomeActivity extends Activity {
 	}
 
 	@Override
-	public void onWindowAttributesChanged(LayoutParams params) {
-		if (params.screenOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-			setContentView(R.layout.main_portrait);
-		else if (params.screenOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-			setContentView(R.layout.main_landscape);
-
-		super.onWindowAttributesChanged(params);
-	}
-
-	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, 1, 0, "Settings").setIcon(R.drawable.icon_menu_settings);
-		menu.add(0, 2, 0, "Log").setIcon(android.R.drawable.ic_menu_view);
-		menu.add(0, 3, 0, "Exit").setIcon(R.drawable.icon_menu_exit);
+		menu.add(0, 2, 0, "Exit").setIcon(R.drawable.icon_menu_exit);
 		return true;
 	}
 
@@ -130,9 +127,6 @@ public class HomeActivity extends Activity {
 			startActivity(new Intent(this, SettingsActivity.class));
 			return true;
 		case 2:
-			startActivity(new Intent(this, LogViewerActivity.class));
-			return true;
-		case 3:
 			this.finish();
 			return true;
 		}

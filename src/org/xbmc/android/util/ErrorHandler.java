@@ -52,7 +52,7 @@ public class ErrorHandler implements IErrorHandler {
 			});
 		} catch (IOException e) {
 			builder.setTitle("Unknown I/O Exception");
-			builder.setMessage(e.getStackTrace().toString());
+			builder.setMessage(e.getMessage().toString());
 		} catch (Exception e) {
 			builder.setTitle("Exception");
 			builder.setMessage(e.getStackTrace().toString());

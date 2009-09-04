@@ -29,7 +29,9 @@ import org.xbmc.httpapi.client.ControlClient;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -40,7 +42,13 @@ public class NowPlayingActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ErrorHandler.setActivity(this);
-        setContentView(R.layout.nowplaying_portrait);
+        WindowManager wm = getWindowManager(); 
+        Display d = wm.getDefaultDisplay();
+
+        if (d.getWidth() > d.getHeight())
+        	setContentView(R.layout.nowplaying_landscape);
+        else
+        	setContentView(R.layout.nowplaying_portrait);
         
   	  	control = ConnectionManager.getHttpClient(this).control;
   	  	
