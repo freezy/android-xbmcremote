@@ -75,9 +75,6 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
   	  	nowPlayingHandler.sendEmptyMessageDelayed(1, 1000);
   	  	setupButtons();
   	  	updatePlayingInfo();
-  	  	
-		final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
-		cover.setScaleType(ScaleType.FIT_CENTER);
 	}
 
 	private void setupPlayingInfo() {

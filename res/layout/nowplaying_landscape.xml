@@ -10,7 +10,7 @@
 	    <ImageView
 	    	android:layout_width="200dip"
 	    	android:layout_height="140dip"
-	    	android:scaleType="fitXY"
+	    	android:scaleType="fitCenter"
 	    	android:adjustViewBounds="true"
 	    	android:src="@drawable/nocover"
 	    	android:id="@+id/CoverImage" />
