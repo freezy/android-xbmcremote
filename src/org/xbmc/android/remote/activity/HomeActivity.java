@@ -55,7 +55,7 @@ public class HomeActivity extends Activity {
         	setContentView(R.layout.main_portrait);
 
 		// check if connection is available
-		try {
+/*		try {
 			if (!ConnectionManager.isNetworkAvailable(this)) {
 				throw new NoNetworkException();
 			}
@@ -65,7 +65,7 @@ public class HomeActivity extends Activity {
 			final ErrorHandler eh = new ErrorHandler(this);
 			eh.handle(e);
 			((TextView) findViewById(R.id.HomeVersionTextView)).setText("Connection error, check your setttings!");
-		}
+		}*/
 
 		final Button GoMusicButton = (Button) findViewById(R.id.GoMusicButton);
 		GoMusicButton.setOnClickListener(new View.OnClickListener() {
