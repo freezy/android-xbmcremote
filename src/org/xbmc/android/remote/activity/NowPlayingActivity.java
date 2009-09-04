@@ -29,6 +29,7 @@ import org.xbmc.httpapi.client.ControlClient;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -53,6 +54,26 @@ public class NowPlayingActivity extends Activity {
   	  	control = ConnectionManager.getHttpClient(this).control;
   	  	
   	  	setupButtons();
+  	  	
+  	  	setupProgressUpdate();
+	}
+
+	private void setupProgressUpdate() {
+		int leftOfSong = 30000;
+  	  	CountDownTimer time = new CountDownTimer(leftOfSong, 1000) {
+  	  		final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
+  	  		
+  	  		public void onTick(long millisUntilFinished) {
+	  	  		if (control.isConnected()) {
+	  		  	  	int progress = control.getPercentage();
+	  		  	  	seekBar.setProgress(progress);
+	  			}
+  	  		};
+  	  		public void onFinish() {
+  	  			setupProgressUpdate();
+  	  		};
+  	  	};
+  	  	time.start();
 	}
 
 	private void setupButtons() {
