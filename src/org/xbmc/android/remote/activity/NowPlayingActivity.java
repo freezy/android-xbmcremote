@@ -30,6 +30,7 @@ import org.xbmc.android.util.DownloadThread;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
+import org.xbmc.httpapi.client.InfoClient.CurrentlyPlaying;
 import org.xbmc.httpapi.info.MusicInfo;
 import org.xbmc.httpapi.type.SeekType;
 import android.app.Activity;
@@ -56,6 +57,7 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 	private String lastPos = "-1";
 	private Bitmap mCover;
 	private String mCoverPath;
+	private boolean isPlaying;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,9 +74,8 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
   	  	info = ConnectionManager.getHttpClient(this).info;
   	  	
   	  	nowPlayingHandler = new Handler(this);
-  	  	nowPlayingHandler.sendEmptyMessageDelayed(1, 1000);
   	  	setupButtons();
-  	  	updatePlayingInfo();
+  	  	nowPlayingHandler.sendEmptyMessage(1);
 	}
 
 	private void setupPlayingInfo() {
@@ -130,22 +131,26 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
         final ImageButton PlayPrevButton = (ImageButton) findViewById(R.id.MediaPreviousButton);
 		PlayPrevButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.playPrevious();
-				updatePlayingInfo();
+				if (control.playPrevious())
+					updatePlayingInfo();
 			}
 		});
 		final ImageButton PlayButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
 		PlayButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.pause();
+				if (control.pause()) {
+					isPlaying = !isPlaying;
+					final ImageButton PlayPauseButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
+					PlayPauseButton.setImageResource(isPlaying ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause);
+				}
 			}
 		});
 		
 		final ImageButton PlayNextButton = (ImageButton) findViewById(R.id.MediaNextButton);
 		PlayNextButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.playNext();
-				updatePlayingInfo();
+				if (control.playNext())
+					updatePlayingInfo();
 			}
 		});
 	}
@@ -164,6 +169,8 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 	  	  		cover.setImageBitmap(mCover);
 			}
 			return true;
+		} else if (msg.what == 4) {
+			updatePlayingInfo();
 		}
 		return false;
 	}
@@ -173,6 +180,12 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 		int progress = control.getPercentage();
 		seekBar.setProgress(progress);
 		
+		CurrentlyPlaying currPlaying = info.getCurrentlyPlaying();
+		if (currPlaying != null) {
+			isPlaying = currPlaying.isPlaying;
+			final ImageButton PlayPauseButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
+			PlayPauseButton.setImageResource(isPlaying ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause);
+		}
 		String currentPos = info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE) + info.getMusicInfo(MusicInfo.MUSICPLAYER_DURATION);
 
 		if (!lastPos.equals(currentPos)) {

@@ -93,9 +93,42 @@ public class InfoClient {
 	public String getSystemInfo(int field) {
 		return mConnection.getString("GetSystemInfo", String.valueOf(field));
 	}
+	
+	public class CurrentlyPlaying {
+		public MediaType mediaType;
+		public boolean isPlaying;
+		
+		public CurrentlyPlaying(MediaType mediaType, boolean isPlaying) {
+			this.mediaType = mediaType;
+			this.isPlaying = isPlaying;
+		}
+	}
+	
+	public CurrentlyPlaying getCurrentlyPlaying() {
+		String currentlyPlaying = mConnection.getString("getcurrentlyplaying", "");
+		
+		if (currentlyPlaying.contains("Nothing Playing"))
+			return null;
+		else
+			return new CurrentlyPlaying(currentlyPlaying.contains("Type:Audio") ? MediaType.music : MediaType.video,
+										currentlyPlaying.contains("PlayStatus:Playing"));
+	}
 
+	/**
+	 * Returns any music info variable see {@link org.xbmc.http.info.MusicInfo}
+	 * @param field Field to return
+	 * @return
+	 */
 	public String getMusicInfo(int field) {
 		return mConnection.getString("GetMusicLabel", String.valueOf(field));
 	}
 
+	/**
+	 * Returns any video info variable see {@link org.xbmc.http.info.VideoInfo}
+	 * @param field Field to return
+	 * @return
+	 */
+	public String getVideoInfo(int field) {
+		return mConnection.getString("GetVideoLabel", String.valueOf(field));
+	}
 }
