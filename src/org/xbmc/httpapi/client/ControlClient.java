@@ -101,7 +101,7 @@ public class ControlClient {
 	 * Seeks to a position. If type is
 	 * <ul>
 	 * 	<li><code>absolute</code> - Sets the playing position of the currently 
-	 *		playing media as a percentage of the media’s length.</li>
+	 *		playing media as a percentage of the mediaï¿½s length.</li>
 	 *  <li><code>relative</code> - Adds/Subtracts the current percentage on to
 	 *		the current position in the song</li>
 	 * </ul> 
@@ -180,5 +180,9 @@ public class ControlClient {
 	 */
 	public boolean navSelect() {
 		return mConnection.getBoolean("Action", String.valueOf(GuiActions.ACTION_SELECT_ITEM));
+	}
+
+	public boolean isConnected() {
+		return mConnection.isConnected();
 	}
 }

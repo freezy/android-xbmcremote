@@ -60,7 +60,8 @@ public class HomeActivity extends Activity {
 			if (!ConnectionManager.isNetworkAvailable(this)) {
 				throw new NoNetworkException();
 			}
-			final String version = ConnectionManager.getHttpClient(this).info.getSystemInfo(SystemInfo.SYSTEM_BUILD_VERSION);
+			HttpClient client = ConnectionManager.getHttpClient(this);
+			final String version = client.isConnected() ? client.info.getSystemInfo(SystemInfo.SYSTEM_BUILD_VERSION) : "";
 			((TextView) findViewById(R.id.HomeVersionTextView)).setText(version.length() > 0 ? "XBMC " + version : "Connection error, check your setttings!");
 		} catch (Exception e) {
 			final ErrorHandler eh = new ErrorHandler(this);

@@ -121,4 +121,8 @@ public class HttpClient {
 		video = new VideoClient(mConnection);
 		control = new ControlClient(mConnection);
 	}
+
+	public boolean isConnected() {
+		return mConnection.isConnected();
+	}
 }

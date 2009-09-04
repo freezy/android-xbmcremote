@@ -23,6 +23,7 @@ package org.xbmc.httpapi;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.DatagramSocket;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -247,6 +248,19 @@ public class Connection {
 			}
 		} else {
 			return -1;
+		}
+	}
+	/**
+	 * Check connection to a XBMC HttpApi session
+	 * @return
+	 * TODO Might need implementation change to not mess with response format
+	 */
+	public boolean isConnected() {
+		try {
+			assertBoolean("SetResponseFormat", "");
+			return true;
+		} catch (Exception e) {
+			return false;
 		}
 	}
 }

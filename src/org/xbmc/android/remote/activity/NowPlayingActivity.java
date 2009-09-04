@@ -57,37 +57,29 @@ public class NowPlayingActivity extends Activity {
 
 	private void setupButtons() {
 		final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
- // 	  	int progress = control.getPercentage();
-  //	  	seekBar.setProgress(progress);
+		if (control.isConnected()) {
+	  	  	int progress = control.getPercentage();
+	  	  	seekBar.setProgress(progress);
+		}
   	  	
         final ImageButton PlayPrevButton = (ImageButton) findViewById(R.id.MediaPreviousButton);
 		PlayPrevButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-//				control.playPrevious();
+				control.playPrevious();
 			}
 		});
 		final ImageButton PlayButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
 		PlayButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-//				control.pause();
+				control.pause();
 			}
 		});
 		
 		final ImageButton PlayNextButton = (ImageButton) findViewById(R.id.MediaNextButton);
 		PlayNextButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-//				control.playNext();
+				control.playNext();
 			}
 		});
-	}
-	
-	@Override
-	public void onWindowAttributesChanged(LayoutParams params) {
-		if (params.screenOrientation ==  ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-			setContentView(R.layout.nowplaying_portrait);
-		else if (params.screenOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-			setContentView(R.layout.nowplaying_landscape);
-		
-		super.onWindowAttributesChanged(params);
 	}
 }
