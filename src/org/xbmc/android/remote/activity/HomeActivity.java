@@ -31,7 +31,6 @@ import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.Menu;

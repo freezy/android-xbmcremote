@@ -21,13 +21,9 @@
 
 package org.xbmc.android.remote.activity;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
-
 import org.xbmc.android.remote.R;
-import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.DownloadCallback;
 import org.xbmc.android.util.DownloadThread;
@@ -36,23 +32,16 @@ import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.info.MusicInfo;
 import org.xbmc.httpapi.type.SeekType;
-
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.os.Handler.Callback;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -62,7 +51,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 public class NowPlayingActivity extends Activity implements Callback, DownloadCallback {
 	private ControlClient control;
 	private InfoClient info;
-	private Handler progressHandler;
+	private Handler nowPlayingHandler;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,10 +67,10 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
   	  	control = ConnectionManager.getHttpClient(this).control;
   	  	info = ConnectionManager.getHttpClient(this).info;
   	  	
+  	  	nowPlayingHandler = new Handler(this);
+  	  	nowPlayingHandler.sendEmptyMessageDelayed(1, 1000);
   	  	setupButtons();
   	  	updatePlayingInfo();
-  	  	progressHandler = new Handler(this);
-  	  	progressHandler.sendEmptyMessageDelayed(1234, 1000);
 	}
 
 	private void setupPlayingInfo() {
@@ -96,8 +85,10 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
   	  	
 		try {
 			String downloadURI = info.getCurrentlyPlayingThumbURI();
-	  	  	Thread downloadThread = new DownloadThread(new String[] { downloadURI }, this);
-	  	  	downloadThread.start();
+			if (downloadURI != null && downloadURI.length() > 0) {
+		  	  	Thread downloadThread = new DownloadThread(new String[] { downloadURI }, this);
+		  	  	downloadThread.start();
+			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -148,11 +139,14 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 	}
 
 	public boolean handleMessage(Message msg) {
-		if (msg.what == 1234) {
+		if (msg.what == 1) {
 			updatePlayingInfo();
-			progressHandler.sendEmptyMessageDelayed(1234, 1000);
+			nowPlayingHandler.sendEmptyMessageDelayed(1, 1000);
 			return true;
-		} else if (msg.what == 4321) {
+		} else if (msg.what == 2) {
+			setupPlayingInfo();
+			return true;
+		} else if (msg.what == 3) {
 			if (mCover != null) {
 	  	  		final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
 	  	  		cover.setImageBitmap(mCover);
@@ -163,7 +157,7 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 		return false;
 	}
 
-	private int lastPos = -1;
+	private String lastPos = "-1";
 	private Bitmap mCover;
 	
 	private void updatePlayingInfo() {
@@ -171,9 +165,9 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 		int progress = control.getPercentage();
 		seekBar.setProgress(progress);
 		
-		int currentPos = Integer.parseInt(info.getMusicInfo(MusicInfo.MUSICPLAYER_PLAYLISTPOS));
-		if (currentPos != lastPos) {
-			setupPlayingInfo();
+		String currentPos = info.getMusicInfo(MusicInfo.MUSICPLAYER_PLAYLISTPOS);
+		if (!lastPos.equals(currentPos)) {
+			nowPlayingHandler.sendEmptyMessage(2);
 			lastPos = currentPos;
 		}
 	}
@@ -184,7 +178,7 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 		
 		try {
 			mCover = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
-			progressHandler.sendEmptyMessageDelayed(4321, 1);
+			nowPlayingHandler.sendEmptyMessage(3);
 		} catch (Exception e) {
 			System.err.println("ERROR: " + e.getMessage());
 			e.printStackTrace();
