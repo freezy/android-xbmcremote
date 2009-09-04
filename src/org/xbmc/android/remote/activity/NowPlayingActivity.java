@@ -141,7 +141,7 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 				if (control.pause()) {
 					isPlaying = !isPlaying;
 					final ImageButton PlayPauseButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
-					PlayPauseButton.setImageResource(isPlaying ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause);
+					PlayPauseButton.setImageResource(isPlaying ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play);
 				}
 			}
 		});
@@ -169,8 +169,6 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 	  	  		cover.setImageBitmap(mCover);
 			}
 			return true;
-		} else if (msg.what == 4) {
-			updatePlayingInfo();
 		}
 		return false;
 	}
@@ -184,7 +182,7 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 		if (currPlaying != null) {
 			isPlaying = currPlaying.isPlaying;
 			final ImageButton PlayPauseButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
-			PlayPauseButton.setImageResource(isPlaying ? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause);
+			PlayPauseButton.setImageResource(isPlaying ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play);
 		}
 		String currentPos = info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE) + info.getMusicInfo(MusicInfo.MUSICPLAYER_DURATION);
 
