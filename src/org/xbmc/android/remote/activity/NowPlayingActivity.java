@@ -87,8 +87,8 @@ public class NowPlayingActivity extends Activity {
 
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				// Uncomment if we want seek to happen while moving the seekbar, instantly so to speek.
-				/*if (fromUser)
-					control.seek(SeekType.absolute, progress);*/
+				if (fromUser && !seekBar.isInTouchMode())
+					control.seek(SeekType.absolute, progress);
 			}
 
 			public void onStartTrackingTouch(SeekBar seekBar) {
