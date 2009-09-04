@@ -36,6 +36,8 @@ import android.content.Context;
 
 /**
  * Wrapper class for our HTTP clients
+ * 
+ * @author Team XBMC
  */
 public class HttpClient {
 	

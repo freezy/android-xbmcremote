@@ -21,14 +21,14 @@
 
 package org.xbmc.httpapi.client;
 
-import java.util.ArrayList;
-import java.util.PriorityQueue;
-
 import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.Database;
-import org.xbmc.httpapi.DatabaseItem;
 
-public class VideoClient extends Database {
+/**
+ * Takes care of everything related to the video database.
+ * 
+ * @author Team XBMC
+ */
+public class VideoClient {
 	
 	private final Connection mConnection;
 
@@ -37,7 +37,6 @@ public class VideoClient extends Database {
 	 * @param connection
 	 */
 	public VideoClient(Connection connection) {
-		super(connection, null); // TODO fix
 		mConnection = connection;
 	}
 	
@@ -45,15 +44,15 @@ public class VideoClient extends Database {
 	 * Get all TVShows in database
 	 * @return list of TV Show names
 	 */
-	public ArrayList<DatabaseItem> getTVShows() {
-		return null;// getMergedList("idShow", "SELECT idShow, c00 from tvshow ORDER BY c00");
-	}
+//	public ArrayList<DatabaseItem> getTVShows() {
+//		return null;// getMergedList("idShow", "SELECT idShow, c00 from tvshow ORDER BY c00");
+//	}
 	
 	/**
 	 * Get all Movies in database
 	 * @return list of Movie names
 	 */
-	public ArrayList<DatabaseItem> getMovies() {
-		return null;//getMergedList("idMovie", "SELECT idMovie, c00 from movie ORDER BY c00");
-	}
+//	public ArrayList<DatabaseItem> getMovies() {
+//		return null;//getMergedList("idMovie", "SELECT idMovie, c00 from movie ORDER BY c00");
+//	}
 }

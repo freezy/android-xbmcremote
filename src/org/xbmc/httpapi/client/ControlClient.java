@@ -31,7 +31,7 @@ import org.xbmc.httpapi.type.SeekType;
  * the user may wants to execute. It equally reads the information instead of
  * setting it.
  * 
- * @author freezy <phreezie@gmail.com>
+ * @author Team XBMC
  */
 public class ControlClient {
 

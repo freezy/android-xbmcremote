@@ -23,16 +23,18 @@ package org.xbmc.httpapi.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.PriorityQueue;
 
 import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.Database;
-import org.xbmc.httpapi.DatabaseItem;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Song;
 
-public class MusicClient extends Database {
+/**
+ * Takes care of every music related stuff, notably the music database.
+ * 
+ * @author Team XBMC
+ */
+public class MusicClient {
 	
 	private final Connection mConnection;
 
@@ -41,35 +43,7 @@ public class MusicClient extends Database {
 	 * @param connection
 	 */
 	public MusicClient(Connection connection) {
-		super(connection, null); // TODO fix
 		mConnection = connection;
-	}
-	
-	/**
-	 * Get artists which contains "like".
-	 * Use this method sparsely as it adds more stress on the Database than getting all artists and let the program sort them, so only usefull if client is embedded. 
-	 * @param like
-	 * @return list of artist names
-	 */
-	public ArrayList<DatabaseItem> getArtists(String like) {
-		 return null; // getMergedList("idArtist", "SELECT idAlbum, strAlbum FROM artist WHERE strArtist LIKE %%" + like + "%%" + " ORDER BY strArtist");
-	}
-
-	/**
-	 * Get all artists available in the database
-	 * @return list of artist names
-	 */
-	public ArrayList<DatabaseItem> getArtists() {
-		return null; // getMergedList("idArtist", "SELECT idArtist, strArtist FROM artist ORDER BY strArtist");
-	}
-	
-	/**
-	 * Get all albums from given artist.
-	 * @param artist
-	 * @return list of album names
-	 */
-	public ArrayList<DatabaseItem> getAlbums(DatabaseItem root) {
-		return null; // getMergedList("idAlbum", "SELECT idAlbum, strAlbum from album WHERE " + root.formatSQL() + " ORDER BY strAlbum");
 	}
 	
 	/**
@@ -83,7 +57,7 @@ public class MusicClient extends Database {
 		sb.append("  WHERE a.idArtist = i.idArtist");
 		sb.append("  ORDER BY i.strArtist ASC");
 		sb.append("  LIMIT 300"); // let's keep it at 300 for now
-		return parseAlbums(mConnection.getString("QueryMusicDatabase", sb.toString()));
+		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
 	/**
@@ -98,7 +72,7 @@ public class MusicClient extends Database {
 		sb.append("  LEFT JOIN albuminfo AS ai ON ai.idAlbumInfo = a.idAlbum");
 		sb.append("  WHERE a.idGenre = g.idGenre");
 		sb.append("  AND a.idAlbum = " + album.id);
-		return null; // parseAlbumInfo(album, instance.getString("QueryMusicDatabase", sb.toString()));
+		return parseAlbumInfo(album, mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
 	/**
@@ -114,7 +88,7 @@ public class MusicClient extends Database {
 		sb.append("  AND s.idArtist = a.idArtist");
 		sb.append("  AND s.idAlbum = " + album.id);
 		sb.append("  ORDER BY s.iTrack");
-		return null; // parseSongs(instance.getString("QueryMusicDatabase", sb.toString()));
+		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
 	/**
@@ -123,15 +97,17 @@ public class MusicClient extends Database {
 	 * @return Base64-encoded content of thumb
 	 */
 	public String getAlbumThumb(ICoverArt art) {
-		return null; // instance.getString("FileDownload", Album.getThumbUri(art));
+		return mConnection.query("FileDownload", Album.getThumbUri(art));
 	}
 
 	/**
 	 * Converts query response from HTTP API to a list of Album objects. Each
 	 * row must return the following attributes in the following order:
-	 * 	1. idAlbum
-	 * 	2. strAlbum
-	 * 	3. strArtist
+	 * <ol>
+	 * 	<li><code>idAlbum</code></li>
+	 * 	<li><code>strAlbum</code></li>
+	 * 	<li><code>strArtist</code></li>
+	 * </ol>
 	 * @param response
 	 * @return List of albums
 	 */
@@ -141,9 +117,9 @@ public class MusicClient extends Database {
 		try {
 			for (int row = 1; row < fields.length; row += 3) {
 				albums.add(new Album(
-						trimInt(fields[row]), 
-						trim(fields[row + 1]), 
-						trim(fields[row + 2])
+						Connection.trimInt(fields[row]), 
+						Connection.trim(fields[row + 1]), 
+						Connection.trim(fields[row + 2])
 				));
 			}
 		} catch (Exception e) {
@@ -155,11 +131,13 @@ public class MusicClient extends Database {
 	/**
 	 * Updates an album with info from HTTP API query response. One row is 
 	 * expected, with the following columns:
-	 * 	1. strGenre
-	 * 	2. strExtraGenres
-	 * 	3. iYear
-	 * 	4. strLabel
-	 * 	5. iRating  
+	 * <ol>
+	 * 	<li><code>strGenre</code></li>
+	 * 	<li><code>strExtraGenres</code></li>
+	 * 	<li><code>iYear</code></li>
+	 * 	<li><code>strLabel</code></li>
+	 * 	<li><code>iRating</code></li>
+	 * </ol>  
 	 * @param album
 	 * @param response
 	 * @return Updated album
@@ -167,17 +145,17 @@ public class MusicClient extends Database {
 	private Album parseAlbumInfo(Album album, String response) {
 		String[] fields = response.split("<field>");
 		try {
-			if (trim(fields[2]).length() > 0) {
-				album.genres = trim(fields[1]) + trim(fields[2]);
+			if (Connection.trim(fields[2]).length() > 0) {
+				album.genres = Connection.trim(fields[1]) + Connection.trim(fields[2]);
 			}	
-			if (trim(fields[3]).length() > 0) {
-				album.year = trimInt(fields[3]);
+			if (Connection.trim(fields[3]).length() > 0) {
+				album.year = Connection.trimInt(fields[3]);
 			}
-			if (trim(fields[4]).length() > 0) {
-				album.label = trim(fields[4]);
+			if (Connection.trim(fields[4]).length() > 0) {
+				album.label = Connection.trim(fields[4]);
 			}
-			if (trim(fields[5]).length() > 0) {
-				album.rating = trimInt(fields[5]);
+			if (Connection.trim(fields[5]).length() > 0) {
+				album.rating = Connection.trimInt(fields[5]);
 			}
 		} catch (Exception e) {
 			System.out.println("ERROR: " + e.getMessage());
@@ -188,12 +166,14 @@ public class MusicClient extends Database {
 	/**
 	 * Converts query response from HTTP API to a list of Song objects. Each
 	 * row must return the following columns in the following order:
-	 * 	1. strTitle
-	 * 	2. StrArtist
-	 * 	3. iTrack
-	 * 	4. iDuration
-	 * 	5. strPath
-	 * 	6. strFileName
+	 * <ol>
+	 * 	<li><code>strTitle</code></li>
+	 * 	<li><code>strArtist</code></li>
+	 * 	<li><code>iTrack</code></li>
+	 * 	<li><code>iDuration</code></li>
+	 * 	<li><code>strPath</code></li>
+	 * 	<li><code>strFileName</code></li>
+	 * </ol>
 	 * @param response
 	 * @return List of Songs
 	 */
@@ -203,12 +183,12 @@ public class MusicClient extends Database {
 		try { 
 			for (int row = 1; row < fields.length; row += 6) { 
 				songs.add(new Song( // String title, String artist, int track, int duration, String path
-						trim(fields[row]), 
-						trim(fields[row + 1]), 
-						trimInt(fields[row + 2]), 
-						trimInt(fields[row + 3]), 
-						trim(fields[row + 4]),
-						trim(fields[row + 5]) 
+						Connection.trim(fields[row]), 
+						Connection.trim(fields[row + 1]), 
+						Connection.trimInt(fields[row + 2]), 
+						Connection.trimInt(fields[row + 3]), 
+						Connection.trim(fields[row + 4]),
+						Connection.trim(fields[row + 5]) 
 				));
 			}
 		} catch (Exception e) {
@@ -217,5 +197,4 @@ public class MusicClient extends Database {
 		Collections.sort(songs);
 		return songs;		
 	}
-
 }

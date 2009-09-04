@@ -7,6 +7,13 @@ import org.xbmc.httpapi.data.MediaLocation;
 import org.xbmc.httpapi.type.DirectoryMask;
 import org.xbmc.httpapi.type.MediaType;
 
+/**
+ * The InfoClient basically takes care of everything else not covered by the
+ * other clients (music, video and control). That means its tasks are bound to
+ * system related stuff like directory listing and so on. 
+ * 
+ * @author Team XBMC
+ */
 public class InfoClient {
 	
 	private final Connection mConnection;

@@ -38,7 +38,7 @@ import android.widget.ImageView;
 /**
  * Adapter class for the album grid view
  * 
- * @author freezy <phreezie@gmail.com>
+ * @author Team XBMC
  */
 public class AlbumAdapter extends BaseAdapter {
 

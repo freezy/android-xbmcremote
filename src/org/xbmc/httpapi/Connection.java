@@ -33,6 +33,8 @@ import java.util.ArrayList;
 /**
  * Keeps track of the HTTP connection and contains basic helper methods for
  * repeated String transformations 
+ * 
+ *  @author Team XBMC
  */
 public class Connection {
 	
