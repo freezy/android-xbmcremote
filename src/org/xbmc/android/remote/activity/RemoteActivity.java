@@ -39,6 +39,15 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 
+/**
+ * Activity for remote control. At the moment that's the good ol' Xbox remote
+ * control, more to come...
+ * 
+ * TODO: Horizontal orientation
+ * TODO: "display" button missing. Looking for an alternative, also the "S" button is quite important for skins like Aeon.
+ * 
+ * @author Team XBMC
+ */
 public class RemoteActivity extends Activity {
 	
 	private Vibrator mVibrator;
@@ -140,6 +149,13 @@ public class RemoteActivity extends Activity {
 		}
 	}
 	
+	/**
+	 * Shortcut for adding the listener class to the button
+	 * @param resourceButton       Resource ID of the button
+	 * @param action               Action string
+	 * @param resourceButtonUp     Resource ID of the button up image
+	 * @param resourceButtonDown   Resource ID of the button down image
+	 */
 	private void setupButton(int resourceButton, String action, int resourceButtonUp, int resourceButtonDown) {
 		findViewById(resourceButton).setOnTouchListener(new OnRemoteAction(action, resourceButtonUp, resourceButtonDown));		
 	}
@@ -183,7 +199,6 @@ public class RemoteActivity extends Activity {
 		setupButton(R.id.RemoteXboxImgBtnMenu, ButtonCodes.REMOTE_MENU, R.drawable.remote_xbox_menu_down, R.drawable.remote_xbox_menu_down);
 		// down
 		setupButton(R.id.RemoteXboxImgBtnDown, ButtonCodes.REMOTE_DOWN, R.drawable.remote_xbox_down_down, R.drawable.remote_xbox_down);
-
 		// back 
 		setupButton(R.id.RemoteXboxImgBtnBack, ButtonCodes.REMOTE_BACK, R.drawable.remote_xbox_back, R.drawable.remote_xbox_back_down);
 		
