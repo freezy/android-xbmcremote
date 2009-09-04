@@ -219,10 +219,14 @@ public class Connection {
 	 * @throws URISyntaxException
 	 */
 	private URL formatQueryString(String method, String parameter) throws MalformedURLException, URISyntaxException {
-		String encodedParameter = URLEncoder.encode(parameter);
-		return new URL(mBaseURL + XBMC_HTTP_BOOTSTRAP + "?command=" + method + "(" + encodedParameter + ")");
+		return new URL(generateQuery(method, parameter));
 	}
 	
+	public String generateQuery(String method, String parameter) {
+		String encodedParameter = URLEncoder.encode(parameter);
+		return mBaseURL + XBMC_HTTP_BOOTSTRAP + "?command=" + method + "(" + encodedParameter + ")";
+	}
+
 	/**
 	 * Removes the trailing "</field>" string from the value
 	 * @param value
@@ -262,5 +266,9 @@ public class Connection {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+	
+	public String getBaseURL() {
+		return mBaseURL;
 	}
 }

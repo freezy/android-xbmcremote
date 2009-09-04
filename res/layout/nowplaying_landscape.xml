@@ -12,7 +12,8 @@
 	    	android:layout_height="140dip"
 	    	android:scaleType="fitXY"
 	    	android:adjustViewBounds="true"
-	    	android:src="@drawable/nocover" />
+	    	android:src="@drawable/nocover"
+	    	android:id="@+id/CoverImage" />
 	   	<LinearLayout
 	        android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"

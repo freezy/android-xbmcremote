@@ -21,8 +21,16 @@
 
 package org.xbmc.android.remote.activity;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import org.xbmc.android.remote.R;
+import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.DownloadCallback;
+import org.xbmc.android.util.DownloadThread;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
@@ -31,6 +39,10 @@ import org.xbmc.httpapi.type.SeekType;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -42,11 +54,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class NowPlayingActivity extends Activity implements Callback {
+public class NowPlayingActivity extends Activity implements Callback, DownloadCallback {
 	private ControlClient control;
 	private InfoClient info;
 	private Handler progressHandler;
@@ -80,6 +93,18 @@ public class NowPlayingActivity extends Activity implements Callback {
   	  	
   	  	final TextView song = (TextView) findViewById(R.id.SongTextView);
   	  	song.setText(info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE));
+  	  	
+		try {
+			String downloadURI = info.getCurrentlyPlayingThumbURI();
+	  	  	Thread downloadThread = new DownloadThread(new String[] { downloadURI }, this);
+	  	  	downloadThread.start();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void setupButtons() {
@@ -127,11 +152,19 @@ public class NowPlayingActivity extends Activity implements Callback {
 			updatePlayingInfo();
 			progressHandler.sendEmptyMessageDelayed(1234, 1000);
 			return true;
+		} else if (msg.what == 4321) {
+			if (mCover != null) {
+	  	  		final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
+	  	  		cover.setImageBitmap(mCover);
+	  	  		mCover = null;
+			}
+			return true;
 		}
 		return false;
 	}
 
 	private int lastPos = -1;
+	private Bitmap mCover;
 	
 	private void updatePlayingInfo() {
 		final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
@@ -142,6 +175,19 @@ public class NowPlayingActivity extends Activity implements Callback {
 		if (currentPos != lastPos) {
 			setupPlayingInfo();
 			lastPos = currentPos;
+		}
+	}
+
+	public void onDownloadDone(byte[] buffer) {
+		if (buffer == null)
+			return;
+		
+		try {
+			mCover = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
+			progressHandler.sendEmptyMessageDelayed(4321, 1);
+		} catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 }

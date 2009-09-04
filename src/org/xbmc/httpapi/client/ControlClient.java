@@ -185,4 +185,16 @@ public class ControlClient {
 	public boolean isConnected() {
 		return mConnection.isConnected();
 	}
+
+	/*public enum PlayState {
+		NotPlaying,
+		Paused,
+		Playing
+	}
+	
+	public PlayState getPlayState() {
+		String s = mConnection.getString("GetCurrentlyPlaying", "");
+		if (s.contains("NotPlaying"))
+		return 
+	}*/
 }

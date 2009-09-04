@@ -1,5 +1,8 @@
 package org.xbmc.httpapi.client;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.xbmc.httpapi.Connection;
@@ -70,6 +73,16 @@ public class InfoClient {
 			shares.add(new MediaLocation(share));
 		}
 		return shares;
+	}
+	
+	public String getCurrentlyPlayingThumbURI() throws MalformedURLException, URISyntaxException {
+		ArrayList<String> array = mConnection.getArray("GetCurrentlyPlaying", "");
+		for (String s : array) {
+			if (s.startsWith("Thumb")) {
+				return mConnection.generateQuery("FileDownload", s.substring(6));
+			}
+		}
+		return null;
 	}
 	
 	/**
