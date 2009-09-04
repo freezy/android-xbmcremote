@@ -18,8 +18,8 @@ import java.net.InetAddress;
  */
 public class EventClient {
 	
-	private boolean mHasIcon = false;
-	private String mDeviceName;
+	private final boolean mHasIcon;
+	private final String mDeviceName;
 	private PingThread mPingThread;
 	private byte mIconType = Packet.ICON_PNG;
 	private byte[] mIconData;
@@ -53,9 +53,11 @@ public class EventClient {
 		iconFileStream.read(iconData);
 
 		mHasIcon = true;
+		mDeviceName = deviceName;
+		
 
 		// Call start-Method...
-		startClient(hostAddress, hostPort, deviceName, iconType, iconData);
+		startClient(hostAddress, hostPort, iconType, iconData);
 	}
 
 	/**
@@ -71,7 +73,8 @@ public class EventClient {
 	 */
 	public EventClient(InetAddress hostAddress, int hostPort, String deviceName, byte iconType, byte[] iconData) throws IOException {
 		mHasIcon = true;
-		startClient(hostAddress, hostPort, deviceName, iconType, iconData);
+		mDeviceName = deviceName;
+		startClient(hostAddress, hostPort, iconType, iconData);
 	}
 
 	/**
@@ -82,12 +85,12 @@ public class EventClient {
 	 * @param deviceName   Name of the Device
 	 * @throws IOException
 	 */
-	public EventClient(InetAddress hostAddress, int hostPort, String deviceName)
-			throws IOException {
+	public EventClient(InetAddress hostAddress, int hostPort, String deviceName) throws IOException {
 		mHasIcon = false;
+		mDeviceName = deviceName;
 		byte iconType = Packet.ICON_NONE;
 		byte[] iconData = null;
-		startClient(hostAddress, hostPort, deviceName, iconType, iconData);
+		startClient(hostAddress, hostPort, iconType, iconData);
 	}
 
 	/**
@@ -95,28 +98,26 @@ public class EventClient {
 	 * 
 	 * @param hostAddress  Address of the Host running XBMC
 	 * @param hostPort     Port of the Host running XBMC (default 9777)
-	 * @param deviceName   Name of the Device
 	 * @param iconType     Type of the icon file (see Packet.ICON_PNG, 
 	 *                     Packet.ICON_JPEG or Packet.ICON_GIF)
 	 * @param iconData     The icon itself as a Byte-Array
 	 * @throws IOException
 	 */
-	private void startClient(InetAddress hostAddress, int hostPort, String deviceName, byte iconType, byte[] iconData) throws IOException {
+	private void startClient(InetAddress hostAddress, int hostPort, byte iconType, byte[] iconData) throws IOException {
 
 		// Save host address and port
-		this.mHostAddress = hostAddress;
-		this.mHostPort = hostPort;
-		this.mDeviceName = deviceName;
+		mHostAddress = hostAddress;
+		mHostPort = hostPort;
 
-		this.mIconType = iconType;
-		this.mIconData = iconData;
+		mIconType = iconType;
+		mIconData = iconData;
 
 		// Send Hello Packet...
 		PacketHELO p;
 		if (mHasIcon)
-			p = new PacketHELO(deviceName, iconType, iconData);
+			p = new PacketHELO(mDeviceName, iconType, iconData);
 		else
-			p = new PacketHELO(deviceName);
+			p = new PacketHELO(mDeviceName);
 
 		p.send(hostAddress, hostPort);
 
@@ -170,8 +171,7 @@ public class EventClient {
 	 *               specifying magnitude of analog key press events
 	 * @param axis
 	 */
-	public void sendButton(short code, boolean repeat, boolean down,
-			boolean queue, short amount, byte axis) throws IOException {
+	public void sendButton(short code, boolean repeat, boolean down, boolean queue, short amount, byte axis) throws IOException {
 		
 		PacketBUTTON p = new PacketBUTTON(code, repeat, down, queue, amount, axis);
 		p.send(mHostAddress, mHostPort);

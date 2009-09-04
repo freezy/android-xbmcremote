@@ -42,6 +42,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class HomeActivity extends Activity {
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -55,7 +56,7 @@ public class HomeActivity extends Activity {
         	setContentView(R.layout.main_portrait);
 
 		// check if connection is available
-/*		try {
+		try {
 			if (!ConnectionManager.isNetworkAvailable(this)) {
 				throw new NoNetworkException();
 			}
@@ -65,14 +66,13 @@ public class HomeActivity extends Activity {
 			final ErrorHandler eh = new ErrorHandler(this);
 			eh.handle(e);
 			((TextView) findViewById(R.id.HomeVersionTextView)).setText("Connection error, check your setttings!");
-		}*/
+		}
 
 		final Button GoMusicButton = (Button) findViewById(R.id.GoMusicButton);
 		GoMusicButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				// Intent myIntent = new Intent(v.getContext(),
-				// AlbumGridActivity.class);
-				Intent myIntent = new Intent(v.getContext(), MediaListActivity.class);
+				Intent myIntent = new Intent(v.getContext(), AlbumGridActivity.class);
+//				Intent myIntent = new Intent(v.getContext(), MediaListActivity.class);
 				myIntent.putExtra("shareType", MediaType.music.toString());
 				startActivityForResult(myIntent, 0);
 			}

@@ -26,7 +26,8 @@ import java.io.IOException;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
-import org.xbmc.httpapi.client.ControlClient;
+import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.eventclient.EventClient;
 
 import android.app.Activity;
 import android.content.Context;
@@ -40,8 +41,9 @@ import android.widget.ImageButton;
 
 public class RemoteActivity extends Activity {
 	
-	private ControlClient mControl;
 	private Vibrator mVibrator;
+	private EventClient mClient;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,20 +51,20 @@ public class RemoteActivity extends Activity {
         ErrorHandler.setActivity(this);
         setContentView(R.layout.remote_xbox);
         
-        mControl = ConnectionManager.getHttpClient(this).control;
         mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-  	  	
+  	  	mClient = ConnectionManager.getEventClient(this);
+
 		setupButtons();
     }
     
 	@Override
 	public boolean onTrackballEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN)
-			return KeyboardAction("enter");
+			return keyboardAction("enter");
 		else if (Math.abs(event.getX()) > 0.1f)
-			return KeyboardAction(event.getX() < 0 ? "left" : "right");
+			return keyboardAction(event.getX() < 0 ? "left" : "right");
 		else if (Math.abs(event.getY()) > 0.1f)
-			return KeyboardAction(event.getY() < 0 ? "up" : "down");
+			return keyboardAction(event.getY() < 0 ? "up" : "down");
 		
 		return false;
 	}
@@ -72,7 +74,7 @@ public class RemoteActivity extends Activity {
 		char key = (char)event.getUnicodeChar();
 		
 		if (key > 'A' && key < 'z')
-			return KeyboardAction("" + key);
+			return keyboardAction("" + key);
 		
 //		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
 			
@@ -81,267 +83,102 @@ public class RemoteActivity extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 	
-	private boolean KeyboardAction(String button) {
+	/**
+	 * Sends a keyboard event
+	 * @param button
+	 * @return
+	 */
+	private boolean keyboardAction(String button) {
 		try {
-			ConnectionManager.getEventClient(RemoteActivity.this).sendButton("KB", button, false, true, true, (short)0, (byte)0);
+			mClient.sendButton("KB", button, false, true, true, (short)0, (byte)0);
 			return true;
 		} catch (IOException e) {
 			return false;
 		}
 	}
-	
+
+
 	/**
-	 * Shortly vibrates in order to give the "click" impression
+	 * Handles the push- release button code. Switches image of the pressed
+	 * button, vibrates and executes command.
 	 */
-	private void vibrate() {
-		mVibrator.vibrate(45);
-	}
-	
-	private class OnKeyboardAction implements OnTouchListener {
+	private class OnRemoteAction implements OnTouchListener {
 		private final String mAction;
 		private final int mUp, mDown;
-		public OnKeyboardAction(String action, int up, int down) {
+		public OnRemoteAction(String action, int up, int down) {
 			mAction = action;
 			mUp = up;
 			mDown = down;
 		}
 		public boolean onTouch(View v, MotionEvent event) {
-			
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				vibrate();
-				KeyboardAction(mAction);
+				mVibrator.vibrate(45);
+				try {
+					mClient.sendButton("R1", mAction, true, true, true, (short)0, (byte)0);
+				} catch (IOException e) {
+					return false;
+				}
 				((ImageButton)v).setImageResource(mDown);
 				return true;
 			} else if (event.getAction() == MotionEvent.ACTION_UP) {
+				try {
+					mClient.sendButton("R1", mAction, false, false, true, (short)0, (byte)0);
+				} catch (IOException e) {
+					return false;
+				}
 				((ImageButton)v).setImageResource(mUp);
 				return true;
 			}
 			return false;
-		}	
+		}
+	}
+	
+	private void setupButton(int resourceButton, String action, int resourceButtonUp, int resourceButtonDown) {
+		findViewById(resourceButton).setOnTouchListener(new OnRemoteAction(action, resourceButtonUp, resourceButtonDown));		
 	}
 	
 	/**
 	 * Assigns the button events to the views.
 	 */
 	private void setupButtons() {
-
+		
 		// seek back
-		findViewById(R.id.RemoteXboxImgBtnSeekBack).setOnTouchListener(new OnKeyboardAction("reverse", R.drawable.remote_xbox_play, R.drawable.remote_xbox_play_down));
-		
+		setupButton(R.id.RemoteXboxImgBtnSeekBack, ButtonCodes.REMOTE_REVERSE, R.drawable.remote_xbox_play, R.drawable.remote_xbox_play_down);
 		// play
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnPlay)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-					KeyboardAction("p");
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_play_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_play);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnPlay, ButtonCodes.REMOTE_PLAY, R.drawable.remote_xbox_play, R.drawable.remote_xbox_play_down);
 		// seek forward
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnSeekForward)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-					KeyboardAction("forward");
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_seek_forward_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_seek_forward);
-				}
-				return true;
-			}
-		});
-		
+		setupButton(R.id.RemoteXboxImgBtnSeekForward, ButtonCodes.REMOTE_FORWARD, R.drawable.remote_xbox_seek_forward, R.drawable.remote_xbox_seek_forward_down);
+
 		// previous
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnPrevious)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-//					mControl.playPrevious();
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_previous_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_previous);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnPrevious, ButtonCodes.REMOTE_SKIP_MINUS, R.drawable.remote_xbox_previous, R.drawable.remote_xbox_previous_down);
 		// stop
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnStop)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-//					mControl.stop();
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_stop_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_stop);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnStop, ButtonCodes.REMOTE_STOP, R.drawable.remote_xbox_stop, R.drawable.remote_xbox_stop_down);
 		// pause
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnPause)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-//					mControl.pause();
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_pause_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_pause);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnPause, ButtonCodes.REMOTE_PAUSE, R.drawable.remote_xbox_pause, R.drawable.remote_xbox_pause_down);
 		// next
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnNext)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-//					mControl.playNext();
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_next_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_next);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnNext, ButtonCodes.REMOTE_SKIP_PLUS, R.drawable.remote_xbox_next, R.drawable.remote_xbox_next_down);
 		
 		// title
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnTitle)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-					KeyboardAction("title");
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_title_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_title);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnTitle, ButtonCodes.REMOTE_TITLE, R.drawable.remote_xbox_title, R.drawable.remote_xbox_title_down);
 		// up
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnUp)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-					KeyboardAction("up");
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_up_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_up);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnUp, ButtonCodes.REMOTE_UP, R.drawable.remote_xbox_up, R.drawable.remote_xbox_up_down);
 		// info
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnInfo)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-					KeyboardAction("i");
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_info_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_info);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnInfo, ButtonCodes.REMOTE_INFO, R.drawable.remote_xbox_info, R.drawable.remote_xbox_info_down);
 		
 		// left
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnLeft)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-					KeyboardAction("left");
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_left_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_left);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnLeft, ButtonCodes.REMOTE_LEFT, R.drawable.remote_xbox_left, R.drawable.remote_xbox_left_down);
 		// select
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnSelect)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-					KeyboardAction("enter");
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_select_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_select);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnSelect, ButtonCodes.REMOTE_SELECT, R.drawable.remote_xbox_select, R.drawable.remote_xbox_select_down);
 		// right
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnRight)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-					KeyboardAction("right");
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_right_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_right);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnRight, ButtonCodes.REMOTE_RIGHT, R.drawable.remote_xbox_right, R.drawable.remote_xbox_right_down);
 		
 		// menu
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnMenu)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-					KeyboardAction("menu");
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_menu_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_menu);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnMenu, ButtonCodes.REMOTE_MENU, R.drawable.remote_xbox_menu_down, R.drawable.remote_xbox_menu_down);
 		// down
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnDown)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-					KeyboardAction("down");
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_down_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_down);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnDown, ButtonCodes.REMOTE_DOWN, R.drawable.remote_xbox_down_down, R.drawable.remote_xbox_down);
+
 		// back 
-		((ImageButton)findViewById(R.id.RemoteXboxImgBtnBack)).setOnTouchListener(new View.OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					vibrate();
-					KeyboardAction("backspace");
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_back_down);
-				}
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setImageResource(R.drawable.remote_xbox_back);
-				}
-				return true;
-			}
-		});
+		setupButton(R.id.RemoteXboxImgBtnBack, ButtonCodes.REMOTE_BACK, R.drawable.remote_xbox_back, R.drawable.remote_xbox_back_down);
 		
 	}
 }
