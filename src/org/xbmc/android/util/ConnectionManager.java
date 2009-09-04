@@ -25,15 +25,10 @@ import java.net.Inet4Address;
 
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.HttpClient;
-import org.xbmc.httpapi.NoNetworkException;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;

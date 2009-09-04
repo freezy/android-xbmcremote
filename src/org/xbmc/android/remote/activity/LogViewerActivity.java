@@ -17,8 +17,8 @@ public class LogViewerActivity extends ListActivity {
 		HttpClient instance = ConnectionManager.getHttpClient(this);
 		
 		ArrayList<Message> log = new ArrayList<Message>();
-		for (Message m : instance.getMessenger())
-			log.add(m);
+//		for (Message m : instance.getMessenger())
+//			log.add(m);
 		
 		setListAdapter(new ArrayAdapter<Message>(this, android.R.layout.simple_list_item_1, log));
 		getListView().setTextFilterEnabled(true);
