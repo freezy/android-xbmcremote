@@ -27,7 +27,7 @@ import org.xbmc.httpapi.type.SeekType;
 
 /**
  * The ControlClient class takes care of everything related to controlling
- * XBMC. These are essentially play control, navigation controls other actions
+ * XBMC. These are essentially play controls, navigation controls other actions
  * the user may wants to execute. It equally reads the information instead of
  * setting it.
  * 

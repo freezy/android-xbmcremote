@@ -39,7 +39,7 @@ import org.xbmc.httpapi.client.VideoClient;
  * <pre>
  *  HttpClient client = ConnectionManager.getHttpClient(this);
  *  String xbmcVersion = client.info.getSystemInfo(SystemInfo.SYSTEM_BUILD_VERSION);
- *  ArrayList<Album> albums = client.music.getAlbums()</pre>
+ *  ArrayList&lt;Album&gt; albums = client.music.getAlbums()</pre>
  *   
  * Since the ConnectionManager keeps a static instance of the HttpClient, you
  * can also get the client without passing an activity once it has already been
