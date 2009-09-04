@@ -19,6 +19,14 @@ public class InfoClient {
 		mConnection = connection;
 	}
 	
+	/**
+	 * Returns the contents of a directory
+	 * @param path    Path to the directory
+	 * @param mask    Mask to filter
+	 * @param offset  Offset (0 for none)
+	 * @param limit   Limit (0 for none)
+	 * @return
+	 */
 	public ArrayList<MediaLocation> getDirectory(String path, DirectoryMask mask, int offset, int limit) {
 		final ArrayList<String> result = mConnection.getArray("GetDirectory", 
 			path + ";" +
@@ -33,12 +41,21 @@ public class InfoClient {
 		return files;
 	}
 	
-	
+	/**
+	 * Returns all the contents of a directory
+	 * @param path    Path to the directory
+	 * @return
+	 */
 	public ArrayList<MediaLocation> getDirectory(String path) {
 		return getDirectory(path, null, 0, 0);
 	}
 
 	
+	/**
+	 * Returns all defined shares of a media type
+	 * @param type Media type
+	 * @return
+	 */
 	public ArrayList<MediaLocation> getShares(MediaType type) {
 		final ArrayList<String> result = mConnection.getArray("GetShares", type.toString());
 		final ArrayList<MediaLocation> shares = new ArrayList<MediaLocation>();
@@ -48,7 +65,11 @@ public class InfoClient {
 		return shares;
 	}
 	
-	
+	/**
+	 * Returns any system info variable, see {@link org.xbmc.httpapi.info.SystemInfo}
+	 * @param field Field to return
+	 * @return
+	 */
 	public String getSystemInfo(int field) {
 		return mConnection.getString("GetSystemInfo", String.valueOf(field));
 	}

@@ -45,6 +45,14 @@ public class Connection {
 	private String mBaseURL;
 	private IErrorHandler mErrorHandler;
 	
+	/**
+	 * Class constructor sets host data and error handler.
+	 * @param host         XBMC host or IP address
+	 * @param port         HTTP API port
+	 * @param username     HTTP user name
+	 * @param password     HTTP password
+	 * @param errorHandler Error handler
+	 */
 	public Connection(String host, int port, String username, String password, IErrorHandler errorHandler) {
 		mBaseURL = "http://";
 		if (username != null) {
@@ -57,6 +65,12 @@ public class Connection {
 //		setResponseFormat();
 	}
 	
+	/**
+	 * Executes an HTTP API method and returns the result as untrimmed string.
+	 * @param method      Name of the method to run
+	 * @param parameters  Parameters of the method, separated by ";"
+	 * @return Result
+	 */
 	public String query(String method, String parameters) {
 		try {
 			final URL query = formatQueryString(method, parameters);
@@ -83,10 +97,22 @@ public class Connection {
 		}
 	}
 	
+	/**
+	 * Executes an HTTP API method and returns the result as string.
+	 * @param method      Name of the method to run
+	 * @param parameters  Parameters of the method, separated by ";"
+	 * @return Result
+	 */
 	public String getString(String method, String parameters) {
 		return this.query(method, parameters).replaceAll(LINE_SEP, "").trim();
 	}
 	
+	/**
+	 * Executes an HTTP API method and returns the result as integer.
+	 * @param method      Name of the method to run
+	 * @param parameters  Parameters of the method, separated by ";"
+	 * @return Result
+	 */
 	public int getInt(String method, String parameters) {
 		try {
 			return Integer.parseInt(getString(method, parameters));
@@ -94,10 +120,23 @@ public class Connection {
 			return 0;
 		}
 	}
+
+	/**
+	 * Executes an HTTP API method without parameter and returns the result as
+	 * integer.
+	 * @param method      Name of the method to run
+	 * @return Result
+	 */
 	public int getInt(String method) {
 		return getInt(method, "");
 	}
 
+	/**
+	 * Executes an HTTP API method and returns the result as boolean.
+	 * @param method      Name of the method to run
+	 * @param parameters  Parameters of the method, separated by ";"
+	 * @return Result
+	 */
 	public boolean getBoolean(String method, String parameters) {
 		try {
 			assertBoolean(method, parameters);
@@ -107,10 +146,22 @@ public class Connection {
 		}
 	}
 	
+	/**
+	 * Executes an HTTP API method and returns the result as boolean.
+	 * @param method      Name of the method to run
+	 * @param parameters  Parameters of the method, separated by ";"
+	 * @return Result
+	 */
 	public boolean getBoolean(String method) {
 		return getBoolean(method, "");
 	}
 	
+	/**
+	 * Executes an HTTP API method without parameter and returns the result in
+	 * a list of strings.
+	 * @param method      Name of the method to run
+	 * @return Result
+	 */
 	public ArrayList<String> getArray(String method, String parameters) {
 		final String[] rows = query(method, parameters).split(LINE_SEP);
 		final ArrayList<String> result = new ArrayList<String>();
@@ -122,6 +173,13 @@ public class Connection {
 		return result;
 	}
 	
+	/**
+	 * Executes an HTTP API method and makes sure the result is OK (or something
+	 * like that)
+	 * @param method      Name of the method to run
+	 * @param parameters  Parameters of the method, separated by ";"
+	 * @throws WrongDataFormatException If not "OK"
+	 */
 	public void assertBoolean(String method, String parameters) throws WrongDataFormatException {
 		final String ret = query(method, parameters);
 		if (!ret.contains("OK")) {
@@ -129,15 +187,19 @@ public class Connection {
 		}
 	}
 	
+	/**
+	 * Sets the correct response format
+	 * @deprecated doesn't really work
+	 */
 	private void setResponseFormat() {
 		try {
 			assertBoolean("SetResponseFormat", "WebHeader;false");
 			assertBoolean("SetResponseFormat", "WebFooter;false");
-			assertBoolean("SetResponseFormat", "Header;");
-			assertBoolean("SetResponseFormat", "Footer;");
-			assertBoolean("SetResponseFormat", "OpenTag;");
-			assertBoolean("SetResponseFormat", "OpenRecordSet;");
-			assertBoolean("SetResponseFormat", "OpenRecord;");
+			assertBoolean("SetResponseFormat", "Header; ");
+			assertBoolean("SetResponseFormat", "Footer; ");
+			assertBoolean("SetResponseFormat", "OpenTag; ");
+			assertBoolean("SetResponseFormat", "OpenRecordSet; ");
+			assertBoolean("SetResponseFormat", "OpenRecord; ");
 			assertBoolean("SetResponseFormat", "CloseRecord;\n");
 			assertBoolean("SetResponseFormat", "CloseField;|");
 		} catch (WrongDataFormatException e) {
@@ -145,8 +207,44 @@ public class Connection {
 		}
 	}
 
+	/**
+	 * Creates the API URL
+	 * @param method     Name of the method to run
+	 * @param parameter  Parameters of the method, separated by ";"
+	 * @return           HTTP API URL
+	 * @throws MalformedURLException
+	 * @throws URISyntaxException
+	 */
 	private URL formatQueryString(String method, String parameter) throws MalformedURLException, URISyntaxException {
 		String encodedParameter = URLEncoder.encode(parameter);
 		return new URL(mBaseURL + XBMC_HTTP_BOOTSTRAP + "?command=" + method + "(" + encodedParameter + ")");
+	}
+	
+	/**
+	 * Removes the trailing "</field>" string from the value
+	 * @param value
+	 * @return Trimmed value
+	 */
+	public static String trim(String value) {
+		return value.substring(0, value.length() - 8);
+	}	
+	
+	/**
+	 * Removes the trailing "</field>" string from the value and tries to
+	 * parse an integer from it. On error, returns -1.
+	 * @param value
+	 * @return Parsed integer from field value
+	 */
+	public static int trimInt(String value) {
+		String trimmed = trim(value);
+		if (trimmed.length() > 0) {
+			try {
+				return Integer.parseInt(trimmed);
+			} catch (NumberFormatException e) {
+				return -1;
+			}
+		} else {
+			return -1;
+		}
 	}
 }

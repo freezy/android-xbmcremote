@@ -25,6 +25,14 @@ import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.info.GuiActions;
 import org.xbmc.httpapi.type.SeekType;
 
+/**
+ * The ControlClient class takes care of everything related to controlling
+ * XBMC. These are essentially play control, navigation controls other actions
+ * the user may wants to execute. It equally reads the information instead of
+ * setting it.
+ * 
+ * @author freezy <phreezie@gmail.com>
+ */
 public class ControlClient {
 
 	private final Connection mConnection;
@@ -48,7 +56,7 @@ public class ControlClient {
 	
 	/**
 	 * Starts playing/showing the next media/image in the current playlist or,
-	 * if currently showing a slidshow, the slideshow playlist. 
+	 * if currently showing a slideshow, the slideshow playlist. 
 	 * @return true on success, false otherwise.
 	 */
 	public boolean playNext() {
@@ -95,7 +103,7 @@ public class ControlClient {
 	 * 	<li><code>absolute</code> - Sets the playing position of the currently 
 	 *		playing media as a percentage of the media’s length.</li>
 	 *  <li><code>relative</code> - Adds/Subtracts the current percentage on to
-	 *		the current postion in the song</li>
+	 *		the current position in the song</li>
 	 * </ul> 
 	 * @param type     Seek type, relative or absolute
 	 * @param progress Progress
