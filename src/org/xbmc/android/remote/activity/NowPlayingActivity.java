@@ -25,22 +25,31 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.httpapi.client.ControlClient;
+import org.xbmc.httpapi.client.InfoClient;
+import org.xbmc.httpapi.info.MusicInfo;
 import org.xbmc.httpapi.type.SeekType;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
+import android.os.Handler.Callback;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class NowPlayingActivity extends Activity {
+public class NowPlayingActivity extends Activity implements Callback {
 	private ControlClient control;
+	private InfoClient info;
+	private Handler progressHandler;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,35 +63,27 @@ public class NowPlayingActivity extends Activity {
         	setContentView(R.layout.nowplaying_portrait);
         
   	  	control = ConnectionManager.getHttpClient(this).control;
+  	  	info = ConnectionManager.getHttpClient(this).info;
   	  	
   	  	setupButtons();
-  	  	setupProgressUpdate();
+  	  	updatePlayingInfo();
+  	  	progressHandler = new Handler(this);
+  	  	progressHandler.sendEmptyMessageDelayed(1234, 1000);
 	}
 
-	private void setupProgressUpdate() {
-		int leftOfSong = 30000;
-  	  	CountDownTimer time = new CountDownTimer(leftOfSong, 1000) {
-  	  		final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
-  	  		
-  	  		public void onTick(long millisUntilFinished) {
-	  	  		if (control.isConnected() && !seekBar.isInTouchMode()) {
-	  		  	  	int progress = control.getPercentage();
-	  		  	  	seekBar.setProgress(progress);
-	  			}
-  	  		};
-  	  		public void onFinish() {
-  	  			setupProgressUpdate();
-  	  		};
-  	  	};
-  	  	time.start();
+	private void setupPlayingInfo() {
+		final TextView artist = (TextView) findViewById(R.id.ArtistTextView);
+  	  	artist.setText(info.getMusicInfo(MusicInfo.MUSICPLAYER_ARTIST));
+  	  	
+  	  	final TextView album = (TextView) findViewById(R.id.AlbumTextView);
+  	  	album.setText(info.getMusicInfo(MusicInfo.MUSICPLAYER_ALBUM));
+  	  	
+  	  	final TextView song = (TextView) findViewById(R.id.SongTextView);
+  	  	song.setText(info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE));
 	}
 
 	private void setupButtons() {
 		final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
-		if (control.isConnected()) {
-	  	  	int progress = control.getPercentage();
-	  	  	seekBar.setProgress(progress);
-		}
 		seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -102,6 +103,7 @@ public class NowPlayingActivity extends Activity {
 		PlayPrevButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				control.playPrevious();
+				updatePlayingInfo();
 			}
 		});
 		final ImageButton PlayButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
@@ -115,7 +117,31 @@ public class NowPlayingActivity extends Activity {
 		PlayNextButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				control.playNext();
+				updatePlayingInfo();
 			}
 		});
+	}
+
+	public boolean handleMessage(Message msg) {
+		if (msg.what == 1234) {
+			updatePlayingInfo();
+			progressHandler.sendEmptyMessageDelayed(1234, 1000);
+			return true;
+		}
+		return false;
+	}
+
+	private int lastPos = -1;
+	
+	private void updatePlayingInfo() {
+		final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
+		int progress = control.getPercentage();
+		seekBar.setProgress(progress);
+		
+		int currentPos = Integer.parseInt(info.getMusicInfo(MusicInfo.MUSICPLAYER_PLAYLISTPOS));
+		if (currentPos != lastPos) {
+			setupPlayingInfo();
+			lastPos = currentPos;
+		}
 	}
 }

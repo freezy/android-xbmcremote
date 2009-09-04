@@ -81,4 +81,8 @@ public class InfoClient {
 		return mConnection.getString("GetSystemInfo", String.valueOf(field));
 	}
 
+	public String getMusicInfo(int field) {
+		return mConnection.getString("GetMusicLabel", String.valueOf(field));
+	}
+
 }
