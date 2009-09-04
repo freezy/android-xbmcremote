@@ -178,7 +178,8 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 		int progress = control.getPercentage();
 		seekBar.setProgress(progress);
 		
-		String currentPos = info.getMusicInfo(MusicInfo.MUSICPLAYER_PLAYLISTPOS);
+		String currentPos = info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE) + info.getMusicInfo(MusicInfo.MUSICPLAYER_DURATION);
+
 		if (!lastPos.equals(currentPos)) {
 			nowPlayingHandler.sendEmptyMessage(2);
 			lastPos = currentPos;
