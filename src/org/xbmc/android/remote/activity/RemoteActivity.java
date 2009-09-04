@@ -65,7 +65,6 @@ public class RemoteActivity extends Activity {
 			return keyboardAction(event.getX() < 0 ? "left" : "right");
 		else if (Math.abs(event.getY()) > 0.1f)
 			return keyboardAction(event.getY() < 0 ? "up" : "down");
-		
 		return false;
 	}
 	
@@ -76,10 +75,18 @@ public class RemoteActivity extends Activity {
 		if (key > 'A' && key < 'z')
 			return keyboardAction("" + key);
 		
-//		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-			
-//		}
-		
+		try {
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+				mClient.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+				return true;
+			}
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+				mClient.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+				return true;
+			}
+		} catch (IOException e) {
+			return false;
+		}
 		return super.onKeyDown(keyCode, event);
 	}
 	
