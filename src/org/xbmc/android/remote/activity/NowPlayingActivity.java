@@ -75,6 +75,9 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
   	  	nowPlayingHandler.sendEmptyMessageDelayed(1, 1000);
   	  	setupButtons();
   	  	updatePlayingInfo();
+  	  	
+		final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
+		cover.setScaleType(ScaleType.FIT_CENTER);
 	}
 
 	private void setupPlayingInfo() {
@@ -90,9 +93,7 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 		try {
 			String downloadURI = info.getCurrentlyPlayingThumbURI();
 			final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
-  	  		cover.setScaleType(ScaleType.CENTER_INSIDE);
-	  	  	cover.setMinimumWidth(280);
-  	  		cover.setMinimumHeight(245);
+
 			if (downloadURI != null && downloadURI.length() > 0) {
 				if (!downloadURI.equals(mCoverPath)) {
 		  	  		cover.setImageResource(R.drawable.cover_downloading);
@@ -164,9 +165,6 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 			if (mCover != null) {
 	  	  		final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
 	  	  		cover.setImageBitmap(mCover);
-	  	  		cover.setScaleType(ScaleType.CENTER_INSIDE);
-		  	  	cover.setMinimumWidth(280);
-	  	  		cover.setMinimumHeight(245);
 			}
 			return true;
 		}

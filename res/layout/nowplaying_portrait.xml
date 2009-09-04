@@ -8,8 +8,10 @@
     	android:layout_height="wrap_content"
     	android:padding="20dip" >
 	    <ImageView
-	    	android:layout_width="wrap_content"
-	    	android:layout_height="wrap_content"
+	    	android:layout_width="280dip"
+	    	android:layout_height="245dip"
+	    	android:scaleType="fitXY"
+	    	android:adjustViewBounds="true"
 	    	android:src="@drawable/nocover"
 	    	android:id="@+id/CoverImage" />
    	</LinearLayout>
