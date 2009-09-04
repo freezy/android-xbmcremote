@@ -60,11 +60,11 @@ public class RemoteActivity extends Activity {
 	@Override
 	public boolean onTrackballEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN)
-			return keyboardAction("enter");
+			return keyboardAction(ButtonCodes.KEYBOARD_ENTER);
 		else if (Math.abs(event.getX()) > 0.1f)
-			return keyboardAction(event.getX() < 0 ? "left" : "right");
+			return keyboardAction(event.getX() < 0 ? ButtonCodes.KEYBOARD_LEFT : ButtonCodes.KEYBOARD_RIGHT);
 		else if (Math.abs(event.getY()) > 0.1f)
-			return keyboardAction(event.getY() < 0 ? "up" : "down");
+			return keyboardAction(event.getY() < 0 ? ButtonCodes.KEYBOARD_UP : ButtonCodes.KEYBOARD_DOWN);
 		return false;
 	}
 	
