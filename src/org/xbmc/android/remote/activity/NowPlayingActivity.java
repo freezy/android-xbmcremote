@@ -46,12 +46,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class NowPlayingActivity extends Activity implements Callback, DownloadCallback {
 	private ControlClient control;
 	private InfoClient info;
 	private Handler nowPlayingHandler;
+	private String lastPos = "-1";
+	private Bitmap mCover;
+	private String mCoverPath;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,9 +89,19 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
   	  	
 		try {
 			String downloadURI = info.getCurrentlyPlayingThumbURI();
+			final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
+  	  		cover.setScaleType(ScaleType.CENTER_INSIDE);
+	  	  	cover.setMinimumWidth(280);
+  	  		cover.setMinimumHeight(245);
 			if (downloadURI != null && downloadURI.length() > 0) {
-		  	  	Thread downloadThread = new DownloadThread(new String[] { downloadURI }, this);
-		  	  	downloadThread.start();
+				if (!downloadURI.equals(mCoverPath)) {
+		  	  		cover.setImageResource(R.drawable.cover_downloading);
+		  	  		mCoverPath = downloadURI;
+			  	  	Thread downloadThread = new DownloadThread(new String[] { downloadURI }, this);
+			  	  	downloadThread.start();
+				}
+			} else {
+	  	  		cover.setImageResource(R.drawable.nocover);
 			}
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -150,15 +164,14 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 			if (mCover != null) {
 	  	  		final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
 	  	  		cover.setImageBitmap(mCover);
-	  	  		mCover = null;
+	  	  		cover.setScaleType(ScaleType.CENTER_INSIDE);
+		  	  	cover.setMinimumWidth(280);
+	  	  		cover.setMinimumHeight(245);
 			}
 			return true;
 		}
 		return false;
 	}
-
-	private String lastPos = "-1";
-	private Bitmap mCover;
 	
 	private void updatePlayingInfo() {
 		final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
