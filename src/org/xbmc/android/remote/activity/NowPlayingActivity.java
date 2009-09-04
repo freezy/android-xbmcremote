@@ -25,6 +25,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.httpapi.client.ControlClient;
+import org.xbmc.httpapi.type.SeekType;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -36,6 +37,7 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class NowPlayingActivity extends Activity {
 	private ControlClient control;
@@ -54,7 +56,6 @@ public class NowPlayingActivity extends Activity {
   	  	control = ConnectionManager.getHttpClient(this).control;
   	  	
   	  	setupButtons();
-  	  	
   	  	setupProgressUpdate();
 	}
 
@@ -64,7 +65,7 @@ public class NowPlayingActivity extends Activity {
   	  		final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
   	  		
   	  		public void onTick(long millisUntilFinished) {
-	  	  		if (control.isConnected()) {
+	  	  		if (control.isConnected() && !seekBar.isInTouchMode()) {
 	  		  	  	int progress = control.getPercentage();
 	  		  	  	seekBar.setProgress(progress);
 	  			}
@@ -82,6 +83,21 @@ public class NowPlayingActivity extends Activity {
 	  	  	int progress = control.getPercentage();
 	  	  	seekBar.setProgress(progress);
 		}
+		seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				// Uncomment if we want seek to happen while moving the seekbar, instantly so to speek.
+				/*if (fromUser)
+					control.seek(SeekType.absolute, progress);*/
+			}
+
+			public void onStartTrackingTouch(SeekBar seekBar) {
+			}
+
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				control.seek(SeekType.absolute, seekBar.getProgress());
+			}
+		});
   	  	
         final ImageButton PlayPrevButton = (ImageButton) findViewById(R.id.MediaPreviousButton);
 		PlayPrevButton.setOnClickListener(new View.OnClickListener() {
