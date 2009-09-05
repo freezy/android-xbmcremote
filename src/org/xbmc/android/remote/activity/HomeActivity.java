@@ -23,7 +23,6 @@ package org.xbmc.android.remote.activity;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.httpapi.HttpClient;
 import org.xbmc.httpapi.NoNetworkException;
 import org.xbmc.httpapi.info.SystemInfo;
@@ -32,6 +31,9 @@ import org.xbmc.httpapi.type.MediaType;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Handler.Callback;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,7 +42,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class HomeActivity extends Activity {
+public class HomeActivity extends Activity implements Callback, Runnable {
+	Handler homeHandler;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,19 +57,10 @@ public class HomeActivity extends Activity {
         else
         	setContentView(R.layout.main_portrait);
 
-		// check if connection is available
-		try {
-			if (!ConnectionManager.isNetworkAvailable(this)) {
-				throw new NoNetworkException();
-			}
-			HttpClient client = ConnectionManager.getHttpClient(this);
-			final String version = client.isConnected() ? client.info.getSystemInfo(SystemInfo.SYSTEM_BUILD_VERSION) : "";
-			((TextView) findViewById(R.id.HomeVersionTextView)).setText(version.length() > 0 ? "XBMC " + version : "Connection error, check your setttings!");
-		} catch (Exception e) {
-			final ErrorHandler eh = new ErrorHandler(this);
-			eh.handle(e);
-			((TextView) findViewById(R.id.HomeVersionTextView)).setText("Connection error, check your setttings!");
-		}
+        homeHandler = new Handler(this);
+        ((TextView) findViewById(R.id.HomeVersionTextView)).setText("Connecting...");
+        Thread connectThread = new Thread(this);
+        connectThread.start();
 
 		final Button GoMusicButton = (Button) findViewById(R.id.GoMusicButton);
 		GoMusicButton.setOnClickListener(new View.OnClickListener() {
@@ -131,5 +125,35 @@ public class HomeActivity extends Activity {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean handleMessage(Message msg) {
+		if (msg.what == 1) {
+			((TextView) findViewById(R.id.HomeVersionTextView)).setText(msg.getData().get("version").toString());
+			return true;
+		}
+		
+		return false;
+	}
+
+	public void run() {
+		String version = "";
+		try {
+			if (!ConnectionManager.isNetworkAvailable(this)) {
+				throw new NoNetworkException();
+			}
+			HttpClient client = ConnectionManager.getHttpClient(this);
+			version = client.isConnected() ? ("XBMC " + client.info.getSystemInfo(SystemInfo.SYSTEM_BUILD_VERSION)) : "Connection error, check your setttings!";
+
+		} catch (Exception e) {
+			version = "Connection error, check your setttings!";
+		}
+		
+		Message msg = new Message();
+		msg.what = 1;
+		Bundle bundle = new Bundle();
+		bundle.putString("version", version);
+		msg.setData(bundle);
+		homeHandler.sendMessage(msg);
 	}
 }
