@@ -14,7 +14,6 @@
         <activity android:name=".activity.RemoteActivity" />
         <activity android:name=".activity.MediaListActivity" />
         <activity android:name=".activity.NowPlayingActivity" />
-        <activity android:name=".activity.LogViewerActivity" />
         <activity android:name=".activity.AlbumGridActivity" />
         <activity android:name=".activity.SettingsActivity" />
     </application>

@@ -23,7 +23,6 @@ package org.xbmc.android.remote.activity;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -32,16 +31,14 @@ import java.net.URLConnection;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.android.util.DownloadCallback;
-import org.xbmc.android.util.DownloadThread;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.InfoClient.CurrentlyPlaying;
 import org.xbmc.httpapi.info.MusicInfo;
 import org.xbmc.httpapi.type.SeekType;
+
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -56,7 +53,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.ImageView.ScaleType;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class NowPlayingActivity extends Activity implements Callback, Runnable {
