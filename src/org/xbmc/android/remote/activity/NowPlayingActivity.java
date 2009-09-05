@@ -149,15 +149,12 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 		} else if (msg.what == 667) {
 			Bundle data = msg.getData();
 			final TextView artist = (TextView) findViewById(R.id.ArtistTextView);
-			String sa =data.getString("artist"); 
 	  	  	artist.setText(data.getString("artist"));
 	  	  	
 	  	  	final TextView album = (TextView) findViewById(R.id.AlbumTextView);
-	  	  	String sal = data.getString("album");
 	  	  	album.setText(data.getString("album"));
 	  	  	
 	  	  	final TextView song = (TextView) findViewById(R.id.SongTextView);
-	  	  	String st = data.getString("title");
 	  	  	song.setText(data.getString("title"));
 	  	  	return true;
 		} else if (msg.what == 668) {
@@ -186,14 +183,10 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 			msg = new Message();
 			bundle = msg.getData();
 	  	  	msg.what = 667;
-			
-	  	  	String album = info.getMusicInfo(MusicInfo.MUSICPLAYER_ALBUM);
-	  	  	String artist = info.getMusicInfo(MusicInfo.MUSICPLAYER_ARTIST);
-	  	  	String title = info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE);
 	  	  	
-			bundle.putString("album", album);
-			bundle.putString("artist", artist);
-			bundle.putString("title", title);
+			bundle.putString("album", info.getMusicInfo(MusicInfo.MUSICPLAYER_ALBUM));
+			bundle.putString("artist", info.getMusicInfo(MusicInfo.MUSICPLAYER_ARTIST));
+			bundle.putString("title", info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE));
 			
 			nowPlayingHandler.sendMessage(msg);
 			
@@ -205,10 +198,7 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 			  	  		mCover = this.getResources().getDrawable(R.drawable.cover_downloading);
 			  	  		mCoverPath = downloadURI;
 			  	  		nowPlayingHandler.sendEmptyMessage(668);
-			  	  		
-				  	  	/*Thread downloadThread = new DownloadThread(new String[] { downloadURI }, this);
-				  	  	downloadThread.start();*/
-			  	  		
+
 			  	  		byte[] buffer = download(downloadURI);
 
 			  	  		if (buffer != null) {
