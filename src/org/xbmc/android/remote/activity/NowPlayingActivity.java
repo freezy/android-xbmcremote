@@ -179,11 +179,11 @@ public class NowPlayingActivity extends Activity implements Callback, DownloadCa
 		seekBar.setProgress(progress);
 		
 		CurrentlyPlaying currPlaying = info.getCurrentlyPlaying();
-		if (currPlaying != null) {
-			isPlaying = currPlaying.isPlaying;
-			final ImageButton PlayPauseButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
-			PlayPauseButton.setImageResource(isPlaying ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play);
-		}
+		
+		isPlaying = currPlaying != null && currPlaying.isPlaying;
+		final ImageButton PlayPauseButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
+		PlayPauseButton.setImageResource(isPlaying ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play);
+		
 		String currentPos = info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE) + info.getMusicInfo(MusicInfo.MUSICPLAYER_DURATION);
 
 		if (!lastPos.equals(currentPos)) {
