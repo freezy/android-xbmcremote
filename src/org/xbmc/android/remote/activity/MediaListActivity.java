@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.httpapi.HttpClient;
@@ -38,11 +39,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
 public class MediaListActivity extends ListActivity implements Callback, Runnable {
-	
 	private final Stack<String> mHistory = new Stack<String>();;
 	private final HttpClient mClient = ConnectionManager.getHttpClient(this);
 
@@ -98,6 +100,56 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 			return true;
 		} else
 			return super.onKeyDown(keyCode, event);
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+		if (mMediaType.equals(MediaType.music))
+			menu.add(0, 0, 0, "Change view").setIcon(android.R.drawable.ic_menu_view);
+		if (!mMediaType.equals(MediaType.music))
+			menu.add(0, 1, 0, "Music");
+		if (!mMediaType.equals(MediaType.video))
+			menu.add(0, 2, 0, "Video");
+		if (!mMediaType.equals(MediaType.pictures))
+			menu.add(0, 3, 0, "Pictures").setIcon(android.R.drawable.ic_menu_camera);
+		
+		menu.add(0, 4, 0, "Now Playing").setIcon(android.R.drawable.ic_media_play);
+		menu.add(0, 5, 0, "Remote");
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent myIntent = null;
+		
+		switch (item.getItemId()) {
+		case 0:
+			myIntent = new Intent(this, AlbumGridActivity.class);
+			break;
+		case 1:
+			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent.putExtra("shareType", MediaType.music.toString());
+			break;
+		case 2:
+			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent.putExtra("shareType", MediaType.video.toString());
+			break;
+		case 3:
+			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent.putExtra("shareType", MediaType.pictures.toString());
+			break;
+		case 4:
+			myIntent = new Intent(this, NowPlayingActivity.class);
+			break;
+		case 5:
+			myIntent = new Intent(this, RemoteActivity.class);
+			break;
+		}
+		
+		if (myIntent != null) {
+			startActivity(myIntent);
+			return true;
+		}
+		return false;
 	}
 
 	public boolean handleMessage(Message msg) {

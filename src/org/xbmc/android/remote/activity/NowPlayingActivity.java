@@ -36,9 +36,11 @@ import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.InfoClient.CurrentlyPlaying;
 import org.xbmc.httpapi.info.MusicInfo;
+import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.SeekType;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -47,6 +49,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -215,6 +219,44 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, 1, 0, "Music");
+		menu.add(0, 2, 0, "Video");
+		menu.add(0, 3, 0, "Pictures").setIcon(android.R.drawable.ic_menu_camera);
+		
+		menu.add(0, 5, 0, "Remote");
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent myIntent = null;
+		
+		switch (item.getItemId()) {
+		case 1:
+			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent.putExtra("shareType", MediaType.music.toString());
+			break;
+		case 2:
+			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent.putExtra("shareType", MediaType.video.toString());
+			break;
+		case 3:
+			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent.putExtra("shareType", MediaType.pictures.toString());
+			break;
+		case 5:
+			myIntent = new Intent(this, RemoteActivity.class);
+			break;
+		}
+		
+		if (myIntent != null) {
+			startActivity(myIntent);
+			return true;
+		}
+		return false;
 	}
 
 	private byte[] download(String pathToDownload) {

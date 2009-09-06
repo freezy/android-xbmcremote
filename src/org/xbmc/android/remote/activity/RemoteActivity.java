@@ -28,12 +28,16 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
+import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -202,5 +206,42 @@ public class RemoteActivity extends Activity {
 		// back 
 		setupButton(R.id.RemoteXboxImgBtnBack, ButtonCodes.REMOTE_BACK, R.drawable.remote_xbox_back, R.drawable.remote_xbox_back_down);
 		
+	}
+	
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, 1, 0, "Music");
+		menu.add(0, 2, 0, "Video");
+		menu.add(0, 3, 0, "Pictures").setIcon(android.R.drawable.ic_menu_camera);
+		menu.add(0, 4, 0, "Now Playing").setIcon(android.R.drawable.ic_media_play);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent myIntent = null;
+		
+		switch (item.getItemId()) {
+		case 1:
+			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent.putExtra("shareType", MediaType.music.toString());
+			break;
+		case 2:
+			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent.putExtra("shareType", MediaType.video.toString());
+			break;
+		case 3:
+			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent.putExtra("shareType", MediaType.pictures.toString());
+			break;
+		case 4:
+			myIntent = new Intent(this, NowPlayingActivity.class);
+			break;
+		}
+		
+		if (myIntent != null) {
+			startActivity(myIntent);
+			return true;
+		}
+		return false;
 	}
 }
