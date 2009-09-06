@@ -34,23 +34,28 @@ import org.xbmc.httpapi.type.MediaType;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Handler.Callback;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.*;
 
-public class MediaListActivity extends ListActivity {
+public class MediaListActivity extends ListActivity implements Callback, Runnable {
 	
 	private final Stack<String> mHistory = new Stack<String>();;
 	private final HttpClient mClient = ConnectionManager.getHttpClient(this);
 
 	private List<MediaLocation> fileItems;
-	private String currentUrl;
+	private String currentUrl, gettingUrl;
 	private MediaType mMediaType;
+	private Handler mediaListHandler;
 
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mediaListHandler = new Handler(this);
 		ErrorHandler.setActivity(this);
 		final String st = getIntent().getStringExtra("shareType");
 		mMediaType = st != null ? MediaType.valueOf(st) : MediaType.music;
@@ -60,6 +65,8 @@ public class MediaListActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
+		if (fileItems == null)
+			return;
 
 		MediaLocation item = fileItems.get(position);
 		if (item.isDirectory) {
@@ -73,18 +80,15 @@ public class MediaListActivity extends ListActivity {
 	}
 
 	private void fillUp(String url) {
-		final List<String> presentationList = new ArrayList<String>();
-		if (url.length() == 0) {
-			fileItems = mClient.info.getShares(mMediaType);
-		} else {
-			fileItems =  mClient.info.getDirectory(url);
-		}
-		for (MediaLocation item : fileItems) {
-			presentationList.add(item.name);
-		}
-		currentUrl = url;
-		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, presentationList));
-		getListView().setTextFilterEnabled(true);
+		if (gettingUrl != null)
+			return;
+		
+		gettingUrl = url;
+		fileItems = null;
+		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new String[]{ "Loading..." }));
+		getListView().setTextFilterEnabled(false);
+		Thread thread = new Thread(this);
+		thread.start();
 	}
 
 	@Override
@@ -94,5 +98,39 @@ public class MediaListActivity extends ListActivity {
 			return true;
 		} else
 			return super.onKeyDown(keyCode, event);
+	}
+
+	public boolean handleMessage(Message msg) {
+		if (msg.what == 1) {
+			Bundle data = msg.getData();
+			
+			setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data.getStringArrayList("items")));
+			//TODO Bug in our getListItem code, if filtered the numbers are really wrong.
+			getListView().setTextFilterEnabled(false);
+			
+			currentUrl = gettingUrl;
+			gettingUrl = null;
+			return true;
+		}
+		return false;
+	}
+
+	public void run() {
+		if (gettingUrl.length() == 0) {
+			fileItems = mClient.info.getShares(mMediaType);
+		} else {
+			fileItems =  mClient.info.getDirectory(gettingUrl);
+		}
+		
+		ArrayList<String> presentationList = new ArrayList<String>();
+
+		for (MediaLocation item : fileItems) {
+			presentationList.add(item.name);
+		}
+		
+		Message msg = Message.obtain(mediaListHandler, 1);
+		Bundle data = msg.getData();
+		data.putStringArrayList("items", presentationList);
+		mediaListHandler.sendMessage(msg);
 	}
 }
