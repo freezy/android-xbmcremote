@@ -170,7 +170,7 @@ public class RemoteActivity extends Activity {
 	private void setupButtons() {
 		
 		// seek back
-		setupButton(R.id.RemoteXboxImgBtnSeekBack, ButtonCodes.REMOTE_REVERSE, R.drawable.remote_xbox_play, R.drawable.remote_xbox_play_down);
+		setupButton(R.id.RemoteXboxImgBtnSeekBack, ButtonCodes.REMOTE_REVERSE, R.drawable.remote_xbox_seek_back, R.drawable.remote_xbox_seek_back_down);
 		// play
 		setupButton(R.id.RemoteXboxImgBtnPlay, ButtonCodes.REMOTE_PLAY, R.drawable.remote_xbox_play, R.drawable.remote_xbox_play_down);
 		// seek forward
