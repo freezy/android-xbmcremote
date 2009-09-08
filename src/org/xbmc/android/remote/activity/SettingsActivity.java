@@ -100,7 +100,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		Preference pref = getPreferenceScreen().findPreference(key);
 		String origSummary = mSummaries.get(key);
-		if (origSummary.contains(SUMMARY_VALUE_PLACEHOLDER)) {
+		if (origSummary != null && origSummary.contains(SUMMARY_VALUE_PLACEHOLDER)) {
 			pref.setSummary(origSummary.replaceAll(SUMMARY_VALUE_PLACEHOLDER, sharedPreferences.getString(key, "")));
 		}
 	}

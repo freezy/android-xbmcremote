@@ -5,6 +5,10 @@
 		android:title="XBMC IP Address / Host"
 		android:defaultValue="10.10.10.10" 
 		android:summary="Connect to address %value%" />
+	<CheckBoxPreference
+		android:key="setting_vibrate_on_touch"
+		android:title="Vibrate on Touch"
+		android:summary="Makes the remote control vibrate on touch." />
 	<PreferenceCategory android:title="Web Server">
 		<EditTextPreference
 			android:key="setting_http_port"

@@ -33,8 +33,10 @@ import org.xbmc.httpapi.type.MediaType;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -117,7 +119,15 @@ public class RemoteActivity extends Activity {
 		}
 	}
 
-
+	/**
+	 * Checks the preferences if vibration on click is activated.
+	 * @return True if vibration activated, false otherwise.
+	 */
+	private boolean isVibrationSet(){
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		return prefs.getBoolean("setting_vibrate_on_touch", true);
+	}
+	
 	/**
 	 * Handles the push- release button code. Switches image of the pressed
 	 * button, vibrates and executes command.
@@ -132,7 +142,8 @@ public class RemoteActivity extends Activity {
 		}
 		public boolean onTouch(View v, MotionEvent event) {
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				mVibrator.vibrate(45);
+				if (isVibrationSet())
+					mVibrator.vibrate(45);
 				try {
 					mClient.sendButton("R1", mAction, true, true, true, (short)0, (byte)0);
 				} catch (IOException e) {
