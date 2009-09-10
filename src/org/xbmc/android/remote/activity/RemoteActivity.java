@@ -42,6 +42,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 
@@ -61,17 +63,20 @@ public class RemoteActivity extends Activity {
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ErrorHandler.setActivity(this);
-        setContentView(R.layout.remote_xbox);
-        
-        mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-  	  	mClient = ConnectionManager.getEventClient(this);
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		
+		ErrorHandler.setActivity(this);
+		setContentView(R.layout.remote_xbox);
+
+		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		mClient = ConnectionManager.getEventClient(this);
 
 		setupButtons();
-    }
-    
+	}
+
 	@Override
 	public boolean onTrackballEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN)
@@ -180,6 +185,9 @@ public class RemoteActivity extends Activity {
 	 */
 	private void setupButtons() {
 		
+		// top display button
+		setupButton(R.id.RemoteXboxImgBtnDisplay, ButtonCodes.REMOTE_DISPLAY, R.drawable.remote_xbox_display, R.drawable.remote_xbox_display_down);
+		
 		// seek back
 		setupButton(R.id.RemoteXboxImgBtnSeekBack, ButtonCodes.REMOTE_REVERSE, R.drawable.remote_xbox_seek_back, R.drawable.remote_xbox_seek_back_down);
 		// play
@@ -211,9 +219,9 @@ public class RemoteActivity extends Activity {
 		setupButton(R.id.RemoteXboxImgBtnRight, ButtonCodes.REMOTE_RIGHT, R.drawable.remote_xbox_right, R.drawable.remote_xbox_right_down);
 		
 		// menu
-		setupButton(R.id.RemoteXboxImgBtnMenu, ButtonCodes.REMOTE_MENU, R.drawable.remote_xbox_menu_down, R.drawable.remote_xbox_menu_down);
+		setupButton(R.id.RemoteXboxImgBtnMenu, ButtonCodes.REMOTE_MENU, R.drawable.remote_xbox_menu, R.drawable.remote_xbox_menu_down);
 		// down
-		setupButton(R.id.RemoteXboxImgBtnDown, ButtonCodes.REMOTE_DOWN, R.drawable.remote_xbox_down_down, R.drawable.remote_xbox_down);
+		setupButton(R.id.RemoteXboxImgBtnDown, ButtonCodes.REMOTE_DOWN, R.drawable.remote_xbox_down, R.drawable.remote_xbox_down_down);
 		// back 
 		setupButton(R.id.RemoteXboxImgBtnBack, ButtonCodes.REMOTE_BACK, R.drawable.remote_xbox_back, R.drawable.remote_xbox_back_down);
 		
