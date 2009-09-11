@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/RemoteXboxLinearLayoutOuter"
-	android:background="#000000" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:orientation="vertical">
-	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutInner" android:layout_gravity="center_horizontal" android:gravity="center_horizontal" android:orientation="horizontal">
+	android:background="#000000" android:layout_width="fill_parent" android:layout_gravity="center_horizontal" android:orientation="vertical" android:layout_height="fill_parent">
+	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutInner" android:gravity="center_horizontal" android:orientation="horizontal" android:layout_gravity="center_vertical|center_horizontal" android:layout_marginTop="12px">
 		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutLeft" android:orientation="vertical">
 			<ImageButton android:id="@+id/RemoteXboxImgBtnTv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_tv"></ImageButton>
 			<ImageButton android:id="@+id/RemoteXboxImgBtnMusic" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_music"></ImageButton>
