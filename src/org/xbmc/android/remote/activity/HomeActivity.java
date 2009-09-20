@@ -21,6 +21,8 @@
 
 package org.xbmc.android.remote.activity;
 
+import java.util.ArrayList;
+
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.httpapi.HttpClient;
@@ -30,81 +32,80 @@ import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
+import android.graphics.AvoidXfermode;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class HomeActivity extends Activity implements Callback, Runnable {
 	Handler homeHandler;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-        WindowManager wm = getWindowManager(); 
-        Display d = wm.getDefaultDisplay();
-
-        if (d.getWidth() > d.getHeight())
-        	setContentView(R.layout.main_landscape);
-        else
-        	setContentView(R.layout.main_portrait);
-
-        homeHandler = new Handler(this);
-        ((TextView) findViewById(R.id.HomeVersionTextView)).setText("Connecting...");
-        Thread connectThread = new Thread(this);
-        connectThread.start();
-
-		final Button GoMusicButton = (Button) findViewById(R.id.GoMusicButton);
-		GoMusicButton.setOnClickListener(new View.OnClickListener() {
+		setContentView(R.layout.home);
+		
+		final ArrayList<HomeItem> homeItems = new ArrayList<HomeItem>();
+		
+		homeItems.add(new HomeItem(R.drawable.home_remote, "Remote Control", "Use as", new View.OnClickListener() {
+			public void onClick(View v) {
+				Intent myIntent = new Intent(v.getContext(), RemoteActivity.class);
+				startActivityForResult(myIntent, 0);
+			}
+		}));
+		homeItems.add(new HomeItem(R.drawable.home_music, "Music", "Listen to", new View.OnClickListener() {
 			public void onClick(View v) {
 //				Intent myIntent = new Intent(v.getContext(), AlbumGridActivity.class);
 				Intent myIntent = new Intent(v.getContext(), MediaListActivity.class);
 				myIntent.putExtra("shareType", MediaType.music.toString());
 				startActivityForResult(myIntent, 0);
 			}
-		});
-
-		final Button GoVideosButton = (Button) findViewById(R.id.GoVideosButton);
-		GoVideosButton.setOnClickListener(new View.OnClickListener() {
+		}));
+		homeItems.add(new HomeItem(R.drawable.home_video, "Videos", "Watch your", new View.OnClickListener() {
 			public void onClick(View v) {
 				Intent myIntent = new Intent(v.getContext(), MediaListActivity.class);
 				myIntent.putExtra("shareType", MediaType.video.toString());
 				startActivityForResult(myIntent, 0);
 			}
-		});
-
-		final Button GoPicturesButton = (Button) findViewById(R.id.GoPicturesButton);
-		GoPicturesButton.setOnClickListener(new View.OnClickListener() {
+		}));
+		homeItems.add(new HomeItem(R.drawable.home_pictures, "Pictures", "Browse your", new View.OnClickListener() {
 			public void onClick(View v) {
 				Intent myIntent = new Intent(v.getContext(), MediaListActivity.class);
 				myIntent.putExtra("shareType", MediaType.pictures.toString());
 				startActivityForResult(myIntent, 0);
 			}
-		});
-
-		final Button GoRemoteButton = (Button) findViewById(R.id.GoRemoteButton);
-		GoRemoteButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				Intent myIntent = new Intent(v.getContext(), RemoteActivity.class);
-				startActivityForResult(myIntent, 0);
-			}
-		});
-
-		final Button GoNowPlayingButton = (Button) findViewById(R.id.GoNowPlayingButton);
-		GoNowPlayingButton.setOnClickListener(new View.OnClickListener() {
+		}));
+		homeItems.add(new HomeItem(R.drawable.home_playing, "Now Playing", "See what's", new View.OnClickListener() {
 			public void onClick(View v) {
 				Intent myIntent = new Intent(v.getContext(), NowPlayingActivity.class);
 				startActivityForResult(myIntent, 0);
 			}
-		});
+		}));
+
+		final GridView lv = (GridView)findViewById(R.id.ItemListView);
+		lv.setAdapter(new HomeAdapter(this, homeItems));
+		
+        homeHandler = new Handler(this);
+        ((TextView) findViewById(R.id.HomeVersionTextView)).setText("Connecting...");
+        Thread connectThread = new Thread(this);
+        connectThread.start();
 	}
 
 	@Override
@@ -156,4 +157,45 @@ public class HomeActivity extends Activity implements Callback, Runnable {
 		msg.setData(bundle);
 		homeHandler.sendMessage(msg);
 	}
+	
+	
+	private class HomeItem {
+		public final int icon;
+		public final String title, subtitle;
+		public final  View.OnClickListener onClick;
+		
+		public HomeItem(int icon, String title, String subtitle, View.OnClickListener onClick) {
+			this.icon = icon;
+			this.title = title;
+			this.subtitle = subtitle;
+			this.onClick = onClick;
+		}
+	}
+	
+	private class HomeAdapter extends ArrayAdapter<HomeItem> {
+		private Activity mActivity;
+		HomeAdapter(Activity activity, ArrayList<HomeItem> items) {
+			super(activity, R.layout.home_item, items);
+			mActivity = activity;
+		}
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View row;
+			if (convertView == null) {
+				LayoutInflater inflater = mActivity.getLayoutInflater();
+				row = inflater.inflate(R.layout.home_item, null);
+			} else {
+				row = convertView;
+			}
+			HomeItem item = this.getItem(position);
+			TextView title = (TextView)row.findViewById(R.id.TitleTextView);
+			TextView subtitle = (TextView)row.findViewById(R.id.SubtitleTextView);
+			ImageView icon = (ImageView)row.findViewById(R.id.IconImageView);
+			title.setText(item.title);
+			subtitle.setText(item.subtitle);
+			icon.setImageResource(item.icon);
+			row.setOnClickListener(item.onClick);
+			return row;
+		}
+	}
+	
 }

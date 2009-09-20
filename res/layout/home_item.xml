@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="fill_parent"
+	android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/OuterLinearLayout">
+	<ImageView android:background="@drawable/home_music"
+		android:layout_width="64px" android:layout_height="64px" android:id="@+id/IconImageView"></ImageView>
+	<LinearLayout android:id="@+id/LinearLayout02"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:orientation="vertical" android:paddingTop="5px">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/SubtitleTextView"
+			android:text="Subtitle"></TextView>
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/TitleTextView"
+			android:textSize="24px" android:text="Title"></TextView>
+	</LinearLayout>
+</LinearLayout>
