@@ -99,7 +99,7 @@ public class HomeActivity extends Activity implements Callback, Runnable {
 			}
 		}));
 
-		final GridView lv = (GridView)findViewById(R.id.ItemListView);
+		final GridView lv = (GridView)findViewById(R.id.HomeItemGridView);
 		lv.setAdapter(new HomeAdapter(this, homeItems));
 		
         homeHandler = new Handler(this);
