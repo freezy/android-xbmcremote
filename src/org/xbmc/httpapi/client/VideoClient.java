@@ -30,14 +30,14 @@ import org.xbmc.httpapi.Connection;
  */
 public class VideoClient {
 	
-	private final Connection mConnection;
+//	private final Connection mConnection;
 
 	/**
 	 * Class constructor needs reference to HTTP client connection
 	 * @param connection
 	 */
 	public VideoClient(Connection connection) {
-		mConnection = connection;
+//		mConnection = connection;
 	}
 	
 	/**

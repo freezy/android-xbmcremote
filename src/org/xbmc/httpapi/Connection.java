@@ -193,7 +193,7 @@ public class Connection {
 	 * Sets the correct response format
 	 * @deprecated doesn't really work
 	 */
-	private void setResponseFormat() {
+/*	private void setResponseFormat() {
 		try {
 			assertBoolean("SetResponseFormat", "WebHeader;false");
 			assertBoolean("SetResponseFormat", "WebFooter;false");
@@ -207,7 +207,7 @@ public class Connection {
 		} catch (WrongDataFormatException e) {
 			mErrorHandler.handle(e);
 		}
-	}
+	}*/
 
 	/**
 	 * Creates the API URL
