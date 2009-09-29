@@ -22,7 +22,7 @@
 package org.xbmc.android.remote.activity;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Stack;
 
 import org.xbmc.android.util.ConnectionManager;
@@ -47,7 +47,7 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 	private final Stack<String> mHistory = new Stack<String>();;
 	private final HttpClient mClient = ConnectionManager.getHttpClient(this);
 
-	private List<MediaLocation> fileItems;
+	private HashMap<String, MediaLocation> fileItems;
 	private String currentUrl, gettingUrl;
 	private MediaType mMediaType;
 	private Handler mediaListHandler;
@@ -69,7 +69,7 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 		if (fileItems == null)
 			return;
 
-		MediaLocation item = fileItems.get(position);
+		MediaLocation item = fileItems.get(l.getAdapter().getItem(position));
 		if (item.isDirectory) {
 			mHistory.add(currentUrl);
 			fillUp(item.path);
@@ -87,7 +87,7 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 		gettingUrl = url;
 		fileItems = null;
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new String[]{ "Loading..." }));
-		getListView().setTextFilterEnabled(false);
+		getListView().setTextFilterEnabled(true);
 		Thread thread = new Thread(this);
 		thread.start();
 	}
@@ -162,8 +162,7 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 			Bundle data = msg.getData();
 			
 			setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data.getStringArrayList("items")));
-			//TODO Bug in our getListItem code, if filtered the numbers are really wrong.
-			getListView().setTextFilterEnabled(false);
+			getListView().setTextFilterEnabled(true);
 			
 			currentUrl = gettingUrl;
 			gettingUrl = null;
@@ -173,16 +172,19 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 	}
 
 	public void run() {
+		ArrayList<MediaLocation> dir;
 		if (gettingUrl.length() == 0) {
-			fileItems = mClient.info.getShares(mMediaType);
+			dir = mClient.info.getShares(mMediaType);
 		} else {
-			fileItems =  mClient.info.getDirectory(gettingUrl);
+			dir =  mClient.info.getDirectory(gettingUrl);
 		}
 		
 		ArrayList<String> presentationList = new ArrayList<String>();
+		fileItems = new HashMap<String, MediaLocation>();
 
-		for (MediaLocation item : fileItems) {
+		for (MediaLocation item : dir) {
 			presentationList.add(item.name);
+			fileItems.put(item.name, item);
 		}
 		
 		Message msg = Message.obtain(mediaListHandler, 1);
