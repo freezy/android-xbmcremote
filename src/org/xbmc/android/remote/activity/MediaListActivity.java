@@ -23,7 +23,6 @@ package org.xbmc.android.remote.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Stack;
 
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
@@ -37,18 +36,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
 public class MediaListActivity extends ListActivity implements Callback, Runnable {
-	private final Stack<String> mHistory = new Stack<String>();;
 	private final HttpClient mClient = ConnectionManager.getHttpClient(this);
 
 	private HashMap<String, MediaLocation> fileItems;
-	private String currentUrl, gettingUrl;
+	private volatile String gettingUrl;
 	private MediaType mMediaType;
 	private Handler mediaListHandler;
 
@@ -60,7 +57,8 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 		ErrorHandler.setActivity(this);
 		final String st = getIntent().getStringExtra("shareType");
 		mMediaType = st != null ? MediaType.valueOf(st) : MediaType.music;
-		fillUp("");
+		final String path = getIntent().getStringExtra("path");
+		fillUp(path == null ? "" : path);
 	}
 
 	@Override
@@ -71,8 +69,10 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 
 		MediaLocation item = fileItems.get(l.getAdapter().getItem(position));
 		if (item.isDirectory) {
-			mHistory.add(currentUrl);
-			fillUp(item.path);
+			Intent myIntent = new Intent(this, MediaListActivity.class);
+			myIntent.putExtra("shareType", mMediaType.toString());
+			myIntent.putExtra("path", item.path);
+			startActivityForResult(myIntent, 0);
 		} else {
 			if (mClient.control.playFile(item.path)) {
 				startActivityForResult(new Intent(v.getContext(), NowPlayingActivity.class), 0);
@@ -87,18 +87,9 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 		gettingUrl = url;
 		fileItems = null;
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new String[]{ "Loading..." }));
-		getListView().setTextFilterEnabled(true);
+		getListView().setTextFilterEnabled(false);
 		Thread thread = new Thread(this);
 		thread.start();
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK && !mHistory.isEmpty()) {
-			fillUp(mHistory.pop());
-			return true;
-		} else
-			return super.onKeyDown(keyCode, event);
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -163,9 +154,7 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 			
 			setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data.getStringArrayList("items")));
 			getListView().setTextFilterEnabled(true);
-			
-			currentUrl = gettingUrl;
-			gettingUrl = null;
+
 			return true;
 		}
 		return false;
