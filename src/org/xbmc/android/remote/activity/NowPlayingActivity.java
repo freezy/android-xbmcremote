@@ -202,23 +202,20 @@ public class NowPlayingActivity extends Activity implements Callback {
         final ImageButton PlayPrevButton = (ImageButton) findViewById(R.id.MediaPreviousButton);
 		PlayPrevButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				if (control.playPrevious())
-					nowPlayingHandler.sendEmptyMessage(1);
+				control.playPrevious();
 			}
 		});
 		final ImageButton PlayButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
 		PlayButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				if (control.pause())
-					nowPlayingHandler.sendEmptyMessage(1);
+				control.pause();
 			}
 		});
 		
 		final ImageButton PlayNextButton = (ImageButton) findViewById(R.id.MediaNextButton);
 		PlayNextButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				if (control.playNext())
-					nowPlayingHandler.sendEmptyMessage(1);
+				control.playNext();
 			}
 		});
 	}
