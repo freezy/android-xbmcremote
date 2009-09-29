@@ -135,7 +135,7 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 
 	Thread updateViewThread;
 	
-	public boolean handleMessage(Message msg) {
+	public synchronized boolean handleMessage(Message msg) {
 		if (msg.what == 1) {
 			if (updateViewThread == null || !updateViewThread.isAlive()) {
 				updateViewThread = new Thread(this);
@@ -210,23 +210,19 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 	
 					if (downloadURI != null && downloadURI.length() > 0) {
 						if (!downloadURI.equals(mCoverPath)) {
-				  	  		mCover = this.getResources().getDrawable(R.drawable.cover_downloading);
 				  	  		mCoverPath = downloadURI;
-				  	  		nowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
+				  	  		setCover(this.getResources().getDrawable(R.drawable.cover_downloading));
 	
 				  	  		byte[] buffer = download(downloadURI);
 	
 				  	  		if (buffer == null || buffer.length == 0)
-				  	  			mCover = this.getResources().getDrawable(R.drawable.nocover);
+				  	  			setCover(this.getResources().getDrawable(R.drawable.nocover));
 				  	  		else
-						  	  	mCover = new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
-				  	  		
-				  	  		nowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
+				  	  			setCover(new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length)));
 						}
 					} else {
-						mCover = this.getResources().getDrawable(R.drawable.nocover);
 						mCoverPath = null;
-						nowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
+						setCover(this.getResources().getDrawable(R.drawable.nocover));
 					}
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
@@ -239,6 +235,11 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 		}
 	}
 	
+	private synchronized void setCover(Drawable cover) {
+		mCover = cover;
+		nowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
+	}
+
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, 1, 0, "Music");
 		menu.add(0, 2, 0, "Video");
