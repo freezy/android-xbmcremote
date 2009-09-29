@@ -167,7 +167,6 @@ public class HomeActivity extends Activity implements Callback, Runnable, OnItem
 			startActivityForResult(new Intent(v.getContext(), RemoteActivity.class), 0);
 			break;
 		case HOME_ACTION_MUSIC:
-			//startActivityForResult(new Intent(v.getContext(), AlbumGridActivity.class), 0);
 			startActivityForResult(createMediaIntent(MediaType.music, v), 0);
 			break;
 		case HOME_ACTION_VIDEOS:
