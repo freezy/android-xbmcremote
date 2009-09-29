@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.httpapi.HttpClient;
@@ -114,6 +113,9 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 		
 		menu.add(0, 4, 0, "Now Playing").setIcon(android.R.drawable.ic_media_play);
 		menu.add(0, 5, 0, "Remote");
+		
+		if (mMediaType.equals(MediaType.music) || mMediaType.equals(MediaType.video))
+			menu.add(0, 6, 0, "Update Library");
 		return true;
 	}
 
@@ -142,6 +144,9 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 			break;
 		case 5:
 			myIntent = new Intent(this, RemoteActivity.class);
+			break;
+		case 6:
+			mClient.control.updateLibrary(mMediaType.toString());
 			break;
 		}
 		

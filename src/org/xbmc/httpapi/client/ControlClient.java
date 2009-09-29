@@ -181,6 +181,10 @@ public class ControlClient {
 	public boolean navSelect() {
 		return mConnection.getBoolean("Action", String.valueOf(GuiActions.ACTION_SELECT_ITEM));
 	}
+	
+	public boolean updateLibrary(String mediaType) {
+		return mConnection.getBoolean("ExecBuiltin", "UpdateLibrary(" + mediaType + ")");
+	}
 
 	public boolean isConnected() {
 		return mConnection.isConnected();
