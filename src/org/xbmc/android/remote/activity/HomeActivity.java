@@ -69,12 +69,16 @@ public class HomeActivity extends Activity implements Callback, Runnable {
         Message connectMsg = new Message();        
         connectMsg.what = 3;
 
-		homeItems.add(new HomeItem(R.drawable.home_remote, "Remote Control", "Use as", new View.OnClickListener() {
+        final HomeItem remote = new HomeItem(R.drawable.home_remote, "Remote Control", "Use as", new View.OnClickListener() {
 			public void onClick(View v) {
 				Intent myIntent = new Intent(v.getContext(), RemoteActivity.class);
 				startActivityForResult(myIntent, 0);
 			}
-		}));
+		});
+        
+		homeItems.add(remote);
+		offlineItems.add(remote);
+		
 		homeItems.add(new HomeItem(R.drawable.home_music, "Music", "Listen to", new View.OnClickListener() {
 			public void onClick(View v) {
 //				Intent myIntent = new Intent(v.getContext(), AlbumGridActivity.class);
