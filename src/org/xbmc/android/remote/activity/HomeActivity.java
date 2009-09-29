@@ -157,6 +157,8 @@ public class HomeActivity extends Activity implements Callback, Runnable, OnItem
 		final GridView gridView = ((GridView)findViewById(R.id.HomeItemGridView));
 		gridView.setAdapter(adapter);
 		gridView.setOnItemClickListener(this);
+		gridView.setSelected(true);
+		gridView.setSelection(0);
 	}
 	
 	public void onItemClick(AdapterView<?> listView, View v, int position, long ID) {
