@@ -69,6 +69,18 @@ public class ConnectionManager {
 	}
 	
 	/**
+	 * Forces the next HTTP Client access to recreate the client and re-read the settings. 
+	 */
+	public static void resetClient() {
+		if (sHttpApiInstance != null) {
+			sHttpApiInstance = null;
+		}
+		if (sEventClientInstance != null) {
+			sEventClientInstance = null;
+		}
+	}
+	
+	/**
 	 * Once instantiated with the activity we can use this one.
 	 * @return Client for XBMC's HTTP API
 	 */

@@ -27,7 +27,6 @@
 			android:password="true"
 			android:defaultValue="xbmc" 
 			android:summary="Password (not displayed)" />
-	
 </PreferenceCategory>
 	<PreferenceCategory android:title="Event Server">
 		<EditTextPreference
@@ -36,7 +35,15 @@
 			android:numeric="decimal"
 			android:defaultValue="9777" 
 			android:summary="Connect to port %value%" />
-	</PreferenceCategory><PreferenceCategory android:title="Wake On Lan"><EditTextPreference android:key="setting_wol" android:title="XBMC Mac Address" android:summary="Send WOL Magic Packet to %value%"></EditTextPreference><EditTextPreference android:defaultValue="40" android:dependency="setting_wol" android:key="setting_wol_wait" android:title="Timeout before reconnect" android:summary="Wait for %value% seconds before trying to reconnect"></EditTextPreference>
-</PreferenceCategory>
-
+	</PreferenceCategory>
+	<PreferenceCategory android:title="Wake On Lan">
+		<EditTextPreference android:key="setting_wol"
+			android:title="XBMC Mac Address" 
+			android:summary="Send WOL Magic Packet to %value%" />
+		<EditTextPreference android:defaultValue="40"
+			android:dependency="setting_wol" 
+			android:key="setting_wol_wait"
+			android:title="Timeout before reconnect" 
+			android:summary="Wait for %value% seconds before trying to reconnect" />
+	</PreferenceCategory>
 </PreferenceScreen>

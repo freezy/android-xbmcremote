@@ -24,6 +24,7 @@ package org.xbmc.android.remote.activity;
 import java.util.Hashtable;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.util.ConnectionManager;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -102,6 +103,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		String origSummary = mSummaries.get(key);
 		if (origSummary != null && origSummary.contains(SUMMARY_VALUE_PLACEHOLDER)) {
 			pref.setSummary(origSummary.replaceAll(SUMMARY_VALUE_PLACEHOLDER, sharedPreferences.getString(key, "")));
+		}
+		if (key.equals("setting_ip") || key.equals("setting_http_port") || key.equals("setting_eventserver_port")) {
+			ConnectionManager.resetClient();
 		}
 	}
 
