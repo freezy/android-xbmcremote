@@ -96,8 +96,8 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if (mMediaType.equals(MediaType.music))
-			menu.add(0, 0, 0, "Change view").setIcon(android.R.drawable.ic_menu_view);
+		/*if (mMediaType.equals(MediaType.music))
+			menu.add(0, 0, 0, "Change view").setIcon(android.R.drawable.ic_menu_view);*/
 		if (!mMediaType.equals(MediaType.music))
 			menu.add(0, 1, 0, "Music");
 		if (!mMediaType.equals(MediaType.video))
