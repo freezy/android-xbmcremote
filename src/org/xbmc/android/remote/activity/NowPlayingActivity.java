@@ -42,6 +42,7 @@ import org.xbmc.httpapi.type.SeekType;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -60,7 +61,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class NowPlayingActivity extends Activity implements Callback, Runnable {
+public class NowPlayingActivity extends Activity implements Callback {
 	public static final int MESSAGE_COVER_IMAGE = 668;
 	public static final int MESSAGE_ARTIST_TEXT_VIEW = 667;
 	public static final int MESSAGE_NOW_PLAYING_PROGRESS = 666;
@@ -71,6 +72,82 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 	private String lastPos = "-1";
 	private String mCoverPath;
 	private Drawable mCover;
+	private UpdateThread updateThread;
+	
+	private class UpdateThread extends Thread {
+		
+		private Resources resources;
+		
+		public UpdateThread(Resources resources) {
+			this.resources = resources;
+		}
+		
+		public void run() {
+			while (!isInterrupted()) {
+				Message msg = new Message();
+				Bundle bundle = msg.getData();
+				if(!control.isConnected()) {
+					msg.what = MESSAGE_CONNECTION_ERROR;
+					nowPlayingHandler.sendMessage(msg);
+				} else {
+					msg.what = MESSAGE_NOW_PLAYING_PROGRESS;
+					bundle.putInt("progress", control.getPercentage());
+					
+					CurrentlyPlaying currPlaying = info.getCurrentlyPlaying();
+					bundle.putBoolean("isplaying", currPlaying != null && currPlaying.isPlaying);
+					
+					String currentPos = info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE) + info.getMusicInfo(MusicInfo.MUSICPLAYER_DURATION);
+					nowPlayingHandler.sendMessage(msg);
+					
+					if (!lastPos.equals(currentPos)) {
+						lastPos = currentPos;
+						msg = new Message();
+						bundle = msg.getData();
+				  	  	msg.what = MESSAGE_ARTIST_TEXT_VIEW;
+				  	  	
+						bundle.putString("album", info.getMusicInfo(MusicInfo.MUSICPLAYER_ALBUM));
+						bundle.putString("artist", info.getMusicInfo(MusicInfo.MUSICPLAYER_ARTIST));
+						bundle.putString("title", info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE));
+						
+						nowPlayingHandler.sendMessage(msg);
+						
+						try {				
+							String downloadURI = info.getCurrentlyPlayingThumbURI();
+			
+							if (downloadURI != null && downloadURI.length() > 0) {
+								if (!downloadURI.equals(mCoverPath)) {
+						  	  		mCoverPath = downloadURI;
+						  	  		setCover(resources.getDrawable(R.drawable.cover_downloading));
+			
+						  	  		byte[] buffer = download(downloadURI);
+			
+						  	  		if (buffer == null || buffer.length == 0)
+						  	  			setCover(resources.getDrawable(R.drawable.nocover));
+						  	  		else
+						  	  			setCover(new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length)));
+								}
+							} else {
+								mCoverPath = null;
+								setCover(resources.getDrawable(R.drawable.nocover));
+							}
+						} catch (MalformedURLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (URISyntaxException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+			
+			try {
+				sleep(1000);
+			} catch (InterruptedException e) {
+				return;
+			}
+		}
+	}
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,9 +165,23 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
   	  	
   	  	nowPlayingHandler = new Handler(this);
   	  	setupButtons();
-  	  	nowPlayingHandler.sendEmptyMessage(1);
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		updateThread = new UpdateThread(getResources());
+		updateThread.start();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		updateThread.interrupt();
+	}
+	
 	private void setupButtons() {
 		final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
 		seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -135,14 +226,7 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 	Thread updateViewThread;
 	
 	public synchronized boolean handleMessage(Message msg) {
-		if (msg.what == 1) {
-			if (updateViewThread == null || !updateViewThread.isAlive()) {
-				updateViewThread = new Thread(this);
-				updateViewThread.start();
-			}
-			nowPlayingHandler.sendEmptyMessageDelayed(1, 1000);
-			return true;
-		} else if (msg.what == MESSAGE_NOW_PLAYING_PROGRESS) {
+		if (msg.what == MESSAGE_NOW_PLAYING_PROGRESS) {
 			Bundle data = msg.getData();
 			final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
 			seekBar.setProgress(data.getInt("progress"));
@@ -174,64 +258,6 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 			return true;
 		}
 		return false;
-	}
-
-	public void run() {
-		Message msg = new Message();
-		Bundle bundle = msg.getData();
-		if(!control.isConnected()) {
-			msg.what = MESSAGE_CONNECTION_ERROR;
-			nowPlayingHandler.sendMessage(msg);
-		} else {
-			msg.what = MESSAGE_NOW_PLAYING_PROGRESS;
-			bundle.putInt("progress", control.getPercentage());
-			
-			CurrentlyPlaying currPlaying = info.getCurrentlyPlaying();
-			bundle.putBoolean("isplaying", currPlaying != null && currPlaying.isPlaying);
-			
-			String currentPos = info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE) + info.getMusicInfo(MusicInfo.MUSICPLAYER_DURATION);
-			nowPlayingHandler.sendMessage(msg);
-			
-			if (!lastPos.equals(currentPos)) {
-				lastPos = currentPos;
-				msg = new Message();
-				bundle = msg.getData();
-		  	  	msg.what = MESSAGE_ARTIST_TEXT_VIEW;
-		  	  	
-				bundle.putString("album", info.getMusicInfo(MusicInfo.MUSICPLAYER_ALBUM));
-				bundle.putString("artist", info.getMusicInfo(MusicInfo.MUSICPLAYER_ARTIST));
-				bundle.putString("title", info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE));
-				
-				nowPlayingHandler.sendMessage(msg);
-				
-				try {				
-					String downloadURI = info.getCurrentlyPlayingThumbURI();
-	
-					if (downloadURI != null && downloadURI.length() > 0) {
-						if (!downloadURI.equals(mCoverPath)) {
-				  	  		mCoverPath = downloadURI;
-				  	  		setCover(this.getResources().getDrawable(R.drawable.cover_downloading));
-	
-				  	  		byte[] buffer = download(downloadURI);
-	
-				  	  		if (buffer == null || buffer.length == 0)
-				  	  			setCover(this.getResources().getDrawable(R.drawable.nocover));
-				  	  		else
-				  	  			setCover(new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length)));
-						}
-					} else {
-						mCoverPath = null;
-						setCover(this.getResources().getDrawable(R.drawable.nocover));
-					}
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 	
 	private synchronized void setCover(Drawable cover) {
