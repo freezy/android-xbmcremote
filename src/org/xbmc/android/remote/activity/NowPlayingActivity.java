@@ -216,13 +216,12 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 	
 				  	  		byte[] buffer = download(downloadURI);
 	
-				  	  		if (buffer == null || buffer.length == 0) {
+				  	  		if (buffer == null || buffer.length == 0)
 				  	  			mCover = this.getResources().getDrawable(R.drawable.nocover);
-				  	  		}
-				  	  		else {
+				  	  		else
 						  	  	mCover = new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
-						  	  	nowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
-				  	  		}
+				  	  		
+				  	  		nowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
 						}
 					} else {
 						mCover = this.getResources().getDrawable(R.drawable.nocover);
