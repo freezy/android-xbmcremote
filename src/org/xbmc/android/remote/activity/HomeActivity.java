@@ -23,11 +23,11 @@ package org.xbmc.android.remote.activity;
 
 import java.util.ArrayList;
 
+import org.xbmc.android.backend.httpapi.HttpApiHandler;
+import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.WakeOnLan;
-import org.xbmc.httpapi.HttpClient;
-import org.xbmc.httpapi.NoNetworkException;
 import org.xbmc.httpapi.info.SystemInfo;
 import org.xbmc.httpapi.type.MediaType;
 
@@ -35,9 +35,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Handler.Callback;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -52,7 +49,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class HomeActivity extends Activity implements Callback, Runnable, OnItemClickListener {
+public class HomeActivity extends Activity implements OnItemClickListener {
 	private static final int HOME_ACTION_REMOTE = 0;
 	private static final int HOME_ACTION_MUSIC = 1;
 	private static final int HOME_ACTION_VIDEOS = 2;
@@ -61,10 +58,10 @@ public class HomeActivity extends Activity implements Callback, Runnable, OnItem
 	private static final int HOME_ACTION_RECONNECT = 5;
 	private static final int HOME_ACTION_WOL = 6;
 
-	Handler homeHandler;
-	Thread connectThread;
-	HomeAdapter homeMenu;
-	HomeAdapter offlineMenu;
+	private HomeAdapter mHomeMenu;
+	private HomeAdapter mOfflineMenu;
+	
+	HttpApiHandler<String> mUpdateVersionHandler;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -75,9 +72,20 @@ public class HomeActivity extends Activity implements Callback, Runnable, OnItem
 		final ArrayList<HomeItem> homeItems = new ArrayList<HomeItem>();
 		final ArrayList<HomeItem> offlineItems = new ArrayList<HomeItem>();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        homeHandler = new Handler(this);
-        Message connectMsg = new Message();        
-        connectMsg.what = 3;
+		mUpdateVersionHandler = new HttpApiHandler<String>(this) {
+			public void run() {
+				if (!ConnectionManager.isNetworkAvailable(mActivity)) {
+					((TextView) findViewById(R.id.HomeVersionTextView)).setText("No network");
+				}
+				if (!value.equals("")) {
+					((TextView) findViewById(R.id.HomeVersionTextView)).setText("XBMC " + value);
+					((GridView)findViewById(R.id.HomeItemGridView)).setAdapter(mHomeMenu);
+				} else {
+					((TextView) findViewById(R.id.HomeVersionTextView)).setText("Check Settings and retry");
+					((GridView)findViewById(R.id.HomeItemGridView)).setAdapter(mOfflineMenu);
+				}
+			}
+		};
 
         final HomeItem remote = new HomeItem(HOME_ACTION_REMOTE, R.drawable.home_remote, "Remote Control", "Use as");
         
@@ -89,19 +97,18 @@ public class HomeActivity extends Activity implements Callback, Runnable, OnItem
 		homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.home_pictures, "Pictures", "Browse your"));
 		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.home_playing, "Now Playing", "See what's"));
 		
-		offlineItems.add(new HomeItem(HOME_ACTION_RECONNECT, R.drawable.home_reconnect, "Again", "Try to connect"));
+		offlineItems.add(new HomeItem(HOME_ACTION_RECONNECT, R.drawable.home_reconnect, "Connect", "Try again to"));
 
 		final String wolMac = prefs.getString("setting_wol", "");
 		if (wolMac.compareTo("") != 0)
 			offlineItems.add(new HomeItem(HOME_ACTION_WOL, R.drawable.home_power, "Power On", "Turn your XBMC's"));
 
-		homeMenu = new HomeAdapter(this, homeItems);
-		offlineMenu = new HomeAdapter(this, offlineItems);
-		setHomeAdapter(offlineMenu);
+		mHomeMenu = new HomeAdapter(this, homeItems);
+		mOfflineMenu = new HomeAdapter(this, offlineItems);
+		setHomeAdapter(mOfflineMenu);
 		
         ((TextView) findViewById(R.id.HomeVersionTextView)).setText("Connecting...");
-        
-		homeHandler.sendMessage(connectMsg);
+        HttpApiThread.info().getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
 	}
 
 	@Override
@@ -124,35 +131,7 @@ public class HomeActivity extends Activity implements Callback, Runnable, OnItem
 		return false;
 	}
 
-	public boolean handleMessage(Message msg) {
-		if (msg.what == 1) { // Connection succeeded
-			((TextView) findViewById(R.id.HomeVersionTextView)).setText(msg.getData().get("version").toString());
-			setHomeAdapter(homeMenu);
-			
-			return true;
-		} else if (msg.what == 2) { // Connection failed - show offline menu
-			((TextView) findViewById(R.id.HomeVersionTextView)).setText(msg.getData().get("version").toString());
-			setHomeAdapter(offlineMenu);
 
-			return true;
-		} else if (msg.what == 3) { // Attempt to connect
-			// If we aren't already trying to connect, get the string from the message
-			// And try to start the connection thread
-			if (connectThread == null || !connectThread.isAlive()) {
-				String connectMsg = msg.getData().getString("message");
-				if (connectMsg == null) {
-					connectMsg = "Connecting...";
-				}
-				((TextView) findViewById(R.id.HomeVersionTextView)).setText(connectMsg);				
-				connectThread = new Thread(this);
-				connectThread.start();				
-			}			
-			return true;
-		}
-		
-		return false;
-	}
-	
 	private void setHomeAdapter(HomeAdapter adapter) {
 		final GridView gridView = ((GridView)findViewById(R.id.HomeItemGridView));
 		gridView.setAdapter(adapter);
@@ -181,13 +160,8 @@ public class HomeActivity extends Activity implements Callback, Runnable, OnItem
 			startActivityForResult(new Intent(v.getContext(), NowPlayingActivity.class), 0);
 			break;
 		case HOME_ACTION_RECONNECT:
-	        Message connectMsg = new Message();
-	        connectMsg.what = 3;
-			Bundle connectText = new Bundle();
-			connectText.putString("message", "Reconnecting...");
-			connectMsg.setData(connectText);
-			homeHandler.sendMessage(connectMsg);
-			
+			((TextView) findViewById(R.id.HomeVersionTextView)).setText("Reconnecting...");
+			HttpApiThread.info().getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
 			break;
 		case HOME_ACTION_WOL:
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -209,34 +183,6 @@ public class HomeActivity extends Activity implements Callback, Runnable, OnItem
 		return myIntent;
 	}
 
-
-	public void run() {
-		String version = "";
-		int msgType = 1;
-		try {
-			if (!ConnectionManager.isNetworkAvailable(this)) {
-				throw new NoNetworkException();
-			}
-			HttpClient client = ConnectionManager.getHttpClient(this);
-
-			if (client.isConnected()) {
-				version = "XBMC " + client.info.getSystemInfo(SystemInfo.SYSTEM_BUILD_VERSION);
-			} else {
-				version = "Connection error, check your setttings!";
-				msgType = 2;
-			}
-		} catch (Exception e) {
-			version = "Connection error, check your setttings!";
-			msgType = 2;
-		}
-		
-		Message msg = new Message();
-		msg.what = msgType;
-		Bundle bundle = new Bundle();
-		bundle.putString("version", version);
-		msg.setData(bundle);
-		homeHandler.sendMessage(msg);
-	}
 		
 	private class HomeItem {
 		public final int ID, icon;
@@ -286,12 +232,8 @@ public class HomeActivity extends Activity implements Callback, Runnable, OnItem
 		
 		@Override
 		public void onFinish() {
-			Message connectMsg = new Message();
-			Bundle connectText = new Bundle();
-			connectText.putString("message", "Attempting to reconnect...");
-			connectMsg.setData(connectText);			
-			connectMsg.what = 3;
-			homeHandler.sendMessage(connectMsg);
+			((TextView) findViewById(R.id.HomeVersionTextView)).setText("Attempting to reconnect...");
+			HttpApiThread.info().getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
 		}
 
 		@Override

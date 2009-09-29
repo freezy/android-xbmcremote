@@ -182,6 +182,15 @@ public class ControlClient {
 		return mConnection.getBoolean("Action", String.valueOf(GuiActions.ACTION_SELECT_ITEM));
 	}
 	
+	/**
+	 * Takes either "video" or "music" as a parameter to begin updating the 
+	 * corresponding database. 
+	 * 
+	 * TODO For "video" you can additionally specify a specific path to be scanned.
+	 * 
+	 * @param mediaType
+	 * @return true on success, false otherwise.
+	 */
 	public boolean updateLibrary(String mediaType) {
 		return mConnection.getBoolean("ExecBuiltin", "UpdateLibrary(" + mediaType + ")");
 	}

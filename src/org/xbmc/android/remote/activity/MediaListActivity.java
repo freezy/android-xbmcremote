@@ -21,42 +21,39 @@
 
 package org.xbmc.android.remote.activity;
 
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.backend.httpapi.HttpApiHandler;
+import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.util.ErrorHandler;
-import org.xbmc.httpapi.HttpClient;
 import org.xbmc.httpapi.data.MediaLocation;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Handler.Callback;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-public class MediaListActivity extends ListActivity implements Callback, Runnable {
+public class MediaListActivity extends ListActivity {
 	public static final int MESSAGE_HANDLE_DATA = 1;
 	public static final int MESSAGE_CONNECTION_ERROR = 2;
 	
-	private final HttpClient mClient = ConnectionManager.getHttpClient(this);
+//	private final HttpClient mClient = ConnectionManager.getHttpClient(this);
 	private HashMap<String, MediaLocation> fileItems;
 	private volatile String gettingUrl;
 	private MediaType mMediaType;
-	private Handler mediaListHandler;
+//	private Handler mediaListHandler;
 
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mediaListHandler = new Handler(this);
+//		mediaListHandler = new Handler(this);
 		ErrorHandler.setActivity(this);
 		final String st = getIntent().getStringExtra("shareType");
 		mMediaType = st != null ? MediaType.valueOf(st) : MediaType.music;
@@ -65,7 +62,7 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	protected void onListItemClick(ListView l, final View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		if (fileItems == null)
 			return;
@@ -77,9 +74,13 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 			myIntent.putExtra("path", item.path);
 			startActivityForResult(myIntent, 0);
 		} else {
-			if (mClient.control.playFile(item.path)) {
-				startActivityForResult(new Intent(v.getContext(), NowPlayingActivity.class), 0);
-			}
+			HttpApiThread.control().playFile(new HttpApiHandler<Boolean>(this) {
+				public void run() {
+					if (value) {
+						startActivityForResult(new Intent(v.getContext(), NowPlayingActivity.class), 0);
+					}
+				}
+			}, item.path);
 		}
 	}
 
@@ -91,10 +92,28 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 		fileItems = null;
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new String[]{ "Loading..." }));
 		getListView().setTextFilterEnabled(false);
-		Thread thread = new Thread(this);
-		thread.start();
+		
+		HttpApiHandler<ArrayList<MediaLocation>> mediaListHandler = new HttpApiHandler<ArrayList<MediaLocation>>(this) {
+			public void run() {
+				ArrayList<String> presentationList = new ArrayList<String>();
+				fileItems = new HashMap<String, MediaLocation>();
+				
+				for (MediaLocation item : value) {
+					presentationList.add(item.name);
+					fileItems.put(item.name, item);
+				}
+				setListAdapter(new ArrayAdapter<String>(mActivity, android.R.layout.simple_list_item_1, presentationList));
+				getListView().setTextFilterEnabled(true);
+			}
+		};
+		
+		if (gettingUrl.length() == 0) {
+			HttpApiThread.info().getShares(mediaListHandler, mMediaType);
+		} else {
+			HttpApiThread.info().getDirectory(mediaListHandler, gettingUrl);
+		}
 	}
-
+	
 	public boolean onCreateOptionsMenu(Menu menu) {
 		/*if (mMediaType.equals(MediaType.music))
 			menu.add(0, 0, 0, "Change view").setIcon(android.R.drawable.ic_menu_view);*/
@@ -140,7 +159,7 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 			myIntent = new Intent(this, RemoteActivity.class);
 			break;
 		case 6:
-			mClient.control.updateLibrary(mMediaType.toString());
+			HttpApiThread.control().updateLibrary(new HttpApiHandler<Void>(this), mMediaType.toString());
 			break;
 		}
 		
@@ -149,49 +168,5 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 			return true;
 		}
 		return false;
-	}
-
-	public boolean handleMessage(Message msg) {
-		if (msg.what == MESSAGE_HANDLE_DATA) {
-			Bundle data = msg.getData();
-			
-			setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data.getStringArrayList("items")));
-			getListView().setTextFilterEnabled(true);
-
-			return true;
-		} else if (msg.what == MESSAGE_CONNECTION_ERROR) {		
-			ErrorHandler handler = new ErrorHandler(this);
-			handler.handle(new SocketTimeoutException());
-			
-			return true;
-		}
-		return false;
-	}
-
-	public void run() {
-		if(!mClient.isConnected()) {
-			Message msg = Message.obtain(mediaListHandler, MESSAGE_CONNECTION_ERROR);
-			mediaListHandler.sendMessage(msg);
-		} else {
-			ArrayList<MediaLocation> dir;
-			if (gettingUrl.length() == 0) {
-				dir = mClient.info.getShares(mMediaType);
-			} else {
-				dir =  mClient.info.getDirectory(gettingUrl);
-			}
-			
-			ArrayList<String> presentationList = new ArrayList<String>();
-			fileItems = new HashMap<String, MediaLocation>();
-	
-			for (MediaLocation item : dir) {
-				presentationList.add(item.name);
-				fileItems.put(item.name, item);
-			}
-			
-			Message msg = Message.obtain(mediaListHandler, MESSAGE_HANDLE_DATA);
-			Bundle data = msg.getData();
-			data.putStringArrayList("items", presentationList);
-			mediaListHandler.sendMessage(msg);
-		}
 	}
 }

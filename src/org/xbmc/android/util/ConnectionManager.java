@@ -178,7 +178,7 @@ public class ConnectionManager {
 	
 	/**
 	 * Returns an instance of the Event Server Client. Instantiation takes
-	 * plave only once, otherwise the first instance is returned.
+	 * place only once, otherwise the first instance is returned.
 	 * 
 	 * @param activity
 	 * @return Client for XBMC's Event Server
