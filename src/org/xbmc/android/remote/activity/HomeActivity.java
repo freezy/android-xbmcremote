@@ -45,12 +45,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
-public class HomeActivity extends Activity implements Callback, Runnable {
+public class HomeActivity extends Activity implements Callback, Runnable, OnItemClickListener {
+	private static final int HOME_ACTION_REMOTE = 0;
+	private static final int HOME_ACTION_MUSIC = 1;
+	private static final int HOME_ACTION_VIDEOS = 2;
+	private static final int HOME_ACTION_PICTURES = 3;
+	private static final int HOME_ACTION_NOWPLAYING = 4;
+	private static final int HOME_ACTION_RECONNECT = 5;
+	private static final int HOME_ACTION_WOL = 6;
+
 	Handler homeHandler;
 	Thread connectThread;
 	HomeAdapter homeMenu;
@@ -69,74 +79,25 @@ public class HomeActivity extends Activity implements Callback, Runnable {
         Message connectMsg = new Message();        
         connectMsg.what = 3;
 
-        final HomeItem remote = new HomeItem(R.drawable.home_remote, "Remote Control", "Use as", new View.OnClickListener() {
-			public void onClick(View v) {
-				Intent myIntent = new Intent(v.getContext(), RemoteActivity.class);
-				startActivityForResult(myIntent, 0);
-			}
-		});
+        final HomeItem remote = new HomeItem(HOME_ACTION_REMOTE, R.drawable.home_remote, "Remote Control", "Use as");
         
 		homeItems.add(remote);
 		offlineItems.add(remote);
 		
-		homeItems.add(new HomeItem(R.drawable.home_music, "Music", "Listen to", new View.OnClickListener() {
-			public void onClick(View v) {
-//				Intent myIntent = new Intent(v.getContext(), AlbumGridActivity.class);
-				Intent myIntent = new Intent(v.getContext(), MediaListActivity.class);
-				myIntent.putExtra("shareType", MediaType.music.toString());
-				startActivityForResult(myIntent, 0);
-			}
-		}));
-		homeItems.add(new HomeItem(R.drawable.home_video, "Videos", "Watch your", new View.OnClickListener() {
-			public void onClick(View v) {
-				Intent myIntent = new Intent(v.getContext(), MediaListActivity.class);
-				myIntent.putExtra("shareType", MediaType.video.toString());
-				startActivityForResult(myIntent, 0);
-			}
-		}));
-		homeItems.add(new HomeItem(R.drawable.home_pictures, "Pictures", "Browse your", new View.OnClickListener() {
-			public void onClick(View v) {
-				Intent myIntent = new Intent(v.getContext(), MediaListActivity.class);
-				myIntent.putExtra("shareType", MediaType.pictures.toString());
-				startActivityForResult(myIntent, 0);
-			}
-		}));
-		homeItems.add(new HomeItem(R.drawable.home_playing, "Now Playing", "See what's", new View.OnClickListener() {
-			public void onClick(View v) {
-				Intent myIntent = new Intent(v.getContext(), NowPlayingActivity.class);
-				startActivityForResult(myIntent, 0);
-			}
-		}));
+		homeItems.add(new HomeItem(HOME_ACTION_MUSIC, R.drawable.home_music, "Music", "Listen to"));
+		homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.home_video, "Videos", "Watch your"));
+		homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.home_pictures, "Pictures", "Browse your"));
+		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.home_playing, "Now Playing", "See what's"));
 		
-		final String wolMac = prefs.getString("setting_wol", "");
-		final int wolWait = Integer.parseInt(prefs.getString("setting_wol_wait", "40"));
+		offlineItems.add(new HomeItem(HOME_ACTION_RECONNECT, R.drawable.home_reconnect, "Again", "Try to connect"));
 
-		offlineItems.add(new HomeItem(R.drawable.home_reconnect, "Again", "Try to connect", new View.OnClickListener() {
-			public void onClick(View v) {
-		        Message connectMsg = new Message();
-		        connectMsg.what = 3;
-				Bundle connectText = new Bundle();
-				connectText.putString("message", "Reconnecting...");
-				connectMsg.setData(connectText);
-				homeHandler.sendMessage(connectMsg);
-			}
-		}));
-		
-		if (wolMac.compareTo("") != 0) {
-			offlineItems.add(new HomeItem(R.drawable.home_power, "Power On", "Turn your XBMC's", new View.OnClickListener() {
-				public void onClick(View v) {
-					WakeOnLan wol = new WakeOnLan();
-					if (wol.sendMagicPacket(wolMac)) { // If succeeded in sending the magic packet, begin the countdown
-						WoLCounter counter = new WoLCounter(wolWait * 1000,1000);
-						counter.start();
-					}
-				}
-			}));
-		}
+		final String wolMac = prefs.getString("setting_wol", "");
+		if (wolMac.compareTo("") != 0)
+			offlineItems.add(new HomeItem(HOME_ACTION_WOL, R.drawable.home_power, "Power On", "Turn your XBMC's"));
 
 		homeMenu = new HomeAdapter(this, homeItems);
 		offlineMenu = new HomeAdapter(this, offlineItems);
-		((GridView)findViewById(R.id.HomeItemGridView)).setAdapter(offlineMenu);
+		setHomeAdapter(offlineMenu);
 		
         ((TextView) findViewById(R.id.HomeVersionTextView)).setText("Connecting...");
         
@@ -166,12 +127,12 @@ public class HomeActivity extends Activity implements Callback, Runnable {
 	public boolean handleMessage(Message msg) {
 		if (msg.what == 1) { // Connection succeeded
 			((TextView) findViewById(R.id.HomeVersionTextView)).setText(msg.getData().get("version").toString());
-			((GridView)findViewById(R.id.HomeItemGridView)).setAdapter(homeMenu);
-
+			setHomeAdapter(homeMenu);
+			
 			return true;
 		} else if (msg.what == 2) { // Connection failed - show offline menu
 			((TextView) findViewById(R.id.HomeVersionTextView)).setText(msg.getData().get("version").toString());
-			((GridView)findViewById(R.id.HomeItemGridView)).setAdapter(offlineMenu);
+			setHomeAdapter(offlineMenu);
 
 			return true;
 		} else if (msg.what == 3) { // Attempt to connect
@@ -191,6 +152,62 @@ public class HomeActivity extends Activity implements Callback, Runnable {
 		
 		return false;
 	}
+	
+	private void setHomeAdapter(HomeAdapter adapter) {
+		final GridView gridView = ((GridView)findViewById(R.id.HomeItemGridView));
+		gridView.setAdapter(adapter);
+		gridView.setOnItemClickListener(this);
+	}
+	
+	public void onItemClick(AdapterView<?> listView, View v, int position, long ID) {
+		HomeItem item = (HomeItem)listView.getAdapter().getItem(position);
+		
+		switch (item.ID) {
+		case HOME_ACTION_REMOTE:
+			startActivityForResult(new Intent(v.getContext(), RemoteActivity.class), 0);
+			break;
+		case HOME_ACTION_MUSIC:
+			//startActivityForResult(new Intent(v.getContext(), AlbumGridActivity.class), 0);
+			startActivityForResult(createMediaIntent(MediaType.music, v), 0);
+			break;
+		case HOME_ACTION_VIDEOS:
+			startActivityForResult(createMediaIntent(MediaType.video, v), 0);
+			break;
+		case HOME_ACTION_PICTURES:
+			startActivityForResult(createMediaIntent(MediaType.pictures, v), 0);
+			break;
+		case HOME_ACTION_NOWPLAYING:
+			startActivityForResult(new Intent(v.getContext(), NowPlayingActivity.class), 0);
+			break;
+		case HOME_ACTION_RECONNECT:
+	        Message connectMsg = new Message();
+	        connectMsg.what = 3;
+			Bundle connectText = new Bundle();
+			connectText.putString("message", "Reconnecting...");
+			connectMsg.setData(connectText);
+			homeHandler.sendMessage(connectMsg);
+			
+			break;
+		case HOME_ACTION_WOL:
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			final String wolMac = prefs.getString("setting_wol", "");
+			final int wolWait = Integer.parseInt(prefs.getString("setting_wol_wait", "40"));
+			
+			WakeOnLan wol = new WakeOnLan();
+			if (wol.sendMagicPacket(wolMac)) { // If succeeded in sending the magic packet, begin the countdown
+				WoLCounter counter = new WoLCounter(wolWait * 1000,1000);
+				counter.start();
+			}
+			break;
+		}
+	}
+
+	private Intent createMediaIntent(MediaType mediaType, View v) {
+		Intent myIntent = new Intent(v.getContext(), MediaListActivity.class);
+		myIntent.putExtra("shareType", mediaType.toString());
+		return myIntent;
+	}
+
 
 	public void run() {
 		String version = "";
@@ -221,15 +238,14 @@ public class HomeActivity extends Activity implements Callback, Runnable {
 	}
 		
 	private class HomeItem {
-		public final int icon;
+		public final int ID, icon;
 		public final String title, subtitle;
-		public final View.OnClickListener onClick;
 		
-		public HomeItem(int icon, String title, String subtitle, View.OnClickListener onClick) {
+		public HomeItem(int ID, int icon, String title, String subtitle) {
+			this.ID = ID;
 			this.icon = icon;
 			this.title = title;
 			this.subtitle = subtitle;
-			this.onClick = onClick;
 		}
 	}
 	
@@ -254,7 +270,6 @@ public class HomeActivity extends Activity implements Callback, Runnable {
 			title.setText(item.title);
 			subtitle.setText(item.subtitle);
 			icon.setImageResource(item.icon);
-			row.setOnClickListener(item.onClick);
 			return row;
 		}
 	}
