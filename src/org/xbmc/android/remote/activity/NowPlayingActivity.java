@@ -24,6 +24,7 @@ package org.xbmc.android.remote.activity;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -60,6 +61,10 @@ import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class NowPlayingActivity extends Activity implements Callback, Runnable {
+	public static final int MESSAGE_COVER_IMAGE = 668;
+	public static final int MESSAGE_ARTIST_TEXT_VIEW = 667;
+	public static final int MESSAGE_NOW_PLAYING_PROGRESS = 666;
+	public static final int MESSAGE_CONNECTION_ERROR = 1;
 	private ControlClient control;
 	private InfoClient info;
 	private Handler nowPlayingHandler;
@@ -137,7 +142,7 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 			}
 			nowPlayingHandler.sendEmptyMessageDelayed(1, 1000);
 			return true;
-		} else if (msg.what == 666) {
+		} else if (msg.what == MESSAGE_NOW_PLAYING_PROGRESS) {
 			Bundle data = msg.getData();
 			final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
 			seekBar.setProgress(data.getInt("progress"));
@@ -146,7 +151,7 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 			boolean isPlaying = data.getBoolean("isplaying");
 			PlayPauseButton.setImageResource(isPlaying ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play);
 			return true;
-		} else if (msg.what == 667) {
+		} else if (msg.what == MESSAGE_ARTIST_TEXT_VIEW) {
 			Bundle data = msg.getData();
 			final TextView artist = (TextView) findViewById(R.id.ArtistTextView);
 	  	  	artist.setText(data.getString("artist"));
@@ -157,9 +162,15 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 	  	  	final TextView song = (TextView) findViewById(R.id.SongTextView);
 	  	  	song.setText(data.getString("title"));
 	  	  	return true;
-		} else if (msg.what == 668) {
+		} else if (msg.what == MESSAGE_COVER_IMAGE) {
 			final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
 			cover.setImageDrawable(mCover);
+			return true;
+		} else if (msg.what == MESSAGE_CONNECTION_ERROR) {
+			ErrorHandler handler = new ErrorHandler(this);
+			handler.handle(new SocketTimeoutException());
+			setResult(MESSAGE_CONNECTION_ERROR);
+			finish();
 			return true;
 		}
 		return false;
@@ -168,55 +179,59 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 	public void run() {
 		Message msg = new Message();
 		Bundle bundle = msg.getData();
-		msg.what = 666;
-		
-		bundle.putInt("progress", control.getPercentage());
-		
-		CurrentlyPlaying currPlaying = info.getCurrentlyPlaying();
-		bundle.putBoolean("isplaying", currPlaying != null && currPlaying.isPlaying);
-		
-		String currentPos = info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE) + info.getMusicInfo(MusicInfo.MUSICPLAYER_DURATION);
-		nowPlayingHandler.sendMessage(msg);
-		
-		if (!lastPos.equals(currentPos)) {
-			lastPos = currentPos;
-			msg = new Message();
-			bundle = msg.getData();
-	  	  	msg.what = 667;
-	  	  	
-			bundle.putString("album", info.getMusicInfo(MusicInfo.MUSICPLAYER_ALBUM));
-			bundle.putString("artist", info.getMusicInfo(MusicInfo.MUSICPLAYER_ARTIST));
-			bundle.putString("title", info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE));
+		if(!control.isConnected()) {
+			msg.what = MESSAGE_CONNECTION_ERROR;
+			nowPlayingHandler.sendMessage(msg);
+		} else {
+			msg.what = MESSAGE_NOW_PLAYING_PROGRESS;
+			bundle.putInt("progress", control.getPercentage());
 			
+			CurrentlyPlaying currPlaying = info.getCurrentlyPlaying();
+			bundle.putBoolean("isplaying", currPlaying != null && currPlaying.isPlaying);
+			
+			String currentPos = info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE) + info.getMusicInfo(MusicInfo.MUSICPLAYER_DURATION);
 			nowPlayingHandler.sendMessage(msg);
 			
-			try {				
-				String downloadURI = info.getCurrentlyPlayingThumbURI();
-
-				if (downloadURI != null && downloadURI.length() > 0) {
-					if (!downloadURI.equals(mCoverPath)) {
-			  	  		mCover = this.getResources().getDrawable(R.drawable.cover_downloading);
-			  	  		mCoverPath = downloadURI;
-			  	  		nowPlayingHandler.sendEmptyMessage(668);
-
-			  	  		byte[] buffer = download(downloadURI);
-
-			  	  		if (buffer != null) {
-					  	  	mCover = new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
-					  	  	nowPlayingHandler.sendEmptyMessage(668);
-			  	  		}
+			if (!lastPos.equals(currentPos)) {
+				lastPos = currentPos;
+				msg = new Message();
+				bundle = msg.getData();
+		  	  	msg.what = MESSAGE_ARTIST_TEXT_VIEW;
+		  	  	
+				bundle.putString("album", info.getMusicInfo(MusicInfo.MUSICPLAYER_ALBUM));
+				bundle.putString("artist", info.getMusicInfo(MusicInfo.MUSICPLAYER_ARTIST));
+				bundle.putString("title", info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE));
+				
+				nowPlayingHandler.sendMessage(msg);
+				
+				try {				
+					String downloadURI = info.getCurrentlyPlayingThumbURI();
+	
+					if (downloadURI != null && downloadURI.length() > 0) {
+						if (!downloadURI.equals(mCoverPath)) {
+				  	  		mCover = this.getResources().getDrawable(R.drawable.cover_downloading);
+				  	  		mCoverPath = downloadURI;
+				  	  		nowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
+	
+				  	  		byte[] buffer = download(downloadURI);
+	
+				  	  		if (buffer != null) {
+						  	  	mCover = new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
+						  	  	nowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
+				  	  		}
+						}
+					} else {
+						mCover = this.getResources().getDrawable(R.drawable.nocover);
+						mCoverPath = null;
+						nowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
 					}
-				} else {
-					mCover = this.getResources().getDrawable(R.drawable.nocover);
-					mCoverPath = null;
-					nowPlayingHandler.sendEmptyMessage(668);
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 	}

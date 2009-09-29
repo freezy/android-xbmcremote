@@ -21,6 +21,7 @@
 
 package org.xbmc.android.remote.activity;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -42,8 +43,10 @@ import android.view.View;
 import android.widget.*;
 
 public class MediaListActivity extends ListActivity implements Callback, Runnable {
+	public static final int MESSAGE_HANDLE_DATA = 1;
+	public static final int MESSAGE_CONNECTION_ERROR = 2;
+	
 	private final HttpClient mClient = ConnectionManager.getHttpClient(this);
-
 	private HashMap<String, MediaLocation> fileItems;
 	private volatile String gettingUrl;
 	private MediaType mMediaType;
@@ -149,36 +152,46 @@ public class MediaListActivity extends ListActivity implements Callback, Runnabl
 	}
 
 	public boolean handleMessage(Message msg) {
-		if (msg.what == 1) {
+		if (msg.what == MESSAGE_HANDLE_DATA) {
 			Bundle data = msg.getData();
 			
 			setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data.getStringArrayList("items")));
 			getListView().setTextFilterEnabled(true);
 
 			return true;
+		} else if (msg.what == MESSAGE_CONNECTION_ERROR) {		
+			ErrorHandler handler = new ErrorHandler(this);
+			handler.handle(new SocketTimeoutException());
+			
+			return true;
 		}
 		return false;
 	}
 
 	public void run() {
-		ArrayList<MediaLocation> dir;
-		if (gettingUrl.length() == 0) {
-			dir = mClient.info.getShares(mMediaType);
+		if(!mClient.isConnected()) {
+			Message msg = Message.obtain(mediaListHandler, MESSAGE_CONNECTION_ERROR);
+			mediaListHandler.sendMessage(msg);
 		} else {
-			dir =  mClient.info.getDirectory(gettingUrl);
+			ArrayList<MediaLocation> dir;
+			if (gettingUrl.length() == 0) {
+				dir = mClient.info.getShares(mMediaType);
+			} else {
+				dir =  mClient.info.getDirectory(gettingUrl);
+			}
+			
+			ArrayList<String> presentationList = new ArrayList<String>();
+			fileItems = new HashMap<String, MediaLocation>();
+	
+			for (MediaLocation item : dir) {
+				presentationList.add(item.name);
+				fileItems.put(item.name, item);
+			}
+			
+			Message msg = Message.obtain(mediaListHandler, MESSAGE_HANDLE_DATA);
+			Bundle data = msg.getData();
+			data.putStringArrayList("items", presentationList);
+			mediaListHandler.sendMessage(msg);
 		}
-		
-		ArrayList<String> presentationList = new ArrayList<String>();
-		fileItems = new HashMap<String, MediaLocation>();
-
-		for (MediaLocation item : dir) {
-			presentationList.add(item.name);
-			fileItems.put(item.name, item);
-		}
-		
-		Message msg = Message.obtain(mediaListHandler, 1);
-		Bundle data = msg.getData();
-		data.putStringArrayList("items", presentationList);
-		mediaListHandler.sendMessage(msg);
 	}
 }
