@@ -42,6 +42,7 @@ import org.xbmc.httpapi.type.SeekType;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -215,7 +216,10 @@ public class NowPlayingActivity extends Activity implements Callback, Runnable {
 	
 				  	  		byte[] buffer = download(downloadURI);
 	
-				  	  		if (buffer != null) {
+				  	  		if (buffer == null || buffer.length == 0) {
+				  	  			mCover = this.getResources().getDrawable(R.drawable.nocover);
+				  	  		}
+				  	  		else {
 						  	  	mCover = new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
 						  	  	nowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
 				  	  		}
