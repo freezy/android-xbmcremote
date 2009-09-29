@@ -24,16 +24,19 @@
     		android:id="@+id/ArtistTextView"
 			android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"
+	    	android:singleLine="true"
 	    	android:text="Artist" />
     	<TextView
     		android:id="@+id/AlbumTextView"
 			android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"
+	    	android:singleLine="true"
 	    	android:text="Album" />
     	<TextView
     		android:id="@+id/SongTextView"
 			android:layout_width="wrap_content"
 	    	android:layout_height="wrap_content"
+	    	android:singleLine="true"
 	    	android:text="Song" />
   	</LinearLayout>
   	<LinearLayout
