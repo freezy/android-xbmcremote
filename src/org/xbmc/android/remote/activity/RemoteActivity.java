@@ -61,6 +61,10 @@ public class RemoteActivity extends Activity {
 	
 	private Vibrator mVibrator;
 	private EventClient mClient;
+	/**
+	 * timestamp since last trackball use.
+	 */
+	private long mTimestamp = 0;
 
 
     @Override
@@ -89,17 +93,24 @@ public class RemoteActivity extends Activity {
 	public boolean onTrackballEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN)
 			return keyboardAction(ButtonCodes.KEYBOARD_ENTER);
-		else if (Math.abs(event.getX()) > 0.1f)
-			return keyboardAction(event.getX() < 0 ? ButtonCodes.KEYBOARD_LEFT : ButtonCodes.KEYBOARD_RIGHT);
-		else if (Math.abs(event.getY()) > 0.1f)
-			return keyboardAction(event.getY() < 0 ? ButtonCodes.KEYBOARD_UP : ButtonCodes.KEYBOARD_DOWN);
+		else{
+			// check when the last trackball move happened to avoid too speedy selections
+			long newstamp = System.currentTimeMillis(); 
+			if(newstamp - mTimestamp > 300){
+				mTimestamp = newstamp;
+				if (Math.abs(event.getX()) > 0.15f) {
+					return keyboardAction(event.getX() < 0 ? ButtonCodes.KEYBOARD_LEFT : ButtonCodes.KEYBOARD_RIGHT);
+				}else if (Math.abs(event.getY()) > 0.15f){
+					return keyboardAction(event.getY() < 0 ? ButtonCodes.KEYBOARD_UP : ButtonCodes.KEYBOARD_DOWN);
+				}
+			}
+		}
 		return false;
 	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		char key = (char)event.getUnicodeChar();
-		
 		if (key > 'A' && key < 'z')
 			return keyboardAction("" + key);
 		
@@ -110,6 +121,26 @@ public class RemoteActivity extends Activity {
 			}
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
 				mClient.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+				return true;
+			}
+			if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+				mClient.sendButton("R1", ButtonCodes.REMOTE_DOWN, false, true, true, (short)0, (byte)0);
+				return true;
+			}
+			if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+				mClient.sendButton("R1", ButtonCodes.REMOTE_UP, false, true, true, (short)0, (byte)0);
+				return true;
+			}
+			if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+				mClient.sendButton("R1", ButtonCodes.REMOTE_LEFT, false, true, true, (short)0, (byte)0);
+				return true;
+			}
+			if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+				mClient.sendButton("R1", ButtonCodes.REMOTE_RIGHT, false, true, true, (short)0, (byte)0);
+				return true;
+			}
+			if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+				mClient.sendButton("R1", ButtonCodes.REMOTE_ENTER, false, true, true, (short)0, (byte)0);
 				return true;
 			}
 		} catch (IOException e) {
@@ -128,6 +159,15 @@ public class RemoteActivity extends Activity {
 			mClient.sendButton("KB", button, false, true, true, (short)0, (byte)0);
 			return true;
 		} catch (IOException e) {
+			return false;
+		}
+	}
+	
+	private boolean mouseAction(int x, int y){
+		try {
+			mClient.sendMouse(x, y);
+			return true;
+		}catch (IOException e) {
 			return false;
 		}
 	}
