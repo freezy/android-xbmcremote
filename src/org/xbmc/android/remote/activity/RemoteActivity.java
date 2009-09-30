@@ -52,9 +52,6 @@ import android.widget.ImageButton;
  * Activity for remote control. At the moment that's the good ol' Xbox remote
  * control, more to come...
  * 
- * TODO: Horizontal orientation
- * TODO: "display" button missing. Looking for an alternative, also the "S" button is quite important for skins like Aeon.
- * 
  * @author Team XBMC
  */
 public class RemoteActivity extends Activity {
@@ -115,33 +112,28 @@ public class RemoteActivity extends Activity {
 			return keyboardAction("" + key);
 		
 		try {
-			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-				mClient.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
-				return true;
-			}
-			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-				mClient.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
-				return true;
-			}
-			if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-				mClient.sendButton("R1", ButtonCodes.REMOTE_DOWN, false, true, true, (short)0, (byte)0);
-				return true;
-			}
-			if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-				mClient.sendButton("R1", ButtonCodes.REMOTE_UP, false, true, true, (short)0, (byte)0);
-				return true;
-			}
-			if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-				mClient.sendButton("R1", ButtonCodes.REMOTE_LEFT, false, true, true, (short)0, (byte)0);
-				return true;
-			}
-			if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-				mClient.sendButton("R1", ButtonCodes.REMOTE_RIGHT, false, true, true, (short)0, (byte)0);
-				return true;
-			}
-			if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
-				mClient.sendButton("R1", ButtonCodes.REMOTE_ENTER, false, true, true, (short)0, (byte)0);
-				return true;
+			switch (keyCode) {
+				case KeyEvent.KEYCODE_VOLUME_UP:
+					mClient.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+					return true;
+				case KeyEvent.KEYCODE_VOLUME_DOWN:
+					mClient.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+					return true;
+				case KeyEvent.KEYCODE_DPAD_DOWN:
+					mClient.sendButton("R1", ButtonCodes.REMOTE_DOWN, false, true, true, (short)0, (byte)0);
+					return true;
+				case KeyEvent.KEYCODE_DPAD_UP:
+					mClient.sendButton("R1", ButtonCodes.REMOTE_UP, false, true, true, (short)0, (byte)0);
+					return true;
+				case KeyEvent.KEYCODE_DPAD_LEFT:
+					mClient.sendButton("R1", ButtonCodes.REMOTE_LEFT, false, true, true, (short)0, (byte)0);
+					return true;
+				case KeyEvent.KEYCODE_DPAD_RIGHT:
+					mClient.sendButton("R1", ButtonCodes.REMOTE_RIGHT, false, true, true, (short)0, (byte)0);
+					return true;
+				case KeyEvent.KEYCODE_DPAD_CENTER:
+					mClient.sendButton("R1", ButtonCodes.REMOTE_ENTER, false, true, true, (short)0, (byte)0);
+					return true;
 			}
 		} catch (IOException e) {
 			return false;
@@ -159,15 +151,6 @@ public class RemoteActivity extends Activity {
 			mClient.sendButton("KB", button, false, true, true, (short)0, (byte)0);
 			return true;
 		} catch (IOException e) {
-			return false;
-		}
-	}
-	
-	private boolean mouseAction(int x, int y){
-		try {
-			mClient.sendMouse(x, y);
-			return true;
-		}catch (IOException e) {
 			return false;
 		}
 	}

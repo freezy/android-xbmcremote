@@ -21,18 +21,23 @@
 
 package org.xbmc.android.remote.activity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
+import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
+import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.data.MediaLocation;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -168,5 +173,23 @@ public class MediaListActivity extends ListActivity {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		EventClient client = ConnectionManager.getEventClient(this);	
+		try {
+			switch (keyCode) {
+				case KeyEvent.KEYCODE_VOLUME_UP:
+					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+					return true;
+				case KeyEvent.KEYCODE_VOLUME_DOWN:
+					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+					return true;
+			}
+		} catch (IOException e) {
+			return false;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

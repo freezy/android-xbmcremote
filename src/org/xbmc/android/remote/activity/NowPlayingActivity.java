@@ -22,6 +22,7 @@
 package org.xbmc.android.remote.activity;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -33,6 +34,8 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
+import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.InfoClient.CurrentlyPlaying;
@@ -51,6 +54,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -299,6 +303,25 @@ public class NowPlayingActivity extends Activity implements Callback {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		EventClient client = ConnectionManager.getEventClient(this);	
+		try {
+			switch (keyCode) {
+				case KeyEvent.KEYCODE_VOLUME_UP:
+					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+					return true;
+				case KeyEvent.KEYCODE_VOLUME_DOWN:
+					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+					return true;
+			}
+		} catch (IOException e) {
+			return false;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
 
 	private byte[] download(String pathToDownload) {
 		try {

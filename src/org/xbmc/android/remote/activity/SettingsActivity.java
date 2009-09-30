@@ -21,10 +21,13 @@
 
 package org.xbmc.android.remote.activity;
 
+import java.io.IOException;
 import java.util.Hashtable;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.eventclient.EventClient;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -32,6 +35,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
+import android.view.KeyEvent;
 
 /**
  * The XBMC remote's preferences page. This is a little special since we want
@@ -97,7 +101,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		// Unregister the listener whenever a key changes
 		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 	}
-
+	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		Preference pref = getPreferenceScreen().findPreference(key);
 		String origSummary = mSummaries.get(key);
@@ -108,5 +112,24 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			ConnectionManager.resetClient();
 		}
 	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		EventClient client = ConnectionManager.getEventClient(this);	
+		try {
+			switch (keyCode) {
+				case KeyEvent.KEYCODE_VOLUME_UP:
+					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+					return true;
+				case KeyEvent.KEYCODE_VOLUME_DOWN:
+					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+					return true;
+			}
+		} catch (IOException e) {
+			return false;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
 
 }
