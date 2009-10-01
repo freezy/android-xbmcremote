@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">XBMC Remote</string>
+<string name="app_receiver">XbmcBroadcastReceiver</string>
+<string name="sms_received">SMS received</string>
 </resources>

@@ -17,9 +17,21 @@
         <activity android:name=".activity.AlbumGridActivity" />
         <activity android:name=".activity.MusicListActivity" />
         <activity android:name=".activity.SettingsActivity" />
+        <receiver android:name=".XbmcBroadcastReceiver" android:label="@string/app_receiver">
+	        <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+                
+                
+            <action android:name="android.intent.action.PHONE_STATE"></action>
+</intent-filter>
+		</receiver>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-sdk android:minSdkVersion="3" />
+	<uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+<uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
+<uses-permission android:name="android.permission.READ_CONTACTS"></uses-permission>
+<uses-permission android:name="android.permission.READ_SMS"></uses-permission>
 </manifest>
