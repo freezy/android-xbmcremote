@@ -134,8 +134,14 @@ public class ConnectionManager {
 			if (prefs.getBoolean("setting_mdns", false)) {
 				ServiceInfo mdnsHost = ConnectionManager.getZeroconfServiceInfo(
 						"_xbmc-web._tcp.local.", prefHost);
-				host = mdnsHost.getHostAddress();
-				port = mdnsHost.getPort();
+
+				// In case the mdns lookup has failed, return a null				
+				if (mdnsHost != null) {
+					host = mdnsHost.getHostAddress();
+					port = mdnsHost.getPort();
+				} else {
+					return null;
+				}
 			} else {
 				host = prefHost;
 				port = Integer.parseInt(prefs.getString("setting_http_port", "80"));
@@ -195,8 +201,14 @@ public class ConnectionManager {
 			if (prefs.getBoolean("setting_mdns", false)) {
 				ServiceInfo mdnsHost = ConnectionManager.getZeroconfServiceInfo(
 						"_xbmc-events._udp.local.", prefHost);
-				host = mdnsHost.getHostAddress();
-				port = mdnsHost.getPort();
+				
+				// In case the mdns lookup has failed, return a null 
+				if (mdnsHost != null) {
+					host = mdnsHost.getHostAddress();
+					port = mdnsHost.getPort();
+				} else {
+					return null;
+				}
 			} else {
 				host = prefHost;
 				port = Integer.parseInt(prefs.getString("setting_eventserver_port", "9777"));
