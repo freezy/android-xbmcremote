@@ -29,43 +29,72 @@ import org.xbmc.httpapi.type.ThumbSize;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
+import android.util.Log;
 
 /**
- * Spawned on first access, then looping. Takes all HTTP API commands and
- * synchronously returns the result.
+ * This thread asynchronously downloads thumbs from XBMC and returns them as
+ * Bitmap.
+ * 
+ * When downloaded, the thumb is automatically saved to the memory- and disk-
+ * cache for further usage.
  * 
  * @author Team XBMC
  */
 class HttpApiDownloadThread extends HttpApiAbstractThread {
 	
+	/**
+	 * Singleton instance of this thread
+	 */
 	protected static HttpApiDownloadThread sHttpApiThread;
+	
+	private static final String LOG_TAG = "HttpApi-Network";
 
+	/**
+	 * Constructor is protected, use get().
+	 */
 	protected HttpApiDownloadThread() {
 		super("HTTP API Network Thread");
 	}
 	
+	/**
+	 * Asynchronously downloads a thumb from XBMC and stores it locally.
+	 * 
+	 * @param handler Callback
+	 * @param cover   Which cover to download
+	 * @param size    Which size to return
+	 */
 	public void getCover(final HttpApiHandler<Bitmap> handler, final ICoverArt cover, final ThumbSize size) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				if (HttpApiMemCacheThread.isInCache(cover)) {
-					System.out.println("Cover is now in mem cache, directly returning...");
+				Log.i(LOG_TAG, "Downloading cover " + cover);
+				/* it can happen that the same cover is queued consecutively several
+				 * times. that's why we check both the disk cache and memory cache if
+				 * the cover is not already available from a previously queued download. 
+				 */
+				if (size == ThumbSize.small && HttpApiMemCacheThread.isInCache(cover)) { // we're optimistic, let's check the memory first.
+					Log.i(LOG_TAG, "Cover is now already in mem cache, directly returning...");
 					handler.value = HttpApiMemCacheThread.getCover(cover);
 					done(handler);
+				} else if (HttpApiDiskCacheThread.isInCache(cover)) {
+					Log.i(LOG_TAG, "Cover is not in mem cache anymore but still on disk, directly returning...");
+					handler.value = HttpApiDiskCacheThread.getCover(cover, size);
 				} else {
-					System.out.println("Download START..");
+					Log.i(LOG_TAG, "Download START..");
 					String b64enc = music(handler).getAlbumThumb(cover);
+					Log.i(LOG_TAG, "Download END.");
 					byte[] bytes;
 					try {
 						bytes = Base64.decode(b64enc);
 						if (bytes.length > 0) {
-							System.out.println("Decoding, resizing and adding to cache");
+							Log.i(LOG_TAG, "Decoding, resizing and adding to cache");
 							Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 							if (bitmap != null) {
 								HttpApiDiskCacheThread.addCoverToCache(cover, bitmap);
 								HttpApiMemCacheThread.addCoverToCache(cover, bitmap);
 								handler.value = bitmap;
-								System.out.println("Done");
+								Log.i(LOG_TAG, "Done");
+							} else {
+								Log.w(LOG_TAG, "Bitmap was null, couldn't decode XBMC's response (" + bytes.length + " bytes).");
 							}
 						}
 					} catch (IOException e) {
@@ -78,8 +107,11 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 			}
 		});
 	}
-	
 
+	/**
+	 * Returns an instance of this thread. Spawns if necessary.
+	 * @return
+	 */
 	public static HttpApiDownloadThread get() {
 		if (sHttpApiThread == null) {
  			sHttpApiThread = new HttpApiDownloadThread();

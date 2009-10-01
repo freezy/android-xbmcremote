@@ -28,22 +28,41 @@ import org.xbmc.httpapi.data.ICoverArt;
 
 import android.graphics.Bitmap;
 
-
 /**
- * Spawned on first access, then looping. Takes all HTTP API commands and
- * synchronously returns the result.
+ * This thread asynchronously delivers memory-cached bitmaps.
+ * 
+ * The memory cache keeps small-size thumb bitmaps in a soft-referenced list.
+ * This thread is directly accessed by the original HttpApi thread, through one
+ * of its wrappers.
  * 
  * @author Team XBMC
  */
 class HttpApiMemCacheThread extends HttpApiAbstractThread {
 	
+	/**
+	 * Singleton instance of this thread
+	 */
 	protected static HttpApiMemCacheThread sHttpApiThread;
+	
+	/**
+	 * The actual cache variable. Here are the thumbs stored. 
+	 */
 	private static final HashMap<String, SoftReference<Bitmap>> sArtCache = new HashMap<String, SoftReference<Bitmap>>();
 
+	/**
+	 * Constructor is protected, use get().
+	 */
 	protected HttpApiMemCacheThread() {
 		super("HTTP API Mem Cache Thread");
 	}
 	
+	/**
+	 * Asynchronously returns a thumb from the mem cache, or null if 
+	 * not available.
+	 * 
+	 * @param handler Callback
+	 * @param cover   Which cover to return
+	 */
 	public void getCover(final HttpApiHandler<Bitmap> handler, final ICoverArt cover) {
 		mHandler.post(new Runnable() {
 			public void run() {
@@ -56,18 +75,39 @@ class HttpApiMemCacheThread extends HttpApiAbstractThread {
 		});
 	}
 	
-	public static boolean isInCache(ICoverArt cover) {
-		return sArtCache.containsKey(cover.getCrc());
-	}
-	
+	/**
+	 * Synchronously returns a thumb from the mem cache, or null 
+	 * if not available.
+	 * 
+	 * @param cover Which cover to return
+	 * @return Bitmap or null if not available.
+	 */
 	public static Bitmap getCover(ICoverArt cover) {
 		return sArtCache.get(cover.getCrc()).get();
 	}
 	
+	/**
+	 * Checks if a thumb is in the mem cache.
+	 * @param cover
+	 * @return True if thumb is in mem cache, false otherwise.
+	 */
+	public static boolean isInCache(ICoverArt cover) {
+		return sArtCache.containsKey(cover.getCrc());
+	}
+	
+	/**
+	 * Adds a cover to the mem cache
+	 * @param cover  Which cover to add
+	 * @param bitmap Bitmap data
+	 */
 	public static void addCoverToCache(ICoverArt cover, Bitmap bitmap) {
 		sArtCache.put(cover.getCrc(), new SoftReference<Bitmap>(bitmap));
 	}
 
+	/**
+	 * Returns an instance of this thread. Spawns if necessary.
+	 * @return
+	 */
 	public static HttpApiMemCacheThread get() {
 		if (sHttpApiThread == null) {
  			sHttpApiThread = new HttpApiMemCacheThread();

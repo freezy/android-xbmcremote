@@ -45,7 +45,6 @@ public abstract class Wrapper {
 	public void setHandler(Handler handler) {
 		mHandler = handler;
 	}
-
 	
 	/**
 	 * Returns the InfoClient class
@@ -90,4 +89,5 @@ public abstract class Wrapper {
 	protected void done(HttpApiHandler<?> handler) {
 		handler.getActivity().runOnUiThread(handler);
 	}
+	
 }

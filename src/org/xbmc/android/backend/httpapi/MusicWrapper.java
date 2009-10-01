@@ -30,14 +30,21 @@ import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.InfoClient} class.
  * 
+ * TODO All the asynchronous cover download stuff needs to be abstracted to an
+ *      interface so we can use it for video as well.  
+ * 
  * @author Team XBMC
  */
 public class MusicWrapper extends Wrapper {
+	
+	private static final String LOG_TAG = "HttpApi-Music";
+	final private static Boolean debug = false;
 	
 	/**
 	 * Gets all albums from database
@@ -154,55 +161,88 @@ public class MusicWrapper extends Wrapper {
 	}
 	
 	/**
-	 * Returns bitmap of an album cover
+	 * Returns bitmap of an album cover. Note that the callback is done by the
+	 * helper methods below.
 	 * @param handler Callback handler
 	 */
 	public void getAlbumCover(final HttpApiHandler<Bitmap> handler, final Album album, final ThumbSize size) {
-		final boolean debug = false;
 		mHandler.post(new Runnable() {
 			public void run() {
-				if (debug) System.out.println("[" + album.getId() + "] Checking in mem cache..");
-				// first, try mem cache
-				HttpApiMemCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
-					public void run() {
-						if (value == null) {
-							if (debug) System.out.println("[" + album.getId() + " empty]");
-							if (debug) System.out.println("[" + album.getId() + "] Checking in disk cache..");
-							// then, try sdcard cache
-							HttpApiDiskCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
-								public void run() {
-									if (value == null) {
-										if (debug) System.out.println("[" + album.getId() + " empty]");
-										if (debug) System.out.println("[" + album.getId() + "] Downloading..");
-										// well, let's download
-										HttpApiDownloadThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
-											public void run() {
-												if (value == null) {
-													if (debug) System.out.println("[" + album.getId() + " empty]");
-												} else {
-													if (debug) System.out.println("[" + album.getId() + " DOWNLOADED!]");
-													handler.value = value;
-													done(handler);
-												}
-											}
-										}, album, size);
-										done(handler);
-									} else {
-										if (debug) System.out.println("[" + album.getId() + " FOUND on disk!]");
-										handler.value = value;
-										done(handler);
-									}
-								}
-							}, album, size);
-							
-						} else {
-							if (debug) System.out.println("[" + album.getId() + " FOUND in memory!]");
-							handler.value = value;
-							done(handler);
-						}
-					}
-				}, album);
+				// first, try mem cache (only if size = small, other sizes aren't mem-cached.
+				if (size == ThumbSize.small) {
+					getAlbumCoverFromMem(handler, album);
+				} else {
+					getAlbumCoverFromDisk(handler, album, size);
+				}
 			}
 		});
 	}
+	
+	
+	/**
+	 * Tries to get small cover from memory, then from disk, then download it from XBMC.
+	 * @param handler Callback handler
+	 * @param album   Get cover for this album
+	 */
+	private void getAlbumCoverFromMem(final HttpApiHandler<Bitmap> handler, final Album album) {
+		if (debug) Log.i(LOG_TAG, "[" + album.getId() + "] Checking in mem cache..");
+		HttpApiMemCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
+			public void run() {
+				if (value == null) {
+					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " empty]");
+					// then, try sdcard cache
+					getAlbumCoverFromDisk(handler, album, ThumbSize.small);
+				} else {
+					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " FOUND in memory!]");
+					handler.value = value;
+					done(handler);
+				}
+			}
+		}, album);
+	}
+	
+	/**
+	 * Tries to get cover from disk, then download it from XBMC.
+	 * @param handler Callback handler
+	 * @param album   Get cover for this album
+	 * @param size    Cover size
+	 */
+	private void getAlbumCoverFromDisk(final HttpApiHandler<Bitmap> handler, final Album album, final ThumbSize size) {
+		if (debug) Log.i(LOG_TAG, "[" + album.getId() + "] Checking in disk cache..");
+		HttpApiDiskCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
+			public void run() {
+				if (value == null) {
+					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " empty]");
+					// well, let's download
+					getAlbumCoverFromNetwork(handler, album, size);
+				} else {
+					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " FOUND on disk!]");
+					handler.value = value;
+					done(handler);
+				}
+			}
+		}, album, size);		
+	}
+	
+	/**
+	 * Last stop: try to download from XBMC.
+	 * @param handler Callback handler
+	 * @param album   Get cover for this album
+	 * @param size    Cover size
+	 */
+	private void getAlbumCoverFromNetwork(final HttpApiHandler<Bitmap> handler, final Album album, final ThumbSize size) {
+		if (debug) Log.i(LOG_TAG, "[" + album.getId() + "] Downloading..");
+		HttpApiDownloadThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
+			public void run() {
+				if (value == null) {
+					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " empty]");
+				} else {
+					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " DOWNLOADED!]");
+					handler.value = value;
+				}
+				done(handler); // callback in any case, since we don't go further than that.
+			}
+		}, album, size);
+	}
+
 }

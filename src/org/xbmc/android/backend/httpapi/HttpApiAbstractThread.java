@@ -28,19 +28,26 @@ import android.os.Handler;
 import android.os.Looper;
 
 /**
- * Spawned on first access, then looping. Takes all HTTP API commands and
- * synchronously returns the result.
+ * Super class for all the cache threads. Keeps common code
+ * in one place.
  * 
  * @author Team XBMC
  */
 abstract class HttpApiAbstractThread extends Thread {
+	
 	protected Handler mHandler;
 	
+	/**
+	 * Class constructor is protected, use get() in the child class.
+	 * @param name
+	 */
 	protected HttpApiAbstractThread(String name) {
 		super(name);
 	}
 	
-
+	/**
+	 * Creates the handler and then loops.
+	 */
 	public void run() {
 		Looper.prepare();
 		mHandler = new Handler();
@@ -64,6 +71,11 @@ abstract class HttpApiAbstractThread extends Thread {
 		handler.getActivity().runOnUiThread(handler);
 	}
 	
+	/**
+	 * Waits until the thread has completely started and we can be sure
+	 * the handler has been initialized.
+	 * @param thread 
+	 */
 	protected static void waitForStartup(HttpApiAbstractThread thread) {
 		while (thread.mHandler == null) {
 			try {

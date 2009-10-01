@@ -95,4 +95,5 @@ public class InfoWrapper extends Wrapper {
 			}
 		});
 	}
+
 }

@@ -28,6 +28,5 @@ package org.xbmc.android.backend.httpapi;
  * @author Team XBMC
  */
 public class VideoWrapper extends Wrapper {
-	
-	
+
 }

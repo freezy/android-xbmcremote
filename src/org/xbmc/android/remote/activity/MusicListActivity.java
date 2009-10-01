@@ -92,11 +92,14 @@ public class MusicListActivity extends ListActivity {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
+		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue " + mListType.getSingular());
+		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play " + mListType.getSingular());
 		String title = "";
 		switch (mListType) {
 			case albums:
 				final Album album = (Album)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
 				title = album.name;
+				menu.add(0, ITEM_CONTEXT_INFO, 3, "View Details");
 				break;
 			case songs:
 				final Song song = (Song)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
@@ -104,9 +107,6 @@ public class MusicListActivity extends ListActivity {
 				break;
 		}
 		menu.setHeaderTitle(title);
-		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue " + mListType.getSingular());
-		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play " + mListType.getSingular());
-//		menu.add(0, ITEM_CONTEXT_INFO, 3, "View Details");
 	}
 	
 	@Override
@@ -114,7 +114,6 @@ public class MusicListActivity extends ListActivity {
 		switch (mListType) {
 			case albums:
 				final Album album = (Album)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(this), album);
 				switch (item.getItemId()) {
 					case ITEM_CONTEXT_QUEUE:
 						HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(this), album);
@@ -123,6 +122,7 @@ public class MusicListActivity extends ListActivity {
 						HttpApiThread.music().play(new HttpApiHandler<Boolean>(this), album);
 						break;
 					case ITEM_CONTEXT_INFO:
+						DialogFactory.getAlbumDetail(this, album).show();
 						break;
 					default:
 						return super.onContextItemSelected(item);
