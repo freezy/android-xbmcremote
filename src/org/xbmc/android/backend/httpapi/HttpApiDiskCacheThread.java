@@ -22,7 +22,6 @@
 package org.xbmc.android.backend.httpapi;
 
 import java.io.File;
-import java.lang.ref.SoftReference;
 
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.httpapi.data.ICoverArt;

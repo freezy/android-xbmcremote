@@ -22,10 +22,8 @@
 package org.xbmc.android.backend.httpapi;
 
 import java.io.IOException;
-import java.lang.ref.SoftReference;
 
 import org.xbmc.android.util.Base64;
-import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.type.ThumbSize;
 

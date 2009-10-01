@@ -21,7 +21,6 @@
 
 package org.xbmc.android.backend.httpapi;
 
-import org.xbmc.httpapi.data.Album;
 
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.InfoClient} class.
