@@ -36,6 +36,7 @@ import org.xbmc.android.remote.activity.AlbumGridActivity;
 import org.xbmc.android.remote.activity.AlbumHolder;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.data.ICoverArt;
+import org.xbmc.httpapi.type.ThumbSize;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -49,14 +50,6 @@ import android.widget.ImageView;
  * @author freezy <phreezie@gmail.com>
  */
 public class ImageLoader extends Thread {
-	
-	public static final int SIZE_BIG = 400;
-	public static final int SIZE_MEDIUM = 103;
-	public static final int SIZE_SMALL = 50;
-	
-	public static final String DIR_BIG = "/original";
-	public static final String DIR_MEDIUM = "/medium";
-	public static final String DIR_SMALL = "/small";
 	
 	public static ImageLoader imageCacheLoader;
 	public static ImageLoader imageNetworkLoader;
@@ -156,7 +149,7 @@ public class ImageLoader extends Thread {
      * @param size	Which size should be chosen for the returned bitmap
      * @return 
      */
-	public static Bitmap loadCachedCover(ImageView image, ICoverArt art, String size) {
+	public static Bitmap loadCachedCover(ImageView image, ICoverArt art, ThumbSize size) {
 		AlbumHolder holder = (AlbumHolder)image.getTag();
 		Bitmap drawable = holder.cover;
 		
@@ -186,7 +179,7 @@ public class ImageLoader extends Thread {
      * @param size	Which size should be chosen for the returned bitmap
      * @return
      */
-	private static Bitmap loadCover(final ImageView image, final ICoverArt art, final String size) {
+	private static Bitmap loadCover(final ImageView image, final ICoverArt art, final ThumbSize size) {
         final File file = new File(ImportUtilities.getCacheDirectory(art.getArtFolder(), size), art.getCrc());
         if (file.exists()) {
            	imageCacheLoader.accept(new CacheRequest(file, image, art));

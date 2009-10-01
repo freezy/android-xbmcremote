@@ -45,6 +45,17 @@ public class ControlClient {
 		mConnection = connection;
 	}
 	
+
+	
+	/**
+	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.
+	 * @param fileOrFolder
+	 * @return true on success, false otherwise.
+	 */
+	public boolean addToPlaylist(String fileOrFolder) {
+		return mConnection.getBoolean("AddToPlayList", fileOrFolder);
+	}
+	
 	/**
 	 * Starts playing the media file <code>filename</code> .
 	 * @param filename File to play
@@ -199,15 +210,24 @@ public class ControlClient {
 		return mConnection.isConnected();
 	}
 
-	/*public enum PlayState {
-		NotPlaying,
+	public enum PlayState {
+		Stopped,
 		Paused,
 		Playing
 	}
 	
+	/**
+	 * Returns current play state
+	 * @return
+	 */
 	public PlayState getPlayState() {
-		String s = mConnection.getString("GetCurrentlyPlaying", "");
-		if (s.contains("NotPlaying"))
-		return 
-	}*/
+		String s = mConnection.getString("GetCurrentlyPlaying");
+		if (s.contains("PlayStatus:Paused")) {
+			return PlayState.Paused;
+		} else if (s.contains("PlayStatus:Playing")) {
+			return PlayState.Playing;
+		} else {
+			return PlayState.Stopped;
+		}
+	}
 }

@@ -21,6 +21,7 @@
 
 package org.xbmc.android.remote.activity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
@@ -28,7 +29,10 @@ import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.WakeOnLan;
+import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.info.SystemInfo;
+import org.xbmc.httpapi.type.ListType;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
@@ -37,6 +41,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -86,7 +91,7 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 				}
 			}
 		};
-
+		
         final HomeItem remote = new HomeItem(HOME_ACTION_REMOTE, R.drawable.home_remote, "Remote Control", "Use as");
         
 		homeItems.add(remote);
@@ -148,7 +153,8 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 			startActivityForResult(new Intent(v.getContext(), RemoteActivity.class), 0);
 			break;
 		case HOME_ACTION_MUSIC:
-			startActivityForResult(createMediaIntent(MediaType.music, v), 0);
+//			startActivityForResult(createMediaIntent(MediaType.music, v), 0);
+			startActivityForResult(createMusicIntent(ListType.albums, v), 0);
 			break;
 		case HOME_ACTION_VIDEOS:
 			startActivityForResult(createMediaIntent(MediaType.video, v), 0);
@@ -176,10 +182,34 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 			break;
 		}
 	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		EventClient client = ConnectionManager.getEventClient(this);	
+		try {
+			switch (keyCode) {
+				case KeyEvent.KEYCODE_VOLUME_UP:
+					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+					return true;
+				case KeyEvent.KEYCODE_VOLUME_DOWN:
+					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+					return true;
+			}
+		} catch (IOException e) {
+			return false;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
 
 	private Intent createMediaIntent(MediaType mediaType, View v) {
 		Intent myIntent = new Intent(v.getContext(), MediaListActivity.class);
 		myIntent.putExtra("shareType", mediaType.toString());
+		return myIntent;
+	}
+	
+	private Intent createMusicIntent(ListType listType, View v) {
+		Intent myIntent = new Intent(v.getContext(), MusicListActivity.class);
+		myIntent.putExtra(MusicListActivity.EXTRA_LIST_TYPE, listType.toString());
 		return myIntent;
 	}
 

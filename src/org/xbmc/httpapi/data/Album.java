@@ -21,15 +21,17 @@
 
 package org.xbmc.httpapi.data;
 
+import java.io.Serializable;
+
 import org.xbmc.android.util.Crc32;
 
 /**
  * The album class keeps the basic album information from the album table
  * as well some of the extended info from the albuminfo table.
  * 
- * @author freezy <f3k@hosts.ch>
+ * @author freezy <phreezie@gmail.com>
  */
-public class Album implements ICoverArt {
+public class Album implements ICoverArt, Serializable {
 
 	/**
 	 * Points to where the album thumbs are stored
@@ -42,10 +44,11 @@ public class Album implements ICoverArt {
 	 * @param name		Album name
 	 * @param artist	Artist
 	 */
-	public Album(int id, String name, String artist) {
+	public Album(int id, String name, String artist, int year) {
 		this.id = id;
 		this.name = name;
 		this.artist = artist;
+		this.year = year;
 	}
 	
 	public String getArtFolder() {
@@ -75,6 +78,14 @@ public class Album implements ICoverArt {
 			thumbID = Crc32.computeAsHex((name + artist).toLowerCase());
 		}
 		return thumbID;
+	}
+	
+	/**
+	 * Returns database ID.
+	 * @return
+	 */
+	public int getId() {
+		return this.id;
 	}
 	
 	/**
@@ -115,6 +126,11 @@ public class Album implements ICoverArt {
 	public int year = -1;
 	
 	/**
+	 * Local path of the album
+	 */
+	public String localPath;
+	
+	/**
 	 * Rating
 	 */
 	public int rating = -1;
@@ -130,4 +146,7 @@ public class Album implements ICoverArt {
 	 * Save this once it's calculated
 	 */
 	public String thumbID = null;
+	
+	private static final long serialVersionUID = 4779827915067184250L;
+
 }

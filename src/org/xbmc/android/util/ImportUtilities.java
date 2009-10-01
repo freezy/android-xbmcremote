@@ -16,14 +16,15 @@
 
 package org.xbmc.android.util;
 
-import android.graphics.Bitmap;
-
 import java.io.File;
-import java.io.IOException;
-import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.xbmc.httpapi.data.ICoverArt;
+import org.xbmc.httpapi.type.ThumbSize;
+
+import android.graphics.Bitmap;
 
 public final class ImportUtilities {
     private static final String CACHE_DIRECTORY = "xbmc";
@@ -31,22 +32,16 @@ public final class ImportUtilities {
     private ImportUtilities() {
     }
 
-    public static File getCacheDirectory(String type, String size) {
-        return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + size);
+    public static File getCacheDirectory(String type, ThumbSize size) {
+        return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + size.getDir());
     }
 
     public static boolean addCoverToCache(ICoverArt art, Bitmap bitmap) {
-        
-    	final int size[] = { ImageLoader.SIZE_BIG, ImageLoader.SIZE_MEDIUM, ImageLoader.SIZE_SMALL };
-    	final String dir[] = { ImageLoader.DIR_BIG, ImageLoader.DIR_MEDIUM, ImageLoader.DIR_SMALL };
-    	
+    	final ThumbSize size[] = { ThumbSize.small, ThumbSize.medium, ThumbSize.big };
     	File cacheDirectory;
-    	
     	for (int i = 0; i < size.length; i++) {
-    		final int s = size[i];
-    		final String d = dir[i];
     		try {
-    			cacheDirectory = ensureCache(art.getArtFolder(), d);
+    			cacheDirectory = ensureCache(art.getArtFolder(), size[i]);
     		} catch (IOException e) {
     			return false;
     		}
@@ -54,7 +49,7 @@ public final class ImportUtilities {
     		FileOutputStream out = null;
     		try {
     			out = new FileOutputStream(coverFile);
-    			final Bitmap resized = Bitmap.createScaledBitmap(bitmap, s, s, true);
+    			final Bitmap resized = Bitmap.createScaledBitmap(bitmap, size[i].getPixel(), size[i].getPixel(), true);
     			resized.compress(Bitmap.CompressFormat.PNG, 100, out);
     		} catch (FileNotFoundException e) {
     			return false;
@@ -65,7 +60,7 @@ public final class ImportUtilities {
         return true;
     }
 
-    private static File ensureCache(String type, String size) throws IOException {
+    private static File ensureCache(String type, ThumbSize size) throws IOException {
         File cacheDirectory = getCacheDirectory(type, size);
         if (!cacheDirectory.exists()) {
             cacheDirectory.mkdirs();
@@ -75,11 +70,11 @@ public final class ImportUtilities {
     }
     
     public static void purgeCache() {
-    	final String dir[] = { ImageLoader.DIR_BIG, ImageLoader.DIR_MEDIUM, ImageLoader.DIR_SMALL };
+    	final ThumbSize size[] = { ThumbSize.small, ThumbSize.medium, ThumbSize.big };
     	final String type[] = { "/music", "/video" };
     	for (int i = 0; i < type.length; i++) {
-    		for (int j = 0; j < dir.length; j++) {
-    			File cacheDirectory = getCacheDirectory(type[i], dir[j]);
+    		for (int j = 0; j < size.length; j++) {
+    			File cacheDirectory = getCacheDirectory(type[i], size[j]);
     			if (cacheDirectory.exists() && cacheDirectory.isDirectory()) {
     				for (File file : cacheDirectory.listFiles()) {
     					file.delete();

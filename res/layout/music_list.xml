@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:id="@+id/MusicListLinearLayoutOuter" android:orientation="vertical"
+	android:fadingEdge="none">
+	<LinearLayout android:id="@+id/MusicListLinearLayoutTop"
+		android:layout_width="fill_parent" android:background="@drawable/layout_top_bar"
+		android:orientation="vertical" android:layout_height="25px"
+		android:paddingTop="3px" android:fadingEdge="none">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/MusicListTextViewTitle"
+			android:textColor="#ffffff" android:text="All Albums"
+			android:layout_gravity="center_vertical|center_horizontal"
+			android:textSize="14px" android:shadowDy="0" android:shadowDx="-1"
+			android:shadowRadius="0.1" android:shadowColor="#000000"></TextView>
+	</LinearLayout>
+	<ListView android:layout_height="fill_parent"
+		android:layout_width="fill_parent" android:fadingEdge="none"
+		android:id="@id/android:list"></ListView>
+	<LinearLayout android:id="@+id/MusicListLinearLayoutBottom"
+		android:layout_height="30px" android:layout_width="fill_parent"
+		android:layout_gravity="bottom"></LinearLayout>
+</LinearLayout>

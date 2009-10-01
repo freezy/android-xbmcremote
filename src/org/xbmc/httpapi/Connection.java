@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
@@ -83,12 +84,12 @@ public class Connection {
 			final BufferedReader rd = new BufferedReader(new InputStreamReader(uc.getInputStream()), 8192);
 			final StringBuilder sb = new StringBuilder();
 
-			System.out.println("HTTP: start (" + query + ")");
+			System.out.println("HTTP: start " + URLDecoder.decode(query.toString()));
 			String line = "";
 			while ((line = rd.readLine()) != null) {    
 				sb.append(line);
 			}
-			System.out.println("HTTP: end (" + query + ")");
+			System.out.println("HTTP: end " + URLDecoder.decode(query.toString()));
 			
 			rd.close();
 			return sb.toString().replace("<html>", "").replace("</html>", "");
@@ -107,6 +108,15 @@ public class Connection {
 	 */
 	public String getString(String method, String parameters) {
 		return this.query(method, parameters).replaceAll(LINE_SEP, "").trim();
+	}
+	
+	/**
+	 * Executes an HTTP API method and returns the result as string.
+	 * @param method      Name of the method to run
+	 * @return Result
+	 */
+	public String getString(String method) {
+		return getString(method, "");
 	}
 	
 	/**

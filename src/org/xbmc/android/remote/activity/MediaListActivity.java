@@ -45,20 +45,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class MediaListActivity extends ListActivity {
+	
 	public static final int MESSAGE_HANDLE_DATA = 1;
 	public static final int MESSAGE_CONNECTION_ERROR = 2;
 	
-//	private final HttpClient mClient = ConnectionManager.getHttpClient(this);
 	private HashMap<String, MediaLocation> fileItems;
 	private volatile String gettingUrl;
 	private MediaType mMediaType;
-//	private Handler mediaListHandler;
-
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		mediaListHandler = new Handler(this);
 		ErrorHandler.setActivity(this);
 		final String st = getIntent().getStringExtra("shareType");
 		mMediaType = st != null ? MediaType.valueOf(st) : MediaType.music;

@@ -21,6 +21,8 @@
 
 package org.xbmc.android.backend.httpapi;
 
+import org.xbmc.httpapi.data.Album;
+
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.InfoClient} class.
  * 
@@ -31,12 +33,26 @@ public class ControlWrapper extends Wrapper {
 	/**
 	 * Starts playing the media file <code>filename</code> .
 	 * @param handler Wrapped boolean return value
-	 * @param type File to play
+	 * @param filename File to play
 	 */
 	public void playFile(final HttpApiHandler<Boolean> handler, final String filename) {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				handler.value = control(handler).playFile(filename);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.
+	 * @param handler Wrapped boolean return value
+	 * @param fileOrFolder File to play
+	 */
+	public void addToPlaylist(final HttpApiHandler<Boolean> handler, final String fileOrFolder) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = control(handler).addToPlaylist(fileOrFolder);
 				done(handler);
 			}
 		});

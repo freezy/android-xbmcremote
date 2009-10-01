@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import org.xbmc.android.util.ImageLoader;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.ICoverArt;
+import org.xbmc.httpapi.type.ThumbSize;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -96,7 +97,7 @@ public class AlbumAdapter extends BaseAdapter {
 			if (convertView == null) {
 				imageView = new ImageView(mContext);
 				holder = new AlbumHolder();
-				imageView.setLayoutParams(new GridView.LayoutParams(ImageLoader.SIZE_MEDIUM, ImageLoader.SIZE_MEDIUM));
+				imageView.setLayoutParams(new GridView.LayoutParams(ThumbSize.medium.getPixel(), ThumbSize.medium.getPixel()));
 //				imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 				imageView.setPadding(0, 0, 1, 1);
 			} else {
@@ -107,7 +108,7 @@ public class AlbumAdapter extends BaseAdapter {
 			holder.thumbCrc = album.getCrc();
 			imageView.setTag(holder);
 			
-			final Bitmap bitmap = ImageLoader.loadCachedCover(imageView, album, ImageLoader.DIR_MEDIUM);
+			final Bitmap bitmap = ImageLoader.loadCachedCover(imageView, album, ThumbSize.medium);
 			if (bitmap != null) {
 				onImageReady(bitmap, album, imageView);
 			} else {

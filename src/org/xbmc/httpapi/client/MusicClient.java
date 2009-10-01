@@ -36,6 +36,19 @@ import org.xbmc.httpapi.data.Song;
  */
 public class MusicClient {
 	
+	// those are the musicdb://n/ keys.
+	public static final int MUSICDB_GENRE           = 1;
+	public static final int MUSICDB_ARTIST          = 2;
+	public static final int MUSICDB_ALBUM           = 3;
+	public static final int MUSICDB_SONG            = 4;
+	public static final int MUSICDB_TOP100          = 5;
+	public static final int MUSICDB_RECENTLY_ADDED  = 6;
+	public static final int MUSICDB_RECENTLY_PLAYED = 7;
+	public static final int MUSICDB_COMPILATION     = 8;
+	public static final int MUSICDB_YEARS           = 9;
+	
+	public static final String PLAYLIST_ID = "0";
+	
 	private final Connection mConnection;
 
 	/**
@@ -47,15 +60,86 @@ public class MusicClient {
 	}
 	
 	/**
+	 * Adds an album to the current playlist.
+	 * @param album
+	 * @return first song of the album
+	 */
+	public Song addToPlaylist(Album album) {
+//		return mConnection.getBoolean("AddToPlayList", "musicdb://" + MUSICDB_ALBUM + "/" + album.id);
+		final ArrayList<Song> songs = getSongs(album);
+		Song firstSong = null;
+		for (Song song : songs) {
+			if (firstSong == null) {
+				firstSong = song;
+			}
+			addToPlaylist(song);
+		}
+		return firstSong;
+	}
+	
+	/**
+	 * Adds a song to the current playlist.
+	 * @param song
+	 * @return true on success, false otherwise.
+	 */
+	public boolean addToPlaylist(Song song) {
+		return mConnection.getBoolean("AddToPlayList", song.path + ";" + PLAYLIST_ID);
+	}
+	
+	/**
+	 * Returns how many items are in the playlist.
+	 * @return
+	 */
+	public int getPlaylistSize() {
+		return mConnection.getInt("GetPlaylistLength", PLAYLIST_ID);
+	}
+	
+	/**
+	 * Clears current playlist
+	 * @return true on success, false otherwise.
+	 */
+	public boolean clearPlaylist() {
+		return mConnection.getBoolean("ClearPlayList", PLAYLIST_ID);
+	}
+	
+	/**
+	 * Plays an album. Playlist is previously cleared.
+	 * @param album
+	 * @return true on success, false otherwise.
+	 */
+	public boolean play(Album album) {
+		final ArrayList<Song> songs = getSongs(album);
+		clearPlaylist();
+		int n = 0;
+		for (Song song : songs) {
+			addToPlaylist(song);
+			if (n == 0) {
+				play(song);
+			}
+			n++;
+		}
+		return true;
+	}
+	
+	/**
+	 * Adds a song to the current playlist.
+	 * @param song
+	 * @return true on success, false otherwise.
+	 */
+	public boolean play(Song song) {
+		return mConnection.getBoolean("PlayFile", song.path + ";" + PLAYLIST_ID);
+	}
+	
+	/**
 	 * Get all albums from database
 	 * @return All albums
 	 */
 	public ArrayList<Album> getAlbums() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT a.idAlbum, a.strAlbum, i.strArtist");
+		sb.append("SELECT a.idAlbum, a.strAlbum, i.strArtist, a.iYear");
 		sb.append("  FROM album AS a, artist AS i");
 		sb.append("  WHERE a.idArtist = i.idArtist");
-		sb.append("  ORDER BY i.strArtist DESC");
+		sb.append("  ORDER BY i.strArtist ASC");
 		sb.append("  LIMIT 300"); // let's keep it at 300 for now
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
@@ -67,7 +151,7 @@ public class MusicClient {
 	 */
 	public Album updateAlbumInfo(Album album) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT g.strGenre, a.strExtraGenres, a.iYear, ai.strLabel, ai.iRating");
+		sb.append("SELECT g.strGenre, a.strExtraGenres, ai.strLabel, ai.iRating");
 		sb.append("  FROM album a, genre g");
 		sb.append("  LEFT JOIN albuminfo AS ai ON ai.idAlbumInfo = a.idAlbum");
 		sb.append("  WHERE a.idGenre = g.idGenre");
@@ -87,7 +171,7 @@ public class MusicClient {
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = a.idArtist");
 		sb.append("  AND s.idAlbum = " + album.id);
-		sb.append("  ORDER BY s.iTrack");
+		sb.append("  ORDER BY s.iTrack, s.strFileName");
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
@@ -115,11 +199,12 @@ public class MusicClient {
 		ArrayList<Album> albums = new ArrayList<Album>();
 		String[] fields = response.split("<field>");
 		try {
-			for (int row = 1; row < fields.length; row += 3) {
+			for (int row = 1; row < fields.length; row += 4) {
 				albums.add(new Album(
 						Connection.trimInt(fields[row]), 
 						Connection.trim(fields[row + 1]), 
-						Connection.trim(fields[row + 2])
+						Connection.trim(fields[row + 2]),
+						Connection.trimInt(fields[row + 3])
 				));
 			}
 		} catch (Exception e) {
@@ -149,12 +234,9 @@ public class MusicClient {
 				album.genres = Connection.trim(fields[1]) + Connection.trim(fields[2]);
 			}	
 			if (Connection.trim(fields[3]).length() > 0) {
-				album.year = Connection.trimInt(fields[3]);
-			}
-			if (Connection.trim(fields[4]).length() > 0) {
 				album.label = Connection.trim(fields[4]);
 			}
-			if (Connection.trim(fields[5]).length() > 0) {
+			if (Connection.trim(fields[4]).length() > 0) {
 				album.rating = Connection.trimInt(fields[5]);
 			}
 		} catch (Exception e) {

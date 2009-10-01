@@ -32,6 +32,7 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Song;
+import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -127,7 +128,7 @@ public class AlbumGridActivity extends Activity {
 					genresText.setVisibility(View.GONE);
 				}
 				
-		        final File file = new File(ImportUtilities.getCacheDirectory(album.getArtFolder(), ImageLoader.DIR_BIG), album.getCrc());
+		        final File file = new File(ImportUtilities.getCacheDirectory(album.getArtFolder(), ThumbSize.big), album.getCrc());
 		        if (file.exists()) {
 		        	cover.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
 		        }
@@ -165,7 +166,7 @@ public class AlbumGridActivity extends Activity {
 					yearText.setVisibility(View.GONE);
 				}
 				
-		        final File file = new File(ImportUtilities.getCacheDirectory(album.getArtFolder(), ImageLoader.DIR_SMALL), album.getCrc());
+		        final File file = new File(ImportUtilities.getCacheDirectory(album.getArtFolder(), ThumbSize.small), album.getCrc());
 		        if (file.exists()) {
 		        	cover.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
 		        }
