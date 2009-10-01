@@ -31,8 +31,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import android.os.Looper;
-
 /**
  * Keeps track of the HTTP connection and contains basic helper methods for
  * repeated String transformations 

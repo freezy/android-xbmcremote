@@ -25,7 +25,7 @@ public class EventClient {
 	private byte[] mIconData;
 	private InetAddress mHostAddress;
 	private int mHostPort;
-	private static EventClient instance = null;
+	private static EventClient sInstance = null;
 
 	/**
 	 * Starts a XBMC EventClient.
@@ -126,7 +126,7 @@ public class EventClient {
 		mPingThread = new PingThread(hostAddress, hostPort, 20000);
 		mPingThread.start();
 		
-		instance = this;
+		sInstance = this;
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class EventClient {
 		mPingThread.giveup();
 		mPingThread.interrupt();
 		
-		instance = null;
+		sInstance = null;
 
 		PacketBYE p = new PacketBYE();
 		p.send(mHostAddress, mHostPort);
@@ -149,7 +149,7 @@ public class EventClient {
 	 * If the XBMC EventClient is active, it returns the instance, otherwise <code>null</code>
 	 */
 	public static EventClient getInstance() {
-		return instance;
+		return sInstance;
 	}
 
 	/**
