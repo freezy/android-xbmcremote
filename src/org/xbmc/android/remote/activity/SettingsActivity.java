@@ -108,7 +108,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		if (origSummary != null && origSummary.contains(SUMMARY_VALUE_PLACEHOLDER)) {
 			pref.setSummary(origSummary.replaceAll(SUMMARY_VALUE_PLACEHOLDER, sharedPreferences.getString(key, "")));
 		}
-		if (key.equals("setting_ip") || key.equals("setting_http_port") || key.equals("setting_eventserver_port")) {
+		if (key.equals("setting_ip") || key.equals("setting_http_port") || key.equals("setting_eventserver_port") || key.equals("setting_http_user") || key.equals("setting_http_pass")) {
 			ConnectionManager.resetClient();
 		}
 	}
