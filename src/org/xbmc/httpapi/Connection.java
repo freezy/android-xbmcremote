@@ -23,12 +23,17 @@ package org.xbmc.httpapi;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.Authenticator;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.net.URLStreamHandler;
+import java.net.URLStreamHandlerFactory;
 import java.util.ArrayList;
 
 /**
@@ -38,6 +43,21 @@ import java.util.ArrayList;
  *  @author Team XBMC
  */
 public class Connection {
+
+    public class MyAuthenticator extends Authenticator {
+    	private String username;
+    	private char[] password;
+    	
+        public MyAuthenticator(String username, String password) {
+    		this.username = username;
+    		this.password = password.toCharArray();
+		}
+
+		// This method is called when a password-protected URL is accessed
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(username, password);
+        }
+    }
 	
 	public static final String LINE_SEP = "<li>";
 	public static final String VALUE_SEP = ";";
@@ -57,9 +77,11 @@ public class Connection {
 	 * @param errorHandler Error handler
 	 */
 	public Connection(String host, int port, String username, String password, IErrorHandler errorHandler) {
+		Authenticator.setDefault(new MyAuthenticator(username, password));
+		
 		mBaseURL = "http://";
 		if (username != null) {
-			mBaseURL += username + (password != null ? ":" + password : "") + "@";
+			mBaseURL += username + /*(password != null ? ":" + password : "") + */"@";
 		}
 		mBaseURL += host;
 		if (port != 80)
@@ -218,7 +240,7 @@ public class Connection {
 			mErrorHandler.handle(e);
 		}
 	}*/
-
+	
 	/**
 	 * Creates the API URL
 	 * @param method     Name of the method to run
