@@ -150,7 +150,7 @@ public class ConnectionManager {
 			String user = prefs.getString("setting_http_user", "");
 			String pass = prefs.getString("setting_http_pass", "");
 			if (port > 0 && user != null && user.length() > 0) {
-				sHttpApiInstance = new HttpClient(host, port, new ErrorHandler(activity));
+				sHttpApiInstance = new HttpClient(host, port, user, pass, new ErrorHandler(activity));
 			} else if (user != null && user.length() > 0) {
 				sHttpApiInstance = new HttpClient(host, user, pass, new ErrorHandler(activity));
 			} else if (port > 0) {
