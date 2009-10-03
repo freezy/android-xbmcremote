@@ -154,7 +154,8 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 			break;
 		case HOME_ACTION_MUSIC:
 //			startActivityForResult(createMediaIntent(MediaType.music, v), 0);
-			startActivityForResult(createMusicIntent(ListType.albums, v), 0);
+//			startActivityForResult(createMusicIntent(ListType.albums, v), 0);
+			startActivityForResult(new Intent(v.getContext(), MediaTabContainerActivity.class), 0);
 			break;
 		case HOME_ACTION_VIDEOS:
 			startActivityForResult(createMediaIntent(MediaType.video, v), 0);

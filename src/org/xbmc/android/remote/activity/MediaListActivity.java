@@ -71,10 +71,11 @@ public class MediaListActivity extends ListActivity {
 
 		MediaLocation item = fileItems.get(l.getAdapter().getItem(position));
 		if (item.isDirectory) {
-			Intent myIntent = new Intent(this, MediaListActivity.class);
-			myIntent.putExtra("shareType", mMediaType.toString());
-			myIntent.putExtra("path", item.path);
-			startActivityForResult(myIntent, 0);
+			Intent nextActivity = new Intent(this, MediaTabContainerActivity.class);
+			nextActivity.putExtras(getIntent().getExtras());
+			nextActivity.putExtra("shareType", mMediaType.toString());
+			nextActivity.putExtra("path", item.path);
+			startActivityForResult(nextActivity, 0);
 		} else {
 			HttpApiThread.control().playFile(new HttpApiHandler<Boolean>(this) {
 				public void run() {

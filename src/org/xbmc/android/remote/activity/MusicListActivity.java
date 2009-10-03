@@ -155,7 +155,10 @@ public class MusicListActivity extends ListActivity {
 		switch (mListType) {
 			case albums:
 				Album album = (Album)v.getTag();
-				nextActivity = new Intent(this, MusicListActivity.class);
+				nextActivity = new Intent(this, MediaTabContainerActivity.class);
+				
+				nextActivity.putExtras(getIntent().getExtras());
+				
 				nextActivity.putExtra(EXTRA_LIST_TYPE, ListType.songs.toString());
 				nextActivity.putExtra(EXTRA_ALBUM, album);
 				startActivity(nextActivity);
