@@ -43,21 +43,23 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 		EventClient client = getEventClient();
 		HttpClient http = ConnectionManager.getHttpClient();
 		SharedPreferences prefs = context.getSharedPreferences("XBMCRemotePrefsFile", Context.MODE_WORLD_WRITEABLE);
+		// currently no new connection to the event server is opened
 		if(client != null) {
 			try {
 				if(action.equals(android.telephony.TelephonyManager.ACTION_PHONE_STATE_CHANGED)
 						&& prefs.getBoolean("settings_show_call", true)) {
 					String extra = intent.getStringExtra(android.telephony.TelephonyManager.EXTRA_STATE);
-					if(extra.equals(android.telephony.TelephonyManager.EXTRA_STATE_RINGING))
-	               {
+					if(extra.equals(android.telephony.TelephonyManager.EXTRA_STATE_RINGING)) {
+						// someone is calling, we get all infos and pause the playback
 	                    String number = intent.getStringExtra(android.telephony.TelephonyManager.EXTRA_INCOMING_NUMBER);
 	                    String id = SmsPopupUtils.getPersonIdFromPhoneNumber(context, number);
 	                    String callername = SmsPopupUtils.getPersonName(context, id, number);
-//	                    byte[] callerpic = SmsPopupUtils.getPersonPhoto(context, id);
+	                    // Bitmap isn't supported by the event server, so we have to compress it
 	                    Bitmap pic = Contacts.People.loadContactPhoto(context, 
 	                    		Uri.withAppendedPath(Contacts.People.CONTENT_URI, id), R.drawable.icon, null);
 	                    ByteArrayOutputStream os = new ByteArrayOutputStream();
 	                    pic.compress(Bitmap.CompressFormat.PNG, 0, os);
+	                    // if xbmc is playing something, we pause it. without the check paused playback would resume
 	                    if(http != null && http.isConnected() && http.info.getCurrentlyPlaying().isPlaying){
 		                    client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, true, true, true, (short)0, (byte)0);
 		                    client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, false, true, (short)0, (byte)0);
@@ -67,6 +69,7 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 	               }
 	               if(extra.equals(android.telephony.TelephonyManager.EXTRA_STATE_IDLE))
 	               {
+	            	   // phone state changed to idle, so if we paused the playback before, we resume it now
 	            	   if(PLAY_STATE == PLAY_STATE_PAUSED) {
 		            	   client.sendButton("R1", ButtonCodes.REMOTE_PLAY, true, true, true, (short)0, (byte)0);
 		            	   client.sendButton("R1", ButtonCodes.REMOTE_PLAY, false, false, true, (short)0, (byte)0);
@@ -74,6 +77,7 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 	            	   PLAY_STATE = PLAY_STATE_NONE;
 	               }
 				}else if(action.equals(SMS_RECVEICED_ACTION) && prefs.getBoolean("setting_show_sms", true)) {
+					// sms received. extract msg, contact and pic and show it on the tv
 					Bundle bundle = intent.getExtras();
 		            if (bundle != null) {
 		            	SmsMmsMessage msg = SmsMmsMessage.getSmsfromPDUs(context, (Object[])bundle.get("pdus"));
