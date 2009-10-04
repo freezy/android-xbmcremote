@@ -26,14 +26,11 @@ import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.net.URLStreamHandler;
-import java.net.URLStreamHandlerFactory;
 import java.util.ArrayList;
 
 /**
@@ -50,7 +47,7 @@ public class Connection {
     	
         public MyAuthenticator(String username, String password) {
     		this.username = username;
-    		this.password = password.toCharArray();
+    		this.password = password!=null?password.toCharArray():new char[0];
 		}
 
 		// This method is called when a password-protected URL is accessed
