@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
-	<GridView android:layout_width="fill_parent"
-		android:id="@+id/HomeItemGridView" android:layout_height="wrap_content">
-</GridView>
-	<TextView android:id="@+id/HomeVersionTextView" android:text="Version Info"
-		android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
-		android:layout_width="wrap_content"></TextView>
-
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent" 
+	android:orientation="vertical">
+	<RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <LinearLayout
+            android:id="@+id/home_bottombar"
+            android:layout_width="fill_parent"
+            android:layout_height="60px"
+            android:layout_alignParentBottom="true" android:background="@drawable/home_bottom">
+			<TextView android:id="@+id/HomeVersionTextView" android:text="Version Info"
+				android:layout_height="wrap_content" android:typeface="monospace" android:layout_gravity="center_vertical" android:gravity="center_horizontal" android:layout_width="fill_parent"/>
+		</LinearLayout>
+		<FrameLayout
+			 android:id="@+id/home_upper"
+			 android:layout_width="fill_parent"
+			 android:layout_height="fill_parent"
+			 android:layout_above="@id/home_bottombar">
+			<GridView 
+				android:layout_width="fill_parent"
+				android:id="@+id/HomeItemGridView" 
+				android:layout_height="wrap_content" />
+		</FrameLayout>
+	</RelativeLayout>
 </LinearLayout>
