@@ -66,43 +66,47 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 	public void getCover(final HttpApiHandler<Bitmap> handler, final ICoverArt cover, final ThumbSize size) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				Log.i(LOG_TAG, "Downloading cover " + cover);
-				/* it can happen that the same cover is queued consecutively several
-				 * times. that's why we check both the disk cache and memory cache if
-				 * the cover is not already available from a previously queued download. 
-				 */
-				if (size == ThumbSize.small && HttpApiMemCacheThread.isInCache(cover)) { // we're optimistic, let's check the memory first.
-					Log.i(LOG_TAG, "Cover is now already in mem cache, directly returning...");
-					handler.value = HttpApiMemCacheThread.getCover(cover);
-					done(handler);
-				} else if (HttpApiDiskCacheThread.isInCache(cover)) {
-					Log.i(LOG_TAG, "Cover is not in mem cache anymore but still on disk, directly returning...");
-					handler.value = HttpApiDiskCacheThread.getCover(cover, size);
-				} else {
-					Log.i(LOG_TAG, "Download START..");
-					String b64enc = music(handler).getAlbumThumb(cover);
-					Log.i(LOG_TAG, "Download END.");
-					byte[] bytes;
-					try {
-						bytes = Base64.decode(b64enc);
-						if (bytes.length > 0) {
-							Log.i(LOG_TAG, "Decoding, resizing and adding to cache");
-							Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-							if (bitmap != null) {
-								HttpApiDiskCacheThread.addCoverToCache(cover, bitmap);
-								HttpApiMemCacheThread.addCoverToCache(cover, bitmap);
-								handler.value = bitmap;
-								Log.i(LOG_TAG, "Done");
-							} else {
-								Log.w(LOG_TAG, "Bitmap was null, couldn't decode XBMC's response (" + bytes.length + " bytes).");
-							}
-						}
-					} catch (IOException e) {
-						System.out.println("IOException " + e.getMessage());
-						System.out.println(e.getStackTrace());
-					} finally {
+				if (cover != null) {
+					Log.i(LOG_TAG, "Downloading cover " + cover);
+					/* it can happen that the same cover is queued consecutively several
+					 * times. that's why we check both the disk cache and memory cache if
+					 * the cover is not already available from a previously queued download. 
+					 */
+					if (size == ThumbSize.small && HttpApiMemCacheThread.isInCache(cover)) { // we're optimistic, let's check the memory first.
+						Log.i(LOG_TAG, "Cover is now already in mem cache, directly returning...");
+						handler.value = HttpApiMemCacheThread.getCover(cover);
 						done(handler);
+					} else if (HttpApiDiskCacheThread.isInCache(cover)) {
+						Log.i(LOG_TAG, "Cover is not in mem cache anymore but still on disk, directly returning...");
+						handler.value = HttpApiDiskCacheThread.getCover(cover, size);
+					} else {
+						Log.i(LOG_TAG, "Download START..");
+						String b64enc = music(handler).getAlbumThumb(cover);
+						Log.i(LOG_TAG, "Download END.");
+						byte[] bytes;
+						try {
+							bytes = Base64.decode(b64enc);
+							if (bytes.length > 0) {
+								Log.i(LOG_TAG, "Decoding, resizing and adding to cache");
+								Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+								if (bitmap != null) {
+									HttpApiDiskCacheThread.addCoverToCache(cover, bitmap);
+									HttpApiMemCacheThread.addCoverToCache(cover, bitmap);
+									handler.value = bitmap;
+									Log.i(LOG_TAG, "Done");
+								} else {
+									Log.w(LOG_TAG, "Bitmap was null, couldn't decode XBMC's response (" + bytes.length + " bytes).");
+								}
+							}
+						} catch (IOException e) {
+							System.out.println("IOException " + e.getMessage());
+							System.out.println(e.getStackTrace());
+						} finally {
+							done(handler);
+						}
 					}
+				} else {
+					done(handler);
 				}
 			}
 		});

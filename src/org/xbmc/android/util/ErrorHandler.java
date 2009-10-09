@@ -27,6 +27,7 @@ import java.net.SocketTimeoutException;
 import org.xbmc.android.remote.activity.SettingsActivity;
 import org.xbmc.httpapi.IErrorHandler;
 import org.xbmc.httpapi.NoNetworkException;
+import org.xbmc.httpapi.NoSettingsException;
 import org.xbmc.httpapi.WrongDataFormatException;
 
 import android.app.Activity;
@@ -75,6 +76,14 @@ public class ErrorHandler implements IErrorHandler {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(sActivity);
 		try {
 			throw exception;
+		} catch (NoSettingsException e) {
+			builder.setTitle("No Settings detected");
+			builder.setMessage(e.getMessage());
+			builder.setNeutralButton("Settings", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					sActivity.startActivity(new Intent(sActivity, SettingsActivity.class));
+				}
+			});
 		} catch (NoNetworkException e) {
 			builder.setTitle("No Network");
 			builder.setMessage(e.getMessage());
@@ -96,6 +105,9 @@ public class ErrorHandler implements IErrorHandler {
 				}
 			});
 		} catch (IOException e) {
+			if (e.getMessage().startsWith("Authority expected")) {
+				
+			}
 			builder.setTitle("Unknown I/O Exception");
 			builder.setMessage(e.getMessage().toString());
 		} catch (Exception e) {
@@ -103,12 +115,15 @@ public class ErrorHandler implements IErrorHandler {
 			builder.setMessage(e.getStackTrace().toString());
 		} finally {
 			
+			exception.printStackTrace();
+			
 			builder.setCancelable(true);
 			builder.setNegativeButton("Close", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();
 				}
 			});
+			
 			final AlertDialog alert = builder.create();
 			alert.show();
 		}

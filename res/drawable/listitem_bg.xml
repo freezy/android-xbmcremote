@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<selector android:id="@+id/listitem_bgcolor" xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="false" android:drawable="@color/listitem_back" />
+    <item android:state_selected="true" android:drawable="@color/listitem_back_selected" />
+    <item android:state_last="true" android:drawable="@drawable/listitem_bottom_rounded" />
+</selector>

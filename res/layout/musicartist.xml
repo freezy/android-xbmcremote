@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.xbmc.android.widget.slidingtabs.SlidingTabHost 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@id/slidingtabhost"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <org.xbmc.android.widget.slidingtabs.SlidingTabWidget
+            android:id="@id/slidingtabs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+             />
+        <FrameLayout
+            android:id="@id/slidingtabcontent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/slidingtabs"
+            >
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:id="@+id/albumlist_outer_layout" android:orientation="vertical"
+				android:fadingEdge="none">
+				<include layout="@layout/titlebar" />
+				<ListView android:layout_height="fill_parent"
+					android:layout_width="fill_parent" android:fadingEdge="none"
+					android:id="@+id/albumlist_list"></ListView>
+			</LinearLayout>
+
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:id="@+id/songlist_outer_layout" android:orientation="vertical"
+				android:fadingEdge="none">
+				<include layout="@layout/titlebar" />
+				<ListView android:layout_height="fill_parent"
+					android:layout_width="fill_parent" android:fadingEdge="none"
+					android:id="@+id/songlist_list"></ListView>
+			</LinearLayout>
+
+    	</FrameLayout>
+    </RelativeLayout>
+</org.xbmc.android.widget.slidingtabs.SlidingTabHost>

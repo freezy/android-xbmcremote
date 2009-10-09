@@ -66,10 +66,12 @@ class HttpApiMemCacheThread extends HttpApiAbstractThread {
 	public void getCover(final HttpApiHandler<Bitmap> handler, final ICoverArt cover) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				SoftReference<Bitmap> ref = sArtCache.get(cover.getCrc());
-		        if (ref != null) {
-		            handler.value = ref.get();
-		        }
+				if (cover != null) {
+					SoftReference<Bitmap> ref = sArtCache.get(cover.getCrc());
+			        if (ref != null) {
+			            handler.value = ref.get();
+			        }
+				}
 				done(handler);
 			}
 		});

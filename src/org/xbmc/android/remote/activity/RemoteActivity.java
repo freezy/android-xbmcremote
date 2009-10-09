@@ -331,15 +331,15 @@ public class RemoteActivity extends Activity {
 		
 		switch (item.getItemId()) {
 		case 1:
-			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent = new Intent(this, FileListActivity.class);
 			myIntent.putExtra("shareType", MediaType.music.toString());
 			break;
 		case 2:
-			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent = new Intent(this, FileListActivity.class);
 			myIntent.putExtra("shareType", MediaType.video.toString());
 			break;
 		case 3:
-			myIntent = new Intent(this, MediaListActivity.class);
+			myIntent = new Intent(this, FileListActivity.class);
 			myIntent.putExtra("shareType", MediaType.pictures.toString());
 			break;
 		case 4:

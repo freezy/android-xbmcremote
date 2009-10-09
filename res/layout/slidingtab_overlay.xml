@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:orientation="vertical"
+	android:layout_height="fill_parent" android:layout_gravity="center_horizontal"
+	android:id="@+id/slidingtab_overlay_layer" android:background="#cc000000">
+	<ImageView android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:id="@+id/slidingtab_overlay_image"
+		android:layout_gravity="center_horizontal" android:paddingTop="120px" android:paddingBottom="10px"></ImageView>
+	<TextView android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:id="@+id/slidingtab_overlay_label"
+		android:text="Tab Label" android:layout_gravity="center_horizontal"
+		android:textColor="#ffffff" android:textSize="18px"></TextView>
+</LinearLayout>

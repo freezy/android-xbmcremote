@@ -64,6 +64,7 @@ public class Connection {
 	private static final String XBMC_HTTP_BOOTSTRAP =  "/xbmcCmds/xbmcHttp";
 	private String mBaseURL;
 	private IErrorHandler mErrorHandler;
+	private boolean settingsOK = false;
 	
 	/**
 	 * Class constructor sets host data and error handler.
@@ -76,15 +77,18 @@ public class Connection {
 	public Connection(String host, int port, String username, String password, IErrorHandler errorHandler) {
 		Authenticator.setDefault(new MyAuthenticator(username, password));
 		
-		mBaseURL = "http://";
-		if (username != null) {
-			mBaseURL += username + /*(password != null ? ":" + password : "") + */"@";
+		if (!host.equals("") && port > 0) {
+			mBaseURL = "http://";
+			if (username != null) {
+				mBaseURL += username + /*(password != null ? ":" + password : "") + */"@";
+			}
+			mBaseURL += host;
+			if (port != 80)
+				mBaseURL += ":" + port;
+//			setResponseFormat();
+			settingsOK = true;
 		}
-		mBaseURL += host;
-		if (port != 80)
-			mBaseURL += ":" + port;
 		mErrorHandler = errorHandler;
-//		setResponseFormat();
 	}
 	
 	/**
@@ -95,6 +99,9 @@ public class Connection {
 	 */
 	public String query(String method, String parameters) {
 		try {
+			if (!settingsOK) {
+				throw new NoSettingsException();
+			}
 			final URL query = formatQueryString(method, parameters);
 			final URLConnection uc = query.openConnection();
 			uc.setConnectTimeout(CONNECTION_TIMEOUT);

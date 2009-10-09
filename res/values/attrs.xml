@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  Copyright (C) 2005-2009 Team XBMC
+      http://xbmc.org
+
+      This Program is free software; you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation; either version 2, or (at your option)
+      any later version.
+
+      This Program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+      GNU General Public License for more details.
+
+      You should have received a copy of the GNU General Public License
+      along with XBMC Remote; see the file license.  If not, write to
+      the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+      http://www.gnu.org/copyleft/gpl.html
+-->
+
+<resources>
+    <!-- These are the standard attributes that make up a complete theme. -->
+    <declare-styleable name="Theme">
+        <!-- Default SlidingTabWidget style. -->
+        <attr name="slidingTabWidgetStyle" format="reference" />
+    </declare-styleable>
+    
+    <declare-styleable name="SlidingTabWidget">
+    	<!--  Defines how many pixels are between the icons in the background. The 
+    		  width is measured from the center of the icons. -->
+	    <attr name="separationWidth" format="integer" />
+    </declare-styleable>
+</resources>

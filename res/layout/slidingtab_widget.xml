@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:id="@+id/SlidingTabLinearLayoutOuter"
+	android:layout_height="60px" android:background="@drawable/st_background"
+	android:orientation="vertical">
+	<HorizontalScrollView android:id="@+id/SlidingTabHorizontalScrollView"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:scrollbars="none" android:layout_marginTop="6px"
+		android:clickable="false" android:fadingEdge="none" android:focusable="false"
+		android:focusableInTouchMode="false" android:isScrollContainer="true">
+		<LinearLayout android:layout_gravity="center_vertical"
+			android:id="@+id/SlidingTabLinearLayoutBackslider"
+			android:layout_marginTop="6px" android:layout_width="wrap_content"
+			android:layout_height="48px" />
+	</HorizontalScrollView>
+	<LinearLayout android:layout_height="wrap_content" android:layout_marginLeft="-19px"
+		android:layout_marginTop="-49px" android:id="@+id/SlidingTabLinearLayoutSlidingContainer" android:layout_width="368px">
+		<ImageButton android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/SlidingTabImageButtonSlider"
+			android:background="@drawable/st_slider" android:isScrollContainer="true" />
+	</LinearLayout>
+
+</LinearLayout>

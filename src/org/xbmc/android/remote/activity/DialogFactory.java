@@ -52,7 +52,7 @@ import android.widget.TextView;
  * 
  * @author Team XBMC
  */
-abstract class DialogFactory {
+public abstract class DialogFactory {
 	
 	/**
 	 * Returns the album details dialog, the one with big cover and queue/play button.

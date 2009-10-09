@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <resources>
+ 	<color name="listitem_title">#ff000000</color>
+ 	<color name="listitem_subtitle">#ff505050</color>
+ 	<color name="listitem_text_selected">#ffffffff</color>
+ 	<color name="listitem_back">#fff8f8f8</color>
+ 	<color name="listitem_back_selected">#00ffffff</color>
+ </resources>

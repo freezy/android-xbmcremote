@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/MusicItemLinearLayoutOuter"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" 
+	android:background="@drawable/listitem_bg">
+	<ImageView 
+		android:background="@drawable/home_music"
+		android:id="@+id/MusicItemImageViewArt" 
+		android:layout_height="50px" 
+		android:layout_width="50px"/>
+	<TextView 
+		android:id="@+id/MusicItemTextViewTitle" 
+		android:layout_height="wrap_content" 
+		android:layout_width="fill_parent" 
+		android:text="Title" 
+		android:textSize="18px" 
+		android:textColor="@drawable/listitem_title" 
+		android:ellipsize="marquee" 
+		android:marqueeRepeatLimit="0" 
+		android:lines="1" 
+		android:paddingLeft="5px" 
+		android:paddingTop="14px"/>
+</LinearLayout>

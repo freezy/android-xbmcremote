@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.data.Album;
+import org.xbmc.httpapi.data.Artist;
+import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.ThumbSize;
 
@@ -60,6 +62,34 @@ public class MusicWrapper extends Wrapper {
 	}
 	
 	/**
+	 * Gets all albums of an artist from database
+	 * @param handler Callback handler
+	 * @param artist  Artist of the albums
+	 */
+	public void getAlbums(final HttpApiHandler<ArrayList<Album>> handler, final Artist artist) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).getAlbums(artist);
+				done(handler);
+			}
+		});
+	}
+
+	/**
+	 * Gets all albums of a genre from database
+	 * @param handler Callback handler
+	 * @param artist  Genre of the albums
+	 */
+	public void getAlbums(final HttpApiHandler<ArrayList<Album>> handler, final Genre genre) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).getAlbums(genre);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
 	 * Gets all songs of an album from database
 	 * @param handler Callback handler
 	 * @param album The album
@@ -68,6 +98,73 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				handler.value = music(handler).getSongs(album);
+				done(handler);
+			}
+		});
+	}
+
+	/**
+	 * Gets all songs from an artist from database
+	 * @param handler Callback handler
+	 * @param album The artist
+	 */
+	public void getSongs(final HttpApiHandler<ArrayList<Song>> handler, final Artist artist) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).getSongs(artist);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Gets all songs of a genre from database
+	 * @param handler Callback handler
+	 * @param album The genre
+	 */
+	public void getSongs(final HttpApiHandler<ArrayList<Song>> handler, final Genre genre) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).getSongs(genre);
+				done(handler);
+			}
+		});
+	}
+
+	/**
+	 * Gets all artists from database
+	 * @param handler Callback handler
+	 */
+	public void getArtists(final HttpApiHandler<ArrayList<Artist>> handler) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).getArtists();
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Gets all artists with at least one song of a genre.
+	 * @param handler Callback handler
+	 */
+	public void getArtists(final HttpApiHandler<ArrayList<Artist>> handler, final Genre genre) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).getArtists(genre);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Gets all artists from database
+	 * @param handler Callback handler
+	 */
+	public void getGenres(final HttpApiHandler<ArrayList<Genre>> handler) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).getGenres();
 				done(handler);
 			}
 		});
@@ -131,6 +228,47 @@ public class MusicWrapper extends Wrapper {
 			}
 		});
 	}
+
+	/**
+	 * Adds all songs from an artist to the playlist. If nothing is playing, the first 
+	 * song will be played, otherwise songs are just added to the playlist.
+	 * @param handler Callback
+	 * @param artist 
+	 */
+	public void addToPlaylist(final HttpApiHandler<Song> handler, final Artist artist) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				final MusicClient mc = music(handler);
+				final ControlClient.PlayState ps = control(handler).getPlayState();
+				handler.value = mc.addToPlaylist(artist);
+				if (ps == ControlClient.PlayState.Stopped) { // if nothing is playing, play the first song
+					mc.play(handler.value);
+				}
+				done(handler);
+			}
+		});
+	}
+
+	/**
+	 * Adds all songs of a genre from an artist to the playlist. If nothing is playing, 
+	 * the first song will be played, otherwise songs are just added to the playlist.
+	 * @param handler Callback
+	 * @param artist 
+	 * @param genre 
+	 */
+	public void addToPlaylist(final HttpApiHandler<Song> handler, final Artist artist, final Genre genre) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				final MusicClient mc = music(handler);
+				final ControlClient.PlayState ps = control(handler).getPlayState();
+				handler.value = mc.addToPlaylist(artist, genre);
+				if (ps == ControlClient.PlayState.Stopped) { // if nothing is playing, play the first song
+					mc.play(handler.value);
+				}
+				done(handler);
+			}
+		});
+	}
 	
 	/**
 	 * Plays an album
@@ -155,6 +293,35 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				handler.value = music(handler).play(song);
+				done(handler);
+			}
+		});
+	}
+
+	/**
+	 * Plays all songs from an artist
+	 * @param handler Callback
+	 * @param artist Artist whose songs to play
+	 */
+	public void play(final HttpApiHandler<Boolean> handler, final Artist artist) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).play(artist);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Plays songs of a genre from an artist
+	 * @param handler Callback
+	 * @param artist Artist whose songs to play
+	 * @param genre  Genre filter
+	 */
+	public void play(final HttpApiHandler<Boolean> handler, final Artist artist, final Genre genre) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).play(artist, genre);
 				done(handler);
 			}
 		});
