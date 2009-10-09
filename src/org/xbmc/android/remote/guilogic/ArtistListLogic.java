@@ -41,6 +41,7 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -141,7 +142,9 @@ public class ArtistListLogic extends ListLogic {
 			final Artist artist = this.getItem(position);
 			row.setTag(artist);
 			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
+			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
 			title.setText(artist.name);
+			icon.setImageResource(R.drawable.icon_artist);
 			return row;
 		}
 	}

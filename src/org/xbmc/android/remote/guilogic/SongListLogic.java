@@ -166,8 +166,10 @@ public class SongListLogic extends ListLogic {
 				}, mAlbum, ThumbSize.small);
 			} else if (mArtist != null) {
 				subtitle.setText(song.album);
+				icon.setImageResource(R.drawable.home_music);
 			} else if (mGenre != null) {
 				subtitle.setText(song.artist);
+				icon.setImageResource(R.drawable.home_music);
 			}
 			return row;
 		}

@@ -27,7 +27,7 @@
 			android:ellipsize="end" 
 			android:marqueeRepeatLimit="1" 
 			android:lines="1" 
-			android:scrollHorizontally="true"/>
+			android:scrollHorizontally="true" />
 		<LinearLayout 
 				android:id="@+id/MusicItemLinearLayoutBottomText" 
 				android:layout_height="wrap_content" 

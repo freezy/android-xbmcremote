@@ -17,9 +17,10 @@
 		android:text="Title" 
 		android:textSize="18px" 
 		android:textColor="@drawable/listitem_title" 
-		android:ellipsize="marquee" 
-		android:marqueeRepeatLimit="0" 
+		android:ellipsize="end" 
+		android:marqueeRepeatLimit="1" 
 		android:lines="1" 
+		android:scrollHorizontally="true" 
 		android:paddingLeft="5px" 
 		android:paddingTop="14px"/>
 </LinearLayout>

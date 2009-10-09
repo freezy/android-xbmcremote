@@ -163,7 +163,7 @@ public class AlbumListLogic extends ListLogic {
 				public void run() {
 					if (album.getId() == ((Album)mTag).getId()) {
 						if (value == null) {
-							icon.setImageResource(R.drawable.home_music);
+							icon.setImageResource(R.drawable.icon_album);
 						} else {
 							icon.setImageBitmap(value);
 						}
