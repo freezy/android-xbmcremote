@@ -18,5 +18,5 @@
 		android:shadowDy="0" 
 		android:shadowDx="-1"
 		android:shadowRadius="0.1" 
-		android:shadowColor="#000000"/>
+		android:shadowColor="#000000" android:lines="1" android:marqueeRepeatLimit="1" android:scrollHorizontally="true" android:ellipsize="start"/>
 </LinearLayout>

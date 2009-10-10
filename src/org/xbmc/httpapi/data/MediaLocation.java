@@ -3,6 +3,7 @@ package org.xbmc.httpapi.data;
 import org.xbmc.httpapi.Connection;
 
 public class MediaLocation {
+	
 	public String name, path;
 	public boolean isDirectory;
 	

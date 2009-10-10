@@ -114,7 +114,20 @@ public class FileListLogic extends ListLogic {
 			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
 			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
 			title.setText(fileItem.name);
-			icon.setImageResource(R.drawable.icon_folder);
+			if (fileItem.isDirectory) {
+				icon.setImageResource(R.drawable.icon_folder);
+			} else {
+				final String ext = fileItem.name.substring(fileItem.name.lastIndexOf(".") + 1).toLowerCase();
+				if (ext.equals("mp3") || ext.equals("ogg")) {
+					icon.setImageResource(R.drawable.icon_music);
+				} else if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("bmp") || ext.equals("gif") || ext.equals("png") || ext.equals("tbn")) {
+					icon.setImageResource(R.drawable.icon_pictures);
+				} else if (ext.equals("m3u")) {
+					icon.setImageResource(R.drawable.icon_playing);
+				} else {
+					icon.setImageResource(R.drawable.icon_file);
+				}
+			}
 			return row;
 		}
 	}
