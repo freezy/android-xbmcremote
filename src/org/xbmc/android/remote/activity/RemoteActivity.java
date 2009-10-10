@@ -46,6 +46,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 /**
@@ -73,7 +74,10 @@ public class RemoteActivity extends Activity {
 		ErrorHandler.setActivity(this);
 		setContentView(R.layout.remote_xbox);
 		
-
+		// remove nasty top fading edge
+		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
+		topFrame.setForeground(null);
+		
 		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		mClient = ConnectionManager.getEventClient(this);
         
