@@ -8,8 +8,7 @@
 	<ImageView 
 		android:id="@+id/MusicItemImageViewArt" 
 		android:layout_width="50px"
-		android:layout_height="50px" 
-		android:background="@drawable/home_music" />
+		android:layout_height="50px" />
 	<LinearLayout 
 		android:id="@+id/MusicItemLinearLayoutText" 
 		android:layout_height="wrap_content" 

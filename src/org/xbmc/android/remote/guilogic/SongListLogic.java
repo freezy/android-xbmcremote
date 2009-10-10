@@ -158,7 +158,7 @@ public class SongListLogic extends ListLogic {
 				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, mAlbum) {
 					public void run() {
 						if (value == null) {
-							icon.setImageResource(R.drawable.home_music);
+							icon.setImageResource(R.drawable.icon_music);
 						} else {
 							icon.setImageBitmap(value);
 						}
@@ -166,10 +166,10 @@ public class SongListLogic extends ListLogic {
 				}, mAlbum, ThumbSize.small);
 			} else if (mArtist != null) {
 				subtitle.setText(song.album);
-				icon.setImageResource(R.drawable.home_music);
+				icon.setImageResource(R.drawable.icon_music);
 			} else if (mGenre != null) {
 				subtitle.setText(song.artist);
-				icon.setImageResource(R.drawable.home_music);
+				icon.setImageResource(R.drawable.icon_music);
 			}
 			return row;
 		}

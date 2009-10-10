@@ -94,21 +94,21 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 			}
 		};
 		
-        final HomeItem remote = new HomeItem(HOME_ACTION_REMOTE, R.drawable.home_remote, "Remote Control", "Use as");
+        final HomeItem remote = new HomeItem(HOME_ACTION_REMOTE, R.drawable.icon_remote, "Remote Control", "Use as");
         
 		homeItems.add(remote);
 		offlineItems.add(remote);
 		
-		homeItems.add(new HomeItem(HOME_ACTION_MUSIC, R.drawable.home_music, "Music", "Listen to"));
-		homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.home_video, "Videos", "Watch your"));
-		homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.home_pictures, "Pictures", "Browse your"));
-		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.home_playing, "Now Playing", "See what's"));
+		homeItems.add(new HomeItem(HOME_ACTION_MUSIC, R.drawable.icon_music, "Music", "Listen to"));
+		homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.icon_video, "Videos", "Watch your"));
+		homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.icon_pictures, "Pictures", "Browse your"));
+		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.icon_playing, "Now Playing", "See what's"));
 		
-		offlineItems.add(new HomeItem(HOME_ACTION_RECONNECT, R.drawable.home_reconnect, "Connect", "Try again to"));
+		offlineItems.add(new HomeItem(HOME_ACTION_RECONNECT, R.drawable.icon_reconnect, "Connect", "Try again to"));
 
 		final String wolMac = prefs.getString("setting_wol", "");
 		if (wolMac.compareTo("") != 0)
-			offlineItems.add(new HomeItem(HOME_ACTION_WOL, R.drawable.home_power, "Power On", "Turn your XBMC's"));
+			offlineItems.add(new HomeItem(HOME_ACTION_WOL, R.drawable.icon_power, "Power On", "Turn your XBMC's"));
 
 		mHomeMenu = new HomeAdapter(this, homeItems);
 		mOfflineMenu = new HomeAdapter(this, offlineItems);

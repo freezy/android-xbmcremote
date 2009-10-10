@@ -6,7 +6,6 @@
 	android:layout_height="fill_parent" 
 	android:background="@drawable/listitem_bg">
 	<ImageView 
-		android:background="@drawable/home_music"
 		android:id="@+id/MusicItemImageViewArt" 
 		android:layout_height="50px" 
 		android:layout_width="50px"/>
