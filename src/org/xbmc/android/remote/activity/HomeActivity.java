@@ -28,6 +28,7 @@ import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.util.WakeOnLan;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
@@ -75,6 +76,8 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.home);
+		
+		ErrorHandler.setActivity(this);
 
 		final ArrayList<HomeItem> homeItems = new ArrayList<HomeItem>();
 		final ArrayList<HomeItem> offlineItems = new ArrayList<HomeItem>();

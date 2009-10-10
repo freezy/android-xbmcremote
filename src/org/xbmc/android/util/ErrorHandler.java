@@ -105,11 +105,18 @@ public class ErrorHandler implements IErrorHandler {
 				}
 			});
 		} catch (IOException e) {
-			if (e.getMessage().startsWith("Authority expected")) {
-				
+			if (e.getMessage().startsWith("Network unreachable")) {
+				builder.setTitle("No network");
+				builder.setMessage("XBMC Remote needs local network access. Please make sure that your wireless network is activated. You can click on the Settings button below to directly access your network settings.");
+				builder.setNeutralButton("Settings", new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						sActivity.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+					}
+				});
+			} else {
+				builder.setTitle("Unknown I/O Exception");
+				builder.setMessage(e.getMessage().toString());
 			}
-			builder.setTitle("Unknown I/O Exception");
-			builder.setMessage(e.getMessage().toString());
 		} catch (Exception e) {
 			builder.setTitle("Exception");
 			builder.setMessage(e.getStackTrace().toString());
@@ -125,7 +132,11 @@ public class ErrorHandler implements IErrorHandler {
 			});
 			
 			final AlertDialog alert = builder.create();
-			alert.show();
+			try {
+				alert.show();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
