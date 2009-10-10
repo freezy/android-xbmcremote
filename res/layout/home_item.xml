@@ -8,9 +8,9 @@
 		android:orientation="vertical" android:paddingTop="5px" android:paddingLeft="10px">
 		<TextView android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:id="@+id/SubtitleTextView"
-			android:text="Subtitle"></TextView>
+			android:text="Subtitle" android:textColor="#909090"></TextView>
 		<TextView android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:id="@+id/TitleTextView"
-			android:textSize="24px" android:text="Title"></TextView>
+			android:textSize="24px" android:text="Title" android:textColor="#ffffff"></TextView>
 	</LinearLayout>
 </LinearLayout>
