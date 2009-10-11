@@ -44,11 +44,12 @@ public class Album implements ICoverArt, Serializable {
 	 * @param name		Album name
 	 * @param artist	Artist
 	 */
-	public Album(int id, String name, String artist, int year) {
+	public Album(int id, String name, String artist, int year, String localPath) {
 		this.id = id;
 		this.name = name;
 		this.artist = artist;
 		this.year = year;
+		this.localPath = localPath;
 	}
 	
 	public String getArtFolder() {
@@ -68,6 +69,11 @@ public class Album implements ICoverArt, Serializable {
 		String hex = art.getCrc();
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
+
+	public static String getFallbackThumbUri(ICoverArt art) {
+		String hex = art.getFallbackCrc();
+		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+	}
 	
 	/**
 	 * Returns the CRC of the album on which the thumb name is based upon.
@@ -78,6 +84,20 @@ public class Album implements ICoverArt, Serializable {
 			thumbID = Crc32.computeAsHex((name + artist).toLowerCase());
 		}
 		return thumbID;
+	}
+	
+	/**
+	 * If no album thumb CRC is found, try to get the thumb of the album's
+	 * directory.
+	 * @return 0-char CRC32
+	 */
+	public String getFallbackCrc() {
+		if (localPath != null) {
+			final String lp = localPath;
+			return Crc32.computeAsHex(lp.substring(0, lp.length() - 1).toLowerCase());
+		} else {
+			return null;
+		}
 	}
 	
 	/**

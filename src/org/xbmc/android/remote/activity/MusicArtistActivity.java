@@ -41,6 +41,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 public class MusicArtistActivity extends SlidingTabActivity  {
@@ -56,6 +57,10 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		ErrorHandler.setActivity(this);
 		setContentView(R.layout.musicartist);
+		
+		// remove nasty top fading edge
+		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
+		topFrame.setForeground(null);
 		
 		mTabHost = getTabHost();
 

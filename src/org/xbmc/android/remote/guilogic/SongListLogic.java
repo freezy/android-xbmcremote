@@ -166,7 +166,7 @@ public class SongListLogic extends ListLogic {
 					}
 				}, mAlbum, ThumbSize.small);
 			} else if (mArtist != null) {
-				final Album albumStub = new Album(-1, song.album, song.artist, -1);
+				final Album albumStub = new Album(-1, song.album, song.artist, -1, null);
 				subtitle.setText(song.artist);
 				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, albumStub) {
 					public void run() {
@@ -180,7 +180,7 @@ public class SongListLogic extends ListLogic {
 				subtitle.setText(song.album);
 				icon.setImageResource(R.drawable.icon_music);
 			} else if (mGenre != null) {
-				final Album albumStub = new Album(-1, song.album, song.artist, -1);
+				final Album albumStub = new Album(-1, song.album, song.artist, -1, null);
 				subtitle.setText(song.artist);
 				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, albumStub) {
 					public void run() {

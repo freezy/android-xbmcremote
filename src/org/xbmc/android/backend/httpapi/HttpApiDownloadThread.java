@@ -47,7 +47,7 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 	 */
 	protected static HttpApiDownloadThread sHttpApiThread;
 	
-	private static final String LOG_TAG = "HttpApi-Network";
+	private static final String TAG = "HttpApi-Network";
 
 	/**
 	 * Constructor is protected, use get().
@@ -67,36 +67,34 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
-					Log.i(LOG_TAG, "Downloading cover " + cover);
+					Log.i(TAG, "Downloading cover " + cover);
 					/* it can happen that the same cover is queued consecutively several
 					 * times. that's why we check both the disk cache and memory cache if
 					 * the cover is not already available from a previously queued download. 
 					 */
 					if (size == ThumbSize.small && HttpApiMemCacheThread.isInCache(cover)) { // we're optimistic, let's check the memory first.
-						Log.i(LOG_TAG, "Cover is now already in mem cache, directly returning...");
+						Log.i(TAG, "Cover is now already in mem cache, directly returning...");
 						handler.value = HttpApiMemCacheThread.getCover(cover);
 						done(handler);
 					} else if (HttpApiDiskCacheThread.isInCache(cover)) {
-						Log.i(LOG_TAG, "Cover is not in mem cache anymore but still on disk, directly returning...");
+						Log.i(TAG, "Cover is not in mem cache anymore but still on disk, directly returning...");
 						handler.value = HttpApiDiskCacheThread.getCover(cover, size);
 					} else {
-						Log.i(LOG_TAG, "Download START..");
+						Log.i(TAG, "Download START..");
 						String b64enc = music(handler).getAlbumThumb(cover);
-						Log.i(LOG_TAG, "Download END.");
+						Log.i(TAG, "Download END.");
 						byte[] bytes;
 						try {
 							bytes = Base64.decode(b64enc);
 							if (bytes.length > 0) {
-								Log.i(LOG_TAG, "Decoding, resizing and adding to cache");
+								Log.i(TAG, "Decoding, resizing and adding to cache");
 								Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 								if (bitmap != null) {
 									HttpApiDiskCacheThread.addCoverToCache(cover, bitmap);
 									HttpApiMemCacheThread.addCoverToCache(cover, bitmap);
 									handler.value = bitmap;
-									Log.i(LOG_TAG, "Done");
-								} else {
-									Log.w(LOG_TAG, "Bitmap was null, couldn't decode XBMC's response (" + bytes.length + " bytes).");
-								}
+									Log.i(TAG, "Done");
+								} 
 							}
 						} catch (IOException e) {
 							System.out.println("IOException " + e.getMessage());

@@ -43,6 +43,7 @@ import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TableLayout;
@@ -66,6 +67,10 @@ public class AlbumGridActivity extends Activity {
 		ErrorHandler.setActivity(this);
 		setContentView(R.layout.albumgrid);
 		final GridView gridview = (GridView)findViewById(R.id.albumgrid_grid);
+		
+		// remove nasty top fading edge
+		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
+		topFrame.setForeground(null);
 		
 		Resources res = getResources();
 		coverDownloading = BitmapFactory.decodeResource(res, R.drawable.cover_downloading);

@@ -211,7 +211,13 @@ public class MusicClient {
 	 */
 	public ArrayList<Album> getAlbums() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT a.idAlbum, a.strAlbum, i.strArtist, a.iYear");
+		sb.append("SELECT a.idAlbum, a.strAlbum, i.strArtist, a.iYear, (");
+		sb.append("   SELECT p.strPath");
+		sb.append("   FROM song AS s, path AS p");
+		sb.append("   WHERE s.idPath = p.idPath");
+		sb.append("   AND s.idAlbum = a.idAlbum");
+		sb.append("   LIMIT 1");
+		sb.append("  )");
 		sb.append("  FROM album AS a, artist AS i");
 		sb.append("  WHERE a.idArtist = i.idArtist");
 		sb.append("  ORDER BY i.strArtist ASC");
@@ -387,7 +393,12 @@ public class MusicClient {
 	 * @return Base64-encoded content of thumb
 	 */
 	public String getAlbumThumb(ICoverArt art) {
-		return mConnection.query("FileDownload", Album.getThumbUri(art));
+		final String data = mConnection.query("FileDownload", Album.getThumbUri(art));
+		if (data.length() > 0) {
+			return data;
+		} else {
+			return mConnection.query("FileDownload", Album.getFallbackThumbUri(art));
+		}
 	}
 
 	/**
@@ -397,6 +408,7 @@ public class MusicClient {
 	 * 	<li><code>idAlbum</code></li>
 	 * 	<li><code>strAlbum</code></li>
 	 * 	<li><code>strArtist</code></li>
+	 * 	<li><code>path to album</code></li>
 	 * </ol>
 	 * @param response
 	 * @return List of albums
@@ -405,12 +417,13 @@ public class MusicClient {
 		ArrayList<Album> albums = new ArrayList<Album>();
 		String[] fields = response.split("<field>");
 		try {
-			for (int row = 1; row < fields.length; row += 4) {
+			for (int row = 1; row < fields.length; row += 5) {
 				albums.add(new Album(
 						Connection.trimInt(fields[row]), 
 						Connection.trim(fields[row + 1]), 
 						Connection.trim(fields[row + 2]),
-						Connection.trimInt(fields[row + 3])
+						Connection.trimInt(fields[row + 3]),
+						Connection.trim(fields[row + 4])
 				));
 			}
 		} catch (Exception e) {

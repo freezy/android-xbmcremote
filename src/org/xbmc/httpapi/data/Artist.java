@@ -78,6 +78,13 @@ public class Artist implements ICoverArt, Serializable {
 	}
 	
 	/**
+	 * No fallback here
+	 */
+	public String getFallbackCrc() {
+		return null;
+	}
+	
+	/**
 	 * Returns database ID.
 	 * @return
 	 */
