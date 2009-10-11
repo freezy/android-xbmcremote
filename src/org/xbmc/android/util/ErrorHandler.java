@@ -24,6 +24,7 @@ package org.xbmc.android.util;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
+import org.apache.http.HttpException;
 import org.xbmc.android.remote.activity.SettingsActivity;
 import org.xbmc.httpapi.IErrorHandler;
 import org.xbmc.httpapi.NoNetworkException;
@@ -116,6 +117,16 @@ public class ErrorHandler implements IErrorHandler {
 			} else {
 				builder.setTitle("Unknown I/O Exception");
 				builder.setMessage(e.getMessage().toString());
+			}
+		} catch (HttpException e) {
+			if (e.getMessage().startsWith("401")) {
+				builder.setTitle("HTTP 401: Unauthorized");
+				builder.setMessage("The supplied username and/or password is incorrect. Please check your settings.");
+				builder.setNeutralButton("Settings", new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						sActivity.startActivity(new Intent(sActivity, SettingsActivity.class));
+					}
+				});
 			}
 		} catch (Exception e) {
 			builder.setTitle("Exception");

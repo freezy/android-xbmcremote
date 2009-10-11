@@ -22,8 +22,10 @@
 package org.xbmc.httpapi;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Authenticator;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URISyntaxException;
@@ -32,6 +34,8 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+
+import org.apache.http.HttpException;
 
 /**
  * Keeps track of the HTTP connection and contains basic helper methods for
@@ -44,6 +48,8 @@ public class Connection {
     public class MyAuthenticator extends Authenticator {
     	private String username;
     	private char[] password;
+    	public static final int MAX_RETRY = 5;
+    	private int retry_count = 0;
     	
         public MyAuthenticator(String username, String password) {
     		this.username = username;
@@ -52,7 +58,11 @@ public class Connection {
 
 		// This method is called when a password-protected URL is accessed
         protected PasswordAuthentication getPasswordAuthentication() {
-            return new PasswordAuthentication(username, password);
+        	if(retry_count < MAX_RETRY) {
+        		retry_count ++;
+        		return new PasswordAuthentication(username, password);
+        	}
+        	return null;
         }
     }
 	
@@ -65,6 +75,7 @@ public class Connection {
 	private String mBaseURL;
 	private IErrorHandler mErrorHandler;
 	private boolean settingsOK = false;
+	private URLConnection uc = null;
 	
 	/**
 	 * Class constructor sets host data and error handler.
@@ -90,7 +101,6 @@ public class Connection {
 		}
 		mErrorHandler = errorHandler;
 	}
-	
 	/**
 	 * Executes an HTTP API method and returns the result as untrimmed string.
 	 * @param method      Name of the method to run
@@ -103,7 +113,8 @@ public class Connection {
 				throw new NoSettingsException();
 			}
 			final URL query = formatQueryString(method, parameters);
-			final URLConnection uc = query.openConnection();
+//			final URLConnection uc = query.openConnection();
+			uc = query.openConnection();
 			uc.setConnectTimeout(CONNECTION_TIMEOUT);
 			uc.setReadTimeout(CONNECTION_TIMEOUT);
 			
@@ -118,9 +129,17 @@ public class Connection {
 			System.out.println("HTTP: end " + URLDecoder.decode(query.toString()));
 			
 			rd.close();
+			uc = null;
 			return sb.toString().replace("<html>", "").replace("</html>", "");
 			
 		} catch (Exception e) {
+			try {
+				if(((HttpURLConnection)uc).getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+					e = new HttpException("401");
+				}
+			} catch (IOException e1) {
+				//do nothing, just tried to check the response code
+			}
 			mErrorHandler.handle(e);
 			return "";
 		}
