@@ -64,6 +64,10 @@ public class Connection {
         	}
         	return null;
         }
+        // has to be called after each successful connection!!!
+        public void resetCounter() {
+        	retry_count = 0;
+        }
     }
 	
 	public static final String LINE_SEP = "<li>";
@@ -76,6 +80,7 @@ public class Connection {
 	private IErrorHandler mErrorHandler;
 	private boolean settingsOK = false;
 	private URLConnection uc = null;
+	private MyAuthenticator auth = null;
 	
 	/**
 	 * Class constructor sets host data and error handler.
@@ -86,7 +91,8 @@ public class Connection {
 	 * @param errorHandler Error handler
 	 */
 	public Connection(String host, int port, String username, String password, IErrorHandler errorHandler) {
-		Authenticator.setDefault(new MyAuthenticator(username, password));
+		auth = new MyAuthenticator(username, password);
+		Authenticator.setDefault(auth);
 		
 		if (!host.equals("") && port > 0) {
 			mBaseURL = "http://";
@@ -117,6 +123,9 @@ public class Connection {
 			uc = query.openConnection();
 			uc.setConnectTimeout(CONNECTION_TIMEOUT);
 			uc.setReadTimeout(CONNECTION_TIMEOUT);
+
+			//connection successful, reset retry counter!
+			auth.resetCounter();
 			
 			final BufferedReader rd = new BufferedReader(new InputStreamReader(uc.getInputStream()), 8192);
 			final StringBuilder sb = new StringBuilder();
@@ -135,7 +144,7 @@ public class Connection {
 		} catch (Exception e) {
 			try {
 				if(((HttpURLConnection)uc).getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-					e = new HttpException("401");
+					e = new HttpException(Integer.toString(HttpURLConnection.HTTP_UNAUTHORIZED));
 				}
 			} catch (IOException e1) {
 				//do nothing, just tried to check the response code
