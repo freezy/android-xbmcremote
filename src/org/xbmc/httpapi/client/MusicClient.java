@@ -215,7 +215,7 @@ public class MusicClient {
 		sb.append("  FROM album AS a, artist AS i");
 		sb.append("  WHERE a.idArtist = i.idArtist");
 		sb.append("  ORDER BY i.strArtist ASC");
-		sb.append("  LIMIT 300"); // let's keep it at 300 for now
+//		sb.append("  LIMIT 300"); // let's keep it at 300 for now
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 
