@@ -234,7 +234,13 @@ public class MusicClient {
 	public ArrayList<Album> getAlbums(Artist artist) {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("SELECT DISTINCT a.idAlbum, a.strAlbum, i.strArtist, a.iYear");
+		sb.append("SELECT DISTINCT a.idAlbum, a.strAlbum, i.strArtist, a.iYear, (");
+		sb.append("   SELECT p.strPath");
+		sb.append("   FROM song AS s, path AS p");
+		sb.append("   WHERE s.idPath = p.idPath");
+		sb.append("   AND s.idAlbum = a.idAlbum");
+		sb.append("   LIMIT 1");
+		sb.append("  )");
 		sb.append("  FROM song AS s, album AS a, artist as i");
 		sb.append("  WHERE s.idArtist = " + artist.id);
 		sb.append("  AND s.idAlbum = a.idAlbum");
@@ -250,7 +256,13 @@ public class MusicClient {
 	public ArrayList<Album> getAlbums(Genre genre) {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("SELECT DISTINCT alb.idAlbum, alb.strAlbum, art.strArtist, alb.iYear");
+		sb.append("SELECT DISTINCT alb.idAlbum, alb.strAlbum, art.strArtist, alb.iYear, (");
+		sb.append("   SELECT p.strPath");
+		sb.append("   FROM song AS s, path AS p");
+		sb.append("   WHERE s.idPath = p.idPath");
+		sb.append("   AND s.idAlbum = alb.idAlbum");
+		sb.append("   LIMIT 1");
+		sb.append("  )");
 		sb.append("  FROM artist as art, album as alb");
 		sb.append("  WHERE art.idArtist = alb.idArtist");
 		sb.append("  AND (alb.idAlbum IN (");
@@ -430,7 +442,9 @@ public class MusicClient {
 				));
 			}
 		} catch (Exception e) {
-			System.out.println("ERROR: " + e.getMessage());
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
 		}
 		return albums;
 	}
@@ -462,7 +476,9 @@ public class MusicClient {
 				album.rating = Connection.trimInt(fields[5]);
 			}
 		} catch (Exception e) {
-			System.out.println("ERROR: " + e.getMessage());
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
 		}
 		return album;
 	}
@@ -497,7 +513,9 @@ public class MusicClient {
 				));
 			}
 		} catch (Exception e) {
-			System.out.println("ERROR: " + e.getMessage());
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
 		}
 		Collections.sort(songs);
 		return songs;		
@@ -524,7 +542,9 @@ public class MusicClient {
 				));
 			}
 		} catch (Exception e) {
-			System.out.println("ERROR: " + e.getMessage());
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
 		}
 		return artists;		
 	}
@@ -550,7 +570,9 @@ public class MusicClient {
 				));
 			}
 		} catch (Exception e) {
-			System.out.println("ERROR: " + e.getMessage());
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
 		}
 		return genres;		
 	}

@@ -99,7 +99,7 @@ public class AlbumListLogic extends ListLogic {
 				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
 					public void run() {
 						setTitle(mArtist.name + " - Albums (" + value.size() + ")");
-						//mList.setAdapter(new AlbumAdapter(mActivity, value));
+						mList.setAdapter(new AlbumAdapter(mActivity, value));
 					}
 				}, mArtist);
 				
@@ -108,7 +108,7 @@ public class AlbumListLogic extends ListLogic {
 				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
 					public void run() {
 						setTitle(mGenre.name + " - Albums (" + value.size() + ")");
-						//mList.setAdapter(new AlbumAdapter(mActivity, value));
+						mList.setAdapter(new AlbumAdapter(mActivity, value));
 					}
 				}, mGenre);
 				
