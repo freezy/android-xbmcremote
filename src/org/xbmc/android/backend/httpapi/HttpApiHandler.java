@@ -21,6 +21,8 @@
 
 package org.xbmc.android.backend.httpapi;
 
+import org.xbmc.httpapi.type.CacheType;
+
 import android.app.Activity;
 
 /**
@@ -37,6 +39,7 @@ public class HttpApiHandler<T> implements Runnable {
 	public T value;
 	protected final Activity mActivity;
 	protected final int mTag;
+	protected CacheType mCacheType;
 	public HttpApiHandler(Activity activity) {
 		mActivity = activity;
 		mTag = 0;
@@ -44,6 +47,9 @@ public class HttpApiHandler<T> implements Runnable {
 	public HttpApiHandler(Activity activity, int tag) {
 		mActivity = activity;
 		mTag = tag;
+	}
+	public void setCacheType(CacheType type) {
+		mCacheType = type;
 	}
 	public Activity getActivity() {
 		return mActivity;

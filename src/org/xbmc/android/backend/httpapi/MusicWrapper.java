@@ -29,6 +29,7 @@ import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.Song;
+import org.xbmc.httpapi.type.CacheType;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.graphics.Bitmap;
@@ -46,7 +47,7 @@ import android.util.Log;
 public class MusicWrapper extends Wrapper {
 	
 	private static final String LOG_TAG = "MusicWrapper";
-	final private static Boolean debug = false;
+	final private static Boolean debug = true;
 	/**
 	 * Gets all albums from database
 	 * @param handler Callback handler
@@ -361,6 +362,7 @@ public class MusicWrapper extends Wrapper {
 				} else {
 					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " FOUND in memory!]");
 					handler.value = value;
+					handler.setCacheType(CacheType.memory);
 					done(handler);
 				}
 			}
@@ -382,12 +384,11 @@ public class MusicWrapper extends Wrapper {
 					if (handler.postCache()) {
 						// well, let's download
 						getAlbumCoverFromNetwork(handler, album, size);
-					} else {
-						done(handler);
 					}
 				} else {
 					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " FOUND on disk!]");
 					handler.value = value;
+					handler.setCacheType(CacheType.sdcard);
 					done(handler);
 				}
 			}
@@ -408,6 +409,7 @@ public class MusicWrapper extends Wrapper {
 					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " empty]");
 				} else {
 					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " DOWNLOADED!]");
+					handler.setCacheType(CacheType.network);
 					handler.value = value;
 				}
 				done(handler); // callback in any case, since we don't go further than that.

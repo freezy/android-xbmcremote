@@ -36,28 +36,31 @@ public final class ImportUtilities {
         return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + size.getDir());
     }
 
-    public static boolean addCoverToCache(ICoverArt art, Bitmap bitmap) {
-    	final ThumbSize size[] = { ThumbSize.small, ThumbSize.medium, ThumbSize.big };
+    public static Bitmap addCoverToCache(ICoverArt art, Bitmap bitmap, ThumbSize size) {
+    	Bitmap sizeToReturn = null;
     	File cacheDirectory;
-    	for (int i = 0; i < size.length; i++) {
+    	for (ThumbSize thumbSize : ThumbSize.values()) {
     		try {
-    			cacheDirectory = ensureCache(art.getArtFolder(), size[i]);
+    			cacheDirectory = ensureCache(art.getArtFolder(), thumbSize);
     		} catch (IOException e) {
-    			return false;
+    			return null;
     		}
     		File coverFile = new File(cacheDirectory, String.format("%08x", art.getCrc()).toLowerCase());
     		FileOutputStream out = null;
     		try {
     			out = new FileOutputStream(coverFile);
-    			final Bitmap resized = Bitmap.createScaledBitmap(bitmap, size[i].getPixel(), size[i].getPixel(), true);
+    			final Bitmap resized = Bitmap.createScaledBitmap(bitmap, thumbSize.getPixel(), thumbSize.getPixel(), true);
     			resized.compress(Bitmap.CompressFormat.PNG, 100, out);
+    			if (size.equals(thumbSize)) {
+    				sizeToReturn = resized;
+    			}
     		} catch (FileNotFoundException e) {
-    			return false;
+    			return null;
     		} finally {
     			IOUtilities.closeStream(out);
     		}
     	}
-        return true;
+        return sizeToReturn;
     }
 
     private static File ensureCache(String type, ThumbSize size) throws IOException {

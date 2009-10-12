@@ -8,7 +8,10 @@
 	<ImageView 
 		android:id="@+id/MusicItemImageViewArt" 
 		android:layout_width="50px"
-		android:layout_height="50px" />
+		android:layout_height="50px"
+		android:adjustViewBounds="false"
+		android:cropToPadding="false" 
+		android:padding="0px" android:layout_margin="0px" android:src="@drawable/icon_album_grey" android:scaleType="fitXY"/>
 	<LinearLayout 
 		android:id="@+id/MusicItemLinearLayoutText" 
 		android:layout_height="wrap_content" 

@@ -37,6 +37,7 @@ import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.Song;
+import org.xbmc.httpapi.type.CacheType;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
@@ -83,7 +84,7 @@ public class AlbumListLogic extends ListLogic {
 			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_album_grey);
 //			mCache.setFallback(mActivity.getResources(), R.drawable.icon_album_grey);
 			
-			ImportUtilities.purgeCache();
+//			ImportUtilities.purgeCache();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -250,25 +251,20 @@ public class AlbumListLogic extends ListLogic {
 			
 			HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, holder.id) {
 				public void run() {
-					final Object calledBackIdg = holder.iconView.getTag();
 //					Log.i("AlbumListLogic", "BACK, tag on iconview = " + calledBackIdg + ", holder.id = " + holder.id);
 					if (mTag == holder.id) {
 						if (value == null) {
-							
-							CrossFadeDrawable transition = holder.getTransitionDrawable();
-							transition.setEnd(BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_album));
-							holder.getImageLoaderView().setImageDrawable(transition);
-							transition.startTransition(500);
-							
-//							holder.iconView.setImageResource(R.drawable.icon_album);
+							holder.iconView.setImageResource(R.drawable.icon_album);
 						} else {
-							
-							CrossFadeDrawable transition = holder.getTransitionDrawable();
-							transition.setEnd(value);
-							holder.getImageLoaderView().setImageDrawable(transition);
-							transition.startTransition(500);
-							
-//							holder.iconView.setImageBitmap(value);
+							// only "fade" if cover was downloaded.
+							if (mCacheType.equals(CacheType.network)) {
+								CrossFadeDrawable transition = holder.getTransitionDrawable();
+								transition.setEnd(value);
+								holder.getImageLoaderView().setImageDrawable(transition);
+								transition.startTransition(500);
+							} else {
+								holder.iconView.setImageBitmap(value);
+							}
 						}
 					} else {
 //						Log.i("AlbumListLogic", "*** SKIPPING UPDATE: mTag = " + mTag + ", holder.id = " + holder.id);

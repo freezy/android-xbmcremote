@@ -90,9 +90,8 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 								Log.i(TAG, "Decoding, resizing and adding to cache");
 								Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 								if (bitmap != null) {
-									HttpApiDiskCacheThread.addCoverToCache(cover, bitmap);
+									handler.value = HttpApiDiskCacheThread.addCoverToCache(cover, bitmap, size);
 									HttpApiMemCacheThread.addCoverToCache(cover, bitmap);
-									handler.value = bitmap;
 									Log.i(TAG, "Done");
 								} 
 							}

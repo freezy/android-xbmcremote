@@ -108,8 +108,8 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 	 * @param cover  Which cover to add
 	 * @param bitmap Bitmap data, original size.
 	 */
-	public static void addCoverToCache(ICoverArt cover, Bitmap bitmap) {
-		ImportUtilities.addCoverToCache(cover, bitmap);
+	public static Bitmap addCoverToCache(ICoverArt cover, Bitmap bitmap, ThumbSize size) {
+		return ImportUtilities.addCoverToCache(cover, bitmap, size);
 	}
 
 	/**
