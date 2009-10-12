@@ -173,10 +173,12 @@ public class FileListLogic extends ListLogic {
 
 	@Override
 	public void onContextItemSelected(MenuItem item) {
+		// be aware that this must be explicitly called by your activity!
 	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		// be aware that this must be explicitly called by your activity!
 	}
 	private static final long serialVersionUID = -3883887349523448733L;
 }

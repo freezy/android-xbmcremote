@@ -69,7 +69,6 @@ public class MusicClient {
 	 * @return first song of the album
 	 */
 	public Song addToPlaylist(Album album) {
-//		return mConnection.getBoolean("AddToPlayList", "musicdb://" + MUSICDB_ALBUM + "/" + album.id);
 		final ArrayList<Song> songs = getSongs(album);
 		Song firstSong = null;
 		for (Song song : songs) {
@@ -88,6 +87,23 @@ public class MusicClient {
 	 */
 	public Song addToPlaylist(Artist artist) {
 		final ArrayList<Song> songs = getSongs(artist);
+		Song firstSong = null;
+		for (Song song : songs) {
+			if (firstSong == null) {
+				firstSong = song;
+			}
+			addToPlaylist(song);
+		}
+		return firstSong;
+	}
+
+	/**
+	 * Adds all songs from a genre to the current playlist.
+	 * @param genre
+	 * @return first song of all added songs
+	 */
+	public Song addToPlaylist(Genre genre) {
+		final ArrayList<Song> songs = getSongs(genre);
 		Song firstSong = null;
 		for (Song song : songs) {
 			if (firstSong == null) {
@@ -147,6 +163,25 @@ public class MusicClient {
 	 */
 	public boolean play(Album album) {
 		final ArrayList<Song> songs = getSongs(album);
+		clearPlaylist();
+		int n = 0;
+		for (Song song : songs) {
+			addToPlaylist(song);
+			if (n == 0) {
+				play(song);
+			}
+			n++;
+		}
+		return true;
+	}
+	
+	/**
+	 * Plays all songs of a genre. Playlist is previously cleared.
+	 * @param genre
+	 * @return true on success, false otherwise.
+	 */
+	public boolean play(Genre genre) {
+		final ArrayList<Song> songs = getSongs(genre);
 		clearPlaylist();
 		int n = 0;
 		for (Song song : songs) {

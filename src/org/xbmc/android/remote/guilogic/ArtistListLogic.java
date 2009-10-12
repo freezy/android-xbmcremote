@@ -96,6 +96,7 @@ public class ArtistListLogic extends ListLogic {
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		// be aware that this must be explicitly called by your activity!
 		final Artist artist = (Artist)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
 		menu.setHeaderTitle(artist.name);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue all songs from Artist");
@@ -108,6 +109,7 @@ public class ArtistListLogic extends ListLogic {
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
+		// be aware that this must be explicitly called by your activity!
 		final Artist artist = (Artist)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:

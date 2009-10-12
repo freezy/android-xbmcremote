@@ -108,6 +108,7 @@ public class SongListLogic extends ListLogic {
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		// be aware that this must be explicitly called by your activity!
 		final Song song = (Song)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
 		menu.setHeaderTitle(song.title);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Song");
@@ -115,6 +116,7 @@ public class SongListLogic extends ListLogic {
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
+		// be aware that this must be explicitly called by your activity!
 		final Song song = (Song)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), song);
 		switch (item.getItemId()) {

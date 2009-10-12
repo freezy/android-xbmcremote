@@ -94,6 +94,9 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 			case 0:
 				mAlbumLogic.onCreateContextMenu(menu, v, menuInfo);
 				break;
+			case 1:
+				mSongLogic.onCreateContextMenu(menu, v, menuInfo);
+				break;
 		}
 	}
 	
@@ -102,6 +105,10 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 		switch (mTabHost.getCurrentTab()) {
 		case 0:
 			mAlbumLogic.onContextItemSelected(item);
+			break;
+		case 1:
+			mSongLogic.onContextItemSelected(item);
+			break;
 		}
 		return super.onContextItemSelected(item);
 	}

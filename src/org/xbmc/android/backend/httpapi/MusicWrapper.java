@@ -191,6 +191,26 @@ public class MusicWrapper extends Wrapper {
 	}
 	
 	/**
+	 * Adds all songs of a genre to the current playlist. If current playlist is stopped,
+	 * play is executed. Value is the first song of the added album.
+	 * @param handler Callback
+	 * @param genre Genre of songs to add
+	 */
+	public void addToPlaylist(final HttpApiHandler<Song> handler, final Genre genre) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				final MusicClient mc = music(handler);
+				final ControlClient.PlayState ps = control(handler).getPlayState();
+				handler.value = mc.addToPlaylist(genre);
+				if (ps == ControlClient.PlayState.Stopped) { // if nothing is playing, play the song
+					mc.play(handler.value);
+				}
+				done(handler);
+			}
+		});
+	}
+	
+	/**
 	 * Adds a song to the current playlist. Even if the playlist is empty, only this song will be added.
 	 * @param handler Callback
 	 * @param album Song to add
@@ -279,6 +299,20 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				handler.value = music(handler).play(album);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Plays all songs of a genre
+	 * @param handler Callback
+	 * @param genre Genre of songs to play
+	 */
+	public void play(final HttpApiHandler<Boolean> handler, final Genre genre) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).play(genre);
 				done(handler);
 			}
 		});

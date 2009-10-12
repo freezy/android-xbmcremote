@@ -27,7 +27,6 @@ import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.MusicGenreActivity;
-import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.Song;
 
@@ -80,20 +79,22 @@ public class GenreListLogic extends ListLogic {
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		final Artist artist = (Artist)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(artist.name);
-		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue all songs");
-		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play all songs");
+		// be aware that this must be explicitly called by your activity!
+		final Genre genre = (Genre)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
+		menu.setHeaderTitle(genre.name);
+		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue " + genre.name + " songs");
+		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play " + genre.name + " songs");
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
-		final Artist artist = (Artist)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+		// be aware that this must be explicitly called by your activity!
+		final Genre genre = (Genre)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), artist);
+				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), genre);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), artist);
+				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), genre);
 				break;
 		}
 	}
