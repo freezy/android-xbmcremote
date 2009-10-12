@@ -143,10 +143,12 @@ public class Connection {
 			
 		} catch (Exception e) {
 			try {
-				if(((HttpURLConnection)uc).getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-					e = new HttpException(Integer.toString(HttpURLConnection.HTTP_UNAUTHORIZED));
+				if(uc != null) {
+					if(((HttpURLConnection)uc).getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+						e = new HttpException(Integer.toString(HttpURLConnection.HTTP_UNAUTHORIZED));
+					}
 				}
-			} catch (IOException e1) {
+			} catch (Exception e1) {
 				//do nothing, just tried to check the response code
 			}
 			mErrorHandler.handle(e);
