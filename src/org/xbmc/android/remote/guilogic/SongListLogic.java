@@ -156,7 +156,7 @@ public class SongListLogic extends ListLogic {
 			if (mAlbum != null) {
 
 				subtitle.setText(song.artist);
-				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, mAlbum) {
+				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity) {
 					public void run() {
 						if (value == null) {
 							icon.setImageResource(R.drawable.icon_music);
@@ -168,7 +168,7 @@ public class SongListLogic extends ListLogic {
 			} else if (mArtist != null) {
 				final Album albumStub = new Album(-1, song.album, song.artist, -1, null);
 				subtitle.setText(song.artist);
-				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, albumStub) {
+				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity) {
 					public void run() {
 						if (value == null) {
 							icon.setImageResource(R.drawable.icon_music);
@@ -182,7 +182,7 @@ public class SongListLogic extends ListLogic {
 			} else if (mGenre != null) {
 				final Album albumStub = new Album(-1, song.album, song.artist, -1, null);
 				subtitle.setText(song.artist);
-				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, albumStub) {
+				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity) {
 					public void run() {
 						if (value == null) {
 							icon.setImageResource(R.drawable.icon_music);

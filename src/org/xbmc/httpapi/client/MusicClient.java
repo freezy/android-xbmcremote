@@ -31,6 +31,8 @@ import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Song;
 
+import android.util.Log;
+
 /**
  * Takes care of every music related stuff, notably the music database.
  * 
@@ -397,6 +399,7 @@ public class MusicClient {
 		if (data.length() > 0) {
 			return data;
 		} else {
+			Log.i("MusicClient", "*** Downloaded cover has size null, retrying with fallback:");
 			return mConnection.query("FileDownload", Album.getFallbackThumbUri(art));
 		}
 	}

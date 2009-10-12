@@ -25,9 +25,13 @@
 				android:id="@+id/albumlist_outer_layout" android:orientation="vertical"
 				android:fadingEdge="none" >
 				<include layout="@layout/titlebar" />
-				<ListView android:layout_height="fill_parent"
-					android:layout_width="fill_parent" android:fadingEdge="none"
-					android:id="@+id/albumlist_list"/>
+				<org.devtcg.five.music.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					<ListView android:layout_height="fill_parent"
+						android:layout_width="fill_parent" android:fadingEdge="none"
+						android:id="@+id/albumlist_list"/>
+				</org.devtcg.five.music.widget.FastScrollView>
 			</LinearLayout>
 
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

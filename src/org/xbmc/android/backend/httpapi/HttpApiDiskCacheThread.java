@@ -66,7 +66,7 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
-					final File file = new File(ImportUtilities.getCacheDirectory(cover.getArtFolder(), size), cover.getCrc());
+					final File file = new File(ImportUtilities.getCacheDirectory(cover.getArtFolder(), size), String.format("%08x", cover.getCrc()).toLowerCase());
 				    if (file.exists()) {
 				    	handler.value = BitmapFactory.decodeFile(file.getAbsolutePath());
 				    	HttpApiMemCacheThread.addCoverToCache(cover, handler.value);
@@ -85,7 +85,7 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 	 * @return Bitmap or null if not available.
 	 */
 	public static Bitmap getCover(ICoverArt cover, ThumbSize size) {
-		final File file = new File(ImportUtilities.getCacheDirectory(cover.getArtFolder(), size), cover.getCrc());
+		final File file = new File(ImportUtilities.getCacheDirectory(cover.getArtFolder(), size), String.format("%08x", cover.getCrc()).toLowerCase());
 	    if (file.exists()) {
 	    	final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 	    	HttpApiMemCacheThread.addCoverToCache(cover, bitmap);
@@ -100,7 +100,7 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 	 * @return True if thumb is in disk cache, false otherwise.
 	 */
 	public static boolean isInCache(ICoverArt cover) {
-		return (new File(ImportUtilities.getCacheDirectory(cover.getArtFolder(), ThumbSize.big), cover.getCrc())).exists();
+		return (new File(ImportUtilities.getCacheDirectory(cover.getArtFolder(), ThumbSize.big), String.format("%08x", cover.getCrc()).toLowerCase())).exists();
 	}
 	
 	/**

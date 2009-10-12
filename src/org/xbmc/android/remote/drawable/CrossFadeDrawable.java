@@ -22,8 +22,8 @@ import android.graphics.PixelFormat;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.os.SystemClock;
 import android.os.Handler;
+import android.os.SystemClock;
 
 public class CrossFadeDrawable extends Drawable {
     private static final int TRANSITION_STARTING = 0;
@@ -51,19 +51,23 @@ public class CrossFadeDrawable extends Drawable {
     private float mStartY;
     private float mEndX;
     private float mEndY;
-
+    
     private final Handler mHandler;
     private final Runnable mInvalidater;
 
     public CrossFadeDrawable(Bitmap start, Bitmap end) {
         mStart = start;
         mEnd = end;
-        mHandler = new Handler();
-        mInvalidater = new Runnable() {
-            public void run() {
-                invalidateSelf();
-            }
-        };
+        
+        /* This is apparently necessary to work around a bug in the
+         * drawing cache.  Romain fixes his bug upstream here:
+         * http://code.google.com/p/shelves/source/detail?r=15 */
+    	mHandler = new Handler();
+    	mInvalidater = new Runnable() {
+    		public void run() {
+    			invalidateSelf();
+    		}
+    	};
     }
 
     /**
@@ -130,7 +134,7 @@ public class CrossFadeDrawable extends Drawable {
     @Override
     public void draw(Canvas canvas) {
         boolean done = true;
-
+        
         switch (mTransitionState) {
             case TRANSITION_STARTING:
                 mStartTimeMillis = SystemClock.uptimeMillis();

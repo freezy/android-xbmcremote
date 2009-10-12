@@ -36,20 +36,17 @@ import android.app.Activity;
 public class HttpApiHandler<T> implements Runnable {
 	public T value;
 	protected final Activity mActivity;
-	protected final Object mTag;
+	protected final int mTag;
 	public HttpApiHandler(Activity activity) {
 		mActivity = activity;
-		mTag = null;
+		mTag = 0;
 	}
-	public HttpApiHandler(Activity activity, Object tag) {
+	public HttpApiHandler(Activity activity, int tag) {
 		mActivity = activity;
 		mTag = tag;
 	}
 	public Activity getActivity() {
 		return mActivity;
-	}
-	public Object getTag() {
-		return mTag;
 	}
 	public void run () {
 		// do nothing

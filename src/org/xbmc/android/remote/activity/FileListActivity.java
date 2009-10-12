@@ -141,7 +141,7 @@ public class FileListActivity extends ListActivity {
 		
 		switch (item.getItemId()) {
 		case 0:
-			myIntent = new Intent(this, AlbumGridActivity.class);
+//			myIntent = new Intent(this, AlbumGridActivity.class);
 			break;
 		case 1:
 			myIntent = new Intent(this, FileListActivity.class);

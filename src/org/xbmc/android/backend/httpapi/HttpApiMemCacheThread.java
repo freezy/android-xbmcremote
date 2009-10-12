@@ -24,6 +24,7 @@ package org.xbmc.android.backend.httpapi;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 
+import org.xbmc.android.remote.drawable.FastBitmapDrawable;
 import org.xbmc.httpapi.data.ICoverArt;
 
 import android.graphics.Bitmap;
@@ -47,7 +48,7 @@ class HttpApiMemCacheThread extends HttpApiAbstractThread {
 	/**
 	 * The actual cache variable. Here are the thumbs stored. 
 	 */
-	private static final HashMap<String, SoftReference<Bitmap>> sArtCache = new HashMap<String, SoftReference<Bitmap>>();
+	private static final HashMap<Integer, SoftReference<Bitmap>> sArtCache = new HashMap<Integer, SoftReference<Bitmap>>();
 
 	/**
 	 * Constructor is protected, use get().

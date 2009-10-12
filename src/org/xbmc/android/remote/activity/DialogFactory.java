@@ -147,7 +147,7 @@ public abstract class DialogFactory {
 			yearText.setVisibility(View.GONE);
 		}
 		
-        final File file = new File(ImportUtilities.getCacheDirectory(album.getArtFolder(), ThumbSize.small), album.getCrc());
+        final File file = new File(ImportUtilities.getCacheDirectory(album.getArtFolder(), ThumbSize.small), String.format("%08x", album.getCrc()).toLowerCase());
         if (file.exists()) {
         	cover.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
         }

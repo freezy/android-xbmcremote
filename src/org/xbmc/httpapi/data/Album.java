@@ -61,17 +61,16 @@ public class Album implements ICoverArt, Serializable {
 	 * @return Path to thumbnail
 	 */
 	public String getThumbUri() {
-		String hex = getCrc();
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+		return getThumbUri(this);
 	}
 	
 	public static String getThumbUri(ICoverArt art) {
-		String hex = art.getCrc();
+		final String hex = String.format("%08x", art.getCrc()).toLowerCase();
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
-
+	
 	public static String getFallbackThumbUri(ICoverArt art) {
-		String hex = art.getFallbackCrc();
+		final String hex = String.format("%08x", art.getFallbackCrc()).toLowerCase();
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
 	
@@ -79,9 +78,9 @@ public class Album implements ICoverArt, Serializable {
 	 * Returns the CRC of the album on which the thumb name is based upon.
 	 * @return 8-char CRC32
 	 */
-	public String getCrc() {
-		if (thumbID == null) {
-			thumbID = Crc32.computeAsHex((name + artist).toLowerCase());
+	public int getCrc() {
+		if (thumbID == 0) {
+			thumbID = Crc32.compute((name + artist).toLowerCase());
 		}
 		return thumbID;
 	}
@@ -91,12 +90,12 @@ public class Album implements ICoverArt, Serializable {
 	 * directory.
 	 * @return 0-char CRC32
 	 */
-	public String getFallbackCrc() {
+	public int getFallbackCrc() {
 		if (localPath != null) {
 			final String lp = localPath;
-			return Crc32.computeAsHex(lp.substring(0, lp.length() - 1).toLowerCase());
+			return Crc32.compute(lp.substring(0, lp.length() - 1).toLowerCase());
 		} else {
-			return null;
+			return 0;
 		}
 	}
 	
@@ -165,7 +164,7 @@ public class Album implements ICoverArt, Serializable {
 	/**
 	 * Save this once it's calculated
 	 */
-	public String thumbID = null;
+	public int thumbID = 0;
 	
 	private static final long serialVersionUID = 4779827915067184250L;
 

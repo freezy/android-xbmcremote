@@ -13,7 +13,6 @@
         <activity android:name=".activity.RemoteActivity" />
         <activity android:name=".activity.FileListActivity" />
         <activity android:name=".activity.NowPlayingActivity" />
-        <activity android:name=".activity.AlbumGridActivity" />
         <activity android:name=".activity.MusicLibraryActivity" />
         <activity android:name=".activity.MusicArtistActivity" />
         <activity android:name=".activity.MusicGenreActivity" />

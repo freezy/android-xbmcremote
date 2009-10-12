@@ -23,11 +23,17 @@ package org.xbmc.android.remote.guilogic;
 
 import java.util.ArrayList;
 
+import org.devtcg.five.music.util.ImageMemCache;
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
+import org.xbmc.android.remote.drawable.CrossFadeDrawable;
+import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.widget.FastScrollView;
+import org.xbmc.android.widget.IdleListDetector;
+import org.xbmc.android.widget.ImageLoaderIdleListener;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
@@ -37,6 +43,8 @@ import org.xbmc.httpapi.type.ThumbSize;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -60,6 +68,11 @@ public class AlbumListLogic extends ListLogic {
 	private Artist mArtist;
 	private Genre mGenre;
 	
+	private static Bitmap mFallbackBitmap;
+	
+	private static final ImageMemCache mCache = new ImageMemCache();
+	private IdleListDetector mImageLoader;
+	
 	public void onCreate(Activity activity, ListView list) {
 		if (!isCreated()) {
 			super.onCreate(activity, list);
@@ -68,13 +81,18 @@ public class AlbumListLogic extends ListLogic {
 			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListLogic.EXTRA_GENRE);
 			mActivity.registerForContextMenu(mList);
 			
+			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_album_grey);
+			mCache.setFallback(mActivity.getResources(), R.drawable.icon_album_grey);
+			
+			ImportUtilities.purgeCache();
+			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
-					Album album = (Album)view.getTag();
+					AlbumViewHolder holder = (AlbumViewHolder)view.getTag();
 					nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new SongListLogic());
-					nextActivity.putExtra(ListLogic.EXTRA_ALBUM, album);
+					nextActivity.putExtra(ListLogic.EXTRA_ALBUM, holder.album);
 					mActivity.startActivity(nextActivity);
 				}
 			});
@@ -84,7 +102,7 @@ public class AlbumListLogic extends ListLogic {
 				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
 					public void run() {
 						setTitle(mArtist.name + " - Albums (" + value.size() + ")");
-						mList.setAdapter(new AlbumAdapter(mActivity, value));
+						//mList.setAdapter(new AlbumAdapter(mActivity, value));
 					}
 				}, mArtist);
 				
@@ -93,7 +111,7 @@ public class AlbumListLogic extends ListLogic {
 				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
 					public void run() {
 						setTitle(mGenre.name + " - Albums (" + value.size() + ")");
-						mList.setAdapter(new AlbumAdapter(mActivity, value));
+						//mList.setAdapter(new AlbumAdapter(mActivity, value));
 					}
 				}, mGenre);
 				
@@ -103,6 +121,14 @@ public class AlbumListLogic extends ListLogic {
 					public void run() {
 						setTitle("Albums (" + value.size() + ")");
 						mList.setAdapter(new AlbumAdapter(mActivity, value));
+						
+						/* Hook up the mechanism to load images only when the list "slows"
+						 * down. */
+						ImageLoaderIdleListener idleListener = new ImageLoaderIdleListener(mActivity, mList, mCache);
+						mImageLoader = new IdleListDetector(idleListener);
+						FastScrollView fastScroller = (FastScrollView)mList.getParent();
+						fastScroller.setOnIdleListDetector(mImageLoader);
+						
 					}
 				});
 			}
@@ -111,62 +137,135 @@ public class AlbumListLogic extends ListLogic {
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		final Album album = (Album)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(album.name);
+		final AlbumViewHolder holder = (AlbumViewHolder)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
+		menu.setHeaderTitle(holder.album.name);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Album");
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Album");
 		menu.add(0, ITEM_CONTEXT_INFO, 3, "View Details");
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
-		final Album album = (Album)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+		final AlbumViewHolder holder = (AlbumViewHolder)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), album);
+				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), holder.album);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), album);
+				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), holder.album);
 				break;
 			case ITEM_CONTEXT_INFO:
-				DialogFactory.getAlbumDetail(mActivity, album).show();
+				DialogFactory.getAlbumDetail(mActivity, holder.album).show();
 				break;
 			default:
 				return;
 		}
 	}
+
+	private static class AlbumViewHolder implements ImageLoaderIdleListener.ImageLoaderHolder {
+		String crc;
+		ImageView iconView;
+		TextView titleView;
+		TextView subtitleView;
+		TextView subsubtitleView;
+		int id = 0;
+		Album album;
+		boolean tempBind;
+		CrossFadeDrawable transition;
+//		final CharArrayBuffer albumBuffer = new CharArrayBuffer(64);
+//		final CharArrayBuffer artistBuffer = new CharArrayBuffer(64);
+		public Album getCover() { return album; }
+		public String getItemId() { return crc; }
+		public boolean isTemporaryBind() { return tempBind; }
+		public void setTemporaryBind(boolean temp) { tempBind = temp; }
+		public ImageView getImageLoaderView() { return iconView; }
+		public CrossFadeDrawable getTransitionDrawable() { return transition; }
+	}
 	
 	private class AlbumAdapter extends ArrayAdapter<Album> {
 		private Activity mActivity;
+		private final LayoutInflater mInflater;
 		AlbumAdapter(Activity activity, ArrayList<Album> items) {
 			super(activity, R.layout.listitem_three, items);
 			mActivity = activity;
+			mInflater = LayoutInflater.from(activity);
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View row;
+			
+			final View row;
+			final AlbumViewHolder holder;
+			
 			if (convertView == null) {
-				LayoutInflater inflater = mActivity.getLayoutInflater();
-				row = inflater.inflate(R.layout.listitem_three, null);
+				row = mInflater.inflate(R.layout.listitem_three, null);
+
+				holder = new AlbumViewHolder();
+				row.setTag(holder);
+				
+				holder.titleView = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
+				holder.subtitleView = (TextView)row.findViewById(R.id.MusicItemTextViewSubtitle);
+				holder.subsubtitleView = (TextView)row.findViewById(R.id.MusicItemTextViewSubSubtitle);
+				holder.iconView = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
+
+				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
+				transition.setCrossFadeEnabled(true);
+				holder.transition = transition;
+				
 			} else {
 				row = convertView;
+				holder = (AlbumViewHolder)convertView.getTag();
 			}
+/*			
 			final Album album = this.getItem(position);
-			row.setTag(album);
-			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
-			final TextView subtitle = (TextView)row.findViewById(R.id.MusicItemTextViewSubtitle);
-			final TextView subsubtitle = (TextView)row.findViewById(R.id.MusicItemTextViewSubSubtitle);
-			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
-			title.setText(album.name);
-			subtitle.setText(album.artist);
-			subsubtitle.setText(album.year > 0 ? String.valueOf(album.year) : "");
+			holder.album = album;
 			
-			HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, album) {
+			if (mImageLoader.isListIdle() == true) {
+				FastBitmapDrawable d = mCache.fetchFromXbmc2(mActivity, album);
+				holder.albumArtwork.setImageDrawable(d);
+				holder.setTemporaryBind(false);
+			} else {
+				holder.albumArtwork.setImageDrawable(mCache.getFallback());
+				holder.setTemporaryBind(true);
+			}
+			
+			if (mImageLoader.isListIdle() == true) {
+				FastBitmapDrawable d = mCache.fetchFromXbmc2(mActivity, album);
+				holder.albumArtwork.setImageDrawable(d);
+				holder.setTemporaryBind(false);
+			} else {
+				holder.albumArtwork.setImageDrawable(mCache.getFallback());
+				holder.setTemporaryBind(true);
+			}
+			
+			holder.artistName.setText(album.artist);
+			holder.albumName.setText(album.name);*/
+			
+			
+			final Album album = this.getItem(position);
+			holder.album = album;
+			holder.id = album.getCrc();
+			Log.i("AlbumListLogic", "GOT, VIEW, setting holder.id = " + holder.id);
+			
+			holder.titleView.setText(album.name);
+			holder.subtitleView.setText(album.artist);
+			holder.subsubtitleView.setText(album.year > 0 ? String.valueOf(album.year) : "");
+			holder.iconView.setImageResource(R.drawable.icon_album);
+			
+			HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, holder.id) {
 				public void run() {
-					if (album.getId() == ((Album)mTag).getId()) {
+					final Object calledBackIdg = holder.iconView.getTag();
+					Log.i("AlbumListLogic", "BACK, tag on iconview = " + calledBackIdg + ", holder.id = " + holder.id);
+					if (mTag == holder.id) {
 						if (value == null) {
-							icon.setImageResource(R.drawable.icon_album);
+							holder.iconView.setImageResource(R.drawable.icon_album);
 						} else {
-							icon.setImageBitmap(value);
+							CrossFadeDrawable transition = holder.getTransitionDrawable();
+							transition.setEnd(value);
+							holder.getImageLoaderView().setImageDrawable(transition);
+							transition.startTransition(500);
+							
+//							holder.iconView.setImageBitmap(value);
 						}
+					} else {
+						Log.i("AlbumListLogic", "*** SKIPPING UPDATE: mTag = " + mTag + ", holder.id = " + holder.id);
 					}
 				}
 			}, album, ThumbSize.small);

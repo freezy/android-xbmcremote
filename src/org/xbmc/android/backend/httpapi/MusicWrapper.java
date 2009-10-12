@@ -46,7 +46,7 @@ import android.util.Log;
 public class MusicWrapper extends Wrapper {
 	
 	private static final String LOG_TAG = "HttpApi-Music";
-	final private static Boolean debug = false;
+	final private static Boolean debug = true;
 	
 	/**
 	 * Gets all albums from database

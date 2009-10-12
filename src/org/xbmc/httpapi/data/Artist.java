@@ -57,12 +57,11 @@ public class Artist implements ICoverArt, Serializable {
 	 * @return Path to thumbnail
 	 */
 	public String getThumbUri() {
-		String hex = getCrc();
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+		return getThumbUri(this);
 	}
 	
 	public static String getThumbUri(ICoverArt art) {
-		String hex = art.getCrc();
+		final String hex = String.format("%08x", art.getCrc()).toLowerCase();
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
 	
@@ -70,18 +69,18 @@ public class Artist implements ICoverArt, Serializable {
 	 * Returns the CRC of the artist on which the thumb name is based upon.
 	 * @return 8-char CRC32
 	 */
-	public String getCrc() {
-		if (thumbID == null) {
-			thumbID = Crc32.computeAsHex((name).toLowerCase());
+	public int getCrc() {
+		if (thumbID == 0) {
+			thumbID = Crc32.compute((name));
 		}
 		return thumbID;
 	}
-	
+
 	/**
 	 * No fallback here
 	 */
-	public String getFallbackCrc() {
-		return null;
+	public int getFallbackCrc() {
+		return 0;
 	}
 	
 	/**
@@ -108,7 +107,7 @@ public class Artist implements ICoverArt, Serializable {
 	 */
 	public String name;
 	
-	public String thumbID = null;
+	public int thumbID = 0;
 	
 	private static final long serialVersionUID = 9073064679039418773L;
 }

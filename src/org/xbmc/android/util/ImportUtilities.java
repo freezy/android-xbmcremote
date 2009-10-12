@@ -45,7 +45,7 @@ public final class ImportUtilities {
     		} catch (IOException e) {
     			return false;
     		}
-    		File coverFile = new File(cacheDirectory, art.getCrc());
+    		File coverFile = new File(cacheDirectory, String.format("%08x", art.getCrc()).toLowerCase());
     		FileOutputStream out = null;
     		try {
     			out = new FileOutputStream(coverFile);

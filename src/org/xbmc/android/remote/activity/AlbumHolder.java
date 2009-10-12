@@ -27,6 +27,6 @@ import android.graphics.Bitmap;
 public class AlbumHolder {
 	public Bitmap cover;
 	public String type;
-	public String thumbCrc;
+	public int thumbCrc;
 	final CharArrayBuffer buffer = new CharArrayBuffer(64);
 }
