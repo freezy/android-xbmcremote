@@ -269,10 +269,11 @@ public class AlbumListLogic extends ListLogic {
 				public boolean postCache() {
 					if (mImageLoader.isListIdle()) {
 						Log.i("AlbumListLogic", "### LOADING: idleing!");
+						return true;
 					} else {
 						Log.i("AlbumListLogic", "### SKIPPING: scrolling!");
+						return false;
 					}
-					return false;
 				}
 			}, album, ThumbSize.small);
 			return row;

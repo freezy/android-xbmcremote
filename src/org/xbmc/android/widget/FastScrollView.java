@@ -109,8 +109,8 @@ public class FastScrollView extends FrameLayout implements OnScrollListener, OnT
 
 	private void useThumbDrawable(Drawable drawable) {
 		mCurrentThumb = drawable;
-		mThumbW = 19; // mCurrentThumb.getIntrinsicWidth();
-		mThumbH = 61; // mCurrentThumb.getIntrinsicHeight();
+		mThumbW = 12; // mCurrentThumb.getIntrinsicWidth();
+		mThumbH = 40; // mCurrentThumb.getIntrinsicHeight();
 		mChangedBounds = true;
 	}
 
