@@ -220,7 +220,8 @@ public class CrossFadeDrawable extends Drawable {
 
     @Override
     public int getIntrinsicWidth() {
-        return Math.max(mStart.getWidth(), mEnd.getWidth());
+        return Math.max(mStart.getWidth(), 
+        		mEnd.getWidth());
     }
 
     @Override

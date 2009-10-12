@@ -8,12 +8,18 @@
 
 package org.xbmc.android.widget;
 
+import org.xbmc.android.backend.httpapi.HttpApiHandler;
+import org.xbmc.android.backend.httpapi.HttpApiThread;
+import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.android.widget.IdleListDetector.OnListIdleListener;
 import org.xbmc.httpapi.data.Album;
-import org.xbmc.httpapi.data.ICoverArt;
+import org.xbmc.httpapi.type.ThumbSize;
 
-import android.content.Context;
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
@@ -25,7 +31,7 @@ import android.widget.ImageView;
  * further enhance performance.
  */
 public class ImageLoaderIdleListener implements OnListIdleListener {
-	private final Context mContext;
+	private final Activity mActivity;
 
 	private final AbsListView mList;
 	private final ArrayAdapter<Album> mAdapter;
@@ -33,43 +39,44 @@ public class ImageLoaderIdleListener implements OnListIdleListener {
 
 	private static final int TRANSITION_DURATION = 175;
 
-	public ImageLoaderIdleListener(Context ctx, AbsListView list) {
-		mContext = ctx;
+	public ImageLoaderIdleListener(Activity activity, AbsListView list) {
+		mActivity = activity;
 		mList = list;
-
 		mAdapter = (ArrayAdapter<Album>) list.getAdapter();
 
 	}
 
-	public void onListIdle() {/*
+	public void onListIdle() {
 		int first = mList.getFirstVisiblePosition();
 		int n = mList.getChildCount();
-
+		Log.i("ImageLoaderIdleListener", "IDLEING, downloading covers");
 		for (int i = 0; i < n; i++) {
 			View row = mList.getChildAt(i);
-			ImageLoaderHolder holder = (ImageLoaderHolder) row.getTag();
-
-			if (holder.isTemporaryBind() == true) {
-//				FastBitmapDrawable d = mCache.fetchFromXbmc2(mContext, holder.getCover());
-
-/*				if (d != mCache.getFallback()) {
-					CrossFadeDrawable transition = holder.getTransitionDrawable();
-					transition.setEnd(d.getBitmap());
-					holder.getImageLoaderView().setImageDrawable(transition);
-					transition.startTransition(TRANSITION_DURATION);
-				}*/
-
-//				holder.setTemporaryBind(false);
-//			}
-//		}
-
+			final ImageLoaderHolder holder = (ImageLoaderHolder) row.getTag();
+			if (holder.isTemporaryBind()) {
+				Log.i("ImageLoaderIdleListener", "Album: " + holder.getCover());
+				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity) {
+					public void run() {
+						if (value != null) {
+							CrossFadeDrawable transition = holder.getTransitionDrawable();
+							transition.setEnd(value);
+							holder.getImageLoaderView().setImageDrawable(transition);
+							transition.startTransition(500);
+						} else {
+							holder.getImageLoaderView().setImageResource(R.drawable.icon_album);
+						}
+					}
+				}, holder.getCover(), ThumbSize.small);
+				holder.setTemporaryBind(false);
+			}
+		}
 //		mList.invalidate();
 	}
 
 	public interface ImageLoaderHolder {
 		public String getItemId();
 		
-		public ICoverArt getCover();
+		public Album getCover();
 
 		public boolean isTemporaryBind();
 

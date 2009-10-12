@@ -248,6 +248,7 @@ public class AlbumListLogic extends ListLogic {
 			holder.subtitleView.setText(album.artist);
 			holder.subsubtitleView.setText(album.year > 0 ? String.valueOf(album.year) : "");
 			holder.iconView.setImageResource(R.drawable.icon_album_grey);
+			holder.setTemporaryBind(true);
 			
 			HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, holder.id) {
 				public void run() {
@@ -265,6 +266,7 @@ public class AlbumListLogic extends ListLogic {
 							} else {
 								holder.iconView.setImageBitmap(value);
 							}
+							holder.setTemporaryBind(false);
 						}
 					} else {
 //						Log.i("AlbumListLogic", "*** SKIPPING UPDATE: mTag = " + mTag + ", holder.id = " + holder.id);
