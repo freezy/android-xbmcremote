@@ -29,7 +29,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
-import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.remote.guilogic.holder.ThreeHolder;
 import org.xbmc.android.widget.FastScrollView;
 import org.xbmc.android.widget.IdleListDetector;
 import org.xbmc.android.widget.ImageLoaderIdleListener;
@@ -37,14 +37,12 @@ import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.Song;
-import org.xbmc.httpapi.type.CacheType;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -70,7 +68,6 @@ public class AlbumListLogic extends ListLogic {
 	
 	private static Bitmap mFallbackBitmap;
 	
-//	private static final ImageMemCache mCache = new ImageMemCache();
 	private IdleListDetector mImageLoader;
 	
 	public void onCreate(Activity activity, ListView list) {
@@ -82,17 +79,17 @@ public class AlbumListLogic extends ListLogic {
 			mActivity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_album_grey);
-//			mCache.setFallback(mActivity.getResources(), R.drawable.icon_album_grey);
 			
 //			ImportUtilities.purgeCache();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
+				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
-					AlbumViewHolder holder = (AlbumViewHolder)view.getTag();
+					ThreeHolder<Album> holder = (ThreeHolder<Album>)view.getTag();
 					nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new SongListLogic());
-					nextActivity.putExtra(ListLogic.EXTRA_ALBUM, holder.album);
+					nextActivity.putExtra(ListLogic.EXTRA_ALBUM, holder.getItem());
 					mActivity.startActivity(nextActivity);
 				}
 			});
@@ -136,52 +133,34 @@ public class AlbumListLogic extends ListLogic {
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		final AlbumViewHolder holder = (AlbumViewHolder)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(holder.album.name);
+		final ThreeHolder<Album> holder = (ThreeHolder<Album>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
+		menu.setHeaderTitle(holder.getItem().name);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Album");
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Album");
 		menu.add(0, ITEM_CONTEXT_INFO, 3, "View Details");
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void onContextItemSelected(MenuItem item) {
-		final AlbumViewHolder holder = (AlbumViewHolder)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+		final ThreeHolder<Album> holder = (ThreeHolder<Album>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+		final Album album = holder.getItem();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), holder.album);
+				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), album);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), holder.album);
+				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), album);
 				break;
 			case ITEM_CONTEXT_INFO:
-				DialogFactory.getAlbumDetail(mActivity, holder.album).show();
+				DialogFactory.getAlbumDetail(mActivity, album).show();
 				break;
 			default:
 				return;
 		}
 	}
 
-	/**
-	 * TODO write this properly.
-	 */
-	private static class AlbumViewHolder implements ImageLoaderIdleListener.ImageLoaderHolder {
-		ImageView iconView;
-		TextView titleView;
-		TextView subtitleView;
-		TextView subsubtitleView;
-		int id = 0;
-		Album album;
-		boolean tempBind;
-		CrossFadeDrawable transition;
-//		final CharArrayBuffer albumBuffer = new CharArrayBuffer(64);
-//		final CharArrayBuffer artistBuffer = new CharArrayBuffer(64);
-		public Album getCover() { return album; }
-		public int getId() { return id; }
-		public boolean isTemporaryBind() { return tempBind; }
-		public void setTemporaryBind(boolean temp) { tempBind = temp; }
-		public ImageView getImageLoaderView() { return iconView; }
-		public CrossFadeDrawable getTransitionDrawable() { return transition; }
-	}
 	
 	private class AlbumAdapter extends ArrayAdapter<Album> {
 		private Activity mActivity;
@@ -191,101 +170,42 @@ public class AlbumListLogic extends ListLogic {
 			mActivity = activity;
 			mInflater = LayoutInflater.from(activity);
 		}
+		
+		@SuppressWarnings("unchecked")
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
 			final View row;
-			final AlbumViewHolder holder;
+			final ThreeHolder<Album> holder;
 			
 			if (convertView == null) {
-				row = mInflater.inflate(R.layout.listitem_three, null);
 
-				holder = new AlbumViewHolder();
+				row = mInflater.inflate(R.layout.listitem_three, null);
+				holder = new ThreeHolder<Album>(
+					(ImageView)row.findViewById(R.id.MusicItemImageViewArt),
+					(TextView)row.findViewById(R.id.MusicItemTextViewTitle),
+					(TextView)row.findViewById(R.id.MusicItemTextViewSubtitle),
+					(TextView)row.findViewById(R.id.MusicItemTextViewSubSubtitle)
+				);
 				row.setTag(holder);
 				
-				holder.titleView = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
-				holder.subtitleView = (TextView)row.findViewById(R.id.MusicItemTextViewSubtitle);
-				holder.subsubtitleView = (TextView)row.findViewById(R.id.MusicItemTextViewSubSubtitle);
-				holder.iconView = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
-
 				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
 				transition.setCrossFadeEnabled(true);
 				holder.transition = transition;
 				
 			} else {
 				row = convertView;
-				holder = (AlbumViewHolder)convertView.getTag();
-			}
-/*			
-			final Album album = this.getItem(position);
-			holder.album = album;
-			
-			if (mImageLoader.isListIdle() == true) {
-				FastBitmapDrawable d = mCache.fetchFromXbmc2(mActivity, album);
-				holder.albumArtwork.setImageDrawable(d);
-				holder.setTemporaryBind(false);
-			} else {
-				holder.albumArtwork.setImageDrawable(mCache.getFallback());
-				holder.setTemporaryBind(true);
+				holder = (ThreeHolder<Album>)convertView.getTag();
 			}
 			
-			if (mImageLoader.isListIdle() == true) {
-				FastBitmapDrawable d = mCache.fetchFromXbmc2(mActivity, album);
-				holder.albumArtwork.setImageDrawable(d);
-				holder.setTemporaryBind(false);
-			} else {
-				holder.albumArtwork.setImageDrawable(mCache.getFallback());
-				holder.setTemporaryBind(true);
-			}
-			
-			holder.artistName.setText(album.artist);
-			holder.albumName.setText(album.name);*/
-			
-			
-			final Album album = this.getItem(position);
-			holder.album = album;
+			final Album album = getItem(position);
+			holder.setItem(album);
 			holder.id = album.getCrc();
-//			Log.i("AlbumListLogic", "GOT, VIEW, setting holder.id = " + holder.id);
 			
-			holder.titleView.setText(album.name);
-			holder.subtitleView.setText(album.artist);
-			holder.subsubtitleView.setText(album.year > 0 ? String.valueOf(album.year) : "");
-			holder.iconView.setImageResource(R.drawable.icon_album_grey);
+			holder.setText(album.name, album.artist, album.year > 0 ? String.valueOf(album.year) : "");
+			holder.setImageResource(R.drawable.icon_album_grey);
 			holder.setTemporaryBind(true);
-			
-			HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, holder.id) {
-				public void run() {
-//					Log.i("AlbumListLogic", "BACK, tag on iconview = " + calledBackIdg + ", holder.id = " + holder.id);
-					if (mTag == holder.id) {
-						if (value == null) {
-							holder.iconView.setImageResource(R.drawable.icon_album);
-						} else {
-							// only "fade" if cover was downloaded.
-							if (mCacheType.equals(CacheType.network)) {
-								CrossFadeDrawable transition = holder.getTransitionDrawable();
-								transition.setEnd(value);
-								holder.getImageLoaderView().setImageDrawable(transition);
-								transition.startTransition(500);
-							} else {
-								holder.iconView.setImageBitmap(value);
-							}
-							holder.setTemporaryBind(false);
-						}
-					} else {
-//						Log.i("AlbumListLogic", "*** SKIPPING UPDATE: mTag = " + mTag + ", holder.id = " + holder.id);
-					}
-				}
-				public boolean postCache() {
-					if (mImageLoader.isListIdle()) {
-//						Log.i("AlbumListLogic", "### LOADING: idleing!");
-						holder.setTemporaryBind(false);
-						return true;
-					} else {
-//						Log.i("AlbumListLogic", "### SKIPPING: scrolling!");
-						holder.setTemporaryBind(true);
-						return false;
-					}
-				}
-			}, album, ThumbSize.small);
+		
+			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mImageLoader), album, ThumbSize.small);
 			return row;
 		}
 	}

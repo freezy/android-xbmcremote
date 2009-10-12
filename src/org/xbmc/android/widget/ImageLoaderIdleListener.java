@@ -8,22 +8,16 @@
 
 package org.xbmc.android.widget;
 
-import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
-import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.drawable.CrossFadeDrawable;
+import org.xbmc.android.remote.guilogic.holder.ThreeHolder;
 import org.xbmc.android.widget.IdleListDetector.OnListIdleListener;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 
 /**
  * Useful common implementation of OnListIdleListener which handles loading
@@ -34,59 +28,30 @@ public class ImageLoaderIdleListener implements OnListIdleListener {
 	private final Activity mActivity;
 
 	private final AbsListView mList;
-	private final ArrayAdapter<Album> mAdapter;
+//	private final ArrayAdapter<Album> mAdapter;
 
-
-	private static final int TRANSITION_DURATION = 175;
+//	private static final int TRANSITION_DURATION = 175;
 
 	public ImageLoaderIdleListener(Activity activity, AbsListView list) {
 		mActivity = activity;
 		mList = list;
-		mAdapter = (ArrayAdapter<Album>) list.getAdapter();
+//		mAdapter = (ArrayAdapter<Album>) list.getAdapter();
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public void onListIdle() {
-		int first = mList.getFirstVisiblePosition();
 		int n = mList.getChildCount();
 		Log.i("ImageLoaderIdleListener", "IDLEING, downloading covers");
 		for (int i = 0; i < n; i++) {
 			View row = mList.getChildAt(i);
-			final ImageLoaderHolder holder = (ImageLoaderHolder) row.getTag();
+			final ThreeHolder<Album> holder = (ThreeHolder<Album>)row.getTag();
 			if (holder.isTemporaryBind()) {
-				Log.i("ImageLoaderIdleListener", "Album: " + holder.getCover());
-				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, holder.getId()) {
-					public void run() {
-						if (mTag == holder.getId()) {
-							if (value != null) {
-								CrossFadeDrawable transition = holder.getTransitionDrawable();
-								transition.setEnd(value);
-								holder.getImageLoaderView().setImageDrawable(transition);
-								transition.startTransition(500);
-							} else {
-								holder.getImageLoaderView().setImageResource(R.drawable.icon_album);
-							}
-						}
-					}
-				}, holder.getCover(), ThumbSize.small);
+				Log.i("ImageLoaderIdleListener", "Album: " + holder.getItem());
+				HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, null), holder.getItem(), ThumbSize.small);
 				holder.setTemporaryBind(false);
 			}
 		}
 //		mList.invalidate();
-	}
-
-	public interface ImageLoaderHolder {
-		
-		public int getId();
-		
-		public Album getCover();
-
-		public boolean isTemporaryBind();
-
-		public void setTemporaryBind(boolean temp);
-
-		public ImageView getImageLoaderView();
-
-		public CrossFadeDrawable getTransitionDrawable();
 	}
 }

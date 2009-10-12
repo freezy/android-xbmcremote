@@ -5,11 +5,11 @@
 		android:title="XBMC IP Address / Host"
 		android:defaultValue="10.10.10.10" 
 		android:summary="Connect to address %value%" />
-	<!-- CheckBoxPreference 
+	<CheckBoxPreference 
 		android:disableDependentsState="true" 
 		android:key="setting_mdns" android:defaultValue="false" 
 		android:title="Use Zeroconf for IP/Port discovery" 
-		android:summary="Use Zeroconf to discover the IP and Ports of XBMC."/-->
+		android:summary="Use Zeroconf to discover the IP and Ports of XBMC."/>
 	<CheckBoxPreference
 		android:key="setting_vibrate_on_touch"
 		android:title="Vibrate on Touch"
