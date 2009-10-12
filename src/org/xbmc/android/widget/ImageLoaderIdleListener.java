@@ -55,15 +55,17 @@ public class ImageLoaderIdleListener implements OnListIdleListener {
 			final ImageLoaderHolder holder = (ImageLoaderHolder) row.getTag();
 			if (holder.isTemporaryBind()) {
 				Log.i("ImageLoaderIdleListener", "Album: " + holder.getCover());
-				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity) {
+				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, holder.getId()) {
 					public void run() {
-						if (value != null) {
-							CrossFadeDrawable transition = holder.getTransitionDrawable();
-							transition.setEnd(value);
-							holder.getImageLoaderView().setImageDrawable(transition);
-							transition.startTransition(500);
-						} else {
-							holder.getImageLoaderView().setImageResource(R.drawable.icon_album);
+						if (mTag == holder.getId()) {
+							if (value != null) {
+								CrossFadeDrawable transition = holder.getTransitionDrawable();
+								transition.setEnd(value);
+								holder.getImageLoaderView().setImageDrawable(transition);
+								transition.startTransition(500);
+							} else {
+								holder.getImageLoaderView().setImageResource(R.drawable.icon_album);
+							}
 						}
 					}
 				}, holder.getCover(), ThumbSize.small);
@@ -74,7 +76,8 @@ public class ImageLoaderIdleListener implements OnListIdleListener {
 	}
 
 	public interface ImageLoaderHolder {
-		public String getItemId();
+		
+		public int getId();
 		
 		public Album getCover();
 

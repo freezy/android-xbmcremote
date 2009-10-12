@@ -161,8 +161,10 @@ public class AlbumListLogic extends ListLogic {
 		}
 	}
 
+	/**
+	 * TODO write this properly.
+	 */
 	private static class AlbumViewHolder implements ImageLoaderIdleListener.ImageLoaderHolder {
-		String crc;
 		ImageView iconView;
 		TextView titleView;
 		TextView subtitleView;
@@ -174,7 +176,7 @@ public class AlbumListLogic extends ListLogic {
 //		final CharArrayBuffer albumBuffer = new CharArrayBuffer(64);
 //		final CharArrayBuffer artistBuffer = new CharArrayBuffer(64);
 		public Album getCover() { return album; }
-		public String getItemId() { return crc; }
+		public int getId() { return id; }
 		public boolean isTemporaryBind() { return tempBind; }
 		public void setTemporaryBind(boolean temp) { tempBind = temp; }
 		public ImageView getImageLoaderView() { return iconView; }
@@ -275,9 +277,11 @@ public class AlbumListLogic extends ListLogic {
 				public boolean postCache() {
 					if (mImageLoader.isListIdle()) {
 //						Log.i("AlbumListLogic", "### LOADING: idleing!");
+						holder.setTemporaryBind(false);
 						return true;
 					} else {
 //						Log.i("AlbumListLogic", "### SKIPPING: scrolling!");
+						holder.setTemporaryBind(true);
 						return false;
 					}
 				}
