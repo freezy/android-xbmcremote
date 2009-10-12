@@ -42,9 +42,16 @@
 				android:id="@+id/filelist_outer_layout" android:orientation="vertical"
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
-				<ListView android:layout_height="fill_parent"
-					android:layout_width="fill_parent" android:fadingEdge="none"
-					android:id="@+id/filelist_list"></ListView>
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					<ListView 
+						android:id="@+id/filelist_list"
+						android:layout_height="fill_parent"
+						android:layout_width="fill_parent" 
+						android:fadingEdge="none"
+						android:scrollbars="none" />
+				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 			
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -52,9 +59,16 @@
 				android:id="@+id/artists_outer_layout" android:orientation="vertical"
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
-				<ListView android:layout_height="fill_parent"
-					android:layout_width="fill_parent" android:fadingEdge="none"
-					android:id="@+id/artists_list"></ListView>
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					<ListView 
+						android:id="@+id/artists_list"
+						android:layout_height="fill_parent"
+						android:layout_width="fill_parent" 
+						android:fadingEdge="none"
+						android:scrollbars="none" />
+				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -62,9 +76,16 @@
 				android:id="@+id/genres_outer_layout" android:orientation="vertical"
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
-				<ListView android:layout_height="fill_parent"
-					android:layout_width="fill_parent" android:fadingEdge="none"
-					android:id="@+id/genres_list"></ListView>
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					<ListView 
+						android:id="@+id/genres_list"
+						android:layout_height="fill_parent"
+						android:layout_width="fill_parent" 
+						android:fadingEdge="none"
+						android:scrollbars="none" />
+					</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 			
     	</FrameLayout>

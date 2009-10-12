@@ -4,7 +4,14 @@
 	android:id="@+id/blanklist_outer_layout" android:orientation="vertical"
 	android:fadingEdge="none">
 	<include layout="@layout/titlebar" />
-	<ListView android:layout_height="fill_parent"
-		android:layout_width="fill_parent" android:fadingEdge="none"
-		android:id="@+id/blanklist_list"></ListView>
+	<org.xbmc.android.widget.FastScrollView
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<ListView 
+			android:id="@+id/blanklist_list"
+			android:layout_height="fill_parent"
+			android:layout_width="fill_parent" 
+			android:fadingEdge="none"
+			android:scrollbars="none" />
+	</org.xbmc.android.widget.FastScrollView>
 </LinearLayout>
