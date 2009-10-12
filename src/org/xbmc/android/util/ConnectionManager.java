@@ -131,7 +131,8 @@ public class ConnectionManager {
 			int port = 0;
 			
 			// If we need to use zeroconf, query it, and use that for the connection information
-			if (prefs.getBoolean("setting_mdns", false)) {
+			// [phreezie] removed for now, please do it async, test, and when youre 100% sure test again, then re-enable. ;)
+/*			if (prefs.getBoolean("setting_mdns", false)) {
 				ServiceInfo mdnsHost = ConnectionManager.getZeroconfServiceInfo(
 						"_xbmc-web._tcp.local.", prefHost);
 
@@ -142,10 +143,10 @@ public class ConnectionManager {
 				} else {
 					return null;
 				}
-			} else {
+			} else {*/
 				host = prefHost;
 				port = Integer.parseInt(prefs.getString("setting_http_port", "80"));
-			}
+//			}
 			
 			String user = prefs.getString("setting_http_user", "");
 			String pass = prefs.getString("setting_http_pass", "");
@@ -198,7 +199,7 @@ public class ConnectionManager {
 			String host = null;
 			int port = 0;
 			
-			if (prefs.getBoolean("setting_mdns", false)) {
+/*			if (prefs.getBoolean("setting_mdns", false)) {
 				ServiceInfo mdnsHost = ConnectionManager.getZeroconfServiceInfo(
 						"_xbmc-events._udp.local.", prefHost);
 				
@@ -209,10 +210,10 @@ public class ConnectionManager {
 				} else {
 					return null;
 				}
-			} else {
+			} else {*/
 				host = prefHost;
 				port = Integer.parseInt(prefs.getString("setting_eventserver_port", "9777"));
-			}
+//			}
 			
 			try {
 				sEventClientInstance = new EventClient(Inet4Address.getByName(host), port, "Android XBMC Remote");

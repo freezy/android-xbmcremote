@@ -241,7 +241,7 @@ public class AlbumListLogic extends ListLogic {
 			final Album album = this.getItem(position);
 			holder.album = album;
 			holder.id = album.getCrc();
-			Log.i("AlbumListLogic", "GOT, VIEW, setting holder.id = " + holder.id);
+//			Log.i("AlbumListLogic", "GOT, VIEW, setting holder.id = " + holder.id);
 			
 			holder.titleView.setText(album.name);
 			holder.subtitleView.setText(album.artist);
@@ -251,27 +251,35 @@ public class AlbumListLogic extends ListLogic {
 			HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, holder.id) {
 				public void run() {
 					final Object calledBackIdg = holder.iconView.getTag();
-					Log.i("AlbumListLogic", "BACK, tag on iconview = " + calledBackIdg + ", holder.id = " + holder.id);
+//					Log.i("AlbumListLogic", "BACK, tag on iconview = " + calledBackIdg + ", holder.id = " + holder.id);
 					if (mTag == holder.id) {
 						if (value == null) {
-							holder.iconView.setImageResource(R.drawable.icon_album);
+							
+							CrossFadeDrawable transition = holder.getTransitionDrawable();
+							transition.setEnd(BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_album));
+							holder.getImageLoaderView().setImageDrawable(transition);
+							transition.startTransition(500);
+							
+//							holder.iconView.setImageResource(R.drawable.icon_album);
 						} else {
-/*							CrossFadeDrawable transition = holder.getTransitionDrawable();
+							
+							CrossFadeDrawable transition = holder.getTransitionDrawable();
 							transition.setEnd(value);
 							holder.getImageLoaderView().setImageDrawable(transition);
-							transition.startTransition(500);*/
-							holder.iconView.setImageBitmap(value);
+							transition.startTransition(500);
+							
+//							holder.iconView.setImageBitmap(value);
 						}
 					} else {
-						Log.i("AlbumListLogic", "*** SKIPPING UPDATE: mTag = " + mTag + ", holder.id = " + holder.id);
+//						Log.i("AlbumListLogic", "*** SKIPPING UPDATE: mTag = " + mTag + ", holder.id = " + holder.id);
 					}
 				}
 				public boolean postCache() {
 					if (mImageLoader.isListIdle()) {
-						Log.i("AlbumListLogic", "### LOADING: idleing!");
+//						Log.i("AlbumListLogic", "### LOADING: idleing!");
 						return true;
 					} else {
-						Log.i("AlbumListLogic", "### SKIPPING: scrolling!");
+//						Log.i("AlbumListLogic", "### SKIPPING: scrolling!");
 						return false;
 					}
 				}
