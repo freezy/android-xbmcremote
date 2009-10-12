@@ -118,12 +118,12 @@ public class SongListLogic extends ListLogic {
 	public void onContextItemSelected(MenuItem item) {
 		// be aware that this must be explicitly called by your activity!
 		final Song song = (Song)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
-		HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), song);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), song);
 				break;
 			case ITEM_CONTEXT_PLAY:
+				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), song);
 				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), song);
 				break;
 			default:

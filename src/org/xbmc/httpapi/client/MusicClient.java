@@ -234,7 +234,7 @@ public class MusicClient {
 	}
 	
 	/**
-	 * Adds a song to the current playlist.
+	 * Adds a song to the current playlist and plays it.
 	 * @param song
 	 * @return true on success, false otherwise.
 	 */
