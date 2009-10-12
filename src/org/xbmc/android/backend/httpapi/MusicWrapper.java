@@ -242,6 +242,7 @@ public class MusicWrapper extends Wrapper {
 					handler.value = mc.addToPlaylist(song);
 				}
 				if (ps == ControlClient.PlayState.Stopped) { // if nothing is playing, play the song
+					mc.setCurrentPlaylist();
 					handler.value = mc.play(song);
 				}
 				done(handler);
@@ -356,6 +357,20 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				handler.value = music(handler).play(artist, genre);
+				done(handler);
+			}
+		});
+	}
+	
+	
+	/**
+	 * Starts playing the next media in the current playlist. 
+	 * @param handler Callback
+	 */
+	public void playlistNext(final HttpApiHandler<Boolean> handler) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).playlistNext();
 				done(handler);
 			}
 		});

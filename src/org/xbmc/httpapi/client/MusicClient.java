@@ -69,15 +69,7 @@ public class MusicClient {
 	 * @return first song of the album
 	 */
 	public Song addToPlaylist(Album album) {
-		final ArrayList<Song> songs = getSongs(album);
-		Song firstSong = null;
-		for (Song song : songs) {
-			if (firstSong == null) {
-				firstSong = song;
-			}
-			addToPlaylist(song);
-		}
-		return firstSong;
+		return addToPlaylist(getSongs(album));
 	}
 
 	/**
@@ -86,15 +78,7 @@ public class MusicClient {
 	 * @return first song of all added songs
 	 */
 	public Song addToPlaylist(Artist artist) {
-		final ArrayList<Song> songs = getSongs(artist);
-		Song firstSong = null;
-		for (Song song : songs) {
-			if (firstSong == null) {
-				firstSong = song;
-			}
-			addToPlaylist(song);
-		}
-		return firstSong;
+		return addToPlaylist(getSongs(artist));
 	}
 
 	/**
@@ -103,15 +87,7 @@ public class MusicClient {
 	 * @return first song of all added songs
 	 */
 	public Song addToPlaylist(Genre genre) {
-		final ArrayList<Song> songs = getSongs(genre);
-		Song firstSong = null;
-		for (Song song : songs) {
-			if (firstSong == null) {
-				firstSong = song;
-			}
-			addToPlaylist(song);
-		}
-		return firstSong;
+		return addToPlaylist(getSongs(genre));
 	}
 
 	/**
@@ -120,7 +96,15 @@ public class MusicClient {
 	 * @return first song of all added songs
 	 */
 	public Song addToPlaylist(Artist artist, Genre genre) {
-		final ArrayList<Song> songs = getSongs(artist, genre);
+		return addToPlaylist(getSongs(artist, genre));
+	}
+	
+	/**
+	 * Adds a list of songs to the current playlist.
+	 * @param artist
+	 * @return first song of all added songs
+	 */
+	public Song addToPlaylist(ArrayList<Song> songs) {
 		Song firstSong = null;
 		for (Song song : songs) {
 			if (firstSong == null) {
@@ -162,17 +146,7 @@ public class MusicClient {
 	 * @return true on success, false otherwise.
 	 */
 	public boolean play(Album album) {
-		final ArrayList<Song> songs = getSongs(album);
-		clearPlaylist();
-		int n = 0;
-		for (Song song : songs) {
-			addToPlaylist(song);
-			if (n == 0) {
-				play(song);
-			}
-			n++;
-		}
-		return true;
+		return play(getSongs(album));
 	}
 	
 	/**
@@ -181,17 +155,7 @@ public class MusicClient {
 	 * @return true on success, false otherwise.
 	 */
 	public boolean play(Genre genre) {
-		final ArrayList<Song> songs = getSongs(genre);
-		clearPlaylist();
-		int n = 0;
-		for (Song song : songs) {
-			addToPlaylist(song);
-			if (n == 0) {
-				play(song);
-			}
-			n++;
-		}
-		return true;
+		return play(getSongs(genre));
 	}
 	
 	/**
@@ -200,17 +164,7 @@ public class MusicClient {
 	 * @return true on success, false otherwise.
 	 */
 	public boolean play(Artist artist) {
-		final ArrayList<Song> songs = getSongs(artist);
-		clearPlaylist();
-		int n = 0;
-		for (Song song : songs) {
-			addToPlaylist(song);
-			if (n == 0) {
-				play(song);
-			}
-			n++;
-		}
-		return true;
+		return play(getSongs(artist));
 	}
 	
 	/**
@@ -220,17 +174,23 @@ public class MusicClient {
 	 * @return true on success, false otherwise.
 	 */
 	public boolean play(Artist artist, Genre genre) {
-		final ArrayList<Song> songs = getSongs(artist, genre);
+		return play(getSongs(artist, genre));
+	}
+
+	
+	/**
+	 * Plays all songs of this array.
+	 * @param artist
+	 * @param genre
+	 * @return true on success, false otherwise.
+	 */
+	public boolean play(ArrayList<Song> songs) {
 		clearPlaylist();
-		int n = 0;
 		for (Song song : songs) {
 			addToPlaylist(song);
-			if (n == 0) {
-				play(song);
-			}
-			n++;
 		}
-		return true;
+		setCurrentPlaylist();
+		return playlistNext();
 	}
 	
 	/**
@@ -240,6 +200,23 @@ public class MusicClient {
 	 */
 	public boolean play(Song song) {
 		return mConnection.getBoolean("PlayFile", song.path + ";" + PLAYLIST_ID);
+	}
+	
+	
+	/**
+	 * Starts playing the next media in the current playlist. 
+	 * @return true on success, false otherwise.
+	 */
+	public boolean playlistNext() {
+		return mConnection.getBoolean("PlayNext");
+	}
+	
+	/**
+	 * Sets current playlist to "0"
+	 * @return true on success, false otherwise.
+	 */
+	public boolean setCurrentPlaylist() {
+		return mConnection.getBoolean("SetCurrentPlaylist", PLAYLIST_ID);
 	}
 	
 	/**
