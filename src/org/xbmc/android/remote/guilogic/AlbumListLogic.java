@@ -30,6 +30,7 @@ import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.widget.FastScrollView;
 import org.xbmc.android.widget.IdleListDetector;
 import org.xbmc.android.widget.ImageLoaderIdleListener;
 import org.xbmc.httpapi.data.Album;
@@ -122,10 +123,10 @@ public class AlbumListLogic extends ListLogic {
 						
 						/* Hook up the mechanism to load images only when the list "slows"
 						 * down. */
-/*						ImageLoaderIdleListener idleListener = new ImageLoaderIdleListener(mActivity, mList, mCache);
+						ImageLoaderIdleListener idleListener = new ImageLoaderIdleListener(mActivity, mList);
 						mImageLoader = new IdleListDetector(idleListener);
 						FastScrollView fastScroller = (FastScrollView)mList.getParent();
-						fastScroller.setOnIdleListDetector(mImageLoader);*/
+						fastScroller.setOnIdleListDetector(mImageLoader);
 						
 					}
 				});
@@ -245,7 +246,7 @@ public class AlbumListLogic extends ListLogic {
 			holder.titleView.setText(album.name);
 			holder.subtitleView.setText(album.artist);
 			holder.subsubtitleView.setText(album.year > 0 ? String.valueOf(album.year) : "");
-			holder.iconView.setImageResource(R.drawable.icon_album);
+			holder.iconView.setImageResource(R.drawable.icon_album_grey);
 			
 			HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity, holder.id) {
 				public void run() {
@@ -255,16 +256,23 @@ public class AlbumListLogic extends ListLogic {
 						if (value == null) {
 							holder.iconView.setImageResource(R.drawable.icon_album);
 						} else {
-							CrossFadeDrawable transition = holder.getTransitionDrawable();
+/*							CrossFadeDrawable transition = holder.getTransitionDrawable();
 							transition.setEnd(value);
 							holder.getImageLoaderView().setImageDrawable(transition);
-							transition.startTransition(500);
-							
-//							holder.iconView.setImageBitmap(value);
+							transition.startTransition(500);*/
+							holder.iconView.setImageBitmap(value);
 						}
 					} else {
 						Log.i("AlbumListLogic", "*** SKIPPING UPDATE: mTag = " + mTag + ", holder.id = " + holder.id);
 					}
+				}
+				public boolean postCache() {
+					if (mImageLoader.isListIdle()) {
+						Log.i("AlbumListLogic", "### LOADING: idleing!");
+					} else {
+						Log.i("AlbumListLogic", "### SKIPPING: scrolling!");
+					}
+					return false;
 				}
 			}, album, ThumbSize.small);
 			return row;

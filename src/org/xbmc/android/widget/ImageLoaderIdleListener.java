@@ -41,7 +41,7 @@ public class ImageLoaderIdleListener implements OnListIdleListener {
 
 	}
 
-	public void onListIdle() {
+	public void onListIdle() {/*
 		int first = mList.getFirstVisiblePosition();
 		int n = mList.getChildCount();
 
@@ -59,11 +59,11 @@ public class ImageLoaderIdleListener implements OnListIdleListener {
 					transition.startTransition(TRANSITION_DURATION);
 				}*/
 
-				holder.setTemporaryBind(false);
-			}
-		}
+//				holder.setTemporaryBind(false);
+//			}
+//		}
 
-		mList.invalidate();
+//		mList.invalidate();
 	}
 
 	public interface ImageLoaderHolder {

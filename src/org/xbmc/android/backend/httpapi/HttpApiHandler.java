@@ -49,7 +49,14 @@ public class HttpApiHandler<T> implements Runnable {
 		return mActivity;
 	}
 	public void run () {
-		// do nothing
+		// do nothing if not overloaded
 	}
-	
+	/**
+	 * Executed before downloading large files. Overload and return false to 
+	 * skip downloading, for instance when a list with covers is scrolling.
+	 * @return
+	 */
+	public boolean postCache() {
+		return true;
+	}
 }

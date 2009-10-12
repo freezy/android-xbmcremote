@@ -45,9 +45,8 @@ import android.util.Log;
  */
 public class MusicWrapper extends Wrapper {
 	
-	private static final String LOG_TAG = "HttpApi-Music";
-	final private static Boolean debug = true;
-	
+	private static final String LOG_TAG = "MusicWrapper";
+	final private static Boolean debug = false;
 	/**
 	 * Gets all albums from database
 	 * @param handler Callback handler
@@ -380,8 +379,12 @@ public class MusicWrapper extends Wrapper {
 			public void run() {
 				if (value == null) {
 					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " empty]");
-					// well, let's download
-					getAlbumCoverFromNetwork(handler, album, size);
+					if (handler.postCache()) {
+						// well, let's download
+						getAlbumCoverFromNetwork(handler, album, size);
+					} else {
+						done(handler);
+					}
 				} else {
 					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " FOUND on disk!]");
 					handler.value = value;
