@@ -24,10 +24,11 @@ package org.xbmc.android.backend.httpapi;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 
-import org.xbmc.android.remote.drawable.FastBitmapDrawable;
+import org.xbmc.android.remote.R;
 import org.xbmc.httpapi.data.ICoverArt;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 /**
  * This thread asynchronously delivers memory-cached bitmaps.
@@ -49,6 +50,7 @@ class HttpApiMemCacheThread extends HttpApiAbstractThread {
 	 * The actual cache variable. Here are the thumbs stored. 
 	 */
 	private static final HashMap<Integer, SoftReference<Bitmap>> sArtCache = new HashMap<Integer, SoftReference<Bitmap>>();
+	private static final HashMap<Integer, Boolean> sNotAvailable = new HashMap<Integer, Boolean>();
 
 	/**
 	 * Constructor is protected, use get().
@@ -68,9 +70,13 @@ class HttpApiMemCacheThread extends HttpApiAbstractThread {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
-					SoftReference<Bitmap> ref = sArtCache.get(cover.getCrc());
+					final int crc = cover.getCrc();
+					final SoftReference<Bitmap> ref = sArtCache.get(crc);
 			        if (ref != null) {
 			            handler.value = ref.get();
+			        } else if (sNotAvailable.containsKey(crc)) {
+//		            	Log.i("HttpApiMemCacheThread", "Delivering not-available image directly from cache (" + crc + ").");
+		            	handler.value = BitmapFactory.decodeResource(handler.getActivity().getResources(), R.drawable.icon_album);
 			        }
 				}
 				done(handler);
@@ -104,7 +110,12 @@ class HttpApiMemCacheThread extends HttpApiAbstractThread {
 	 * @param bitmap Bitmap data
 	 */
 	public static void addCoverToCache(ICoverArt cover, Bitmap bitmap) {
-		sArtCache.put(cover.getCrc(), new SoftReference<Bitmap>(bitmap));
+		// if bitmap is null, add an entry to the sNotAvailable table so we can return the default bitmap later directly.
+		if (bitmap == null) {
+			sNotAvailable.put(cover.getCrc(), true);
+		} else {
+			sArtCache.put(cover.getCrc(), new SoftReference<Bitmap>(bitmap));
+		}
 	}
 
 	/**

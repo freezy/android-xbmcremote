@@ -47,7 +47,7 @@ import android.util.Log;
 public class MusicWrapper extends Wrapper {
 	
 	private static final String LOG_TAG = "MusicWrapper";
-	final private static Boolean debug = true;
+	final private static Boolean debug = false;
 	/**
 	 * Gets all albums from database
 	 * @param handler Callback handler

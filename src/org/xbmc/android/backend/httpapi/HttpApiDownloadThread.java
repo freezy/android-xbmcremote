@@ -90,10 +90,16 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 								Log.i(TAG, "Decoding, resizing and adding to cache");
 								Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 								if (bitmap != null) {
+									// add to disk cache
 									handler.value = HttpApiDiskCacheThread.addCoverToCache(cover, bitmap, size);
+									// add to mem cache
 									HttpApiMemCacheThread.addCoverToCache(cover, bitmap);
 									Log.i(TAG, "Done");
-								} 
+								}
+							} else {
+								// still add null value to mem cache so we don't try to fetch it again
+								Log.i(TAG, "Adding null-value (" + cover.getCrc() + ") to mem cache in order to block future downloads");
+								HttpApiMemCacheThread.addCoverToCache(cover, null);
 							}
 						} catch (IOException e) {
 							System.out.println("IOException " + e.getMessage());
