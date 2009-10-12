@@ -1,5 +1,6 @@
 /*
- * $Id: IdleListDetector.java 1077 2009-01-20 12:00:43Z jasta00 $
+ * Code taken from jasta's five project:
+ *   http://code.google.com/p/five/
  * 
  * Much of this logic was taken from Romain Guy's Shelves project:
  * 

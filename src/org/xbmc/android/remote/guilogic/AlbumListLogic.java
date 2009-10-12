@@ -23,7 +23,6 @@ package org.xbmc.android.remote.guilogic;
 
 import java.util.ArrayList;
 
-import org.devtcg.five.music.util.ImageMemCache;
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
@@ -31,7 +30,6 @@ import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.android.util.ImportUtilities;
-import org.xbmc.android.widget.FastScrollView;
 import org.xbmc.android.widget.IdleListDetector;
 import org.xbmc.android.widget.ImageLoaderIdleListener;
 import org.xbmc.httpapi.data.Album;
@@ -70,7 +68,7 @@ public class AlbumListLogic extends ListLogic {
 	
 	private static Bitmap mFallbackBitmap;
 	
-	private static final ImageMemCache mCache = new ImageMemCache();
+//	private static final ImageMemCache mCache = new ImageMemCache();
 	private IdleListDetector mImageLoader;
 	
 	public void onCreate(Activity activity, ListView list) {
@@ -82,7 +80,7 @@ public class AlbumListLogic extends ListLogic {
 			mActivity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_album_grey);
-			mCache.setFallback(mActivity.getResources(), R.drawable.icon_album_grey);
+//			mCache.setFallback(mActivity.getResources(), R.drawable.icon_album_grey);
 			
 			ImportUtilities.purgeCache();
 			
@@ -124,10 +122,10 @@ public class AlbumListLogic extends ListLogic {
 						
 						/* Hook up the mechanism to load images only when the list "slows"
 						 * down. */
-						ImageLoaderIdleListener idleListener = new ImageLoaderIdleListener(mActivity, mList, mCache);
+/*						ImageLoaderIdleListener idleListener = new ImageLoaderIdleListener(mActivity, mList, mCache);
 						mImageLoader = new IdleListDetector(idleListener);
 						FastScrollView fastScroller = (FastScrollView)mList.getParent();
-						fastScroller.setOnIdleListDetector(mImageLoader);
+						fastScroller.setOnIdleListDetector(mImageLoader);*/
 						
 					}
 				});

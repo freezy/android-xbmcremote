@@ -1,16 +1,14 @@
 /*
- * $Id: ImageLoaderIdleListener.java 1077 2009-01-20 12:00:43Z jasta00 $
+ * Code taken from jasta's five project:
+ *   http://code.google.com/p/five/
  *
  * Much of this logic was taken from Romain Guy's Shelves project:
- * 
  *   http://code.google.com/p/shelves/
  */
 
 package org.xbmc.android.widget;
 
-import org.devtcg.five.music.util.ImageMemCache;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
-import org.xbmc.android.remote.drawable.FastBitmapDrawable;
 import org.xbmc.android.widget.IdleListDetector.OnListIdleListener;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.ICoverArt;
@@ -32,14 +30,12 @@ public class ImageLoaderIdleListener implements OnListIdleListener {
 	private final AbsListView mList;
 	private final ArrayAdapter<Album> mAdapter;
 
-	private final ImageMemCache mCache;
 
 	private static final int TRANSITION_DURATION = 175;
 
-	public ImageLoaderIdleListener(Context ctx, AbsListView list, ImageMemCache cache) {
+	public ImageLoaderIdleListener(Context ctx, AbsListView list) {
 		mContext = ctx;
 		mList = list;
-		mCache = cache;
 
 		mAdapter = (ArrayAdapter<Album>) list.getAdapter();
 
@@ -54,14 +50,14 @@ public class ImageLoaderIdleListener implements OnListIdleListener {
 			ImageLoaderHolder holder = (ImageLoaderHolder) row.getTag();
 
 			if (holder.isTemporaryBind() == true) {
-				FastBitmapDrawable d = mCache.fetchFromXbmc2(mContext, holder.getCover());
+//				FastBitmapDrawable d = mCache.fetchFromXbmc2(mContext, holder.getCover());
 
-				if (d != mCache.getFallback()) {
+/*				if (d != mCache.getFallback()) {
 					CrossFadeDrawable transition = holder.getTransitionDrawable();
 					transition.setEnd(d.getBitmap());
 					holder.getImageLoaderView().setImageDrawable(transition);
 					transition.startTransition(TRANSITION_DURATION);
-				}
+				}*/
 
 				holder.setTemporaryBind(false);
 			}
