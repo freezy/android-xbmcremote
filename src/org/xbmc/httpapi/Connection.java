@@ -289,7 +289,16 @@ public class Connection {
 	
 	public String generateQuery(String method, String parameter) {
 		String encodedParameter = URLEncoder.encode(parameter);
-		return mBaseURL + XBMC_HTTP_BOOTSTRAP + "?command=" + method + "(" + encodedParameter + ")";
+		StringBuilder sb = new StringBuilder();
+		sb.append(mBaseURL);
+		sb.append(XBMC_HTTP_BOOTSTRAP);
+		sb.append("?command=");
+		sb.append(method);
+		sb.append("(");
+		sb.append(encodedParameter);
+		sb.append(")");
+//		return mBaseURL + XBMC_HTTP_BOOTSTRAP + "?command=" + method + "(" + encodedParameter + ")";
+		return sb.toString();
 	}
 
 	/**
