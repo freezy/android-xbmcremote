@@ -230,7 +230,8 @@ public class MusicWrapper extends Wrapper {
 	 * album will be added with this song playing, otherwise only this song is
 	 * added.
 	 * @param handler Callback
-	 * @param album Song to add
+	 * @param album Album to add
+	 * @param song Song to play
 	 */
 	public void addToPlaylist(final HttpApiHandler<Boolean> handler, final Album album, final Song song) {
 		mHandler.post(new Runnable() {
@@ -238,7 +239,17 @@ public class MusicWrapper extends Wrapper {
 				final MusicClient mc = music(handler);
 				final ControlClient.PlayState ps = control(handler).getPlayState();
 				if (mc.getPlaylistSize() == 0) {  // if playlist is empty, add the whole album
-					mc.addToPlaylist(album);
+					int n = 0;
+					int playPos = 0;
+					for (Song albumSong : mc.getSongs(album)) {
+						if (albumSong.id == song.id) {
+							playPos = n;
+						}
+						n++;
+						mc.addToPlaylist(albumSong);
+					}
+					mc.setCurrentPlaylist();
+					mc.playlistSetSong(playPos);
 				} else {                          // otherwise, only add the song
 					handler.value = mc.addToPlaylist(song);
 				}
@@ -329,6 +340,35 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				handler.value = music(handler).play(song);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Plays a song, but the whole album is added to the playlist.
+	 * @param handler Callback
+	 * @param album Album to queue
+	 * @param song Song to play
+	 */
+	public void play(final HttpApiHandler<Boolean> handler, final Album album, final Song song) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				final MusicClient mc = music(handler);
+				final ControlClient cc = control(handler);
+				int n = 0;
+				int playPos = 0;
+				mc.clearPlaylist();
+				for (Song albumSong : mc.getSongs(album)) {
+					if (albumSong.id == song.id) {
+						playPos = n;
+					}
+					n++;
+					mc.addToPlaylist(albumSong);
+				}
+				cc.stop();
+				mc.setCurrentPlaylist();
+				mc.playlistSetSong(playPos);
 				done(handler);
 			}
 		});

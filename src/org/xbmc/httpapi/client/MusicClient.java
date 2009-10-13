@@ -212,6 +212,17 @@ public class MusicClient {
 	}
 	
 	/**
+	 * Sets the media at playlist position position to be the next item to be 
+	 * played. Position starts at 0, so SetPlaylistSong(5) sets the position
+	 * to the 6th song in the playlist.
+	 * @param pos Position
+	 * @return true on success, false otherwise.
+	 */
+	public boolean playlistSetSong(int pos) {
+		return mConnection.getBoolean("SetPlaylistSong", String.valueOf(pos));
+	}
+	
+	/**
 	 * Sets current playlist to "0"
 	 * @return true on success, false otherwise.
 	 */
@@ -350,7 +361,7 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Album album) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.strTitle, art.strArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("SELECT s.idSong, s.strTitle, art.strArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
 		sb.append("  FROM song AS s, path AS p, artist AS art, album AS alb, artist as albArtist");
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = art.idArtist");
@@ -368,7 +379,7 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Artist artist) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("SELECT s.idSong, s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
 		sb.append("  FROM song AS s, path AS p, artist art, album AS alb, artist as albArtist");
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = art.idArtist");
@@ -386,7 +397,7 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Genre genre) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("SELECT s.idSong, s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
 		sb.append("  FROM song AS s, path AS p, artist art, album AS alb, artist as albArtist");
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = art.idArtist");
@@ -405,7 +416,7 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Artist artist, Genre genre) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("SELECT s.idSong, s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
 		sb.append("  FROM song AS s, path AS p, artist art, album AS alb, artist as albArtist");
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = art.idArtist");
@@ -517,16 +528,17 @@ public class MusicClient {
 		ArrayList<Song> songs = new ArrayList<Song>();
 		String[] fields = response.split("<field>");
 		try { 
-			for (int row = 1; row < fields.length; row += 8) { 
-				songs.add(new Song( // String title, String artist, String album, String albumArtist int track, int duration, String path
-						Connection.trim(fields[row]), 
+			for (int row = 1; row < fields.length; row += 9) { 
+				songs.add(new Song( // int id, String title, String artist, String album, String albumArtist int track, int duration, String path
+						Connection.trimInt(fields[row]),
 						Connection.trim(fields[row + 1]), 
 						Connection.trim(fields[row + 2]), 
 						Connection.trim(fields[row + 3]), 
-						Connection.trimInt(fields[row + 4]), 
+						Connection.trim(fields[row + 4]), 
 						Connection.trimInt(fields[row + 5]), 
-						Connection.trim(fields[row + 6]),
-						Connection.trim(fields[row + 7]) 
+						Connection.trimInt(fields[row + 6]), 
+						Connection.trim(fields[row + 7]),
+						Connection.trim(fields[row + 8]) 
 				));
 			}
 		} catch (Exception e) {

@@ -39,7 +39,8 @@ public class Song implements Comparable<Song> {
 	 * @param path      Path to song (without filename)
 	 * @param filename  Filename
 	 */
-	public Song(String title, String artist, String album, String albumArtist, int track, int duration, String path, String filename) {
+	public Song(int id, String title, String artist, String album, String albumArtist, int track, int duration, String path, String filename) {
+		this.id = id;
 		this.title = title;
 		this.artist = artist;
 		this.album = album;
@@ -90,6 +91,10 @@ public class Song implements Comparable<Song> {
 		// return t.disc == disc ? (t.number > number ? -1 : 1) : (t.disc > disc ? -1 : 1)
 	}
 	
+	/**
+	 * Database ID
+	 */
+	public int id;
 	/**
 	 * Song title
 	 */

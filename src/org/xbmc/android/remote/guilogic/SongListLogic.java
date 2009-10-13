@@ -115,7 +115,7 @@ public class SongListLogic extends ListLogic {
 	@SuppressWarnings("unchecked")
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
-		final ThreeHolder<Song> holder = (ThreeHolder<Song>)v.getTag();
+		final ThreeHolder<Song> holder = (ThreeHolder<Song>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
 		menu.setHeaderTitle(holder.getHolderItem().title);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Song");
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Song");
@@ -127,11 +127,18 @@ public class SongListLogic extends ListLogic {
 		final ThreeHolder<Song> holder = (ThreeHolder<Song>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), holder.getHolderItem());
+				if (mAlbum == null) {
+					HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), holder.getHolderItem());
+				} else {
+					HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), mAlbum, holder.getHolderItem());
+				}
 				break;
 			case ITEM_CONTEXT_PLAY:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), holder.getHolderItem());
-				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), holder.getHolderItem());
+				if (mAlbum == null) {
+					HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), holder.getHolderItem());
+				} else {
+					HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), mAlbum, holder.getHolderItem());
+				}
 				break;
 			default:
 				return;
@@ -149,8 +156,8 @@ public class SongListLogic extends ListLogic {
 		@SuppressWarnings("unchecked")
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
-			final View row;
-			final ThreeHolder<Song> holder;
+			View row;
+			ThreeHolder<Song> holder;
 			
 			if (convertView == null) {
 				
@@ -173,7 +180,6 @@ public class SongListLogic extends ListLogic {
 			final Song song = getItem(position);
 			Album album = null;
 			
-			holder.setHolderItem(song);
 			if (mAlbum != null) {
 				album = mAlbum;
 				holder.setText(song.title, song.artist, song.getDuration());
@@ -184,6 +190,7 @@ public class SongListLogic extends ListLogic {
 				album = new Album(-1, song.album, song.albumArtist, -1, null);
 				holder.setText(song.title, song.album, song.getDuration());
 			}
+			holder.setHolderItem(song);
 			if (album != null) {
 				holder.id = album.getId();
 				holder.setCoverItem(album);
