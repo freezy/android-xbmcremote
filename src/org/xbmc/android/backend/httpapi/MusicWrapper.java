@@ -46,8 +46,9 @@ import android.util.Log;
  */
 public class MusicWrapper extends Wrapper {
 	
-	private static final String LOG_TAG = "MusicWrapper";
-	final private static Boolean debug = false;
+	private static final String TAG = "MusicWrapper";
+	private static final Boolean DEBUG = false;
+	
 	/**
 	 * Gets all albums from database
 	 * @param handler Callback handler
@@ -401,15 +402,15 @@ public class MusicWrapper extends Wrapper {
 	 * @param album   Get cover for this album
 	 */
 	private void getAlbumCoverFromMem(final HttpApiHandler<Bitmap> handler, final Album album) {
-		if (debug) Log.i(LOG_TAG, "[" + album.getId() + "] Checking in mem cache..");
+		if (DEBUG) Log.i(TAG, "[" + album.getId() + "] Checking in mem cache..");
 		HttpApiMemCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
 				if (value == null) {
-					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " empty]");
+					if (DEBUG) Log.i(TAG, "[" + album.getId() + " empty]");
 					// then, try sdcard cache
 					getAlbumCoverFromDisk(handler, album, ThumbSize.small);
 				} else {
-					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " FOUND in memory!]");
+					if (DEBUG) Log.i(TAG, "[" + album.getId() + " FOUND in memory!]");
 					handler.value = value;
 					handler.setCacheType(CacheType.memory);
 					done(handler);
@@ -425,17 +426,17 @@ public class MusicWrapper extends Wrapper {
 	 * @param size    Cover size
 	 */
 	private void getAlbumCoverFromDisk(final HttpApiHandler<Bitmap> handler, final Album album, final ThumbSize size) {
-		if (debug) Log.i(LOG_TAG, "[" + album.getId() + "] Checking in disk cache..");
+		if (DEBUG) Log.i(TAG, "[" + album.getId() + "] Checking in disk cache..");
 		HttpApiDiskCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
 				if (value == null) {
-					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " empty]");
+					if (DEBUG) Log.i(TAG, "[" + album.getId() + " empty]");
 					if (handler.postCache()) {
 						// well, let's download
 						getAlbumCoverFromNetwork(handler, album, size);
 					}
 				} else {
-					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " FOUND on disk!]");
+					if (DEBUG) Log.i(TAG, "[" + album.getId() + " FOUND on disk!]");
 					handler.value = value;
 					handler.setCacheType(CacheType.sdcard);
 					done(handler);
@@ -451,13 +452,13 @@ public class MusicWrapper extends Wrapper {
 	 * @param size    Cover size
 	 */
 	private void getAlbumCoverFromNetwork(final HttpApiHandler<Bitmap> handler, final Album album, final ThumbSize size) {
-		if (debug) Log.i(LOG_TAG, "[" + album.getId() + "] Downloading..");
+		if (DEBUG) Log.i(TAG, "[" + album.getId() + "] Downloading..");
 		HttpApiDownloadThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
 				if (value == null) {
-					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " empty]");
+					if (DEBUG) Log.i(TAG, "[" + album.getId() + " empty]");
 				} else {
-					if (debug) Log.i(LOG_TAG, "[" + album.getId() + " DOWNLOADED!]");
+					if (DEBUG) Log.i(TAG, "[" + album.getId() + " DOWNLOADED!]");
 					handler.setCacheType(CacheType.network);
 					handler.value = value;
 				}

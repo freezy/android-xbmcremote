@@ -5,11 +5,12 @@
 		android:title="XBMC IP Address / Host"
 		android:defaultValue="10.10.10.10" 
 		android:summary="Connect to address %value%" />
-	<CheckBoxPreference 
+	<!-- CheckBoxPreference 
 		android:disableDependentsState="true" 
 		android:key="setting_mdns" android:defaultValue="false" 
 		android:title="Use Zeroconf for IP/Port discovery" 
-		android:summary="Use Zeroconf to discover the IP and Ports of XBMC."/>
+		android:summary="Use Zeroconf to discover the IP and Ports of XBMC."
+		android:enabled="false" /--> 
 	<CheckBoxPreference
 		android:key="setting_vibrate_on_touch"
 		android:title="Vibrate on Touch"
@@ -20,7 +21,7 @@
 			android:title="Web Server Port"
 			android:numeric="decimal"
 			android:defaultValue="8080" 
-			android:summary="Connect to port %value%" android:dependency="setting_mdns"/>
+			android:summary="Connect to port %value%" /> <!--  android:dependency="setting_mdns" -->
 		<EditTextPreference
 			android:key="setting_http_user"
 			android:title="Web Server User"
@@ -39,7 +40,7 @@
 			android:title="XBMC Event Server Port"
 			android:numeric="decimal"
 			android:defaultValue="9777" 
-			android:summary="Connect to port %value%" android:dependency="setting_mdns"/>
+			android:summary="Connect to port %value%" /> <!--  android:dependency="setting_mdns" -->
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Wake On Lan">
 		<EditTextPreference android:key="setting_wol"
