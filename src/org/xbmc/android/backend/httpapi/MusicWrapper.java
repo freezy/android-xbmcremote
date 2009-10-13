@@ -237,7 +237,7 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				final MusicClient mc = music(handler);
-				final ControlClient.PlayState ps = control(handler).getPlayState();
+				final ControlClient.PlayStatus ps = control(handler).getPlayState();
 				if (mc.getPlaylistSize() == 0) {  // if playlist is empty, add the whole album
 					int n = 0;
 					int playPos = 0;
@@ -253,7 +253,7 @@ public class MusicWrapper extends Wrapper {
 				} else {                          // otherwise, only add the song
 					handler.value = mc.addToPlaylist(song);
 				}
-				if (ps == ControlClient.PlayState.Stopped) { // if nothing is playing, play the song
+				if (ps == ControlClient.PlayStatus.Stopped) { // if nothing is playing, play the song
 					mc.setCurrentPlaylist();
 					handler.value = mc.play(song);
 				}
@@ -444,8 +444,8 @@ public class MusicWrapper extends Wrapper {
 	 * @param numAlreadyQueued Number of previously queued items
 	 */
 	private void checkForPlayAfterQueue(final MusicClient mc, final ControlClient cc, int numAlreadyQueued) {
-		final ControlClient.PlayState ps = cc.getPlayState();
-		if (ps == ControlClient.PlayState.Stopped) { // if nothing is playing, play the song
+		final ControlClient.PlayStatus ps = cc.getPlayState();
+		if (ps == ControlClient.PlayStatus.Stopped) { // if nothing is playing, play the song
 			mc.setCurrentPlaylist();
 			if (numAlreadyQueued == 0) {
 				mc.playlistNext();

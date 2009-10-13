@@ -21,8 +21,12 @@
 
 package org.xbmc.httpapi.client;
 
+import java.io.Serializable;
+import java.util.HashMap;
+
 import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.info.GuiActions;
+import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.SeekType;
 
 /**
@@ -44,8 +48,6 @@ public class ControlClient {
 	public ControlClient(Connection connection) {
 		mConnection = connection;
 	}
-	
-
 	
 	/**
 	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.
@@ -206,28 +208,104 @@ public class ControlClient {
 		return mConnection.getBoolean("ExecBuiltin", "UpdateLibrary(" + mediaType + ")");
 	}
 
-	public boolean isConnected() {
-		return mConnection.isConnected();
-	}
-
-	public enum PlayState {
-		Stopped,
-		Paused,
-		Playing
-	}
-	
 	/**
 	 * Returns current play state
 	 * @return
 	 */
-	public PlayState getPlayState() {
-		String s = mConnection.getString("GetCurrentlyPlaying");
-		if (s.contains("PlayStatus:Paused")) {
-			return PlayState.Paused;
-		} else if (s.contains("PlayStatus:Playing")) {
-			return PlayState.Playing;
+	public PlayStatus getPlayState() {
+		return PlayStatus.parse(mConnection.getString("GetCurrentlyPlaying"));
+	}
+	
+	/**
+	 * Returns state and type of the media currently playing.
+	 * @return
+	 */
+	public ICurrentlyPlaying getCurrentlyPlaying() {
+		final HashMap<String, String> map = mConnection.getPairs("GetCurrentlyPlaying");
+		if (map.get("Filename").contains("Nothing Playing")) {
+			return new ICurrentlyPlaying() {
+				private static final long serialVersionUID = -1554068775915058884L;
+				public boolean isPlaying() { return false; }
+				public MediaType getType() { return null; }
+				public String getTitle() { return ""; }
+				public int getTime() { return 0; }
+				public PlayStatus getPlayStatus() { return PlayStatus.Stopped; }
+				public float getPercentage() { return 0; }
+				public String getFilename() { return ""; }
+				public int getDuration() { return 0; }
+				public String getArtist() { return ""; }
+				public String getAlbum() { return ""; }
+			};
 		} else {
-			return PlayState.Stopped;
+			final MediaType type = map.get("Type").contains("Audio") ? MediaType.music : MediaType.video;
+			switch (type) {
+				case music:
+					return MusicClient.getCurrentlyPlaying(map);
+				default:
+					return null;
+			}
 		}
+	}
+	
+	
+	public interface ICurrentlyPlaying extends Serializable {
+		public PlayStatus getPlayStatus();
+		public MediaType getType();
+		public boolean isPlaying();
+		
+		public String getFilename();
+		public String getTitle();
+		
+		public int getTime();
+		public int getDuration();
+		public float getPercentage();
+		
+		public String getArtist();
+		public String getAlbum();
+		
+	}
+
+	/**
+	 * Describes the current play status
+	 */
+	public enum PlayStatus {
+		Stopped,
+		Paused,
+		Playing;
+		public static PlayStatus parse(String response) {
+			if (response.contains("PlayStatus:Paused") || response.equals("Paused")) {
+				return PlayStatus.Paused;
+			} else if (response.contains("PlayStatus:Playing") || response.equals("Playing")) {
+				return PlayStatus.Playing;
+			} else {
+				return PlayStatus.Stopped;
+			}
+		}
+	}
+	
+	/**
+	 * Contains info about which media type is playing and if it's playing.
+	 * @deprecated 
+	 */
+	public class CurrentlyPlaying {
+		public MediaType mediaType;
+		public PlayStatus playStatus;
+		
+		public CurrentlyPlaying(MediaType mediaType, PlayStatus playState) {
+			this.mediaType = mediaType;
+			this.playStatus = playState;
+		}
+		public boolean isPlaying() {
+			return playStatus.equals(PlayStatus.Playing);
+		}
+	}
+	
+	
+	
+
+	
+	
+	public boolean isConnected() {
+		return mConnection.isConnected();
 	}
 }

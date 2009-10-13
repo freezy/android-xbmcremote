@@ -33,6 +33,7 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.http.HttpException;
 
@@ -71,6 +72,7 @@ public class Connection {
 	
 	public static final String LINE_SEP = "<li>";
 	public static final String VALUE_SEP = ";";
+	public static final String PAIR_SEP = ":";
 	
 	private static final int CONNECTION_TIMEOUT = 10000; // in milliseconds
 	
@@ -224,10 +226,9 @@ public class Connection {
 	}
 	
 	/**
-	 * Executes an HTTP API method without parameter and returns the result in
-	 * a list of strings.
+	 * Executes an HTTP API method and returns the result in a list of strings.
 	 * @param method      Name of the method to run
-	 * @return Result
+	 * @param parameters  Parameters of the method, separated by ";"
 	 */
 	public ArrayList<String> getArray(String method, String parameters) {
 		final String[] rows = query(method, parameters).split(LINE_SEP);
@@ -238,6 +239,37 @@ public class Connection {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Executes an HTTP API method and returns the result as a list of 
+	 * key => value pairs
+	 * @param method      Name of the method to run
+	 * @param parameters  Parameters of the method, separated by ";"
+	 * @return
+	 */
+	public HashMap<String, String> getPairs(String method, String parameters) {
+		final String[] rows = query(method, parameters).split(LINE_SEP);
+		final HashMap<String, String> result = new HashMap<String, String>();
+		for (String row : rows) {
+			final String[] pair = row.split(PAIR_SEP, 2);
+			if (pair.length == 1) {
+				result.put(pair[0].trim(), "");
+			} else if (pair.length == 2 && pair[0].trim().length() > 0) {
+				result.put(pair[0].trim(), pair[1].trim());
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Executes an HTTP API method without parameter and returns the result as
+	 * a list of key => value pairs
+	 * @param method      Name of the method to run
+	 * @return
+	 */
+	public HashMap<String, String> getPairs(String method) {
+		return getPairs(method, "");
 	}
 	
 	/**

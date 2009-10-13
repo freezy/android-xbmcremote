@@ -10,6 +10,7 @@ import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.eventclient.Packet;
 import org.xbmc.httpapi.HttpClient;
+import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -66,8 +67,9 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 	                    pic.compress(Bitmap.CompressFormat.PNG, 0, os);
 	                    
 	                    // if xbmc is playing something, we pause it. without the check paused playback would resume
-	                    if(http != null && http.isConnected() && http.info != null && http.info.getCurrentlyPlaying() != null ){
-	                    	if(http.info.getCurrentlyPlaying().isPlaying){
+	                    final ICurrentlyPlaying cp = http.control.getCurrentlyPlaying();
+	                    if (http != null && http.isConnected() && http.info != null && cp != null ){
+	                    	if (cp.isPlaying()){
 	                    		client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, true, true, true, (short)0, (byte)0);
 	                    		client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, false, true, (short)0, (byte)0);
 	                    		PLAY_STATE = PLAY_STATE_PAUSED;

@@ -38,8 +38,7 @@ import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
-import org.xbmc.httpapi.client.InfoClient.CurrentlyPlaying;
-import org.xbmc.httpapi.info.MusicInfo;
+import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.SeekType;
 
@@ -66,73 +65,77 @@ import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class NowPlayingActivity extends Activity implements Callback {
+	
 	public static final int MESSAGE_COVER_IMAGE = 668;
 	public static final int MESSAGE_ARTIST_TEXT_VIEW = 667;
 	public static final int MESSAGE_NOW_PLAYING_PROGRESS = 666;
 	public static final int MESSAGE_CONNECTION_ERROR = 1;
-	private ControlClient control;
-	private InfoClient info;
-	private Handler nowPlayingHandler;
-	private String lastPos = "-1";
+	
+	public static final String BUNDLE_CURRENTLY_PLAYING = "CurrentlyPlaying";
+	
+	private InfoClient mInfo;
+	private ControlClient mControl;
+	
+	private Handler mNowPlayingHandler;
+	private UpdateThread mUpdateThread;
+
+	private String mLastPos = "-1";
 	private String mCoverPath;
 	private Drawable mCover;
-	private UpdateThread updateThread;
 	
 	private class UpdateThread extends Thread {
 		
-		private Resources resources;
+		private Resources mResources;
 		
 		public UpdateThread(Resources resources) {
-			this.resources = resources;
+			mResources = resources;
 		}
 		
 		public void run() {
 			while (!isInterrupted()) {
 				Message msg = new Message();
 				Bundle bundle = msg.getData();
-				if(!control.isConnected()) {
+				if (!mControl.isConnected()) {
 					msg.what = MESSAGE_CONNECTION_ERROR;
-					nowPlayingHandler.sendMessage(msg);
+					bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, null);
+					mNowPlayingHandler.sendMessage(msg);
 				} else {
+					
+					final ICurrentlyPlaying currPlaying = mControl.getCurrentlyPlaying();
+					bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
+
 					msg.what = MESSAGE_NOW_PLAYING_PROGRESS;
-					bundle.putInt("progress", control.getPercentage());
 					
-					CurrentlyPlaying currPlaying = info.getCurrentlyPlaying();
-					bundle.putBoolean("isplaying", currPlaying != null && currPlaying.isPlaying);
+					String currentPos = currPlaying.getTitle() + currPlaying.getDuration();
+					mNowPlayingHandler.sendMessage(msg);
 					
-					String currentPos = info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE) + info.getMusicInfo(MusicInfo.MUSICPLAYER_DURATION);
-					nowPlayingHandler.sendMessage(msg);
-					
-					if (!lastPos.equals(currentPos)) {
-						lastPos = currentPos;
+					if (!mLastPos.equals(currentPos)) {
+						mLastPos = currentPos;
 						msg = new Message();
 						bundle = msg.getData();
+						bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
 				  	  	msg.what = MESSAGE_ARTIST_TEXT_VIEW;
 				  	  	
-						bundle.putString("album", info.getMusicInfo(MusicInfo.MUSICPLAYER_ALBUM));
-						bundle.putString("artist", info.getMusicInfo(MusicInfo.MUSICPLAYER_ARTIST));
-						bundle.putString("title", info.getMusicInfo(MusicInfo.MUSICPLAYER_TITLE));
-						
-						nowPlayingHandler.sendMessage(msg);
+						mNowPlayingHandler.sendMessage(msg);
 						
 						try {				
-							String downloadURI = info.getCurrentlyPlayingThumbURI();
+							String downloadURI = mInfo.getCurrentlyPlayingThumbURI();
 			
 							if (downloadURI != null && downloadURI.length() > 0) {
 								if (!downloadURI.equals(mCoverPath)) {
 						  	  		mCoverPath = downloadURI;
-						  	  		setCover(resources.getDrawable(R.drawable.cover_downloading));
+						  	  		setCover(mResources.getDrawable(R.drawable.cover_downloading));
 			
 						  	  		byte[] buffer = download(downloadURI);
 			
 						  	  		if (buffer == null || buffer.length == 0)
-						  	  			setCover(resources.getDrawable(R.drawable.nocover));
+						  	  			setCover(mResources.getDrawable(R.drawable.nocover));
 						  	  		else
 						  	  			setCover(new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length)));
 								}
 							} else {
 								mCoverPath = null;
-								setCover(resources.getDrawable(R.drawable.nocover));
+								setCover(mResources.getDrawable(R.drawable.nocover));
 							}
 						} catch (MalformedURLException e) {
 							// TODO Auto-generated catch block
@@ -164,10 +167,10 @@ public class NowPlayingActivity extends Activity implements Callback {
         else
         	setContentView(R.layout.nowplaying_portrait);
         
-  	  	control = ConnectionManager.getHttpClient(this).control;
-  	  	info = ConnectionManager.getHttpClient(this).info;
+  	  	mControl = ConnectionManager.getHttpClient(this).control;
+  	  	mInfo = ConnectionManager.getHttpClient(this).info;
   	  	
-  	  	nowPlayingHandler = new Handler(this);
+  	  	mNowPlayingHandler = new Handler(this);
   	  	setupButtons();
 	}
 
@@ -175,15 +178,15 @@ public class NowPlayingActivity extends Activity implements Callback {
 	protected void onResume() {
 		super.onResume();
 		
-		updateThread = new UpdateThread(getResources());
-		updateThread.start();
+		mUpdateThread = new UpdateThread(getResources());
+		mUpdateThread.start();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		
-		updateThread.interrupt();
+		mUpdateThread.interrupt();
 	}
 	
 	private void setupButtons() {
@@ -192,34 +195,34 @@ public class NowPlayingActivity extends Activity implements Callback {
 
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				if (fromUser && !seekBar.isInTouchMode())
-					control.seek(SeekType.absolute, progress);
+					mControl.seek(SeekType.absolute, progress);
 			}
 
 			public void onStartTrackingTouch(SeekBar seekBar) {
 			}
 
 			public void onStopTrackingTouch(SeekBar seekBar) {
-				control.seek(SeekType.absolute, seekBar.getProgress());
+				mControl.seek(SeekType.absolute, seekBar.getProgress());
 			}
 		});
   	  	
         final ImageButton PlayPrevButton = (ImageButton) findViewById(R.id.MediaPreviousButton);
 		PlayPrevButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.playPrevious();
+				mControl.playPrevious();
 			}
 		});
 		final ImageButton PlayButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
 		PlayButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.pause();
+				mControl.pause();
 			}
 		});
 		
 		final ImageButton PlayNextButton = (ImageButton) findViewById(R.id.MediaNextButton);
 		PlayNextButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				control.playNext();
+				mControl.playNext();
 			}
 		});
 	}
@@ -227,43 +230,51 @@ public class NowPlayingActivity extends Activity implements Callback {
 	Thread updateViewThread;
 	
 	public synchronized boolean handleMessage(Message msg) {
-		if (msg.what == MESSAGE_NOW_PLAYING_PROGRESS) {
-			Bundle data = msg.getData();
+		
+		final Bundle data = msg.getData();
+		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying)data.getSerializable(BUNDLE_CURRENTLY_PLAYING);
+
+		switch (msg.what) {
+		case MESSAGE_NOW_PLAYING_PROGRESS: 
 			final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
-			seekBar.setProgress(data.getInt("progress"));
+			seekBar.setProgress(Math.round(currentlyPlaying.getPercentage()));
 			
 			final ImageButton PlayPauseButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
 			boolean isPlaying = data.getBoolean("isplaying");
 			PlayPauseButton.setImageResource(isPlaying ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play);
 			return true;
-		} else if (msg.what == MESSAGE_ARTIST_TEXT_VIEW) {
-			Bundle data = msg.getData();
+		
+		case MESSAGE_ARTIST_TEXT_VIEW:
 			final TextView artist = (TextView) findViewById(R.id.ArtistTextView);
-	  	  	artist.setText(data.getString("artist"));
+			final TextView album = (TextView) findViewById(R.id.AlbumTextView);
+			final TextView song = (TextView) findViewById(R.id.SongTextView);
+
+			artist.setText(currentlyPlaying.getArtist());
+	  	  	album.setText(currentlyPlaying.getAlbum());
+	  	  	song.setText(currentlyPlaying.getTitle());
 	  	  	
-	  	  	final TextView album = (TextView) findViewById(R.id.AlbumTextView);
-	  	  	album.setText(data.getString("album"));
-	  	  	
-	  	  	final TextView song = (TextView) findViewById(R.id.SongTextView);
-	  	  	song.setText(data.getString("title"));
 	  	  	return true;
-		} else if (msg.what == MESSAGE_COVER_IMAGE) {
+	  	  	
+		case MESSAGE_COVER_IMAGE:
 			final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
 			cover.setImageDrawable(mCover);
 			return true;
-		} else if (msg.what == MESSAGE_CONNECTION_ERROR) {
+			
+		case MESSAGE_CONNECTION_ERROR:
 			ErrorHandler handler = new ErrorHandler(this);
 			handler.handle(new SocketTimeoutException());
 			setResult(MESSAGE_CONNECTION_ERROR);
 			finish();
 			return true;
+			
+		default:
+			return false;
 		}
-		return false;
 	}
 	
 	private synchronized void setCover(Drawable cover) {
 		mCover = cover;
-		nowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
+		mNowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {

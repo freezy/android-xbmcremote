@@ -23,13 +23,16 @@ package org.xbmc.httpapi.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import org.xbmc.httpapi.Connection;
+import org.xbmc.httpapi.client.ControlClient.PlayStatus;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Song;
+import org.xbmc.httpapi.type.MediaType;
 
 import android.util.Log;
 
@@ -605,4 +608,61 @@ public class MusicClient {
 		}
 		return genres;		
 	}
+	
+	public static ControlClient.ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
+		return new ControlClient.ICurrentlyPlaying() {
+			private static final long serialVersionUID = 5036994329211476713L;
+			public String getTitle() {
+				return map.get("Title");
+			}
+			
+			public int getTime() {
+				return parseTime(map.get("Time"));
+			}
+			
+			public PlayStatus getPlayStatus() {
+				return PlayStatus.parse(map.get("PlayStatus"));
+			}
+			
+			public float getPercentage() {
+				return Float.valueOf(map.get("Percentage"));
+			}
+			
+			public String getFilename() {
+				return map.get("Filename");
+			}
+			
+			public int getDuration() {
+				return parseTime(map.get("Duration"));
+			}
+			
+			public String getArtist() {
+				return map.get("Artist");
+			}
+			
+			public String getAlbum() {
+				return map.get("Album");
+			}
+
+			public MediaType getType() {
+				return MediaType.music;
+			}
+
+			public boolean isPlaying() {
+				return PlayStatus.parse(map.get("PlayStatus")).equals(PlayStatus.Playing);
+			}
+			
+			private int parseTime(String time) {
+				String[] s = time.split(":");
+				if (s.length == 2) {
+					return Integer.parseInt(s[0]) * 60 + Integer.parseInt(s[1]);
+				} else if (s.length == 3) {
+					return Integer.parseInt(s[0]) * 3600 + Integer.parseInt(s[1]) * 60 + Integer.parseInt(s[2]);
+				} else {
+					return 0;
+				}
+			}
+		};
+	}
+	
 }

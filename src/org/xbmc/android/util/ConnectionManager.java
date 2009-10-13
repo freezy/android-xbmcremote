@@ -124,7 +124,7 @@ public class ConnectionManager {
 	public static HttpClient getHttpClient(Activity activity) {
 		if (sHttpApiInstance == null) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-			String prefHost = prefs.getString("setting_ip", "");
+			String prefHost = prefs.getString("setting_ip", "10.10.10.10");
 
 			// Define the variables for the connection
 			String host = null;
@@ -194,7 +194,7 @@ public class ConnectionManager {
 		if (sEventClientInstance == null) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 			
-			String prefHost = prefs.getString("setting_ip", "");
+			String prefHost = prefs.getString("setting_ip", "10.10.10.10");
 
 			String host = null;
 			int port = 0;
