@@ -4,6 +4,7 @@ import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.android.widget.IdleListDetector;
+import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.type.CacheType;
 
 import android.app.Activity;
@@ -20,7 +21,8 @@ public class ThreeHolder<T> {
 	private final TextView mSubtitleView;
 	private final TextView mSubsubtitleView;
 	
-	private T mItem;
+	private T mHolderItem;
+	private Album mCoverItem;
 
 	boolean tempBind;
 	public CrossFadeDrawable transition;
@@ -36,11 +38,19 @@ public class ThreeHolder<T> {
 		return new CoverDownloadHandler(activity, idler);
 	}
 	
-	public void setItem(T item) {
-		mItem = item;
+	public void setHolderItem(T item) {
+		mHolderItem = item;
 	}
-	public T getItem() {
-		return mItem;
+	public T getHolderItem() {
+		return mHolderItem;
+	}
+	
+	public void setCoverItem(Album cover) {
+		mCoverItem = cover;
+	}
+	
+	public Album getCoverItem() {
+		return mCoverItem;
 	}
 
 	public class CoverDownloadHandler extends HttpApiHandler<Bitmap> {
@@ -50,10 +60,11 @@ public class ThreeHolder<T> {
 			mIdler = idler;
 		}
 		public void run() {
-			// mTag is the id of the album that finished downloading. holder.id
-			// is the id of the current view. must be equal,
-			// otherwise that means that we already scrolled further and the
-			// downloaded view isnt visible anymore.
+			/* mTag is the id of the album that finished downloading. holder.id
+			 * is the id of the current view. must be equal,
+			 * otherwise that means that we already scrolled further and the
+			 * downloaded view isn't visible anymore.
+			 */
 			if (mTag == id) {
 				if (value == null) {
 					setImageResource(R.drawable.icon_album);

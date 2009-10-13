@@ -24,8 +24,12 @@ package org.xbmc.android.remote.guilogic;
 import java.io.Serializable;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.widget.FastScrollView;
+import org.xbmc.android.widget.IdleListDetector;
+import org.xbmc.android.widget.IdleListener;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -51,13 +55,15 @@ public abstract class ListLogic implements Serializable {
 	private TextView mTitleView;
 	private boolean isCreated = false;
 	
+	protected static Bitmap mFallbackBitmap;
+	protected IdleListDetector mPostScrollLoader;
 	
 	public void onCreate(Activity activity, ListView list) {
 		mList = list;
 		mActivity = activity;
 		isCreated = true;
 		
-		mList.setOnItemSelectedListener(new OnItemSelectedListener() {
+		list.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				Log.i("onItemSelected", "onItemSelected(<view>, <view>, " + arg2 + ", " + arg3);
@@ -65,9 +71,18 @@ public abstract class ListLogic implements Serializable {
 
 			public void onNothingSelected(AdapterView<?> arg0) {
 				// TODO Auto-generated method stub
-				
 			}
 		});
+	}
+	
+	/**
+	 * Hook up the mechanism to load images only when the list "slows" down.
+	 */
+	protected void setupIdleListener() {
+		IdleListener idleListener = new IdleListener(mActivity, mList);
+		mPostScrollLoader = new IdleListDetector(idleListener);
+		FastScrollView fastScroller = (FastScrollView)mList.getParent();
+		fastScroller.setOnIdleListDetector(mPostScrollLoader);
 	}
 	
 	public abstract void onContextItemSelected(MenuItem item);

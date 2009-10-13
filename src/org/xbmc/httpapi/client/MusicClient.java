@@ -350,11 +350,12 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Album album) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, s.iTrack, s.iDuration, p.strPath, s.strFileName");
-		sb.append("  FROM song AS s, path AS p, artist AS art, album AS alb");
+		sb.append("SELECT s.strTitle, art.strArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("  FROM song AS s, path AS p, artist AS art, album AS alb, artist as albArtist");
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = art.idArtist");
 		sb.append("  AND s.idAlbum = alb.idAlbum");
+		sb.append("  AND albArtist.idArtist = alb.idArtist");
 		sb.append("  AND s.idAlbum = " + album.id);
 		sb.append("  ORDER BY s.iTrack, s.strFileName");
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
@@ -367,11 +368,12 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Artist artist) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, s.iTrack, s.iDuration, p.strPath, s.strFileName");
-		sb.append("  FROM song AS s, path AS p, artist art, album AS alb");
+		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("  FROM song AS s, path AS p, artist art, album AS alb, artist as albArtist");
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = art.idArtist");
 		sb.append("  AND s.idAlbum = alb.idAlbum");
+		sb.append("  AND albArtist.idArtist = alb.idArtist");
 		sb.append("  AND s.idArtist = " + artist.id);
 		sb.append("  ORDER BY alb.strAlbum, s.iTrack, s.strFileName");
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
@@ -384,11 +386,12 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Genre genre) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, s.iTrack, s.iDuration, p.strPath, s.strFileName");
-		sb.append("  FROM song AS s, path AS p, artist art, album AS alb");
+		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("  FROM song AS s, path AS p, artist art, album AS alb, artist as albArtist");
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = art.idArtist");
 		sb.append("  AND s.idAlbum = alb.idAlbum");
+		sb.append("  AND albArtist.idArtist = alb.idArtist");
 		sb.append("  AND s.idGenre = " + genre.id);
 		sb.append("  ORDER BY art.StrArtist, alb.strAlbum, s.iTrack, s.strFileName");
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
@@ -402,11 +405,12 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Artist artist, Genre genre) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, s.iTrack, s.iDuration, p.strPath, s.strFileName");
-		sb.append("  FROM song AS s, path AS p, artist art, album AS alb");
+		sb.append("SELECT s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("  FROM song AS s, path AS p, artist art, album AS alb, artist as albArtist");
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = art.idArtist");
 		sb.append("  AND s.idAlbum = alb.idAlbum");
+		sb.append("  AND albArtist.idArtist = alb.idArtist");
 		sb.append("  AND s.idGenre = " + genre.id);
 		sb.append("  AND s.idArtist = " + artist.id);
 		sb.append("  ORDER BY art.StrArtist, alb.strAlbum, s.iTrack, s.strFileName");
@@ -513,15 +517,16 @@ public class MusicClient {
 		ArrayList<Song> songs = new ArrayList<Song>();
 		String[] fields = response.split("<field>");
 		try { 
-			for (int row = 1; row < fields.length; row += 7) { 
-				songs.add(new Song( // String title, String artist, String album, int track, int duration, String path
+			for (int row = 1; row < fields.length; row += 8) { 
+				songs.add(new Song( // String title, String artist, String album, String albumArtist int track, int duration, String path
 						Connection.trim(fields[row]), 
 						Connection.trim(fields[row + 1]), 
 						Connection.trim(fields[row + 2]), 
-						Connection.trimInt(fields[row + 3]), 
+						Connection.trim(fields[row + 3]), 
 						Connection.trimInt(fields[row + 4]), 
-						Connection.trim(fields[row + 5]),
-						Connection.trim(fields[row + 6]) 
+						Connection.trimInt(fields[row + 5]), 
+						Connection.trim(fields[row + 6]),
+						Connection.trim(fields[row + 7]) 
 				));
 			}
 		} catch (Exception e) {

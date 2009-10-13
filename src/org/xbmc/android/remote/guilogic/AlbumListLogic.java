@@ -30,9 +30,6 @@ import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.android.remote.guilogic.holder.ThreeHolder;
-import org.xbmc.android.widget.FastScrollView;
-import org.xbmc.android.widget.IdleListDetector;
-import org.xbmc.android.widget.ImageLoaderIdleListener;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
@@ -41,7 +38,6 @@ import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -66,10 +62,6 @@ public class AlbumListLogic extends ListLogic {
 	private Artist mArtist;
 	private Genre mGenre;
 	
-	private static Bitmap mFallbackBitmap;
-	
-	private IdleListDetector mImageLoader;
-	
 	public void onCreate(Activity activity, ListView list) {
 		if (!isCreated()) {
 			super.onCreate(activity, list);
@@ -79,6 +71,7 @@ public class AlbumListLogic extends ListLogic {
 			mActivity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_album_grey);
+			setupIdleListener();
 			
 //			ImportUtilities.purgeCache();
 			
@@ -89,7 +82,7 @@ public class AlbumListLogic extends ListLogic {
 					ThreeHolder<Album> holder = (ThreeHolder<Album>)view.getTag();
 					nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new SongListLogic());
-					nextActivity.putExtra(ListLogic.EXTRA_ALBUM, holder.getItem());
+					nextActivity.putExtra(ListLogic.EXTRA_ALBUM, holder.getHolderItem());
 					mActivity.startActivity(nextActivity);
 				}
 			});
@@ -118,14 +111,6 @@ public class AlbumListLogic extends ListLogic {
 					public void run() {
 						setTitle("Albums (" + value.size() + ")");
 						mList.setAdapter(new AlbumAdapter(mActivity, value));
-						
-						/* Hook up the mechanism to load images only when the list "slows"
-						 * down. */
-						ImageLoaderIdleListener idleListener = new ImageLoaderIdleListener(mActivity, mList);
-						mImageLoader = new IdleListDetector(idleListener);
-						FastScrollView fastScroller = (FastScrollView)mList.getParent();
-						fastScroller.setOnIdleListDetector(mImageLoader);
-						
 					}
 				});
 			}
@@ -136,7 +121,7 @@ public class AlbumListLogic extends ListLogic {
 	@SuppressWarnings("unchecked")
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		final ThreeHolder<Album> holder = (ThreeHolder<Album>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(holder.getItem().name);
+		menu.setHeaderTitle(holder.getHolderItem().name);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Album");
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Album");
 		menu.add(0, ITEM_CONTEXT_INFO, 3, "View Details");
@@ -145,7 +130,7 @@ public class AlbumListLogic extends ListLogic {
 	@SuppressWarnings("unchecked")
 	public void onContextItemSelected(MenuItem item) {
 		final ThreeHolder<Album> holder = (ThreeHolder<Album>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
-		final Album album = holder.getItem();
+		final Album album = holder.getHolderItem();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), album);
@@ -198,14 +183,15 @@ public class AlbumListLogic extends ListLogic {
 			}
 			
 			final Album album = getItem(position);
-			holder.setItem(album);
+			holder.setHolderItem(album);
+			holder.setCoverItem(album);
 			holder.id = album.getCrc();
 			
 			holder.setText(album.name, album.artist, album.year > 0 ? String.valueOf(album.year) : "");
 			holder.setImageResource(R.drawable.icon_album_grey);
 			holder.setTemporaryBind(true);
 		
-			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mImageLoader), album, ThumbSize.small);
+			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.small);
 			return row;
 		}
 	}

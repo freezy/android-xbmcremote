@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.drawable.CrossFadeDrawable;
+import org.xbmc.android.remote.guilogic.holder.ThreeHolder;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
@@ -33,7 +35,7 @@ import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -66,13 +68,16 @@ public class SongListLogic extends ListLogic {
 			mAlbum = (Album)mActivity.getIntent().getSerializableExtra(EXTRA_ALBUM);
 			mArtist = (Artist)mActivity.getIntent().getSerializableExtra(EXTRA_ARTIST);
 			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(EXTRA_GENRE);
-			
 			mActivity.registerForContextMenu(mList);
 			
+			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_music);
+			setupIdleListener();
+			
 			mList.setOnItemClickListener(new OnItemClickListener() {
+				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					Song song = (Song)view.getTag();
-					HttpApiThread.music().play(new HttpApiHandler<Boolean>((Activity)view.getContext()), song);
+					final ThreeHolder<Song> holder = (ThreeHolder<Song>)view.getTag();
+					HttpApiThread.music().play(new HttpApiHandler<Boolean>((Activity)view.getContext()), holder.getHolderItem());
 				}
 			});
 					
@@ -107,24 +112,26 @@ public class SongListLogic extends ListLogic {
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
-		final Song song = (Song)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(song.title);
+		final ThreeHolder<Song> holder = (ThreeHolder<Song>)v.getTag();
+		menu.setHeaderTitle(holder.getHolderItem().title);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Song");
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Song");
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void onContextItemSelected(MenuItem item) {
 		// be aware that this must be explicitly called by your activity!
-		final Song song = (Song)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+		final ThreeHolder<Song> holder = (ThreeHolder<Song>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), song);
+				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), holder.getHolderItem());
 				break;
 			case ITEM_CONTEXT_PLAY:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), song);
-				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), song);
+				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), holder.getHolderItem());
+				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), holder.getHolderItem());
 				break;
 			default:
 				return;
@@ -133,68 +140,56 @@ public class SongListLogic extends ListLogic {
 	
 	private class SongAdapter extends ArrayAdapter<Song> {
 		private Activity mActivity;
+		private final LayoutInflater mInflater;
 		SongAdapter(Activity activity, ArrayList<Song> items) {
 			super(activity, R.layout.listitem_three, items);
 			mActivity = activity;
+			mInflater = LayoutInflater.from(activity);
 		}
+		@SuppressWarnings("unchecked")
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View row;
+			
+			final View row;
+			final ThreeHolder<Song> holder;
+			
 			if (convertView == null) {
-				LayoutInflater inflater = mActivity.getLayoutInflater();
-				row = inflater.inflate(R.layout.listitem_three, null);
+				
+				row = mInflater.inflate(R.layout.listitem_three, null);
+				holder = new ThreeHolder<Song>(
+					(ImageView)row.findViewById(R.id.MusicItemImageViewArt),
+					(TextView)row.findViewById(R.id.MusicItemTextViewTitle),
+					(TextView)row.findViewById(R.id.MusicItemTextViewSubtitle),
+					(TextView)row.findViewById(R.id.MusicItemTextViewSubSubtitle)
+				);
+				row.setTag(holder);
+				
+				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
+				transition.setCrossFadeEnabled(true);
+				holder.transition = transition;
 			} else {
 				row = convertView;
+				holder = (ThreeHolder<Song>)convertView.getTag();
 			}
-			final Song song = this.getItem(position);
-			row.setTag(song);
-			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
-			final TextView subtitle = (TextView)row.findViewById(R.id.MusicItemTextViewSubtitle);
-			final TextView subsubtitle = (TextView)row.findViewById(R.id.MusicItemTextViewSubSubtitle);
-			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
-			title.setText(song.title);
-//			title.setText(song.track + " " + song.title);
-			subsubtitle.setText(song.getDuration());
+			final Song song = getItem(position);
+			Album album = null;
 			
+			holder.setHolderItem(song);
 			if (mAlbum != null) {
-
-				subtitle.setText(song.artist);
-				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity) {
-					public void run() {
-						if (value == null) {
-							icon.setImageResource(R.drawable.icon_music);
-						} else {
-							icon.setImageBitmap(value);
-						}
-					}
-				}, mAlbum, ThumbSize.small);
+				album = mAlbum;
+				holder.setText(song.title, song.artist, song.getDuration());
 			} else if (mArtist != null) {
-				final Album albumStub = new Album(-1, song.album, song.artist, -1, null);
-				subtitle.setText(song.artist);
-				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity) {
-					public void run() {
-						if (value == null) {
-							icon.setImageResource(R.drawable.icon_music);
-						} else {
-							icon.setImageBitmap(value);
-						}
-					}
-				}, albumStub, ThumbSize.small);
-				subtitle.setText(song.album);
-				icon.setImageResource(R.drawable.icon_music);
+				album = new Album(-1, song.album, song.albumArtist, -1, null);
+				holder.setText(song.title, song.album, song.getDuration());
 			} else if (mGenre != null) {
-				final Album albumStub = new Album(-1, song.album, song.artist, -1, null);
-				subtitle.setText(song.artist);
-				HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(mActivity) {
-					public void run() {
-						if (value == null) {
-							icon.setImageResource(R.drawable.icon_music);
-						} else {
-							icon.setImageBitmap(value);
-						}
-					}
-				}, albumStub, ThumbSize.small);
-				subtitle.setText(song.artist);
-				icon.setImageResource(R.drawable.icon_music);
+				album = new Album(-1, song.album, song.albumArtist, -1, null);
+				holder.setText(song.title, song.album, song.getDuration());
+			}
+			if (album != null) {
+				holder.id = album.getId();
+				holder.setCoverItem(album);
+				holder.setImageResource(R.drawable.icon_album_grey);
+				holder.setTemporaryBind(true);
+				HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.small);
 			}
 			return row;
 		}

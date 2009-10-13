@@ -39,10 +39,11 @@ public class Song implements Comparable<Song> {
 	 * @param path      Path to song (without filename)
 	 * @param filename  Filename
 	 */
-	public Song(String title, String artist, String album, int track, int duration, String path, String filename) {
+	public Song(String title, String artist, String album, String albumArtist, int track, int duration, String path, String filename) {
 		this.title = title;
 		this.artist = artist;
 		this.album = album;
+		this.albumArtist = albumArtist;
 		this.track = track & 0xffff;
 		this.disc = track >> 16;
 		this.duration = duration;
@@ -101,6 +102,11 @@ public class Song implements Comparable<Song> {
 	 * Song album (null if single)
 	 */
 	public String album;
+	
+	/**
+	 * Album's artist (e.g. "Various Artists" on compilations)
+	 */
+	public String albumArtist;
 	/**
 	 * Track number
 	 */
