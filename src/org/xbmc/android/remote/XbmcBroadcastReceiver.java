@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Contacts;
@@ -55,16 +56,24 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 	                    String id = SmsPopupUtils.getPersonIdFromPhoneNumber(context, number);
 	                    String callername = SmsPopupUtils.getPersonName(context, id, number);
 	                    // Bitmap isn't supported by the event server, so we have to compress it
-	                    Bitmap pic = Contacts.People.loadContactPhoto(context, 
+	                    Bitmap pic;
+	                    if(id != null)
+	                    	pic = Contacts.People.loadContactPhoto(context, 
 	                    		Uri.withAppendedPath(Contacts.People.CONTENT_URI, id), R.drawable.icon, null);
+	                    else
+	                    	pic = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
 	                    ByteArrayOutputStream os = new ByteArrayOutputStream();
 	                    pic.compress(Bitmap.CompressFormat.PNG, 0, os);
+	                    
 	                    // if xbmc is playing something, we pause it. without the check paused playback would resume
-	                    if(http != null && http.isConnected() && http.info.getCurrentlyPlaying().isPlaying){
-		                    client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, true, true, true, (short)0, (byte)0);
-		                    client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, false, true, (short)0, (byte)0);
-		                    PLAY_STATE = PLAY_STATE_PAUSED;
+	                    if(http != null && http.isConnected() && http.info != null && http.info.getCurrentlyPlaying() != null ){
+	                    	if(http.info.getCurrentlyPlaying().isPlaying){
+	                    		client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, true, true, true, (short)0, (byte)0);
+	                    		client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, false, true, (short)0, (byte)0);
+	                    		PLAY_STATE = PLAY_STATE_PAUSED;
+	                    	}
 	                    }
+	                    
 	                    client.sendNotification(callername,"calling", Packet.ICON_PNG, os.toByteArray());
 	               }
 	               if(extra.equals(android.telephony.TelephonyManager.EXTRA_STATE_IDLE))
