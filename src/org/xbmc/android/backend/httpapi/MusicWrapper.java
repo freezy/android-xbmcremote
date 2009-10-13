@@ -173,7 +173,9 @@ public class MusicWrapper extends Wrapper {
 	
 	/**
 	 * Adds an album to the current playlist. If current playlist is stopped,
-	 * play is executed. Value is the first song of the added album.
+	 * the album is added to playlist and the first song is selected to play. 
+	 * If something is playing already, the album is only queued.
+	 * 
 	 * @param handler Callback
 	 * @param album Album to add
 	 */
@@ -181,11 +183,10 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				final MusicClient mc = music(handler);
-				final ControlClient.PlayState ps = control(handler).getPlayState();
+				final ControlClient cc = control(handler);
+				final int numAlreadyQueued = mc.getPlaylistSize();
 				handler.value = mc.addToPlaylist(album);
-				if (ps == ControlClient.PlayState.Stopped) { // if nothing is playing, play the song
-					mc.play(handler.value);
-				}
+				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 				done(handler);
 			}
 		});
@@ -201,11 +202,10 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				final MusicClient mc = music(handler);
-				final ControlClient.PlayState ps = control(handler).getPlayState();
+				final ControlClient cc = control(handler);
+				final int numAlreadyQueued = mc.getPlaylistSize();
 				handler.value = mc.addToPlaylist(genre);
-				if (ps == ControlClient.PlayState.Stopped) { // if nothing is playing, play the song
-					mc.play(handler.value);
-				}
+				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 				done(handler);
 			}
 		});
@@ -263,8 +263,10 @@ public class MusicWrapper extends Wrapper {
 	}
 
 	/**
-	 * Adds all songs from an artist to the playlist. If nothing is playing, the first 
-	 * song will be played, otherwise songs are just added to the playlist.
+	 * Adds all songs from an artist to the playlist. If current playlist is
+	 * stopped, the all songs of the artist are added to playlist and the first
+	 * song is selected to play. If something is playing already, the songs are
+	 * only queued.
 	 * @param handler Callback
 	 * @param artist 
 	 */
@@ -272,11 +274,10 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				final MusicClient mc = music(handler);
-				final ControlClient.PlayState ps = control(handler).getPlayState();
+				final ControlClient cc = control(handler);
+				final int numAlreadyQueued = mc.getPlaylistSize();
 				handler.value = mc.addToPlaylist(artist);
-				if (ps == ControlClient.PlayState.Stopped) { // if nothing is playing, play the first song
-					mc.play(handler.value);
-				}
+				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 				done(handler);
 			}
 		});
@@ -293,11 +294,10 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				final MusicClient mc = music(handler);
-				final ControlClient.PlayState ps = control(handler).getPlayState();
+				final ControlClient cc = control(handler);
+				final int numAlreadyQueued = mc.getPlaylistSize();
 				handler.value = mc.addToPlaylist(artist, genre);
-				if (ps == ControlClient.PlayState.Stopped) { // if nothing is playing, play the first song
-					mc.play(handler.value);
-				}
+				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 				done(handler);
 			}
 		});
@@ -435,6 +435,25 @@ public class MusicWrapper extends Wrapper {
 		});
 	}
 	
+	/**
+	 * Checks if something's playing. If that's not the case, set the 
+	 * playlist's play position either to the start if there were no items
+	 * before, or to the first position of the newly added files.
+	 * @param mc Music client
+	 * @param cc Control client
+	 * @param numAlreadyQueued Number of previously queued items
+	 */
+	private void checkForPlayAfterQueue(final MusicClient mc, final ControlClient cc, int numAlreadyQueued) {
+		final ControlClient.PlayState ps = cc.getPlayState();
+		if (ps == ControlClient.PlayState.Stopped) { // if nothing is playing, play the song
+			mc.setCurrentPlaylist();
+			if (numAlreadyQueued == 0) {
+				mc.playlistNext();
+			} else {
+				mc.playlistSetSong(numAlreadyQueued);
+			}
+		}
+	}
 	
 	/**
 	 * Tries to get small cover from memory, then from disk, then download it from XBMC.
