@@ -39,6 +39,7 @@ import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
+import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.SeekType;
 
@@ -56,8 +57,12 @@ import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.view.View.OnTouchListener;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -75,6 +80,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 	
 	private InfoClient mInfo;
 	private ControlClient mControl;
+	private EventClient mClient;
 	
 	private Handler mNowPlayingHandler;
 	private UpdateThread mUpdateThread;
@@ -83,92 +89,45 @@ public class NowPlayingActivity extends Activity implements Callback {
 	private String mCoverPath;
 	private Drawable mCover;
 	
-	private class UpdateThread extends Thread {
-		
-		private Resources mResources;
-		
-		public UpdateThread(Resources resources) {
-			mResources = resources;
-		}
-		
-		public void run() {
-			while (!isInterrupted()) {
-				Message msg = new Message();
-				Bundle bundle = msg.getData();
-				if (!mControl.isConnected()) {
-					msg.what = MESSAGE_CONNECTION_ERROR;
-					bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, null);
-					mNowPlayingHandler.sendMessage(msg);
-				} else {
-					
-					final ICurrentlyPlaying currPlaying = mControl.getCurrentlyPlaying();
-					bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
+	private TextView mAlbumView;
+	private TextView mArtistView;
+	private TextView mSongTitleView;
+	private TextView mCounterLeftView;
+	private TextView mCounterRightView;
+	private ImageButton mPlayPauseView;
+	private SeekBar mSeekBar;
 
-					msg.what = MESSAGE_NOW_PLAYING_PROGRESS;
-					
-					String currentPos = currPlaying.getTitle() + currPlaying.getDuration();
-					mNowPlayingHandler.sendMessage(msg);
-					
-					if (!mLastPos.equals(currentPos)) {
-						mLastPos = currentPos;
-						msg = new Message();
-						bundle = msg.getData();
-						bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
-				  	  	msg.what = MESSAGE_ARTIST_TEXT_VIEW;
-				  	  	
-						mNowPlayingHandler.sendMessage(msg);
-						
-						try {				
-							String downloadURI = mInfo.getCurrentlyPlayingThumbURI();
-			
-							if (downloadURI != null && downloadURI.length() > 0) {
-								if (!downloadURI.equals(mCoverPath)) {
-						  	  		mCoverPath = downloadURI;
-						  	  		setCover(mResources.getDrawable(R.drawable.cover_downloading));
-			
-						  	  		byte[] buffer = download(downloadURI);
-			
-						  	  		if (buffer == null || buffer.length == 0)
-						  	  			setCover(mResources.getDrawable(R.drawable.nocover));
-						  	  		else
-						  	  			setCover(new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length)));
-								}
-							} else {
-								mCoverPath = null;
-								setCover(mResources.getDrawable(R.drawable.nocover));
-							}
-						} catch (MalformedURLException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (URISyntaxException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-			
-			try {
-				sleep(1000);
-			} catch (InterruptedException e) {
-				return;
-			}
-		}
-	}
-	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ErrorHandler.setActivity(this);
         WindowManager wm = getWindowManager(); 
         Display d = wm.getDefaultDisplay();
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        if (d.getWidth() > d.getHeight())
-        	setContentView(R.layout.nowplaying_landscape);
-        else
-        	setContentView(R.layout.nowplaying_portrait);
+//        if (d.getWidth() > d.getHeight())
+ //       	setContentView(R.layout.nowplaying_landscape);
+  //      else
+   //     	setContentView(R.layout.nowplaying_portrait);
         
   	  	mControl = ConnectionManager.getHttpClient(this).control;
   	  	mInfo = ConnectionManager.getHttpClient(this).info;
+  	  	mClient = ConnectionManager.getEventClient(this);
+  	  	
+		mSeekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
+		mArtistView = (TextView) findViewById(R.id.ArtistTextView);
+		mAlbumView = (TextView) findViewById(R.id.AlbumTextView);
+		mSongTitleView = (TextView) findViewById(R.id.SongTextView);
+		mCounterLeftView = (TextView)findViewById(R.id.now_playing_counter_left);
+		mCounterRightView = (TextView)findViewById(R.id.now_playing_counter_right);
+		mPlayPauseView = (ImageButton)findViewById(R.id.MediaPlayPauseButton);
+		
+  	  	
+		// remove nasty top fading edge
+		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
+		topFrame.setForeground(null);
+  	  	
+		// set titlebar text
+  	  	((TextView)findViewById(R.id.titlebar_text)).setText("Now playing");
   	  	
   	  	mNowPlayingHandler = new Handler(this);
   	  	setupButtons();
@@ -190,8 +149,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 	}
 	
 	private void setupButtons() {
-		final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
-		seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+		mSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				if (fromUser && !seekBar.isInTouchMode())
@@ -205,28 +163,31 @@ public class NowPlayingActivity extends Activity implements Callback {
 				mControl.seek(SeekType.absolute, seekBar.getProgress());
 			}
 		});
-  	  	
-        final ImageButton PlayPrevButton = (ImageButton) findViewById(R.id.MediaPreviousButton);
-		PlayPrevButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				mControl.playPrevious();
-			}
-		});
-		final ImageButton PlayButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
-		PlayButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				mControl.pause();
-			}
-		});
 		
-		final ImageButton PlayNextButton = (ImageButton) findViewById(R.id.MediaNextButton);
-		PlayNextButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				mControl.playNext();
-			}
-		});
-	}
+		// previous
+		setupButton(R.id.MediaPreviousButton, ButtonCodes.REMOTE_SKIP_MINUS, R.drawable.now_playing_previous, R.drawable.now_playing_previous_down);
+		// stop
+		setupButton(R.id.MediaStopButton, ButtonCodes.REMOTE_STOP, R.drawable.now_playing_stop, R.drawable.now_playing_stop_down);
+		// pause
+		setupButton(R.id.MediaPlayPauseButton, ButtonCodes.REMOTE_PAUSE, R.drawable.now_playing_pause, R.drawable.now_playing_pause_down);
+		// next
+		setupButton(R.id.MediaNextButton, ButtonCodes.REMOTE_SKIP_PLUS, R.drawable.now_playing_next, R.drawable.now_playing_next_down);
 
+	}
+	
+	/**
+	 * Shortcut for adding the listener class to the button
+	 * @param resourceButton       Resource ID of the button
+	 * @param action               Action string
+	 * @param resourceButtonUp     Resource ID of the button up image
+	 * @param resourceButtonDown   Resource ID of the button down image
+	 */
+	private void setupButton(int resourceButton, String action, int resourceButtonUp, int resourceButtonDown) {
+		findViewById(resourceButton).setOnTouchListener(new OnRemoteAction(action, resourceButtonUp, resourceButtonDown));		
+	}
+	
+
+	
 	Thread updateViewThread;
 	
 	public synchronized boolean handleMessage(Message msg) {
@@ -236,22 +197,25 @@ public class NowPlayingActivity extends Activity implements Callback {
 
 		switch (msg.what) {
 		case MESSAGE_NOW_PLAYING_PROGRESS: 
-			final SeekBar seekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
-			seekBar.setProgress(Math.round(currentlyPlaying.getPercentage()));
+			mSeekBar.setProgress(Math.round(currentlyPlaying.getPercentage()));
 			
-			final ImageButton PlayPauseButton = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
-			boolean isPlaying = data.getBoolean("isplaying");
-			PlayPauseButton.setImageResource(isPlaying ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play);
+			mCounterLeftView.setText(Song.getDuration(currentlyPlaying.getTime() + 1));
+			mCounterRightView.setText("-" + Song.getDuration(currentlyPlaying.getDuration() - currentlyPlaying.getTime() - 1));
+			
+			if (currentlyPlaying.isPlaying()) {
+				setupButton(R.id.MediaPlayPauseButton, ButtonCodes.REMOTE_PAUSE, R.drawable.now_playing_play, R.drawable.now_playing_play_down);
+				mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
+			} else {
+				setupButton(R.id.MediaPlayPauseButton, ButtonCodes.REMOTE_PAUSE, R.drawable.now_playing_pause, R.drawable.now_playing_pause_down);
+				mPlayPauseView.setBackgroundResource(R.drawable.now_playing_play);
+			}
 			return true;
 		
 		case MESSAGE_ARTIST_TEXT_VIEW:
-			final TextView artist = (TextView) findViewById(R.id.ArtistTextView);
-			final TextView album = (TextView) findViewById(R.id.AlbumTextView);
-			final TextView song = (TextView) findViewById(R.id.SongTextView);
 
-			artist.setText(currentlyPlaying.getArtist());
-	  	  	album.setText(currentlyPlaying.getAlbum());
-	  	  	song.setText(currentlyPlaying.getTitle());
+			mArtistView.setText(currentlyPlaying.getArtist());
+	  	  	mAlbumView.setText(currentlyPlaying.getAlbum());
+	  	  	mSongTitleView.setText(currentlyPlaying.getTitle());
 	  	  	
 	  	  	return true;
 	  	  	
@@ -353,4 +317,113 @@ public class NowPlayingActivity extends Activity implements Callback {
 			return null;
 		}
 	}
+	
+	/**
+	 * Handles the push- release button code. Switches image of the pressed
+	 * button, vibrates and executes command.
+	 */
+	private class OnRemoteAction implements OnTouchListener {
+		private final String mAction;
+		private final int mUp, mDown;
+		public OnRemoteAction(String action, int up, int down) {
+			mAction = action;
+			mUp = up;
+			mDown = down;
+		}
+		public boolean onTouch(View v, MotionEvent event) {
+			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				try {
+					mClient.sendButton("R1", mAction, true, true, true, (short)0, (byte)0);
+				} catch (IOException e) {
+					return false;
+				}
+				((ImageButton)v).setBackgroundResource(mDown);
+				return true;
+			} else if (event.getAction() == MotionEvent.ACTION_UP) {
+				try {
+					mClient.sendButton("R1", mAction, false, false, true, (short)0, (byte)0);
+				} catch (IOException e) {
+					return false;
+				}
+				((ImageButton)v).setBackgroundResource(mUp);
+				return true;
+			}
+			return false;
+		}
+	}
+	
+	
+	private class UpdateThread extends Thread {
+		
+		private Resources mResources;
+		
+		public UpdateThread(Resources resources) {
+			mResources = resources;
+		}
+		
+		public void run() {
+			while (!isInterrupted()) {
+				Message msg = new Message();
+				Bundle bundle = msg.getData();
+				if (!mControl.isConnected()) {
+					msg.what = MESSAGE_CONNECTION_ERROR;
+					bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, null);
+					mNowPlayingHandler.sendMessage(msg);
+				} else {
+					
+					final ICurrentlyPlaying currPlaying = mControl.getCurrentlyPlaying();
+					bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
+
+					msg.what = MESSAGE_NOW_PLAYING_PROGRESS;
+					
+					String currentPos = currPlaying.getTitle() + currPlaying.getDuration();
+					mNowPlayingHandler.sendMessage(msg);
+					
+					if (!mLastPos.equals(currentPos)) {
+						mLastPos = currentPos;
+						msg = new Message();
+						bundle = msg.getData();
+						bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
+				  	  	msg.what = MESSAGE_ARTIST_TEXT_VIEW;
+				  	  	
+						mNowPlayingHandler.sendMessage(msg);
+						
+						try {				
+							String downloadURI = mInfo.getCurrentlyPlayingThumbURI();
+			
+							if (downloadURI != null && downloadURI.length() > 0) {
+								if (!downloadURI.equals(mCoverPath)) {
+						  	  		mCoverPath = downloadURI;
+//						  	  		setCover(mResources.getDrawable(R.drawable.cover_downloading));
+			
+						  	  		byte[] buffer = download(downloadURI);
+			
+						  	  		if (buffer == null || buffer.length == 0)
+						  	  			setCover(null);
+						  	  		else
+						  	  			setCover(new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length)));
+								}
+							} else {
+								mCoverPath = null;
+								setCover(null);
+							}
+						} catch (MalformedURLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (URISyntaxException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+				try {
+					sleep(1000);
+				} catch (InterruptedException e) {
+					return;
+				}
+			}
+			
+		}
+	}
+		
 }

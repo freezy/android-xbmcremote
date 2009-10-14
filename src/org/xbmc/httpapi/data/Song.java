@@ -57,8 +57,16 @@ public class Song implements Comparable<Song> {
 	 * @return Formatted duration
 	 */
 	public String getDuration() {
+		return getDuration(duration);
+	}
+	
+	/**
+	 * Returns a formatted string (MM:SS) for a number of seconds.
+	 * @param d Number of seconds
+	 * @return Formatted time
+	 */
+	public static String getDuration(int d) {
 		StringBuilder sb = new StringBuilder();
-		int d = duration;
 		if (d > 3600) {
 			sb.append(Math.floor(d / 3600));
 			sb.append(":");
