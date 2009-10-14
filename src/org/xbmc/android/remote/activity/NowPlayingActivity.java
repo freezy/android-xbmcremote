@@ -107,7 +107,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 //        if (d.getWidth() > d.getHeight())
  //       	setContentView(R.layout.nowplaying_landscape);
   //      else
-   //     	setContentView(R.layout.nowplaying_portrait);
+       	setContentView(R.layout.nowplaying_portrait);
         
   	  	mControl = ConnectionManager.getHttpClient(this).control;
   	  	mInfo = ConnectionManager.getHttpClient(this).info;
@@ -199,13 +199,16 @@ public class NowPlayingActivity extends Activity implements Callback {
 		case MESSAGE_NOW_PLAYING_PROGRESS: 
 			mSeekBar.setProgress(Math.round(currentlyPlaying.getPercentage()));
 			
-			mCounterLeftView.setText(Song.getDuration(currentlyPlaying.getTime() + 1));
-			mCounterRightView.setText("-" + Song.getDuration(currentlyPlaying.getDuration() - currentlyPlaying.getTime() - 1));
-			
 			if (currentlyPlaying.isPlaying()) {
+				mSeekBar.setEnabled(true);
+				mCounterLeftView.setText(Song.getDuration(currentlyPlaying.getTime() + 1));
+				mCounterRightView.setText("-" + Song.getDuration(currentlyPlaying.getDuration() - currentlyPlaying.getTime() - 1));
 				setupButton(R.id.MediaPlayPauseButton, ButtonCodes.REMOTE_PAUSE, R.drawable.now_playing_play, R.drawable.now_playing_play_down);
 				mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
 			} else {
+				mSeekBar.setEnabled(false);
+				mCounterLeftView.setText("");
+				mCounterRightView.setText("");
 				setupButton(R.id.MediaPlayPauseButton, ButtonCodes.REMOTE_PAUSE, R.drawable.now_playing_pause, R.drawable.now_playing_pause_down);
 				mPlayPauseView.setBackgroundResource(R.drawable.now_playing_play);
 			}
