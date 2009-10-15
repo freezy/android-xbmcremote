@@ -71,7 +71,7 @@ public class Artist implements ICoverArt, Serializable {
 	 */
 	public int getCrc() {
 		if (thumbID == 0) {
-			thumbID = Crc32.compute((name));
+			thumbID = Crc32.computeLowerCase((name));
 		}
 		return thumbID;
 	}

@@ -20,15 +20,17 @@
  */
 
 package org.xbmc.android.util;
+
 import java.io.UnsupportedEncodingException;
 
 /**
  * This is basically a transcript from XBMC's Crc32.cpp. It avoids having to
  * query for thumb names by the HTTP API.
+ * 
  * @author freezy <phreezie@gmail.com>
  */
 public class Crc32 {
-	
+
 	public static int compute(byte[] buffer, int crc) {
 		int count = buffer.length;
 		while (count-- > 0) {
@@ -36,6 +38,7 @@ public class Crc32 {
 		}
 		return crc;
 	}
+
 	public static int compute(byte value, int crc) {
 		crc ^= (value << 24);
 		for (int i = 0; i < 8; i++) {
@@ -47,6 +50,7 @@ public class Crc32 {
 		}
 		return crc;
 	}
+
 	public static int compute(String strValue) {
 		try {
 			return compute(strValue.getBytes("UTF-8"), 0xFFFFFFFF);
@@ -54,7 +58,25 @@ public class Crc32 {
 			return compute(strValue.getBytes(), 0xFFFFFFFF);
 		}
 	}
+
 	public static String computeAsHex(String strValue) {
 		return String.format("%08x", compute(strValue));
 	}
+
+	public static String computeAsHexLowerCase(String strValue) {
+		return String.format("%08x", compute(toXbmcLowerCase(strValue)));
+	}
+
+	public static int computeLowerCase(String strValue) {
+		return compute(toXbmcLowerCase(strValue));
+	}
+	private static String toXbmcLowerCase(String strValue) {
+		   char chars[] = strValue.toCharArray();
+		    for(int i = 0; i < chars.length; i++){
+		      if(chars[i] >= 65 && chars[i] <= 90)
+		        chars[i] = Character.toLowerCase(chars[i]);
+		    }
+		    return new String(chars);
+	}
+
 }

@@ -80,7 +80,7 @@ public class Album implements ICoverArt, Serializable {
 	 */
 	public int getCrc() {
 		if (thumbID == 0) {
-			thumbID = Crc32.compute((name + artist).toLowerCase());
+			thumbID = Crc32.computeLowerCase((name + artist));
 		}
 		return thumbID;
 	}
@@ -93,7 +93,7 @@ public class Album implements ICoverArt, Serializable {
 	public int getFallbackCrc() {
 		if (localPath != null) {
 			final String lp = localPath;
-			return Crc32.compute(lp.substring(0, lp.length() - 1).toLowerCase());
+			return Crc32.computeLowerCase(lp.substring(0, lp.length() - 1));
 		} else {
 			return 0;
 		}
