@@ -187,7 +187,9 @@ public class NowPlayingActivity extends Activity implements Callback {
 
 		switch (msg.what) {
 		case MESSAGE_NOW_PLAYING_PROGRESS: 
-			mSeekBar.setProgress(Math.round(currentlyPlaying.getPercentage()));
+			if (!mSeekBar.isPressed()) {
+				mSeekBar.setProgress(Math.round(currentlyPlaying.getPercentage()));
+			}
 			if (currentlyPlaying.isPlaying()) {
 				mSeekBar.setEnabled(true);
 				mCounterLeftView.setText(Song.getDuration(currentlyPlaying.getTime() + 1));

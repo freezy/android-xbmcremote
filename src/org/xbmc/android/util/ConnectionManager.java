@@ -111,7 +111,7 @@ public class ConnectionManager {
 
 		// Add the host information to the collection, for future reference
 		sServiceInfo.add(hostInfo);
-		return hostInfo;        
+		return hostInfo;
 	}
 	
 	/**
@@ -150,14 +150,19 @@ public class ConnectionManager {
 			
 			String user = prefs.getString("setting_http_user", "");
 			String pass = prefs.getString("setting_http_pass", "");
+			int timeout = 10000;
+			try {
+				timeout = prefs.getInt("setting_socket_timeout", 10000);
+			} catch (ClassCastException e) { }
+			
 			if (port > 0 && user != null && user.length() > 0) {
-				sHttpApiInstance = new HttpClient(host, port, user, pass, new ErrorHandler(activity));
+				sHttpApiInstance = new HttpClient(host, port, user, pass, timeout, new ErrorHandler(activity));
 			} else if (user != null && user.length() > 0) {
-				sHttpApiInstance = new HttpClient(host, user, pass, new ErrorHandler(activity));
+				sHttpApiInstance = new HttpClient(host, user, pass, timeout, new ErrorHandler(activity));
 			} else if (port > 0) {
-				sHttpApiInstance = new HttpClient(host, port, new ErrorHandler(activity));
+				sHttpApiInstance = new HttpClient(host, port, timeout, new ErrorHandler(activity));
 			} else {
-				sHttpApiInstance = new HttpClient(host, new ErrorHandler(activity));
+				sHttpApiInstance = new HttpClient(host, timeout, new ErrorHandler(activity));
 			}
 		}
 		return sHttpApiInstance;

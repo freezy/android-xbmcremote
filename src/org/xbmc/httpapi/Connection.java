@@ -45,31 +45,6 @@ import org.apache.http.HttpException;
  */
 public class Connection {
 
-    public class MyAuthenticator extends Authenticator {
-    	private String username;
-    	private char[] password;
-    	public static final int MAX_RETRY = 5;
-    	private int retry_count = 0;
-    	
-        public MyAuthenticator(String username, String password) {
-    		this.username = username;
-    		this.password = password!=null?password.toCharArray():new char[0];
-		}
-
-		// This method is called when a password-protected URL is accessed
-        protected PasswordAuthentication getPasswordAuthentication() {
-        	if(retry_count < MAX_RETRY) {
-        		retry_count ++;
-        		return new PasswordAuthentication(username, password);
-        	}
-        	return null;
-        }
-        // has to be called after each successful connection!!!
-        public void resetCounter() {
-        	retry_count = 0;
-        }
-    }
-	
 	public static final String LINE_SEP = "<li>";
 	public static final String VALUE_SEP = ";";
 	public static final String PAIR_SEP = ":";
@@ -80,6 +55,7 @@ public class Connection {
 	private String mBaseURL;
 	private IErrorHandler mErrorHandler;
 	private boolean settingsOK = false;
+	private int mTimeout;
 	private URLConnection uc = null;
 	private MyAuthenticator auth = null;
 	
@@ -91,7 +67,7 @@ public class Connection {
 	 * @param password     HTTP password
 	 * @param errorHandler Error handler
 	 */
-	public Connection(String host, int port, String username, String password, IErrorHandler errorHandler) {
+	public Connection(String host, int port, String username, String password, int timeout, IErrorHandler errorHandler) {
 		auth = new MyAuthenticator(username, password);
 		Authenticator.setDefault(auth);
 		
@@ -101,13 +77,17 @@ public class Connection {
 				mBaseURL += username + /*(password != null ? ":" + password : "") + */"@";
 			}
 			mBaseURL += host;
-			if (port != 80)
+			if (port != 80) {
 				mBaseURL += ":" + port;
+			}
+			mTimeout = timeout;
+			
 //			setResponseFormat();
 			settingsOK = true;
 		}
 		mErrorHandler = errorHandler;
 	}
+	
 	/**
 	 * Executes an HTTP API method and returns the result as untrimmed string.
 	 * @param method      Name of the method to run
@@ -122,7 +102,7 @@ public class Connection {
 			final URL query = formatQueryString(method, parameters);
 //			final URLConnection uc = query.openConnection();
 			uc = query.openConnection();
-			uc.setConnectTimeout(CONNECTION_TIMEOUT);
+			uc.setConnectTimeout(1000);
 			uc.setReadTimeout(CONNECTION_TIMEOUT);
 
 			//connection successful, reset retry counter!
@@ -376,4 +356,31 @@ public class Connection {
 	public String getBaseURL() {
 		return mBaseURL;
 	}
+	
+
+    public class MyAuthenticator extends Authenticator {
+    	private String username;
+    	private char[] password;
+    	public static final int MAX_RETRY = 5;
+    	private int retry_count = 0;
+    	
+        public MyAuthenticator(String username, String password) {
+    		this.username = username;
+    		this.password = password!=null?password.toCharArray():new char[0];
+		}
+
+		// This method is called when a password-protected URL is accessed
+        protected PasswordAuthentication getPasswordAuthentication() {
+        	if(retry_count < MAX_RETRY) {
+        		retry_count ++;
+        		return new PasswordAuthentication(username, password);
+        	}
+        	return null;
+        }
+        // has to be called after each successful connection!!!
+        public void resetCounter() {
+        	retry_count = 0;
+        }
+    }
+	
 }

@@ -81,8 +81,8 @@ public class HttpClient {
 	 * @param host         Host or IP address to XBMC
 	 * @param errorHandler Error handler
 	 */
-	public HttpClient(String host, IErrorHandler errorHandler) {
-		this(host, -1, null, null, errorHandler);
+	public HttpClient(String host, int timeout, IErrorHandler errorHandler) {
+		this(host, -1, null, null, timeout, errorHandler);
 	}
 	
 	/**
@@ -91,8 +91,8 @@ public class HttpClient {
 	 * @param port         Port to the webserver
 	 * @param errorHandler Error handler
 	 */
-	public HttpClient(String host, int port, IErrorHandler errorHandler) {
-		this(host, port, null, null, errorHandler);
+	public HttpClient(String host, int port, int timeout, IErrorHandler errorHandler) {
+		this(host, port, null, null, timeout, errorHandler);
 	}
 
 	/**
@@ -102,8 +102,8 @@ public class HttpClient {
 	 * @param password     Password
 	 * @param errorHandler Error handler
 	 */
-	public HttpClient(String host, String username, String password, IErrorHandler errorHandler) {
-		this(host, -1, username, password, errorHandler);
+	public HttpClient(String host, String username, String password, int timeout, IErrorHandler errorHandler) {
+		this(host, -1, username, password, timeout, errorHandler);
 	}
 
 	/**
@@ -114,8 +114,8 @@ public class HttpClient {
 	 * @param password     Username
 	 * @param errorHandler Error handler
 	 */
-	public HttpClient(String host, int port, String username, String password, IErrorHandler errorHandler) {		
-		mConnection= new Connection(host, port, username, password, errorHandler);
+	public HttpClient(String host, int port, String username, String password, int timeout, IErrorHandler errorHandler) {		
+		mConnection= new Connection(host, port, username, password, timeout, errorHandler);
 		info = new InfoClient(mConnection);
 		music = new MusicClient(mConnection);
 		video = new VideoClient(mConnection);
