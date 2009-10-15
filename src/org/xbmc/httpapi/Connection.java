@@ -49,7 +49,11 @@ public class Connection {
 	public static final String VALUE_SEP = ";";
 	public static final String PAIR_SEP = ":";
 	
-	private static final int CONNECTION_TIMEOUT = 10000; // in milliseconds
+	/**
+	 * Connection timeout in milliseconds. That's just the CONNECTION timeout. 
+	 * Read timeout is set by preferences.
+	 */
+	private static final int CONNECTION_TIMEOUT = 1000; 
 	
 	private static final String XBMC_HTTP_BOOTSTRAP =  "/xbmcCmds/xbmcHttp";
 	private String mBaseURL;
@@ -102,8 +106,8 @@ public class Connection {
 			final URL query = formatQueryString(method, parameters);
 //			final URLConnection uc = query.openConnection();
 			uc = query.openConnection();
-			uc.setConnectTimeout(1000);
-			uc.setReadTimeout(CONNECTION_TIMEOUT);
+			uc.setConnectTimeout(CONNECTION_TIMEOUT);
+			uc.setReadTimeout(mTimeout);
 
 			//connection successful, reset retry counter!
 			auth.resetCounter();
