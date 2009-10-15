@@ -37,6 +37,8 @@ import java.util.HashMap;
 
 import org.apache.http.HttpException;
 
+import android.util.Log;
+
 /**
  * Keeps track of the HTTP connection and contains basic helper methods for
  * repeated String transformations 
@@ -48,6 +50,8 @@ public class Connection {
 	public static final String LINE_SEP = "<li>";
 	public static final String VALUE_SEP = ";";
 	public static final String PAIR_SEP = ":";
+	
+	public static final String TAG = "Connection";
 	
 	/**
 	 * Connection timeout in milliseconds. That's just the CONNECTION timeout. 
@@ -104,23 +108,31 @@ public class Connection {
 				throw new NoSettingsException();
 			}
 			final URL query = formatQueryString(method, parameters);
+			final String debugUrl = URLDecoder.decode(query.toString());
+			final String debugTag = debugUrl.substring(debugUrl.indexOf("?command=") + 9);
+			Log.i(TAG, "START: " + debugUrl);
+
+			
 //			final URLConnection uc = query.openConnection();
+			final long connectionTimer = System.currentTimeMillis();
 			uc = query.openConnection();
 			uc.setConnectTimeout(CONNECTION_TIMEOUT);
 			uc.setReadTimeout(mTimeout);
+			
+			Log.i(TAG, "CONNECTED: " + (System.currentTimeMillis() - connectionTimer) + "ms (" + debugTag + ")");
 
 			//connection successful, reset retry counter!
 			auth.resetCounter();
 			
+			final long responseTimer = System.currentTimeMillis();
 			final BufferedReader rd = new BufferedReader(new InputStreamReader(uc.getInputStream()), 8192);
 			final StringBuilder sb = new StringBuilder();
-
-			System.out.println("HTTP: start " + URLDecoder.decode(query.toString()));
+			
 			String line = "";
 			while ((line = rd.readLine()) != null) {    
 				sb.append(line);
 			}
-			System.out.println("HTTP: end " + URLDecoder.decode(query.toString()));
+			Log.i(TAG, "DOWNLOADED: " + (System.currentTimeMillis() - responseTimer) + "ms (" + debugTag + ")");
 			
 			rd.close();
 			uc = null;
