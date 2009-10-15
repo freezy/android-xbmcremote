@@ -45,7 +45,6 @@ import org.xbmc.httpapi.type.SeekType;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -53,14 +52,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -96,17 +93,11 @@ public class NowPlayingActivity extends Activity implements Callback {
 	private TextView mCounterRightView;
 	private ImageButton mPlayPauseView;
 	private SeekBar mSeekBar;
-
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ErrorHandler.setActivity(this);
-        WindowManager wm = getWindowManager(); 
-        Display d = wm.getDefaultDisplay();
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-//        if (d.getWidth() > d.getHeight())
- //       	setContentView(R.layout.nowplaying_landscape);
-  //      else
        	setContentView(R.layout.nowplaying_portrait);
         
   	  	mControl = ConnectionManager.getHttpClient(this).control;
@@ -120,7 +111,6 @@ public class NowPlayingActivity extends Activity implements Callback {
 		mCounterLeftView = (TextView)findViewById(R.id.now_playing_counter_left);
 		mCounterRightView = (TextView)findViewById(R.id.now_playing_counter_right);
 		mPlayPauseView = (ImageButton)findViewById(R.id.MediaPlayPauseButton);
-		
   	  	
 		// remove nasty top fading edge
 		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
@@ -136,15 +126,13 @@ public class NowPlayingActivity extends Activity implements Callback {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		mUpdateThread = new UpdateThread(getResources());
+		mUpdateThread = new UpdateThread();
 		mUpdateThread.start();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
 		mUpdateThread.interrupt();
 	}
 	
@@ -185,11 +173,13 @@ public class NowPlayingActivity extends Activity implements Callback {
 	private void setupButton(int resourceButton, String action, int resourceButtonUp, int resourceButtonDown) {
 		findViewById(resourceButton).setOnTouchListener(new OnRemoteAction(action, resourceButtonUp, resourceButtonDown));		
 	}
-	
 
 	
-	Thread updateViewThread;
-	
+	/**
+	 * This is called from the thread with a message containing updated
+	 * info of what's currently playing.
+	 * @param msg Message object containing currently playing info
+	 */
 	public synchronized boolean handleMessage(Message msg) {
 		
 		final Bundle data = msg.getData();
@@ -198,7 +188,6 @@ public class NowPlayingActivity extends Activity implements Callback {
 		switch (msg.what) {
 		case MESSAGE_NOW_PLAYING_PROGRESS: 
 			mSeekBar.setProgress(Math.round(currentlyPlaying.getPercentage()));
-			
 			if (currentlyPlaying.isPlaying()) {
 				mSeekBar.setEnabled(true);
 				mCounterLeftView.setText(Song.getDuration(currentlyPlaying.getTime() + 1));
@@ -215,11 +204,9 @@ public class NowPlayingActivity extends Activity implements Callback {
 			return true;
 		
 		case MESSAGE_ARTIST_TEXT_VIEW:
-
 			mArtistView.setText(currentlyPlaying.getArtist());
 	  	  	mAlbumView.setText(currentlyPlaying.getAlbum());
 	  	  	mSongTitleView.setText(currentlyPlaying.getTitle());
-	  	  	
 	  	  	return true;
 	  	  	
 		case MESSAGE_COVER_IMAGE:
@@ -358,12 +345,6 @@ public class NowPlayingActivity extends Activity implements Callback {
 	
 	private class UpdateThread extends Thread {
 		
-		private Resources mResources;
-		
-		public UpdateThread(Resources resources) {
-			mResources = resources;
-		}
-		
 		public void run() {
 			while (!isInterrupted()) {
 				Message msg = new Message();
@@ -397,7 +378,6 @@ public class NowPlayingActivity extends Activity implements Callback {
 							if (downloadURI != null && downloadURI.length() > 0) {
 								if (!downloadURI.equals(mCoverPath)) {
 						  	  		mCoverPath = downloadURI;
-//						  	  		setCover(mResources.getDrawable(R.drawable.cover_downloading));
 			
 						  	  		byte[] buffer = download(downloadURI);
 			
@@ -425,8 +405,6 @@ public class NowPlayingActivity extends Activity implements Callback {
 					return;
 				}
 			}
-			
 		}
 	}
-		
 }
