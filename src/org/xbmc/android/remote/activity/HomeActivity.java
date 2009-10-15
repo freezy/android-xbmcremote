@@ -64,6 +64,11 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 	private static final int HOME_ACTION_NOWPLAYING = 4;
 	private static final int HOME_ACTION_RECONNECT = 5;
 	private static final int HOME_ACTION_WOL = 6;
+	
+	private static final int MENU_ABOUT = 1;
+	private static final int MENU_SETTINGS = 2;
+	private static final int MENU_EXIT = 3;
+	
 
 	private HomeAdapter mHomeMenu;
 	private HomeAdapter mOfflineMenu;
@@ -123,18 +128,22 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, 1, 0, "Settings").setIcon(R.drawable.icon_menu_settings);
-		menu.add(0, 2, 0, "Exit").setIcon(R.drawable.icon_menu_exit);
+		menu.add(0, MENU_ABOUT, 0, "About").setIcon(R.drawable.menu_about);
+		menu.add(0, MENU_SETTINGS, 0, "Settings").setIcon(R.drawable.icon_menu_settings);
+		menu.add(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.icon_menu_exit);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case 1:
+		case MENU_ABOUT:
+			startActivity(new Intent(this, AboutActivity.class));
+			return true;
+		case MENU_SETTINGS:
 			startActivity(new Intent(this, SettingsActivity.class));
 			return true;
-		case 2:
+		case MENU_EXIT:
 			System.exit(0);
 			return true;
 		}

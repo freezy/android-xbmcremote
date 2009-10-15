@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:background="@drawable/about_back"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent">
+
+	<TableLayout 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:stretchColumns="1" 
+		android:paddingLeft="50dip" 
+		android:paddingRight="50dip" 
+		android:paddingTop="50dip">
+			<TableRow 
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content">
+		        <TextView
+		            android:layout_column="1"
+		            android:text="Version"
+		            android:padding="3dip" />
+		        <TextView
+		        	android:id="@+id/about_version"
+		            android:text="v0.0.0"
+		            android:gravity="right" 
+		            android:padding="3dip" 
+		            android:textColor="#ffffffff"/>
+			</TableRow>
+			<TableRow 
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content">
+		        <TextView
+		            android:layout_column="1"
+		            android:text="Build"
+		            android:padding="3dip" />
+		        <TextView
+		            android:id="@+id/about_revision" 
+		        	android:text="Revision 0"
+		            android:gravity="right" 
+		            android:textColor="#ffffffff" 
+		            android:padding="3dip"/>
+			</TableRow>
+	<TextView
+        	android:text="@string/app_url_message"
+        	android:textSize="12px"
+            android:gravity="center"
+            android:linksClickable="true" 
+            android:paddingTop="15dip"
+            android:autoLink="web" />
+	</TableLayout>
+</LinearLayout>
