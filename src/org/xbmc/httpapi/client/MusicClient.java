@@ -615,43 +615,33 @@ public class MusicClient {
 			public String getTitle() {
 				return map.get("Title");
 			}
-			
 			public int getTime() {
 				return parseTime(map.get("Time"));
 			}
-			
 			public PlayStatus getPlayStatus() {
 				return PlayStatus.parse(map.get("PlayStatus"));
 			}
-			
 			public float getPercentage() {
 				return Float.valueOf(map.get("Percentage"));
 			}
-			
 			public String getFilename() {
 				return map.get("Filename");
 			}
-			
 			public int getDuration() {
 				return parseTime(map.get("Duration"));
 			}
-			
 			public String getArtist() {
 				return map.get("Artist");
 			}
-			
 			public String getAlbum() {
 				return map.get("Album");
 			}
-
 			public MediaType getType() {
 				return MediaType.music;
 			}
-
 			public boolean isPlaying() {
 				return PlayStatus.parse(map.get("PlayStatus")).equals(PlayStatus.Playing);
 			}
-			
 			private int parseTime(String time) {
 				String[] s = time.split(":");
 				if (s.length == 2) {

@@ -222,27 +222,30 @@ public class ControlClient {
 	 */
 	public ICurrentlyPlaying getCurrentlyPlaying() {
 		final HashMap<String, String> map = mConnection.getPairs("GetCurrentlyPlaying");
+		final ICurrentlyPlaying nothingPlaying = new ICurrentlyPlaying() {
+			private static final long serialVersionUID = -1554068775915058884L;
+			public boolean isPlaying() { return false; }
+			public MediaType getType() { return null; }
+			public String getTitle() { return ""; }
+			public int getTime() { return 0; }
+			public PlayStatus getPlayStatus() { return PlayStatus.Stopped; }
+			public float getPercentage() { return 0; }
+			public String getFilename() { return ""; }
+			public int getDuration() { return 0; }
+			public String getArtist() { return ""; }
+			public String getAlbum() { return ""; }
+		};
 		if (map.get("Filename").contains("Nothing Playing")) {
-			return new ICurrentlyPlaying() {
-				private static final long serialVersionUID = -1554068775915058884L;
-				public boolean isPlaying() { return false; }
-				public MediaType getType() { return null; }
-				public String getTitle() { return ""; }
-				public int getTime() { return 0; }
-				public PlayStatus getPlayStatus() { return PlayStatus.Stopped; }
-				public float getPercentage() { return 0; }
-				public String getFilename() { return ""; }
-				public int getDuration() { return 0; }
-				public String getArtist() { return ""; }
-				public String getAlbum() { return ""; }
-			};
+			return nothingPlaying;
 		} else {
 			final MediaType type = map.get("Type").contains("Audio") ? MediaType.music : MediaType.video;
 			switch (type) {
 				case music:
 					return MusicClient.getCurrentlyPlaying(map);
+				case video:
+					return VideoClient.getCurrentlyPlaying(map);
 				default:
-					return null;
+					return nothingPlaying;
 			}
 		}
 	}
