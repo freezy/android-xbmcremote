@@ -172,6 +172,13 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 //			startActivityForResult(new Intent(v.getContext(), MediaTabContainerActivity.class), 0);
 			break;
 		case HOME_ACTION_VIDEOS:
+
+/*			Intent nextActivity = new Intent(v.getContext(), ListActivity.class);
+			nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new FileListLogic());
+			nextActivity.putExtra(ListLogic.EXTRA_SHARE_TYPE, MediaType.video.toString());
+			nextActivity.putExtra(ListLogic.EXTRA_PATH, "");
+			startActivity(nextActivity);*/
+
 			startActivityForResult(createMediaIntent(MediaType.video, v), 0);
 			break;
 		case HOME_ACTION_PICTURES:

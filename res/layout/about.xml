@@ -44,7 +44,6 @@
         	android:text="@string/app_url_message"
         	android:textSize="12px"
             android:gravity="center"
-            android:linksClickable="true" 
             android:paddingTop="15dip"
             android:autoLink="web" />
 	</TableLayout>

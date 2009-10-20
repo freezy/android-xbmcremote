@@ -96,16 +96,15 @@ public class FileListLogic extends ListLogic {
 	}
 	
 	private class FileItemAdapter extends ArrayAdapter<MediaLocation> {
-		private Activity mActivity;
+		private final LayoutInflater mInflater; 
 		FileItemAdapter(Activity activity, ArrayList<MediaLocation> items) {
 			super(activity, R.layout.listitem_three, items);
-			mActivity = activity;
+			mInflater = activity.getLayoutInflater();
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View row;
 			if (convertView == null) {
-				LayoutInflater inflater = mActivity.getLayoutInflater();
-				row = inflater.inflate(R.layout.listitem_oneliner, null);
+				row = mInflater.inflate(R.layout.listitem_oneliner, null);
 			} else {
 				row = convertView;
 			}
@@ -114,7 +113,9 @@ public class FileListLogic extends ListLogic {
 			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
 			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
 			title.setText(fileItem.name);
-			if (fileItem.isDirectory) {
+			if (fileItem.isArchive) {
+				icon.setImageResource(R.drawable.icon_zip);
+			} else if (fileItem.isDirectory) {
 				icon.setImageResource(R.drawable.icon_folder);
 			} else {
 				final String ext = fileItem.name.substring(fileItem.name.lastIndexOf(".") + 1).toLowerCase();

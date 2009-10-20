@@ -1,11 +1,14 @@
 package org.xbmc.httpapi.data;
 
+import java.net.URLDecoder;
+
 import org.xbmc.httpapi.Connection;
 
 public class MediaLocation {
 	
 	public String name, path;
 	public boolean isDirectory;
+	public boolean isArchive = false;
 	
 	/**
 	 * Class constructor with already parsed data
@@ -16,6 +19,7 @@ public class MediaLocation {
 		this.name = name;
 		this.path = path;
 		this.isDirectory = path.endsWith("/") || path.endsWith("\\");
+		this.isArchive = isDirectory && path.startsWith("rar://") || path.startsWith("zip://");
 	}
 	
 	/**
@@ -37,10 +41,18 @@ public class MediaLocation {
 			path = line;
 			if (isDirectory) {
 				trimmed = trimmed.substring(0, trimmed.lastIndexOf("/")); 
-				name = trimmed.substring(trimmed.lastIndexOf("/") + 1);
-			} else {
-				name = trimmed.substring(trimmed.lastIndexOf("/") + 1);
 			}
+			name = trimmed.substring(trimmed.lastIndexOf("/") + 1);
+		}
+		if (path.startsWith("rar://") || path.startsWith("zip://")) {
+			final String decoded;
+			if (isDirectory) {
+				decoded = URLDecoder.decode(path.substring(0, path.length() - 1)).replaceAll("\\\\", "/");
+			} else {
+				decoded = URLDecoder.decode(path).replaceAll("\\\\", "/");
+			}
+			name = decoded.substring(decoded.lastIndexOf("/") + 1);
+			isArchive = true;
 		}
 	}
 }

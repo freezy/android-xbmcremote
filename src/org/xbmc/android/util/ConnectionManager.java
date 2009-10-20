@@ -152,8 +152,8 @@ public class ConnectionManager {
 			String pass = prefs.getString("setting_http_pass", "");
 			int timeout = 10000;
 			try {
-				timeout = prefs.getInt("setting_socket_timeout", 10000);
-			} catch (ClassCastException e) { }
+				timeout = Integer.parseInt(prefs.getString("setting_socket_timeout", "10000"));
+			} catch (ClassCastException e) {}
 			
 			if (port > 0 && user != null && user.length() > 0) {
 				sHttpApiInstance = new HttpClient(host, port, user, pass, timeout, new ErrorHandler(activity));
