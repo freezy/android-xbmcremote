@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 public class ThreeHolder<T> {
 
-	public int id = 0;
+	public long id = 0;
 
 	private final ImageView mIconView;
 	private final TextView mTitleView;
@@ -106,7 +106,7 @@ public class ThreeHolder<T> {
 		mIconView.setImageResource(res);
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 

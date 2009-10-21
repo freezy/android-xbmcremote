@@ -69,7 +69,7 @@ public class Artist implements ICoverArt, Serializable {
 	 * Returns the CRC of the artist on which the thumb name is based upon.
 	 * @return 8-char CRC32
 	 */
-	public int getCrc() {
+	public long getCrc() {
 		if (thumbID == 0) {
 			thumbID = Crc32.computeLowerCase((name));
 		}
@@ -107,7 +107,7 @@ public class Artist implements ICoverArt, Serializable {
 	 */
 	public String name;
 	
-	public int thumbID = 0;
+	public long thumbID = 0;
 	
 	private static final long serialVersionUID = 9073064679039418773L;
 }

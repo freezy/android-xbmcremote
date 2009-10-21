@@ -44,12 +44,21 @@ public class Album implements ICoverArt, Serializable {
 	 * @param name		Album name
 	 * @param artist	Artist
 	 */
-	public Album(int id, String name, String artist, int year, String localPath) {
+	public Album(int id, String name, String artist, int year) {
 		this.id = id;
 		this.name = name;
 		this.artist = artist;
 		this.year = year;
-		this.localPath = localPath;
+	}
+
+	public Album(int id, String name, String artist, int year, String thumbPath) {
+		this.id = id;
+		this.name = name;
+		this.artist = artist;
+		this.year = year;
+		if (!thumbPath.equals("")) {
+			this.thumbID = Long.parseLong(thumbPath.substring(thumbPath.lastIndexOf("/") + 1, thumbPath.length() - 4), 16);
+		}
 	}
 	
 	public String getArtFolder() {
@@ -78,7 +87,7 @@ public class Album implements ICoverArt, Serializable {
 	 * Returns the CRC of the album on which the thumb name is based upon.
 	 * @return 8-char CRC32
 	 */
-	public int getCrc() {
+	public long getCrc() {
 		if (thumbID == 0) {
 			thumbID = Crc32.computeLowerCase((name + artist));
 		}
@@ -164,7 +173,7 @@ public class Album implements ICoverArt, Serializable {
 	/**
 	 * Save this once it's calculated
 	 */
-	public int thumbID = 0;
+	public long thumbID = 0;
 	
 	private static final long serialVersionUID = 4779827915067184250L;
 

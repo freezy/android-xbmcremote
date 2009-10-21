@@ -239,7 +239,10 @@ public class MusicClient {
 	 */
 	public ArrayList<Album> getAlbums() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT a.idAlbum, a.strAlbum, i.strArtist, a.iYear, (");
+		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
+		sb.append(" FROM albumview WHERE albumview.strAlbum <> ''");
+		
+/*		sb.append("SELECT a.idAlbum, a.strAlbum, i.strArtist, a.iYear, (");
 		sb.append("   SELECT p.strPath");
 		sb.append("   FROM song AS s, path AS p");
 		sb.append("   WHERE s.idPath = p.idPath");
@@ -249,7 +252,7 @@ public class MusicClient {
 		sb.append("  FROM album AS a, artist AS i");
 		sb.append("  WHERE a.idArtist = i.idArtist");
 		sb.append("  ORDER BY i.strArtist ASC");
-//		sb.append("  LIMIT 300"); // let's keep it at 300 for now
+//		sb.append("  LIMIT 300"); // let's keep it at 300 for now*/
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 
@@ -260,7 +263,12 @@ public class MusicClient {
 	public ArrayList<Album> getAlbums(Artist artist) {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("SELECT DISTINCT a.idAlbum, a.strAlbum, i.strArtist, a.iYear, (");
+		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
+		sb.append(" FROM albumview");
+		sb.append(" WHERE albumview.strAlbum <> ''");
+		sb.append(" AND idArtist = " + artist.id);
+		
+/*		sb.append("SELECT DISTINCT a.idAlbum, a.strAlbum, i.strArtist, a.iYear, (");
 		sb.append("   SELECT p.strPath");
 		sb.append("   FROM song AS s, path AS p");
 		sb.append("   WHERE s.idPath = p.idPath");
@@ -271,7 +279,7 @@ public class MusicClient {
 		sb.append("  WHERE s.idArtist = " + artist.id);
 		sb.append("  AND s.idAlbum = a.idAlbum");
 		sb.append("  AND i.idArtist = s.idArtist");
-		sb.append("  ORDER BY a.strAlbum ASC");
+		sb.append("  ORDER BY a.strAlbum ASC");*/
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 
@@ -282,7 +290,21 @@ public class MusicClient {
 	public ArrayList<Album> getAlbums(Genre genre) {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("SELECT DISTINCT alb.idAlbum, alb.strAlbum, art.strArtist, alb.iYear, (");
+		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
+		sb.append("  FROM albumview");
+		sb.append("  WHERE albumview.strAlbum <> ''");
+		sb.append("  AND (idAlbum IN (");
+		sb.append("        SELECT DISTINCT s.idAlbum");
+		sb.append("        FROM exgenresong AS g, song AS s");
+		sb.append("        WHERE g.idGenre = " + genre.id);
+		sb.append("        AND g.idSong = s.idSong");
+		sb.append("  ) OR idAlbum IN (");
+		sb.append("        SELECT DISTINCT idAlbum");
+		sb.append("        FROM song");
+		sb.append("        WHERE idGenre = " + genre.id);
+		sb.append("  ))");
+		
+/*		sb.append("SELECT DISTINCT alb.idAlbum, alb.strAlbum, art.strArtist, alb.iYear, (");
 		sb.append("   SELECT p.strPath");
 		sb.append("   FROM song AS s, path AS p");
 		sb.append("   WHERE s.idPath = p.idPath");
@@ -301,7 +323,7 @@ public class MusicClient {
 		sb.append("        FROM song");
 		sb.append("        WHERE idGenre = " + genre.id);
 		sb.append("  ))");
-		sb.append("  ORDER BY alb.strAlbum");
+		sb.append("  ORDER BY alb.strAlbum");*/
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	

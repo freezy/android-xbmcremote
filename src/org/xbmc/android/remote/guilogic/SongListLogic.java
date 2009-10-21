@@ -184,10 +184,10 @@ public class SongListLogic extends ListLogic {
 				album = mAlbum;
 				holder.setText(song.title, song.artist, song.getDuration());
 			} else if (mArtist != null) {
-				album = new Album(-1, song.album, song.albumArtist, -1, null);
+				album = new Album(-1, song.album, song.albumArtist, -1);
 				holder.setText(song.title, song.album, song.getDuration());
 			} else if (mGenre != null) {
-				album = new Album(-1, song.album, song.albumArtist, -1, null);
+				album = new Album(-1, song.album, song.albumArtist, -1);
 				holder.setText(song.title, song.album, song.getDuration());
 			}
 			holder.setHolderItem(song);

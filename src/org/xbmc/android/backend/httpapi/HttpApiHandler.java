@@ -38,13 +38,13 @@ import android.app.Activity;
 public class HttpApiHandler<T> implements Runnable {
 	public T value;
 	protected final Activity mActivity;
-	protected final int mTag;
+	protected final long mTag;
 	protected CacheType mCacheType;
 	public HttpApiHandler(Activity activity) {
 		mActivity = activity;
 		mTag = 0;
 	}
-	public HttpApiHandler(Activity activity, int tag) {
+	public HttpApiHandler(Activity activity, long tag) {
 		mActivity = activity;
 		mTag = tag;
 	}

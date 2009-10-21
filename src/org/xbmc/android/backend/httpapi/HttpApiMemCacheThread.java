@@ -49,8 +49,8 @@ class HttpApiMemCacheThread extends HttpApiAbstractThread {
 	/**
 	 * The actual cache variable. Here are the thumbs stored. 
 	 */
-	private static final HashMap<Integer, SoftReference<Bitmap>> sArtCache = new HashMap<Integer, SoftReference<Bitmap>>();
-	private static final HashMap<Integer, Boolean> sNotAvailable = new HashMap<Integer, Boolean>();
+	private static final HashMap<Long, SoftReference<Bitmap>> sArtCache = new HashMap<Long, SoftReference<Bitmap>>();
+	private static final HashMap<Long, Boolean> sNotAvailable = new HashMap<Long, Boolean>();
 
 	/**
 	 * Constructor is protected, use get().
@@ -70,7 +70,7 @@ class HttpApiMemCacheThread extends HttpApiAbstractThread {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
-					final int crc = cover.getCrc();
+					final long crc = cover.getCrc();
 					final SoftReference<Bitmap> ref = sArtCache.get(crc);
 			        if (ref != null) {
 			            handler.value = ref.get();
