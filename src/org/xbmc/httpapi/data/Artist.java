@@ -90,6 +90,14 @@ public class Artist implements ICoverArt, Serializable {
 	public int getId() {
 		return this.id;
 	}
+	
+	/**
+	 * Returns database ID.
+	 * @return
+	 */
+	public String getName() {
+		return this.name;
+	}
 
 	/**
 	 * Something descriptive

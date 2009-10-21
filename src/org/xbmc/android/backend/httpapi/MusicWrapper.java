@@ -28,6 +28,7 @@ import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
+import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.CacheType;
 import org.xbmc.httpapi.type.ThumbSize;
@@ -422,7 +423,7 @@ public class MusicWrapper extends Wrapper {
 	 * helper methods below.
 	 * @param handler Callback handler
 	 */
-	public void getAlbumCover(final HttpApiHandler<Bitmap> handler, final Album album, final ThumbSize size) {
+	public void getAlbumCover(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final ThumbSize size) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				// first, try mem cache (only if size = small, other sizes aren't mem-cached.
@@ -460,7 +461,7 @@ public class MusicWrapper extends Wrapper {
 	 * @param handler Callback handler
 	 * @param album   Get cover for this album
 	 */
-	private void getAlbumCoverFromMem(final HttpApiHandler<Bitmap> handler, final Album album) {
+	private void getAlbumCoverFromMem(final HttpApiHandler<Bitmap> handler, final ICoverArt album) {
 		if (DEBUG) Log.i(TAG, "[" + album.getId() + "] Checking in mem cache..");
 		HttpApiMemCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
@@ -484,7 +485,7 @@ public class MusicWrapper extends Wrapper {
 	 * @param album   Get cover for this album
 	 * @param size    Cover size
 	 */
-	private void getAlbumCoverFromDisk(final HttpApiHandler<Bitmap> handler, final Album album, final ThumbSize size) {
+	private void getAlbumCoverFromDisk(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final ThumbSize size) {
 		if (DEBUG) Log.i(TAG, "[" + album.getId() + "] Checking in disk cache..");
 		HttpApiDiskCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
@@ -510,7 +511,7 @@ public class MusicWrapper extends Wrapper {
 	 * @param album   Get cover for this album
 	 * @param size    Cover size
 	 */
-	private void getAlbumCoverFromNetwork(final HttpApiHandler<Bitmap> handler, final Album album, final ThumbSize size) {
+	private void getAlbumCoverFromNetwork(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final ThumbSize size) {
 		if (DEBUG) Log.i(TAG, "[" + album.getId() + "] Downloading..");
 		HttpApiDownloadThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {

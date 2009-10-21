@@ -27,7 +27,7 @@ import java.util.Formatter;
  * data container with some smallish formatting methods 
  * @author freezy <f3k@hosts.ch>
  */
-public class Song implements Comparable<Song> {
+public class Song implements Comparable<Song>, ICoverArt {
 	
 	/**
 	 * Constructor
@@ -39,17 +39,19 @@ public class Song implements Comparable<Song> {
 	 * @param path      Path to song (without filename)
 	 * @param filename  Filename
 	 */
-	public Song(int id, String title, String artist, String album, String albumArtist, int track, int duration, String path, String filename) {
+	public Song(int id, String title, String artist, String album, int track, int duration, String path, String filename, String thumbPath) {
 		this.id = id;
 		this.title = title;
 		this.artist = artist;
 		this.album = album;
-		this.albumArtist = albumArtist;
 		this.track = track & 0xffff;
 		this.disc = track >> 16;
 		this.duration = duration;
 		this.path = path + filename;
 		this.filename = filename;
+		if (!thumbPath.equals("")) {
+			this.thumbID = Long.parseLong(thumbPath.substring(thumbPath.lastIndexOf("/") + 1, thumbPath.length() - 4), 16);
+		}
 	}
 	
 	/**
@@ -98,6 +100,30 @@ public class Song implements Comparable<Song> {
 		return filename.compareTo(t.filename); // filename comparison is more accurate
 		// return t.disc == disc ? (t.number > number ? -1 : 1) : (t.disc > disc ? -1 : 1)
 	}
+
+	/**
+	 * Returns the CRC of the song.
+	 * @return CRC32
+	 */
+	public long getCrc() {
+		return thumbID;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public String getName() {
+		return title;
+	}
+
+	public int getFallbackCrc() {
+		return 0;
+	}	
+	
+	public String getArtFolder() {
+		return "/Music";
+	}
 	
 	/**
 	 * Database ID
@@ -116,10 +142,6 @@ public class Song implements Comparable<Song> {
 	 */
 	public String album;
 	
-	/**
-	 * Album's artist (e.g. "Various Artists" on compilations)
-	 */
-	public String albumArtist;
 	/**
 	 * Track number
 	 */
@@ -140,4 +162,10 @@ public class Song implements Comparable<Song> {
 	 * Filename of song
 	 */
 	public String filename;	
+	/**
+	 * CRC of the thumb
+	 */
+	public long thumbID = 0;
+	
+
 }

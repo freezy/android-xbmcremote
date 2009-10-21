@@ -85,7 +85,7 @@ public class Album implements ICoverArt, Serializable {
 	
 	/**
 	 * Returns the CRC of the album on which the thumb name is based upon.
-	 * @return 8-char CRC32
+	 * @return CRC32
 	 */
 	public long getCrc() {
 		if (thumbID == 0) {
@@ -114,6 +114,14 @@ public class Album implements ICoverArt, Serializable {
 	 */
 	public int getId() {
 		return this.id;
+	}
+	
+	/**
+	 * Returns database ID.
+	 * @return
+	 */
+	public String getName() {
+		return toString();
 	}
 	
 	/**

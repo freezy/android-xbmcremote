@@ -4,7 +4,7 @@ import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.android.widget.IdleListDetector;
-import org.xbmc.httpapi.data.Album;
+import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.type.CacheType;
 
 import android.app.Activity;
@@ -22,7 +22,7 @@ public class ThreeHolder<T> {
 	private final TextView mSubsubtitleView;
 	
 	private T mHolderItem;
-	private Album mCoverItem;
+	private ICoverArt mCoverItem;
 
 	boolean tempBind;
 	public CrossFadeDrawable transition;
@@ -45,11 +45,11 @@ public class ThreeHolder<T> {
 		return mHolderItem;
 	}
 	
-	public void setCoverItem(Album cover) {
+	public void setCoverItem(ICoverArt cover) {
 		mCoverItem = cover;
 	}
 	
-	public Album getCoverItem() {
+	public ICoverArt getCoverItem() {
 		return mCoverItem;
 	}
 

@@ -293,11 +293,10 @@ public class MusicClient {
 		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
 		sb.append("  FROM albumview");
 		sb.append("  WHERE albumview.strAlbum <> ''");
-		sb.append("  AND (idAlbum IN (");
-		sb.append("        SELECT DISTINCT s.idAlbum");
-		sb.append("        FROM exgenresong AS g, song AS s");
-		sb.append("        WHERE g.idGenre = " + genre.id);
-		sb.append("        AND g.idSong = s.idSong");
+		sb.append("  AND (idAlbum IN ("); 
+		sb.append("        SELECT song.idAlbum FROM song"); 			
+		sb.append("        JOIN exgenresong ON song.idSong = exgenresong.idSong"); 			
+		sb.append("        WHERE exgenresong.idGenre =  " + genre.id);
 		sb.append("  ) OR idAlbum IN (");
 		sb.append("        SELECT DISTINCT idAlbum");
 		sb.append("        FROM song");
@@ -386,14 +385,19 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Album album) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.idSong, s.strTitle, art.strArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		
+		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
+		sb.append("  FROM songview");
+		sb.append("  WHERE idAlbum = " + album.id);
+		
+/*		sb.append("SELECT s.idSong, s.strTitle, art.strArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
 		sb.append("  FROM song AS s, path AS p, artist AS art, album AS alb, artist as albArtist");
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = art.idArtist");
 		sb.append("  AND s.idAlbum = alb.idAlbum");
 		sb.append("  AND albArtist.idArtist = alb.idArtist");
 		sb.append("  AND s.idAlbum = " + album.id);
-		sb.append("  ORDER BY s.iTrack, s.strFileName");
+		sb.append("  ORDER BY s.iTrack, s.strFileName");*/
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
@@ -404,14 +408,37 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Artist artist) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.idSong, s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb ");
+		sb.append("  FROM songview");
+		sb.append("  WHERE (");
+		sb.append("    idArtist = " + artist.id);
+		sb.append("    OR idSong IN (");
+		sb.append("       SELECT exartistsong.idSong");
+		sb.append("       FROM exartistsong");
+		sb.append("       WHERE exartistsong.idArtist = " + artist.id);
+		sb.append("    ) OR idSong IN (");
+		sb.append("       SELECT song.idSong");
+		sb.append("       FROM song");
+		sb.append("       JOIN album ON song.idAlbum = album.idAlbum");
+		sb.append("       WHERE album.idArtist = " + artist.id);
+		sb.append("    ) OR idSong IN (");
+		sb.append("       SELECT song.idSong");
+		sb.append("       FROM song");
+		sb.append("       JOIN exartistalbum ON song.idAlbum = exartistalbum.idAlbum");
+		sb.append("       JOIN album ON song.idAlbum = album.idAlbum");
+		sb.append("       WHERE exartistalbum.idArtist = " + artist.id);
+		sb.append("       AND album.strExtraArtists != ''");
+		sb.append("    )");
+		sb.append("  )");
+		
+/*		sb.append("SELECT s.idSong, s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
 		sb.append("  FROM song AS s, path AS p, artist art, album AS alb, artist as albArtist");
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = art.idArtist");
 		sb.append("  AND s.idAlbum = alb.idAlbum");
 		sb.append("  AND albArtist.idArtist = alb.idArtist");
 		sb.append("  AND s.idArtist = " + artist.id);
-		sb.append("  ORDER BY alb.strAlbum, s.iTrack, s.strFileName");
+		sb.append("  ORDER BY alb.strAlbum, s.iTrack, s.strFileName");*/
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
@@ -422,14 +449,22 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Genre genre) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT s.idSong, s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
+
+		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
+		sb.append("  FROM songview");
+		sb.append("  WHERE idGenre = " + genre.id);
+		sb.append("  OR idSong IN (");
+		sb.append("     SELECT exgenresong.idSong FROM exgenresong WHERE exgenresong.idGenre = " + genre.id);
+		sb.append("  )");
+		
+/*		sb.append("SELECT s.idSong, s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
 		sb.append("  FROM song AS s, path AS p, artist art, album AS alb, artist as albArtist");
 		sb.append("  WHERE s.idPath = p.idPath");
 		sb.append("  AND s.idArtist = art.idArtist");
 		sb.append("  AND s.idAlbum = alb.idAlbum");
 		sb.append("  AND albArtist.idArtist = alb.idArtist");
 		sb.append("  AND s.idGenre = " + genre.id);
-		sb.append("  ORDER BY art.StrArtist, alb.strAlbum, s.iTrack, s.strFileName");
+		sb.append("  ORDER BY art.StrArtist, alb.strAlbum, s.iTrack, s.strFileName");*/
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
@@ -441,6 +476,36 @@ public class MusicClient {
 	 */
 	public ArrayList<Song> getSongs(Artist artist, Genre genre) {
 		StringBuilder sb = new StringBuilder();
+		
+		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb ");
+		sb.append("  FROM songview");
+		sb.append("  WHERE (");
+		sb.append("    idArtist = " + artist.id);
+		sb.append("    OR idSong IN (");
+		sb.append("       SELECT exartistsong.idSong");
+		sb.append("       FROM exartistsong");
+		sb.append("       WHERE exartistsong.idArtist = " + artist.id);
+		sb.append("    ) OR idSong IN (");
+		sb.append("       SELECT song.idSong");
+		sb.append("       FROM song");
+		sb.append("       JOIN album ON song.idAlbum = album.idAlbum");
+		sb.append("       WHERE album.idArtist = " + artist.id);
+		sb.append("    ) OR idSong IN (");
+		sb.append("       SELECT song.idSong");
+		sb.append("       FROM song");
+		sb.append("       JOIN exartistalbum ON song.idAlbum = exartistalbum.idAlbum");
+		sb.append("       JOIN album ON song.idAlbum = album.idAlbum");
+		sb.append("       WHERE exartistalbum.idArtist = " + artist.id);
+		sb.append("       AND album.strExtraArtists != ''");
+		sb.append("    )");
+		sb.append("  ) AND (");
+		sb.append("    idGenre = " + genre.id);
+		sb.append("    OR idSong IN (");
+		sb.append("       SELECT exgenresong.idSong FROM exgenresong WHERE exgenresong.idGenre = " + genre.id);
+		sb.append("    )");
+		sb.append("  )");
+		
+		/*
 		sb.append("SELECT s.idSong, s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
 		sb.append("  FROM song AS s, path AS p, artist art, album AS alb, artist as albArtist");
 		sb.append("  WHERE s.idPath = p.idPath");
@@ -449,7 +514,7 @@ public class MusicClient {
 		sb.append("  AND albArtist.idArtist = alb.idArtist");
 		sb.append("  AND s.idGenre = " + genre.id);
 		sb.append("  AND s.idArtist = " + artist.id);
-		sb.append("  ORDER BY art.StrArtist, alb.strAlbum, s.iTrack, s.strFileName");
+		sb.append("  ORDER BY art.StrArtist, alb.strAlbum, s.iTrack, s.strFileName");*/
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
@@ -554,15 +619,15 @@ public class MusicClient {
 		String[] fields = response.split("<field>");
 		try { 
 			for (int row = 1; row < fields.length; row += 9) { 
-				songs.add(new Song( // int id, String title, String artist, String album, String albumArtist int track, int duration, String path
+				songs.add(new Song( // int id, String title, String artist, String album, int track, int duration, String path, String filename, String thumbPath
 						Connection.trimInt(fields[row]),
 						Connection.trim(fields[row + 1]), 
 						Connection.trim(fields[row + 2]), 
 						Connection.trim(fields[row + 3]), 
-						Connection.trim(fields[row + 4]), 
+						Connection.trimInt(fields[row + 4]), 
 						Connection.trimInt(fields[row + 5]), 
-						Connection.trimInt(fields[row + 6]), 
-						Connection.trim(fields[row + 7]),
+						Connection.trim(fields[row + 6]),
+						Connection.trim(fields[row + 7]), 
 						Connection.trim(fields[row + 8]) 
 				));
 			}
