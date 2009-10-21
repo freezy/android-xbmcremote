@@ -39,7 +39,6 @@ import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -53,8 +52,6 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		ErrorHandler.setActivity(this);
 		setContentView(R.layout.musicartist);
 		

@@ -1,37 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/RemoteXboxLinearLayoutOuter"
 	android:background="#000000" android:layout_width="fill_parent" android:layout_gravity="center_horizontal" android:orientation="vertical" android:layout_height="fill_parent">
-	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutInner" android:gravity="center_horizontal" android:orientation="horizontal" android:layout_gravity="center_vertical|center_horizontal">
+	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutInner" android:gravity="center_horizontal" 
+		android:orientation="horizontal" android:layout_gravity="center_vertical|center_horizontal">
 		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutLeft" android:orientation="vertical">
-			<ImageButton android:id="@+id/RemoteXboxImgBtnTv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_tv"></ImageButton>
-			<ImageButton android:id="@+id/RemoteXboxImgBtnMusic" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_music"></ImageButton>
-			<ImageButton android:id="@+id/RemoteXboxImgBtnPictures" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_pictures"></ImageButton>
-			<ImageButton android:id="@+id/RemoteXboxImgBtnVideos" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_videos"></ImageButton>
-			<ImageButton android:id="@+id/RemoteXboxImgBtnDisplay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_display"></ImageButton>
-		</LinearLayout><LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutMiddleLeft" android:orientation="vertical"><LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:id="@+id/RemoteXboxLinearLayoutCenterTop"><ImageButton android:id="@+id/RemoteXboxImgBtnPrevious" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_previous"></ImageButton><ImageButton android:id="@+id/RemoteXboxImgBtnPlay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_play"></ImageButton><ImageButton android:id="@+id/RemoteXboxImgBtnNext" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_next"></ImageButton></LinearLayout>
-			
-			<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutCenterBottom"><LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/RemoteXboxLinearLayoutMiddleLeft"><ImageButton android:id="@+id/RemoteXboxImgBtnTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_title"></ImageButton><ImageButton android:id="@+id/RemoteXboxImgBtnLeft" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_left"></ImageButton><ImageButton android:id="@+id/RemoteXboxImgBtnMenu" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_menu"></ImageButton></LinearLayout><LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutMiddle" android:orientation="vertical">
-			
-			<ImageButton android:id="@+id/RemoteXboxImgBtnUp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_up"></ImageButton>
-			<ImageButton android:id="@+id/RemoteXboxImgBtnSelect" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_select"></ImageButton>
-			<ImageButton android:id="@+id/RemoteXboxImgBtnDown" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_down"></ImageButton>
-		
-</LinearLayout><LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutMiddleRight" android:orientation="vertical">
-			
-			<ImageButton android:id="@+id/RemoteXboxImgBtnInfo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_info"></ImageButton>
-			<ImageButton android:id="@+id/RemoteXboxImgBtnRight" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_right"></ImageButton>
-			<ImageButton android:id="@+id/RemoteXboxImgBtnBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_back"></ImageButton>
-		</LinearLayout></LinearLayout>
-			
-			
-		
-
-</LinearLayout><LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutRight" android:orientation="vertical">
-			<ImageButton android:id="@+id/RemoteXboxImgBtnSeekBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_seek_back"></ImageButton>
-			<ImageButton android:id="@+id/RemoteXboxImgBtnSeekForward" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_seek_forward"></ImageButton>
-			<ImageButton android:id="@+id/RemoteXboxImgBtnPause" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_pause"></ImageButton>
-			<ImageButton android:id="@+id/RemoteXboxImgBtnStop" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_stop"></ImageButton>
-			<ImageButton android:id="@+id/RemoteXboxImgBtnPower" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_power"></ImageButton>
+			<Button android:id="@+id/RemoteXboxImgBtnTv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_tv" />
+			<Button android:id="@+id/RemoteXboxImgBtnMusic" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_music" />
+			<Button android:id="@+id/RemoteXboxImgBtnPictures" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_pictures" />
+			<Button android:id="@+id/RemoteXboxImgBtnVideos" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_videos" />
+			<Button android:id="@+id/RemoteXboxImgBtnDisplay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_display" />
+		</LinearLayout>
+		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutMiddleLeft" android:orientation="vertical">
+			<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:id="@+id/RemoteXboxLinearLayoutCenterTop">
+				<Button android:id="@+id/RemoteXboxImgBtnPrevious" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_previous" />
+				<Button android:id="@+id/RemoteXboxImgBtnPlay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_play" />
+				<Button android:id="@+id/RemoteXboxImgBtnNext" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_next" />
+			</LinearLayout>
+			<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutCenterBottom">
+				<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/RemoteXboxLinearLayoutMiddleLeft">
+					<Button android:id="@+id/RemoteXboxImgBtnTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_title" />
+					<Button android:id="@+id/RemoteXboxImgBtnLeft" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_left" />
+					<Button android:id="@+id/RemoteXboxImgBtnMenu" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_menu" />
+				</LinearLayout>
+				<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutMiddle" android:orientation="vertical">
+					<Button android:id="@+id/RemoteXboxImgBtnUp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_up" />
+					<Button android:id="@+id/RemoteXboxImgBtnSelect" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_select" />
+					<Button android:id="@+id/RemoteXboxImgBtnDown" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_down" />
+				</LinearLayout>
+				<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutMiddleRight" android:orientation="vertical">
+					<Button android:id="@+id/RemoteXboxImgBtnInfo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_info" />
+					<Button android:id="@+id/RemoteXboxImgBtnRight" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_right" />
+					<Button android:id="@+id/RemoteXboxImgBtnBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_back" />
+				</LinearLayout>
+			</LinearLayout>
+		</LinearLayout>
+		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutRight" android:orientation="vertical">
+			<Button android:id="@+id/RemoteXboxImgBtnSeekBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_seek_back" />
+			<Button android:id="@+id/RemoteXboxImgBtnSeekForward" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_seek_forward" />
+			<Button android:id="@+id/RemoteXboxImgBtnPause" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_pause" />
+			<Button android:id="@+id/RemoteXboxImgBtnStop" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_stop" />
+			<Button android:id="@+id/RemoteXboxImgBtnPower" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_landscape_power" />
 		</LinearLayout>
 	</LinearLayout>
 </LinearLayout>

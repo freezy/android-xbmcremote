@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.xbmc.android.remote"
-	android:versionCode="220"
-	android:versionName="0.5.7+">
+	android:versionCode="221"
+	android:versionName="0.5.8">
     <application android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:name=".activity.HomeActivity"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AboutActivity" />
-        <activity android:name=".activity.RemoteActivity" />
+        <activity android:name=".activity.RemoteActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity android:name=".activity.MusicLibraryActivity" android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name=".activity.MusicArtistActivity" android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name=".activity.MusicGenreActivity" android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name=".activity.ListActivity" android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name=".activity.NowPlayingActivity" android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name=".activity.AboutActivity" android:theme="@android:style/Theme.NoTitleBar" />
         <activity android:name=".activity.FileListActivity" />
-        <activity android:name=".activity.NowPlayingActivity" />
-        <activity android:name=".activity.MusicLibraryActivity" />
-        <activity android:name=".activity.MusicArtistActivity" />
-        <activity android:name=".activity.MusicGenreActivity" />
-        <activity android:name=".activity.ListActivity" />
         <activity android:name=".activity.SettingsActivity" />
         <receiver android:name=".XbmcBroadcastReceiver" android:label="@string/app_receiver">
 	        <intent-filter>

@@ -43,11 +43,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
+import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 
 /**
  * Activity for remote control. At the moment that's the good ol' Xbox remote
@@ -68,8 +67,6 @@ public class RemoteActivity extends Activity {
     @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		
 		ErrorHandler.setActivity(this);
 		setContentView(R.layout.remote_xbox);
@@ -189,7 +186,7 @@ public class RemoteActivity extends Activity {
 				} catch (IOException e) {
 					return false;
 				}
-				((ImageButton)v).setImageResource(mDown);
+				((Button)v).setBackgroundResource(mDown);
 				return true;
 			} else if (event.getAction() == MotionEvent.ACTION_UP) {
 				try {
@@ -197,7 +194,7 @@ public class RemoteActivity extends Activity {
 				} catch (IOException e) {
 					return false;
 				}
-				((ImageButton)v).setImageResource(mUp);
+				((Button)v).setBackgroundResource(mUp);
 				return true;
 			}
 			return false;
