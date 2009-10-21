@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.data.MediaLocation;
+import org.xbmc.httpapi.info.GuiSettings;
 import org.xbmc.httpapi.type.DirectoryMask;
 import org.xbmc.httpapi.type.MediaType;
 
@@ -91,6 +92,24 @@ public class InfoClient {
 	 */
 	public String getSystemInfo(int field) {
 		return mConnection.getString("GetSystemInfo", String.valueOf(field));
+	}
+	
+	/**
+	 * Returns a boolean GUI setting
+	 * @param field
+	 * @return
+	 */
+	public boolean getGuiSettingBool(int field) {
+		return mConnection.getBoolean("GetGuiSetting", GuiSettings.MusicLibrary.getType(field) + ";" + GuiSettings.MusicLibrary.getName(field));
+	}
+
+	/**
+	 * Returns an integer GUI setting
+	 * @param field
+	 * @return
+	 */
+	public int getGuiSettingInt(int field) {
+		return mConnection.getInt("GetGuiSetting", GuiSettings.MusicLibrary.getType(field) + ";" + GuiSettings.MusicLibrary.getName(field));
 	}
 	
 	/**

@@ -328,30 +328,66 @@ public class MusicClient {
 	
 	/**
 	 * Gets all albums from database
+	 * @param albumArtistsOnly If set to true, hide artists who appear only on compilations.
 	 * @return All albums
 	 */
-	public ArrayList<Artist> getArtists() {
-		return parseArtists(mConnection.query("QueryMusicDatabase", "SELECT idArtist, strArtist FROM artist ORDER BY strArtist"));
+	public ArrayList<Artist> getArtists(boolean albumArtistsOnly) {
+		
+		StringBuilder sb = new StringBuilder();
+		if (albumArtistsOnly) {
+			sb.append("SELECT idArtist, strArtist ");
+			sb.append("  FROM artist");
+			sb.append("  WHERE (");
+			sb.append("    idArtist IN (");
+			sb.append("      SELECT album.idArtist");
+			sb.append("      FROM album");
+			sb.append("    ) OR idArtist IN (");
+			sb.append("      SELECT exartistalbum.idArtist");
+			sb.append("      FROM exartistalbum");
+			sb.append("      JOIN album ON album.idAlbum = exartistalbum.idAlbum");
+			sb.append("      WHERE album.strExtraArtists != ''");
+			sb.append("    )");
+			sb.append(") AND artist.strArtist != ''");
+		} else {
+			sb.append("SELECT idArtist, strArtist FROM artist ORDER BY strArtist");
+		}
+		return parseArtists(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 
 	/**
 	 * Gets all artists with at least one song of a genre.
 	 * @return Albums with a genre
 	 */
-	public ArrayList<Artist> getArtists(Genre genre) {
+	public ArrayList<Artist> getArtists(Genre genre, boolean albumArtistsOnly) {
+
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT DISTINCT idArtist, strArtist FROM artist");
-		sb.append("   WHERE idArtist IN (");
-		sb.append("         SELECT DISTINCT s.idArtist");
-		sb.append("         FROM exgenresong AS g, song AS s");
-		sb.append("         WHERE g.idGenre = " + genre.id);
-		sb.append("         AND g.idSong = s.idSong");
-		sb.append("   ) OR idArtist IN (");
-		sb.append("        SELECT DISTINCT idArtist");
-		sb.append("         FROM song");
-		sb.append("         WHERE idGenre = " + genre.id);
-		sb.append("   )");
-		sb.append("   ORDER BY strArtist");
+		sb.append("SELECT DISTINCT idArtist, strArtist ");
+		sb.append("  FROM artist");
+		sb.append("  WHERE (idArtist IN (");
+		sb.append("    SELECT DISTINCT s.idArtist");
+		sb.append("    FROM exgenresong AS g, song AS s");
+		sb.append("    WHERE g.idGenre = " + genre.id);
+		sb.append("    AND g.idSong = s.idSong");
+		sb.append("  ) OR idArtist IN (");
+		sb.append("    SELECT DISTINCT idArtist");
+		sb.append("     FROM song");
+		sb.append("     WHERE idGenre = " + genre.id);
+		sb.append("  ))");
+
+		if (albumArtistsOnly) {
+			sb.append("  AND (");
+			sb.append("    idArtist IN (");
+			sb.append("      SELECT album.idArtist");
+			sb.append("      FROM album");
+			sb.append("    ) OR idArtist IN (");
+			sb.append("      SELECT exartistalbum.idArtist");
+			sb.append("      FROM exartistalbum");
+			sb.append("      JOIN album ON album.idAlbum = exartistalbum.idAlbum");
+			sb.append("      WHERE album.strExtraArtists != ''");
+			sb.append("    )");
+			sb.append("  ) AND artist.strArtist != ''");
+		}		
+		
 		return parseArtists(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	

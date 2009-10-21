@@ -30,6 +30,7 @@ import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Song;
+import org.xbmc.httpapi.info.GuiSettings;
 import org.xbmc.httpapi.type.CacheType;
 import org.xbmc.httpapi.type.ThumbSize;
 
@@ -140,7 +141,8 @@ public class MusicWrapper extends Wrapper {
 	public void getArtists(final HttpApiHandler<ArrayList<Artist>> handler) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getArtists();
+				final boolean albumArtistsOnly = info(handler).getGuiSettingBool(GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
+				handler.value = music(handler).getArtists(albumArtistsOnly);
 				done(handler);
 			}
 		});
@@ -153,7 +155,8 @@ public class MusicWrapper extends Wrapper {
 	public void getArtists(final HttpApiHandler<ArrayList<Artist>> handler, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getArtists(genre);
+				final boolean albumArtistsOnly = info(handler).getGuiSettingBool(GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
+				handler.value = music(handler).getArtists(genre, albumArtistsOnly);
 				done(handler);
 			}
 		});

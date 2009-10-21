@@ -178,26 +178,20 @@ public class SongListLogic extends ListLogic {
 				holder = (ThreeHolder<Song>)convertView.getTag();
 			}
 			final Song song = getItem(position);
-//			Album album = null;
 			
 			if (mAlbum != null) {
-//				album = mAlbum;
 				holder.setText(song.title, song.artist, song.getDuration());
 			} else if (mArtist != null) {
-//				album = new Album(-1, song.album, song.artist, -1);
 				holder.setText(song.title, song.album, song.getDuration());
 			} else if (mGenre != null) {
-//				album = new Album(-1, song.album, song.artist, -1);
-				holder.setText(song.title, song.album, song.getDuration());
+				holder.setText(song.title, song.artist, song.getDuration());
 			}
 			holder.setHolderItem(song);
-//			if (album != null) {
-				holder.id = song.getId();
-				holder.setCoverItem(song);
-				holder.setImageResource(R.drawable.icon_album_grey);
-				holder.setTemporaryBind(true);
-				HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), song, ThumbSize.small);
-//			}
+			holder.id = song.getId();
+			holder.setCoverItem(song);
+			holder.setImageResource(R.drawable.icon_album_grey);
+			holder.setTemporaryBind(true);
+			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), song, ThumbSize.small);
 			return row;
 		}
 	}

@@ -204,8 +204,7 @@ public class Connection {
 	 */
 	public boolean getBoolean(String method, String parameters) {
 		try {
-			assertBoolean(method, parameters);
-			return true;
+			return assertBoolean(method, parameters);
 		} catch (WrongDataFormatException e) {
 			return false;
 		}
@@ -275,9 +274,13 @@ public class Connection {
 	 * @param parameters  Parameters of the method, separated by ";"
 	 * @throws WrongDataFormatException If not "OK"
 	 */
-	public void assertBoolean(String method, String parameters) throws WrongDataFormatException {
+	public boolean assertBoolean(String method, String parameters) throws WrongDataFormatException {
 		final String ret = query(method, parameters);
-		if (!ret.contains("OK")) {
+		if (ret.contains("OK") || ret.contains("true") || ret.contains("True") || ret.contains("TRUE")) {
+			return true;
+		} else if (ret.contains("false") || ret.contains("False") || ret.contains("FALSE")) {
+			return false;
+		} else {
 			throw new WrongDataFormatException("OK", ret);
 		}
 	}
