@@ -49,8 +49,12 @@ public class Song implements Comparable<Song>, ICoverArt {
 		this.duration = duration;
 		this.path = path + filename;
 		this.filename = filename;
-		if (!thumbPath.equals("")) {
-			this.thumbID = Long.parseLong(thumbPath.substring(thumbPath.lastIndexOf("/") + 1, thumbPath.length() - 4), 16);
+		if (!thumbPath.equals("NONE")) {
+			try {
+				this.thumbID = Long.parseLong(thumbPath.substring(thumbPath.lastIndexOf("/") + 1, thumbPath.length() - 4), 16);
+			} catch (NumberFormatException e) {
+				this.thumbID = 0L;
+			}
 		}
 	}
 	
