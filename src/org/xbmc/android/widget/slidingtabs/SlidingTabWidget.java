@@ -27,6 +27,7 @@ import org.xbmc.android.widget.slidingtabs.SlidingTabHost.SlidingTabSpec;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -113,7 +114,7 @@ public class SlidingTabWidget extends LinearLayout {
         mSlider.setOnTouchListener(new SliderOnTouchListener());
         
 		// inflate and prepare the overlay
-        LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mOverlayLayout = (LinearLayout) inflater.inflate(R.layout.slidingtab_overlay, mTabContent, false);
 		mOverlayIcon = (ImageView)mOverlayLayout.findViewById(R.id.slidingtab_overlay_image);
 		mOverlayText = (TextView)mOverlayLayout.findViewById(R.id.slidingtab_overlay_label);
@@ -204,6 +205,7 @@ public class SlidingTabWidget extends LinearLayout {
 		// make the buttons accessible by click directly.
 		bgImg.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				updateLayoutDimensions();
 				final BackgroundImage bgImg = (BackgroundImage)v;
 				if (bgImg.getTabIndex() != mSelectedTab) {
 					mSlider.setImageResource(bgImg.getSliderIconResource());
@@ -286,6 +288,7 @@ public class SlidingTabWidget extends LinearLayout {
 	 * haven't found out yet how. Should be called when the layout is rendered.
 	 */
 	private void updateLayoutDimensions() {
+		Log.i("updateLayoutDimensions", "mInverseSliderWidth = " + mInverseSliderWidth);
 		if (mSliderMoveWidth == 0) {
 			mSliderMoveWidth = mOuterLayout.getWidth() - mSlider.getBackground().getIntrinsicWidth() + (2 * SHADOW_PADDING);
 		}
