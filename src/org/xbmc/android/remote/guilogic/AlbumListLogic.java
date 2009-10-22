@@ -28,6 +28,7 @@ import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
+import org.xbmc.android.remote.activity.NowPlayingActivity;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.android.remote.guilogic.holder.ThreeHolder;
 import org.xbmc.httpapi.data.Album;
@@ -155,7 +156,12 @@ public class AlbumListLogic extends ListLogic {
 				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), album);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), album);
+				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity) {
+					public void run() {
+						if (value == true)
+							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+					}
+				}, album);
 				break;
 			case ITEM_CONTEXT_INFO:
 				DialogFactory.getAlbumDetail(mActivity, album).show();

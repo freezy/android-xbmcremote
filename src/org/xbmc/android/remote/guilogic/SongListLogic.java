@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.activity.NowPlayingActivity;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.android.remote.guilogic.holder.ThreeHolder;
 import org.xbmc.httpapi.data.Album;
@@ -35,6 +36,7 @@ import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -134,11 +136,18 @@ public class SongListLogic extends ListLogic {
 				}
 				break;
 			case ITEM_CONTEXT_PLAY:
+				final HttpApiHandler<Boolean> handler = new HttpApiHandler<Boolean>(mActivity) {
+					public void run() {
+						if (value == true)
+							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+					}
+				};
 				if (mAlbum == null) {
-					HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), holder.getHolderItem());
+					HttpApiThread.music().play(handler, holder.getHolderItem());
 				} else {
-					HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), mAlbum, holder.getHolderItem());
+					HttpApiThread.music().play(handler, mAlbum, holder.getHolderItem());
 				}
+				mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 				break;
 			default:
 				return;

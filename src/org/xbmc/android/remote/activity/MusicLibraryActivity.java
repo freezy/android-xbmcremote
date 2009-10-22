@@ -127,6 +127,9 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 			case 2:
 				mGenreLogic.onCreateContextMenu(menu, v, menuInfo);
 				break;
+			case 3:
+				mCompilationsLogic.onCreateContextMenu(menu, v, menuInfo);
+				break;
 		}
 	}
 	
@@ -141,6 +144,9 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 			break;
 		case 2:
 			mGenreLogic.onContextItemSelected(item);
+			break;
+		case 3:
+			mCompilationsLogic.onContextItemSelected(item);
 			break;
 		}
 		return super.onContextItemSelected(item);
