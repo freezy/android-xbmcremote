@@ -234,6 +234,28 @@ public class MusicClient {
 	}
 	
 	/**
+	 * Gets all allbums with given artist IDs
+	 * @param artistIDs Array of artist IDs
+	 * @return All compilation albums
+	 */
+	public ArrayList<Album> getAlbums(ArrayList<Integer> artistIDs) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
+		sb.append(" FROM albumview WHERE albumview.strAlbum <> ''");
+		sb.append(" AND idArtist IN (");
+		int n = 0;
+		for (Integer id : artistIDs) {
+			sb.append(id);
+			n++;
+			if (artistIDs.size() < n) {
+				sb.append(", ");
+			}
+		}
+		sb.append(")");
+		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
+	}
+	
+	/**
 	 * Gets all albums from database
 	 * @return All albums
 	 */
@@ -568,6 +590,23 @@ public class MusicClient {
 			return mConnection.query("FileDownload", Album.getFallbackThumbUri(art));
 		}
 	}
+	
+	/**
+	 * Returns a list containing all artist IDs that stand for "compilation".
+	 * Best case scenario would be only one ID for "Various Artists", though
+	 * there are also just "V.A." or "VA" naming conventions.
+	 * @return List of compilation artist IDs
+	 */
+	public ArrayList<Integer> getCompilationArtistIDs() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT idArtist");
+		sb.append("  FROM artist");
+		sb.append("  WHERE lower(strArtist) LIKE 'various artists%'");
+		sb.append("  OR lower(strArtist) LIKE 'v.a.%'");
+		sb.append("  OR lower(strArtist) = 'va'");
+		return parseIntArray(mConnection.query("QueryMusicDatabase", sb.toString()));
+		
+	}
 
 	/**
 	 * Converts query response from HTTP API to a list of Album objects. Each
@@ -674,6 +713,26 @@ public class MusicClient {
 		}
 		Collections.sort(songs);
 		return songs;		
+	}
+	
+	/**
+	 * Converts query response from HTTP API to a list of integer values.
+	 * @param response
+	 * @return
+	 */
+	private ArrayList<Integer> parseIntArray(String response) {
+		ArrayList<Integer> array = new ArrayList<Integer>();
+		String[] fields = response.split("<field>");
+		try { 
+			for (int row = 1; row < fields.length; row += 9) {
+				array.add(Connection.trimInt(fields[row]));
+			}
+		} catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
+		}
+		return array;
 	}
 	
 	/**

@@ -55,6 +55,21 @@ public class MusicWrapper extends Wrapper {
 	 * Gets all albums from database
 	 * @param handler Callback handler
 	 */
+	public void getCompilations(final HttpApiHandler<ArrayList<Album>> handler) {
+		mHandler.post(new Runnable() {
+			public void run() {
+				final MusicClient mc = music(handler);
+				ArrayList<Integer> compilationArtistIDs = mc.getCompilationArtistIDs();
+				handler.value = mc.getAlbums(compilationArtistIDs);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Gets all albums from database
+	 * @param handler Callback handler
+	 */
 	public void getAlbums(final HttpApiHandler<ArrayList<Album>> handler) {
 		mHandler.post(new Runnable() {
 			public void run() { 

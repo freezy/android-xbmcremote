@@ -51,6 +51,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	private AlbumListLogic mAlbumLogic;
 	private ArtistListLogic mArtistLogic;
 	private GenreListLogic mGenreLogic;
+	private AlbumListLogic mCompilationsLogic;
 	private FileListLogic mFileLogic;
 
 	@Override
@@ -69,6 +70,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mTabHost.addTab(mTabHost.newTabSpec("tab_albums", "Albums", R.drawable.st_album_on, R.drawable.st_album_off).setBigIcon(R.drawable.st_album_over).setContent(R.id.albumlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_artists", "Artists", R.drawable.st_artist_on, R.drawable.st_artist_off).setBigIcon(R.drawable.st_artist_over).setContent(R.id.artists_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_genres", "Genres", R.drawable.st_genre_on, R.drawable.st_genre_off).setBigIcon(R.drawable.st_genre_over).setContent(R.id.genres_outer_layout));
+		mTabHost.addTab(mTabHost.newTabSpec("tab_compilations", "Compilations", R.drawable.st_va_on, R.drawable.st_va_off).setBigIcon(R.drawable.st_va_over).setContent(R.id.compilations_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
 		mTabHost.setCurrentTab(0);
 
@@ -85,7 +87,11 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 
 		mGenreLogic = new GenreListLogic();
 		mGenreLogic.findTitleView(findViewById(R.id.genres_outer_layout));
-		
+
+		mCompilationsLogic = new AlbumListLogic();
+		mCompilationsLogic.findTitleView(findViewById(R.id.compilations_outer_layout));
+		mCompilationsLogic.setCompilationsOnly(true);
+
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				if (tabId.equals("tab_albums")) {
@@ -99,6 +105,9 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 				}
 				if (tabId.equals("tab_genres")) {
 					mGenreLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.genres_list));
+				}
+				if (tabId.equals("tab_compilations")) {
+					mCompilationsLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.compilations_list));
 				}
 			}
 		});

@@ -61,6 +61,15 @@ public class AlbumListLogic extends ListLogic {
 	
 	private Artist mArtist;
 	private Genre mGenre;
+	private boolean mCompilationsOnly = false;
+	
+	/**
+	 * Defines if only compilations should be listed.
+	 * @param co True if compilations only should be listed, false otherwise.
+	 */
+	public void setCompilationsOnly(boolean co) {
+		mCompilationsOnly = co;
+	}
 	
 	public void onCreate(Activity activity, ListView list) {
 		if (!isCreated()) {
@@ -106,13 +115,23 @@ public class AlbumListLogic extends ListLogic {
 				}, mGenre);
 				
 			} else {
-				setTitle("Albums...");
-				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
-					public void run() {
-						setTitle("Albums (" + value.size() + ")");
-						mList.setAdapter(new AlbumAdapter(mActivity, value));
-					}
-				});
+				if (mCompilationsOnly) {
+					setTitle("Compilations...");
+					HttpApiThread.music().getCompilations(new HttpApiHandler<ArrayList<Album>>(mActivity) {
+						public void run() {
+							setTitle("Compilations (" + value.size() + ")");
+							mList.setAdapter(new AlbumAdapter(mActivity, value));
+						}
+					});
+				} else {
+					setTitle("Albums...");
+					HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
+						public void run() {
+							setTitle("Albums (" + value.size() + ")");
+							mList.setAdapter(new AlbumAdapter(mActivity, value));
+						}
+					});
+				}
 			}
 		}
 	}
