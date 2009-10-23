@@ -27,7 +27,6 @@ import org.xbmc.android.widget.slidingtabs.SlidingTabHost.SlidingTabSpec;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -288,7 +287,6 @@ public class SlidingTabWidget extends LinearLayout {
 	 * haven't found out yet how. Should be called when the layout is rendered.
 	 */
 	private void updateLayoutDimensions() {
-		Log.i("updateLayoutDimensions", "mInverseSliderWidth = " + mInverseSliderWidth);
 		if (mSliderMoveWidth == 0) {
 			mSliderMoveWidth = mOuterLayout.getWidth() - mSlider.getBackground().getIntrinsicWidth() + (2 * SHADOW_PADDING);
 		}
