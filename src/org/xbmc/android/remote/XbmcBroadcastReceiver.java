@@ -42,7 +42,7 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
-		EventClient client = getEventClient();
+		EventClient client = ConnectionManager.getEventClient();
 		HttpClient http = ConnectionManager.getHttpClient();
 		SharedPreferences prefs = context.getSharedPreferences("XBMCRemotePrefsFile", Context.MODE_WORLD_WRITEABLE);
 		// currently no new connection to the event server is opened
@@ -111,16 +111,6 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	/**
-	 * 
-	 * @return the active <code>EventClient</client> or creates a new one
-	 */
-	public EventClient getEventClient() {
-		EventClient client = EventClient.getInstance();
-		
-		return client;
 	}
 
 }

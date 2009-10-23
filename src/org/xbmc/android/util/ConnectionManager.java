@@ -234,7 +234,8 @@ public class ConnectionManager {
 	 * @return Client for XBMC's Event Server
 	 */
 	public static EventClient getEventClient() {
-		return sEventClientInstance;
+		//return sEventClientInstance;
+		return getEventClient(null);
 	}
 	
 	/**

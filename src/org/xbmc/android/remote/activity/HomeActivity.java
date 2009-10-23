@@ -72,6 +72,8 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 	private HomeAdapter mHomeMenu;
 	private HomeAdapter mOfflineMenu;
 	
+	private EventClient mClient;
+	
 	HttpApiHandler<String> mUpdateVersionHandler;
 
 	@Override
@@ -79,7 +81,7 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
-		
+		mClient = ConnectionManager.getEventClient(this);
 		ErrorHandler.setActivity(this);
 
 		final ArrayList<HomeItem> homeItems = new ArrayList<HomeItem>();
@@ -205,14 +207,13 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		EventClient client = ConnectionManager.getEventClient(this);	
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:
-					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+					mClient.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
 					return true;
 				case KeyEvent.KEYCODE_VOLUME_DOWN:
-					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+					mClient.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
 					return true;
 			}
 		} catch (IOException e) {
