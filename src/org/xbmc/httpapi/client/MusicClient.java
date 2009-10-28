@@ -263,6 +263,7 @@ public class MusicClient {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
 		sb.append(" FROM albumview WHERE albumview.strAlbum <> ''");
+		sb.append(" ORDER BY upper(strAlbum), strAlbum");
 		
 /*		sb.append("SELECT a.idAlbum, a.strAlbum, i.strArtist, a.iYear, (");
 		sb.append("   SELECT p.strPath");
@@ -289,6 +290,7 @@ public class MusicClient {
 		sb.append(" FROM albumview");
 		sb.append(" WHERE albumview.strAlbum <> ''");
 		sb.append(" AND idArtist = " + artist.id);
+		sb.append(" ORDER BY upper(strAlbum), strAlbum");
 		
 /*		sb.append("SELECT DISTINCT a.idAlbum, a.strAlbum, i.strArtist, a.iYear, (");
 		sb.append("   SELECT p.strPath");
@@ -324,6 +326,7 @@ public class MusicClient {
 		sb.append("        FROM song");
 		sb.append("        WHERE idGenre = " + genre.id);
 		sb.append("  ))");
+		sb.append(" ORDER BY upper(strAlbum), strAlbum");
 		
 /*		sb.append("SELECT DISTINCT alb.idAlbum, alb.strAlbum, art.strArtist, alb.iYear, (");
 		sb.append("   SELECT p.strPath");
@@ -371,8 +374,9 @@ public class MusicClient {
 			sb.append("    )");
 			sb.append(") AND artist.strArtist != ''");
 		} else {
-			sb.append("SELECT idArtist, strArtist FROM artist ORDER BY strArtist");
+			sb.append("SELECT idArtist, strArtist FROM artist");
 		}
+		sb.append(" ORDER BY upper(strArtist), strArtist");
 		return parseArtists(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 
@@ -409,7 +413,7 @@ public class MusicClient {
 			sb.append("    )");
 			sb.append("  ) AND artist.strArtist != ''");
 		}		
-		
+		sb.append(" ORDER BY upper(strArtist), strArtist");
 		return parseArtists(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
@@ -418,7 +422,7 @@ public class MusicClient {
 	 * @return All genres
 	 */
 	public ArrayList<Genre> getGenres() {
-		return parseGenres(mConnection.query("QueryMusicDatabase", "SELECT idGenre, strGenre FROM genre ORDER BY strGenre"));
+		return parseGenres(mConnection.query("QueryMusicDatabase", "SELECT idGenre, strGenre FROM genre ORDER BY upper(strGenre), strGenre"));
 	}
 	
 	/**
@@ -447,6 +451,7 @@ public class MusicClient {
 		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
 		sb.append("  FROM songview");
 		sb.append("  WHERE idAlbum = " + album.id);
+		sb.append(" ORDER BY iTrack, strFileName");
 		
 /*		sb.append("SELECT s.idSong, s.strTitle, art.strArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
 		sb.append("  FROM song AS s, path AS p, artist AS art, album AS alb, artist as albArtist");
