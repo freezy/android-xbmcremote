@@ -75,6 +75,8 @@ public class GenreListLogic extends ListLogic {
 					mList.setAdapter(new GenreAdapter(mActivity, value));
 				}
 			});
+			
+			mList.setOnKeyListener(new ListLogicOnKeyListener<Genre>());
 		}
 	}
 	

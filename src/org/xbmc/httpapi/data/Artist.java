@@ -30,7 +30,7 @@ import org.xbmc.android.util.Crc32;
  * 
  * @author Team XBMC
  */
-public class Artist implements ICoverArt, Serializable {
+public class Artist implements ICoverArt, Serializable, NamedResource {
 
 	/**
 	 * TODO verify that's correct and test!
@@ -52,6 +52,10 @@ public class Artist implements ICoverArt, Serializable {
 		return "/Artist";
 	}
 
+	public String getShortName() {
+		return this.name;
+	}
+	
 	/**
 	 * Composes the complete path to the artist's thumbnail
 	 * @return Path to thumbnail

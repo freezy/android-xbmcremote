@@ -97,6 +97,8 @@ public class AlbumListLogic extends ListLogic {
 				}
 			});
 					
+			mList.setOnKeyListener(new ListLogicOnKeyListener<Album>());
+			
 			if (mArtist != null) {
 				setTitle(mArtist.name + " - Albums...");
 				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {

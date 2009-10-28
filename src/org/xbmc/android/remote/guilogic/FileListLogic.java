@@ -92,6 +92,7 @@ public class FileListLogic extends ListLogic {
 					}
 				}
 			});
+			mList.setOnKeyListener(new ListLogicOnKeyListener<MediaLocation>());
 		}
 	}
 	

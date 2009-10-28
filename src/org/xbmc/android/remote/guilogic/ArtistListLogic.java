@@ -75,6 +75,8 @@ public class ArtistListLogic extends ListLogic {
 				}
 			});
 			
+			mList.setOnKeyListener(new ListLogicOnKeyListener<Artist>());
+			
 			if (mGenre != null) {
 				setTitle(mGenre.name + " - Artists...");
 				HttpApiThread.music().getArtists(new HttpApiHandler<ArrayList<Artist>>(mActivity) {

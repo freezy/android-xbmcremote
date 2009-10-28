@@ -83,6 +83,8 @@ public class SongListLogic extends ListLogic {
 				}
 			});
 					
+			mList.setOnKeyListener(new ListLogicOnKeyListener<Song>());
+			
 			if (mAlbum != null) {
 				setTitle("Songs...");
 				HttpApiThread.music().getSongs(new HttpApiHandler<ArrayList<Song>>(mActivity) {

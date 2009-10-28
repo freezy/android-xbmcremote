@@ -31,7 +31,7 @@ import org.xbmc.android.util.Crc32;
  * 
  * @author freezy <phreezie@gmail.com>
  */
-public class Album implements ICoverArt, Serializable {
+public class Album implements ICoverArt, Serializable, NamedResource {
 
 	/**
 	 * Points to where the album thumbs are stored
@@ -69,6 +69,10 @@ public class Album implements ICoverArt, Serializable {
 		return "/Music";
 	}
 
+	public String getShortName() {
+		return this.name;
+	}
+	
 	/**
 	 * Composes the complete path to the album's thumbnail
 	 * @return Path to thumbnail

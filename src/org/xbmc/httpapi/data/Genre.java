@@ -23,12 +23,13 @@ package org.xbmc.httpapi.data;
 
 import java.io.Serializable;
 
+
 /**
  * Genre is basically a name and an ID.
  * 
  * @author Team XBMC
  */
-public class Genre implements Serializable {
+public class Genre implements Serializable, NamedResource {
 
 	/**
 	 * Constructor
@@ -64,6 +65,10 @@ public class Genre implements Serializable {
 	 * Genre name
 	 */
 	public String name;
+	
+	public String getShortName() {
+		return this.name;
+	}
 	
 	private static final long serialVersionUID = 9073064679039418773L;
 }

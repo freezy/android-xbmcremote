@@ -4,7 +4,7 @@ import java.net.URLDecoder;
 
 import org.xbmc.httpapi.Connection;
 
-public class MediaLocation {
+public class MediaLocation implements NamedResource {
 	
 	public String name, path;
 	public boolean isDirectory;
@@ -20,6 +20,10 @@ public class MediaLocation {
 		this.path = path;
 		this.isDirectory = path.endsWith("/") || path.endsWith("\\");
 		this.isArchive = isDirectory && path.startsWith("rar://") || path.startsWith("zip://");
+	}
+	
+	public String getShortName(){
+		return this.name;
 	}
 	
 	/**

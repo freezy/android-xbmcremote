@@ -22,12 +22,13 @@
 package org.xbmc.httpapi.data;
 import java.util.Formatter;
 
+
 /**
  * The song class contains everything to know about a song. It's basically a
  * data container with some smallish formatting methods 
  * @author freezy <f3k@hosts.ch>
  */
-public class Song implements Comparable<Song>, ICoverArt {
+public class Song implements Comparable<Song>, ICoverArt, NamedResource {
 	
 	/**
 	 * Constructor
@@ -119,6 +120,10 @@ public class Song implements Comparable<Song>, ICoverArt {
 	
 	public String getName() {
 		return title;
+	}
+	
+	public String getShortName() {
+		return getName();
 	}
 
 	public int getFallbackCrc() {
