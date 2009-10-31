@@ -53,9 +53,16 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 					String extra = intent.getStringExtra(android.telephony.TelephonyManager.EXTRA_STATE);
 					if(extra.equals(android.telephony.TelephonyManager.EXTRA_STATE_RINGING)) {
 						// someone is calling, we get all infos and pause the playback
-	                    String number = intent.getStringExtra(android.telephony.TelephonyManager.EXTRA_INCOMING_NUMBER);
-	                    String id = SmsPopupUtils.getPersonIdFromPhoneNumber(context, number);
-	                    String callername = SmsPopupUtils.getPersonName(context, id, number);
+						String number = null;
+						String id = null;
+						String callername = null;
+	                    number = intent.getStringExtra(android.telephony.TelephonyManager.EXTRA_INCOMING_NUMBER);
+	                    if(number != null){
+	                    	id = SmsPopupUtils.getPersonIdFromPhoneNumber(context, number);
+	                    	callername = SmsPopupUtils.getPersonName(context, id, number);
+	                    }
+	                    else
+	                    	callername = "Unknown Number";
 	                    // Bitmap isn't supported by the event server, so we have to compress it
 	                    Bitmap pic;
 	                    if(id != null)
