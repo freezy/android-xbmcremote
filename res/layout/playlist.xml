@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent"
+	android:orientation="vertical" 
+	android:background="#000000">
+	<include layout="@layout/titlebar" />
+	<org.xbmc.android.widget.FastScrollView
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<ListView 
+			android:id="@+id/playlist_list"
+			android:layout_height="fill_parent"
+			android:layout_width="fill_parent"
+			android:fadingEdge="none"
+			android:scrollbars="none" />
+	</org.xbmc.android.widget.FastScrollView>
+</LinearLayout>

@@ -437,6 +437,18 @@ public class MusicWrapper extends Wrapper {
 	}
 	
 	/**
+	 * Returns an array of songs on the playlist. Empty array if nothing is playing.
+	 * @param handler Callback
+	 */
+	public void getPlaylist(final HttpApiHandler<ArrayList<Song>> handler) {
+		mHandler.post(new Runnable() {
+			public void run() {
+				handler.value = music(handler).getPlaylist();
+			}
+		});
+	}
+	
+	/**
 	 * Returns bitmap of an album cover. Note that the callback is done by the
 	 * helper methods below.
 	 * @param handler Callback handler

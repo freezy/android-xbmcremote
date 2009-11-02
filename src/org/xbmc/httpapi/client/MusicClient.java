@@ -57,6 +57,8 @@ public class MusicClient {
 	public static final String PLAYLIST_ID = "0";
 	public static final String LIBRARY_TYPE = "songs";
 	
+	public static final int PLAYLIST_LIMIT = 100;
+	
 	private final Connection mConnection;
 
 	/**
@@ -122,6 +124,49 @@ public class MusicClient {
 	}
 	
 	/**
+	 * Retrieves the currently playing song number in the playlist.
+	 * @return Number of items in the playlist
+	 */
+	public int getPlaylistPosition() {
+		return mConnection.getInt("GetPlaylistSong");
+	}
+	
+	/**
+	 * Returns the first {@link PLAYLIST_LIMIT} songs of the playlist. 
+	 * @return Songs in the playlist.
+	 */
+	public ArrayList<Song> getPlaylist() {
+		final ArrayList<String> nodes = mConnection.getArray("GetDirectory", "playlistmusic://");
+		final ArrayList<String> ids = new ArrayList<String>();
+		final int playlistPosition = getPlaylistPosition();
+		int i = 0;
+		for (String node : nodes) {
+			ids.add(node.substring(node.lastIndexOf('/') + 1, node.lastIndexOf('.')));
+			if (++i > PLAYLIST_LIMIT + playlistPosition) {
+				break;
+			}
+		}
+		StringBuilder sql = new StringBuilder();
+		sql.append("idSong IN (");
+		int j = 0;
+		for (String id : ids) {
+			sql.append(id);
+			if (++j < i) {
+				sql.append(',');
+			}
+		}
+		sql.append(")");
+		final HashMap<Integer, Song> unsortedSongs = getSongsAsHashMap(sql);
+		final ArrayList<Song> sortedSongs = new ArrayList<Song>();
+		
+		for (String node : nodes) {
+			final int id = Integer.parseInt(node.substring(node.lastIndexOf('/') + 1, node.lastIndexOf('.')));
+			sortedSongs.add(unsortedSongs.get(id));
+		}
+		return sortedSongs;
+	}
+	
+	/**
 	 * Clears current playlist
 	 * @return True on success, false otherwise.
 	 */
@@ -180,9 +225,9 @@ public class MusicClient {
 	 * @param sqlCondition SQL Condition
 	 * @return True on success, false otherwise.
 	 */
-	private boolean play(String sqlCondition) {
+	private boolean play(StringBuilder sqlCondition) {
 		clearPlaylist();
-		mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + sqlCondition);
+		mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + sqlCondition.toString());
 		setCurrentPlaylist();
 		return playlistNext();
 	}
@@ -377,7 +422,7 @@ public class MusicClient {
 	 * @param sqlCondition SQL condition which tracks to return
 	 * @return Found tracks
 	 */
-	private ArrayList<Song> getSongs(String sqlCondition) {
+	private ArrayList<Song> getSongs(StringBuilder sqlCondition) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
 		sb.append(" FROM songview WHERE ");
@@ -387,15 +432,29 @@ public class MusicClient {
 	}
 	
 	/**
+	 * Returns a hash map containing tracks of a certain condition.
+	 * @param sqlCondition SQL condition which tracks to return
+	 * @return Found tracks
+	 */
+	private HashMap<Integer, Song> getSongsAsHashMap(StringBuilder sqlCondition) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
+		sb.append(" FROM songview WHERE ");
+		sb.append(sqlCondition);
+		sb.append(" ORDER BY iTrack, strFileName");
+		return parseSongsAsHashMap(mConnection.query("QueryMusicDatabase", sb.toString()));
+	}
+	
+	/**
 	 * Returns the SQL condition that returns all songs of a song.
 	 * @param song Song
 	 * @return SQL string
 	 */
-	private String getSongsCondition(Song song) {
-		StringBuilder sb = new StringBuilder();
+	private StringBuilder getSongsCondition(Song song) {
+		final StringBuilder sb = new StringBuilder();
 		sb.append("idSong = ");
 		sb.append(song.id);
-		return sb.toString();
+		return sb;
 	}
 
 	/**
@@ -403,11 +462,11 @@ public class MusicClient {
 	 * @param album Album
 	 * @return SQL string
 	 */
-	private String getSongsCondition(Album album) {
-		StringBuilder sb = new StringBuilder();
+	private StringBuilder getSongsCondition(Album album) {
+		final StringBuilder sb = new StringBuilder();
 		sb.append("idAlbum = ");
 		sb.append(album.id);
-		return sb.toString();
+		return sb;
 	}
 
 	/**
@@ -415,8 +474,8 @@ public class MusicClient {
 	 * @param artist Artist
 	 * @return SQL string
 	 */
-	private String getSongsCondition(Artist artist) {
-		StringBuilder sb = new StringBuilder();
+	private StringBuilder getSongsCondition(Artist artist) {
+		final StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		sb.append("  idArtist = " + artist.id);
 		sb.append("  OR idSong IN (");
@@ -440,7 +499,7 @@ public class MusicClient {
 		sb.append("     AND album.strExtraArtists != ''");
 		sb.append("  )");
 		sb.append(")");
-		return sb.toString();
+		return sb;
 	}	
 	
 	/**
@@ -448,14 +507,14 @@ public class MusicClient {
 	 * @param genre Genre
 	 * @return SQL string
 	 */
-	private String getSongsCondition(Genre genre) {
-		StringBuilder sb = new StringBuilder();
+	private StringBuilder getSongsCondition(Genre genre) {
+		final StringBuilder sb = new StringBuilder();
 		sb.append("idGenre = " + genre.id);
 		sb.append("OR idSong IN (");
 		sb.append("   SELECT exgenresong.idSong FROM exgenresong WHERE exgenresong.idGenre = ");
 		sb.append(genre.id);
 		sb.append(")");
-		return sb.toString();
+		return sb;
 	}
 
 	/**
@@ -464,8 +523,8 @@ public class MusicClient {
 	 * @param genre Genre
 	 * @return SQL string
 	 */
-	private String getSongsCondition(Artist artist, Genre genre) {
-		StringBuilder sb = new StringBuilder();
+	private StringBuilder getSongsCondition(Artist artist, Genre genre) {
+		final StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		sb.append("  idArtist = " + artist.id);
 		sb.append("  OR idSong IN (");
@@ -496,7 +555,7 @@ public class MusicClient {
 		sb.append(genre.id);
 		sb.append("  )");
 		sb.append(")");
-		return sb.toString();
+		return sb;
 	}
 	
 	/**
@@ -669,6 +728,50 @@ public class MusicClient {
 						Connection.trim(fields[row + 7]), 
 						Connection.trim(fields[row + 8]) 
 				));
+			}
+		} catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
+		}
+		return songs;		
+	}
+	
+	/**
+	 * Converts query response from HTTP API to a list of Song objects. Each
+	 * row must return the following columns in the following order:
+	 * <ol>
+	 * 	<li><code>idSong</code></li>
+	 * 	<li><code>strTitle</code></li>
+	 * 	<li><code>strArtist</code></li>
+	 * 	<li><code>strAlbum</code></li>
+	 * 	<li><code>iTrack</code></li>
+	 * 	<li><code>iDuration</code></li>
+	 * 	<li><code>strPath</code></li>
+	 * 	<li><code>strFileName</code></li>
+	 * 	<li><code>strThumb</code></li>
+	 * </ol> 
+	 * @param response
+	 * @return List of Songs
+	 */
+	private HashMap<Integer, Song> parseSongsAsHashMap(String response) {
+		HashMap<Integer, Song> songs = new HashMap<Integer, Song>();
+		String[] fields = response.split("<field>");
+		try { 
+			for (int row = 1; row < fields.length; row += 9) { 
+				songs.put(Connection.trimInt(fields[row]),
+					new Song( // int id, String title, String artist, String album, int track, int duration, String path, String filename, String thumbPath
+						Connection.trimInt(fields[row]),
+						Connection.trim(fields[row + 1]), 
+						Connection.trim(fields[row + 2]), 
+						Connection.trim(fields[row + 3]), 
+						Connection.trimInt(fields[row + 4]), 
+						Connection.trimInt(fields[row + 5]), 
+						Connection.trim(fields[row + 6]),
+						Connection.trim(fields[row + 7]), 
+						Connection.trim(fields[row + 8])
+					)
+				);
 			}
 		} catch (Exception e) {
 			System.err.println("ERROR: " + e.getMessage());

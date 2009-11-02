@@ -96,7 +96,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ErrorHandler.setActivity(this);
-       	setContentView(R.layout.nowplaying_portrait);
+       	setContentView(R.layout.nowplaying);
         
   	  	mControl = ConnectionManager.getHttpClient(this).control;
   	  	mInfo = ConnectionManager.getHttpClient(this).info;
@@ -158,6 +158,20 @@ public class NowPlayingActivity extends Activity implements Callback {
 		setupButton(R.id.MediaPlayPauseButton, ButtonCodes.REMOTE_PAUSE, R.drawable.now_playing_pause, R.drawable.now_playing_pause_down);
 		// next
 		setupButton(R.id.MediaNextButton, ButtonCodes.REMOTE_SKIP_PLUS, R.drawable.now_playing_next, R.drawable.now_playing_next_down);
+		// playlist button
+		findViewById(R.id.MediaPlaylistButton).setOnTouchListener(new OnTouchListener() {
+			public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					((ImageButton)v).setBackgroundResource(R.drawable.now_playing_playlist_down);
+					startActivity(new Intent(NowPlayingActivity.this, PlaylistActivity.class));
+					return true;
+				} else if (event.getAction() == MotionEvent.ACTION_UP) {
+					((ImageButton)v).setBackgroundResource(R.drawable.now_playing_playlist);
+					return true;
+				}
+				return false;
+			}
+		});
 
 	}
 	

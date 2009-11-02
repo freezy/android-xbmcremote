@@ -17,6 +17,7 @@
         <activity android:name=".activity.MusicGenreActivity" android:theme="@android:style/Theme.NoTitleBar" />
         <activity android:name=".activity.ListActivity" android:theme="@android:style/Theme.NoTitleBar" />
         <activity android:name=".activity.NowPlayingActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
+        <activity android:name=".activity.PlaylistActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
         <activity android:name=".activity.AboutActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait"/>
         <activity android:name=".activity.FileListActivity" />
         <activity android:name=".activity.SettingsActivity" />
