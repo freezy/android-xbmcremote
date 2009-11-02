@@ -70,8 +70,7 @@
 				<LinearLayout 
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					 >
+					android:orientation="vertical">
 					<RelativeLayout 
 						android:layout_width="fill_parent" 
 						android:layout_height="wrap_content"
@@ -83,8 +82,7 @@
 							android:textSize="12px"
 							android:textColor="#ffffffff"
 							android:gravity="left"
-							android:singleLine="true"
-							android:text="5:12" />
+							android:singleLine="true" />
 						<TextView 
 							android:id="@+id/now_playing_counter_right"
 							android:layout_width="wrap_content" 
@@ -93,8 +91,7 @@
 							android:textSize="12px"
 							android:textColor="#ffffffff"
 							android:gravity="right"
-							android:singleLine="true"
-							android:text="-2:11" />
+							android:singleLine="true" />
 					</RelativeLayout>
 					<TextView 
 						android:id="@+id/SongTextView"
@@ -104,7 +101,6 @@
 						android:textColor="#ffffffff"
 						android:gravity="center_horizontal"
 						android:singleLine="true"
-						android:text="Artist"
 						android:layout_marginTop="-15px" />
 					<TextView 
 						android:id="@+id/ArtistTextView"
@@ -112,11 +108,8 @@
 						android:layout_height="wrap_content"
 						android:singleLine="true"
 						android:gravity="center_horizontal"
-						android:textSize="14px"
-						android:text="Album" />
-					
+						android:textSize="14px" />
 				</LinearLayout>
-
 			</LinearLayout>
 		</FrameLayout>
 	</RelativeLayout>

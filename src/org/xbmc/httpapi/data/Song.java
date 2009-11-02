@@ -25,10 +25,11 @@ import java.util.Formatter;
 
 /**
  * The song class contains everything to know about a song. It's basically a
- * data container with some smallish formatting methods 
- * @author freezy <f3k@hosts.ch>
+ * data container with some smallish formatting methods
+ *  
+ * @author Team XBMC
  */
-public class Song implements Comparable<Song>, ICoverArt, NamedResource {
+public class Song implements ICoverArt, NamedResource {
 	
 	/**
 	 * Constructor
@@ -96,14 +97,6 @@ public class Song implements Comparable<Song>, ICoverArt, NamedResource {
 	 */
 	public String toString() {
 		return "[" + track + "/" + disc + "] " + artist + " - " + title;
-	}
-	
-	/**
-	 * Sort by filename, since track/disc numbers aren't always accurate
-	 */
-	public int compareTo(Song t) {
-		return filename.compareTo(t.filename); // filename comparison is more accurate
-		// return t.disc == disc ? (t.number > number ? -1 : 1) : (t.disc > disc ? -1 : 1)
 	}
 
 	/**

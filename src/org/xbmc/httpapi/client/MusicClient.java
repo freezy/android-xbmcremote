@@ -22,7 +22,6 @@
 package org.xbmc.httpapi.client;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 import org.xbmc.httpapi.Connection;
@@ -53,6 +52,7 @@ public class MusicClient {
 	public static final int MUSICDB_RECENTLY_PLAYED = 7;
 	public static final int MUSICDB_COMPILATION     = 8;
 	public static final int MUSICDB_YEARS           = 9;
+	public static final int MUSICDB_SINGLES         = 10;
 	
 	public static final String PLAYLIST_ID = "0";
 	public static final String LIBRARY_TYPE = "songs";
@@ -186,8 +186,6 @@ public class MusicClient {
 		setCurrentPlaylist();
 		return playlistNext();
 	}
-	
-
 	
 	/**
 	 * Starts playing the next media in the current playlist. 
@@ -677,7 +675,6 @@ public class MusicClient {
 			System.err.println("response = " + response);
 			e.printStackTrace();
 		}
-		Collections.sort(songs);
 		return songs;		
 	}
 	
