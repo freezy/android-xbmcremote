@@ -140,8 +140,10 @@ public class SongListLogic extends ListLogic {
 			case ITEM_CONTEXT_PLAY:
 				final HttpApiHandler<Boolean> handler = new HttpApiHandler<Boolean>(mActivity) {
 					public void run() {
-						if (value == true)
-							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+						if( value != null) {
+							if (value == true)
+								mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+						}
 					}
 				};
 				if (mAlbum == null) {

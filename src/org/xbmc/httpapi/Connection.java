@@ -103,7 +103,7 @@ public class Connection {
 	 * @param parameters  Parameters of the method, separated by ";"
 	 * @return Result
 	 */
-	public String query(String method, String parameters) {
+	public synchronized String query(String method, String parameters) {
 		try {
 			if (!settingsOK) {
 				throw new NoSettingsException();
