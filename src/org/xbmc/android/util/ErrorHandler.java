@@ -31,8 +31,8 @@ import org.xbmc.httpapi.NoNetworkException;
 import org.xbmc.httpapi.NoSettingsException;
 import org.xbmc.httpapi.WrongDataFormatException;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
@@ -55,18 +55,18 @@ import android.content.DialogInterface.OnClickListener;
  */
 public class ErrorHandler implements IErrorHandler {
 	
-	private static Activity sActivity;
+	private static Context sContext;
 	
 	/**
 	 * An activity is needed for the (potential) GUI stuff.
 	 * @param activity
 	 */
-	public ErrorHandler(Activity activity) {
-		sActivity = activity;
+	public ErrorHandler(Context context) {
+		sContext = context;
 	}
 	
-	public static void setActivity(Activity activity) {
-		sActivity = activity;
+	public static void setActivity(Context context) {
+		sContext = context;
 	}
 	
 	/**
@@ -74,7 +74,7 @@ public class ErrorHandler implements IErrorHandler {
 	 * @param exception Exception to handle.
 	 */
 	public void handle(Exception exception) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(sActivity);
+		final AlertDialog.Builder builder = new AlertDialog.Builder(sContext);
 		try {
 			throw exception;
 		} catch (NoSettingsException e) {
@@ -82,7 +82,7 @@ public class ErrorHandler implements IErrorHandler {
 			builder.setMessage(e.getMessage());
 			builder.setNeutralButton("Settings", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					sActivity.startActivity(new Intent(sActivity, SettingsActivity.class));
+					sContext.startActivity(new Intent(sContext, SettingsActivity.class));
 				}
 			});
 		} catch (NoNetworkException e) {
@@ -91,7 +91,7 @@ public class ErrorHandler implements IErrorHandler {
 			builder.setCancelable(true);
 			builder.setNeutralButton("Settings", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					sActivity.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+					sContext.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
 				}
 			});
 		} catch (WrongDataFormatException e) {
@@ -102,7 +102,7 @@ public class ErrorHandler implements IErrorHandler {
 			builder.setMessage("Make sure XBMC webserver is enabled and XBMC is running.");
 			builder.setNeutralButton("Settings", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					sActivity.startActivity(new Intent(sActivity, SettingsActivity.class));
+					sContext.startActivity(new Intent(sContext, SettingsActivity.class));
 				}
 			});
 		} catch (IOException e) {
@@ -111,7 +111,7 @@ public class ErrorHandler implements IErrorHandler {
 				builder.setMessage("XBMC Remote needs local network access. Please make sure that your wireless network is activated. You can click on the Settings button below to directly access your network settings.");
 				builder.setNeutralButton("Settings", new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						sActivity.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+						sContext.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
 					}
 				});
 			} else {
@@ -124,7 +124,7 @@ public class ErrorHandler implements IErrorHandler {
 				builder.setMessage("The supplied username and/or password is incorrect. Please check your settings.");
 				builder.setNeutralButton("Settings", new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						sActivity.startActivity(new Intent(sActivity, SettingsActivity.class));
+						sContext.startActivity(new Intent(sContext, SettingsActivity.class));
 					}
 				});
 			}

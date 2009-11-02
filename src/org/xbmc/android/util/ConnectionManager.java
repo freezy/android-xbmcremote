@@ -32,7 +32,6 @@ import javax.jmdns.ServiceInfo;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.HttpClient;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -118,12 +117,12 @@ public class ConnectionManager {
 	 * Returns an instance of the HTTP Client. Instantiation takes place only
 	 * once, otherwise the first instance is returned.
 	 * 
-	 * @param activity
+	 * @param context
 	 * @return Client for XBMC's HTTP API
 	 */
-	public static HttpClient getHttpClient(Activity activity) {
+	public static HttpClient getHttpClient(Context context) {
 		if (sHttpApiInstance == null) {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 			String prefHost = prefs.getString("setting_ip", "10.10.10.10");
 
 			// Define the variables for the connection
@@ -156,13 +155,13 @@ public class ConnectionManager {
 			} catch (ClassCastException e) {}
 			
 			if (port > 0 && user != null && user.length() > 0) {
-				sHttpApiInstance = new HttpClient(host, port, user, pass, timeout, new ErrorHandler(activity));
+				sHttpApiInstance = new HttpClient(host, port, user, pass, timeout, new ErrorHandler(context));
 			} else if (user != null && user.length() > 0) {
-				sHttpApiInstance = new HttpClient(host, user, pass, timeout, new ErrorHandler(activity));
+				sHttpApiInstance = new HttpClient(host, user, pass, timeout, new ErrorHandler(context));
 			} else if (port > 0) {
-				sHttpApiInstance = new HttpClient(host, port, timeout, new ErrorHandler(activity));
+				sHttpApiInstance = new HttpClient(host, port, timeout, new ErrorHandler(context));
 			} else {
-				sHttpApiInstance = new HttpClient(host, timeout, new ErrorHandler(activity));
+				sHttpApiInstance = new HttpClient(host, timeout, new ErrorHandler(context));
 			}
 		}
 		return sHttpApiInstance;
@@ -181,23 +180,15 @@ public class ConnectionManager {
 	}
 	
 	/**
-	 * Once instantiated with the activity we can use this one.
-	 * @return Client for XBMC's HTTP API
-	 */
-	public static HttpClient getHttpClient() {
-		return sHttpApiInstance;
-	}
-	
-	/**
 	 * Returns an instance of the Event Server Client. Instantiation takes
 	 * place only once, otherwise the first instance is returned.
 	 * 
-	 * @param activity
+	 * @param context
 	 * @return Client for XBMC's Event Server
 	 */
-	public static EventClient getEventClient(Activity activity) {
+	public static EventClient getEventClient(Context context) {
 		if (sEventClientInstance == null) {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 			
 			String prefHost = prefs.getString("setting_ip", "10.10.10.10");
 
@@ -227,15 +218,6 @@ public class ConnectionManager {
 			}
 		}
 		return sEventClientInstance;
-	}
-	
-	/**
-	 * Once instantiated with the activity we can use this one.
-	 * @return Client for XBMC's Event Server
-	 */
-	public static EventClient getEventClient() {
-		//return sEventClientInstance;
-		return getEventClient(null);
 	}
 	
 	/**

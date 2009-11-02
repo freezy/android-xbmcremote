@@ -42,8 +42,8 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
-		EventClient client = ConnectionManager.getEventClient();
-		HttpClient http = ConnectionManager.getHttpClient();
+		EventClient client = ConnectionManager.getEventClient(context);
+		HttpClient http = ConnectionManager.getHttpClient(context);
 		SharedPreferences prefs = context.getSharedPreferences("XBMCRemotePrefsFile", Context.MODE_WORLD_WRITEABLE);
 		// currently no new connection to the event server is opened
 		if(client != null) {

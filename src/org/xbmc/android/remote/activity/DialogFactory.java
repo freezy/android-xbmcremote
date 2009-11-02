@@ -66,7 +66,7 @@ public abstract class DialogFactory {
 		dialog.setContentView(R.layout.albuminfo);
 		
 		// DEPRECATED
-		ConnectionManager.getHttpClient().music.updateAlbumInfo(album);
+		ConnectionManager.getHttpClient(activity).music.updateAlbumInfo(album);
 		dialog.setTitle(album.name);
 
 		// get controls
@@ -154,7 +154,7 @@ public abstract class DialogFactory {
         
 		trackTable.setScrollContainer(true);
 		
-		ArrayList<Song> songs = ConnectionManager.getHttpClient().music.getSongs(album);
+		ArrayList<Song> songs = ConnectionManager.getHttpClient(activity).music.getSongs(album);
 		numTrackText.setText(songs.size() + " Tracks");
 		
 		
