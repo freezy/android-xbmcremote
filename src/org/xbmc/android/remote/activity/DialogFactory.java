@@ -85,7 +85,7 @@ public abstract class DialogFactory {
 		});
 		playButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(activity), album);
+				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(activity), album);
 			}
 		});
 		

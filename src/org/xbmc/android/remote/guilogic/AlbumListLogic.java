@@ -34,7 +34,6 @@ import org.xbmc.android.remote.guilogic.holder.ThreeHolder;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
-import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
@@ -158,7 +157,7 @@ public class AlbumListLogic extends ListLogic {
 		final Album album = holder.getHolderItem();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), album);
+				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), album);
 				break;
 			case ITEM_CONTEXT_PLAY:
 				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity) {

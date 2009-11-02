@@ -29,7 +29,6 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.MusicGenreActivity;
 import org.xbmc.android.remote.activity.NowPlayingActivity;
 import org.xbmc.httpapi.data.Genre;
-import org.xbmc.httpapi.data.Song;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -94,7 +93,7 @@ public class GenreListLogic extends ListLogic {
 		final Genre genre = (Genre)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), genre);
+				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), genre);
 				break;
 			case ITEM_CONTEXT_PLAY:
 				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity) {

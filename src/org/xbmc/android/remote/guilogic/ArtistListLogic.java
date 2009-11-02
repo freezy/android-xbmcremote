@@ -30,7 +30,6 @@ import org.xbmc.android.remote.activity.MusicArtistActivity;
 import org.xbmc.android.remote.activity.NowPlayingActivity;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
-import org.xbmc.httpapi.data.Song;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -117,7 +116,7 @@ public class ArtistListLogic extends ListLogic {
 		final Artist artist = (Artist)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), artist);
+				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), artist);
 				break;
 			case ITEM_CONTEXT_PLAY:
 				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity) {
@@ -128,7 +127,7 @@ public class ArtistListLogic extends ListLogic {
 				}, artist);
 				break;
 			case ITEM_CONTEXT_QUEUE_GENRE:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Song>(mActivity), artist, mGenre);
+				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), artist, mGenre);
 				break;
 			case ITEM_CONTEXT_PLAY_GENRE:
 				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), artist, mGenre);

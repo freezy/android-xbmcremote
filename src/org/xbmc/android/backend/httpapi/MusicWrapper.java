@@ -198,7 +198,7 @@ public class MusicWrapper extends Wrapper {
 	 * @param handler Callback
 	 * @param album Album to add
 	 */
-	public void addToPlaylist(final HttpApiHandler<Song> handler, final Album album) {
+	public void addToPlaylist(final HttpApiHandler<Boolean> handler, final Album album) {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				final MusicClient mc = music(handler);
@@ -217,7 +217,7 @@ public class MusicWrapper extends Wrapper {
 	 * @param handler Callback
 	 * @param genre Genre of songs to add
 	 */
-	public void addToPlaylist(final HttpApiHandler<Song> handler, final Genre genre) {
+	public void addToPlaylist(final HttpApiHandler<Boolean> handler, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				final MusicClient mc = music(handler);
@@ -289,7 +289,7 @@ public class MusicWrapper extends Wrapper {
 	 * @param handler Callback
 	 * @param artist 
 	 */
-	public void addToPlaylist(final HttpApiHandler<Song> handler, final Artist artist) {
+	public void addToPlaylist(final HttpApiHandler<Boolean> handler, final Artist artist) {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				final MusicClient mc = music(handler);
@@ -309,7 +309,7 @@ public class MusicWrapper extends Wrapper {
 	 * @param artist 
 	 * @param genre 
 	 */
-	public void addToPlaylist(final HttpApiHandler<Song> handler, final Artist artist, final Genre genre) {
+	public void addToPlaylist(final HttpApiHandler<Boolean> handler, final Artist artist, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				final MusicClient mc = music(handler);

@@ -55,6 +55,7 @@ public class MusicClient {
 	public static final int MUSICDB_YEARS           = 9;
 	
 	public static final String PLAYLIST_ID = "0";
+	public static final String LIBRARY_TYPE = "songs";
 	
 	private final Connection mConnection;
 
@@ -68,60 +69,45 @@ public class MusicClient {
 	
 	/**
 	 * Adds an album to the current playlist.
-	 * @param album
-	 * @return first song of the album
+	 * @param album Album
+	 * @return True on success, false otherwise.
 	 */
-	public Song addToPlaylist(Album album) {
-		return addToPlaylist(getSongs(album));
+	public boolean addToPlaylist(Album album) {
+		return mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(album));
 	}
 
 	/**
 	 * Adds all songs from an artist to the current playlist.
-	 * @param artist
-	 * @return first song of all added songs
+	 * @param artist Artist
+	 * @return True on success, false otherwise.
 	 */
-	public Song addToPlaylist(Artist artist) {
-		return addToPlaylist(getSongs(artist));
+	public boolean addToPlaylist(Artist artist) {
+		return mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist));
 	}
 
 	/**
 	 * Adds all songs from a genre to the current playlist.
-	 * @param genre
-	 * @return first song of all added songs
+	 * @param genre Genre
+	 * @return True on success, false otherwise.
 	 */
-	public Song addToPlaylist(Genre genre) {
-		return addToPlaylist(getSongs(genre));
+	public boolean addToPlaylist(Genre genre) {
+		return mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(genre));
 	}
 
 	/**
 	 * Adds songs of a genre from an artist to the current playlist.
-	 * @param artist
-	 * @return first song of all added songs
+	 * @param artist Artist
+	 * @param genre Genre
+	 * @return True on success, false otherwise.
 	 */
-	public Song addToPlaylist(Artist artist, Genre genre) {
-		return addToPlaylist(getSongs(artist, genre));
-	}
-	
-	/**
-	 * Adds a list of songs to the current playlist.
-	 * @param artist
-	 * @return first song of all added songs
-	 */
-	public Song addToPlaylist(ArrayList<Song> songs) {
-		Song firstSong = null;
-		for (Song song : songs) {
-			if (firstSong == null) {
-				firstSong = song;
-			}
-			addToPlaylist(song);
-		}
-		return firstSong;
+	public boolean addToPlaylist(Artist artist, Genre genre) {
+		return mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist, genre));
 	}
 	
 	/**
 	 * Adds a song to the current playlist.
-	 * @param song
-	 * @return true on success, false otherwise.
+	 * @param song Song to add
+	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(Song song) {
 		return mConnection.getBoolean("AddToPlayList", song.path + ";" + PLAYLIST_ID);
@@ -129,7 +115,7 @@ public class MusicClient {
 	
 	/**
 	 * Returns how many items are in the playlist.
-	 * @return
+	 * @return Number of items in the playlist
 	 */
 	public int getPlaylistSize() {
 		return mConnection.getInt("GetPlaylistLength", PLAYLIST_ID);
@@ -137,78 +123,75 @@ public class MusicClient {
 	
 	/**
 	 * Clears current playlist
-	 * @return true on success, false otherwise.
+	 * @return True on success, false otherwise.
 	 */
 	public boolean clearPlaylist() {
 		return mConnection.getBoolean("ClearPlayList", PLAYLIST_ID);
 	}
 	
 	/**
+	 * Adds a song to the current playlist and plays it.
+	 * @param song Song
+	 * @return True on success, false otherwise.
+	 */
+	public boolean play(Song song) {
+		return play(getSongsCondition(song));
+	}
+	
+	/**
 	 * Plays an album. Playlist is previously cleared.
-	 * @param album
-	 * @return true on success, false otherwise.
+	 * @param album Album to play
+	 * @return True on success, false otherwise.
 	 */
 	public boolean play(Album album) {
-		return play(getSongs(album));
+		return play(getSongsCondition(album));
 	}
 	
 	/**
 	 * Plays all songs of a genre. Playlist is previously cleared.
-	 * @param genre
-	 * @return true on success, false otherwise.
+	 * @param genre Genre
+	 * @return True on success, false otherwise.
 	 */
 	public boolean play(Genre genre) {
-		return play(getSongs(genre));
+		return play(getSongsCondition(genre));
 	}
 	
 	/**
 	 * Plays all songs from an artist. Playlist is previously cleared.
-	 * @param artist
-	 * @return true on success, false otherwise.
+	 * @param artist Artist
+	 * @return True on success, false otherwise.
 	 */
 	public boolean play(Artist artist) {
-		return play(getSongs(artist));
+		return play(getSongsCondition(artist));
 	}
 	
 	/**
 	 * Plays songs of a genre from an artist. Playlist is previously cleared.
-	 * @param artist
-	 * @param genre
-	 * @return true on success, false otherwise.
+	 * @param artist Artist
+	 * @param genre Genre
+	 * @return True on success, false otherwise.
 	 */
 	public boolean play(Artist artist, Genre genre) {
-		return play(getSongs(artist, genre));
+		return play(getSongsCondition(artist, genre));
 	}
 
-	
 	/**
-	 * Plays all songs of this array.
-	 * @param artist
-	 * @param genre
-	 * @return true on success, false otherwise.
+	 * Plays all songs fetched by a SQL condition.
+	 * @param sqlCondition SQL Condition
+	 * @return True on success, false otherwise.
 	 */
-	public boolean play(ArrayList<Song> songs) {
+	private boolean play(String sqlCondition) {
 		clearPlaylist();
-		for (Song song : songs) {
-			addToPlaylist(song);
-		}
+		mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + sqlCondition);
 		setCurrentPlaylist();
 		return playlistNext();
 	}
 	
-	/**
-	 * Adds a song to the current playlist and plays it.
-	 * @param song
-	 * @return true on success, false otherwise.
-	 */
-	public boolean play(Song song) {
-		return mConnection.getBoolean("PlayFile", song.path + ";" + PLAYLIST_ID);
-	}
-	
+
 	
 	/**
 	 * Starts playing the next media in the current playlist. 
-	 * @return true on success, false otherwise.
+	 * @return True on success, false otherwise.
 	 */
 	public boolean playlistNext() {
 		return mConnection.getBoolean("PlayNext");
@@ -227,14 +210,14 @@ public class MusicClient {
 	
 	/**
 	 * Sets current playlist to "0"
-	 * @return true on success, false otherwise.
+	 * @return True on success, false otherwise.
 	 */
 	public boolean setCurrentPlaylist() {
 		return mConnection.getBoolean("SetCurrentPlaylist", PLAYLIST_ID);
 	}
 	
 	/**
-	 * Gets all allbums with given artist IDs
+	 * Gets all albums with given artist IDs
 	 * @param artistIDs Array of artist IDs
 	 * @return All compilation albums
 	 */
@@ -264,18 +247,6 @@ public class MusicClient {
 		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
 		sb.append(" FROM albumview WHERE albumview.strAlbum <> ''");
 		sb.append(" ORDER BY upper(strAlbum), strAlbum");
-		
-/*		sb.append("SELECT a.idAlbum, a.strAlbum, i.strArtist, a.iYear, (");
-		sb.append("   SELECT p.strPath");
-		sb.append("   FROM song AS s, path AS p");
-		sb.append("   WHERE s.idPath = p.idPath");
-		sb.append("   AND s.idAlbum = a.idAlbum");
-		sb.append("   LIMIT 1");
-		sb.append("  )");
-		sb.append("  FROM album AS a, artist AS i");
-		sb.append("  WHERE a.idArtist = i.idArtist");
-		sb.append("  ORDER BY i.strArtist ASC");
-//		sb.append("  LIMIT 300"); // let's keep it at 300 for now*/
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 
@@ -285,25 +256,11 @@ public class MusicClient {
 	 */
 	public ArrayList<Album> getAlbums(Artist artist) {
 		StringBuilder sb = new StringBuilder();
-		
 		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
 		sb.append(" FROM albumview");
 		sb.append(" WHERE albumview.strAlbum <> ''");
 		sb.append(" AND idArtist = " + artist.id);
 		sb.append(" ORDER BY upper(strAlbum), strAlbum");
-		
-/*		sb.append("SELECT DISTINCT a.idAlbum, a.strAlbum, i.strArtist, a.iYear, (");
-		sb.append("   SELECT p.strPath");
-		sb.append("   FROM song AS s, path AS p");
-		sb.append("   WHERE s.idPath = p.idPath");
-		sb.append("   AND s.idAlbum = a.idAlbum");
-		sb.append("   LIMIT 1");
-		sb.append("  )");
-		sb.append("  FROM song AS s, album AS a, artist as i");
-		sb.append("  WHERE s.idArtist = " + artist.id);
-		sb.append("  AND s.idAlbum = a.idAlbum");
-		sb.append("  AND i.idArtist = s.idArtist");
-		sb.append("  ORDER BY a.strAlbum ASC");*/
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 
@@ -313,7 +270,6 @@ public class MusicClient {
 	 */
 	public ArrayList<Album> getAlbums(Genre genre) {
 		StringBuilder sb = new StringBuilder();
-		
 		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
 		sb.append("  FROM albumview");
 		sb.append("  WHERE albumview.strAlbum <> ''");
@@ -327,27 +283,6 @@ public class MusicClient {
 		sb.append("        WHERE idGenre = " + genre.id);
 		sb.append("  ))");
 		sb.append(" ORDER BY upper(strAlbum), strAlbum");
-		
-/*		sb.append("SELECT DISTINCT alb.idAlbum, alb.strAlbum, art.strArtist, alb.iYear, (");
-		sb.append("   SELECT p.strPath");
-		sb.append("   FROM song AS s, path AS p");
-		sb.append("   WHERE s.idPath = p.idPath");
-		sb.append("   AND s.idAlbum = alb.idAlbum");
-		sb.append("   LIMIT 1");
-		sb.append("  )");
-		sb.append("  FROM artist as art, album as alb");
-		sb.append("  WHERE art.idArtist = alb.idArtist");
-		sb.append("  AND (alb.idAlbum IN (");
-		sb.append("        SELECT DISTINCT s.idAlbum");
-		sb.append("        FROM exgenresong AS g, song AS s");
-		sb.append("        WHERE g.idGenre = " + genre.id);
-		sb.append("        AND g.idSong = s.idSong");
-		sb.append("  ) OR alb.idAlbum IN (");
-		sb.append("        SELECT DISTINCT idAlbum");
-		sb.append("        FROM song");
-		sb.append("        WHERE idGenre = " + genre.id);
-		sb.append("  ))");
-		sb.append("  ORDER BY alb.strAlbum");*/
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
@@ -357,7 +292,6 @@ public class MusicClient {
 	 * @return All albums
 	 */
 	public ArrayList<Artist> getArtists(boolean albumArtistsOnly) {
-		
 		StringBuilder sb = new StringBuilder();
 		if (albumArtistsOnly) {
 			sb.append("SELECT idArtist, strArtist ");
@@ -382,10 +316,11 @@ public class MusicClient {
 
 	/**
 	 * Gets all artists with at least one song of a genre.
+	 * @param genre Genre
+	 * @param albumArtistsOnly If set to true, hide artists who appear only on compilations.
 	 * @return Albums with a genre
 	 */
 	public ArrayList<Artist> getArtists(Genre genre, boolean albumArtistsOnly) {
-
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT DISTINCT idArtist, strArtist ");
 		sb.append("  FROM artist");
@@ -399,7 +334,6 @@ public class MusicClient {
 		sb.append("     FROM song");
 		sb.append("     WHERE idGenre = " + genre.id);
 		sb.append("  ))");
-
 		if (albumArtistsOnly) {
 			sb.append("  AND (");
 			sb.append("    idArtist IN (");
@@ -441,68 +375,148 @@ public class MusicClient {
 	}
 	
 	/**
-	 * Returns a list containing all tracks of an album. The list is sorted by filename.
-	 * @param album
-	 * @return Tracks of an album
+	 * Returns a list containing tracks of a certain condition.
+	 * @param sqlCondition SQL condition which tracks to return
+	 * @return Found tracks
 	 */
-	public ArrayList<Song> getSongs(Album album) {
+	private ArrayList<Song> getSongs(String sqlCondition) {
 		StringBuilder sb = new StringBuilder();
-		
 		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
-		sb.append("  FROM songview");
-		sb.append("  WHERE idAlbum = " + album.id);
+		sb.append(" FROM songview WHERE ");
+		sb.append(sqlCondition);
 		sb.append(" ORDER BY iTrack, strFileName");
-		
-/*		sb.append("SELECT s.idSong, s.strTitle, art.strArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
-		sb.append("  FROM song AS s, path AS p, artist AS art, album AS alb, artist as albArtist");
-		sb.append("  WHERE s.idPath = p.idPath");
-		sb.append("  AND s.idArtist = art.idArtist");
-		sb.append("  AND s.idAlbum = alb.idAlbum");
-		sb.append("  AND albArtist.idArtist = alb.idArtist");
-		sb.append("  AND s.idAlbum = " + album.id);
-		sb.append("  ORDER BY s.iTrack, s.strFileName");*/
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
 	}
 	
+	/**
+	 * Returns the SQL condition that returns all songs of a song.
+	 * @param song Song
+	 * @return SQL string
+	 */
+	private String getSongsCondition(Song song) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("idSong = ");
+		sb.append(song.id);
+		return sb.toString();
+	}
+
+	/**
+	 * Returns the SQL condition that returns all songs of an album.
+	 * @param album Album
+	 * @return SQL string
+	 */
+	private String getSongsCondition(Album album) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("idAlbum = ");
+		sb.append(album.id);
+		return sb.toString();
+	}
+
+	/**
+	 * Returns the SQL condition that returns all songs of an artist.
+	 * @param artist Artist
+	 * @return SQL string
+	 */
+	private String getSongsCondition(Artist artist) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		sb.append("  idArtist = " + artist.id);
+		sb.append("  OR idSong IN (");
+		sb.append("     SELECT exartistsong.idSong");
+		sb.append("     FROM exartistsong");
+		sb.append("     WHERE exartistsong.idArtist = ");
+		sb.append(artist.id);
+		sb.append("  ) OR idSong IN (");
+		sb.append("     SELECT song.idSong");
+		sb.append("     FROM song");
+		sb.append("     JOIN album ON song.idAlbum = album.idAlbum");
+		sb.append("     WHERE album.idArtist = ");
+		sb.append(artist.id);
+		sb.append("  ) OR idSong IN (");
+		sb.append("     SELECT song.idSong");
+		sb.append("     FROM song");
+		sb.append("     JOIN exartistalbum ON song.idAlbum = exartistalbum.idAlbum");
+		sb.append("     JOIN album ON song.idAlbum = album.idAlbum");
+		sb.append("     WHERE exartistalbum.idArtist = ");
+		sb.append(artist.id);
+		sb.append("     AND album.strExtraArtists != ''");
+		sb.append("  )");
+		sb.append(")");
+		return sb.toString();
+	}	
+	
+	/**
+	 * Returns the SQL condition that returns all songs of a genre.
+	 * @param genre Genre
+	 * @return SQL string
+	 */
+	private String getSongsCondition(Genre genre) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("idGenre = " + genre.id);
+		sb.append("OR idSong IN (");
+		sb.append("   SELECT exgenresong.idSong FROM exgenresong WHERE exgenresong.idGenre = ");
+		sb.append(genre.id);
+		sb.append(")");
+		return sb.toString();
+	}
+
+	/**
+	 * Returns the SQL condition that returns all songs of a genre AND an artist.
+	 * @param artist Artist
+	 * @param genre Genre
+	 * @return SQL string
+	 */
+	private String getSongsCondition(Artist artist, Genre genre) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		sb.append("  idArtist = " + artist.id);
+		sb.append("  OR idSong IN (");
+		sb.append("     SELECT exartistsong.idSong");
+		sb.append("     FROM exartistsong");
+		sb.append("     WHERE exartistsong.idArtist = ");
+		sb.append(artist.id);
+		sb.append("  ) OR idSong IN (");
+		sb.append("     SELECT song.idSong");
+		sb.append("     FROM song");
+		sb.append("     JOIN album ON song.idAlbum = album.idAlbum");
+		sb.append("     WHERE album.idArtist = ");
+		sb.append(artist.id);
+		sb.append("  ) OR idSong IN (");
+		sb.append("     SELECT song.idSong");
+		sb.append("     FROM song");
+		sb.append("     JOIN exartistalbum ON song.idAlbum = exartistalbum.idAlbum");
+		sb.append("     JOIN album ON song.idAlbum = album.idAlbum");
+		sb.append("     WHERE exartistalbum.idArtist = ");
+		sb.append(artist.id);
+		sb.append("     AND album.strExtraArtists != ''");
+		sb.append("  )");
+		sb.append(") AND (");
+		sb.append("  idGenre = ");
+		sb.append(genre.id);
+		sb.append("  OR idSong IN (");
+		sb.append("     SELECT exgenresong.idSong FROM exgenresong WHERE exgenresong.idGenre = ");
+		sb.append(genre.id);
+		sb.append("  )");
+		sb.append(")");
+		return sb.toString();
+	}
+	
+	/**
+	 * Returns a list containing all tracks of an album. The list is sorted by filename.
+	 * @param album
+	 * @return All tracks of an album
+	 */
+	public ArrayList<Song> getSongs(Album album) {
+		return getSongs(getSongsCondition(album));
+	}
+
 	/**
 	 * Returns a list containing all tracks of an artist. The list is sorted by album name, filename.
 	 * @param artist Artist
 	 * @return All tracks of the artist
 	 */
 	public ArrayList<Song> getSongs(Artist artist) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb ");
-		sb.append("  FROM songview");
-		sb.append("  WHERE (");
-		sb.append("    idArtist = " + artist.id);
-		sb.append("    OR idSong IN (");
-		sb.append("       SELECT exartistsong.idSong");
-		sb.append("       FROM exartistsong");
-		sb.append("       WHERE exartistsong.idArtist = " + artist.id);
-		sb.append("    ) OR idSong IN (");
-		sb.append("       SELECT song.idSong");
-		sb.append("       FROM song");
-		sb.append("       JOIN album ON song.idAlbum = album.idAlbum");
-		sb.append("       WHERE album.idArtist = " + artist.id);
-		sb.append("    ) OR idSong IN (");
-		sb.append("       SELECT song.idSong");
-		sb.append("       FROM song");
-		sb.append("       JOIN exartistalbum ON song.idAlbum = exartistalbum.idAlbum");
-		sb.append("       JOIN album ON song.idAlbum = album.idAlbum");
-		sb.append("       WHERE exartistalbum.idArtist = " + artist.id);
-		sb.append("       AND album.strExtraArtists != ''");
-		sb.append("    )");
-		sb.append("  )");
-		
-/*		sb.append("SELECT s.idSong, s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
-		sb.append("  FROM song AS s, path AS p, artist art, album AS alb, artist as albArtist");
-		sb.append("  WHERE s.idPath = p.idPath");
-		sb.append("  AND s.idArtist = art.idArtist");
-		sb.append("  AND s.idAlbum = alb.idAlbum");
-		sb.append("  AND albArtist.idArtist = alb.idArtist");
-		sb.append("  AND s.idArtist = " + artist.id);
-		sb.append("  ORDER BY alb.strAlbum, s.iTrack, s.strFileName");*/
-		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
+		return getSongs(getSongsCondition(artist));
 	}
 	
 	/**
@@ -511,24 +525,7 @@ public class MusicClient {
 	 * @return All tracks of the genre
 	 */
 	public ArrayList<Song> getSongs(Genre genre) {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
-		sb.append("  FROM songview");
-		sb.append("  WHERE idGenre = " + genre.id);
-		sb.append("  OR idSong IN (");
-		sb.append("     SELECT exgenresong.idSong FROM exgenresong WHERE exgenresong.idGenre = " + genre.id);
-		sb.append("  )");
-		
-/*		sb.append("SELECT s.idSong, s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
-		sb.append("  FROM song AS s, path AS p, artist art, album AS alb, artist as albArtist");
-		sb.append("  WHERE s.idPath = p.idPath");
-		sb.append("  AND s.idArtist = art.idArtist");
-		sb.append("  AND s.idAlbum = alb.idAlbum");
-		sb.append("  AND albArtist.idArtist = alb.idArtist");
-		sb.append("  AND s.idGenre = " + genre.id);
-		sb.append("  ORDER BY art.StrArtist, alb.strAlbum, s.iTrack, s.strFileName");*/
-		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
+		return getSongs(getSongsCondition(genre));
 	}
 	
 	/**
@@ -538,47 +535,7 @@ public class MusicClient {
 	 * @return All tracks of the genre
 	 */
 	public ArrayList<Song> getSongs(Artist artist, Genre genre) {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb ");
-		sb.append("  FROM songview");
-		sb.append("  WHERE (");
-		sb.append("    idArtist = " + artist.id);
-		sb.append("    OR idSong IN (");
-		sb.append("       SELECT exartistsong.idSong");
-		sb.append("       FROM exartistsong");
-		sb.append("       WHERE exartistsong.idArtist = " + artist.id);
-		sb.append("    ) OR idSong IN (");
-		sb.append("       SELECT song.idSong");
-		sb.append("       FROM song");
-		sb.append("       JOIN album ON song.idAlbum = album.idAlbum");
-		sb.append("       WHERE album.idArtist = " + artist.id);
-		sb.append("    ) OR idSong IN (");
-		sb.append("       SELECT song.idSong");
-		sb.append("       FROM song");
-		sb.append("       JOIN exartistalbum ON song.idAlbum = exartistalbum.idAlbum");
-		sb.append("       JOIN album ON song.idAlbum = album.idAlbum");
-		sb.append("       WHERE exartistalbum.idArtist = " + artist.id);
-		sb.append("       AND album.strExtraArtists != ''");
-		sb.append("    )");
-		sb.append("  ) AND (");
-		sb.append("    idGenre = " + genre.id);
-		sb.append("    OR idSong IN (");
-		sb.append("       SELECT exgenresong.idSong FROM exgenresong WHERE exgenresong.idGenre = " + genre.id);
-		sb.append("    )");
-		sb.append("  )");
-		
-		/*
-		sb.append("SELECT s.idSong, s.strTitle, art.StrArtist, alb.strAlbum, albArtist.strArtist AS albumArtist, s.iTrack, s.iDuration, p.strPath, s.strFileName");
-		sb.append("  FROM song AS s, path AS p, artist art, album AS alb, artist as albArtist");
-		sb.append("  WHERE s.idPath = p.idPath");
-		sb.append("  AND s.idArtist = art.idArtist");
-		sb.append("  AND s.idAlbum = alb.idAlbum");
-		sb.append("  AND albArtist.idArtist = alb.idArtist");
-		sb.append("  AND s.idGenre = " + genre.id);
-		sb.append("  AND s.idArtist = " + artist.id);
-		sb.append("  ORDER BY art.StrArtist, alb.strAlbum, s.iTrack, s.strFileName");*/
-		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
+		return getSongs(getSongsCondition(artist, genre));
 	}
 	
 	/**
@@ -620,8 +577,9 @@ public class MusicClient {
 	 * 	<li><code>idAlbum</code></li>
 	 * 	<li><code>strAlbum</code></li>
 	 * 	<li><code>strArtist</code></li>
-	 * 	<li><code>path to album</code></li>
-	 * </ol>
+	 * 	<li><code>iYear</code></li>
+	 * 	<li><code>strThumb</code></li>
+	 * </ol> 
 	 * @param response
 	 * @return List of albums
 	 */
@@ -684,13 +642,16 @@ public class MusicClient {
 	 * Converts query response from HTTP API to a list of Song objects. Each
 	 * row must return the following columns in the following order:
 	 * <ol>
+	 * 	<li><code>idSong</code></li>
 	 * 	<li><code>strTitle</code></li>
 	 * 	<li><code>strArtist</code></li>
+	 * 	<li><code>strAlbum</code></li>
 	 * 	<li><code>iTrack</code></li>
 	 * 	<li><code>iDuration</code></li>
 	 * 	<li><code>strPath</code></li>
 	 * 	<li><code>strFileName</code></li>
-	 * </ol>
+	 * 	<li><code>strThumb</code></li>
+	 * </ol> 
 	 * @param response
 	 * @return List of Songs
 	 */
@@ -841,5 +802,4 @@ public class MusicClient {
 			}
 		};
 	}
-	
 }

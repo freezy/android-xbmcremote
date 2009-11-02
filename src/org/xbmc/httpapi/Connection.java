@@ -94,6 +94,7 @@ public class Connection {
 			settingsOK = true;
 		}
 		mErrorHandler = errorHandler;
+		setResponseFormat();
 	}
 	
 	/**
@@ -160,7 +161,7 @@ public class Connection {
 	 * @return Result
 	 */
 	public String getString(String method, String parameters) {
-		return this.query(method, parameters).replaceAll(LINE_SEP, "").trim();
+		return query(method, parameters).replaceAll(LINE_SEP, "").trim();
 	}
 	
 	/**
@@ -286,24 +287,28 @@ public class Connection {
 	}
 	
 	/**
-	 * Sets the correct response format
-	 * @deprecated doesn't really work
+	 * Sets the correct response format to default values
 	 */
-/*	private void setResponseFormat() {
+	private void setResponseFormat() {
 		try {
-			assertBoolean("SetResponseFormat", "WebHeader;false");
-			assertBoolean("SetResponseFormat", "WebFooter;false");
+			assertBoolean("SetResponseFormat", "WebHeader;true");
+			assertBoolean("SetResponseFormat", "WebFooter;true");
 			assertBoolean("SetResponseFormat", "Header; ");
 			assertBoolean("SetResponseFormat", "Footer; ");
-			assertBoolean("SetResponseFormat", "OpenTag; ");
+			assertBoolean("SetResponseFormat", "OpenTag;" + LINE_SEP);
+			assertBoolean("SetResponseFormat", "CloseTag;\n");
+			assertBoolean("SetResponseFormat", "CloseFinalTag;false");
+			
 			assertBoolean("SetResponseFormat", "OpenRecordSet; ");
+			assertBoolean("SetResponseFormat", "CloseRecordSet; ");
 			assertBoolean("SetResponseFormat", "OpenRecord; ");
-			assertBoolean("SetResponseFormat", "CloseRecord;\n");
-			assertBoolean("SetResponseFormat", "CloseField;|");
+			assertBoolean("SetResponseFormat", "CloseRecord;");
+			assertBoolean("SetResponseFormat", "OpenField;<field>");
+			assertBoolean("SetResponseFormat", "CloseField;</field>");
 		} catch (WrongDataFormatException e) {
 			mErrorHandler.handle(e);
 		}
-	}*/
+	}
 	
 	/**
 	 * Creates the API URL
@@ -337,7 +342,7 @@ public class Connection {
 	 * @return Trimmed value
 	 */
 	public static String trim(String value) {
-		return value.substring(0, value.length() - 8);
+		return value.replace("</record>", "").substring(0, value.length() - 8);
 	}	
 	
 	/**
