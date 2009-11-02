@@ -125,11 +125,11 @@ public class MusicPlaylistLogic extends ListLogic {
 	}
 	
 	private class SongAdapter extends ArrayAdapter<PrimitivePlaylistItem> {
-		private Activity mActivity;
+//		private Activity mActivity;
 		private final LayoutInflater mInflater;
 		SongAdapter(Activity activity, ArrayList<PrimitivePlaylistItem> items) {
 			super(activity, R.layout.listitem_oneliner, items);
-			mActivity = activity;
+//			mActivity = activity;
 			mInflater = LayoutInflater.from(activity);
 		}
 		@SuppressWarnings("unchecked")

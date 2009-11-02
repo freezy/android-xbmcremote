@@ -93,7 +93,7 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing");
+		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
 		switch (mTabHost.getCurrentTab()) {
 			case 0:
 				mAlbumLogic.onCreateOptionsMenu(menu);
@@ -102,7 +102,7 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 				mSongLogic.onCreateOptionsMenu(menu);
 				break;
 		}
-		menu.add(0, MENU_REMOTE, 0, "Remote control");
+		menu.add(0, MENU_REMOTE, 0, "Remote control").setIcon(R.drawable.menu_remote);
 		return super.onPrepareOptionsMenu(menu);
 	}
 	

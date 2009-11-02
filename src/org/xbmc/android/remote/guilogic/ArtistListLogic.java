@@ -137,7 +137,6 @@ public class ArtistListLogic extends ListLogic {
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu) {
-		menu.add(0, 1, 0, "Settings").setIcon(R.drawable.icon_menu_settings);
 	}
 	
 	private class ArtistAdapter extends ArrayAdapter<Artist> {
