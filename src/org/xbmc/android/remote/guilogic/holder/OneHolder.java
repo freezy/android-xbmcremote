@@ -33,14 +33,12 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ThreeHolder<T> implements IHolder {
+public class OneHolder<T> implements IHolder {
 
 	public long id = 0;
 
 	private final ImageView mIconView;
 	private final TextView mTitleView;
-	private final TextView mSubtitleView;
-	private final TextView mSubsubtitleView;
 	
 	private T mHolderItem;
 	private ICoverArt mCoverItem;
@@ -48,11 +46,9 @@ public class ThreeHolder<T> implements IHolder {
 	boolean tempBind;
 	public CrossFadeDrawable transition;
 
-	public ThreeHolder(ImageView icon, TextView title, TextView subtitle, TextView subsubtitle) {
+	public OneHolder(ImageView icon, TextView title) {
 		mIconView = icon;
 		mTitleView = title;
-		mSubtitleView = subtitle;
-		mSubsubtitleView = subsubtitle;
 	}
 	
 	public CoverDownloadHandler getCoverDownloadHandler(Activity activity, IdleListDetector idler) {
@@ -117,10 +113,8 @@ public class ThreeHolder<T> implements IHolder {
 		}
 	}
 
-	public void setText(String title, String subtitle, String subsubtitle) {
+	public void setText(String title) {
 		mTitleView.setText(title);
-		mSubtitleView.setText(subtitle);
-		mSubsubtitleView.setText(subsubtitle);
 	}
 
 	public void setImageResource(int res) {

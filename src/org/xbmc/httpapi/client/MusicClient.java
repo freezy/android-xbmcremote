@@ -42,6 +42,8 @@ import android.util.Log;
  */
 public class MusicClient {
 	
+	public static final String TAG = "MusicClient";
+	
 	// those are the musicdb://n/ keys.
 	public static final int MUSICDB_GENRE           = 1;
 	public static final int MUSICDB_ARTIST          = 2;
@@ -132,10 +134,41 @@ public class MusicClient {
 	}
 	
 	/**
+	 * Sets the media at playlist position position to be the next item to be played.
+	 * @param position New position, starting with 0.
+	 * @return True on success, false otherwise.
+	 */
+	public boolean setPlaylistPosition(int position) {
+		return mConnection.getBoolean("SetPlaylistSong", String.valueOf(position));
+	}
+	
+	/**
+	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
+	 * @param position Position to remove, starting with 0.
+	 * @return True on success, false otherwise.
+	 */
+	public boolean removeFromPlaylist(int position) {
+		return mConnection.getBoolean("RemoveFromPlaylist", PLAYLIST_ID + ";" + position);
+	}
+	
+	/**
+	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
+	 * @param position Complete path (including filename) of the media to be removed.
+	 * @return True on success, false otherwise.
+	 */
+	public boolean removeFromPlaylist(String path) {
+		return mConnection.getBoolean("RemoveFromPlaylist", PLAYLIST_ID + ";" + path);
+	}
+	
+	/**
 	 * Returns the first {@link PLAYLIST_LIMIT} songs of the playlist. 
 	 * @return Songs in the playlist.
 	 */
-	public ArrayList<Song> getPlaylist() {
+	public ArrayList<String> getPlaylist() {
+		return mConnection.getArray("GetPlaylistContents", PLAYLIST_ID);
+		
+		
+		/*
 		final ArrayList<String> nodes = mConnection.getArray("GetDirectory", "playlistmusic://");
 		final ArrayList<String> ids = new ArrayList<String>();
 		final int playlistPosition = getPlaylistPosition();
@@ -160,10 +193,15 @@ public class MusicClient {
 		final ArrayList<Song> sortedSongs = new ArrayList<Song>();
 		
 		for (String node : nodes) {
-			final int id = Integer.parseInt(node.substring(node.lastIndexOf('/') + 1, node.lastIndexOf('.')));
-			sortedSongs.add(unsortedSongs.get(id));
+			try {
+				final int id = Integer.parseInt(node.substring(node.lastIndexOf('/') + 1, node.lastIndexOf('.')));
+				sortedSongs.add(unsortedSongs.get(id));
+			} catch (NumberFormatException e) { 
+				Log.e(TAG, e.getMessage());
+				e.printStackTrace();
+			}
 		}
-		return sortedSongs;
+		return sortedSongs;*/
 	}
 	
 	/**
@@ -435,7 +473,7 @@ public class MusicClient {
 	 * Returns a hash map containing tracks of a certain condition.
 	 * @param sqlCondition SQL condition which tracks to return
 	 * @return Found tracks
-	 */
+	 *
 	private HashMap<Integer, Song> getSongsAsHashMap(StringBuilder sqlCondition) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
@@ -443,7 +481,7 @@ public class MusicClient {
 		sb.append(sqlCondition);
 		sb.append(" ORDER BY iTrack, strFileName");
 		return parseSongsAsHashMap(mConnection.query("QueryMusicDatabase", sb.toString()));
-	}
+	}*/
 	
 	/**
 	 * Returns the SQL condition that returns all songs of a song.
@@ -753,7 +791,7 @@ public class MusicClient {
 	 * </ol> 
 	 * @param response
 	 * @return List of Songs
-	 */
+	 *
 	private HashMap<Integer, Song> parseSongsAsHashMap(String response) {
 		HashMap<Integer, Song> songs = new HashMap<Integer, Song>();
 		String[] fields = response.split("<field>");
@@ -779,7 +817,7 @@ public class MusicClient {
 			e.printStackTrace();
 		}
 		return songs;		
-	}
+	}*/
 	
 	/**
 	 * Converts query response from HTTP API to a list of integer values.

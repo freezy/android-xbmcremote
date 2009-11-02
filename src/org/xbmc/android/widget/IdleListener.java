@@ -9,7 +9,7 @@
 package org.xbmc.android.widget;
 
 import org.xbmc.android.backend.httpapi.HttpApiThread;
-import org.xbmc.android.remote.guilogic.holder.ThreeHolder;
+import org.xbmc.android.remote.guilogic.holder.IHolder;
 import org.xbmc.android.widget.IdleListDetector.OnListIdleListener;
 import org.xbmc.httpapi.type.ThumbSize;
 
@@ -43,7 +43,7 @@ public class IdleListener implements OnListIdleListener {
 		Log.i("ImageLoaderIdleListener", "IDLEING, downloading covers");
 		for (int i = 0; i < n; i++) {
 			View row = mList.getChildAt(i);
-			final ThreeHolder<?> holder = (ThreeHolder<?>)row.getTag();
+			final IHolder holder = (IHolder)row.getTag();
 			if (holder.isTemporaryBind()) {
 				Log.i("ImageLoaderIdleListener", "Album: " + holder.getCoverItem());
 				HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, null), holder.getCoverItem(), ThumbSize.small);

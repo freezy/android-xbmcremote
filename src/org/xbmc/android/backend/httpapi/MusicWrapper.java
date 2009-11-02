@@ -323,6 +323,48 @@ public class MusicWrapper extends Wrapper {
 	}
 	
 	/**
+	 * Sets the media at playlist position position to be the next item to be played.
+	 * @param handler Callback
+	 * @param position Position, starting with 0.
+	 */
+	public void setPlaylistSong(final HttpApiHandler<Boolean> handler, final int position) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).setPlaylistPosition(position);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
+	 * @param position Position to remove, starting with 0.
+	 * @return True on success, false otherwise.
+	 */
+	public void removeFromPlaylist(final HttpApiHandler<Boolean> handler, final int position) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).removeFromPlaylist(position);
+				done(handler);
+			}
+		});
+	}
+
+	/**
+	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
+	 * @param position Complete path (including filename) of the media to be removed.
+	 * @return True on success, false otherwise.
+	 */
+	public void removeFromPlaylist(final HttpApiHandler<Boolean> handler, final String path) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = music(handler).removeFromPlaylist(path);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
 	 * Plays an album
 	 * @param handler Callback
 	 * @param album Album to play
@@ -440,10 +482,24 @@ public class MusicWrapper extends Wrapper {
 	 * Returns an array of songs on the playlist. Empty array if nothing is playing.
 	 * @param handler Callback
 	 */
-	public void getPlaylist(final HttpApiHandler<ArrayList<Song>> handler) {
+	public void getPlaylist(final HttpApiHandler<ArrayList<String>> handler) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				handler.value = music(handler).getPlaylist();
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Returns the position of the currently playing song in the playlist. First position is 0.
+	 * @param handler Callback
+	 */
+	public void getPlaylistPosition(final HttpApiHandler<Integer> handler) {
+		mHandler.post(new Runnable() {
+			public void run() {
+				handler.value = music(handler).getPlaylistPosition();
+				done(handler);
 			}
 		});
 	}

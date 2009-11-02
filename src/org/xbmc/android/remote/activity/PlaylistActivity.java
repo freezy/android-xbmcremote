@@ -21,41 +21,54 @@
 
 package org.xbmc.android.remote.activity;
 
-import java.util.ArrayList;
-
-import org.xbmc.android.backend.httpapi.HttpApiHandler;
-import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.remote.guilogic.MusicPlaylistLogic;
 import org.xbmc.android.util.ErrorHandler;
-import org.xbmc.eventclient.EventClient;
-import org.xbmc.httpapi.data.Song;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class PlaylistActivity extends Activity {
 	
-	private EventClient mClient;
-	private ListView mList;
+	private MusicPlaylistLogic mMusicPlaylistLogic;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ErrorHandler.setActivity(this);
        	setContentView(R.layout.playlist);
         
- 	  	mClient = ConnectionManager.getEventClient(this);
+ 	  	mMusicPlaylistLogic = new MusicPlaylistLogic();
+ 	  	mMusicPlaylistLogic.findTitleView(findViewById(R.id.playlist_outer_layout));
+ 	  	mMusicPlaylistLogic.onCreate(this, (ListView)findViewById(R.id.playlist_list));
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		mMusicPlaylistLogic.onCreateOptionsMenu(menu);
+		return super.onCreateOptionsMenu(menu);
+	}
 
-  	  	// set titlebar text
-  	  	((TextView)findViewById(R.id.titlebar_text)).setText("Current playlist");
-  	  	
-	  	mList = (ListView)findViewById(R.id.playlist_list);
-  	  	HttpApiThread.music().getPlaylist(new HttpApiHandler<ArrayList<Song>>(this) {
-  	  		public void run() {
-  	  			
-  	  		}
-  	  	});
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		mMusicPlaylistLogic.onOptionsItemSelected(item);
+		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		mMusicPlaylistLogic.onCreateContextMenu(menu, v, menuInfo);
+		super.onCreateContextMenu(menu, v, menuInfo);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		mMusicPlaylistLogic.onContextItemSelected(item);
+		return super.onContextItemSelected(item);
 	}
 }

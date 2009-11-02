@@ -99,7 +99,7 @@ public class FileListLogic extends ListLogic {
 	private class FileItemAdapter extends ArrayAdapter<MediaLocation> {
 		private final LayoutInflater mInflater; 
 		FileItemAdapter(Activity activity, ArrayList<MediaLocation> items) {
-			super(activity, R.layout.listitem_three, items);
+			super(activity, R.layout.listitem_oneliner, items);
 			mInflater = activity.getLayoutInflater();
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
