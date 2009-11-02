@@ -42,6 +42,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,8 @@ public class AlbumListLogic extends ListLogic {
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
 	public static final int ITEM_CONTEXT_INFO = 3;
+	
+	public static final int MENU_PLAY_ALL = 1;
 	
 	private Artist mArtist;
 	private Genre mGenre;
@@ -172,7 +175,43 @@ public class AlbumListLogic extends ListLogic {
 				return;
 		}
 	}
-
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu) {
+		if (mArtist != null || mGenre != null) {
+			menu.add(0, MENU_PLAY_ALL, 0, "Play all");
+		}
+	}
+	
+	@Override
+	public void onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case MENU_PLAY_ALL:
+			if (mArtist != null && mGenre == null) {
+				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity) {
+					public void run() {
+						if (value == true)
+							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+					}
+				}, mArtist);			
+			} else if (mGenre != null && mArtist == null) {
+				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity) {
+					public void run() {
+						if (value == true)
+							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+					}
+				}, mGenre);
+			} else if (mGenre != null && mArtist != null) {
+				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity) {
+					public void run() {
+						if (value == true)
+							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+					}
+				}, mArtist, mGenre);
+			}
+			break;
+		}
+	}
 	
 	private class AlbumAdapter extends ArrayAdapter<Album> {
 		private Activity mActivity;

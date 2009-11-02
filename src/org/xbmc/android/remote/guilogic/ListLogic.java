@@ -32,6 +32,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -86,8 +87,10 @@ public abstract class ListLogic implements Serializable {
 	}
 	
 	public abstract void onContextItemSelected(MenuItem item);
-	
 	public abstract void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo);
+	
+	public void onCreateOptionsMenu(Menu menu) { }
+	public void onOptionsItemSelected(MenuItem item) { }
 	
 	public void findTitleView(View parent) {
 		mTitleView = (TextView)parent.findViewById(R.id.titlebar_text);	

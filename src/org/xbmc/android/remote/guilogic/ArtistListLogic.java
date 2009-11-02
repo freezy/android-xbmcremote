@@ -36,6 +36,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,6 +134,11 @@ public class ArtistListLogic extends ListLogic {
 				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), artist, mGenre);
 				break;
 		}
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu) {
+		menu.add(0, 1, 0, "Settings").setIcon(R.drawable.icon_menu_settings);
 	}
 	
 	private class ArtistAdapter extends ArrayAdapter<Artist> {

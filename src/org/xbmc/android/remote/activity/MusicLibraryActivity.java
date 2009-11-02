@@ -36,9 +36,11 @@ import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -53,6 +55,9 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	private GenreListLogic mGenreLogic;
 	private AlbumListLogic mCompilationsLogic;
 	private FileListLogic mFileLogic;
+	
+	private static final int MENU_NOW_PLAYING = 101;
+	private static final int MENU_REMOTE = 102;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -94,6 +99,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
+				
 				if (tabId.equals("tab_albums")) {
 					mAlbumLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.albumlist_list));
 				}
@@ -111,7 +117,65 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 				}
 			}
 		});
-
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing");
+		switch (mTabHost.getCurrentTab()) {
+			case 0:
+				mAlbumLogic.onCreateOptionsMenu(menu);
+				break;
+			case 1:
+				mArtistLogic.onCreateOptionsMenu(menu);
+				break;
+			case 2:
+				mGenreLogic.onCreateOptionsMenu(menu);
+				break;
+			case 3:
+				mCompilationsLogic.onCreateOptionsMenu(menu);
+				break;
+			case 4:
+				mFileLogic.onCreateOptionsMenu(menu);
+				break;
+		}
+		menu.add(0, MENU_REMOTE, 0, "Remote control");
+		return super.onPrepareOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		// first, process individual menu events
+		switch (mTabHost.getCurrentTab()) {
+		case 0:
+			mAlbumLogic.onOptionsItemSelected(item);
+			break;
+		case 1:
+			mArtistLogic.onOptionsItemSelected(item);
+			break;
+		case 2:
+			mGenreLogic.onOptionsItemSelected(item);
+			break;
+		case 3:
+			mCompilationsLogic.onOptionsItemSelected(item);
+			break;
+		case 4:
+			mFileLogic.onOptionsItemSelected(item);
+			break;
+		}
+		
+		// then the generic ones.
+		switch (item.getItemId()) {
+		case MENU_REMOTE:
+			startActivity(new Intent(this, RemoteActivity.class));
+			return true;
+		case MENU_NOW_PLAYING:
+			startActivity(new Intent(this,  NowPlayingActivity.class));
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
@@ -130,6 +194,9 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 			case 3:
 				mCompilationsLogic.onCreateContextMenu(menu, v, menuInfo);
 				break;
+			case 4:
+				mFileLogic.onCreateContextMenu(menu, v, menuInfo);
+				break;
 		}
 	}
 	
@@ -147,6 +214,9 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 			break;
 		case 3:
 			mCompilationsLogic.onContextItemSelected(item);
+			break;
+		case 4:
+			mFileLogic.onContextItemSelected(item);
 			break;
 		}
 		return super.onContextItemSelected(item);
