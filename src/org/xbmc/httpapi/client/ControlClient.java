@@ -201,8 +201,8 @@ public class ControlClient {
 	 * 
 	 * TODO For "video" you can additionally specify a specific path to be scanned.
 	 * 
-	 * @param mediaType
-	 * @return true on success, false otherwise.
+	 * @param mediaType Either <code>video</code> or <code>music</code>.
+	 * @return True on success, false otherwise.
 	 */
 	public boolean updateLibrary(String mediaType) {
 		return mConnection.getBoolean("ExecBuiltin", "UpdateLibrary(" + mediaType + ")");

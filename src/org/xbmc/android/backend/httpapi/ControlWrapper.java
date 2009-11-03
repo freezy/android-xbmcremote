@@ -64,10 +64,10 @@ public class ControlWrapper extends Wrapper {
 	 * @param handler Callback handler
 	 * @param mediaType
 	 */
-	public void updateLibrary(final HttpApiHandler<Void> handler, final String mediaType) {
+	public void updateLibrary(final HttpApiHandler<Boolean> handler, final String mediaType) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				control(handler).updateLibrary(mediaType);
+				handler.value = control(handler).updateLibrary(mediaType);
 				done(handler);
 			}
 		});

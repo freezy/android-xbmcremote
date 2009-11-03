@@ -162,7 +162,7 @@ public class FileListActivity extends ListActivity {
 			myIntent = new Intent(this, RemoteActivity.class);
 			break;
 		case 6:
-			HttpApiThread.control().updateLibrary(new HttpApiHandler<Void>(this), mMediaType.toString());
+			HttpApiThread.control().updateLibrary(new HttpApiHandler<Boolean>(this), mMediaType.toString());
 			break;
 		}
 		

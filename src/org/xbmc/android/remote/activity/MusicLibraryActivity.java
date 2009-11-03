@@ -23,6 +23,8 @@ package org.xbmc.android.remote.activity;
 
 import java.io.IOException;
 
+import org.xbmc.android.backend.httpapi.HttpApiHandler;
+import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.guilogic.AlbumListLogic;
 import org.xbmc.android.remote.guilogic.ArtistListLogic;
@@ -36,6 +38,8 @@ import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -46,6 +50,7 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MusicLibraryActivity extends SlidingTabActivity  {
 
@@ -57,7 +62,8 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	private FileListLogic mFileLogic;
 	
 	private static final int MENU_NOW_PLAYING = 101;
-	private static final int MENU_REMOTE = 102;
+	private static final int MENU_UPDATE_LIBRARY = 102;
+	private static final int MENU_REMOTE = 103;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -140,6 +146,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 				mFileLogic.onCreateOptionsMenu(menu);
 				break;
 		}
+		menu.add(0, MENU_UPDATE_LIBRARY, 0, "Update Library").setIcon(R.drawable.menu_refresh);
 		menu.add(0, MENU_REMOTE, 0, "Remote control").setIcon(R.drawable.menu_remote);
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -170,6 +177,33 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		switch (item.getItemId()) {
 		case MENU_REMOTE:
 			startActivity(new Intent(this, RemoteActivity.class));
+			return true;
+		case MENU_UPDATE_LIBRARY:
+			final AlertDialog.Builder builder = new AlertDialog.Builder(MusicLibraryActivity.this);
+			builder.setMessage("Are you sure you want XBMC to rescan your music library?")
+				.setCancelable(false)
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						HttpApiThread.control().updateLibrary(new HttpApiHandler<Boolean>(MusicLibraryActivity.this) {
+							public void run() {
+								final String message;
+								if (value) {
+									message = "Music library updated has been launched.";
+								} else {
+									message = "Error launching music library update.";
+								}
+								Toast toast = Toast.makeText(MusicLibraryActivity.this, message, Toast.LENGTH_SHORT);
+								toast.show();
+							}
+						}, "music");
+					}
+				})
+				.setNegativeButton("Uh, no.", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
+			builder.create().show();
 			return true;
 		case MENU_NOW_PLAYING:
 			startActivity(new Intent(this,  NowPlayingActivity.class));
