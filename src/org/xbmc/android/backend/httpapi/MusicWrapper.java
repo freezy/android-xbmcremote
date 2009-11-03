@@ -257,24 +257,33 @@ public class MusicWrapper extends Wrapper {
 			public void run() { 
 				final MusicClient mc = music(handler);
 				final ControlClient.PlayStatus ps = control(handler).getPlayState();
-				if (mc.getPlaylistSize() == 0) {  // if playlist is empty, add the whole album
+				mc.setCurrentPlaylist();
+				final int playlistSize = mc.getPlaylistSize(); 
+				int playPos = -1;
+				if (playlistSize == 0) {  // if playlist is empty, add the whole album
 					int n = 0;
-					int playPos = 0;
 					for (Song albumSong : mc.getSongs(album)) {
 						if (albumSong.id == song.id) {
 							playPos = n;
+							break;
 						}
 						n++;
-						mc.addToPlaylist(albumSong);
 					}
-					mc.setCurrentPlaylist();
-					mc.playlistSetSong(playPos);
+					mc.addToPlaylist(album);
 				} else {                          // otherwise, only add the song
 					handler.value = mc.addToPlaylist(song);
 				}
 				if (ps == ControlClient.PlayStatus.Stopped) { // if nothing is playing, play the song
-					mc.setCurrentPlaylist();
-					handler.value = mc.play(song);
+					if (playPos == 0) {
+						mc.playlistSetSong(playPos + 1);
+						handler.value = mc.playPrev();
+					} else if (playPos > 0) {
+						mc.playlistSetSong(playPos - 1);
+						handler.value = mc.playNext();
+					} else {
+						mc.playlistSetSong(playlistSize - 1);
+						handler.value = mc.playNext();
+					}
 				}
 				done(handler);
 			}
@@ -429,7 +438,7 @@ public class MusicWrapper extends Wrapper {
 				}
 				cc.stop();
 				mc.setCurrentPlaylist();
-				mc.playlistSetSong(playPos);
+				handler.value = mc.playlistSetSong(playPos);
 				done(handler);
 			}
 		});
@@ -472,7 +481,7 @@ public class MusicWrapper extends Wrapper {
 	public void playlistNext(final HttpApiHandler<Boolean> handler) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).playlistNext();
+				handler.value = music(handler).playNext();
 				done(handler);
 			}
 		});
@@ -535,7 +544,7 @@ public class MusicWrapper extends Wrapper {
 		if (ps == ControlClient.PlayStatus.Stopped) { // if nothing is playing, play the song
 			mc.setCurrentPlaylist();
 			if (numAlreadyQueued == 0) {
-				mc.playlistNext();
+				mc.playNext();
 			} else {
 				mc.playlistSetSong(numAlreadyQueued);
 			}

@@ -267,15 +267,25 @@ public class MusicClient {
 		clearPlaylist();
 		mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + sqlCondition.toString());
 		setCurrentPlaylist();
-		return playlistNext();
+		return playNext();
 	}
 	
 	/**
-	 * Starts playing the next media in the current playlist. 
+	 * Starts playing/showing the next media/image in the current playlist
+	 * or, if currently showing a slidshow, the slideshow playlist.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean playlistNext() {
+	public boolean playNext() {
 		return mConnection.getBoolean("PlayNext");
+	}
+
+	/**
+	 * Starts playing/showing the previous media/image in the current playlist
+	 * or, if currently showing a slidshow, the slideshow playlist.
+	 * @return True on success, false otherwise.
+	 */
+	public boolean playPrev() {
+		return mConnection.getBoolean("PlayPrev");
 	}
 	
 	/**

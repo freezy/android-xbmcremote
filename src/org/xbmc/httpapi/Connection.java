@@ -120,7 +120,7 @@ public class Connection {
 			uc.setConnectTimeout(CONNECTION_TIMEOUT);
 			uc.setReadTimeout(mTimeout);
 			
-			Log.i(TAG, "CONNECTED: " + (System.currentTimeMillis() - connectionTimer) + "ms (" + debugTag + ")");
+			//Log.i(TAG, "CONNECTED: " + (System.currentTimeMillis() - connectionTimer) + "ms (" + debugTag + ")");
 
 			//connection successful, reset retry counter!
 			auth.resetCounter();
@@ -133,7 +133,7 @@ public class Connection {
 			while ((line = rd.readLine()) != null) {    
 				sb.append(line);
 			}
-			Log.i(TAG, "DOWNLOADED: " + (System.currentTimeMillis() - responseTimer) + "ms (" + debugTag + ")");
+			Log.i(TAG, "DONE: " + (System.currentTimeMillis() - responseTimer) + "ms (" + debugTag + ")");
 			
 			rd.close();
 			uc = null;

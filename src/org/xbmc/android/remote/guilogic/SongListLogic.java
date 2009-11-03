@@ -49,6 +49,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -78,8 +79,20 @@ public class SongListLogic extends ListLogic {
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					final ThreeHolder<Song> holder = (ThreeHolder<Song>)view.getTag();
-					HttpApiThread.music().play(new HttpApiHandler<Boolean>((Activity)view.getContext()), holder.getHolderItem());
+					final Song song = ((ThreeHolder<Song>)view.getTag()).getHolderItem();
+					if (mAlbum == null) {
+						HttpApiThread.music().play(new SongQueryHandler(
+							mActivity, 
+							"Playing \"" + song.title + "\" by " + song.artist + "...", 
+							true
+						), song);
+					} else {
+						HttpApiThread.music().play(new SongQueryHandler(
+							mActivity, 
+							"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...", 
+							true
+						), mAlbum, song);
+					}
 				}
 			});
 					
@@ -132,29 +145,51 @@ public class SongListLogic extends ListLogic {
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				if (mAlbum == null) {
-					HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), holder.getHolderItem());
+					HttpApiThread.music().addToPlaylist(new SongQueryHandler(mActivity, "The whole album has been added to playlist with your selected song playing."), holder.getHolderItem());
 				} else {
-					HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), mAlbum, holder.getHolderItem());
+					HttpApiThread.music().addToPlaylist(new SongQueryHandler(mActivity, "Song added to playlist."), mAlbum, holder.getHolderItem());
 				}
 				break;
 			case ITEM_CONTEXT_PLAY:
-				final HttpApiHandler<Boolean> handler = new HttpApiHandler<Boolean>(mActivity) {
-					public void run() {
-						if( value != null) {
-							if (value == true)
-								mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
-						}
-					}
-				};
+				final Song song = holder.getHolderItem();
 				if (mAlbum == null) {
-					HttpApiThread.music().play(handler, holder.getHolderItem());
+					HttpApiThread.music().play(new SongQueryHandler(
+						mActivity, 
+						"Playing \"" + song.title + "\" by " + song.artist + "...", 
+						true
+					), song);
 				} else {
-					HttpApiThread.music().play(handler, mAlbum, holder.getHolderItem());
+					HttpApiThread.music().play(new SongQueryHandler(
+						mActivity, 
+						"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...", 
+						true
+					), mAlbum, song);
 				}
-				mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 				break;
 			default:
 				return;
+		}
+	}
+	
+	private class SongQueryHandler extends HttpApiHandler<Boolean> {
+		private final String mMessage;
+		private final boolean mGotoNowPlaying;
+		public SongQueryHandler(Activity activity, String successMessage) {
+			super(activity);
+			mMessage = successMessage;
+			mGotoNowPlaying = false;
+		}
+		public SongQueryHandler(Activity activity, String successMessage, boolean gotoNowPlaying) {
+			super(activity);
+			mMessage = successMessage;
+			mGotoNowPlaying = gotoNowPlaying;
+		}
+		public void run() {
+			Toast toast = Toast.makeText(mActivity, value ? mMessage : "Error playing song!", Toast.LENGTH_LONG);
+			toast.show();
+			if (value && mGotoNowPlaying) {
+				mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+			}
 		}
 	}
 	
