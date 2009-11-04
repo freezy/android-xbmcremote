@@ -31,7 +31,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
-import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -62,7 +61,6 @@ public class SlidingTabHost extends FrameLayout implements ViewTreeObserver.OnTo
 	 */
 	protected LocalActivityManager mLocalActivityManager = null;
 	private OnTabChangeListener mOnTabChangeListener;
-//	private OnKeyListener mTabKeyListener;
 
 	public SlidingTabHost(Context context) {
 		super(context);
@@ -110,27 +108,6 @@ public class SlidingTabHost extends FrameLayout implements ViewTreeObserver.OnTo
 		if (mTabWidget == null) {
 			throw new RuntimeException("Your SlidingTabHost must have a SlidingTabWidget whose id attribute is 'R.id.slidingtabs'");
 		}
-
-
-		// KeyListener to attach to all tabs. Detects non-navigation keys
-		// and relays them to the tab content.
-/*		mTabKeyListener = new OnKeyListener() {
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				switch (keyCode) {
-				case KeyEvent.KEYCODE_DPAD_CENTER:
-				case KeyEvent.KEYCODE_DPAD_LEFT:
-				case KeyEvent.KEYCODE_DPAD_RIGHT:
-				case KeyEvent.KEYCODE_DPAD_UP:
-				case KeyEvent.KEYCODE_DPAD_DOWN:
-				case KeyEvent.KEYCODE_ENTER:
-					return false;
-
-				}
-				mTabContent.requestFocus(View.FOCUS_FORWARD);
-				return mTabContent.dispatchKeyEvent(event);
-			}
-
-		};*/
 
 		mTabWidget.setTabSelectionListener(new SlidingTabWidget.OnTabSelectionChanged() {
 			public void onTabSelectionChanged(int tabIndex, boolean clicked) {
@@ -210,7 +187,8 @@ public class SlidingTabHost extends FrameLayout implements ViewTreeObserver.OnTo
 			throw new IllegalArgumentException("you must specify a way to create the tab content");
 		}
 
-		mTabWidget.addTab(tabSpec);
+		mTabWidget.addTab(tabSpec); //.setOnKeyListener(mTabKeyListener);
+//		mTabWidget.updateOnKeyListener(mTabKeyListener);
 		mTabSpecs.add(tabSpec);
 
 		if (mCurrentTab == -1) {
@@ -275,21 +253,30 @@ public class SlidingTabHost extends FrameLayout implements ViewTreeObserver.OnTo
 
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
-		final boolean handled = super.dispatchKeyEvent(event);
-
-		// unhandled key ups change focus to tab indicator for embedded
-		// activities
-		// when there is nothing that will take focus from default focus
-		// searching
-		if (!handled && (event.getAction() == KeyEvent.ACTION_DOWN) && (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP)
-		// && (mCurrentView.isRootNamespace())
-				&& (mCurrentView.hasFocus()) && (mCurrentView.findFocus().focusSearch(View.FOCUS_UP) == null)) {
-			mTabWidget.getChildTabViewAt(mCurrentTab).requestFocus();
-			playSoundEffect(SoundEffectConstants.NAVIGATION_UP);
-			return true;
+		switch (event.getKeyCode()) {
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+				if (event.getAction() == KeyEvent.ACTION_DOWN) {
+					final int tabIndex = mCurrentTab - 1;
+					if (tabIndex >= 0) {
+						setCurrentTab(tabIndex);
+						mTabWidget.moveTo(tabIndex);
+					}
+				}
+				return true;
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+				if (event.getAction() == KeyEvent.ACTION_DOWN) {
+					final int tabIndex = mCurrentTab + 1;
+					if (tabIndex <= mTabWidget.getTabCount()) {
+						setCurrentTab(tabIndex);
+						mTabWidget.moveTo(tabIndex);
+					}
+				}
+				return true;
+			default:
+				return super.dispatchKeyEvent(event);
 		}
-		return handled;
 	}
+
 
 	@Override
 	public void dispatchWindowFocusChanged(boolean hasFocus) {

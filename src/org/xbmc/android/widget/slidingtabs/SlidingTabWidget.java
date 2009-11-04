@@ -157,13 +157,13 @@ public class SlidingTabWidget extends LinearLayout {
 		}
 		a.recycle();
 	}
-	
+
 	/**
 	 * Adds a new tab and sets the correct paddings defined by the
 	 * separation width.
 	 * @param newTab
 	 */
-	public void addTab(SlidingTabSpec newTab) {
+	void addTab(SlidingTabSpec newTab) {
 		
 		BackgroundImage bgImg = new BackgroundImage(mContext, mNumTabs, newTab);
 		
@@ -229,7 +229,20 @@ public class SlidingTabWidget extends LinearLayout {
 		mInverseSliderBackground.invalidate();
 		Log.i("padding", total + ": " + sb.toString() + "(" + mInverseSliderWidth + ")");
 */
-		
+	}
+	
+	/**
+	 * Automatically animates the slider (and background) to given tabindex.
+	 * @param tabIndex
+	 */
+	void moveTo(int tabIndex) {
+		updateLayoutDimensions();
+		final BackgroundImage bgImg = (BackgroundImage)getChildTabViewAt(tabIndex);
+		if (bgImg != null && tabIndex != mSelectedTab) {
+			mSlider.setImageResource(bgImg.getSliderIconResource());
+			snapTo(bgImg.getTabIndex());
+			setCurrentTab(bgImg.getTabIndex());
+		}
 	}
 	
 	/**
