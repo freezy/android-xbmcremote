@@ -536,11 +536,16 @@ public class MusicWrapper extends Wrapper {
 	public void getAlbumCover(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final ThumbSize size) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				// first, try mem cache (only if size = small, other sizes aren't mem-cached.
-				if (size == ThumbSize.small) {
-					getAlbumCoverFromMem(handler, album);
+				if (album.getCrc() > 0) {
+					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
+					if (size == ThumbSize.small) {
+						getAlbumCoverFromMem(handler, album);
+					} else {
+						getAlbumCoverFromDisk(handler, album, size);
+					}
 				} else {
-					getAlbumCoverFromDisk(handler, album, size);
+					handler.value = null;
+					done(handler);
 				}
 			}
 		});
