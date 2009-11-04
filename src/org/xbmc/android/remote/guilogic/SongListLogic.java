@@ -145,9 +145,9 @@ public class SongListLogic extends ListLogic {
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				if (mAlbum == null) {
-					HttpApiThread.music().addToPlaylist(new SongQueryHandler(mActivity, "The whole album has been added to playlist with your selected song playing."), holder.getHolderItem());
+					HttpApiThread.music().addToPlaylist(new SongQueryHandler(mActivity, "Song added to playlist."), holder.getHolderItem());
 				} else {
-					HttpApiThread.music().addToPlaylist(new SongQueryHandler(mActivity, "Song added to playlist."), mAlbum, holder.getHolderItem());
+					HttpApiThread.music().addToPlaylist(new SongQueryHandler(mActivity, "Playlist empty, added whole album.", "Song added to playlist.", false), mAlbum, holder.getHolderItem());
 				}
 				break;
 			case ITEM_CONTEXT_PLAY:
@@ -172,20 +172,29 @@ public class SongListLogic extends ListLogic {
 	}
 	
 	private class SongQueryHandler extends HttpApiHandler<Boolean> {
-		private final String mMessage;
+		private final String mSuccessMessage;
+		private final String mErrorMessage;
 		private final boolean mGotoNowPlaying;
 		public SongQueryHandler(Activity activity, String successMessage) {
 			super(activity);
-			mMessage = successMessage;
+			mSuccessMessage = successMessage;
+			mErrorMessage = null;
+			mGotoNowPlaying = false;
+		}
+		public SongQueryHandler(Activity activity, String successMessage, String errorMessage, boolean gotoNowPlaying) {
+			super(activity);
+			mSuccessMessage = successMessage;
+			mErrorMessage = errorMessage;
 			mGotoNowPlaying = false;
 		}
 		public SongQueryHandler(Activity activity, String successMessage, boolean gotoNowPlaying) {
 			super(activity);
-			mMessage = successMessage;
+			mSuccessMessage = successMessage;
+			mErrorMessage = null;
 			mGotoNowPlaying = gotoNowPlaying;
 		}
 		public void run() {
-			Toast toast = Toast.makeText(mActivity, value ? mMessage : "Error playing song!", Toast.LENGTH_LONG);
+			Toast toast = Toast.makeText(mActivity,  value ? mSuccessMessage : (mErrorMessage == null ? "Error playing song!" : mErrorMessage), Toast.LENGTH_LONG);
 			toast.show();
 			if (value && mGotoNowPlaying) {
 				mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));

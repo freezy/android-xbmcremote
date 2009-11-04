@@ -248,6 +248,10 @@ public class MusicWrapper extends Wrapper {
 	 * Adds a song to the current playlist. If the playlist is empty, the whole
 	 * album will be added with this song playing, otherwise only this song is
 	 * added.
+	 * 
+	 * <b>Attention</b>, the handler.value result is different as usual: True 
+	 * means the whole album was added, false means ony the song.
+	 *  
 	 * @param handler Callback
 	 * @param album Album to add
 	 * @param song Song to play
@@ -270,19 +274,21 @@ public class MusicWrapper extends Wrapper {
 						n++;
 					}
 					mc.addToPlaylist(album);
+					handler.value = true;
 				} else {                          // otherwise, only add the song
-					handler.value = mc.addToPlaylist(song);
+					mc.addToPlaylist(song);
+					handler.value = false;
 				}
 				if (ps == ControlClient.PlayStatus.Stopped) { // if nothing is playing, play the song
 					if (playPos == 0) {
 						mc.playlistSetSong(playPos + 1);
-						handler.value = mc.playPrev();
+						mc.playPrev();
 					} else if (playPos > 0) {
 						mc.playlistSetSong(playPos - 1);
-						handler.value = mc.playNext();
+						mc.playNext();
 					} else {
 						mc.playlistSetSong(playlistSize - 1);
-						handler.value = mc.playNext();
+						mc.playNext();
 					}
 				}
 				done(handler);
@@ -432,13 +438,17 @@ public class MusicWrapper extends Wrapper {
 				for (Song albumSong : mc.getSongs(album)) {
 					if (albumSong.id == song.id) {
 						playPos = n;
+						break;
 					}
 					n++;
-					mc.addToPlaylist(albumSong);
 				}
 				cc.stop();
+				mc.addToPlaylist(album);
 				mc.setCurrentPlaylist();
-				handler.value = mc.playlistSetSong(playPos);
+				if (playPos > 0) {
+					mc.playlistSetSong(playPos - 1);
+				}				
+				handler.value = mc.playNext();
 				done(handler);
 			}
 		});

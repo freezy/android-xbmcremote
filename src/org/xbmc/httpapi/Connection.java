@@ -115,7 +115,7 @@ public class Connection {
 
 			
 //			final URLConnection uc = query.openConnection();
-			final long connectionTimer = System.currentTimeMillis();
+//			final long connectionTimer = System.currentTimeMillis();
 			uc = query.openConnection();
 			uc.setConnectTimeout(CONNECTION_TIMEOUT);
 			uc.setReadTimeout(mTimeout);
