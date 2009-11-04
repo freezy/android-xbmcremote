@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.activity.NowPlayingActivity;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.android.remote.guilogic.holder.ThreeHolder;
 import org.xbmc.httpapi.data.Album;
@@ -36,7 +35,6 @@ import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -49,7 +47,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -81,15 +78,17 @@ public class SongListLogic extends ListLogic {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					final Song song = ((ThreeHolder<Song>)view.getTag()).getHolderItem();
 					if (mAlbum == null) {
-						HttpApiThread.music().play(new SongQueryHandler(
+						HttpApiThread.music().play(new QueryHandler(
 							mActivity, 
 							"Playing \"" + song.title + "\" by " + song.artist + "...", 
+							"Error playing song!",
 							true
 						), song);
 					} else {
-						HttpApiThread.music().play(new SongQueryHandler(
+						HttpApiThread.music().play(new QueryHandler(
 							mActivity, 
-							"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...", 
+							"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
+							"Error playing song!",
 							true
 						), mAlbum, song);
 					}
@@ -145,60 +144,31 @@ public class SongListLogic extends ListLogic {
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				if (mAlbum == null) {
-					HttpApiThread.music().addToPlaylist(new SongQueryHandler(mActivity, "Song added to playlist."), holder.getHolderItem());
+					HttpApiThread.music().addToPlaylist(new QueryHandler(mActivity, "Song added to playlist.", "Error adding song!"), holder.getHolderItem());
 				} else {
-					HttpApiThread.music().addToPlaylist(new SongQueryHandler(mActivity, "Playlist empty, added whole album.", "Song added to playlist.", false), mAlbum, holder.getHolderItem());
+					HttpApiThread.music().addToPlaylist(new QueryHandler(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, holder.getHolderItem());
 				}
 				break;
 			case ITEM_CONTEXT_PLAY:
 				final Song song = holder.getHolderItem();
 				if (mAlbum == null) {
-					HttpApiThread.music().play(new SongQueryHandler(
+					HttpApiThread.music().play(new QueryHandler(
 						mActivity, 
 						"Playing \"" + song.title + "\" by " + song.artist + "...", 
+						"Error playing song!",
 						true
 					), song);
 				} else {
-					HttpApiThread.music().play(new SongQueryHandler(
+					HttpApiThread.music().play(new QueryHandler(
 						mActivity, 
-						"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...", 
+						"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
+						"Error playing song!",
 						true
 					), mAlbum, song);
 				}
 				break;
 			default:
 				return;
-		}
-	}
-	
-	private class SongQueryHandler extends HttpApiHandler<Boolean> {
-		private final String mSuccessMessage;
-		private final String mErrorMessage;
-		private final boolean mGotoNowPlaying;
-		public SongQueryHandler(Activity activity, String successMessage) {
-			super(activity);
-			mSuccessMessage = successMessage;
-			mErrorMessage = null;
-			mGotoNowPlaying = false;
-		}
-		public SongQueryHandler(Activity activity, String successMessage, String errorMessage, boolean gotoNowPlaying) {
-			super(activity);
-			mSuccessMessage = successMessage;
-			mErrorMessage = errorMessage;
-			mGotoNowPlaying = false;
-		}
-		public SongQueryHandler(Activity activity, String successMessage, boolean gotoNowPlaying) {
-			super(activity);
-			mSuccessMessage = successMessage;
-			mErrorMessage = null;
-			mGotoNowPlaying = gotoNowPlaying;
-		}
-		public void run() {
-			Toast toast = Toast.makeText(mActivity,  value ? mSuccessMessage : (mErrorMessage == null ? "Error playing song!" : mErrorMessage), Toast.LENGTH_LONG);
-			toast.show();
-			if (value && mGotoNowPlaying) {
-				mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
-			}
 		}
 	}
 	

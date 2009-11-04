@@ -27,7 +27,6 @@ import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.MusicArtistActivity;
-import org.xbmc.android.remote.activity.NowPlayingActivity;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
 
@@ -116,21 +115,34 @@ public class ArtistListLogic extends ListLogic {
 		final Artist artist = (Artist)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), artist);
+				HttpApiThread.music().addToPlaylist(new QueryHandler(
+						mActivity, 
+						"Adding all songs by " + artist.name + " to playlist...", 
+						"Error adding songs!"
+					), artist);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity) {
-					public void run() {
-						if (value == true)
-							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
-					}
-				}, artist);
+				HttpApiThread.music().play(new QueryHandler(
+						mActivity, 
+						"Playing all songs by " + artist.name + "...", 
+						"Error playing songs!",
+						true
+					), artist);
 				break;
 			case ITEM_CONTEXT_QUEUE_GENRE:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), artist, mGenre);
+				HttpApiThread.music().addToPlaylist(new QueryHandler(
+						mActivity, 
+						"Adding all songs of genre " + mGenre.name + " by " + artist.name + " to playlist...", 
+						"Error adding songs!"
+					), artist, mGenre);
 				break;
 			case ITEM_CONTEXT_PLAY_GENRE:
-				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity), artist, mGenre);
+				HttpApiThread.music().play(new QueryHandler(
+						mActivity, 
+						"Playing all songs of genre " + mGenre.name + " by " + artist.name + "...", 
+						"Error playing songs!",
+						true
+					), artist, mGenre);
 				break;
 		}
 	}

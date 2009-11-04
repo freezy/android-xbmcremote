@@ -23,12 +23,15 @@ package org.xbmc.android.remote.guilogic;
 
 import java.io.Serializable;
 
+import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.activity.NowPlayingActivity;
 import org.xbmc.android.widget.FastScrollView;
 import org.xbmc.android.widget.IdleListDetector;
 import org.xbmc.android.widget.IdleListener;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -39,6 +42,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public abstract class ListLogic implements Serializable {
@@ -106,6 +110,29 @@ public abstract class ListLogic implements Serializable {
 		return isCreated;
 	}
 	
+	protected class QueryHandler extends HttpApiHandler<Boolean> {
+		private final String mSuccessMessage;
+		private final String mErrorMessage;
+		private final boolean mGotoNowPlaying;
+		public QueryHandler(Activity activity, String successMessage, String errorMessage) {
+			super(activity);
+			mSuccessMessage = successMessage;
+			mErrorMessage = errorMessage;
+			mGotoNowPlaying = false;
+		}
+		public QueryHandler(Activity activity, String successMessage, String errorMessage, boolean gotoNowPlaying) {
+			super(activity);
+			mSuccessMessage = successMessage;
+			mErrorMessage = errorMessage;
+			mGotoNowPlaying = gotoNowPlaying;
+		}
+		public void run() {
+			Toast.makeText(mActivity, value ? mSuccessMessage :  mErrorMessage, Toast.LENGTH_LONG).show();
+			if (value && mGotoNowPlaying) {
+				mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+			}
+		}
+	}
 
 
 	private static final long serialVersionUID = 2903701184005613570L;

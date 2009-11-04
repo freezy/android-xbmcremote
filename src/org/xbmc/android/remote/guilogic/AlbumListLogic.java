@@ -28,7 +28,6 @@ import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
-import org.xbmc.android.remote.activity.NowPlayingActivity;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.android.remote.guilogic.holder.ThreeHolder;
 import org.xbmc.httpapi.data.Album;
@@ -157,15 +156,19 @@ public class AlbumListLogic extends ListLogic {
 		final Album album = holder.getHolderItem();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				HttpApiThread.music().addToPlaylist(new HttpApiHandler<Boolean>(mActivity), album);
+				HttpApiThread.music().addToPlaylist(new QueryHandler(
+						mActivity, 
+						"Adding album \"" + album.name + "\" by " + album.artist + " to playlist...", 
+						"Error adding album!"
+					), album);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity) {
-					public void run() {
-						if (value == true)
-							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
-					}
-				}, album);
+				HttpApiThread.music().play(new QueryHandler(
+						mActivity, 
+						"Playing album \"" + album.name + "\" by " + album.artist + "...", 
+						"Error playing album!",
+						true
+					), album);
 				break;
 			case ITEM_CONTEXT_INFO:
 				DialogFactory.getAlbumDetail(mActivity, album).show();
@@ -178,7 +181,7 @@ public class AlbumListLogic extends ListLogic {
 	@Override
 	public void onCreateOptionsMenu(Menu menu) {
 		if (mArtist != null || mGenre != null) {
-			menu.add(0, MENU_PLAY_ALL, 0, "Play all");
+			menu.add(0, MENU_PLAY_ALL, 0, "Play all").setIcon(R.drawable.menu_album);
 		}
 	}
 	
@@ -187,26 +190,26 @@ public class AlbumListLogic extends ListLogic {
 		switch (item.getItemId()) {
 		case MENU_PLAY_ALL:
 			if (mArtist != null && mGenre == null) {
-				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity) {
-					public void run() {
-						if (value == true)
-							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
-					}
-				}, mArtist);			
+				HttpApiThread.music().play(new QueryHandler(
+						mActivity, 
+						"Playing all albums by " + mArtist.name + "...", 
+						"Error playing songs!",
+						true
+					), mArtist);			
 			} else if (mGenre != null && mArtist == null) {
-				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity) {
-					public void run() {
-						if (value == true)
-							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
-					}
-				}, mGenre);
+				HttpApiThread.music().play(new QueryHandler(
+						mActivity, 
+						"Playing all albums of genre " + mGenre.name + "...", 
+						"Error playing songs!",
+						true
+					), mGenre);
 			} else if (mGenre != null && mArtist != null) {
-				HttpApiThread.music().play(new HttpApiHandler<Boolean>(mActivity) {
-					public void run() {
-						if (value == true)
-							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
-					}
-				}, mArtist, mGenre);
+				HttpApiThread.music().play(new QueryHandler(
+						mActivity, 
+						"Playing all songs of genre " + mGenre.name + " by " + mArtist.name + "...", 
+						"Error playing songs!",
+						true
+					), mArtist, mGenre);
 			}
 			break;
 		}
