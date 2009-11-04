@@ -23,6 +23,9 @@
     <declare-styleable name="Theme">
         <!-- Default SlidingTabWidget style. -->
         <attr name="slidingTabWidgetStyle" format="reference" />
+        
+        <!-- Default HorizontalScrollView style. -->
+        <attr name="slidingTabScrollViewStyle" format="reference" />
     </declare-styleable>
     
     <declare-styleable name="SlidingTabWidget">
@@ -30,4 +33,10 @@
     		  width is measured from the center of the icons. -->
 	    <attr name="separationWidth" format="integer" />
     </declare-styleable>
+    
+    <declare-styleable name="SlidingTabScrollView">
+        <!-- Defines whether the scrollview should stretch its content to fill the viewport. -->
+        <attr name="fillViewport" format="boolean" />
+    </declare-styleable>
+    
 </resources>

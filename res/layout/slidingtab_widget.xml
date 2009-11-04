@@ -5,7 +5,7 @@
 	android:layout_height="60px" 
 	android:background="@drawable/st_background"
 	android:orientation="vertical">
-	<HorizontalScrollView 
+	<org.xbmc.android.widget.slidingtabs.SlidingTabScrollView 
 		android:id="@+id/SlidingTabHorizontalScrollView"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
@@ -14,7 +14,8 @@
 		android:fadingEdge="none" 
 		android:clickable="false" 
 		android:focusable="false"
-		android:focusableInTouchMode="false" 
+		android:focusableInTouchMode="false"
+		android:longClickable="false"
 		android:isScrollContainer="true">
 		<LinearLayout 
 			android:id="@+id/SlidingTabLinearLayoutBackslider"
@@ -22,7 +23,7 @@
 			android:layout_height="48px"
 			android:layout_marginTop="6px" 
 			android:layout_gravity="center_vertical" />
-	</HorizontalScrollView>
+	</org.xbmc.android.widget.slidingtabs.SlidingTabScrollView >
 	<LinearLayout 
 		android:id="@+id/SlidingTabLinearLayoutSlidingContainer" 
 		android:layout_width="1000px"

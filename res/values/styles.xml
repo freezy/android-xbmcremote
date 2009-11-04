@@ -23,4 +23,6 @@
     <style name="SlidingTabWidget">
         <item name="separationWidth">75</item>
     </style>
+    <style name="SlidingTabScrollView">
+    </style>
 </resources>

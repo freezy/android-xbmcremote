@@ -24,5 +24,6 @@
     -->
     <style name="Theme">
         <item name="slidingTabWidgetStyle">@style/SlidingTabWidget</item>
+        <item name="slidingTabScrollViewStyle">@style/SlidingTabScrollView</item>
     </style>
 </resources>
