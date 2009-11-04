@@ -28,8 +28,7 @@
 			android:layout_above="@id/now_playing_bottombar">
 			<LinearLayout android:layout_width="fill_parent"
 				android:layout_height="fill_parent" 
-				android:orientation="vertical"
-				>
+				android:orientation="vertical">
 				<include layout="@layout/titlebar" />
 				<TextView android:id="@+id/AlbumTextView"
 						android:layout_width="fill_parent" 
@@ -38,7 +37,6 @@
 						android:singleLine="true"
 						android:textSize="18px"
 						android:textColor="#ffffffff"
-						android:text="Song"
 						android:paddingTop="7px" />
 				<RelativeLayout 
 					android:layout_width="wrap_content"
@@ -100,8 +98,11 @@
 						android:textSize="16px"
 						android:textColor="#ffffffff"
 						android:gravity="center_horizontal"
+						android:layout_marginTop="-15px"
 						android:singleLine="true"
-						android:layout_marginTop="-15px" />
+						android:ellipsize="end"
+						android:paddingLeft="25px"
+						android:paddingRight="22px" />
 					<TextView 
 						android:id="@+id/ArtistTextView"
 						android:layout_width="fill_parent" 
