@@ -525,7 +525,8 @@ public class MusicClient {
 	private StringBuilder getSongsCondition(Artist artist) {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("(");
-		sb.append("  idArtist = " + artist.id);
+		sb.append("  idArtist = ");
+		sb.append(artist.id);
 		sb.append("  OR idSong IN (");
 		sb.append("     SELECT exartistsong.idSong");
 		sb.append("     FROM exartistsong");
@@ -557,9 +558,10 @@ public class MusicClient {
 	 */
 	private StringBuilder getSongsCondition(Genre genre) {
 		final StringBuilder sb = new StringBuilder();
-		sb.append("idGenre = " + genre.id);
-		sb.append("OR idSong IN (");
-		sb.append("   SELECT exgenresong.idSong FROM exgenresong WHERE exgenresong.idGenre = ");
+		sb.append("idGenre = ");
+		sb.append(genre.id);
+		sb.append("  OR idSong IN (");
+		sb.append("    SELECT exgenresong.idSong FROM exgenresong WHERE exgenresong.idGenre = ");
 		sb.append(genre.id);
 		sb.append(")");
 		return sb;
@@ -574,7 +576,8 @@ public class MusicClient {
 	private StringBuilder getSongsCondition(Artist artist, Genre genre) {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("(");
-		sb.append("  idArtist = " + artist.id);
+		sb.append("  idArtist = ");
+		sb.append(artist.id);
 		sb.append("  OR idSong IN (");
 		sb.append("     SELECT exartistsong.idSong");
 		sb.append("     FROM exartistsong");

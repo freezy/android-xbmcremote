@@ -387,6 +387,7 @@ public class MusicWrapper extends Wrapper {
 	public void play(final HttpApiHandler<Boolean> handler, final Album album) {
 		mHandler.post(new Runnable() {
 			public void run() { 
+				control(handler).stop();
 				handler.value = music(handler).play(album);
 				done(handler);
 			}
@@ -401,6 +402,7 @@ public class MusicWrapper extends Wrapper {
 	public void play(final HttpApiHandler<Boolean> handler, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
+				control(handler).stop();
 				handler.value = music(handler).play(genre);
 				done(handler);
 			}
@@ -415,6 +417,7 @@ public class MusicWrapper extends Wrapper {
 	public void play(final HttpApiHandler<Boolean> handler, final Song song) {
 		mHandler.post(new Runnable() {
 			public void run() { 
+				control(handler).stop();
 				handler.value = music(handler).play(song);
 				done(handler);
 			}
@@ -462,6 +465,7 @@ public class MusicWrapper extends Wrapper {
 	public void play(final HttpApiHandler<Boolean> handler, final Artist artist) {
 		mHandler.post(new Runnable() {
 			public void run() { 
+				control(handler).stop();
 				handler.value = music(handler).play(artist);
 				done(handler);
 			}
@@ -477,6 +481,7 @@ public class MusicWrapper extends Wrapper {
 	public void play(final HttpApiHandler<Boolean> handler, final Artist artist, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
+				control(handler).stop();
 				handler.value = music(handler).play(artist, genre);
 				done(handler);
 			}
