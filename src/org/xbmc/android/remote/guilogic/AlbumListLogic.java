@@ -93,7 +93,7 @@ public class AlbumListLogic extends ListLogic {
 					ThreeHolder<Album> holder = (ThreeHolder<Album>)view.getTag();
 					nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new SongListLogic());
-					nextActivity.putExtra(ListLogic.EXTRA_ALBUM, holder.getHolderItem());
+					nextActivity.putExtra(ListLogic.EXTRA_ALBUM, holder.holderItem);
 					mActivity.startActivity(nextActivity);
 				}
 			});
@@ -144,7 +144,7 @@ public class AlbumListLogic extends ListLogic {
 	@SuppressWarnings("unchecked")
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		final ThreeHolder<Album> holder = (ThreeHolder<Album>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(holder.getHolderItem().name);
+		menu.setHeaderTitle(holder.holderItem.name);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Album");
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Album");
 		menu.add(0, ITEM_CONTEXT_INFO, 3, "View Details");
@@ -153,7 +153,7 @@ public class AlbumListLogic extends ListLogic {
 	@SuppressWarnings("unchecked")
 	public void onContextItemSelected(MenuItem item) {
 		final ThreeHolder<Album> holder = (ThreeHolder<Album>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
-		final Album album = holder.getHolderItem();
+		final Album album = holder.holderItem;
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				HttpApiThread.music().addToPlaylist(new QueryHandler(
@@ -251,12 +251,14 @@ public class AlbumListLogic extends ListLogic {
 			}
 			
 			final Album album = getItem(position);
-			holder.setHolderItem(album);
-			holder.setCoverItem(album);
+			holder.holderItem = album;
+			holder.coverItem = album;
 			holder.id = album.getCrc();
 			
-			holder.setText(album.name, album.artist, album.year > 0 ? String.valueOf(album.year) : "");
-			holder.setImageResource(R.drawable.icon_album_grey);
+			holder.titleView.setText(album.name);
+			holder.subtitleView.setText(album.artist);
+			holder.subsubtitleView.setText(album.year > 0 ? String.valueOf(album.year) : "");
+			holder.iconView.setImageResource(R.drawable.icon_album_grey);
 			holder.setTemporaryBind(true);
 		
 			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.small);

@@ -31,6 +31,7 @@ import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
+import org.xbmc.httpapi.data.Song;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -45,64 +46,89 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class PlaylistActivity extends Activity implements Callback {
-	
+
+	public static final int MESSAGE_PLAYLIST_SIZE = 701;
+	public static final String BUNDLE_PLAYLIST_SIZE = "playlist_size";
+
 	private MusicPlaylistLogic mMusicPlaylistLogic;
 	private EventClient mClient;
-	
+
 	private Handler mNowPlayingHandler;
 	private NowPlayingPollerThread mNowPlayingPoller;
-	
+
 	private ImageButton mPlayPauseView;
-	
+	private TextView mLabel1;
+	private TextView mLabel2;
+
 	public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ErrorHandler.setActivity(this);
-       	setContentView(R.layout.playlist);
-        
-       	mClient = ConnectionManager.getEventClient(this);
-       	
- 	  	mMusicPlaylistLogic = new MusicPlaylistLogic();
- 	  	mMusicPlaylistLogic.findTitleView(findViewById(R.id.playlist_outer_layout));
- 	  	mMusicPlaylistLogic.onCreate(this, (ListView)findViewById(R.id.playlist_list));
- 	  	
- 	  	mPlayPauseView = (ImageButton)findViewById(R.id.MediaPlayPauseButton);
- 	  	mNowPlayingHandler = new Handler(this);
- 	  	
- 	  	// setup buttons
+		super.onCreate(savedInstanceState);
+		ErrorHandler.setActivity(this);
+		setContentView(R.layout.playlist);
+
+		// cache references for faster access
+		mPlayPauseView = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
+		mLabel1 = (TextView) findViewById(R.id.playlist_textfield_upper);
+		mLabel2 = (TextView) findViewById(R.id.playlist_textfield_lower);
+
+		mClient = ConnectionManager.getEventClient(this);
+		mNowPlayingHandler = new Handler(this);
+
+		// create and associate logic
+		mMusicPlaylistLogic = new MusicPlaylistLogic();
+		mMusicPlaylistLogic.findTitleView(findViewById(R.id.playlist_outer_layout));
+		mMusicPlaylistLogic.onCreate(this, (ListView) findViewById(R.id.playlist_list));
+		mMusicPlaylistLogic.subscribe(mNowPlayingHandler);
+
+		// setup buttons
 		findViewById(R.id.MediaPreviousButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_MINUS));
 		findViewById(R.id.MediaStopButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_STOP));
 		findViewById(R.id.MediaPlayPauseButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_PAUSE));
 		findViewById(R.id.MediaNextButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_PLUS));
 	}
-	
+
 	/**
-	 * This is called from the thread with a message containing updated
-	 * info of what's currently playing.
-	 * @param msg Message object containing currently playing info
+	 * This is called from the thread with a message containing updated info of
+	 * what's currently playing.
+	 * 
+	 * @param msg
+	 *            Message object containing currently playing info
 	 */
 	public synchronized boolean handleMessage(Message msg) {
 		final Bundle data = msg.getData();
-		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying)data.getSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
+		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying) data.getSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
 		switch (msg.what) {
-			case NowPlayingPollerThread.MESSAGE_NOW_PLAYING_PROGRESS: 
-				if (currentlyPlaying.isPlaying()) {
-					mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
-				} else {
-					mPlayPauseView.setBackgroundResource(R.drawable.now_playing_play);
-				}
-				return true;
-			default:
-				return false;
+		case NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED:
+			if (currentlyPlaying.isPlaying()) {
+				mLabel1.setText(Song.getDuration(currentlyPlaying.getTime() + 1));
+				mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
+			} else {
+				mLabel1.setText("--:--");
+				mPlayPauseView.setBackgroundResource(R.drawable.now_playing_play);
+			}
+			return true;
+			
+		case PlaylistActivity.MESSAGE_PLAYLIST_SIZE:
+			final int size = msg.getData().getInt(BUNDLE_PLAYLIST_SIZE);
+			mLabel2.setText(size == 0 ? "empty" : size + " tracks");
+			return true;
+			
+		case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
+			mMusicPlaylistLogic.onTrackChanged(currentlyPlaying);
+			return true;
+			
+		default:
+			return false;
 		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-  	  	mNowPlayingPoller = ConnectionManager.getNowPlayingPoller(this);
-  	  	mNowPlayingPoller.subscribe(mNowPlayingHandler);
+		mNowPlayingPoller = ConnectionManager.getNowPlayingPoller(this);
+		mNowPlayingPoller.subscribe(mNowPlayingHandler);
 	}
 
 	@Override
@@ -110,7 +136,7 @@ public class PlaylistActivity extends Activity implements Callback {
 		super.onPause();
 		mNowPlayingPoller.unSubscribe(mNowPlayingHandler);
 	}
-		
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		mMusicPlaylistLogic.onCreateOptionsMenu(menu);
@@ -122,32 +148,35 @@ public class PlaylistActivity extends Activity implements Callback {
 		mMusicPlaylistLogic.onOptionsItemSelected(item);
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		mMusicPlaylistLogic.onCreateContextMenu(menu, v, menuInfo);
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
-	
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		mMusicPlaylistLogic.onContextItemSelected(item);
 		return super.onContextItemSelected(item);
 	}
-	
+
 	/**
 	 * Handles the push- release button code. Switches image of the pressed
 	 * button, vibrates and executes command.
 	 */
 	private class OnRemoteAction implements OnClickListener {
 		private final String mAction;
+
 		public OnRemoteAction(String action) {
 			mAction = action;
 		}
+
 		public void onClick(View v) {
 			try {
-				mClient.sendButton("R1", mAction, false, true, true, (short)0, (byte)0);
-			} catch (IOException e) { }
+				mClient.sendButton("R1", mAction, false, true, true, (short) 0, (byte) 0);
+			} catch (IOException e) {
+			}
 		}
 	}
 }

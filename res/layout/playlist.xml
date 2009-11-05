@@ -26,9 +26,27 @@
 				<ImageButton android:id="@+id/MediaNextButton"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:background="@drawable/now_playing_next" />
-				<ImageView android:id="@+id/MediaNextButton"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
-					android:background="@drawable/playlist_rightboxes" />
+				<LinearLayout
+					android:layout_width="88px"
+					android:layout_height="60px"
+					android:orientation="vertical" 
+					android:background="@drawable/playlist_rightboxes" >
+					<TextView 
+						android:id="@+id/playlist_textfield_upper"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textColor="#ffffff"
+						android:textSize="12px"
+						android:paddingTop="9px"
+						android:layout_gravity="center" />
+					<TextView 
+						android:id="@+id/playlist_textfield_lower" 
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textSize="12px"
+						android:paddingTop="8px"
+						android:layout_gravity="center" />
+				</LinearLayout>
 			</LinearLayout>
 		</LinearLayout>
 		<FrameLayout android:id="@+id/home_upper"

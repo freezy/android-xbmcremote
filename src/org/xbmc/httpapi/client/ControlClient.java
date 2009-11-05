@@ -226,6 +226,7 @@ public class ControlClient {
 			private static final long serialVersionUID = -1554068775915058884L;
 			public boolean isPlaying() { return false; }
 			public MediaType getType() { return null; }
+			public int getPlaylistPosition() { return 0; }
 			public String getTitle() { return ""; }
 			public int getTime() { return 0; }
 			public PlayStatus getPlayStatus() { return PlayStatus.Stopped; }
@@ -255,6 +256,7 @@ public class ControlClient {
 		public PlayStatus getPlayStatus();
 		public MediaType getType();
 		public boolean isPlaying();
+		public int getPlaylistPosition();
 		
 		public String getFilename();
 		public String getTitle();

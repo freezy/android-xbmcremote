@@ -37,41 +37,30 @@ public class ThreeHolder<T> implements IHolder {
 
 	public long id = 0;
 
-	private final ImageView mIconView;
-	private final TextView mTitleView;
-	private final TextView mSubtitleView;
-	private final TextView mSubsubtitleView;
+	public final ImageView iconView;
+	public final TextView titleView;
+	public final TextView subtitleView;
+	public final TextView subsubtitleView;
 	
-	private T mHolderItem;
-	private ICoverArt mCoverItem;
+	public T holderItem;
+	public ICoverArt coverItem;
 
 	boolean tempBind;
 	public CrossFadeDrawable transition;
 
 	public ThreeHolder(ImageView icon, TextView title, TextView subtitle, TextView subsubtitle) {
-		mIconView = icon;
-		mTitleView = title;
-		mSubtitleView = subtitle;
-		mSubsubtitleView = subsubtitle;
+		iconView = icon;
+		titleView = title;
+		subtitleView = subtitle;
+		subsubtitleView = subsubtitle;
 	}
 	
 	public CoverDownloadHandler getCoverDownloadHandler(Activity activity, IdleListDetector idler) {
 		return new CoverDownloadHandler(activity, idler);
 	}
 	
-	public void setHolderItem(T item) {
-		mHolderItem = item;
-	}
-	public T getHolderItem() {
-		return mHolderItem;
-	}
-	
-	public void setCoverItem(ICoverArt cover) {
-		mCoverItem = cover;
-	}
-	
 	public ICoverArt getCoverItem() {
-		return mCoverItem;
+		return coverItem;
 	}
 
 	public class CoverDownloadHandler extends HttpApiHandler<Bitmap> {
@@ -88,16 +77,16 @@ public class ThreeHolder<T> implements IHolder {
 			 */
 			if (mTag == id) {
 				if (value == null) {
-					setImageResource(R.drawable.icon_album);
+					iconView.setImageResource(R.drawable.icon_album);
 				} else {
 					// only "fade" if cover was downloaded.
 					if (mCacheType != null && mCacheType.equals(CacheType.network)) {
-						CrossFadeDrawable transition = getTransitionDrawable();
-						transition.setEnd(value);
-						getImageLoaderView().setImageDrawable(transition);
-						transition.startTransition(500);
+						CrossFadeDrawable t = transition;
+						t.setEnd(value);
+						iconView.setImageDrawable(t);
+						t.startTransition(500);
 					} else {
-						mIconView.setImageBitmap(value);
+						iconView.setImageBitmap(value);
 					}
 					setTemporaryBind(false);
 				}
@@ -117,33 +106,11 @@ public class ThreeHolder<T> implements IHolder {
 		}
 	}
 
-	public void setText(String title, String subtitle, String subsubtitle) {
-		mTitleView.setText(title);
-		mSubtitleView.setText(subtitle);
-		mSubsubtitleView.setText(subsubtitle);
-	}
-
-	public void setImageResource(int res) {
-		mIconView.setImageResource(res);
-	}
-
-	public long getId() {
-		return id;
-	}
-
 	public boolean isTemporaryBind() {
 		return tempBind;
 	}
 
 	public void setTemporaryBind(boolean temp) {
 		tempBind = temp;
-	}
-
-	public ImageView getImageLoaderView() {
-		return mIconView;
-	}
-
-	public CrossFadeDrawable getTransitionDrawable() {
-		return transition;
 	}
 }

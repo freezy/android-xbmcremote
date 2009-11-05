@@ -37,39 +37,24 @@ public class OneHolder<T> implements IHolder {
 
 	public long id = 0;
 
-	private final ImageView mIconView;
-	private final TextView mTitleView;
+	public final ImageView iconView;
+	public final TextView titleView;
 	
-	private T mHolderItem;
-	private ICoverArt mCoverItem;
+	public T holderItem;
+	public ICoverArt coverItem;
 
 	boolean tempBind;
 	public CrossFadeDrawable transition;
 
 	public OneHolder(ImageView icon, TextView title) {
-		mIconView = icon;
-		mTitleView = title;
+		iconView = icon;
+		titleView = title;
 	}
 	
 	public CoverDownloadHandler getCoverDownloadHandler(Activity activity, IdleListDetector idler) {
 		return new CoverDownloadHandler(activity, idler);
 	}
 	
-	public void setHolderItem(T item) {
-		mHolderItem = item;
-	}
-	public T getHolderItem() {
-		return mHolderItem;
-	}
-	
-	public void setCoverItem(ICoverArt cover) {
-		mCoverItem = cover;
-	}
-	
-	public ICoverArt getCoverItem() {
-		return mCoverItem;
-	}
-
 	public class CoverDownloadHandler extends HttpApiHandler<Bitmap> {
 		private final IdleListDetector mIdler;
 		public CoverDownloadHandler(Activity activity, IdleListDetector idler) {
@@ -84,16 +69,16 @@ public class OneHolder<T> implements IHolder {
 			 */
 			if (mTag == id) {
 				if (value == null) {
-					setImageResource(R.drawable.icon_album);
+					iconView.setImageResource(R.drawable.icon_album);
 				} else {
 					// only "fade" if cover was downloaded.
 					if (mCacheType != null && mCacheType.equals(CacheType.network)) {
-						CrossFadeDrawable transition = getTransitionDrawable();
-						transition.setEnd(value);
-						getImageLoaderView().setImageDrawable(transition);
-						transition.startTransition(500);
+						CrossFadeDrawable t = transition;
+						t.setEnd(value);
+						iconView.setImageDrawable(t);
+						t.startTransition(500);
 					} else {
-						mIconView.setImageBitmap(value);
+						iconView.setImageBitmap(value);
 					}
 					setTemporaryBind(false);
 				}
@@ -113,16 +98,8 @@ public class OneHolder<T> implements IHolder {
 		}
 	}
 
-	public void setText(String title) {
-		mTitleView.setText(title);
-	}
-
-	public void setImageResource(int res) {
-		mIconView.setImageResource(res);
-	}
-
-	public long getId() {
-		return id;
+	public ICoverArt getCoverItem() {
+		return coverItem;
 	}
 
 	public boolean isTemporaryBind() {
@@ -131,13 +108,5 @@ public class OneHolder<T> implements IHolder {
 
 	public void setTemporaryBind(boolean temp) {
 		tempBind = temp;
-	}
-
-	public ImageView getImageLoaderView() {
-		return mIconView;
-	}
-
-	public CrossFadeDrawable getTransitionDrawable() {
-		return transition;
 	}
 }

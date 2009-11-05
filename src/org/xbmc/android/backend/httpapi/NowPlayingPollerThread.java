@@ -28,7 +28,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ConnectionManager;
@@ -61,15 +60,14 @@ public class NowPlayingPollerThread extends Thread {
 	
 	public static final String BUNDLE_CURRENTLY_PLAYING = "CurrentlyPlaying";
 	public static final int MESSAGE_CONNECTION_ERROR = 1;
-	public static final int MESSAGE_NOW_PLAYING_PROGRESS = 666;
-	public static final int MESSAGE_ARTIST_TEXT_VIEW = 667;
-	public static final int MESSAGE_COVER_IMAGE = 668;
+	public static final int MESSAGE_PROGRESS_CHANGED = 666;
+	public static final int MESSAGE_TRACK_CHANGED = 667;
+	public static final int MESSAGE_COVER_CHANGED = 668;
 
 	private final InfoClient mInfo;
 	private final ControlClient mControl;
 	private final HashSet<Handler> mSubscribers;
 	
-	private String mLastPos = "-1";
 	private String mCoverPath;
 	private Drawable mCover;
 	
@@ -90,7 +88,7 @@ public class NowPlayingPollerThread extends Thread {
 			handler.sendMessage(msg);
 		} else {
 			final ICurrentlyPlaying currPlaying = control.getCurrentlyPlaying();
-			msg.what = NowPlayingPollerThread.MESSAGE_NOW_PLAYING_PROGRESS;
+			msg.what = NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED;
 			bundle = msg.getData();
 			bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, currPlaying);
 			handler.sendMessage(msg);
@@ -98,11 +96,11 @@ public class NowPlayingPollerThread extends Thread {
 	  		msg = Message.obtain(handler);
   	  		bundle = msg.getData();
   	  		bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, currPlaying);
-  	  		msg.what = NowPlayingPollerThread.MESSAGE_ARTIST_TEXT_VIEW;	
+  	  		msg.what = NowPlayingPollerThread.MESSAGE_TRACK_CHANGED;	
   	  		handler.sendMessage(msg);
   	  		
   			msg = Message.obtain(handler);
-  	  		handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_IMAGE);
+  	  		handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_CHANGED);
 		}
 		mSubscribers.add(handler);
 	}
@@ -118,14 +116,13 @@ public class NowPlayingPollerThread extends Thread {
 	public void run() {
 		Message msg = null;
 		Bundle bundle = null;
-		Handler handler = null;
+		String lastPos = "-1";
 		ControlClient control = mControl; // use local reference for faster access
 		HashSet<Handler> subscribers = mSubscribers;
 		while (!isInterrupted()) {
 			if(subscribers.size() > 0){
 				if (!control.isConnected()) {
-					for(Iterator<Handler> it = subscribers.iterator();it.hasNext();){
-						handler = it.next();
+					for (Handler handler : subscribers) {
 						msg = Message.obtain(handler);
 						msg.what = NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR;
 						bundle = msg.getData();
@@ -134,10 +131,9 @@ public class NowPlayingPollerThread extends Thread {
 					}				
 				} else {
 					final ICurrentlyPlaying currPlaying = control.getCurrentlyPlaying();
-					for(Iterator<Handler> it = subscribers.iterator();it.hasNext();){
-						handler = it.next();
+					for (Handler handler : subscribers) {
 						msg = Message.obtain(handler);
-						msg.what = NowPlayingPollerThread.MESSAGE_NOW_PLAYING_PROGRESS;
+						msg.what = NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED;
 						bundle = msg.getData();
 						bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, currPlaying);
 						handler.sendMessage(msg);
@@ -145,14 +141,13 @@ public class NowPlayingPollerThread extends Thread {
 
 					String currentPos = currPlaying.getTitle() + currPlaying.getDuration();
 					
-					if (!mLastPos.equals(currentPos)) {
-						mLastPos = currentPos;
-			  	  		for(Iterator<Handler> it = subscribers.iterator();it.hasNext();){
-			  	  			handler = it.next();
+					if (!lastPos.equals(currentPos)) {
+						lastPos = currentPos;
+						for (Handler handler : subscribers) {
 			  	  			msg = Message.obtain(handler);
 			  	  			bundle = msg.getData();
 			  	  			bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, currPlaying);
-			  	  			msg.what = NowPlayingPollerThread.MESSAGE_ARTIST_TEXT_VIEW;	
+			  	  			msg.what = NowPlayingPollerThread.MESSAGE_TRACK_CHANGED;	
 			  	  			handler.sendMessage(msg);
 			  	  		}
 			  	  		
@@ -170,19 +165,17 @@ public class NowPlayingPollerThread extends Thread {
 			  	  					else 
 			  	  						mCover = new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
 
-		  				  	  		for(Iterator<Handler> it = subscribers.iterator();it.hasNext();){
-		  				  	  			handler = it.next();
+			  	  					for (Handler handler : subscribers) {
 		  				  	  			msg = Message.obtain(handler);
-		  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_IMAGE);
+		  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_CHANGED);
 		  				  	  		}	
 			  	  				}
 			  	  			} else {
 			  	  				mCover = null;
 			  	  				if (mCoverPath != null){
-		  				  	  		for(Iterator<Handler> it = subscribers.iterator();it.hasNext();){
-		  				  	  			handler = it.next();
+			  	  					for (Handler handler : subscribers) {
 		  				  	  			msg = Message.obtain(handler);
-		  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_IMAGE);
+		  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_CHANGED);
 		  				  	  		}			  	  					
 			  	  				}
 			  	  				mCoverPath = null;

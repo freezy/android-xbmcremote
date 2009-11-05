@@ -920,6 +920,9 @@ public class MusicClient {
 			public PlayStatus getPlayStatus() {
 				return PlayStatus.parse(map.get("PlayStatus"));
 			}
+			public int getPlaylistPosition() {
+				return Integer.parseInt(map.get("SongNo"));
+			}
 			public float getPercentage() {
 				return Float.valueOf(map.get("Percentage"));
 			}

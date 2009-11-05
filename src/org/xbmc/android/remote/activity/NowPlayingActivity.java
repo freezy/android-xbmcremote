@@ -148,7 +148,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying)data.getSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
 
 		switch (msg.what) {
-		case NowPlayingPollerThread.MESSAGE_NOW_PLAYING_PROGRESS: 
+		case NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED: 
 			if (!mSeekBar.isPressed()) {
 				mSeekBar.setProgress(Math.round(currentlyPlaying.getPercentage()));
 			}
@@ -165,13 +165,13 @@ public class NowPlayingActivity extends Activity implements Callback {
 			}
 			return true;
 		
-		case NowPlayingPollerThread.MESSAGE_ARTIST_TEXT_VIEW:
+		case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
 			mArtistView.setText(currentlyPlaying.getArtist());
 	  	  	mAlbumView.setText(currentlyPlaying.getAlbum());
 	  	  	mSongTitleView.setText(currentlyPlaying.getTitle());
 	  	  	return true;
 	  	  	
-		case NowPlayingPollerThread.MESSAGE_COVER_IMAGE:
+		case NowPlayingPollerThread.MESSAGE_COVER_CHANGED:
 			final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
 			cover.setImageDrawable(mNowPlayingPoller.getNowPlayingCover());
 			return true;

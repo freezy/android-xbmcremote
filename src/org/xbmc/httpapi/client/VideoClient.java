@@ -72,6 +72,9 @@ public class VideoClient {
 			public PlayStatus getPlayStatus() {
 				return PlayStatus.parse(map.get("PlayStatus"));
 			}
+			public int getPlaylistPosition() {
+				return Integer.parseInt(map.get("VideoNo"));
+			}
 			public float getPercentage() {
 				return Float.valueOf(map.get("Percentage"));
 			}

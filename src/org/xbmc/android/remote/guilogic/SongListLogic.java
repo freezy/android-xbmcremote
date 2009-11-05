@@ -76,7 +76,7 @@ public class SongListLogic extends ListLogic {
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					final Song song = ((ThreeHolder<Song>)view.getTag()).getHolderItem();
+					final Song song = ((ThreeHolder<Song>)view.getTag()).holderItem;
 					if (mAlbum == null) {
 						HttpApiThread.music().play(new QueryHandler(
 							mActivity, 
@@ -132,7 +132,7 @@ public class SongListLogic extends ListLogic {
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
 		final ThreeHolder<Song> holder = (ThreeHolder<Song>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(holder.getHolderItem().title);
+		menu.setHeaderTitle(holder.holderItem.title);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Song");
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Song");
 	}
@@ -144,13 +144,13 @@ public class SongListLogic extends ListLogic {
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				if (mAlbum == null) {
-					HttpApiThread.music().addToPlaylist(new QueryHandler(mActivity, "Song added to playlist.", "Error adding song!"), holder.getHolderItem());
+					HttpApiThread.music().addToPlaylist(new QueryHandler(mActivity, "Song added to playlist.", "Error adding song!"), holder.holderItem);
 				} else {
-					HttpApiThread.music().addToPlaylist(new QueryHandler(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, holder.getHolderItem());
+					HttpApiThread.music().addToPlaylist(new QueryHandler(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, holder.holderItem);
 				}
 				break;
 			case ITEM_CONTEXT_PLAY:
-				final Song song = holder.getHolderItem();
+				final Song song = holder.holderItem;
 				if (mAlbum == null) {
 					HttpApiThread.music().play(new QueryHandler(
 						mActivity, 
@@ -206,17 +206,19 @@ public class SongListLogic extends ListLogic {
 			}
 			final Song song = getItem(position);
 			
+			holder.titleView.setText(song.title);
 			if (mAlbum != null) {
-				holder.setText(song.title, song.artist, song.getDuration());
+				holder.subtitleView.setText(song.artist);
 			} else if (mArtist != null) {
-				holder.setText(song.title, song.album, song.getDuration());
+				holder.subtitleView.setText(song.album);
 			} else if (mGenre != null) {
-				holder.setText(song.title, song.artist, song.getDuration());
+				holder.subtitleView.setText(song.artist);
 			}
-			holder.setHolderItem(song);
+			holder.subsubtitleView.setText(song.getDuration());
+			holder.holderItem = song;
 			holder.id = song.getId();
-			holder.setCoverItem(song);
-			holder.setImageResource(R.drawable.icon_album_grey);
+			holder.coverItem = song;
+			holder.iconView.setImageResource(R.drawable.icon_album_grey);
 			holder.setTemporaryBind(true);
 			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), song, ThumbSize.small);
 			return row;
