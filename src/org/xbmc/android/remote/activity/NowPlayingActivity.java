@@ -113,15 +113,11 @@ public class NowPlayingActivity extends Activity implements Callback {
 	
 	private void setupButtons() {
 		mSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				if (fromUser && !seekBar.isInTouchMode())
 					mControl.seek(SeekType.absolute, progress);
 			}
-
-			public void onStartTrackingTouch(SeekBar seekBar) {
-			}
-
+			public void onStartTrackingTouch(SeekBar seekBar) { }
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				mControl.seek(SeekType.absolute, seekBar.getProgress());
 			}
