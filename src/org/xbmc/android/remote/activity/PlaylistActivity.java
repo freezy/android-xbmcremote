@@ -39,6 +39,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -159,6 +160,24 @@ public class PlaylistActivity extends Activity implements Callback {
 	public boolean onContextItemSelected(MenuItem item) {
 		mMusicPlaylistLogic.onContextItemSelected(item);
 		return super.onContextItemSelected(item);
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		EventClient client = ConnectionManager.getEventClient(this);	
+		try {
+			switch (keyCode) {
+				case KeyEvent.KEYCODE_VOLUME_UP:
+					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+					return true;
+				case KeyEvent.KEYCODE_VOLUME_DOWN:
+					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+					return true;
+			}
+		} catch (IOException e) {
+			return false;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 	/**
