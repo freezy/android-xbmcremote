@@ -44,6 +44,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 /**
  * @author Team XBMC
@@ -146,7 +147,7 @@ public class NowPlayingPollerThread extends Thread {
 			  	  		
 			  	  		try {				
 			  	  			String downloadURI = mInfo.getCurrentlyPlayingThumbURI();
-			  	  			
+			  	  			Log.i("POLLER", "downloadURI: " + downloadURI);
 			  	  			if (downloadURI != null && downloadURI.length() > 0) {
 			  	  				if (!downloadURI.equals(mCoverPath)) {
 			  	  					mCoverPath = downloadURI;
@@ -155,18 +156,25 @@ public class NowPlayingPollerThread extends Thread {
 			  	  					
 			  	  					if (buffer == null || buffer.length == 0)
 			  	  						mCover = null;
-			  	  					else {
+			  	  					else 
 			  	  						mCover = new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
-			  				  	  		for(Iterator<Handler> it = mSubscribers.iterator();it.hasNext();){
-			  				  	  			handler = it.next();
-			  				  	  			msg = Message.obtain(handler);
-			  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_IMAGE);
-			  				  	  		}			  	  						
-			  	  					}
+
+		  				  	  		for(Iterator<Handler> it = mSubscribers.iterator();it.hasNext();){
+		  				  	  			handler = it.next();
+		  				  	  			msg = Message.obtain(handler);
+		  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_IMAGE);
+		  				  	  		}	
 			  	  				}
 			  	  			} else {
-			  	  				mCoverPath = null;
 			  	  				mCover = null;
+			  	  				if (mCoverPath != null){
+		  				  	  		for(Iterator<Handler> it = mSubscribers.iterator();it.hasNext();){
+		  				  	  			handler = it.next();
+		  				  	  			msg = Message.obtain(handler);
+		  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_IMAGE);
+		  				  	  		}			  	  					
+			  	  				}
+			  	  				mCoverPath = null;
 			  	  			}
 			  	  		} catch (MalformedURLException e) {
 			  	  			// TODO Auto-generated catch block
