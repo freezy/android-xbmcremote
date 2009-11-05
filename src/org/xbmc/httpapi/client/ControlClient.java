@@ -235,7 +235,7 @@ public class ControlClient {
 			public String getArtist() { return ""; }
 			public String getAlbum() { return ""; }
 		};
-		if (map.get("Filename").contains("Nothing Playing")) {
+		if (map.get("Filename") != null && map.get("Filename").contains("Nothing Playing")) {
 			return nothingPlaying;
 		} else {
 			final MediaType type = map.get("Type").contains("Audio") ? MediaType.music : MediaType.video;
@@ -285,28 +285,6 @@ public class ControlClient {
 			}
 		}
 	}
-	
-	/**
-	 * Contains info about which media type is playing and if it's playing.
-	 * @deprecated 
-	 */
-	public class CurrentlyPlaying {
-		public MediaType mediaType;
-		public PlayStatus playStatus;
-		
-		public CurrentlyPlaying(MediaType mediaType, PlayStatus playState) {
-			this.mediaType = mediaType;
-			this.playStatus = playState;
-		}
-		public boolean isPlaying() {
-			return playStatus.equals(PlayStatus.Playing);
-		}
-	}
-	
-	
-	
-
-	
 	
 	public boolean isConnected() {
 		return mConnection.isConnected();

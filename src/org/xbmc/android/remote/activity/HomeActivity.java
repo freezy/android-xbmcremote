@@ -86,7 +86,7 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 
 		final ArrayList<HomeItem> homeItems = new ArrayList<HomeItem>();
 		final ArrayList<HomeItem> offlineItems = new ArrayList<HomeItem>();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		mUpdateVersionHandler = new HttpApiHandler<String>(this) {
 			public void run() {
 				if (!ConnectionManager.isNetworkAvailable(mActivity)) {

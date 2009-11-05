@@ -102,7 +102,7 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 								HttpApiMemCacheThread.addCoverToCache(cover, null);
 							}
 						} catch (IOException e) {
-							System.out.println("IOException " + e.getMessage());
+							System.out.println("IOException: " + e.getMessage());
 							System.out.println(e.getStackTrace());
 						} finally {
 							done(handler);

@@ -45,9 +45,8 @@ import android.os.Handler.Callback;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
+import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -128,42 +127,19 @@ public class NowPlayingActivity extends Activity implements Callback {
 			}
 		});
 		
-		// previous
-		setupButton(R.id.MediaPreviousButton, ButtonCodes.REMOTE_SKIP_MINUS, R.drawable.now_playing_previous, R.drawable.now_playing_previous_down);
-		// stop
-		setupButton(R.id.MediaStopButton, ButtonCodes.REMOTE_STOP, R.drawable.now_playing_stop, R.drawable.now_playing_stop_down);
-		// pause
-		setupButton(R.id.MediaPlayPauseButton, ButtonCodes.REMOTE_PAUSE, R.drawable.now_playing_pause, R.drawable.now_playing_pause_down);
-		// next
-		setupButton(R.id.MediaNextButton, ButtonCodes.REMOTE_SKIP_PLUS, R.drawable.now_playing_next, R.drawable.now_playing_next_down);
+		// setup buttons
+		findViewById(R.id.MediaPreviousButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_MINUS));
+		findViewById(R.id.MediaStopButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_STOP));
+		findViewById(R.id.MediaPlayPauseButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_PAUSE));
+		findViewById(R.id.MediaNextButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_PLUS));
+		
 		// playlist button
-		findViewById(R.id.MediaPlaylistButton).setOnTouchListener(new OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					((ImageButton)v).setBackgroundResource(R.drawable.now_playing_playlist_down);
-					startActivity(new Intent(NowPlayingActivity.this, PlaylistActivity.class));
-					return true;
-				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					((ImageButton)v).setBackgroundResource(R.drawable.now_playing_playlist);
-					return true;
-				}
-				return false;
+		findViewById(R.id.MediaPlaylistButton).setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				startActivity(new Intent(NowPlayingActivity.this, PlaylistActivity.class));
 			}
 		});
-
 	}
-	
-	/**
-	 * Shortcut for adding the listener class to the button
-	 * @param resourceButton       Resource ID of the button
-	 * @param action               Action string
-	 * @param resourceButtonUp     Resource ID of the button up image
-	 * @param resourceButtonDown   Resource ID of the button down image
-	 */
-	private void setupButton(int resourceButton, String action, int resourceButtonUp, int resourceButtonDown) {
-		findViewById(resourceButton).setOnTouchListener(new OnRemoteAction(action, resourceButtonUp, resourceButtonDown));		
-	}
-
 	
 	/**
 	 * This is called from the thread with a message containing updated
@@ -184,13 +160,11 @@ public class NowPlayingActivity extends Activity implements Callback {
 				mSeekBar.setEnabled(true);
 				mCounterLeftView.setText(Song.getDuration(currentlyPlaying.getTime() + 1));
 				mCounterRightView.setText("-" + Song.getDuration(currentlyPlaying.getDuration() - currentlyPlaying.getTime() - 1));
-				setupButton(R.id.MediaPlayPauseButton, ButtonCodes.REMOTE_PAUSE, R.drawable.now_playing_play, R.drawable.now_playing_play_down);
 				mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
 			} else {
 				mSeekBar.setEnabled(false);
 				mCounterLeftView.setText("");
 				mCounterRightView.setText("");
-				setupButton(R.id.MediaPlayPauseButton, ButtonCodes.REMOTE_PAUSE, R.drawable.now_playing_pause, R.drawable.now_playing_pause_down);
 				mPlayPauseView.setBackgroundResource(R.drawable.now_playing_play);
 			}
 			return true;
@@ -274,39 +248,19 @@ public class NowPlayingActivity extends Activity implements Callback {
 		return super.onKeyDown(keyCode, event);
 	}
 
-
-	
 	/**
 	 * Handles the push- release button code. Switches image of the pressed
 	 * button, vibrates and executes command.
 	 */
-	private class OnRemoteAction implements OnTouchListener {
+	private class OnRemoteAction implements OnClickListener {
 		private final String mAction;
-		private final int mUp, mDown;
-		public OnRemoteAction(String action, int up, int down) {
+		public OnRemoteAction(String action) {
 			mAction = action;
-			mUp = up;
-			mDown = down;
 		}
-		public boolean onTouch(View v, MotionEvent event) {
-			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				try {
-					mClient.sendButton("R1", mAction, true, true, true, (short)0, (byte)0);
-				} catch (IOException e) {
-					return false;
-				}
-				((ImageButton)v).setBackgroundResource(mDown);
-				return true;
-			} else if (event.getAction() == MotionEvent.ACTION_UP) {
-				try {
-					mClient.sendButton("R1", mAction, false, false, true, (short)0, (byte)0);
-				} catch (IOException e) {
-					return false;
-				}
-				((ImageButton)v).setBackgroundResource(mUp);
-				return true;
-			}
-			return false;
+		public void onClick(View v) {
+			try {
+				mClient.sendButton("R1", mAction, false, true, true, (short)0, (byte)0);
+			} catch (IOException e) { }
 		}
 	}
 }

@@ -29,7 +29,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ConnectionManager;
@@ -47,22 +46,32 @@ import android.os.Message;
 import android.util.Log;
 
 /**
- * @author Team XBMC
+ * Activities (and other stuff) can subscribe to this thread in order to obtain
+ * real-time "Now playing" information. The thread will send relevant messages
+ * to all subscribers. If there are no subscriptions, nothing is polled.
  *
+ * Please remember to unsubscribe (e.g. onPause()) in order to avoid unnecessary
+ * polling.
+ * 
+ * @author Team XBMC
  */
 public class NowPlayingPollerThread extends Thread {
 	
-	private String mLastPos = "-1";
-	private InfoClient mInfo;
-	private ControlClient mControl;
-	private Set<Handler> mSubscribers;
-	private String mCoverPath;
-	private Drawable mCover;
+	private static final String TAG = "POLLER";
+	
 	public static final String BUNDLE_CURRENTLY_PLAYING = "CurrentlyPlaying";
 	public static final int MESSAGE_CONNECTION_ERROR = 1;
 	public static final int MESSAGE_NOW_PLAYING_PROGRESS = 666;
 	public static final int MESSAGE_ARTIST_TEXT_VIEW = 667;
 	public static final int MESSAGE_COVER_IMAGE = 668;
+
+	private final InfoClient mInfo;
+	private final ControlClient mControl;
+	private final HashSet<Handler> mSubscribers;
+	
+	private String mLastPos = "-1";
+	private String mCoverPath;
+	private Drawable mCover;
 	
 	public NowPlayingPollerThread(Context context){
   	  	mControl = ConnectionManager.getHttpClient(context).control;
@@ -74,17 +83,18 @@ public class NowPlayingPollerThread extends Thread {
 		//update handler on the state of affairs
 		Message msg = Message.obtain(handler);
 		Bundle bundle = msg.getData();
-		if (!mControl.isConnected()){
+		ControlClient control = mControl; // local access is much faster
+		if (!control.isConnected()){
 			msg.what = NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR;
 			bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, null);
 			handler.sendMessage(msg);
 		} else {
-			final ICurrentlyPlaying currPlaying = mControl.getCurrentlyPlaying();
+			final ICurrentlyPlaying currPlaying = control.getCurrentlyPlaying();
 			msg.what = NowPlayingPollerThread.MESSAGE_NOW_PLAYING_PROGRESS;
 			bundle = msg.getData();
 			bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, currPlaying);
 			handler.sendMessage(msg);
-			
+
 	  		msg = Message.obtain(handler);
   	  		bundle = msg.getData();
   	  		bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, currPlaying);
@@ -109,10 +119,12 @@ public class NowPlayingPollerThread extends Thread {
 		Message msg = null;
 		Bundle bundle = null;
 		Handler handler = null;
+		ControlClient control = mControl; // use local reference for faster access
+		HashSet<Handler> subscribers = mSubscribers;
 		while (!isInterrupted()) {
-			if(mSubscribers.size() > 0){
-				if (!mControl.isConnected()) {
-					for(Iterator<Handler> it = mSubscribers.iterator();it.hasNext();){
+			if(subscribers.size() > 0){
+				if (!control.isConnected()) {
+					for(Iterator<Handler> it = subscribers.iterator();it.hasNext();){
 						handler = it.next();
 						msg = Message.obtain(handler);
 						msg.what = NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR;
@@ -121,9 +133,8 @@ public class NowPlayingPollerThread extends Thread {
 						handler.sendMessage(msg);
 					}				
 				} else {
-					
-					final ICurrentlyPlaying currPlaying = mControl.getCurrentlyPlaying();
-					for(Iterator<Handler> it = mSubscribers.iterator();it.hasNext();){
+					final ICurrentlyPlaying currPlaying = control.getCurrentlyPlaying();
+					for(Iterator<Handler> it = subscribers.iterator();it.hasNext();){
 						handler = it.next();
 						msg = Message.obtain(handler);
 						msg.what = NowPlayingPollerThread.MESSAGE_NOW_PLAYING_PROGRESS;
@@ -136,7 +147,7 @@ public class NowPlayingPollerThread extends Thread {
 					
 					if (!mLastPos.equals(currentPos)) {
 						mLastPos = currentPos;
-			  	  		for(Iterator<Handler> it = mSubscribers.iterator();it.hasNext();){
+			  	  		for(Iterator<Handler> it = subscribers.iterator();it.hasNext();){
 			  	  			handler = it.next();
 			  	  			msg = Message.obtain(handler);
 			  	  			bundle = msg.getData();
@@ -147,7 +158,7 @@ public class NowPlayingPollerThread extends Thread {
 			  	  		
 			  	  		try {				
 			  	  			String downloadURI = mInfo.getCurrentlyPlayingThumbURI();
-			  	  			Log.i("POLLER", "downloadURI: " + downloadURI);
+			  	  			Log.i(TAG, "downloadURI: " + downloadURI);
 			  	  			if (downloadURI != null && downloadURI.length() > 0) {
 			  	  				if (!downloadURI.equals(mCoverPath)) {
 			  	  					mCoverPath = downloadURI;
@@ -159,7 +170,7 @@ public class NowPlayingPollerThread extends Thread {
 			  	  					else 
 			  	  						mCover = new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
 
-		  				  	  		for(Iterator<Handler> it = mSubscribers.iterator();it.hasNext();){
+		  				  	  		for(Iterator<Handler> it = subscribers.iterator();it.hasNext();){
 		  				  	  			handler = it.next();
 		  				  	  			msg = Message.obtain(handler);
 		  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_IMAGE);
@@ -168,7 +179,7 @@ public class NowPlayingPollerThread extends Thread {
 			  	  			} else {
 			  	  				mCover = null;
 			  	  				if (mCoverPath != null){
-		  				  	  		for(Iterator<Handler> it = mSubscribers.iterator();it.hasNext();){
+		  				  	  		for(Iterator<Handler> it = subscribers.iterator();it.hasNext();){
 		  				  	  			handler = it.next();
 		  				  	  			msg = Message.obtain(handler);
 		  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_IMAGE);
@@ -177,11 +188,9 @@ public class NowPlayingPollerThread extends Thread {
 			  	  				mCoverPath = null;
 			  	  			}
 			  	  		} catch (MalformedURLException e) {
-			  	  			// TODO Auto-generated catch block
 			  	  			e.printStackTrace();
 			  	  		} catch (URISyntaxException e) {
-			  	  			// TODO Auto-generated catch block
-						e.printStackTrace();
+			  	  			e.printStackTrace();
 			  	  		}
 					}
 				}

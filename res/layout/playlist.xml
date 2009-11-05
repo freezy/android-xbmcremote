@@ -1,20 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout 
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/playlist_outer_layout"
-	android:layout_width="fill_parent" 
-	android:layout_height="fill_parent"
-	android:orientation="vertical" 
-	android:background="#000000">
-	<include layout="@layout/titlebar" />
-	<org.xbmc.android.widget.FastScrollView
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent">
-		<ListView 
-			android:id="@+id/playlist_list"
-			android:layout_height="fill_parent"
-			android:layout_width="fill_parent"
-			android:fadingEdge="none"
-			android:scrollbars="none" />
-	</org.xbmc.android.widget.FastScrollView>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<RelativeLayout android:orientation="vertical"
+		android:layout_width="fill_parent" android:layout_height="fill_parent">
+		<LinearLayout android:id="@+id/playlist_bottombar"
+			android:layout_width="fill_parent" android:layout_height="60px"
+			android:layout_alignParentBottom="true"
+			android:background="@drawable/bottom_controls_background"
+			android:gravity="center_horizontal">
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				>
+				<ImageButton android:id="@+id/MediaPreviousButton"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:background="@drawable/now_playing_previous" />
+				<ImageButton android:id="@+id/MediaPlayPauseButton"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:background="@drawable/now_playing_play" />
+				<ImageButton android:id="@+id/MediaStopButton"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:background="@drawable/now_playing_stop" />
+				<ImageButton android:id="@+id/MediaNextButton"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:background="@drawable/now_playing_next" />
+			</LinearLayout>
+		</LinearLayout>
+		<FrameLayout android:id="@+id/home_upper"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:layout_above="@id/playlist_bottombar">
+			<LinearLayout 
+				android:id="@+id/playlist_outer_layout"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent" 
+				android:orientation="vertical">
+				<include layout="@layout/titlebar" />
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					<ListView 
+						android:id="@+id/playlist_list"
+						android:layout_height="fill_parent"
+						android:layout_width="fill_parent"
+						android:fadingEdge="none"
+						android:scrollbars="none" />
+				</org.xbmc.android.widget.FastScrollView>
+			</LinearLayout>
+		</FrameLayout>
+	</RelativeLayout>
 </LinearLayout>

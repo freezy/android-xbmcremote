@@ -68,8 +68,9 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 				if (cover != null) {
 					final File file = new File(ImportUtilities.getCacheDirectory(cover.getArtFolder(), size), String.format("%08x", cover.getCrc()).toLowerCase());
 				    if (file.exists()) {
-				    	handler.value = BitmapFactory.decodeFile(file.getAbsolutePath());
-				    	HttpApiMemCacheThread.addCoverToCache(cover, handler.value);
+				    	final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+				    	HttpApiMemCacheThread.addCoverToCache(cover, bitmap);
+				    	handler.value = bitmap;
 				    }
 				}
 				done(handler);
