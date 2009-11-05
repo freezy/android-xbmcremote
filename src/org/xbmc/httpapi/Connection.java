@@ -57,7 +57,7 @@ public class Connection {
 	 * Connection timeout in milliseconds. That's just the CONNECTION timeout. 
 	 * Read timeout is set by preferences.
 	 */
-	private static final int CONNECTION_TIMEOUT = 1000; 
+	private static final int CONNECTION_TIMEOUT = 5000; 
 	
 	private static final String XBMC_HTTP_BOOTSTRAP =  "/xbmcCmds/xbmcHttp";
 	private String mBaseURL;
