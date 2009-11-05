@@ -56,7 +56,7 @@ public class Album implements ICoverArt, Serializable, NamedResource {
 		this.name = name;
 		this.artist = artist;
 		this.year = year;
-		thumbPath = thumbPath.replace("\\\\", "/");
+		thumbPath = thumbPath.replace("\\", "/");
 		if (!thumbPath.equals("NONE")) {
 			try {
 				this.thumbID = Long.parseLong(thumbPath.substring(thumbPath.lastIndexOf("/") + 1, thumbPath.length() - 4), 16);

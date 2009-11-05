@@ -66,7 +66,7 @@ public class Connection {
 	private int mTimeout;
 	private URLConnection uc = null;
 	private MyAuthenticator auth = null;
-	private boolean mIsConnected = false;
+//	private boolean mIsConnected = false;
 	
 	/**
 	 * Class constructor sets host data and error handler.
@@ -150,7 +150,7 @@ public class Connection {
 			} catch (Exception e1) {
 				//do nothing, just tried to check the response code
 			}
-			mIsConnected = false;
+//			mIsConnected = false;
 			mErrorHandler.handle(e);
 			return "";
 		}
@@ -307,10 +307,10 @@ public class Connection {
 			assertBoolean("SetResponseFormat", "CloseRecord;");
 			assertBoolean("SetResponseFormat", "OpenField;<field>");
 			assertBoolean("SetResponseFormat", "CloseField;</field>");
-			mIsConnected = true;
+//			mIsConnected = true;
 		} catch (WrongDataFormatException e) {
 			mErrorHandler.handle(e);
-			mIsConnected = false;
+//			mIsConnected = false;
 		}
 	}
 	
