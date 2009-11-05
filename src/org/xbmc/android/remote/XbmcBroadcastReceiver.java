@@ -74,12 +74,14 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 	                    pic.compress(Bitmap.CompressFormat.PNG, 0, os);
 	                    
 	                    // if xbmc is playing something, we pause it. without the check paused playback would resume
-	                    final ICurrentlyPlaying cp = http.control.getCurrentlyPlaying();
-	                    if (http != null && http.isConnected() && http.info != null && cp != null ){
-	                    	if (cp.isPlaying()){
-	                    		client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, true, true, true, (short)0, (byte)0);
-	                    		client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, false, true, (short)0, (byte)0);
-	                    		PLAY_STATE = PLAY_STATE_PAUSED;
+	                    if (http != null && http.isConnected() && http.info != null ){
+	                    	final ICurrentlyPlaying cp = http.control.getCurrentlyPlaying();
+	                    	if(cp != null){
+	                    		if (cp.isPlaying()){
+	                    			client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, true, true, true, (short)0, (byte)0);
+	                    			client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, false, true, (short)0, (byte)0);
+	                    			PLAY_STATE = PLAY_STATE_PAUSED;
+	                    		}
 	                    	}
 	                    }
 	                    
@@ -95,20 +97,21 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 	            	   PLAY_STATE = PLAY_STATE_NONE;
 	               }
 				}else if(action.equals(SMS_RECVEICED_ACTION) && prefs.getBoolean("setting_show_sms", true)) {
+					if (client != null) {
 					// sms received. extract msg, contact and pic and show it on the tv
-					Bundle bundle = intent.getExtras();
-		            if (bundle != null) {
-		            	SmsMmsMessage msg = SmsMmsMessage.getSmsfromPDUs(context, (Object[])bundle.get("pdus"));
-		            	Bitmap pic = msg.getContactPhoto();
-		            	if(pic != null) {
-		            		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		            		pic.compress(Bitmap.CompressFormat.PNG, 0, os);
-		            		client.sendNotification("SMS Received from "+msg.getContactName(), msg.getMessageBody(),
+						Bundle bundle = intent.getExtras();
+						if (bundle != null) {
+							SmsMmsMessage msg = SmsMmsMessage.getSmsfromPDUs(context, (Object[])bundle.get("pdus"));
+							Bitmap pic = msg.getContactPhoto();
+							if(pic != null) {
+								ByteArrayOutputStream os = new ByteArrayOutputStream();
+								pic.compress(Bitmap.CompressFormat.PNG, 0, os);
+								client.sendNotification("SMS Received from "+msg.getContactName(), msg.getMessageBody(),
 		            				Packet.ICON_PNG, os.toByteArray());
-		            	} else {
-		            		client.sendNotification("SMS Received from "+msg.getContactName(), msg.getMessageBody());
-		            	}
-		            }
+							} else
+								client.sendNotification("SMS Received from "+msg.getContactName(), msg.getMessageBody());
+						}
+					}
 				}
 			} catch (NotFoundException e) {
 				// TODO Auto-generated catch block
