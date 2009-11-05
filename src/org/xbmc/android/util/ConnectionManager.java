@@ -29,6 +29,7 @@ import java.util.HashSet;
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
 
+import org.xbmc.android.backend.httpapi.NowPlayingPollerThread;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.HttpClient;
 
@@ -46,6 +47,7 @@ public class ConnectionManager {
 	private static HttpClient sHttpApiInstance;
 	private static EventClient sEventClientInstance;
 	private static Collection<ServiceInfo> sServiceInfo = new HashSet<ServiceInfo>();
+	private static NowPlayingPollerThread sNowPlayingPoller;
 	
 	/**
 	 * Performs zeroconf lookup for the hostname and XBMC's services.
@@ -165,6 +167,25 @@ public class ConnectionManager {
 			}
 		}
 		return sHttpApiInstance;
+	}
+	
+	/**
+	 * Returns an instance of the NowPlaying Poller . Instantiation takes place only
+	 * once, otherwise the first instance is returned.
+	 * 
+	 * @param context
+	 * @return A reference to the NowPlaying Poller
+	 */
+	public static NowPlayingPollerThread getNowPlayingPoller( Context context) {
+		if (sNowPlayingPoller == null) {
+			sNowPlayingPoller = new NowPlayingPollerThread(context);
+			sNowPlayingPoller.start();
+		}
+		if (sNowPlayingPoller.isInterrupted()){
+			sNowPlayingPoller = new NowPlayingPollerThread(context);
+			sNowPlayingPoller.start();			
+		}
+		return sNowPlayingPoller;
 	}
 	
 	/**

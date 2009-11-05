@@ -21,23 +21,16 @@
 
 package org.xbmc.android.remote.activity;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
 
+import org.xbmc.android.backend.httpapi.NowPlayingPollerThread;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.ControlClient;
-import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.MediaType;
@@ -45,9 +38,6 @@ import org.xbmc.httpapi.type.SeekType;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -67,23 +57,11 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class NowPlayingActivity extends Activity implements Callback {
 	
-	public static final int MESSAGE_COVER_IMAGE = 668;
-	public static final int MESSAGE_ARTIST_TEXT_VIEW = 667;
-	public static final int MESSAGE_NOW_PLAYING_PROGRESS = 666;
-	public static final int MESSAGE_CONNECTION_ERROR = 1;
-	
-	public static final String BUNDLE_CURRENTLY_PLAYING = "CurrentlyPlaying";
-	
-	private InfoClient mInfo;
 	private ControlClient mControl;
 	private EventClient mClient;
-	
-	private Handler mNowPlayingHandler;
-	private UpdateThread mUpdateThread;
 
-	private String mLastPos = "-1";
-	private String mCoverPath;
-	private Drawable mCover;
+	private Handler mNowPlayingHandler;
+	private NowPlayingPollerThread mNowPlayingPoller;
 	
 	private TextView mAlbumView;
 	private TextView mArtistView;
@@ -99,7 +77,6 @@ public class NowPlayingActivity extends Activity implements Callback {
        	setContentView(R.layout.nowplaying);
         
   	  	mControl = ConnectionManager.getHttpClient(this).control;
-  	  	mInfo = ConnectionManager.getHttpClient(this).info;
   	  	mClient = ConnectionManager.getEventClient(this);
   	  	
 		mSeekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
@@ -118,20 +95,21 @@ public class NowPlayingActivity extends Activity implements Callback {
   	  	((TextView)findViewById(R.id.titlebar_text)).setText("Now playing");
   	  	
   	  	mNowPlayingHandler = new Handler(this);
+
   	  	setupButtons();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mUpdateThread = new UpdateThread();
-		mUpdateThread.start();
+  	  	mNowPlayingPoller = ConnectionManager.getNowPlayingPoller(this);
+  	  	mNowPlayingPoller.subscribe(mNowPlayingHandler);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mUpdateThread.interrupt();
+		mNowPlayingPoller.unSubscribe(mNowPlayingHandler);
 	}
 	
 	private void setupButtons() {
@@ -195,10 +173,10 @@ public class NowPlayingActivity extends Activity implements Callback {
 	public synchronized boolean handleMessage(Message msg) {
 		
 		final Bundle data = msg.getData();
-		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying)data.getSerializable(BUNDLE_CURRENTLY_PLAYING);
+		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying)data.getSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
 
 		switch (msg.what) {
-		case MESSAGE_NOW_PLAYING_PROGRESS: 
+		case NowPlayingPollerThread.MESSAGE_NOW_PLAYING_PROGRESS: 
 			if (!mSeekBar.isPressed()) {
 				mSeekBar.setProgress(Math.round(currentlyPlaying.getPercentage()));
 			}
@@ -217,21 +195,21 @@ public class NowPlayingActivity extends Activity implements Callback {
 			}
 			return true;
 		
-		case MESSAGE_ARTIST_TEXT_VIEW:
+		case NowPlayingPollerThread.MESSAGE_ARTIST_TEXT_VIEW:
 			mArtistView.setText(currentlyPlaying.getArtist());
 	  	  	mAlbumView.setText(currentlyPlaying.getAlbum());
 	  	  	mSongTitleView.setText(currentlyPlaying.getTitle());
 	  	  	return true;
 	  	  	
-		case MESSAGE_COVER_IMAGE:
+		case NowPlayingPollerThread.MESSAGE_COVER_IMAGE:
 			final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
-			cover.setImageDrawable(mCover);
+			cover.setImageDrawable(mNowPlayingPoller.getNowPlayingCover());
 			return true;
 			
-		case MESSAGE_CONNECTION_ERROR:
+		case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
 			ErrorHandler handler = new ErrorHandler(this);
 			handler.handle(new SocketTimeoutException());
-			setResult(MESSAGE_CONNECTION_ERROR);
+			setResult(NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR);
 			finish();
 			return true;
 			
@@ -240,11 +218,6 @@ public class NowPlayingActivity extends Activity implements Callback {
 		}
 	}
 	
-	private synchronized void setCover(Drawable cover) {
-		mCover = cover;
-		mNowPlayingHandler.sendEmptyMessage(MESSAGE_COVER_IMAGE);
-	}
-
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, 1, 0, "Music");
 		menu.add(0, 2, 0, "Video");
@@ -302,25 +275,6 @@ public class NowPlayingActivity extends Activity implements Callback {
 	}
 
 
-	private byte[] download(String pathToDownload) {
-		try {
-			final URL url = new URL(pathToDownload);
-			final URLConnection uc = url.openConnection();
-			
-			final BufferedReader rd = new BufferedReader(new InputStreamReader(uc.getInputStream()), 8192);
-			
-			final StringBuilder sb = new StringBuilder();
-			String line = "";
-			while ((line = rd.readLine()) != null) {    
-				sb.append(line);
-			}
-			
-			rd.close();
-			return Base64.decode(sb.toString().replace("<html>", "").replace("</html>", ""));
-		} catch (Exception e) {
-			return null;
-		}
-	}
 	
 	/**
 	 * Handles the push- release button code. Switches image of the pressed
@@ -353,72 +307,6 @@ public class NowPlayingActivity extends Activity implements Callback {
 				return true;
 			}
 			return false;
-		}
-	}
-	
-	
-	private class UpdateThread extends Thread {
-		
-		public void run() {
-			while (!isInterrupted()) {
-				Message msg = new Message();
-				Bundle bundle = msg.getData();
-				if (!mControl.isConnected()) {
-					msg.what = MESSAGE_CONNECTION_ERROR;
-					bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, null);
-					mNowPlayingHandler.sendMessage(msg);
-				} else {
-					
-					final ICurrentlyPlaying currPlaying = mControl.getCurrentlyPlaying();
-					bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
-
-					msg.what = MESSAGE_NOW_PLAYING_PROGRESS;
-					
-					String currentPos = currPlaying.getTitle() + currPlaying.getDuration();
-					mNowPlayingHandler.sendMessage(msg);
-					
-					if (!mLastPos.equals(currentPos)) {
-						mLastPos = currentPos;
-						msg = new Message();
-						bundle = msg.getData();
-						bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
-				  	  	msg.what = MESSAGE_ARTIST_TEXT_VIEW;
-				  	  	
-						mNowPlayingHandler.sendMessage(msg);
-						
-						try {				
-							String downloadURI = mInfo.getCurrentlyPlayingThumbURI();
-			
-							if (downloadURI != null && downloadURI.length() > 0) {
-								if (!downloadURI.equals(mCoverPath)) {
-						  	  		mCoverPath = downloadURI;
-			
-						  	  		byte[] buffer = download(downloadURI);
-			
-						  	  		if (buffer == null || buffer.length == 0)
-						  	  			setCover(null);
-						  	  		else
-						  	  			setCover(new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length)));
-								}
-							} else {
-								mCoverPath = null;
-								setCover(null);
-							}
-						} catch (MalformedURLException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (URISyntaxException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
-				try {
-					sleep(1000);
-				} catch (InterruptedException e) {
-					return;
-				}
-			}
 		}
 	}
 }
