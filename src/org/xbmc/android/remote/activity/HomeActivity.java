@@ -36,6 +36,7 @@ import org.xbmc.httpapi.info.SystemInfo;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -95,6 +96,7 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 				if (!value.equals("")) {
 					((TextView) findViewById(R.id.HomeVersionTextView)).setText("XBMC " + value);
 					((GridView)findViewById(R.id.HomeItemGridView)).setAdapter(mHomeMenu);
+					NowPlayingNotificationManager.getInstance(getBaseContext()).startNotificating();
 				} else {
 					((TextView) findViewById(R.id.HomeVersionTextView)).setText("Check Settings and retry");
 					((GridView)findViewById(R.id.HomeItemGridView)).setAdapter(mOfflineMenu);
@@ -144,6 +146,7 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 			startActivity(new Intent(this, SettingsActivity.class));
 			return true;
 		case MENU_EXIT:
+			NowPlayingNotificationManager.getInstance(getBaseContext()).removeNotification();
 			System.exit(0);
 			return true;
 		}

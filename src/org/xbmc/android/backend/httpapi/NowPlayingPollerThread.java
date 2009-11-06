@@ -34,6 +34,7 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
+import org.xbmc.httpapi.client.ControlClient.PlayStatus;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -63,6 +64,7 @@ public class NowPlayingPollerThread extends Thread {
 	public static final int MESSAGE_PROGRESS_CHANGED = 666;
 	public static final int MESSAGE_TRACK_CHANGED = 667;
 	public static final int MESSAGE_COVER_CHANGED = 668;
+	public static final int MESSAGE_PLAYSTATE_CHANGED = 669;
 
 	private final InfoClient mInfo;
 	private final ControlClient mControl;
@@ -113,43 +115,45 @@ public class NowPlayingPollerThread extends Thread {
 		return mCover;
 	}
 	
+	public void sendMessage(int what, ICurrentlyPlaying curr) {
+		HashSet<Handler> subscribers = mSubscribers;
+		Message msg;
+		Bundle bundle;
+		for (Handler handler : subscribers) {
+			msg = Message.obtain(handler);
+			msg.what = what;
+			bundle = msg.getData();
+			bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, curr);
+			msg.setTarget(handler);
+			handler.sendMessage(msg);
+		}	
+	}
+	
 	public void run() {
-		Message msg = null;
-		Bundle bundle = null;
 		String lastPos = "-1";
+		PlayStatus lastPlayStatus = null;
 		ControlClient control = mControl; // use local reference for faster access
 		HashSet<Handler> subscribers = mSubscribers;
 		while (!isInterrupted()) {
 			if(subscribers.size() > 0){
 				if (!control.isConnected()) {
-					for (Handler handler : subscribers) {
-						msg = Message.obtain(handler);
-						msg.what = NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR;
-						bundle = msg.getData();
-						bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, null);
-						handler.sendMessage(msg);
-					}				
+					sendMessage(MESSAGE_CONNECTION_ERROR, null);
 				} else {
 					final ICurrentlyPlaying currPlaying = control.getCurrentlyPlaying();
-					for (Handler handler : subscribers) {
-						msg = Message.obtain(handler);
-						msg.what = NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED;
-						bundle = msg.getData();
-						bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, currPlaying);
-						handler.sendMessage(msg);
-					}
-
+					
+					sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
+					
 					String currentPos = currPlaying.getTitle() + currPlaying.getDuration();
+					PlayStatus currentPlayStatus = currPlaying.getPlayStatus();
+					
+					if (currentPlayStatus != lastPlayStatus) {
+						sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);
+					}
 					
 					if (!lastPos.equals(currentPos)) {
 						lastPos = currentPos;
-						for (Handler handler : subscribers) {
-			  	  			msg = Message.obtain(handler);
-			  	  			bundle = msg.getData();
-			  	  			bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, currPlaying);
-			  	  			msg.what = NowPlayingPollerThread.MESSAGE_TRACK_CHANGED;	
-			  	  			handler.sendMessage(msg);
-			  	  		}
+						
+						sendMessage(MESSAGE_TRACK_CHANGED, currPlaying);
 			  	  		
 			  	  		try {				
 			  	  			String downloadURI = mInfo.getCurrentlyPlayingThumbURI();
@@ -166,7 +170,6 @@ public class NowPlayingPollerThread extends Thread {
 			  	  						mCover = new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
 
 			  	  					for (Handler handler : subscribers) {
-		  				  	  			msg = Message.obtain(handler);
 		  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_CHANGED);
 		  				  	  		}	
 			  	  				}
@@ -174,7 +177,6 @@ public class NowPlayingPollerThread extends Thread {
 			  	  				mCover = null;
 			  	  				if (mCoverPath != null){
 			  	  					for (Handler handler : subscribers) {
-		  				  	  			msg = Message.obtain(handler);
 		  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_CHANGED);
 		  				  	  		}			  	  					
 			  	  				}

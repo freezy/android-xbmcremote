@@ -58,7 +58,7 @@
 			android:title="Timeout before reconnect" 
 			android:summary="Wait for %value% seconds before trying to reconnect" />
 	</PreferenceCategory>
-	<PreferenceCategory  android:title="On-Screen Notifications">
+	<PreferenceCategory  android:title="On-Screen Notifications"><CheckBoxPreference android:key="setting_show_notification" android:title="Statusbar notifications" android:summary="Show now playing notifications in the status bar." android:defaultValue="true"></CheckBoxPreference>
 		<CheckBoxPreference android:key="setting_show_sms"
 			android:title="Show incoming SMS"
 			android:summary="Shows incoming SMS with contact name and picture on your TV."
@@ -69,5 +69,6 @@
 			android:key="setting_show_call" 
 			android:selectable="true"
 			android:enabled="true"/>
-	</PreferenceCategory>
+	
+</PreferenceCategory>
 </PreferenceScreen>
