@@ -36,7 +36,6 @@ import org.xbmc.httpapi.info.SystemInfo;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;

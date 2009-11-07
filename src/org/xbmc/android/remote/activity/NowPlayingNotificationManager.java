@@ -5,7 +5,6 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 import org.xbmc.httpapi.client.ControlClient.PlayStatus;
-import org.xbmc.httpapi.data.Song;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -51,14 +50,14 @@ public class NowPlayingNotificationManager {
 		if((artist == null || artist.equals("") ) && (title == null || title.equals("")))
 			removeNotification();
 		else
-			showNotification(artist, title, "Paused on XBMC",R.drawable.icon_playing);//change icon to pause if there is one
+			showNotification(artist, title, "Paused on XBMC",R.drawable.notif_pause);
 	}
 	
 	public void showPlayingNotification(String artist, String title) {
 		if((artist == null || artist.equals("") ) && (title == null || title.equals("")))
 			removeNotification();
 		else
-			showNotification(artist, title, "Now playing on XBMC", R.drawable.icon_play);
+			showNotification(artist, title, "Now playing on XBMC", R.drawable.notif_play);
 	}
 	
 	public void showNotification(String artist, String title, String text, int icon) {
