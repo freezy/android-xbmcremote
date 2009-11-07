@@ -23,22 +23,52 @@ package org.xbmc.android.remote.guilogic;
 
 import org.xbmc.httpapi.data.NamedResource;
 
+import android.content.Context;
+import android.os.Build;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 
 public class ListLogicOnKeyListener<T extends NamedResource> implements OnKeyListener {
+	
+	public static final String[] DEVICES_HANDLE_MENU_LONGPRESS = {"HTC Magic"};
+	public static final int LONGPRESS_REPEATS = 10;
 
-	public ListLogicOnKeyListener(){ }
+	public static boolean sHandleMenuLongPress;
+	
+	static{
+		//Decide if MenuKey LongPress is handled by the device itself.
+		sHandleMenuLongPress = true;
+		for(int i = 0; i < DEVICES_HANDLE_MENU_LONGPRESS.length; i++){
+			if(Build.MODEL.equals(DEVICES_HANDLE_MENU_LONGPRESS[i])){
+				sHandleMenuLongPress = false;
+				break;
+			}
+		}
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
-		int startIndex = ((ListView)v).getSelectedItem() == null ? 0 : ((ListView)v).getSelectedItemPosition() +1;
-		if(event.getAction() == KeyEvent.ACTION_DOWN){ //only snoop on key down - never mind the key-up-event
-			//Only "eat" ascii input
-			if((event.getDisplayLabel() >= 65 && event.getDisplayLabel() <= 90 ) || ( event.getDisplayLabel() >= 97 && event.getDisplayLabel() <= 122 )){
-				for(int i = startIndex; i < ((ListView)v).getCount(); i++ ){
+		if (keyCode == KeyEvent.KEYCODE_MENU){
+			switch(event.getAction()){
+			case KeyEvent.ACTION_DOWN:
+				if(!sHandleMenuLongPress)
+					return false;
+				return handleMenuKeyDown(v, event);
+			case  KeyEvent.ACTION_UP:
+				return handleMenuKeyUp(v, event);
+			default:
+				return false;
+			}
+		}
+		if (event.getAction() == KeyEvent.ACTION_DOWN) {
+			if ( keyCode >= KeyEvent.KEYCODE_A && keyCode <= KeyEvent.KEYCODE_Z ){
+				int startIndex = ((ListView)v).getSelectedItem() == null ? 0 : ((ListView)v).getSelectedItemPosition() +1;
+				int count = ((ListView)v).getCount();
+				for(int i = startIndex; i < count; i++){
 					if(((T)((ListView)v).getItemAtPosition(i)).getShortName().toLowerCase().charAt(0) == Character.toLowerCase(event.getDisplayLabel())){
 						((ListView)v).setSelection(i);
 						return true;
@@ -52,10 +82,32 @@ public class ListLogicOnKeyListener<T extends NamedResource> implements OnKeyLis
 							return true;
 						}
 					}
-				}
-				return true; //event is eaten
+				}			
+				return true;
 			}
-		} 
-		return false; //event is NOT eaten
+		}
+		//event is NOT eaten
+		return false;
 	}
+	
+	private boolean handleMenuKeyDown(View v, KeyEvent event){
+		InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+		if(event.getRepeatCount() >= LONGPRESS_REPEATS){
+			imm.showSoftInput(v, InputMethodManager.SHOW_FORCED);
+			mCreatingSoftKeyboard = true;
+			return true;
+		}
+		imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+		return false;
+	}
+	private boolean handleMenuKeyUp(View v, KeyEvent event){
+		if(mCreatingSoftKeyboard){
+			mCreatingSoftKeyboard = false;
+			return true;
+		}
+		
+		return false;
+	}
+
+	private boolean mCreatingSoftKeyboard = false;
 }

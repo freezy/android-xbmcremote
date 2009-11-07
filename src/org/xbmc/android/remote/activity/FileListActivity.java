@@ -27,6 +27,7 @@ import java.util.HashMap;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
+import org.xbmc.android.remote.guilogic.ListLogicOnKeyListener;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
@@ -35,12 +36,14 @@ import org.xbmc.httpapi.data.MediaLocation;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -106,7 +109,6 @@ public class FileListActivity extends ListActivity {
 					mFileItems.put(item.name, item);
 				}
 				setListAdapter(new ArrayAdapter<String>(mActivity, android.R.layout.simple_list_item_1, presentationList));
-				getListView().setTextFilterEnabled(true);
 			}
 		};
 		
@@ -132,6 +134,7 @@ public class FileListActivity extends ListActivity {
 		
 		if (mMediaType.equals(MediaType.music) || mMediaType.equals(MediaType.video))
 			menu.add(0, 6, 0, "Update Library");
+		
 		return true;
 	}
 
@@ -184,10 +187,71 @@ public class FileListActivity extends ListActivity {
 				case KeyEvent.KEYCODE_VOLUME_DOWN:
 					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
 					return true;
+				case KeyEvent.KEYCODE_MENU:
+					if(!ListLogicOnKeyListener.sHandleMenuLongPress)
+						return super.onKeyDown(keyCode, event);
+					return handleMenuKeyDown( event);
+				default:
+					return handleGeneralKeyDown(keyCode, event);
 			}
 		} catch (IOException e) {
-			return false;
+			return super.onKeyDown(keyCode, event);
+		}
+	}
+	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event){
+		if(keyCode == KeyEvent.KEYCODE_MENU)
+			return handleMenuKeyUp(event);
+		if ( keyCode >= KeyEvent.KEYCODE_A && keyCode <= KeyEvent.KEYCODE_Z )
+			return true;
+		
+		return super.onKeyUp(keyCode, event);
+	}
+	
+	private boolean handleGeneralKeyDown(int keyCode, KeyEvent event){
+		ListView mLv = getListView();
+		if ( keyCode >= KeyEvent.KEYCODE_A && keyCode <= KeyEvent.KEYCODE_Z ){
+			int startIndex = mLv.getSelectedItem() == null ? 0 : mLv.getSelectedItemPosition() +1;
+			int count = mLv.getCount();
+			for(int i = startIndex; i < count; i++){
+				if(mFileItems.get(mLv.getAdapter().getItem(i)).getShortName().toLowerCase().charAt(0) == Character.toLowerCase(event.getDisplayLabel())){
+					mLv.setSelection(i);
+					return true;
+				}
+			}
+			//Check if we should iterate again from the top
+			if(startIndex > 0){
+				for(int i = 0; i < startIndex -1 ; i++){
+					if(mFileItems.get(mLv.getAdapter().getItem(i)).getShortName().toLowerCase().charAt(0) == Character.toLowerCase(event.getDisplayLabel())){
+						mLv.setSelection(i);
+						return true;
+					}
+				}
+			}			
+			return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
+	
+	private boolean handleMenuKeyDown( KeyEvent event){
+		ListView mLv = getListView();
+		InputMethodManager imm = (InputMethodManager) mLv.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+		if(event.getRepeatCount() >= ListLogicOnKeyListener.LONGPRESS_REPEATS){
+			imm.showSoftInput(mLv, InputMethodManager.SHOW_FORCED);
+			mCreatingSoftKeyboard = true;
+			return true;
+		}
+		imm.hideSoftInputFromWindow(mLv.getWindowToken(), 0);
+		return false;
+	}
+	private boolean handleMenuKeyUp(KeyEvent event){
+		if(mCreatingSoftKeyboard){
+			mCreatingSoftKeyboard = false;
+			return true;
+		}
+		return false;
+	}
+
+	private boolean mCreatingSoftKeyboard = false;
 }

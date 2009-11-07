@@ -152,7 +152,6 @@ public class FileListLogic extends ListLogic {
 					mFileItems.put(item.name, item);
 				}
 				setListAdapter(new FileItemAdapter(mActivity, value));
-				mList.setTextFilterEnabled(true);
 			}
 		};
 		
