@@ -96,16 +96,17 @@ public class NowPlayingActivity extends Activity implements Callback {
 	@Override
 	protected void onResume() {
 		super.onResume();
-  	  	//mNowPlayingPoller = ConnectionManager.getNowPlayingPoller(this);
-  	  	//mNowPlayingPoller.subscribe(mNowPlayingHandler);
 		ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		//mNowPlayingPoller.unSubscribe(mNowPlayingHandler);
 		ConnectionManager.getNowPlayingPoller(this).unSubscribe(mNowPlayingHandler);
+		if(isTaskRoot()){
+			Intent intent = new Intent(NowPlayingActivity.this, HomeActivity.class );
+			NowPlayingActivity.this.startActivity(intent);
+		}
 	}
 	
 	private void setupButtons() {
