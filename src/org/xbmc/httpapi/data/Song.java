@@ -76,14 +76,18 @@ public class Song implements ICoverArt, NamedResource {
 	public static String getDuration(int d) {
 		StringBuilder sb = new StringBuilder();
 		if (d > 3600) {
-			sb.append(Math.floor(d / 3600));
+			sb.append((int)d / 3600);
 			sb.append(":");
 			d %= 3600;
 		}
-		int min = (int)Math.floor(d / 60);
+		int min = (int)d / 60;
 		Formatter f = new Formatter();
 		if (sb.length() > 0) {
-			sb.append(f.format("%02d:", min));
+//			sb.append(f.format("%02d", min));
+			if(min < 10)
+				sb.append(0);
+			sb.append(min);
+			sb.append(":");
 		} else {
 			sb.append(min + ":");
 		}
