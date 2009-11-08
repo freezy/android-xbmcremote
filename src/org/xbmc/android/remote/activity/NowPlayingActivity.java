@@ -33,7 +33,6 @@ import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 import org.xbmc.httpapi.data.Song;
-import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.SeekType;
 
 import android.app.Activity;
@@ -44,8 +43,6 @@ import android.os.Message;
 import android.os.Handler.Callback;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
@@ -195,44 +192,6 @@ public class NowPlayingActivity extends Activity implements Callback {
 		default:
 			return false;
 		}
-	}
-	
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, 1, 0, "Music");
-		menu.add(0, 2, 0, "Video");
-		menu.add(0, 3, 0, "Pictures").setIcon(android.R.drawable.ic_menu_camera);
-		
-		menu.add(0, 5, 0, "Remote");
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		Intent myIntent = null;
-		
-		switch (item.getItemId()) {
-		case 1:
-			myIntent = new Intent(this, FileListActivity.class);
-			myIntent.putExtra("shareType", MediaType.music.toString());
-			break;
-		case 2:
-			myIntent = new Intent(this, FileListActivity.class);
-			myIntent.putExtra("shareType", MediaType.video.toString());
-			break;
-		case 3:
-			myIntent = new Intent(this, FileListActivity.class);
-			myIntent.putExtra("shareType", MediaType.pictures.toString());
-			break;
-		case 5:
-			myIntent = new Intent(this, RemoteActivity.class);
-			break;
-		}
-		
-		if (myIntent != null) {
-			startActivity(myIntent);
-			return true;
-		}
-		return false;
 	}
 	
 	@Override

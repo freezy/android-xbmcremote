@@ -55,9 +55,12 @@ import android.widget.FrameLayout;
  * @author Team XBMC
  */
 public class RemoteActivity extends Activity {
+	private static final int MENU_NOW_PLAYING = 301;
+	private static final int MENU_EXIT = 302;
 	
 	private Vibrator mVibrator;
 	private EventClient mClient;
+	
 	/**
 	 * timestamp since last trackball use.
 	 */
@@ -319,35 +322,23 @@ public class RemoteActivity extends Activity {
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, 1, 0, "Music");
-		menu.add(0, 2, 0, "Video");
-		menu.add(0, 3, 0, "Pictures").setIcon(android.R.drawable.ic_menu_camera);
-		menu.add(0, 4, 0, "Now Playing").setIcon(android.R.drawable.ic_media_play);
+		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
+		menu.add(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent myIntent = null;
-		
 		switch (item.getItemId()) {
-		case 1:
-			myIntent = new Intent(this, FileListActivity.class);
+		case MENU_NOW_PLAYING:
+			myIntent = new Intent(this, NowPlayingActivity.class);
 			myIntent.putExtra("shareType", MediaType.music.toString());
 			break;
-		case 2:
-			myIntent = new Intent(this, FileListActivity.class);
-			myIntent.putExtra("shareType", MediaType.video.toString());
-			break;
-		case 3:
-			myIntent = new Intent(this, FileListActivity.class);
-			myIntent.putExtra("shareType", MediaType.pictures.toString());
-			break;
-		case 4:
-			myIntent = new Intent(this, NowPlayingActivity.class);
+		case MENU_EXIT:
+			System.exit(0);
 			break;
 		}
-		
 		if (myIntent != null) {
 			startActivity(myIntent);
 			return true;

@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.guilogic.FileListLogic;
+import org.xbmc.android.remote.guilogic.ListLogic;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.util.WakeOnLan;
@@ -174,25 +176,16 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 			startActivityForResult(new Intent(v.getContext(), RemoteActivity.class), 0);
 			break;
 		case HOME_ACTION_MUSIC:
-//			startActivityForResult(createMediaIntent(MediaType.music, v), 0);
 			startActivity(new Intent(v.getContext(), MusicLibraryActivity.class));
-//			startActivityForResult(new Intent(v.getContext(), MediaTabContainerActivity.class), 0);
 			break;
 		case HOME_ACTION_VIDEOS:
-
-/*			Intent nextActivity = new Intent(v.getContext(), ListActivity.class);
-			nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new FileListLogic());
-			nextActivity.putExtra(ListLogic.EXTRA_SHARE_TYPE, MediaType.video.toString());
-			nextActivity.putExtra(ListLogic.EXTRA_PATH, "");
-			startActivity(nextActivity);*/
-
-			startActivityForResult(createMediaIntent(MediaType.video, v), 0);
+			startActivity(createMediaIntent(MediaType.video, v));
 			break;
 		case HOME_ACTION_PICTURES:
-			startActivityForResult(createMediaIntent(MediaType.pictures, v), 0);
+			startActivity(createMediaIntent(MediaType.pictures, v));
 			break;
 		case HOME_ACTION_NOWPLAYING:
-			startActivityForResult(new Intent(v.getContext(), NowPlayingActivity.class), 0);
+			startActivity(new Intent(v.getContext(), NowPlayingActivity.class));
 			break;
 		case HOME_ACTION_RECONNECT:
 			((TextView) findViewById(R.id.HomeVersionTextView)).setText("Reconnecting...");
@@ -230,9 +223,11 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 	}
 
 	private Intent createMediaIntent(MediaType mediaType, View v) {
-		Intent myIntent = new Intent(v.getContext(), FileListActivity.class);
-		myIntent.putExtra("shareType", mediaType.toString());
-		return myIntent;
+		Intent nextActivity = new Intent(v.getContext(), ListActivity.class);
+		nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new FileListLogic());
+		nextActivity.putExtra(ListLogic.EXTRA_SHARE_TYPE, mediaType.toString());
+		nextActivity.putExtra(ListLogic.EXTRA_PATH, "");
+		return nextActivity;
 	}
 	
 	private class HomeItem {
