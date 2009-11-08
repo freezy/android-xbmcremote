@@ -25,6 +25,8 @@ import java.util.ArrayList;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
+import org.xbmc.android.backend.httpapi.MusicWrapper;
+import org.xbmc.android.backend.httpapi.Wrapper;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
@@ -33,15 +35,19 @@ import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
+import org.xbmc.httpapi.type.SortType;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -60,6 +66,11 @@ public class AlbumListController extends ListController {
 	public static final int ITEM_CONTEXT_INFO = 3;
 	
 	public static final int MENU_PLAY_ALL = 1;
+	public static final int MENU_SORT = 2;
+	public static final int MENU_SORT_BY_ARTIST_ASC = 21;
+	public static final int MENU_SORT_BY_ARTIST_DESC = 22;
+	public static final int MENU_SORT_BY_ALBUM_ASC = 23;
+	public static final int MENU_SORT_BY_ALBUM_DESC = 24;
 	
 	private Artist mArtist;
 	private Genre mGenre;
@@ -74,14 +85,18 @@ public class AlbumListController extends ListController {
 	}
 	
 	public void onCreate(Activity activity, ListView list) {
+		
+		MusicWrapper.setSortKey(Wrapper.PREF_SORT_KEY_ALBUM);
+		MusicWrapper.setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
+		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
 			mArtist = (Artist)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_ARTIST);
 			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
-			mActivity.registerForContextMenu(mList);
+			activity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_album_grey);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_album_grey);
 			setupIdleListener();
 			
 //			ImportUtilities.purgeCache();
@@ -97,45 +112,49 @@ public class AlbumListController extends ListController {
 					mActivity.startActivity(nextActivity);
 				}
 			});
-					
 			mList.setOnKeyListener(new ListLogicOnKeyListener<Album>());
-			
-			if (mArtist != null) {
-				setTitle(mArtist.name + " - Albums...");
-				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
-					public void run() {
-						setTitle(mArtist.name + " - Albums (" + value.size() + ")");
-						mList.setAdapter(new AlbumAdapter(mActivity, value));
-					}
-				}, mArtist);
-				
-			} else if (mGenre != null) {
-				setTitle(mGenre.name + " - Albums...");
-				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
-					public void run() {
-						setTitle(mGenre.name + " - Albums (" + value.size() + ")");
-						mList.setAdapter(new AlbumAdapter(mActivity, value));
-					}
-				}, mGenre);
-				
-			} else {
-				if (mCompilationsOnly) {
-					setTitle("Compilations...");
-					HttpApiThread.music().getCompilations(new HttpApiHandler<ArrayList<Album>>(mActivity) {
-						public void run() {
-							setTitle("Compilations (" + value.size() + ")");
-							mList.setAdapter(new AlbumAdapter(mActivity, value));
-						}
-					});
-				} else {
-					setTitle("Albums...");
-					HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
-						public void run() {
-							setTitle("Albums (" + value.size() + ")");
-							mList.setAdapter(new AlbumAdapter(mActivity, value));
-						}
-					});
+			fetch();
+		}
+	}
+	
+	private void fetch() {
+		final Artist artist = mArtist;
+		final Genre genre = mGenre;
+		if (artist != null) {						// albums of an artist
+			setTitle(artist.name + " - Albums...");
+			HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
+				public void run() {
+					setTitle(artist.name + " - Albums (" + value.size() + ")");
+					mList.setAdapter(new AlbumAdapter(mActivity, value));
 				}
+			}, artist);
+			
+		} else if (genre != null) {					// albums of a genre
+			setTitle(genre.name + " - Albums...");
+			HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
+				public void run() {
+					setTitle(genre.name + " - Albums (" + value.size() + ")");
+					mList.setAdapter(new AlbumAdapter(mActivity, value));
+				}
+			}, genre);
+			
+		} else {
+			if (mCompilationsOnly) {				// compilations
+				setTitle("Compilations...");
+				HttpApiThread.music().getCompilations(new HttpApiHandler<ArrayList<Album>>(mActivity) {
+					public void run() {
+						setTitle("Compilations (" + value.size() + ")");
+						mList.setAdapter(new AlbumAdapter(mActivity, value));
+					}
+				});
+			} else {
+				setTitle("Albums...");				// all albums
+				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
+					public void run() {
+						setTitle("Albums (" + value.size() + ")");
+						mList.setAdapter(new AlbumAdapter(mActivity, value));
+					}
+				});
 			}
 		}
 	}
@@ -183,10 +202,16 @@ public class AlbumListController extends ListController {
 		if (mArtist != null || mGenre != null) {
 			menu.add(0, MENU_PLAY_ALL, 0, "Play all").setIcon(R.drawable.menu_album);
 		}
+		SubMenu sortMenu = menu.addSubMenu(0, MENU_SORT, 0, "Sort").setIcon(R.drawable.menu_sort);
+		sortMenu.add(2, MENU_SORT_BY_ALBUM_ASC, 0, "by Album ascending");
+		sortMenu.add(2, MENU_SORT_BY_ALBUM_DESC, 0, "by Album descending");
+		sortMenu.add(2, MENU_SORT_BY_ARTIST_ASC, 0, "by Artist ascending");
+		sortMenu.add(2, MENU_SORT_BY_ARTIST_DESC, 0, "by Artist descending");
 	}
 	
 	@Override
 	public void onOptionsItemSelected(MenuItem item) {
+		final SharedPreferences.Editor ed;
 		switch (item.getItemId()) {
 		case MENU_PLAY_ALL:
 			if (mArtist != null && mGenre == null) {
@@ -211,6 +236,34 @@ public class AlbumListController extends ListController {
 						true
 					), mArtist, mGenre);
 			}
+			break;
+		case MENU_SORT_BY_ALBUM_ASC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(Wrapper.PREF_SORT_BY_PREFIX + Wrapper.PREF_SORT_KEY_ALBUM, SortType.ALBUM);
+			ed.putString(Wrapper.PREF_SORT_ORDER_PREFIX + Wrapper.PREF_SORT_KEY_ALBUM, SortType.ORDER_ASC);
+			ed.commit();
+			fetch();
+			break;
+		case MENU_SORT_BY_ALBUM_DESC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(Wrapper.PREF_SORT_BY_PREFIX + Wrapper.PREF_SORT_KEY_ALBUM, SortType.ALBUM);
+			ed.putString(Wrapper.PREF_SORT_ORDER_PREFIX + Wrapper.PREF_SORT_KEY_ALBUM, SortType.ORDER_DESC);
+			ed.commit();
+			fetch();
+			break;
+		case MENU_SORT_BY_ARTIST_ASC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(Wrapper.PREF_SORT_BY_PREFIX + Wrapper.PREF_SORT_KEY_ALBUM, SortType.ARTIST);
+			ed.putString(Wrapper.PREF_SORT_ORDER_PREFIX + Wrapper.PREF_SORT_KEY_ALBUM, SortType.ORDER_ASC);
+			ed.commit();
+			fetch();
+			break;
+		case MENU_SORT_BY_ARTIST_DESC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(Wrapper.PREF_SORT_BY_PREFIX + Wrapper.PREF_SORT_KEY_ALBUM, SortType.ARTIST);
+			ed.putString(Wrapper.PREF_SORT_ORDER_PREFIX + Wrapper.PREF_SORT_KEY_ALBUM, SortType.ORDER_DESC);
+			ed.commit();
+			fetch();
 			break;
 		}
 	}

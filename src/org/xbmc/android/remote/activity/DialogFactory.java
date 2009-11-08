@@ -31,6 +31,7 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Song;
+import org.xbmc.httpapi.type.SortType;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
@@ -154,7 +155,7 @@ public abstract class DialogFactory {
         
 		trackTable.setScrollContainer(true);
 		
-		ArrayList<Song> songs = ConnectionManager.getHttpClient(activity).music.getSongs(album);
+		ArrayList<Song> songs = ConnectionManager.getHttpClient(activity).music.getSongs(album, SortType.TRACK, SortType.ORDER_ASC);
 		numTrackText.setText(songs.size() + " Tracks");
 		
 		

@@ -86,7 +86,7 @@ public class MusicPlaylistController extends ListController {
 	  	  			for (String path : value) {
 	  	  				items.add(new PlaylistItem(path, i++));
 					}
-					setTitle("Music playlist (" + (value.size() > MusicClient.PLAYLIST_LIMIT ? "(" + MusicClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
+					setTitle("Music playlist (" + (value.size() > MusicClient.PLAYLIST_LIMIT ? MusicClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
 					mSongAdapter = new SongAdapter(activity, items);
 					mList.setAdapter(mSongAdapter);
 					if (mCurrentPosition >= 0) {

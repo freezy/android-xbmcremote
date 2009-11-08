@@ -36,6 +36,19 @@ import android.os.Handler;
  */
 public abstract class Wrapper {
 	
+	public static final String PREF_SORT_BY_PREFIX = "sort_by_";
+	public static final String PREF_SORT_ORDER_PREFIX = "sort_order_";
+	
+	/* The idea of the sort keys is to remember different sort settings for
+	 * each type. In your controller, make sure you run setSortKey() in the
+	 * onCreate() method.
+	 */
+	public static final int PREF_SORT_KEY_ALBUM = 1;
+	public static final int PREF_SORT_KEY_ARTIST = 2;
+	public static final int PREF_SORT_KEY_SONG = 3;
+	public static final int PREF_SORT_KEY_GENRE = 4;
+	public static final int PREF_SORT_KEY_FILEMODE = 5;
+	
 	protected Handler mHandler;
 	
 	/**

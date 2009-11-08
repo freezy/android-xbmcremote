@@ -32,8 +32,10 @@ import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.info.GuiSettings;
 import org.xbmc.httpapi.type.CacheType;
+import org.xbmc.httpapi.type.SortType;
 import org.xbmc.httpapi.type.ThumbSize;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -50,6 +52,9 @@ public class MusicWrapper extends Wrapper {
 	
 	private static final String TAG = "MusicWrapper";
 	private static final Boolean DEBUG = false;
+	
+	private static SharedPreferences sPref;
+	private static int sCurrentSortKey;
 	
 	/**
 	 * Gets all albums from database
@@ -73,7 +78,7 @@ public class MusicWrapper extends Wrapper {
 	public void getAlbums(final HttpApiHandler<ArrayList<Album>> handler) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getAlbums();
+				handler.value = music(handler).getAlbums(getSortBy(SortType.ALBUM), getSortOrder());
 				done(handler);
 			}
 		});
@@ -87,7 +92,7 @@ public class MusicWrapper extends Wrapper {
 	public void getAlbums(final HttpApiHandler<ArrayList<Album>> handler, final Artist artist) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getAlbums(artist);
+				handler.value = music(handler).getAlbums(artist, getSortBy(SortType.ALBUM), getSortOrder());
 				done(handler);
 			}
 		});
@@ -101,7 +106,7 @@ public class MusicWrapper extends Wrapper {
 	public void getAlbums(final HttpApiHandler<ArrayList<Album>> handler, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getAlbums(genre);
+				handler.value = music(handler).getAlbums(genre, getSortBy(SortType.ALBUM), getSortOrder());
 				done(handler);
 			}
 		});
@@ -115,7 +120,7 @@ public class MusicWrapper extends Wrapper {
 	public void getSongs(final HttpApiHandler<ArrayList<Song>> handler, final Album album) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getSongs(album);
+				handler.value = music(handler).getSongs(album, getSortBy(SortType.ARTIST), getSortOrder());
 				done(handler);
 			}
 		});
@@ -129,7 +134,7 @@ public class MusicWrapper extends Wrapper {
 	public void getSongs(final HttpApiHandler<ArrayList<Song>> handler, final Artist artist) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getSongs(artist);
+				handler.value = music(handler).getSongs(artist, getSortBy(SortType.ARTIST), getSortOrder());
 				done(handler);
 			}
 		});
@@ -143,7 +148,7 @@ public class MusicWrapper extends Wrapper {
 	public void getSongs(final HttpApiHandler<ArrayList<Song>> handler, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getSongs(genre);
+				handler.value = music(handler).getSongs(genre, getSortBy(SortType.ARTIST), getSortOrder());
 				done(handler);
 			}
 		});
@@ -266,7 +271,7 @@ public class MusicWrapper extends Wrapper {
 				int playPos = -1;
 				if (playlistSize == 0) {  // if playlist is empty, add the whole album
 					int n = 0;
-					for (Song albumSong : mc.getSongs(album)) {
+					for (Song albumSong : mc.getSongs(album, SortType.DONT_SORT, null)) {
 						if (albumSong.id == song.id) {
 							playPos = n;
 							break;
@@ -438,7 +443,7 @@ public class MusicWrapper extends Wrapper {
 				int n = 0;
 				int playPos = 0;
 				mc.clearPlaylist();
-				for (Song albumSong : mc.getSongs(album)) {
+				for (Song albumSong : mc.getSongs(album, SortType.DONT_SORT, null)) {
 					if (albumSong.id == song.id) {
 						playPos = n;
 						break;
@@ -551,6 +556,24 @@ public class MusicWrapper extends Wrapper {
 		});
 	}
 	
+	
+	/**
+	 * Sets the static reference to the preferences object. Used to obtain
+	 * current sort values.
+	 * @param pref
+	 */
+	public static void setPreferences(SharedPreferences pref) {
+		sPref = pref;
+	}
+	
+	/**
+	 * Sets which kind of view is currently active.
+	 * @param sortKey
+	 */
+	public static void setSortKey(int sortKey) {
+		sCurrentSortKey = sortKey;
+	}
+	
 	/**
 	 * Checks if something's playing. If that's not the case, set the 
 	 * playlist's play position either to the start if there were no items
@@ -640,6 +663,31 @@ public class MusicWrapper extends Wrapper {
 				done(handler); // callback in any case, since we don't go further than that.
 			}
 		}, album, size);
+	}
+
+	/**
+	 * Returns currently saved "sort by" value. If the preference was not set yet, or
+	 * if the current sort key is not set, return default value.
+	 * @param type Default value
+	 * @return Sort by field
+	 */
+	private static int getSortBy(int type) {
+		if (sPref != null) {
+			return sPref.getInt(Wrapper.PREF_SORT_BY_PREFIX + sCurrentSortKey, type);
+		}
+		return type;
+	}
+	
+	/**
+	 * Returns currently saved "sort by" value. If the preference was not set yet, or
+	 * if the current sort key is not set, return "ASC".
+	 * @return Sort order
+	 */
+	private static String getSortOrder() {
+		if (sPref != null) {
+			return sPref.getString(Wrapper.PREF_SORT_ORDER_PREFIX + sCurrentSortKey, SortType.ORDER_ASC);
+		}
+		return SortType.ORDER_ASC;
 	}
 
 }
