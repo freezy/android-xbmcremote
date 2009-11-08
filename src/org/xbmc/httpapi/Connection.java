@@ -308,19 +308,20 @@ public class Connection {
 			sb.append("WebFooter;true;");
 			sb.append("Header; ;");
 			sb.append("Footer; ;");
-			sb.append("OpenTag;");
-			sb.append(LINE_SEP);
-			sb.append(";");
+			sb.append("OpenTag;");sb.append(LINE_SEP);sb.append(";");
 			sb.append("CloseTag;\n;");
-			sb.append("CloseFinalTag;false;");
+			sb.append("CloseFinalTag;false");
+			assertBoolean("SetResponseFormat", sb.toString());
+			
+			sb = new StringBuilder();
 			sb.append("OpenRecordSet; ;");
 			sb.append("CloseRecordSet; ;");
 			sb.append("OpenRecord; ;");
 			sb.append("CloseRecord; ;");
 			sb.append("OpenField;<field>;");
 			sb.append("CloseField;</field>");
+			assertBoolean("SetResponseFormat", sb.toString());
 			
-			assertBoolean("SetResponseFormat");
 //			mIsConnected = true;
 		} catch (WrongDataFormatException e) {
 			mErrorHandler.handle(e);
