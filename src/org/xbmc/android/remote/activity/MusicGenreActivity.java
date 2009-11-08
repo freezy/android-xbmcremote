@@ -24,9 +24,9 @@ package org.xbmc.android.remote.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.guilogic.AlbumListLogic;
-import org.xbmc.android.remote.guilogic.ArtistListLogic;
-import org.xbmc.android.remote.guilogic.SongListLogic;
+import org.xbmc.android.remote.controller.AlbumListController;
+import org.xbmc.android.remote.controller.ArtistListController;
+import org.xbmc.android.remote.controller.SongListController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
@@ -49,9 +49,9 @@ import android.widget.ListView;
 public class MusicGenreActivity extends SlidingTabActivity  {
 
 	private SlidingTabHost mTabHost;
-	private ArtistListLogic mArtistLogic;
-	private AlbumListLogic mAlbumLogic;
-	private SongListLogic mSongLogic;
+	private ArtistListController mArtistLogic;
+	private AlbumListController mAlbumLogic;
+	private SongListController mSongLogic;
 	
 	private static final int MENU_NOW_PLAYING = 101;
 	private static final int MENU_REMOTE = 102;
@@ -73,14 +73,14 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 		mTabHost.addTab(mTabHost.newTabSpec("genretab_songs", "Songs", R.drawable.st_song_on, R.drawable.st_song_off).setBigIcon(R.drawable.st_song_over).setContent(R.id.songlist_outer_layout));
 		mTabHost.setCurrentTab(0);
 		
-		mArtistLogic = new ArtistListLogic();
+		mArtistLogic = new ArtistListController();
 		mArtistLogic.findTitleView(findViewById(R.id.artistlist_outer_layout));
 		mArtistLogic.onCreate(this, (ListView)findViewById(R.id.artistlist_list)); // first tab can be updated now.
 
-		mAlbumLogic = new AlbumListLogic();
+		mAlbumLogic = new AlbumListController();
 		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
 
-		mSongLogic = new SongListLogic();
+		mSongLogic = new SongListController();
 		mSongLogic.findTitleView(findViewById(R.id.songlist_outer_layout));
 		
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {

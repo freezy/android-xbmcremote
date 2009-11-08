@@ -56,7 +56,6 @@ import android.widget.FrameLayout;
  */
 public class RemoteActivity extends Activity {
 	private static final int MENU_NOW_PLAYING = 301;
-	private static final int MENU_EXIT = 302;
 	
 	private Vibrator mVibrator;
 	private EventClient mClient;
@@ -323,7 +322,6 @@ public class RemoteActivity extends Activity {
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
-		menu.add(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
 		return true;
 	}
 
@@ -334,9 +332,6 @@ public class RemoteActivity extends Activity {
 		case MENU_NOW_PLAYING:
 			myIntent = new Intent(this, NowPlayingActivity.class);
 			myIntent.putExtra("shareType", MediaType.music.toString());
-			break;
-		case MENU_EXIT:
-			System.exit(0);
 			break;
 		}
 		if (myIntent != null) {

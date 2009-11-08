@@ -24,7 +24,7 @@ package org.xbmc.android.remote.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.guilogic.ListLogic;
+import org.xbmc.android.remote.controller.ListController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
@@ -41,7 +41,7 @@ import android.widget.ListView;
 
 public class ListActivity extends Activity  {
 	
-	ListLogic mListLogic;
+	ListController mListLogic;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,7 @@ public class ListActivity extends Activity  {
 		ErrorHandler.setActivity(this);
 		setContentView(R.layout.blanklist);
 		
-		mListLogic = (ListLogic)getIntent().getSerializableExtra(ListLogic.EXTRA_LIST_LOGIC);
+		mListLogic = (ListController)getIntent().getSerializableExtra(ListController.EXTRA_LIST_LOGIC);
 		
 		mListLogic.findTitleView(findViewById(R.id.blanklist_outer_layout));
 		mListLogic.onCreate(this, (ListView)findViewById(R.id.blanklist_list));

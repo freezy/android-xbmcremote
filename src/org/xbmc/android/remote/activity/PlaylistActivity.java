@@ -25,7 +25,7 @@ import java.io.IOException;
 
 import org.xbmc.android.backend.httpapi.NowPlayingPollerThread;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.guilogic.MusicPlaylistLogic;
+import org.xbmc.android.remote.controller.MusicPlaylistController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
@@ -54,7 +54,7 @@ public class PlaylistActivity extends Activity implements Callback {
 	public static final int MESSAGE_PLAYLIST_SIZE = 701;
 	public static final String BUNDLE_PLAYLIST_SIZE = "playlist_size";
 
-	private MusicPlaylistLogic mMusicPlaylistLogic;
+	private MusicPlaylistController mMusicPlaylistLogic;
 	private EventClient mClient;
 
 	private Handler mNowPlayingHandler;
@@ -78,7 +78,7 @@ public class PlaylistActivity extends Activity implements Callback {
 		mNowPlayingHandler = new Handler(this);
 
 		// create and associate logic
-		mMusicPlaylistLogic = new MusicPlaylistLogic();
+		mMusicPlaylistLogic = new MusicPlaylistController();
 		mMusicPlaylistLogic.findTitleView(findViewById(R.id.playlist_outer_layout));
 		mMusicPlaylistLogic.onCreate(this, (ListView) findViewById(R.id.playlist_list));
 		mMusicPlaylistLogic.subscribe(mNowPlayingHandler);

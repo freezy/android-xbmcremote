@@ -26,10 +26,10 @@ import java.io.IOException;
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.guilogic.AlbumListLogic;
-import org.xbmc.android.remote.guilogic.ArtistListLogic;
-import org.xbmc.android.remote.guilogic.FileListLogic;
-import org.xbmc.android.remote.guilogic.GenreListLogic;
+import org.xbmc.android.remote.controller.AlbumListController;
+import org.xbmc.android.remote.controller.ArtistListController;
+import org.xbmc.android.remote.controller.FileListController;
+import org.xbmc.android.remote.controller.GenreListController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
@@ -55,11 +55,11 @@ import android.widget.Toast;
 public class MusicLibraryActivity extends SlidingTabActivity  {
 
 	private SlidingTabHost mTabHost;
-	private AlbumListLogic mAlbumLogic;
-	private ArtistListLogic mArtistLogic;
-	private GenreListLogic mGenreLogic;
-	private AlbumListLogic mCompilationsLogic;
-	private FileListLogic mFileLogic;
+	private AlbumListController mAlbumLogic;
+	private ArtistListController mArtistLogic;
+	private GenreListController mGenreLogic;
+	private AlbumListController mCompilationsLogic;
+	private FileListController mFileLogic;
 	
 	private static final int MENU_NOW_PLAYING = 101;
 	private static final int MENU_UPDATE_LIBRARY = 102;
@@ -86,20 +86,20 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mTabHost.setCurrentTab(0);
 
 		// assign the gui logic to each tab
-		mAlbumLogic = new AlbumListLogic();
+		mAlbumLogic = new AlbumListController();
 		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
 		mAlbumLogic.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
 
-		mFileLogic = new FileListLogic();
+		mFileLogic = new FileListController();
 		mFileLogic.findTitleView(findViewById(R.id.filelist_outer_layout));
 		
-		mArtistLogic = new ArtistListLogic();
+		mArtistLogic = new ArtistListController();
 		mArtistLogic.findTitleView(findViewById(R.id.artists_outer_layout));
 
-		mGenreLogic = new GenreListLogic();
+		mGenreLogic = new GenreListController();
 		mGenreLogic.findTitleView(findViewById(R.id.genres_outer_layout));
 
-		mCompilationsLogic = new AlbumListLogic();
+		mCompilationsLogic = new AlbumListController();
 		mCompilationsLogic.findTitleView(findViewById(R.id.compilations_outer_layout));
 		mCompilationsLogic.setCompilationsOnly(true);
 

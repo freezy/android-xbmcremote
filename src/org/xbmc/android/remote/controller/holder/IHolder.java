@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.remote.guilogic.holder;
+package org.xbmc.android.remote.controller.holder;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.widget.IdleListDetector;

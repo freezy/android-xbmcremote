@@ -19,20 +19,22 @@
  *
  */
 
-package org.xbmc.android.remote.guilogic;
+package org.xbmc.android.remote.controller;
 
 import java.util.ArrayList;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.activity.MusicGenreActivity;
+import org.xbmc.android.remote.activity.MusicArtistActivity;
+import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,73 +47,113 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class GenreListLogic extends ListLogic {
+public class ArtistListController extends ListController {
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
+	public static final int ITEM_CONTEXT_QUEUE_GENRE = 3;
+	public static final int ITEM_CONTEXT_PLAY_GENRE = 4;
+	
+	private Genre mGenre;
 	
 	public void onCreate(Activity activity, ListView list) {
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
+			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
+			
 			mActivity.registerForContextMenu(mList);
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
-					Genre genre = (Genre)view.getTag();
-					nextActivity = new Intent(view.getContext(), MusicGenreActivity.class);
-					nextActivity.putExtra(ListLogic.EXTRA_GENRE, genre);
-					nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new SongListLogic());
+					Artist artist = (Artist)view.getTag();
+					nextActivity = new Intent(view.getContext(), MusicArtistActivity.class);
+					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new AlbumListController());
+					nextActivity.putExtra(ListController.EXTRA_ARTIST, artist);
 					mActivity.startActivity(nextActivity);
 				}
 			});
-
-			setTitle("Genres...");
-			HttpApiThread.music().getGenres(new HttpApiHandler<ArrayList<Genre>>(mActivity) {
-				public void run() {
-					setTitle("Genres (" + value.size() + ")");
-					mList.setAdapter(new GenreAdapter(mActivity, value));
-				}
-			});
 			
-			mList.setOnKeyListener(new ListLogicOnKeyListener<Genre>());
+			mList.setOnKeyListener(new ListLogicOnKeyListener<Artist>());
+			
+			if (mGenre != null) {
+				setTitle(mGenre.name + " - Artists...");
+				HttpApiThread.music().getArtists(new HttpApiHandler<ArrayList<Artist>>(mActivity) {
+					public void run() {
+						setTitle(mGenre.name + " - Artists (" + value.size() + ")");
+						mList.setAdapter(new ArtistAdapter(mActivity, value));
+					}
+				}, mGenre);
+			} else {
+				setTitle("Artists...");
+				HttpApiThread.music().getArtists(new HttpApiHandler<ArrayList<Artist>>(mActivity) {
+					public void run() {
+						setTitle("Artists (" + value.size() + ")");
+						mList.setAdapter(new ArtistAdapter(mActivity, value));
+					}
+				});
+			}
 		}
 	}
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
-		final Genre genre = (Genre)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(genre.name);
-		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue " + genre.name + " songs");
-		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play " + genre.name + " songs");
+		final Artist artist = (Artist)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
+		menu.setHeaderTitle(artist.name);
+		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue all songs from Artist");
+		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play all songs from Artist");
+		if (mGenre != null) {
+			menu.add(0, ITEM_CONTEXT_QUEUE_GENRE, 3, "Queue only " + mGenre.name + " from Artist");
+			menu.add(0, ITEM_CONTEXT_PLAY_GENRE, 4, "Play only " + mGenre.name + " from Artist");
+			
+		}
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
 		// be aware that this must be explicitly called by your activity!
-		final Genre genre = (Genre)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+		final Artist artist = (Artist)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				HttpApiThread.music().addToPlaylist(new QueryHandler(
 						mActivity, 
-						"Adding all songs of genre " + genre.name + " to playlist...", 
+						"Adding all songs by " + artist.name + " to playlist...", 
 						"Error adding songs!"
-					), genre);
+					), artist);
 				break;
 			case ITEM_CONTEXT_PLAY:
 				HttpApiThread.music().play(new QueryHandler(
 						mActivity, 
-						"Playing all songs of genre " + genre.name + "...", 
+						"Playing all songs by " + artist.name + "...", 
 						"Error playing songs!",
 						true
-					), genre);
+					), artist);
+				break;
+			case ITEM_CONTEXT_QUEUE_GENRE:
+				HttpApiThread.music().addToPlaylist(new QueryHandler(
+						mActivity, 
+						"Adding all songs of genre " + mGenre.name + " by " + artist.name + " to playlist...", 
+						"Error adding songs!"
+					), artist, mGenre);
+				break;
+			case ITEM_CONTEXT_PLAY_GENRE:
+				HttpApiThread.music().play(new QueryHandler(
+						mActivity, 
+						"Playing all songs of genre " + mGenre.name + " by " + artist.name + "...", 
+						"Error playing songs!",
+						true
+					), artist, mGenre);
 				break;
 		}
 	}
 	
-	private class GenreAdapter extends ArrayAdapter<Genre> {
+	@Override
+	public void onCreateOptionsMenu(Menu menu) {
+	}
+	
+	private class ArtistAdapter extends ArrayAdapter<Artist> {
 		private Activity mActivity;
-		GenreAdapter(Activity activity, ArrayList<Genre> items) {
+		ArtistAdapter(Activity activity, ArrayList<Artist> items) {
 			super(activity, R.layout.listitem_oneliner, items);
 			mActivity = activity;
 		}
@@ -123,13 +165,12 @@ public class GenreListLogic extends ListLogic {
 			} else {
 				row = convertView;
 			}
-			final Genre genre = this.getItem(position);
-			row.setTag(genre);
+			final Artist artist = this.getItem(position);
+			row.setTag(artist);
 			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
 			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
-			title.setText(genre.name);
-			icon.setImageResource(R.drawable.icon_genre);
-			
+			title.setText(artist.name);
+			icon.setImageResource(R.drawable.icon_artist);
 			return row;
 		}
 	}

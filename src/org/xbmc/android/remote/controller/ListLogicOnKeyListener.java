@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.remote.guilogic;
+package org.xbmc.android.remote.controller;
 
 import org.xbmc.httpapi.data.NamedResource;
 

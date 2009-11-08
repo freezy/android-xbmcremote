@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.remote.guilogic;
+package org.xbmc.android.remote.controller;
 
 import java.util.ArrayList;
 
@@ -28,8 +28,8 @@ import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
+import org.xbmc.android.remote.controller.holder.ThreeHolder;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
-import org.xbmc.android.remote.guilogic.holder.ThreeHolder;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
@@ -53,7 +53,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class AlbumListLogic extends ListLogic {
+public class AlbumListController extends ListController {
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
@@ -77,8 +77,8 @@ public class AlbumListLogic extends ListLogic {
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
-			mArtist = (Artist)mActivity.getIntent().getSerializableExtra(ListLogic.EXTRA_ARTIST);
-			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListLogic.EXTRA_GENRE);
+			mArtist = (Artist)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_ARTIST);
+			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
 			mActivity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_album_grey);
@@ -92,8 +92,8 @@ public class AlbumListLogic extends ListLogic {
 					Intent nextActivity;
 					ThreeHolder<Album> holder = (ThreeHolder<Album>)view.getTag();
 					nextActivity = new Intent(view.getContext(), ListActivity.class);
-					nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new SongListLogic());
-					nextActivity.putExtra(ListLogic.EXTRA_ALBUM, holder.holderItem);
+					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new SongListController());
+					nextActivity.putExtra(ListController.EXTRA_ALBUM, holder.holderItem);
 					mActivity.startActivity(nextActivity);
 				}
 			});

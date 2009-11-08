@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.remote.guilogic;
+package org.xbmc.android.remote.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.PlaylistActivity;
-import org.xbmc.android.remote.guilogic.holder.OneHolder;
+import org.xbmc.android.remote.controller.holder.OneHolder;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 import org.xbmc.httpapi.data.Song;
@@ -53,7 +53,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class MusicPlaylistLogic extends ListLogic {
+public class MusicPlaylistController extends ListController {
 	
 	public static final String TAG = "MusicPlaylistLogic";
 	
@@ -75,7 +75,7 @@ public class MusicPlaylistLogic extends ListLogic {
 			
 			HttpApiThread.music().getPlaylistPosition(new HttpApiHandler<Integer>(activity) {
 				public void run() {
-					MusicPlaylistLogic.this.mCurrentPosition = value;
+					MusicPlaylistController.this.mCurrentPosition = value;
 				}
 			});
 			

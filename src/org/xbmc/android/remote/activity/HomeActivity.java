@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.guilogic.FileListLogic;
-import org.xbmc.android.remote.guilogic.ListLogic;
+import org.xbmc.android.remote.controller.FileListController;
+import org.xbmc.android.remote.controller.ListController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.util.WakeOnLan;
@@ -224,9 +224,9 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 
 	private Intent createMediaIntent(MediaType mediaType, View v) {
 		Intent nextActivity = new Intent(v.getContext(), ListActivity.class);
-		nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new FileListLogic());
-		nextActivity.putExtra(ListLogic.EXTRA_SHARE_TYPE, mediaType.toString());
-		nextActivity.putExtra(ListLogic.EXTRA_PATH, "");
+		nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new FileListController());
+		nextActivity.putExtra(ListController.EXTRA_SHARE_TYPE, mediaType.toString());
+		nextActivity.putExtra(ListController.EXTRA_PATH, "");
 		return nextActivity;
 	}
 	

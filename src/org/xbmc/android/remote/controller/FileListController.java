@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.remote.guilogic;
+package org.xbmc.android.remote.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +48,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class FileListLogic extends ListLogic {
+public class FileListController extends ListController {
 	
 	public static final int MESSAGE_HANDLE_DATA = 1;
 	public static final int MESSAGE_CONNECTION_ERROR = 2;
@@ -77,9 +77,9 @@ public class FileListLogic extends ListLogic {
 					MediaLocation item = mFileItems.get(((MediaLocation)parent.getAdapter().getItem(position)).name);
 					if (item.isDirectory) {
 						Intent nextActivity = new Intent(mActivity, ListActivity.class);
-						nextActivity.putExtra(ListLogic.EXTRA_LIST_LOGIC, new FileListLogic());
-						nextActivity.putExtra(ListLogic.EXTRA_SHARE_TYPE, mMediaType.toString());
-						nextActivity.putExtra(ListLogic.EXTRA_PATH, item.path);
+						nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new FileListController());
+						nextActivity.putExtra(ListController.EXTRA_SHARE_TYPE, mMediaType.toString());
+						nextActivity.putExtra(ListController.EXTRA_PATH, item.path);
 						mActivity.startActivity(nextActivity);
 					} else {
 						HttpApiThread.control().playFile(new HttpApiHandler<Boolean>(mActivity) {

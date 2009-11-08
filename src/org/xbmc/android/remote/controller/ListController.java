@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.remote.guilogic;
+package org.xbmc.android.remote.controller;
 
 import java.io.Serializable;
 
@@ -45,7 +45,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public abstract class ListLogic implements Serializable {
+public abstract class ListController implements Serializable {
 	
 	public static final String EXTRA_LIST_LOGIC = "ListLogic"; 
 	public static final String EXTRA_ALBUM = "album"; 

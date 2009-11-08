@@ -19,15 +19,15 @@
  *
  */
 
-package org.xbmc.android.remote.guilogic;
+package org.xbmc.android.remote.controller;
 
 import java.util.ArrayList;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.controller.holder.ThreeHolder;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
-import org.xbmc.android.remote.guilogic.holder.ThreeHolder;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
@@ -50,7 +50,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class SongListLogic extends ListLogic {
+public class SongListController extends ListController {
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
