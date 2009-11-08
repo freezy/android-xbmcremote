@@ -289,24 +289,38 @@ public class Connection {
 	}
 	
 	/**
+	 * Executes an HTTP API method and makes sure the result is OK (or something
+	 * like that)
+	 * @param method      Name of the method to run
+	 * @throws WrongDataFormatException If not "OK"
+	 */
+	public boolean assertBoolean(String method) throws WrongDataFormatException {
+		return assertBoolean(method, "");
+	}
+	
+	/**
 	 * Sets the correct response format to default values
 	 */
 	private void setResponseFormat() {
 		try {
-			assertBoolean("SetResponseFormat", "WebHeader;true");
-			assertBoolean("SetResponseFormat", "WebFooter;true");
-			assertBoolean("SetResponseFormat", "Header; ");
-			assertBoolean("SetResponseFormat", "Footer; ");
-			assertBoolean("SetResponseFormat", "OpenTag;" + LINE_SEP);
-			assertBoolean("SetResponseFormat", "CloseTag;\n");
-			assertBoolean("SetResponseFormat", "CloseFinalTag;false");
+			StringBuilder sb = new StringBuilder();
+			sb.append("WebHeader;true;");
+			sb.append("WebFooter;true;");
+			sb.append("Header; ;");
+			sb.append("Footer; ;");
+			sb.append("OpenTag;");
+			sb.append(LINE_SEP);
+			sb.append(";");
+			sb.append("CloseTag;\n;");
+			sb.append("CloseFinalTag;false;");
+			sb.append("OpenRecordSet; ;");
+			sb.append("CloseRecordSet; ;");
+			sb.append("OpenRecord; ;");
+			sb.append("CloseRecord; ;");
+			sb.append("OpenField;<field>;");
+			sb.append("CloseField;</field>");
 			
-			assertBoolean("SetResponseFormat", "OpenRecordSet; ");
-			assertBoolean("SetResponseFormat", "CloseRecordSet; ");
-			assertBoolean("SetResponseFormat", "OpenRecord; ");
-			assertBoolean("SetResponseFormat", "CloseRecord;");
-			assertBoolean("SetResponseFormat", "OpenField;<field>");
-			assertBoolean("SetResponseFormat", "CloseField;</field>");
+			assertBoolean("SetResponseFormat");
 //			mIsConnected = true;
 		} catch (WrongDataFormatException e) {
 			mErrorHandler.handle(e);
