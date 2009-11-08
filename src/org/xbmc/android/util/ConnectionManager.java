@@ -38,6 +38,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * Globally returns the control objects. 
@@ -101,13 +102,15 @@ public class ConnectionManager {
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
+						Log.e("ConnectionManager", Log.getStackTraceString(e));
 						break;
 					}
 					iAttempt++;
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			Log.e("ConnectionManager", Log.getStackTraceString(e));
 		}
 
 		// Add the host information to the collection, for future reference
@@ -181,7 +184,7 @@ public class ConnectionManager {
 			sNowPlayingPoller = new NowPlayingPollerThread(context);
 			sNowPlayingPoller.start();
 		}
-		if (sNowPlayingPoller.isInterrupted()){
+		if (!sNowPlayingPoller.isAlive()){
 			sNowPlayingPoller = new NowPlayingPollerThread(context);
 			sNowPlayingPoller.start();			
 		}
@@ -197,6 +200,9 @@ public class ConnectionManager {
 		}
 		if (sEventClientInstance != null) {
 			sEventClientInstance = null;
+		}
+		if (sNowPlayingPoller != null) {
+			sNowPlayingPoller.interrupt();
 		}
 	}
 	

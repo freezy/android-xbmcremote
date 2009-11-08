@@ -12,10 +12,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
-public class NowPlayingNotificationManager {
+public class NowPlayingNotificationManager implements OnSharedPreferenceChangeListener {
 
 	private Context mContext = null;
 	private static NowPlayingNotificationManager mInstance = null;
@@ -24,8 +27,9 @@ public class NowPlayingNotificationManager {
 	
 	private NowPlayingNotificationManager(Context context) {
 		mContext = context;
-		SharedPreferences prefs = mContext.getSharedPreferences("XBMCRemotePrefsFile", Context.MODE_WORLD_READABLE);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
 		mEnabled = prefs.getBoolean("setting_show_notification", true);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 	
 	public static NowPlayingNotificationManager getInstance(Context context) {
@@ -99,7 +103,30 @@ public class NowPlayingNotificationManager {
 				break;
 			case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
 				removeNotification();
+				break;
+			case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
+				try{
+					Thread.sleep(1000);
+				} catch(InterruptedException e) {
+					Log.e("NowPlayingNotificationManager", Log.getStackTraceString(e));
+				}
+				startNotificating();
 			}
 		}
 	};
+
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if(key.equals("setting_show_notification")) {
+			boolean newState = sharedPreferences.getBoolean(key, true);
+			if(newState){
+				mEnabled = true;
+				startNotificating();
+			}
+			else {
+				mEnabled = false;
+				stopNotificating();
+			}
+			
+		}
+	}
 }

@@ -42,6 +42,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,10 +59,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 	
 	private ControlClient mControl;
 	private EventClient mClient;
-
 	private Handler mNowPlayingHandler;
-	private NowPlayingPollerThread mNowPlayingPoller;
-	
 	private TextView mAlbumView;
 	private TextView mArtistView;
 	private TextView mSongTitleView;
@@ -101,14 +99,16 @@ public class NowPlayingActivity extends Activity implements Callback {
 	@Override
 	protected void onResume() {
 		super.onResume();
-  	  	mNowPlayingPoller = ConnectionManager.getNowPlayingPoller(this);
-  	  	mNowPlayingPoller.subscribe(mNowPlayingHandler);
+  	  	//mNowPlayingPoller = ConnectionManager.getNowPlayingPoller(this);
+  	  	//mNowPlayingPoller.subscribe(mNowPlayingHandler);
+		ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mNowPlayingPoller.unSubscribe(mNowPlayingHandler);
+		//mNowPlayingPoller.unSubscribe(mNowPlayingHandler);
+		ConnectionManager.getNowPlayingPoller(this).unSubscribe(mNowPlayingHandler);
 	}
 	
 	private void setupButtons() {
@@ -173,7 +173,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 	  	  	
 		case NowPlayingPollerThread.MESSAGE_COVER_CHANGED:
 			final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
-			cover.setImageDrawable(mNowPlayingPoller.getNowPlayingCover());
+			cover.setImageDrawable(ConnectionManager.getNowPlayingPoller(this).getNowPlayingCover());
 			return true;
 			
 		case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
@@ -183,6 +183,15 @@ public class NowPlayingActivity extends Activity implements Callback {
 			finish();
 			return true;
 			
+		case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
+			//mNowPlayingPoller.unSubscribe(mNowPlayingHandler);
+			try{
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				Log.e("NowPlayingActivity", Log.getStackTraceString(e));
+			}
+			ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);
+			return true;
 		default:
 			return false;
 		}

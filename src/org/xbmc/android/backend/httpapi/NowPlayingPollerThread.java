@@ -57,10 +57,9 @@ import android.util.Log;
  */
 public class NowPlayingPollerThread extends Thread {
 	
-	private static final String TAG = "POLLER";
-	
 	public static final String BUNDLE_CURRENTLY_PLAYING = "CurrentlyPlaying";
 	public static final int MESSAGE_CONNECTION_ERROR = 1;
+	public static final int MESSAGE_RECONFIGURE = 2;
 	public static final int MESSAGE_PROGRESS_CHANGED = 666;
 	public static final int MESSAGE_TRACK_CHANGED = 667;
 	public static final int MESSAGE_COVER_CHANGED = 668;
@@ -134,7 +133,7 @@ public class NowPlayingPollerThread extends Thread {
 		PlayStatus lastPlayStatus = null;
 		ControlClient control = mControl; // use local reference for faster access
 		HashSet<Handler> subscribers = mSubscribers;
-		while (!isInterrupted()) {
+		while (!isInterrupted() ) {
 			if(subscribers.size() > 0){
 				if (!control.isConnected()) {
 					sendMessage(MESSAGE_CONNECTION_ERROR, null);
@@ -157,7 +156,6 @@ public class NowPlayingPollerThread extends Thread {
 			  	  		
 			  	  		try {				
 			  	  			String downloadURI = mInfo.getCurrentlyPlayingThumbURI();
-			  	  			Log.i(TAG, "downloadURI: " + downloadURI);
 			  	  			if (downloadURI != null && downloadURI.length() > 0) {
 			  	  				if (!downloadURI.equals(mCoverPath)) {
 			  	  					mCoverPath = downloadURI;
@@ -183,16 +181,23 @@ public class NowPlayingPollerThread extends Thread {
 			  	  				mCoverPath = null;
 			  	  			}
 			  	  		} catch (MalformedURLException e) {
-			  	  			e.printStackTrace();
+			  	  			//e.printStackTrace();
+			  	  		Log.e("NowPlayingPollerThread", Log.getStackTraceString(e));
 			  	  		} catch (URISyntaxException e) {
-			  	  			e.printStackTrace();
+			  	  			//e.printStackTrace();
+			  	  		Log.e("NowPlayingPollerThread", Log.getStackTraceString(e));
 			  	  		}
 					}
 				}
 			}
 			try {
 				sleep(1000);
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e) {
+				for (Handler handler : subscribers) {
+					handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_RECONFIGURE);
+					unSubscribe(handler);
+				}
 				return;
 			}
 		}

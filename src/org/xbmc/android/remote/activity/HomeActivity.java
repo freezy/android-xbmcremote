@@ -152,7 +152,12 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 		return false;
 	}
 
-
+	@Override
+	public void onResume(){
+		super.onResume();
+        HttpApiThread.info().getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
+	}
+	
 	private void setHomeAdapter(HomeAdapter adapter) {
 		final GridView gridView = ((GridView)findViewById(R.id.HomeItemGridView));
 		gridView.setAdapter(adapter);
