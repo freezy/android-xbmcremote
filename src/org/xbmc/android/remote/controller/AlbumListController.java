@@ -214,27 +214,29 @@ public class AlbumListController extends ListController {
 		final SharedPreferences.Editor ed;
 		switch (item.getItemId()) {
 		case MENU_PLAY_ALL:
-			if (mArtist != null && mGenre == null) {
+			final Artist artist = mArtist;
+			final Genre genre = mGenre;
+			if (artist != null && genre == null) {
 				HttpApiThread.music().play(new QueryHandler(
 						mActivity, 
-						"Playing all albums by " + mArtist.name + "...", 
+						"Playing all albums by " + artist.name + "...", 
 						"Error playing songs!",
 						true
-					), mArtist);			
-			} else if (mGenre != null && mArtist == null) {
+					), genre);			
+			} else if (genre != null && artist == null) {
 				HttpApiThread.music().play(new QueryHandler(
 						mActivity, 
-						"Playing all albums of genre " + mGenre.name + "...", 
+						"Playing all albums of genre " + genre.name + "...", 
 						"Error playing songs!",
 						true
-					), mGenre);
-			} else if (mGenre != null && mArtist != null) {
+					), genre);
+			} else if (genre != null && artist != null) {
 				HttpApiThread.music().play(new QueryHandler(
 						mActivity, 
-						"Playing all songs of genre " + mGenre.name + " by " + mArtist.name + "...", 
+						"Playing all songs of genre " + genre.name + " by " + artist.name + "...", 
 						"Error playing songs!",
 						true
-					), mArtist, mGenre);
+					), artist, genre);
 			}
 			break;
 		case MENU_SORT_BY_ALBUM_ASC:

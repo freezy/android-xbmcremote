@@ -393,7 +393,7 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				control(handler).stop();
-				handler.value = music(handler).play(album);
+				handler.value = music(handler).play(album, getSortBy(SortType.TRACK), getSortOrder());
 				done(handler);
 			}
 		});
@@ -408,7 +408,7 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				control(handler).stop();
-				handler.value = music(handler).play(genre);
+				handler.value = music(handler).play(genre, getSortBy(SortType.ARTIST), getSortOrder());
 				done(handler);
 			}
 		});
@@ -471,7 +471,7 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				control(handler).stop();
-				handler.value = music(handler).play(artist);
+				handler.value = music(handler).play(artist, getSortBy(SortType.ALBUM), getSortOrder());
 				done(handler);
 			}
 		});

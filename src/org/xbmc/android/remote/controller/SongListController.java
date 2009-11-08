@@ -219,7 +219,31 @@ public class SongListController extends ListController {
 		final SharedPreferences.Editor ed;
 		switch (item.getItemId()) {
 		case MENU_PLAY_ALL:
-			// TODO
+			final Album album = mAlbum;
+			final Genre genre = mGenre;
+			final Artist artist = mArtist;
+			if (album != null) {
+				HttpApiThread.music().play(new QueryHandler(
+						mActivity, 
+						"Playing all songs of album " + album.name + " by " + album.artist + "...", 
+						"Error playing songs!",
+						true
+					), album);			
+			} else if (artist != null) {
+				HttpApiThread.music().play(new QueryHandler(
+						mActivity, 
+						"Playing all songs from " + artist.name + "...", 
+						"Error playing songs!",
+						true
+					), artist);
+			} else if (genre != null) {
+				HttpApiThread.music().play(new QueryHandler(
+						mActivity, 
+						"Playing all songs of genre " + genre.name + "...", 
+						"Error playing songs!",
+						true
+					), genre);
+			}
 			break;
 		case MENU_SORT_BY_ALBUM_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();

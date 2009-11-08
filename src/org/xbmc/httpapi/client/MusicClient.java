@@ -228,28 +228,34 @@ public class MusicClient {
 	/**
 	 * Plays an album. Playlist is previously cleared.
 	 * @param album Album to play
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Album album) {
-		return play(getSongsCondition(album).append(songsOrderBy(SortType.TRACK, SortType.ORDER_ASC)));
+	public boolean play(Album album, int sortBy, String sortOrder) {
+		return play(getSongsCondition(album).append(songsOrderBy(sortBy, sortOrder)));
 	}
 	
 	/**
 	 * Plays all songs of a genre. Playlist is previously cleared.
 	 * @param genre Genre
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Genre genre) {
-		return play(getSongsCondition(genre).append(songsOrderBy(SortType.ARTIST, SortType.ORDER_ASC)));
+	public boolean play(Genre genre, int sortBy, String sortOrder) {
+		return play(getSongsCondition(genre).append(songsOrderBy(sortBy, sortOrder)));
 	}
 	
 	/**
 	 * Plays all songs from an artist. Playlist is previously cleared.
 	 * @param artist Artist
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Artist artist) {
-		return play(getSongsCondition(artist).append(songsOrderBy(SortType.ALBUM, SortType.ORDER_ASC)));
+	public boolean play(Artist artist, int sortBy, String sortOrder) {
+		return play(getSongsCondition(artist).append(songsOrderBy(sortBy, sortOrder)));
 	}
 	
 	/**
@@ -624,7 +630,9 @@ public class MusicClient {
 	
 	/**
 	 * Returns a list containing all tracks of an album. The list is sorted by filename.
-	 * @param album
+	 * @param album Album
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.	 
 	 * @return All tracks of an album
 	 */
 	public ArrayList<Song> getSongs(Album album, int sortBy, String sortOrder) {
@@ -634,6 +642,8 @@ public class MusicClient {
 	/**
 	 * Returns a list containing all tracks of an artist. The list is sorted by album name, filename.
 	 * @param artist Artist
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All tracks of the artist
 	 */
 	public ArrayList<Song> getSongs(Artist artist, int sortBy, String sortOrder) {
@@ -643,6 +653,8 @@ public class MusicClient {
 	/**
 	 * Returns a list containing all tracks of a genre. The list is sorted by artist, album name, filename.
 	 * @param genre Genre
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All tracks of the genre
 	 */
 	public ArrayList<Song> getSongs(Genre genre, int sortBy, String sortOrder) {
@@ -653,6 +665,8 @@ public class MusicClient {
 	 * Returns a list containing all tracks of a genre AND and artist. The list is sorted by 
 	 * artist, album name, filename.
 	 * @param genre Genre
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All tracks of the genre
 	 */
 	public ArrayList<Song> getSongs(Artist artist, Genre genre, int sortBy, String sortOrder) {
