@@ -134,7 +134,7 @@ public class SongListController extends ListController {
 					if (value.size() > 0) {
 						mList.setAdapter(new SongAdapter(mActivity, value));
 					} else {
-						setNoDataMessage("No songs found", R.drawable.icon_playlist_dark);
+						setNoDataMessage("No songs found", R.drawable.icon_music_dark);
 					}
 				}
 			}, album);
@@ -148,7 +148,7 @@ public class SongListController extends ListController {
 						mList.setAdapter(new SongAdapter(mActivity, value));
 					} else {
 						setTitle(artist.name + " - Songs");
-						setNoDataMessage("No songs found.", R.drawable.icon_playlist_dark);
+						setNoDataMessage("No songs found.", R.drawable.icon_music_dark);
 					}
 				}
 			}, artist);
@@ -162,7 +162,7 @@ public class SongListController extends ListController {
 						mList.setAdapter(new SongAdapter(mActivity, value));
 					} else {
 						setTitle(genre.name + " - Songs");
-						setNoDataMessage("No songs found.", R.drawable.icon_playlist_dark);
+						setNoDataMessage("No songs found.", R.drawable.icon_music_dark);
 					}
 				}
 			}, genre);

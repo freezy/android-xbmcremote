@@ -515,6 +515,10 @@ public class MusicWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() {
 				handler.value = music(handler).getPlaylist();
+				final String firstEntry = handler.value.get(0);
+				if (firstEntry != null && firstEntry.equals("[Empty]")) {
+					handler.value = new ArrayList<String>();
+				} 
 				done(handler);
 			}
 		});
