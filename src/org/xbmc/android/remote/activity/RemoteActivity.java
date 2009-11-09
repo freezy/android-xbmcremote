@@ -31,9 +31,11 @@ import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -54,11 +56,13 @@ import android.widget.FrameLayout;
  * 
  * @author Team XBMC
  */
-public class RemoteActivity extends Activity {
+public class RemoteActivity extends Activity implements OnSharedPreferenceChangeListener {
 	private static final int MENU_NOW_PLAYING = 401;
 	
 	private Vibrator mVibrator;
 	private EventClient mClient;
+	private KeyguardManager.KeyguardLock mKeyguardLock = null;
+	private boolean mDisableKeyguard = false;
 	
 	/**
 	 * timestamp since last trackball use.
@@ -80,6 +84,10 @@ public class RemoteActivity extends Activity {
 		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		mClient = ConnectionManager.getEventClient(this);
         
+    	final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    	mDisableKeyguard = prefs.getBoolean("setting_disable_keyguard_remote", false);
+		prefs.registerOnSharedPreferenceChangeListener(this);
+		
 		WindowManager wm = getWindowManager(); 
         Display d = wm.getDefaultDisplay();
         
@@ -89,6 +97,25 @@ public class RemoteActivity extends Activity {
 			setupButtonsPortrait();
 	}
 
+    @Override
+    protected void onResume(){
+    	super.onResume();
+    	if(mDisableKeyguard) {
+    		KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
+			mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
+			mKeyguardLock.disableKeyguard();
+    	}
+    }
+    
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (mKeyguardLock != null){
+			mKeyguardLock.reenableKeyguard();
+			mKeyguardLock = null;
+		}
+	}
+	
 	@Override
 	public boolean onTrackballEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN)
@@ -339,5 +366,26 @@ public class RemoteActivity extends Activity {
 			return true;
 		}
 		return false;
+	}
+	
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if(key.equals("setting_disable_keyguard_remote")) {
+			boolean newState = sharedPreferences.getBoolean(key, false);
+			mDisableKeyguard = newState;
+			if (newState) {
+				if(this.hasWindowFocus()) {
+		    		KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
+					mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
+					mKeyguardLock.disableKeyguard();
+				}
+			}
+			else {
+				if(this.hasWindowFocus()) {
+					if (mKeyguardLock != null)
+						mKeyguardLock.reenableKeyguard();
+					mKeyguardLock = null;
+				}
+			}
+		}
 	}
 }
