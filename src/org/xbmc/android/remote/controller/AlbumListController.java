@@ -30,6 +30,7 @@ import org.xbmc.android.backend.httpapi.Wrapper;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
+import org.xbmc.android.remote.controller.holder.OneHolder;
 import org.xbmc.android.remote.controller.holder.ThreeHolder;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.httpapi.data.Album;
@@ -53,6 +54,7 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -71,10 +73,19 @@ public class AlbumListController extends ListController {
 	public static final int MENU_SORT_BY_ARTIST_DESC = 22;
 	public static final int MENU_SORT_BY_ALBUM_ASC = 23;
 	public static final int MENU_SORT_BY_ALBUM_DESC = 24;
+	public static final int MENU_SWITCH_VIEW = 3;
+	
+	private static final int VIEW_LIST = 1;
+	private static final int VIEW_GRID = 2;
+	
+	private int mCurrentView = VIEW_LIST;
+	
 	
 	private Artist mArtist;
 	private Genre mGenre;
 	private boolean mCompilationsOnly = false;
+
+	private GridView mGrid = null;
 	
 	/**
 	 * Defines if only compilations should be listed.
@@ -82,6 +93,14 @@ public class AlbumListController extends ListController {
 	 */
 	public void setCompilationsOnly(boolean co) {
 		mCompilationsOnly = co;
+	}
+	
+	/**
+	 * If grid reference is set, albums can be displayed as wall view.
+	 * @param grid Reference to GridView
+	 */
+	public void setGrid(GridView grid) {
+		mGrid = grid;
 	}
 	
 	public void onCreate(Activity activity, ListView list) {
@@ -117,6 +136,27 @@ public class AlbumListController extends ListController {
 		}
 	}
 	
+	private void setAdapter(ArrayList<Album> value) {
+		switch (mCurrentView) {
+			case VIEW_LIST:
+				mList.setAdapter(new AlbumAdapter(mActivity, value));
+				mList.setVisibility(View.VISIBLE);
+				mGrid.setVisibility(View.GONE);
+				break;
+			case VIEW_GRID:
+				if (mGrid != null) {
+					mGrid.setAdapter(new AlbumGridAdapter(mActivity, value));
+					mGrid.setVisibility(View.VISIBLE);
+					mList.setVisibility(View.GONE);
+				} else {
+					mGrid.setVisibility(View.GONE);
+					mList.setVisibility(View.VISIBLE);
+					mList.setAdapter(new AlbumAdapter(mActivity, value));
+				}
+			break;
+		}
+	}
+	
 	private void fetch() {
 		final Artist artist = mArtist;
 		final Genre genre = mGenre;
@@ -126,7 +166,7 @@ public class AlbumListController extends ListController {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(artist.name + " - Albums (" + value.size() + ")");
-						mList.setAdapter(new AlbumAdapter(mActivity, value));
+						setAdapter(value);
 					} else {
 						setTitle(artist.name + " - Albums");
 						setNoDataMessage("No albums found.", R.drawable.icon_album_dark);
@@ -140,7 +180,7 @@ public class AlbumListController extends ListController {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(genre.name + " - Albums (" + value.size() + ")");
-						mList.setAdapter(new AlbumAdapter(mActivity, value));
+						setAdapter(value);
 					} else {
 						setTitle(genre.name + " - Albums");
 						setNoDataMessage("No albums found.", R.drawable.icon_album_dark);
@@ -155,7 +195,7 @@ public class AlbumListController extends ListController {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle("Compilations (" + value.size() + ")");
-							mList.setAdapter(new AlbumAdapter(mActivity, value));
+							setAdapter(value);
 						} else {
 							setTitle("Compilations");
 							setNoDataMessage("No compilations found.", R.drawable.icon_album_dark);
@@ -168,7 +208,7 @@ public class AlbumListController extends ListController {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle("Albums (" + value.size() + ")");
-							mList.setAdapter(new AlbumAdapter(mActivity, value));
+							setAdapter(value);
 						} else {
 							setTitle("Albums");
 							setNoDataMessage("No Albums found.", R.drawable.icon_album_dark);
@@ -227,6 +267,7 @@ public class AlbumListController extends ListController {
 		sortMenu.add(2, MENU_SORT_BY_ALBUM_DESC, 0, "by Album descending");
 		sortMenu.add(2, MENU_SORT_BY_ARTIST_ASC, 0, "by Artist ascending");
 		sortMenu.add(2, MENU_SORT_BY_ARTIST_DESC, 0, "by Artist descending");
+//		menu.add(0, MENU_SWITCH_VIEW, 0, "Switch view");
 	}
 	
 	@Override
@@ -287,6 +328,10 @@ public class AlbumListController extends ListController {
 			ed.commit();
 			fetch();
 			break;
+		case MENU_SWITCH_VIEW:
+			mCurrentView = (mCurrentView % 2) + 1;
+			fetch();
+			break;
 		}
 	}
 	
@@ -337,6 +382,47 @@ public class AlbumListController extends ListController {
 			holder.setTemporaryBind(true);
 		
 			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.small);
+			return row;
+		}
+	}
+	
+	private class AlbumGridAdapter extends ArrayAdapter<Album> {
+		private Activity mActivity;
+		AlbumGridAdapter(Activity activity, ArrayList<Album> items) {
+			super(activity, R.layout.listitem_three, items);
+			mActivity = activity;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public View getView(int position, View convertView, ViewGroup parent) {
+			
+			final ImageView row;
+			final OneHolder<Album> holder;
+			
+			if (convertView == null) {
+				
+				row = new ImageView(mActivity);
+				holder = new OneHolder<Album>(row, null);
+				row.setTag(holder);
+				
+				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
+				transition.setCrossFadeEnabled(true);
+				holder.transition = transition;
+				
+			} else {
+				row = (ImageView)convertView;
+				holder = (OneHolder<Album>)convertView.getTag();
+			}
+			
+			final Album album = getItem(position);
+			holder.holderItem = album;
+			holder.coverItem = album;
+			holder.id = album.getCrc();
+			
+			row.setImageResource(R.drawable.icon_album_grey);
+			holder.setTemporaryBind(true);
+			
+			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.medium);
 			return row;
 		}
 	}
