@@ -141,7 +141,9 @@ public class AlbumListController extends ListController {
 			case VIEW_LIST:
 				mList.setAdapter(new AlbumAdapter(mActivity, value));
 				mList.setVisibility(View.VISIBLE);
-				mGrid.setVisibility(View.GONE);
+				if (mGrid != null) {
+					mGrid.setVisibility(View.GONE);
+				}
 				break;
 			case VIEW_GRID:
 				if (mGrid != null) {
@@ -149,7 +151,6 @@ public class AlbumListController extends ListController {
 					mGrid.setVisibility(View.VISIBLE);
 					mList.setVisibility(View.GONE);
 				} else {
-					mGrid.setVisibility(View.GONE);
 					mList.setVisibility(View.VISIBLE);
 					mList.setAdapter(new AlbumAdapter(mActivity, value));
 				}
