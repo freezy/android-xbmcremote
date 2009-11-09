@@ -61,9 +61,9 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 	 * 
 	 * @param handler Callback
 	 * @param cover   Which cover to download
-	 * @param size    Which size to return
+	 * @param thumbSize    Which size to return
 	 */
-	public void getCover(final HttpApiHandler<Bitmap> handler, final ICoverArt cover, final ThumbSize size) {
+	public void getCover(final HttpApiHandler<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
@@ -72,13 +72,13 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 					 * times. that's why we check both the disk cache and memory cache if
 					 * the cover is not already available from a previously queued download. 
 					 */
-					if (size == ThumbSize.small && HttpApiMemCacheThread.isInCache(cover)) { // we're optimistic, let's check the memory first.
+					if (thumbSize == ThumbSize.SMALL && HttpApiMemCacheThread.isInCache(cover)) { // we're optimistic, let's check the memory first.
 						Log.i(TAG, "Cover is now already in mem cache, directly returning...");
 						handler.value = HttpApiMemCacheThread.getCover(cover);
 						done(handler);
 					} else if (HttpApiDiskCacheThread.isInCache(cover)) {
 						Log.i(TAG, "Cover is not in mem cache anymore but still on disk, directly returning...");
-						handler.value = HttpApiDiskCacheThread.getCover(cover, size);
+						handler.value = HttpApiDiskCacheThread.getCover(cover, thumbSize);
 					} else {
 						Log.i(TAG, "Download START..");
 						String b64enc = music(handler).getAlbumThumb(cover);
@@ -91,7 +91,7 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 								Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 								if (bitmap != null) {
 									// add to disk cache
-									handler.value = HttpApiDiskCacheThread.addCoverToCache(cover, bitmap, size);
+									handler.value = HttpApiDiskCacheThread.addCoverToCache(cover, bitmap, thumbSize);
 									// add to mem cache
 									HttpApiMemCacheThread.addCoverToCache(cover, bitmap);
 									Log.i(TAG, "Done");

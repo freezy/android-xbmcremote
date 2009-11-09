@@ -32,16 +32,16 @@ public final class ImportUtilities {
     private ImportUtilities() {
     }
 
-    public static File getCacheDirectory(String type, ThumbSize size) {
-        return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + size.getDir());
+    public static File getCacheDirectory(String type, int size) {
+        return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + ThumbSize.getDir(size));
     }
 
-    public static Bitmap addCoverToCache(ICoverArt art, Bitmap bitmap, ThumbSize size) {
+    public static Bitmap addCoverToCache(ICoverArt art, Bitmap bitmap, int thumbSize) {
     	Bitmap sizeToReturn = null;
     	File cacheDirectory;
-    	for (ThumbSize thumbSize : ThumbSize.values()) {
+    	for (int currentThumbSize : ThumbSize.values()) {
     		try {
-    			cacheDirectory = ensureCache(art.getArtFolder(), thumbSize);
+    			cacheDirectory = ensureCache(art.getArtFolder(), currentThumbSize);
     		} catch (IOException e) {
     			return null;
     		}
@@ -49,9 +49,9 @@ public final class ImportUtilities {
     		FileOutputStream out = null;
     		try {
     			out = new FileOutputStream(coverFile);
-    			final Bitmap resized = Bitmap.createScaledBitmap(bitmap, thumbSize.getPixel(), thumbSize.getPixel(), true);
+    			final Bitmap resized = Bitmap.createScaledBitmap(bitmap, ThumbSize.getPixel(currentThumbSize), ThumbSize.getPixel(currentThumbSize), true);
     			resized.compress(Bitmap.CompressFormat.PNG, 100, out);
-    			if (size.equals(thumbSize)) {
+    			if (thumbSize == currentThumbSize) {
     				sizeToReturn = resized;
     			}
     		} catch (FileNotFoundException e) {
@@ -63,7 +63,7 @@ public final class ImportUtilities {
         return sizeToReturn;
     }
 
-    private static File ensureCache(String type, ThumbSize size) throws IOException {
+    private static File ensureCache(String type, int size) throws IOException {
         File cacheDirectory = getCacheDirectory(type, size);
         if (!cacheDirectory.exists()) {
             cacheDirectory.mkdirs();
@@ -73,7 +73,7 @@ public final class ImportUtilities {
     }
     
     public static void purgeCache() {
-    	final ThumbSize size[] = { ThumbSize.small, ThumbSize.medium, ThumbSize.big };
+    	final int size[] = ThumbSize.values();
     	final String type[] = { "/music", "/video" };
     	for (int i = 0; i < type.length; i++) {
     		for (int j = 0; j < size.length; j++) {

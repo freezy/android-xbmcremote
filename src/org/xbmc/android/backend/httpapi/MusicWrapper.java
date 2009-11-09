@@ -542,15 +542,15 @@ public class MusicWrapper extends Wrapper {
 	 * helper methods below.
 	 * @param handler Callback handler
 	 */
-	public void getAlbumCover(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final ThumbSize size) {
+	public void getAlbumCover(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final int thumbSize) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (album.getCrc() > 0) {
 					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
-					if (size == ThumbSize.small) {
+					if (thumbSize == ThumbSize.SMALL) {
 						getAlbumCoverFromMem(handler, album);
 					} else {
-						getAlbumCoverFromDisk(handler, album, size);
+						getAlbumCoverFromDisk(handler, album, thumbSize);
 					}
 				} else {
 					handler.value = null;
@@ -610,7 +610,7 @@ public class MusicWrapper extends Wrapper {
 				if (value == null) {
 					if (DEBUG) Log.i(TAG, "[" + album.getId() + " empty]");
 					// then, try sdcard cache
-					getAlbumCoverFromDisk(handler, album, ThumbSize.small);
+					getAlbumCoverFromDisk(handler, album, ThumbSize.SMALL);
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + album.getId() + " FOUND in memory!]");
 					handler.value = value;
@@ -625,9 +625,9 @@ public class MusicWrapper extends Wrapper {
 	 * Tries to get cover from disk, then download it from XBMC.
 	 * @param handler Callback handler
 	 * @param album   Get cover for this album
-	 * @param size    Cover size
+	 * @param thumbSize    Cover size
 	 */
-	private void getAlbumCoverFromDisk(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final ThumbSize size) {
+	private void getAlbumCoverFromDisk(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + album.getId() + "] Checking in disk cache..");
 		HttpApiDiskCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
@@ -635,7 +635,7 @@ public class MusicWrapper extends Wrapper {
 					if (DEBUG) Log.i(TAG, "[" + album.getId() + " empty]");
 					if (handler.postCache()) {
 						// well, let's download
-						getAlbumCoverFromNetwork(handler, album, size);
+						getAlbumCoverFromNetwork(handler, album, thumbSize);
 					}
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + album.getId() + " FOUND on disk!]");
@@ -644,16 +644,16 @@ public class MusicWrapper extends Wrapper {
 					done(handler);
 				}
 			}
-		}, album, size);		
+		}, album, thumbSize);		
 	}
 	
 	/**
 	 * Last stop: try to download from XBMC.
 	 * @param handler Callback handler
 	 * @param album   Get cover for this album
-	 * @param size    Cover size
+	 * @param thumbSize    Cover size
 	 */
-	private void getAlbumCoverFromNetwork(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final ThumbSize size) {
+	private void getAlbumCoverFromNetwork(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + album.getId() + "] Downloading..");
 		HttpApiDownloadThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
@@ -666,7 +666,7 @@ public class MusicWrapper extends Wrapper {
 				}
 				done(handler); // callback in any case, since we don't go further than that.
 			}
-		}, album, size);
+		}, album, thumbSize);
 	}
 
 	/**

@@ -381,7 +381,7 @@ public class AlbumListController extends ListController {
 			holder.iconView.setImageResource(R.drawable.icon_album_grey);
 			holder.setTemporaryBind(true);
 		
-			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.small);
+			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.SMALL);
 			return row;
 		}
 	}
@@ -422,7 +422,7 @@ public class AlbumListController extends ListController {
 			row.setImageResource(R.drawable.icon_album_grey);
 			holder.setTemporaryBind(true);
 			
-			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.medium);
+			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.MEDIUM);
 			return row;
 		}
 	}

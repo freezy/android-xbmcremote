@@ -21,32 +21,40 @@
 
 package org.xbmc.httpapi.type;
 
-public enum ThumbSize {
-	small, medium, big;
+public abstract class ThumbSize {
 	
-	public String getDir() {
-		switch (this) {
-		case small:
+	public static final int SMALL = 1;
+	public static final int MEDIUM = 2;
+	public static final int BIG = 3;
+	
+	public static String getDir(int size) {
+		switch (size) {
+		case SMALL:
 			return "/small";
-		case medium:
+		case MEDIUM:
 			return "/medium";
-		case big:
+		case BIG:
 			return "/original";
 		default:
 			return "";
 		}
 	}
 
-	public int getPixel() {
-		switch (this) {
-			case small:
+	public static int getPixel(int size) {
+		switch (size) {
+			case SMALL:
 				return 50;
-			case medium:
+			case MEDIUM:
 				return 103;
-			case big:
+			case BIG:
 				return 400;
 			default:
 				return 0;
 		}
+	}
+	
+	public static int[] values() {
+		int[] values = { SMALL, MEDIUM, BIG }; 
+		return values;
 	}
 }

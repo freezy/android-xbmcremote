@@ -111,7 +111,7 @@ public abstract class DialogFactory {
         			cover.setImageBitmap(value);
         		}
         	}
-        }, album, ThumbSize.big);
+        }, album, ThumbSize.BIG);
         
 		cover.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -148,7 +148,7 @@ public abstract class DialogFactory {
 			yearText.setVisibility(View.GONE);
 		}
 		
-        final File file = new File(ImportUtilities.getCacheDirectory(album.getArtFolder(), ThumbSize.small), String.format("%08x", album.getCrc()).toLowerCase());
+        final File file = new File(ImportUtilities.getCacheDirectory(album.getArtFolder(), ThumbSize.SMALL), String.format("%08x", album.getCrc()).toLowerCase());
         if (file.exists()) {
         	cover.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
         }

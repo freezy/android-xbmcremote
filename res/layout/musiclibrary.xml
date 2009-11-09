@@ -35,6 +35,14 @@
 						android:layout_width="fill_parent" 
 						android:fadingEdge="none"
 						android:scrollbars="none" />
+					<GridView 
+						android:id="@+id/albumlist_grid"
+						android:layout_height="fill_parent"
+						android:layout_width="fill_parent"
+						android:numColumns="3" 
+						android:fadingEdge="none"
+						android:scrollbars="none"
+						android:visibility="gone" />
 				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 

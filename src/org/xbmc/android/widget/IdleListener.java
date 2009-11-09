@@ -46,7 +46,7 @@ public class IdleListener implements OnListIdleListener {
 			final IHolder holder = (IHolder)row.getTag();
 			if (holder.isTemporaryBind()) {
 				Log.i("ImageLoaderIdleListener", "Album: " + holder.getCoverItem());
-				HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, null), holder.getCoverItem(), ThumbSize.small);
+				HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, null), holder.getCoverItem(), ThumbSize.SMALL);
 				holder.setTemporaryBind(false);
 			}
 		}
