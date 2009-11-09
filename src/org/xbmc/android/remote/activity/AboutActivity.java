@@ -27,6 +27,8 @@ import org.xbmc.android.util.ErrorHandler;
 import android.app.Activity;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 public class AboutActivity extends Activity {
@@ -40,6 +42,10 @@ public class AboutActivity extends Activity {
 			final int versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
 			((TextView)findViewById(R.id.about_version)).setText("v" + versionName);
 			((TextView)findViewById(R.id.about_revision)).setText("Revision " + versionCode);
+			TextView message = (TextView)findViewById(R.id.about_url_message);
+			
+			message.setText(Html.fromHtml("Visit our project page at <a href=\"http://code.google.com/p/android-xbmcremote\">Google Code</a>."));
+			message.setMovementMethod(LinkMovementMethod.getInstance());
 		} catch (NameNotFoundException e) {
 			((TextView)findViewById(R.id.about_version)).setText("Error reading version");
 		}

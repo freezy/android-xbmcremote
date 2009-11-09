@@ -41,10 +41,9 @@
 		            android:padding="3dip"/>
 			</TableRow>
 	<TextView
-        	android:text="@string/app_url_message"
-        	android:textSize="12px"
-            android:gravity="center"
-            android:paddingTop="15dip"
-            android:autoLink="web" />
+       	android:id="@+id/about_url_message"
+       	android:textSize="12px"
+		android:gravity="center"
+		android:paddingTop="15dip"/>
 	</TableLayout>
 </LinearLayout>
