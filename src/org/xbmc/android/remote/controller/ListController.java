@@ -53,6 +53,7 @@ public abstract class ListController implements Serializable {
 	public static final String EXTRA_GENRE = "genre";
 	public static final String EXTRA_SHARE_TYPE = "shareType"; 
 	public static final String EXTRA_PATH = "path"; 
+	public static final String EXTRA_DISPLAY_PATH = "display_path"; 
 	
 	protected ListView mList;
 	protected Activity mActivity;

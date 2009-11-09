@@ -12,7 +12,7 @@
 		android:layout_height="wrap_content" 
 		android:id="@+id/titlebar_text"
 		android:textColor="#ffffff" 
-		android:text="Title"
+		android:text="XBMC Remote"
 		android:layout_gravity="center_vertical|center_horizontal"
 		android:textSize="16px" 
 		android:shadowDy="0" 

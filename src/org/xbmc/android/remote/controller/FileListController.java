@@ -67,7 +67,8 @@ public class FileListController extends ListController {
 			final String st = mActivity.getIntent().getStringExtra(EXTRA_SHARE_TYPE);
 			mMediaType = st != null ? MediaType.valueOf(st) : MediaType.music;
 			final String path = mActivity.getIntent().getStringExtra(EXTRA_PATH);
-			fillUp(path == null ? "" : path);
+			final String displayPath = mActivity.getIntent().getStringExtra(EXTRA_DISPLAY_PATH);
+			fillUp(path == null ? "" : path, displayPath);
 	
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -80,6 +81,7 @@ public class FileListController extends ListController {
 						nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new FileListController());
 						nextActivity.putExtra(ListController.EXTRA_SHARE_TYPE, mMediaType.toString());
 						nextActivity.putExtra(ListController.EXTRA_PATH, item.path);
+						nextActivity.putExtra(ListController.EXTRA_DISPLAY_PATH, item.displayPath);
 						mActivity.startActivity(nextActivity);
 					} else {
 						HttpApiThread.control().playFile(new HttpApiHandler<Boolean>(mActivity) {
@@ -135,7 +137,7 @@ public class FileListController extends ListController {
 	}
 	
 	
-	private void fillUp(final String url) {
+	private void fillUp(final String url, final String displayPath) {
 		if (mGettingUrl != null)
 			return;
 		
@@ -146,7 +148,7 @@ public class FileListController extends ListController {
 		
 		HttpApiHandler<ArrayList<MediaLocation>> mediaListHandler = new HttpApiHandler<ArrayList<MediaLocation>>(mActivity) {
 			public void run() {
-				setTitle(url.equals("") ? "/" : url);
+				setTitle(url.equals("") ? "/" : displayPath);
 				mFileItems = new HashMap<String, MediaLocation>();
 				for (MediaLocation item : value) {
 					mFileItems.put(item.name, item);

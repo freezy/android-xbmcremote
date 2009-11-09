@@ -6,9 +6,10 @@ import org.xbmc.httpapi.Connection;
 
 public class MediaLocation implements NamedResource {
 	
-	public String name, path;
+	public String name, path, displayPath;
 	public boolean isDirectory;
 	public boolean isArchive = false;
+	public boolean isMultipath = false;
 	
 	/**
 	 * Class constructor with already parsed data
@@ -18,8 +19,15 @@ public class MediaLocation implements NamedResource {
 	public MediaLocation(String name, String path) {
 		this.name = name;
 		this.path = path;
-		this.isDirectory = path.endsWith("/") || path.endsWith("\\");
-		this.isArchive = isDirectory && path.startsWith("rar://") || path.startsWith("zip://");
+		isDirectory = path.endsWith("/") || path.endsWith("\\");
+		isArchive = isDirectory && path.startsWith("rar://") || path.startsWith("zip://");
+		isMultipath = path.startsWith("multipath://");
+		
+		if (isArchive || isMultipath) {
+			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
+		} else {
+			displayPath = path.replaceAll("\\\\", "/");
+		}
 	}
 	
 	public String getShortName(){
@@ -28,7 +36,7 @@ public class MediaLocation implements NamedResource {
 	
 	/**
 	 * Parses name and path from raw line.
-	 * @param line raw line, either path only ort name and path, separated by Connection.VALUE_SEP.
+	 * @param line raw line, either path only or name and path, separated by Connection.VALUE_SEP.
 	 */
 	public MediaLocation(String line) {
 		if (line.endsWith(".m3u\\") || line.endsWith(".m3u/")) {
@@ -52,11 +60,21 @@ public class MediaLocation implements NamedResource {
 			final String decoded;
 			if (isDirectory) {
 				decoded = URLDecoder.decode(path.substring(0, path.length() - 1)).replaceAll("\\\\", "/");
+				isArchive = true;
 			} else {
 				decoded = URLDecoder.decode(path).replaceAll("\\\\", "/");
+				isArchive = false;
 			}
 			name = decoded.substring(decoded.lastIndexOf("/") + 1);
-			isArchive = true;
+			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
+
+		} else if (path.startsWith("multipath://")) {
+			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
+			isMultipath = true;
+			
+		} else {
+			displayPath = path.replaceAll("\\\\", "/");
 		}
+		
 	}
 }
