@@ -53,8 +53,8 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 	private AlbumListController mAlbumLogic;
 	private SongListController mSongLogic;
 	
-	private static final int MENU_NOW_PLAYING = 101;
-	private static final int MENU_REMOTE = 102;
+	private static final int MENU_NOW_PLAYING = 201;
+	private static final int MENU_REMOTE = 202;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

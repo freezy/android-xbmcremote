@@ -61,9 +61,9 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	private AlbumListController mCompilationsLogic;
 	private FileListController mFileLogic;
 	
-	private static final int MENU_NOW_PLAYING = 101;
-	private static final int MENU_UPDATE_LIBRARY = 102;
-	private static final int MENU_REMOTE = 103;
+	private static final int MENU_NOW_PLAYING = 301;
+	private static final int MENU_UPDATE_LIBRARY = 302;
+	private static final int MENU_REMOTE = 303;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

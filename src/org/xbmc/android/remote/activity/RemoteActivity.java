@@ -55,7 +55,7 @@ import android.widget.FrameLayout;
  * @author Team XBMC
  */
 public class RemoteActivity extends Activity {
-	private static final int MENU_NOW_PLAYING = 301;
+	private static final int MENU_NOW_PLAYING = 401;
 	
 	private Vibrator mVibrator;
 	private EventClient mClient;

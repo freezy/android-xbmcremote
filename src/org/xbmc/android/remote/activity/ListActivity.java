@@ -31,15 +31,20 @@ import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
 
 public class ListActivity extends Activity  {
+	
+	private static final int MENU_NOW_PLAYING = 501;
+	private static final int MENU_REMOTE = 502;
 	
 	ListController mListLogic;
 
@@ -65,6 +70,28 @@ public class ListActivity extends Activity  {
 	public boolean onContextItemSelected(MenuItem item) {
 		mListLogic.onContextItemSelected(item);
 		return super.onContextItemSelected(item);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
+		mListLogic.onCreateOptionsMenu(menu);
+		menu.add(0, MENU_REMOTE, 0, "Remote control").setIcon(R.drawable.menu_remote);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		mListLogic.onOptionsItemSelected(item);
+		switch (item.getItemId()) {
+			case MENU_REMOTE:
+				startActivity(new Intent(this, RemoteActivity.class));
+				return true;
+			case MENU_NOW_PLAYING:
+				startActivity(new Intent(this,  NowPlayingActivity.class));
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
