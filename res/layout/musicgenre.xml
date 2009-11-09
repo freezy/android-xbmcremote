@@ -25,6 +25,7 @@
 				android:id="@+id/artistlist_outer_layout" android:orientation="vertical"
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
 				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent">
@@ -42,6 +43,7 @@
 				android:id="@+id/albumlist_outer_layout" android:orientation="vertical"
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
 				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent">
@@ -59,6 +61,7 @@
 				android:id="@+id/songlist_outer_layout" android:orientation="vertical"
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
 				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent">

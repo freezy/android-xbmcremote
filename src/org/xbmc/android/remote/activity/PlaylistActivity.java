@@ -80,6 +80,7 @@ public class PlaylistActivity extends Activity implements Callback {
 		// create and associate logic
 		mMusicPlaylistLogic = new MusicPlaylistController();
 		mMusicPlaylistLogic.findTitleView(findViewById(R.id.playlist_outer_layout));
+		mMusicPlaylistLogic.findMessageView(findViewById(R.id.playlist_outer_layout));
 		mMusicPlaylistLogic.onCreate(this, (ListView) findViewById(R.id.playlist_list));
 		mMusicPlaylistLogic.subscribe(mNowPlayingHandler);
 

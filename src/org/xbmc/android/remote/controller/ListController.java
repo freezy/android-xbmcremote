@@ -33,17 +33,15 @@ import org.xbmc.android.widget.IdleListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public abstract class ListController implements Serializable {
 	
@@ -59,6 +57,8 @@ public abstract class ListController implements Serializable {
 	protected Activity mActivity;
 	
 	private TextView mTitleView;
+	private ViewGroup mMessageGroup;
+	private TextView mMessageText;
 	private boolean isCreated = false;
 	
 	protected static Bitmap mFallbackBitmap;
@@ -68,17 +68,6 @@ public abstract class ListController implements Serializable {
 		mList = list;
 		mActivity = activity;
 		isCreated = true;
-		
-		list.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				Log.i("onItemSelected", "onItemSelected(<view>, <view>, " + arg2 + ", " + arg3);
-			}
-
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
-			}
-		});
 	}
 	
 	/**
@@ -101,6 +90,12 @@ public abstract class ListController implements Serializable {
 		mTitleView = (TextView)parent.findViewById(R.id.titlebar_text);	
 	}
 	
+	public void findMessageView(View parent) {
+		mMessageGroup = (ViewGroup)parent.findViewById(R.id.listmessage);	
+		mMessageText = (TextView)parent.findViewById(R.id.listmessage_text);	
+		mMessageGroup.setVisibility(View.GONE);
+	}
+	
 	protected void setTitle(String title) {
 		if (mTitleView != null) {
 			mTitleView.setText(title);
@@ -109,6 +104,14 @@ public abstract class ListController implements Serializable {
 	
 	protected boolean isCreated() {
 		return isCreated;
+	}
+	
+	protected void setNoDataMessage(String message, int imageResource) {
+		if (mMessageGroup != null) {
+			mMessageText.setText(message);
+			mMessageText.setCompoundDrawablesWithIntrinsicBounds(imageResource, 0, 0, 0);
+			mMessageGroup.setVisibility(View.VISIBLE);
+		}
 	}
 	
 	protected class QueryHandler extends HttpApiHandler<Boolean> {

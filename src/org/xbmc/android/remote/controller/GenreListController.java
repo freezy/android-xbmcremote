@@ -69,8 +69,13 @@ public class GenreListController extends ListController {
 			setTitle("Genres...");
 			HttpApiThread.music().getGenres(new HttpApiHandler<ArrayList<Genre>>(mActivity) {
 				public void run() {
-					setTitle("Genres (" + value.size() + ")");
-					mList.setAdapter(new GenreAdapter(mActivity, value));
+					if (value.size() > 0) {
+						setTitle("Genres (" + value.size() + ")");
+						mList.setAdapter(new GenreAdapter(mActivity, value));
+					} else {
+						setTitle("Genres");
+						setNoDataMessage("No genres found.", R.drawable.icon_genre_dark);
+					}
 				}
 			});
 			

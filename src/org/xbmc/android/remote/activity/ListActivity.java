@@ -58,6 +58,7 @@ public class ListActivity extends Activity  {
 		mListLogic = (ListController)getIntent().getSerializableExtra(ListController.EXTRA_LIST_LOGIC);
 		
 		mListLogic.findTitleView(findViewById(R.id.blanklist_outer_layout));
+		mListLogic.findMessageView(findViewById(R.id.blanklist_outer_layout));
 		mListLogic.onCreate(this, (ListView)findViewById(R.id.blanklist_list));
 	}
 	

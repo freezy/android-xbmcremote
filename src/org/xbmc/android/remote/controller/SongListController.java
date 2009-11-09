@@ -131,7 +131,11 @@ public class SongListController extends ListController {
 			HttpApiThread.music().getSongs(new HttpApiHandler<ArrayList<Song>>(mActivity) {
 				public void run() {
 					setTitle(album.name);
-					mList.setAdapter(new SongAdapter(mActivity, value));
+					if (value.size() > 0) {
+						mList.setAdapter(new SongAdapter(mActivity, value));
+					} else {
+						setNoDataMessage("No songs found", R.drawable.icon_playlist_dark);
+					}
 				}
 			}, album);
 			
@@ -139,8 +143,13 @@ public class SongListController extends ListController {
 			setTitle(artist.name + " - Songs...");
 			HttpApiThread.music().getSongs(new HttpApiHandler<ArrayList<Song>>(mActivity) {
 				public void run() {
-					setTitle(artist.name + " - Songs (" + value.size() + ")");
-					mList.setAdapter(new SongAdapter(mActivity, value));
+					if (value.size() > 0) {
+						setTitle(artist.name + " - Songs (" + value.size() + ")");
+						mList.setAdapter(new SongAdapter(mActivity, value));
+					} else {
+						setTitle(artist.name + " - Songs");
+						setNoDataMessage("No songs found.", R.drawable.icon_playlist_dark);
+					}
 				}
 			}, artist);
 			
@@ -148,8 +157,13 @@ public class SongListController extends ListController {
 			setTitle(genre.name + " - Songs...");
 			HttpApiThread.music().getSongs(new HttpApiHandler<ArrayList<Song>>(mActivity) {
 				public void run() {
-					setTitle(genre.name + " - Songs (" + value.size() + ")");
-					mList.setAdapter(new SongAdapter(mActivity, value));
+					if (value.size() > 0) {
+						setTitle(genre.name + " - Songs (" + value.size() + ")");
+						mList.setAdapter(new SongAdapter(mActivity, value));
+					} else {
+						setTitle(genre.name + " - Songs");
+						setNoDataMessage("No songs found.", R.drawable.icon_playlist_dark);
+					}
 				}
 			}, genre);
 		}

@@ -124,8 +124,13 @@ public class AlbumListController extends ListController {
 			setTitle(artist.name + " - Albums...");
 			HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
 				public void run() {
-					setTitle(artist.name + " - Albums (" + value.size() + ")");
-					mList.setAdapter(new AlbumAdapter(mActivity, value));
+					if (value.size() > 0) {
+						setTitle(artist.name + " - Albums (" + value.size() + ")");
+						mList.setAdapter(new AlbumAdapter(mActivity, value));
+					} else {
+						setTitle(artist.name + " - Albums");
+						setNoDataMessage("No albums found.", R.drawable.icon_album_dark);
+					}
 				}
 			}, artist);
 			
@@ -133,8 +138,13 @@ public class AlbumListController extends ListController {
 			setTitle(genre.name + " - Albums...");
 			HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
 				public void run() {
-					setTitle(genre.name + " - Albums (" + value.size() + ")");
-					mList.setAdapter(new AlbumAdapter(mActivity, value));
+					if (value.size() > 0) {
+						setTitle(genre.name + " - Albums (" + value.size() + ")");
+						mList.setAdapter(new AlbumAdapter(mActivity, value));
+					} else {
+						setTitle(genre.name + " - Albums");
+						setNoDataMessage("No albums found.", R.drawable.icon_album_dark);
+					}
 				}
 			}, genre);
 			
@@ -143,16 +153,26 @@ public class AlbumListController extends ListController {
 				setTitle("Compilations...");
 				HttpApiThread.music().getCompilations(new HttpApiHandler<ArrayList<Album>>(mActivity) {
 					public void run() {
-						setTitle("Compilations (" + value.size() + ")");
-						mList.setAdapter(new AlbumAdapter(mActivity, value));
+						if (value.size() > 0) {
+							setTitle("Compilations (" + value.size() + ")");
+							mList.setAdapter(new AlbumAdapter(mActivity, value));
+						} else {
+							setTitle("Compilations");
+							setNoDataMessage("No compilations found.", R.drawable.icon_album_dark);
+						}
 					}
 				});
 			} else {
 				setTitle("Albums...");				// all albums
 				HttpApiThread.music().getAlbums(new HttpApiHandler<ArrayList<Album>>(mActivity) {
 					public void run() {
-						setTitle("Albums (" + value.size() + ")");
-						mList.setAdapter(new AlbumAdapter(mActivity, value));
+						if (value.size() > 0) {
+							setTitle("Albums (" + value.size() + ")");
+							mList.setAdapter(new AlbumAdapter(mActivity, value));
+						} else {
+							setTitle("Albums");
+							setNoDataMessage("No Albums found.", R.drawable.icon_album_dark);
+						}
 					}
 				});
 			}

@@ -149,11 +149,15 @@ public class FileListController extends ListController {
 		HttpApiHandler<ArrayList<MediaLocation>> mediaListHandler = new HttpApiHandler<ArrayList<MediaLocation>>(mActivity) {
 			public void run() {
 				setTitle(url.equals("") ? "/" : displayPath);
-				mFileItems = new HashMap<String, MediaLocation>();
-				for (MediaLocation item : value) {
-					mFileItems.put(item.name, item);
+				if (value.size() > 0) {
+					mFileItems = new HashMap<String, MediaLocation>();
+					for (MediaLocation item : value) {
+						mFileItems.put(item.name, item);
+					}
+					setListAdapter(new FileItemAdapter(mActivity, value));
+				} else {
+					setNoDataMessage("No files found.", R.drawable.icon_folder_dark);
 				}
-				setListAdapter(new FileItemAdapter(mActivity, value));
 			}
 		};
 		

@@ -58,6 +58,7 @@
 				android:layout_height="fill_parent" 
 				android:orientation="vertical">
 				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
 				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent">

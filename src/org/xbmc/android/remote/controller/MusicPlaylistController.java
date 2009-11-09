@@ -81,17 +81,23 @@ public class MusicPlaylistController extends ListController {
 			
 	  	  	HttpApiThread.music().getPlaylist(new HttpApiHandler<ArrayList<String>>(activity) {
 	  	  		public void run() {
-	  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
-	  	  			int i = 0;
-	  	  			for (String path : value) {
-	  	  				items.add(new PlaylistItem(path, i++));
+	  	  			if (value.size() > 0) {
+		  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
+		  	  			int i = 0;
+		  	  			for (String path : value) {
+		  	  				items.add(new PlaylistItem(path, i++));
+						}
+						setTitle("Music playlist (" + (value.size() > MusicClient.PLAYLIST_LIMIT ? MusicClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
+						mSongAdapter = new SongAdapter(activity, items);
+						mList.setAdapter(mSongAdapter);
+						if (mCurrentPosition >= 0) {
+							mList.setSelection(mCurrentPosition);
+						}
+					} else {
+						setTitle("Music playlist");
+						setNoDataMessage("No tracks in playlist.", R.drawable.icon_playlist_dark);
 					}
-					setTitle("Music playlist (" + (value.size() > MusicClient.PLAYLIST_LIMIT ? MusicClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
-					mSongAdapter = new SongAdapter(activity, items);
-					mList.setAdapter(mSongAdapter);
-					if (mCurrentPosition >= 0) {
-						mList.setSelection(mCurrentPosition);
-					}
+
 	  	  		}
 	  	  	});
 			

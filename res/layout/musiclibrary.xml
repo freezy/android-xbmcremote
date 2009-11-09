@@ -25,6 +25,7 @@
 				android:id="@+id/albumlist_outer_layout" android:orientation="vertical"
 				android:fadingEdge="none" >
 				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
 				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent">
@@ -42,6 +43,7 @@
 				android:id="@+id/filelist_outer_layout" android:orientation="vertical"
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
 				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent">
@@ -59,6 +61,7 @@
 				android:id="@+id/artists_outer_layout" android:orientation="vertical"
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
 				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent">
@@ -76,6 +79,7 @@
 				android:id="@+id/genres_outer_layout" android:orientation="vertical"
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
 				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent">
@@ -85,7 +89,7 @@
 						android:layout_width="fill_parent" 
 						android:fadingEdge="none"
 						android:scrollbars="none" />
-					</org.xbmc.android.widget.FastScrollView>
+				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -93,6 +97,7 @@
 				android:id="@+id/compilations_outer_layout" android:orientation="vertical"
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
 				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent">
@@ -102,9 +107,8 @@
 						android:layout_width="fill_parent" 
 						android:fadingEdge="none"
 						android:scrollbars="none" />
-					</org.xbmc.android.widget.FastScrollView>
+				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
-			
     	</FrameLayout>
     </RelativeLayout>
 </org.xbmc.android.widget.slidingtabs.SlidingTabHost>

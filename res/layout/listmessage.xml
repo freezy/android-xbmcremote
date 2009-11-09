@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/listmessage" 
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal"
+	android:gravity="center_horizontal" >
+	<TextView 
+		android:id="@+id/listmessage_text" 
+		android:layout_height="wrap_content" 
+		android:layout_width="wrap_content" 
+		android:paddingTop="30px"
+		android:text="No media found." 
+		android:textSize="18px"
+		android:drawableLeft="@drawable/icon_album_grey" 
+		android:gravity="center_vertical|center_horizontal" 
+		android:drawablePadding="10px" />
+</LinearLayout>

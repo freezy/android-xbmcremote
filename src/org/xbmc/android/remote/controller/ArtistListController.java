@@ -80,16 +80,26 @@ public class ArtistListController extends ListController {
 				setTitle(mGenre.name + " - Artists...");
 				HttpApiThread.music().getArtists(new HttpApiHandler<ArrayList<Artist>>(mActivity) {
 					public void run() {
-						setTitle(mGenre.name + " - Artists (" + value.size() + ")");
-						mList.setAdapter(new ArtistAdapter(mActivity, value));
+						if (value.size() > 0) {
+							setTitle(mGenre.name + " - Artists (" + value.size() + ")");
+							mList.setAdapter(new ArtistAdapter(mActivity, value));
+						} else {
+							setTitle(mGenre.name + " - Artists");
+							setNoDataMessage("No artists found.", R.drawable.icon_artist_dark);
+						}
 					}
 				}, mGenre);
 			} else {
 				setTitle("Artists...");
 				HttpApiThread.music().getArtists(new HttpApiHandler<ArrayList<Artist>>(mActivity) {
 					public void run() {
-						setTitle("Artists (" + value.size() + ")");
-						mList.setAdapter(new ArtistAdapter(mActivity, value));
+						if (value.size() > 0) {
+							setTitle("Artists (" + value.size() + ")");
+							mList.setAdapter(new ArtistAdapter(mActivity, value));
+						} else {
+							setTitle("Artists");
+							setNoDataMessage("No artists found.", R.drawable.icon_artist_dark);
+						}
 					}
 				});
 			}

@@ -88,19 +88,24 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		// assign the gui logic to each tab
 		mAlbumLogic = new AlbumListController();
 		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
+		mAlbumLogic.findMessageView(findViewById(R.id.albumlist_outer_layout));
 		mAlbumLogic.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
 
 		mFileLogic = new FileListController();
 		mFileLogic.findTitleView(findViewById(R.id.filelist_outer_layout));
+		mFileLogic.findMessageView(findViewById(R.id.filelist_outer_layout));
 		
 		mArtistLogic = new ArtistListController();
 		mArtistLogic.findTitleView(findViewById(R.id.artists_outer_layout));
+		mArtistLogic.findMessageView(findViewById(R.id.artists_outer_layout));
 
 		mGenreLogic = new GenreListController();
 		mGenreLogic.findTitleView(findViewById(R.id.genres_outer_layout));
+		mGenreLogic.findMessageView(findViewById(R.id.genres_outer_layout));
 
 		mCompilationsLogic = new AlbumListController();
 		mCompilationsLogic.findTitleView(findViewById(R.id.compilations_outer_layout));
+		mCompilationsLogic.findMessageView(findViewById(R.id.compilations_outer_layout));
 		mCompilationsLogic.setCompilationsOnly(true);
 
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {

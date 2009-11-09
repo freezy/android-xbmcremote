@@ -3,6 +3,5 @@
     <string name="app_name">XBMC Remote</string>
 	<string name="app_receiver">XbmcBroadcastReceiver</string>
 	<string name="sms_received">SMS received</string>
-	<string name="app_url_message">Visit our project page at <a href="http://code.google.com/p/android-xbmcremote/">Google Code</a>.</string>
 	<string name="alphabet">\u0020ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 </resources>
