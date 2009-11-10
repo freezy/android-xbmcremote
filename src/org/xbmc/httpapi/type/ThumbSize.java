@@ -21,11 +21,15 @@
 
 package org.xbmc.httpapi.type;
 
+import android.content.res.Resources;
+
 public abstract class ThumbSize {
 	
 	public static final int SMALL = 1;
 	public static final int MEDIUM = 2;
 	public static final int BIG = 3;
+	
+	private static final float sScale = Resources.getSystem().getDisplayMetrics().density;
 	
 	public static String getDir(int size) {
 		switch (size) {
@@ -43,11 +47,11 @@ public abstract class ThumbSize {
 	public static int getPixel(int size) {
 		switch (size) {
 			case SMALL:
-				return 50;
+				return (int)(50 * sScale);
 			case MEDIUM:
-				return 103;
+				return (int)(103 * sScale);
 			case BIG:
-				return 400;
+				return (int)(400 * sScale);
 			default:
 				return 0;
 		}
