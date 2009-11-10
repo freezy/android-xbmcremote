@@ -194,9 +194,10 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			final String wolMac = prefs.getString("setting_wol", "");
 			final int wolWait = Integer.parseInt(prefs.getString("setting_wol_wait", "40"));
+			final int wolPort = Integer.parseInt(prefs.getString("setting_wol_port", "9"));
 			
 			WakeOnLan wol = new WakeOnLan();
-			if (wol.sendMagicPacket(wolMac)) { // If succeeded in sending the magic packet, begin the countdown
+			if (wol.sendMagicPacket(wolMac, wolPort)) { // If succeeded in sending the magic packet, begin the countdown
 				WoLCounter counter = new WoLCounter(wolWait * 1000,1000);
 				counter.start();
 			}

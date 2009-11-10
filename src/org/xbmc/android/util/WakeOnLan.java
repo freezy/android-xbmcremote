@@ -28,6 +28,10 @@ public class WakeOnLan {
         }
     }
  
+	public Boolean sendMagicPacket(String macStr, int PORT) {
+		return sendMagicPacket(macStr, "255.255.255.255", PORT);
+	}
+
     public Boolean sendMagicPacket(String macStr) {
     	return sendMagicPacket(macStr, "255.255.255.255", 9);
     }
