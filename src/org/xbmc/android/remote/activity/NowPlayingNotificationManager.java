@@ -46,6 +46,7 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 	
 	public void stopNotificating() {
 		ConnectionManager.getNowPlayingPoller(mContext).unSubscribe(mPollingHandler);
+		removeNotification();
 	}
 	
 	
