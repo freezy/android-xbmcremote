@@ -28,7 +28,7 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 	private NowPlayingNotificationManager(Context context) {
 		mContext = context;
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-		mEnabled = prefs.getBoolean("setting_show_notification", true);
+		mEnabled = prefs.getBoolean("setting_show_notification", false);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 	
