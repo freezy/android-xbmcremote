@@ -42,7 +42,7 @@
 			</TableRow>
 	<TextView
        	android:id="@+id/about_url_message"
-       	android:textSize="12px"
+       	android:textSize="12dip"
 		android:gravity="center"
 		android:paddingTop="15dip"/>
 	</TableLayout>

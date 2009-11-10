@@ -83,6 +83,8 @@ public class SlidingTabWidget extends LinearLayout {
 	private int mSliderMoveWidth = 0;
 	private int mBackMoveWidth = 0;
 	float mBackMoveFactor = 0;
+	
+	private static float sScale;
 
 	
 	public SlidingTabWidget(Context context) {
@@ -98,11 +100,13 @@ public class SlidingTabWidget extends LinearLayout {
 	public SlidingTabWidget(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs);
 		
+		sScale = context.getResources().getDisplayMetrics().density;
+
 		mContext = context;
 		setOrientation(LinearLayout.HORIZONTAL);
 		
 		// inflate widget layout from xml
-		inflate(mContext, R.layout.slidingtab_widget, this);
+		inflate(context, R.layout.slidingtab_widget, this);
 		
         // set all the view references 
 		mOuterLayout = (LinearLayout)findViewById(R.id.SlidingTabLinearLayoutOuter);
@@ -113,7 +117,7 @@ public class SlidingTabWidget extends LinearLayout {
         mSlider.setOnTouchListener(new SliderOnTouchListener());
         
 		// inflate and prepare the overlay
-        final LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mOverlayLayout = (LinearLayout) inflater.inflate(R.layout.slidingtab_overlay, mTabContent, false);
 		mOverlayIcon = (ImageView)mOverlayLayout.findViewById(R.id.slidingtab_overlay_image);
 		mOverlayText = (TextView)mOverlayLayout.findViewById(R.id.slidingtab_overlay_label);
@@ -153,7 +157,7 @@ public class SlidingTabWidget extends LinearLayout {
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SlidingTabWidget, defStyle, 0);
 		mSeparationWidth = a.getInt(R.styleable.SlidingTabWidget_separationWidth, 0);
 		if (mSeparationWidth == 0) {
-			mSeparationWidth = 75;
+			mSeparationWidth = (int)(75 * sScale);
 		}
 		a.recycle();
 	}
@@ -170,7 +174,7 @@ public class SlidingTabWidget extends LinearLayout {
 		final int drawableWidth = bgImg.getDrawable().getIntrinsicWidth();
 		final int drawableHeight = bgImg.getDrawable().getIntrinsicHeight();
 		final int hPadding = Math.round((float)(mSeparationWidth - drawableWidth) / 2.0f);
-		final int vPadding = Math.round((float)(SCROLLBAR_HEIGHT - drawableHeight) / 2.0f); 
+		final int vPadding = Math.round((float)((int)(SCROLLBAR_HEIGHT * sScale) - drawableHeight) / 2.0f); 
 		
 		bgImg.setOverlayIconResource(newTab.getBigIconResource());
 		

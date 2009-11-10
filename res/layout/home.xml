@@ -3,7 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent" 
-	android:orientation="vertical" android:paddingTop="10px">
+	android:orientation="vertical" android:paddingTop="10dip">
 	<RelativeLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -11,7 +11,7 @@
         <LinearLayout
             android:id="@+id/home_bottombar"
             android:layout_width="fill_parent"
-            android:layout_height="60px"
+            android:layout_height="60dip"
             android:layout_alignParentBottom="true" 
             android:background="@drawable/home_bottom">
 			<TextView android:id="@+id/HomeVersionTextView" android:text="Version Info"

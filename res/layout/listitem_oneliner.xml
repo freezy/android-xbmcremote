@@ -7,19 +7,19 @@
 	android:background="@drawable/listitem_bg">
 	<ImageView 
 		android:id="@+id/MusicItemImageViewArt" 
-		android:layout_height="50px" 
-		android:layout_width="50px"/>
+		android:layout_height="50dip" 
+		android:layout_width="50dip"/>
 	<TextView 
 		android:id="@+id/MusicItemTextViewTitle" 
 		android:layout_height="wrap_content" 
 		android:layout_width="fill_parent" 
 		android:text="Title" 
-		android:textSize="18px" 
+		android:textSize="18dip" 
 		android:textColor="@drawable/listitem_title" 
 		android:ellipsize="end" 
 		android:marqueeRepeatLimit="1" 
 		android:lines="1" 
 		android:scrollHorizontally="true" 
-		android:paddingLeft="5px" 
-		android:paddingTop="14px"/>
+		android:paddingLeft="5dip" 
+		android:paddingTop="14dip"/>
 </LinearLayout>

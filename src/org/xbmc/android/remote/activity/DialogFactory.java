@@ -167,7 +167,7 @@ public abstract class DialogFactory {
 			txtTrack.setGravity(Gravity.RIGHT);
 			txtTrack.setWidth(20);
 			txtTrack.setPadding(0, 0, 5, 0);
-			txtTrack.setTextSize(TypedValue.COMPLEX_UNIT_PX, 10);
+			txtTrack.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
 			
 			TextView txtTitle = new TextView(activity);
 			if (album.isVA()) {

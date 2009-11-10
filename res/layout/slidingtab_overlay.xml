@@ -5,9 +5,9 @@
 	android:id="@+id/slidingtab_overlay_layer" android:background="#bb000000">
 	<ImageView android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:id="@+id/slidingtab_overlay_image"
-		android:layout_gravity="center_horizontal" android:paddingTop="120px" android:paddingBottom="10px"></ImageView>
+		android:layout_gravity="center_horizontal" android:paddingTop="120dip" android:paddingBottom="10dip"></ImageView>
 	<TextView android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:id="@+id/slidingtab_overlay_label"
 		android:text="Tab Label" android:layout_gravity="center_horizontal"
-		android:textColor="#ffffff" android:textSize="18px"></TextView>
+		android:textColor="#ffffff" android:textSize="18dip"></TextView>
 </LinearLayout>

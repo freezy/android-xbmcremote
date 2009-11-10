@@ -5,7 +5,7 @@
 	<RelativeLayout android:orientation="vertical"
 		android:layout_width="fill_parent" android:layout_height="fill_parent">
 		<LinearLayout android:id="@+id/now_playing_bottombar"
-			android:layout_width="wrap_content" android:layout_height="60px"
+			android:layout_width="wrap_content" android:layout_height="60dip"
 			android:layout_alignParentBottom="true">
 			<ImageButton android:id="@+id/MediaPreviousButton"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -35,23 +35,23 @@
 						android:layout_height="wrap_content"
 						android:gravity="center_horizontal"
 						android:singleLine="true"
-						android:textSize="18px"
+						android:textSize="18dip"
 						android:textColor="#ffffffff"
-						android:paddingTop="7px" />
+						android:paddingTop="7dip" />
 				<RelativeLayout 
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_gravity="center_horizontal"
-					android:paddingTop="7px">
+					android:paddingTop="7dip">
 					<ImageView
-						android:layout_width="266px" 
-						android:layout_height="233px" 
+						android:layout_width="266dip" 
+						android:layout_height="233dip" 
 						android:scaleType="centerCrop" 
 						android:id="@+id/CoverImage" 
 						android:background="@drawable/coverbox_back" />
 					<ImageView 
-						android:layout_width="266px"
-						android:layout_height="233px" 
+						android:layout_width="266dip"
+						android:layout_height="233dip" 
 						android:scaleType="centerCrop" 
 						android:background="@drawable/coverbox_front" />
 				</RelativeLayout>
@@ -61,9 +61,9 @@
 					android:max="100"
 					android:progressDrawable="@drawable/progressbar"
 					android:thumb="@drawable/pgbar_thumb" 
-					android:paddingLeft="20px"
-					android:paddingRight="10px"
-					android:paddingTop="20px"
+					android:paddingLeft="20dip"
+					android:paddingRight="10dip"
+					android:paddingTop="20dip"
 					/>
 				<LinearLayout 
 					android:layout_width="fill_parent"
@@ -72,12 +72,12 @@
 					<RelativeLayout 
 						android:layout_width="fill_parent" 
 						android:layout_height="wrap_content"
-						android:layout_marginTop="-5px">
+						android:layout_marginTop="-5dip">
 						<TextView 
 							android:id="@+id/now_playing_counter_left"
 							android:layout_width="wrap_content" 
 							android:layout_height="wrap_content"
-							android:textSize="12px"
+							android:textSize="12dip"
 							android:textColor="#ffffffff"
 							android:gravity="left"
 							android:singleLine="true" />
@@ -86,7 +86,7 @@
 							android:layout_width="wrap_content" 
 							android:layout_height="wrap_content"
 							android:layout_alignParentRight="true"
-							android:textSize="12px"
+							android:textSize="12dip"
 							android:textColor="#ffffffff"
 							android:gravity="right"
 							android:singleLine="true" />
@@ -95,21 +95,21 @@
 						android:id="@+id/SongTextView"
 						android:layout_width="fill_parent" 
 						android:layout_height="wrap_content"
-						android:textSize="16px"
+						android:textSize="16dip"
 						android:textColor="#ffffffff"
 						android:gravity="center_horizontal"
-						android:layout_marginTop="-15px"
+						android:layout_marginTop="-15dip"
 						android:singleLine="true"
 						android:ellipsize="end"
-						android:paddingLeft="25px"
-						android:paddingRight="22px" />
+						android:paddingLeft="25dip"
+						android:paddingRight="22dip" />
 					<TextView 
 						android:id="@+id/ArtistTextView"
 						android:layout_width="fill_parent" 
 						android:layout_height="wrap_content"
 						android:singleLine="true"
 						android:gravity="center_horizontal"
-						android:textSize="14px" />
+						android:textSize="14dip" />
 				</LinearLayout>
 			</LinearLayout>
 		</FrameLayout>

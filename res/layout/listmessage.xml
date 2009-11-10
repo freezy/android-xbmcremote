@@ -10,10 +10,10 @@
 		android:id="@+id/listmessage_text" 
 		android:layout_height="wrap_content" 
 		android:layout_width="wrap_content" 
-		android:paddingTop="30px"
+		android:paddingTop="30dip"
 		android:text="No media found." 
-		android:textSize="18px"
+		android:textSize="18dip"
 		android:drawableLeft="@drawable/icon_album_grey" 
 		android:gravity="center_vertical|center_horizontal" 
-		android:drawablePadding="10px" />
+		android:drawablePadding="10dip" />
 </LinearLayout>

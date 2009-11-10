@@ -2,14 +2,14 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/SlidingTabLinearLayoutOuter"
 	android:layout_width="fill_parent" 
-	android:layout_height="60px" 
+	android:layout_height="60dip" 
 	android:background="@drawable/st_background"
 	android:orientation="vertical">
 	<org.xbmc.android.widget.slidingtabs.SlidingTabScrollView 
 		android:id="@+id/SlidingTabHorizontalScrollView"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
-		android:layout_marginTop="6px"
+		android:layout_marginTop="6dip"
 		android:scrollbars="none" 
 		android:fadingEdge="none" 
 		android:clickable="false" 
@@ -20,16 +20,16 @@
 		<LinearLayout 
 			android:id="@+id/SlidingTabLinearLayoutBackslider"
 			android:layout_width="wrap_content"
-			android:layout_height="48px"
-			android:layout_marginTop="6px" 
+			android:layout_height="48dip"
+			android:layout_marginTop="6dip" 
 			android:layout_gravity="center_vertical" />
 	</org.xbmc.android.widget.slidingtabs.SlidingTabScrollView >
 	<LinearLayout 
 		android:id="@+id/SlidingTabLinearLayoutSlidingContainer" 
-		android:layout_width="1000px"
+		android:layout_width="1000dip"
 		android:layout_height="wrap_content" 
-		android:layout_marginLeft="-19px"
-		android:layout_marginTop="-49px"> 
+		android:layout_marginLeft="-19dip"
+		android:layout_marginTop="-49dip"> 
 		<ImageButton 
 			android:id="@+id/SlidingTabImageButtonSlider"
 			android:layout_width="wrap_content"

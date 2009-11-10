@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:layout_width="fill_parent"
 	android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/OuterLinearLayout" android:paddingLeft="10px" android:paddingBottom="5px">
-	<ImageView android:layout_width="64px" android:layout_height="64px" android:id="@+id/IconImageView"></ImageView>
+	android:id="@+id/OuterLinearLayout" android:paddingLeft="10dip" android:paddingBottom="5dip">
+	<ImageView android:layout_width="64dip" android:layout_height="64dip" android:id="@+id/IconImageView"></ImageView>
 	<LinearLayout android:id="@+id/LinearLayout02"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:orientation="vertical" android:paddingTop="5px" android:paddingLeft="10px">
+		android:orientation="vertical" android:paddingTop="5dip" android:paddingLeft="10dip">
 		<TextView android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:id="@+id/SubtitleTextView"
 			android:text="Subtitle" android:textColor="#909090"></TextView>
 		<TextView android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:id="@+id/TitleTextView"
-			android:textSize="24px" android:text="Title" android:textColor="#ffffff"></TextView>
+			android:textSize="24dip" android:text="Title" android:textColor="#ffffff"></TextView>
 	</LinearLayout>
 </LinearLayout>

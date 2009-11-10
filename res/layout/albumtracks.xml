@@ -1,12 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
 	android:layout_height="fill_parent"
-	android:id="@+id/albumtracks" android:layout_width="270px" android:padding="5px">
+	android:id="@+id/albumtracks" android:layout_width="270dip" android:padding="5dip">
 	
 	<LinearLayout android:layout_height="wrap_content"
 		android:layout_marginBottom="5dp" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_gravity="left" android:id="@+id/LinearLayoutHeader">
 		<ImageView android:src="@drawable/nocover"
-			android:id="@+id/album_cover" android:layout_height="64px" android:layout_width="64px" android:layout_marginRight="5px" android:scaleType="fitXY"/><LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:orientation="vertical" android:layout_marginBottom="5pt" android:id="@+id/LinearLayoutInfo">
+			android:id="@+id/album_cover" android:layout_height="64dip" android:layout_width="64dip" android:layout_marginRight="5dip" android:scaleType="fitXY"/><LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:orientation="vertical" android:layout_marginBottom="5pt" android:id="@+id/LinearLayoutInfo">
 		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/album_artistname" android:text="Artist" android:textStyle="bold"></TextView>
 		<TextView android:text="Year" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/album_year"></TextView>
 	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textStyle="italic" android:text="x Tracks" android:id="@+id/album_numtracks"></TextView>
@@ -15,7 +15,7 @@
 	
 	        	       
 
-<ScrollView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/ScrollView" android:scrollbarStyle="outsideOverlay"><LinearLayout android:layout_height="wrap_content" android:layout_marginBottom="5px" android:id="@+id/LinearLayoutTracks" android:orientation="vertical" android:layout_width="wrap_content" android:paddingRight="10px">
+<ScrollView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/ScrollView" android:scrollbarStyle="outsideOverlay"><LinearLayout android:layout_height="wrap_content" android:layout_marginBottom="5dip" android:id="@+id/LinearLayoutTracks" android:orientation="vertical" android:layout_width="wrap_content" android:paddingRight="10dip">
 		
 	<TableLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/album_tracktable" android:layout_weight="2"></TableLayout></LinearLayout></ScrollView>
 </LinearLayout>

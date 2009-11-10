@@ -7,24 +7,24 @@
 	android:background="@drawable/listitem_bg" >
 	<ImageView 
 		android:id="@+id/MusicItemImageViewArt" 
-		android:layout_width="50px"
-		android:layout_height="50px"
+		android:layout_width="50dip"
+		android:layout_height="50dip"
 		android:adjustViewBounds="false"
 		android:cropToPadding="false" 
-		android:padding="0px" android:layout_margin="0px" android:src="@drawable/icon_album_grey" android:scaleType="fitXY"/>
+		android:padding="0dip" android:layout_margin="0dip" android:src="@drawable/icon_album_grey" android:scaleType="fitXY"/>
 	<LinearLayout 
 		android:id="@+id/MusicItemLinearLayoutText" 
 		android:layout_height="wrap_content" 
 		android:layout_width="fill_parent"
-		android:paddingLeft="5px" 
-		android:paddingTop="5px" 
+		android:paddingLeft="5dip" 
+		android:paddingTop="5dip" 
 		android:orientation="vertical">
 		<TextView 
 			android:id="@+id/MusicItemTextViewTitle" 
 			android:layout_height="wrap_content" 
 			android:layout_width="fill_parent" 
 			android:text="Title" 
-			android:textSize="18px" 
+			android:textSize="18dip" 
 			android:textColor="@drawable/listitem_title" 
 			android:ellipsize="end" 
 			android:marqueeRepeatLimit="1" 
@@ -41,7 +41,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" 
 				android:text="Subtitle"
-				android:textSize="12px"
+				android:textSize="12dip"
 				android:textColor="@drawable/listitem_subtitle" 
 				android:layout_gravity="left" 
 				android:lines="1" />
@@ -50,12 +50,12 @@
 				android:layout_height="wrap_content" 
 				android:layout_width="fill_parent" 
 				android:text="Year" 
-				android:textSize="12px"
+				android:textSize="12dip"
 				android:textColor="@drawable/listitem_subtitle" 
 				android:layout_gravity="right" 
 				android:gravity="right" 
 				android:lines="1" 
-				android:paddingRight="8px"/>
+				android:paddingRight="8dip"/>
 		</LinearLayout>	
 	</LinearLayout>
 </LinearLayout>
