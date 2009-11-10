@@ -126,7 +126,6 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 		setHomeAdapter(mOfflineMenu);
 		
         ((TextView) findViewById(R.id.HomeVersionTextView)).setText("Connecting...");
-        HttpApiThread.info().getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
 	}
 
 	@Override
