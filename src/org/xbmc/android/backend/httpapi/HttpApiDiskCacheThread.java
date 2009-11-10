@@ -69,7 +69,7 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 					final File file = new File(ImportUtilities.getCacheDirectory(cover.getArtFolder(), thumbSize), String.format("%08x", cover.getCrc()).toLowerCase());
 				    if (file.exists()) {
 				    	final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-				    	HttpApiMemCacheThread.addCoverToCache(cover, bitmap);
+				    	HttpApiMemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
 				    	handler.value = bitmap;
 				    }
 				}
@@ -89,7 +89,7 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 		final File file = new File(ImportUtilities.getCacheDirectory(cover.getArtFolder(), thumbSize), String.format("%08x", cover.getCrc()).toLowerCase());
 	    if (file.exists()) {
 	    	final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-	    	HttpApiMemCacheThread.addCoverToCache(cover, bitmap);
+	    	HttpApiMemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
 	    	return bitmap;
 	    } else
 	    	return null;

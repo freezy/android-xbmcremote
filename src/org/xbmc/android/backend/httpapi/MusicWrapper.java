@@ -547,9 +547,11 @@ public class MusicWrapper extends Wrapper {
 			public void run() {
 				if (album.getCrc() > 0) {
 					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
-					if (thumbSize == ThumbSize.SMALL) {
-						getAlbumCoverFromMem(handler, album);
+					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
+						if (DEBUG) Log.i(TAG, "[" + album.getId() + " ] trying memory");
+						getAlbumCoverFromMem(handler, album, thumbSize);
 					} else {
+						if (DEBUG) Log.i(TAG, "[" + album.getId() + " ] trying disk directly");
 						getAlbumCoverFromDisk(handler, album, thumbSize);
 					}
 				} else {
@@ -603,14 +605,14 @@ public class MusicWrapper extends Wrapper {
 	 * @param handler Callback handler
 	 * @param album   Get cover for this album
 	 */
-	private void getAlbumCoverFromMem(final HttpApiHandler<Bitmap> handler, final ICoverArt album) {
+	private void getAlbumCoverFromMem(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + album.getId() + "] Checking in mem cache..");
 		HttpApiMemCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
 				if (value == null) {
 					if (DEBUG) Log.i(TAG, "[" + album.getId() + " empty]");
 					// then, try sdcard cache
-					getAlbumCoverFromDisk(handler, album, ThumbSize.SMALL);
+					getAlbumCoverFromDisk(handler, album, thumbSize);
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + album.getId() + " FOUND in memory!]");
 					handler.value = value;
@@ -618,7 +620,7 @@ public class MusicWrapper extends Wrapper {
 					done(handler);
 				}
 			}
-		}, album);
+		}, album, thumbSize);
 	}
 	
 	/**

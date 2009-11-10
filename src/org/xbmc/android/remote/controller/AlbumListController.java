@@ -115,7 +115,7 @@ public class AlbumListController extends ListController {
 			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
 			activity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_album_grey);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_album_dark_big);
 			setupIdleListener();
 			
 //			ImportUtilities.purgeCache();
@@ -268,7 +268,7 @@ public class AlbumListController extends ListController {
 		sortMenu.add(2, MENU_SORT_BY_ALBUM_DESC, 0, "by Album descending");
 		sortMenu.add(2, MENU_SORT_BY_ARTIST_ASC, 0, "by Artist ascending");
 		sortMenu.add(2, MENU_SORT_BY_ARTIST_DESC, 0, "by Artist descending");
-//		menu.add(0, MENU_SWITCH_VIEW, 0, "Switch view");
+//		menu.add(0, MENU_SWITCH_VIEW, 0, "Switch view").setIcon(R.drawable.menu_view);
 	}
 	
 	@Override
@@ -401,8 +401,8 @@ public class AlbumListController extends ListController {
 			final OneHolder<Album> holder;
 			
 			if (convertView == null) {
-				
 				row = new ImageView(mActivity);
+				
 				holder = new OneHolder<Album>(row, null);
 				row.setTag(holder);
 				
@@ -420,7 +420,7 @@ public class AlbumListController extends ListController {
 			holder.coverItem = album;
 			holder.id = album.getCrc();
 			
-			row.setImageResource(R.drawable.icon_album_grey);
+			row.setImageResource(R.drawable.icon_album_dark_big);
 			holder.setTemporaryBind(true);
 			
 			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.MEDIUM);
