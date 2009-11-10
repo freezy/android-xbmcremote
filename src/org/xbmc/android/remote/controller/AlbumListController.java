@@ -58,6 +58,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -80,12 +81,13 @@ public class AlbumListController extends ListController {
 	
 	private int mCurrentView = VIEW_LIST;
 	
-	
 	private Artist mArtist;
 	private Genre mGenre;
 	private boolean mCompilationsOnly = false;
+	private boolean mLoadCovers = false;
 
 	private GridView mGrid = null;
+	
 	
 	/**
 	 * Defines if only compilations should be listed.
@@ -107,9 +109,15 @@ public class AlbumListController extends ListController {
 		
 		MusicWrapper.setSortKey(Wrapper.PREF_SORT_KEY_ALBUM);
 		MusicWrapper.setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
+		mLoadCovers = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
 		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
+
+			if (!mLoadCovers) {
+				Toast toast = Toast.makeText(activity, "Your SD card is not mounted. You'll need it for caching covers. Displaying place holders only.", Toast.LENGTH_LONG);
+				toast.show();
+			}
 			
 			mArtist = (Artist)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_ARTIST);
 			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
@@ -379,10 +387,15 @@ public class AlbumListController extends ListController {
 			holder.titleView.setText(album.name);
 			holder.subtitleView.setText(album.artist);
 			holder.subsubtitleView.setText(album.year > 0 ? String.valueOf(album.year) : "");
-			holder.iconView.setImageResource(R.drawable.icon_album_grey);
-			holder.setTemporaryBind(true);
-		
-			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.SMALL);
+			
+			if (mLoadCovers) {
+				holder.setTemporaryBind(true);
+				holder.iconView.setImageResource(R.drawable.icon_album_grey);
+				HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.SMALL);
+			} else {
+				holder.iconView.setImageResource(R.drawable.icon_album);
+			}		
+			
 			return row;
 		}
 	}
@@ -420,10 +433,13 @@ public class AlbumListController extends ListController {
 			holder.coverItem = album;
 			holder.id = album.getCrc();
 			
-			row.setImageResource(R.drawable.icon_album_dark_big);
-			holder.setTemporaryBind(true);
-			
-			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.MEDIUM);
+			if (mLoadCovers) {
+				row.setImageResource(R.drawable.icon_album_dark_big);
+				holder.setTemporaryBind(true);
+				HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.MEDIUM);
+			} else {
+				row.setImageResource(R.drawable.icon_album);
+			}
 			return row;
 		}
 	}

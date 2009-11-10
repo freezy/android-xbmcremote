@@ -51,7 +51,7 @@ import android.util.Log;
 public class MusicWrapper extends Wrapper {
 	
 	private static final String TAG = "MusicWrapper";
-	private static final Boolean DEBUG = false;
+	private static final Boolean DEBUG = true;
 	
 	private static SharedPreferences sPref;
 	private static int sCurrentSortKey;

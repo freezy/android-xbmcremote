@@ -54,6 +54,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -78,14 +79,22 @@ public class SongListController extends ListController {
 	private Artist mArtist;
 	private Genre mGenre;
 	
+	private boolean mLoadCovers = false;
+	
 	public void onCreate(Activity activity, ListView list) {
 		
 		MusicWrapper.setSortKey(Wrapper.PREF_SORT_KEY_SONG);
 		MusicWrapper.setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		
+		mLoadCovers = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+		
 		if (!isCreated()) {
-			
 			super.onCreate(activity, list);
+			
+			if (!mLoadCovers) {
+				Toast toast = Toast.makeText(activity, "Your SD card is not mounted. You'll need it for caching covers. Displaying place holders only.", Toast.LENGTH_LONG);
+				toast.show();
+			}
 			
 			mAlbum = (Album)mActivity.getIntent().getSerializableExtra(EXTRA_ALBUM);
 			mArtist = (Artist)mActivity.getIntent().getSerializableExtra(EXTRA_ARTIST);
@@ -365,9 +374,13 @@ public class SongListController extends ListController {
 			holder.holderItem = song;
 			holder.id = song.getId();
 			holder.coverItem = song;
-			holder.iconView.setImageResource(R.drawable.icon_album_grey);
-			holder.setTemporaryBind(true);
-			HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), song, ThumbSize.SMALL);
+			if (mLoadCovers) {
+				holder.iconView.setImageResource(R.drawable.icon_music_dark);
+				holder.setTemporaryBind(true);
+				HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), song, ThumbSize.SMALL);
+			} else {
+				holder.iconView.setImageResource(R.drawable.icon_music);
+			}
 			return row;
 		}
 	}

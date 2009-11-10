@@ -280,7 +280,10 @@ public class SlidingTabHost extends FrameLayout implements ViewTreeObserver.OnTo
 
 	@Override
 	public void dispatchWindowFocusChanged(boolean hasFocus) {
-		mCurrentView.dispatchWindowFocusChanged(hasFocus);
+		View v = mCurrentView;
+		if (v != null) {
+			mCurrentView.dispatchWindowFocusChanged(hasFocus);
+		}
 	}
 
 	public void setCurrentTab(int index) {
