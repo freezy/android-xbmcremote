@@ -64,6 +64,7 @@ public class ConfigurationManager implements OnSharedPreferenceChangeListener {
 
 	public void initKeyguard(boolean fromRemoteControl) {
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+		mKeyguardFromRemote = fromRemoteControl;
 		mKeyguardDisabled = isKeyguardDisabled(prefs);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
