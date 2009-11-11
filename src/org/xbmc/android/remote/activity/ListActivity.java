@@ -31,8 +31,12 @@ import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
 import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -41,10 +45,13 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
 
-public class ListActivity extends Activity  {
+public class ListActivity extends Activity  implements OnSharedPreferenceChangeListener{
 	
 	private static final int MENU_NOW_PLAYING = 501;
 	private static final int MENU_REMOTE = 502;
+    private boolean mDisableKeyguard = false;
+    private KeyguardManager.KeyguardLock mKeyguardLock = null;
+
 	
 	ListController mListLogic;
 
@@ -60,6 +67,11 @@ public class ListActivity extends Activity  {
 		mListLogic.findTitleView(findViewById(R.id.blanklist_outer_layout));
 		mListLogic.findMessageView(findViewById(R.id.blanklist_outer_layout));
 		mListLogic.onCreate(this, (ListView)findViewById(R.id.blanklist_list));
+		
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		String disableKeyguardString = prefs.getString("setting_disable_keyguard", "0");
+		mDisableKeyguard = ( disableKeyguardString.equals("2") );
+		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 	
 	@Override
@@ -112,4 +124,48 @@ public class ListActivity extends Activity  {
 		}
 		return super.onKeyDown(keyCode, event);
 	}
+	
+	   @Override
+	   protected void onResume(){
+	   	super.onResume();
+	   	if(mDisableKeyguard) {
+	   		KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
+	       mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
+	       mKeyguardLock.disableKeyguard();
+	   	}
+	  }
+	    
+		@Override
+		protected void onPause() {
+			super.onPause();
+			if (mKeyguardLock != null){
+				mKeyguardLock.reenableKeyguard();
+				mKeyguardLock = null;
+			}
+		}
+	    
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+			if(key.equals("setting_disable_keyguard")) {
+				String disableKeyguardString = sharedPreferences.getString(key, "0");
+				boolean disableKeyguardState = ( disableKeyguardString.equals("2") );
+				if (disableKeyguardState != mDisableKeyguard){
+					if (disableKeyguardState) {
+						if(this.hasWindowFocus()  ) {
+			    			KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
+							mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
+							mKeyguardLock.disableKeyguard();
+						}
+					}
+					else {
+						if(this.hasWindowFocus()) {
+							if (mKeyguardLock != null) {
+								mKeyguardLock.reenableKeyguard();
+							}
+							mKeyguardLock = null;
+						}
+					}
+					mDisableKeyguard = disableKeyguardState;
+				}
+			}
+		}
 }

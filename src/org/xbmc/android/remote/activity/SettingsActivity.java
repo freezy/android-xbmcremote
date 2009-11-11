@@ -29,6 +29,8 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
+import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -53,12 +55,17 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	
 	private final Hashtable<String, String> mSummaries = new Hashtable<String, String>();
 	
+    private boolean mDisableKeyguard = false;
+    private KeyguardManager.KeyguardLock mKeyguardLock = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 		PreferenceScreen ps = getPreferenceScreen();
+		String disableKeyguardString = ps.getSharedPreferences().getString("setting_disable_keyguard", "0");
+		mDisableKeyguard = ( disableKeyguardString.equals("2") );
 		// save original summaries to variable for later update
 		mSummaries.clear();
 		for (String key : ps.getSharedPreferences().getAll().keySet()) {
@@ -67,7 +74,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				mSummaries.put(key, pref.getSummary().toString());
 			}
 		}
-		
 		
 		updateSummaries();
 	}
@@ -93,6 +99,11 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		super.onResume();
 		updateSummaries();
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+	   	if(mDisableKeyguard) {
+	   		KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
+	   		mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
+	   		mKeyguardLock.disableKeyguard();
+	   	}
 	}
 	
 	@Override
@@ -100,6 +111,10 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		super.onPause();
 		// Unregister the listener whenever a key changes
 		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+		if (mKeyguardLock != null){
+			mKeyguardLock.reenableKeyguard();
+			mKeyguardLock = null;
+		}
 	}
 	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -110,6 +125,28 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		}
 		if (key.equals("setting_ip") || key.equals("setting_http_port") || key.equals("setting_eventserver_port") || key.equals("setting_http_user") || key.equals("setting_http_pass")) {
 			ConnectionManager.resetClient();
+		}
+		if(key.equals("setting_disable_keyguard")) {
+			String disableKeyguardString = sharedPreferences.getString(key, "0");
+			boolean disableKeyguardState = ( disableKeyguardString.equals("2") );
+			if (disableKeyguardState != mDisableKeyguard){
+				if (disableKeyguardState) {
+					if(this.hasWindowFocus()  ) {
+		    			KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
+						mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
+						mKeyguardLock.disableKeyguard();
+					}
+				}
+				else {
+					if(this.hasWindowFocus()) {
+						if (mKeyguardLock != null) {
+							mKeyguardLock.reenableKeyguard();
+						}
+						mKeyguardLock = null;
+					}
+				}
+				mDisableKeyguard = disableKeyguardState;
+			}
 		}
 	}
 	

@@ -83,11 +83,12 @@
 			android:enabled="true" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Screen Behaviour">
-    <CheckBoxPreference
-      android:title="Disable keyguard in RC"
-      android:summary="Disables the screen lock when the application is in remote control mode. (Display will still dim/turn off.)"
-      android:key="setting_disable_keyguard_remote"
-      android:selectable="true"
-      android:enabled="true" />
+		<ListPreference
+			android:key="setting_disable_keyguard"
+			android:title="Disable the Keyguard?"
+			android:summary="Click to set Keyguard (screen lock) behaviour for the app."
+			android:entries="@array/KeyguardPreferenceEntries"
+			android:entryValues="@array/KeyguardPreferenceValues"
+			android:defaultValue="0" />
 	</PreferenceCategory>
 </PreferenceScreen>

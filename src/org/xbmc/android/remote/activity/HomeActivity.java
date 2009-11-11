@@ -38,8 +38,10 @@ import org.xbmc.httpapi.info.SystemInfo;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
@@ -56,7 +58,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class HomeActivity extends Activity implements OnItemClickListener {
+public class HomeActivity extends Activity implements OnItemClickListener, OnSharedPreferenceChangeListener {
 
 	private static final int HOME_ACTION_REMOTE = 0;
 	private static final int HOME_ACTION_MUSIC = 1;
@@ -75,7 +77,8 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 	private HomeAdapter mOfflineMenu;
 	
 	private EventClient mClient;
-	
+    private boolean mDisableKeyguard = false;
+    private KeyguardManager.KeyguardLock mKeyguardLock = null;
 	HttpApiHandler<String> mUpdateVersionHandler;
 
 	@Override
@@ -121,6 +124,10 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 		if (wolMac.compareTo("") != 0)
 			offlineItems.add(new HomeItem(HOME_ACTION_WOL, R.drawable.icon_power, "Power On", "Turn your XBMC's"));
 
+		String disableKeyguardString = prefs.getString("setting_disable_keyguard", "0");
+		mDisableKeyguard = ( disableKeyguardString.equals("2") );
+		prefs.registerOnSharedPreferenceChangeListener(this);
+		
 		mHomeMenu = new HomeAdapter(this, homeItems);
 		mOfflineMenu = new HomeAdapter(this, offlineItems);
 		setHomeAdapter(mOfflineMenu);
@@ -157,6 +164,20 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 	public void onResume(){
 		super.onResume();
         HttpApiThread.info().getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
+       	if(mDisableKeyguard) {
+       		KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
+           mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
+           mKeyguardLock.disableKeyguard();
+       	}
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (mKeyguardLock != null){
+			mKeyguardLock.reenableKeyguard();
+			mKeyguardLock = null;
+		}
 	}
 	
 	private void setHomeAdapter(HomeAdapter adapter) {
@@ -285,6 +306,31 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 		@Override
 		public void onTick(long millisUntilFinished) {
 			textCount.setText("Waiting for " + millisUntilFinished/1000 + " more seconds...");						
+		}
+	}
+	
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if(key.equals("setting_disable_keyguard")) {
+			String disableKeyguardString = sharedPreferences.getString(key, "0");
+			boolean disableKeyguardState = ( disableKeyguardString.equals("2") );
+			if (disableKeyguardState != mDisableKeyguard){
+				if (disableKeyguardState) {
+					if(this.hasWindowFocus()  ) {
+		    			KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
+						mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
+						mKeyguardLock.disableKeyguard();
+					}
+				}
+				else {
+					if(this.hasWindowFocus()) {
+						if (mKeyguardLock != null) {
+							mKeyguardLock.reenableKeyguard();
+						}
+						mKeyguardLock = null;
+					}
+				}
+				mDisableKeyguard = disableKeyguardState;
+			}
 		}
 	}
 }

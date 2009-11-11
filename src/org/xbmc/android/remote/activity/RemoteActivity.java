@@ -85,7 +85,8 @@ public class RemoteActivity extends Activity implements OnSharedPreferenceChange
 		mClient = ConnectionManager.getEventClient(this);
         
     	final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    	mDisableKeyguard = prefs.getBoolean("setting_disable_keyguard_remote", false);
+    	String disableKeyguardString = prefs.getString("setting_disable_keyguard", "0");
+    	mDisableKeyguard = ( disableKeyguardString.equals("1") || disableKeyguardString.equals("2") );
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		
 		WindowManager wm = getWindowManager(); 
@@ -369,22 +370,26 @@ public class RemoteActivity extends Activity implements OnSharedPreferenceChange
 	}
 	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if(key.equals("setting_disable_keyguard_remote")) {
-			boolean newState = sharedPreferences.getBoolean(key, false);
-			mDisableKeyguard = newState;
-			if (newState) {
-				if(this.hasWindowFocus()) {
-		    		KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
-					mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
-					mKeyguardLock.disableKeyguard();
+		if(key.equals("setting_disable_keyguard")) {
+			String disableKeyguardString = sharedPreferences.getString(key, "0");
+			boolean disableKeyguardState = ( disableKeyguardString.equals("1") || disableKeyguardString.equals("2") );
+			if (disableKeyguardState != mDisableKeyguard){
+				if (disableKeyguardState) {
+					if(this.hasWindowFocus()  ) {
+		    			KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
+						mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
+						mKeyguardLock.disableKeyguard();
+					}
 				}
-			}
-			else {
-				if(this.hasWindowFocus()) {
-					if (mKeyguardLock != null)
-						mKeyguardLock.reenableKeyguard();
-					mKeyguardLock = null;
+				else {
+					if(this.hasWindowFocus()) {
+						if (mKeyguardLock != null) {
+							mKeyguardLock.reenableKeyguard();
+						}
+						mKeyguardLock = null;
+					}
 				}
+				mDisableKeyguard = disableKeyguardState;
 			}
 		}
 	}
