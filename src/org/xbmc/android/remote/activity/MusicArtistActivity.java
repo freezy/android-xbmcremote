@@ -23,6 +23,7 @@ package org.xbmc.android.remote.activity;
 
 import java.io.IOException;
 
+import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.controller.AlbumListController;
 import org.xbmc.android.remote.controller.SongListController;
@@ -50,6 +51,8 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 	private SlidingTabHost mTabHost;
 	private AlbumListController mAlbumLogic;
 	private SongListController mSongLogic;
+	
+	private ConfigurationManager mConfigurationManager;
 	
 	private static final int MENU_NOW_PLAYING = 101;
 	private static final int MENU_REMOTE = 102;
@@ -89,6 +92,9 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 				}
 			}
 		});
+		
+		mConfigurationManager = ConfigurationManager.getInstance(this);
+		mConfigurationManager.initKeyguard();
 	}
 	
 	
@@ -176,5 +182,17 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 			return false;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mConfigurationManager.onActivityResume(this);
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mConfigurationManager.onActivityPause();
 	}
 }

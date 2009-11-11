@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
+import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.controller.AlbumListController;
 import org.xbmc.android.remote.controller.ArtistListController;
@@ -65,6 +66,8 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	private static final int MENU_NOW_PLAYING = 301;
 	private static final int MENU_UPDATE_LIBRARY = 302;
 	private static final int MENU_REMOTE = 303;
+	
+    private ConfigurationManager mConfigurationManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -130,6 +133,9 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 				}
 			}
 		});
+		
+		mConfigurationManager = ConfigurationManager.getInstance(this);
+		mConfigurationManager.initKeyguard();
 	}
 	
 	@Override
@@ -279,5 +285,18 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 			return false;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mConfigurationManager.onActivityResume(this);
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mConfigurationManager.onActivityPause();
 	}
 }

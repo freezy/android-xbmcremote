@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 
 import org.xbmc.android.backend.httpapi.NowPlayingPollerThread;
+import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
@@ -36,15 +37,11 @@ import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.SeekType;
 
 import android.app.Activity;
-import android.app.KeyguardManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -56,7 +53,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class NowPlayingActivity extends Activity implements Callback, OnSharedPreferenceChangeListener {
+public class NowPlayingActivity extends Activity implements Callback {
 	
 	private ControlClient mControl;
 	private EventClient mClient;
@@ -69,9 +66,7 @@ public class NowPlayingActivity extends Activity implements Callback, OnSharedPr
 	private ImageButton mPlayPauseView;
 	private SeekBar mSeekBar;
 	
-    private boolean mDisableKeyguard = false;
-    private KeyguardManager.KeyguardLock mKeyguardLock = null;
-
+	private ConfigurationManager mConfigurationManager;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,10 +93,8 @@ public class NowPlayingActivity extends Activity implements Callback, OnSharedPr
   	  	
   	  	mNowPlayingHandler = new Handler(this);
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String disableKeyguardString = prefs.getString("setting_disable_keyguard", "0");
-        mDisableKeyguard = ( disableKeyguardString.equals("2") );
-        prefs.registerOnSharedPreferenceChangeListener(this);
+  	  	mConfigurationManager = ConfigurationManager.getInstance(this);
+		mConfigurationManager.initKeyguard();
   	  	
   	  	setupButtons();
 	}
@@ -110,21 +103,14 @@ public class NowPlayingActivity extends Activity implements Callback, OnSharedPr
 	protected void onResume() {
 		super.onResume();
 		ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);
-	   	if(mDisableKeyguard) {
-	   		KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
-	       mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
-	       mKeyguardLock.disableKeyguard();
-	   	}
+		mConfigurationManager.onActivityResume(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		ConnectionManager.getNowPlayingPoller(this).unSubscribe(mNowPlayingHandler);
-		if (mKeyguardLock != null){
-			mKeyguardLock.reenableKeyguard();
-			mKeyguardLock = null;
-		}
+		mConfigurationManager.onActivityPause();
 		if(isTaskRoot()){
 			Intent intent = new Intent(NowPlayingActivity.this, HomeActivity.class );
 			NowPlayingActivity.this.startActivity(intent);
@@ -248,31 +234,6 @@ public class NowPlayingActivity extends Activity implements Callback, OnSharedPr
 			try {
 				mClient.sendButton("R1", mAction, false, true, true, (short)0, (byte)0);
 			} catch (IOException e) { }
-		}
-	}
-	
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if(key.equals("setting_disable_keyguard")) {
-			String disableKeyguardString = sharedPreferences.getString(key, "0");
-			boolean disableKeyguardState = ( disableKeyguardString.equals("2") );
-			if (disableKeyguardState != mDisableKeyguard){
-				if (disableKeyguardState) {
-					if(this.hasWindowFocus()  ) {
-		    			KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
-						mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
-						mKeyguardLock.disableKeyguard();
-					}
-				}
-				else {
-					if(this.hasWindowFocus()) {
-						if (mKeyguardLock != null) {
-							mKeyguardLock.reenableKeyguard();
-						}
-						mKeyguardLock = null;
-					}
-				}
-				mDisableKeyguard = disableKeyguardState;
-			}
 		}
 	}
 }

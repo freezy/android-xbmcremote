@@ -24,6 +24,7 @@ package org.xbmc.android.remote.activity;
 import java.io.IOException;
 
 import org.xbmc.android.backend.httpapi.NowPlayingPollerThread;
+import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.controller.MusicPlaylistController;
 import org.xbmc.android.util.ConnectionManager;
@@ -34,14 +35,10 @@ import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 import org.xbmc.httpapi.data.Song;
 
 import android.app.Activity;
-import android.app.KeyguardManager;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Handler.Callback;
-import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -49,11 +46,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class PlaylistActivity extends Activity implements Callback, OnSharedPreferenceChangeListener{
+public class PlaylistActivity extends Activity implements Callback {
 
 	public static final int MESSAGE_PLAYLIST_SIZE = 701;
 	public static final String BUNDLE_PLAYLIST_SIZE = "playlist_size";
@@ -68,13 +66,16 @@ public class PlaylistActivity extends Activity implements Callback, OnSharedPref
 	private TextView mLabel1;
 	private TextView mLabel2;
 
-    private boolean mDisableKeyguard = false;
-    private KeyguardManager.KeyguardLock mKeyguardLock = null;
+	private ConfigurationManager mConfigurationManager;
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		ErrorHandler.setActivity(this);
 		setContentView(R.layout.playlist);
+		
+		// remove nasty top fading edge
+		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
+		topFrame.setForeground(null);
 
 		// cache references for faster access
 		mPlayPauseView = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
@@ -97,10 +98,8 @@ public class PlaylistActivity extends Activity implements Callback, OnSharedPref
 		findViewById(R.id.MediaPlayPauseButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_PAUSE));
 		findViewById(R.id.MediaNextButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_PLUS));
 		
-	      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-	      String disableKeyguardString = prefs.getString("setting_disable_keyguard", "0");
-	      mDisableKeyguard = ( disableKeyguardString.equals("2") );
-	      prefs.registerOnSharedPreferenceChangeListener(this);
+		mConfigurationManager = ConfigurationManager.getInstance(this);
+		mConfigurationManager.initKeyguard();
 	}
 
 	/**
@@ -141,11 +140,7 @@ public class PlaylistActivity extends Activity implements Callback, OnSharedPref
 	@Override
 	protected void onResume() {
 		super.onResume();
-	   	if(mDisableKeyguard) {
-	   		KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
-	       mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
-	       mKeyguardLock.disableKeyguard();
-	   	}
+		mConfigurationManager.onActivityResume(this);
 		mNowPlayingPoller = ConnectionManager.getNowPlayingPoller(this);
 		mNowPlayingPoller.subscribe(mNowPlayingHandler);
 	}
@@ -153,10 +148,7 @@ public class PlaylistActivity extends Activity implements Callback, OnSharedPref
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (mKeyguardLock != null){
-			mKeyguardLock.reenableKeyguard();
-			mKeyguardLock = null;
-		}
+		mConfigurationManager.onActivityPause();
 		mNowPlayingPoller.unSubscribe(mNowPlayingHandler);
 	}
 
@@ -217,31 +209,6 @@ public class PlaylistActivity extends Activity implements Callback, OnSharedPref
 			try {
 				mClient.sendButton("R1", mAction, false, true, true, (short) 0, (byte) 0);
 			} catch (IOException e) {
-			}
-		}
-	}
-	
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if(key.equals("setting_disable_keyguard")) {
-			String disableKeyguardString = sharedPreferences.getString(key, "0");
-			boolean disableKeyguardState = ( disableKeyguardString.equals("2") );
-			if (disableKeyguardState != mDisableKeyguard){
-				if (disableKeyguardState) {
-					if(this.hasWindowFocus()  ) {
-		    			KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
-						mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
-						mKeyguardLock.disableKeyguard();
-					}
-				}
-				else {
-					if(this.hasWindowFocus()) {
-						if (mKeyguardLock != null) {
-							mKeyguardLock.reenableKeyguard();
-						}
-						mKeyguardLock = null;
-					}
-				}
-				mDisableKeyguard = disableKeyguardState;
 			}
 		}
 	}

@@ -21,24 +21,20 @@
 
 package org.xbmc.android.remote.activity;
 
+import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ErrorHandler;
 
 import android.app.Activity;
-import android.app.KeyguardManager;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
-public class AboutActivity extends Activity implements OnSharedPreferenceChangeListener{
+public class AboutActivity extends Activity {
 	
-    private boolean mDisableKeyguard = false;
-    private KeyguardManager.KeyguardLock mKeyguardLock = null;
+    private ConfigurationManager mConfigurationManager;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,54 +53,19 @@ public class AboutActivity extends Activity implements OnSharedPreferenceChangeL
 		} catch (NameNotFoundException e) {
 			((TextView)findViewById(R.id.about_version)).setText("Error reading version");
 		}
-		
-	      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-	      String disableKeyguardString = prefs.getString("setting_disable_keyguard", "0");
-	      mDisableKeyguard = ( disableKeyguardString.equals("2") );
-	      prefs.registerOnSharedPreferenceChangeListener(this);
+		mConfigurationManager = ConfigurationManager.getInstance(this);
+		mConfigurationManager.initKeyguard();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mConfigurationManager.onActivityResume(this);
 	}
 	
-	   @Override
-	   protected void onResume(){
-	   	super.onResume();
-	   	if(mDisableKeyguard) {
-	   		KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
-	       mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
-	       mKeyguardLock.disableKeyguard();
-	   	}
-	  }
-	    
-		@Override
-		protected void onPause() {
-			super.onPause();
-			if (mKeyguardLock != null){
-				mKeyguardLock.reenableKeyguard();
-				mKeyguardLock = null;
-			}
-		}
-	
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if(key.equals("setting_disable_keyguard")) {
-			String disableKeyguardString = sharedPreferences.getString(key, "0");
-			boolean disableKeyguardState = ( disableKeyguardString.equals("2") );
-			if (disableKeyguardState != mDisableKeyguard){
-				if (disableKeyguardState) {
-					if(this.hasWindowFocus()  ) {
-		    			KeyguardManager keyguardManager = (KeyguardManager)getSystemService(Activity.KEYGUARD_SERVICE);
-						mKeyguardLock = keyguardManager.newKeyguardLock("RemoteActivityKeyguardLock");
-						mKeyguardLock.disableKeyguard();
-					}
-				}
-				else {
-					if(this.hasWindowFocus()) {
-						if (mKeyguardLock != null) {
-							mKeyguardLock.reenableKeyguard();
-						}
-						mKeyguardLock = null;
-					}
-				}
-				mDisableKeyguard = disableKeyguardState;
-			}
-		}
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mConfigurationManager.onActivityPause();
 	}
 }
