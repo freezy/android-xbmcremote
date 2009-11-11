@@ -91,7 +91,9 @@ public class InfoClient {
 	 * @return
 	 */
 	public String getSystemInfo(int field) {
-		return mConnection.getString("GetSystemInfo", String.valueOf(field));
+		if(mConnection.isConnected())
+			return mConnection.getString("GetSystemInfo", String.valueOf(field));
+		return "";
 	}
 	
 	/**

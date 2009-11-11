@@ -66,7 +66,7 @@ public class Connection {
 	private int mTimeout;
 	private URLConnection uc = null;
 	private MyAuthenticator auth = null;
-//	private boolean mIsConnected = false;
+	private boolean mIsConnected = false;
 	
 	/**
 	 * Class constructor sets host data and error handler.
@@ -79,7 +79,7 @@ public class Connection {
 	public Connection(String host, int port, String username, String password, int timeout, IErrorHandler errorHandler) {
 		auth = new MyAuthenticator(username, password);
 		Authenticator.setDefault(auth);
-		
+		mErrorHandler = errorHandler;
 		if (!host.equals("") && port > 0) {
 			mBaseURL = "http://";
 			if (username != null) {
@@ -90,12 +90,13 @@ public class Connection {
 				mBaseURL += ":" + port;
 			}
 			mTimeout = timeout;
-			
-//			setResponseFormat();
 			settingsOK = true;
+			if ( setResponseFormat()) {
+				mIsConnected = true;
+			}
 		}
-		mErrorHandler = errorHandler;
-		setResponseFormat();
+		else
+			mErrorHandler.handle(new NoSettingsException());
 	}
 	
 	/**
@@ -301,7 +302,7 @@ public class Connection {
 	/**
 	 * Sets the correct response format to default values
 	 */
-	private void setResponseFormat() {
+	private boolean setResponseFormat() {
 		try {
 			StringBuilder sb = new StringBuilder();
 			sb.append("WebHeader;true;");
@@ -321,10 +322,11 @@ public class Connection {
 			sb.append("OpenField;<field>;");
 			sb.append("CloseField;</field>");
 			assertBoolean("SetResponseFormat", sb.toString());
-			
+
+			return true;
 //			mIsConnected = true;
 		} catch (WrongDataFormatException e) {
-			mErrorHandler.handle(e);
+			return false;
 //			mIsConnected = false;
 		}
 	}
@@ -388,12 +390,7 @@ public class Connection {
 	 * TODO Might need implementation change to not mess with response format
 	 */
 	public boolean isConnected() {
-		try {
-			assertBoolean("SetResponseFormat", "");
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		return mIsConnected;
 	}
 	
 	public String getBaseURL() {

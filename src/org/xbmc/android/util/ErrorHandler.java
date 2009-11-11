@@ -22,6 +22,7 @@
 package org.xbmc.android.util;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 
 import org.apache.http.HttpException;
@@ -99,6 +100,14 @@ public class ErrorHandler implements IErrorHandler {
 			builder.setMessage("Wrong data from HTTP API; expected '" + e.getExpected() + "', got '" + e.getReceived() + "'.");
 		} catch (SocketTimeoutException e) {
 			builder.setTitle("Socket Timeout");
+			builder.setMessage("Make sure XBMC webserver is enabled and XBMC is running.");
+			builder.setNeutralButton("Settings", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					sContext.startActivity(new Intent(sContext, SettingsActivity.class));
+				}
+			});
+		} catch (ConnectException e) {
+			builder.setTitle("Connection Refused");
 			builder.setMessage("Make sure XBMC webserver is enabled and XBMC is running.");
 			builder.setNeutralButton("Settings", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {

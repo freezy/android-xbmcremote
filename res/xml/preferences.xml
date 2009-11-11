@@ -3,7 +3,7 @@
 	<EditTextPreference
 		android:key="setting_ip"
 		android:title="XBMC IP Address / Host"
-		android:defaultValue="10.10.10.10" 
+		android:defaultValue="" 
 		android:summary="Connect to address %value%" />
 	<EditTextPreference
 		android:key="setting_socket_timeout"
@@ -83,10 +83,11 @@
 			android:enabled="true" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Screen Behaviour">
-		<CheckBoxPreference android:title="Disable keyguard in RC"
-			android:summary="Disables the screen lock when the application is in remote control mode. (Display will still dim/turn off.)"
-			android:key="setting_disable_keyguard_remote"
-			android:selectable="true"
-			android:enabled="true" />
+    <CheckBoxPreference
+      android:title="Disable keyguard in RC"
+      android:summary="Disables the screen lock when the application is in remote control mode. (Display will still dim/turn off.)"
+      android:key="setting_disable_keyguard_remote"
+      android:selectable="true"
+      android:enabled="true" />
 	</PreferenceCategory>
 </PreferenceScreen>
