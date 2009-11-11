@@ -28,6 +28,10 @@ import android.telephony.TelephonyManager;
 import android.telephony.gsm.SmsMessage;
 import android.text.TextUtils;
 
+/**
+ * TODO Once we move to 1.6+, waste the deprecated code.
+ */
+@SuppressWarnings("deprecation")
 public class SmsPopupUtils {
 	// Content URIs for SMS app, these may change in future SDK
 	

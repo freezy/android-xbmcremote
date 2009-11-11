@@ -10,6 +10,10 @@ import android.telephony.PhoneNumberUtils;
 import android.telephony.gsm.SmsMessage;
 import android.text.format.DateUtils;
 
+/**
+ * TODO Once we move to 1.6+, waste the deprecated code.
+ */
+@SuppressWarnings("deprecation")
 public class SmsMmsMessage {
 	
 	private static final String PREFIX = "net.everythingandroid.smspopup.";

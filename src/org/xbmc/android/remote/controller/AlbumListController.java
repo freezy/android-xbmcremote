@@ -33,6 +33,7 @@ import org.xbmc.android.remote.activity.ListActivity;
 import org.xbmc.android.remote.controller.holder.OneHolder;
 import org.xbmc.android.remote.controller.holder.ThreeHolder;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
+import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
@@ -62,6 +63,10 @@ import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
+/**
+ * TODO Once we move to 1.6+, waste the deprecated code. 
+ */
+@SuppressWarnings("unused")
 public class AlbumListController extends ListController {
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
