@@ -207,6 +207,45 @@ public class ControlClient {
 	public boolean updateLibrary(String mediaType) {
 		return mConnection.getBoolean("ExecBuiltin", "UpdateLibrary(" + mediaType + ")");
 	}
+	
+	/**
+	 * Broadcast a message. Used to test broadcasting feature. 
+	 * @param message
+	 * @return True on success, false otherwise.
+	 */
+	public boolean broadcast(String message) {
+		return mConnection.getBoolean("Broadcast", message);
+	}
+	
+	/**
+	 * Returns the current broadcast port number, or 0 if deactivated.
+	 * @return Current broadcast port number.
+	 */
+	public int getBroadcast() {
+		final String ret[] = mConnection.getString("GetBroadcast").split(";");
+		try {
+			final int port = Integer.parseInt(ret[1]);
+			return port > 1 && !ret[0].equals("0") ? port : 0;
+		} catch (NumberFormatException e) {
+			return 0;
+		}
+	}
+	
+	/**
+	 * Sets the brodcast level and port. Level currently only takes three values:
+	 * <ul> 
+	 *  	<li><code>0</code> - No broadcasts</li>
+	 *  	<li><code>1</code> - Media playback and startup & shutdown events
+	 *  	<li><code>2</code> - "OnAction" events (e.g. buttons) as well as level 1 events. 
+	 *  </ul>
+	 *  
+	 * @param port  Broadcast port
+	 * @param level Broadcast level
+	 * @return True on success, false otherwise.
+	 */
+	public boolean setBroadcast(int port, int level) {
+		return mConnection.getBoolean("SetBroadcast", level + ";" + port);
+	}
 
 	/**
 	 * Returns current play state
