@@ -40,6 +40,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 public class ListActivity extends Activity {
@@ -57,6 +58,10 @@ public class ListActivity extends Activity {
 
 		ErrorHandler.setActivity(this);
 		setContentView(R.layout.blanklist);
+		
+		// remove nasty top fading edge
+		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
+		topFrame.setForeground(null);
 
 		mListLogic = (ListController) getIntent().getSerializableExtra(ListController.EXTRA_LIST_LOGIC);
 
