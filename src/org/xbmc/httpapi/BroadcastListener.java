@@ -36,22 +36,26 @@ import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 import android.util.Log;
 
 /**
- * Implementation of XBMC's broadcast feature. Classical observer pattern, any
- * class implementing the observer interface can subscribe. On any event, the
- * update() method is executed on the subscriber, with the event code in the
- * BroadcastListener.Event object.
+ * Implementation of XBMC's broadcast feature. 
  * 
- * We will set the broadcast port to something random in order to distinguish
+ * <p>Classical observer pattern, any class implementing the observer interface
+ * can subscribe. On any event, the {@link Observable#update(Observable o, Object arg) update()}
+ * method is executed on the subscriber, with the event code in the
+ * {@link BroadcastListener.Event} object.</p>
+ * 
+ * <p>We will set the broadcast port to something random in order to distinguish
  * between several potential XBMC instances running concurrently. If broadcasting
  * is active and a random port is already set, the current port will be reused,
- * otherwise it'll be reset.
+ * otherwise it'll be reset.</p>
  * 
- * At start, we'll make XBMC broadcast an initial packet to test if it's 
+ * <p>At start, we'll make XBMC broadcast an initial packet to test if it's 
  * working (different subnets will already not work, for instance). Upon 
- * success, the EVENT_AVAILABLE event is propagated. If nothing was received 
- * after a timeout, the EVENT_TIMEOUT event is propagated.
+ * success, the <code>EVENT_AVAILABLE</code> event is propagated. If nothing was
+ * received after a timeout or an error happened, the <code>EVENT_TIMEOUT</code> 
+ * or the <code>EVENT_ERROR</code> event are propagated respectively.</p>
  * 
- * @see http://xbmc.org/wiki/?title=Web_Server_HTTP_API#Broadcast
+ * @see <a href="http://xbmc.org/wiki/?title=Web_Server_HTTP_API#Broadcast">XBMC Wiki</a>
+ * @see <a href="http://xbmc.org/trac/ticket/7687">Trac about missing messages</a>
  * @author Team XBMC
  */
 public class BroadcastListener extends Observable implements Runnable {
@@ -71,18 +75,18 @@ public class BroadcastListener extends Observable implements Runnable {
 	public static final int EVENT_ON_QUEUE_NEXT_ITEM  = 9;
 	public static final int EVENT_ON_MEDIA_CHANGED    = 10;
 	public static final int EVENT_ON_PROGRESS_CHANGED = 11;
-	public static final int EVENT_AVAILABLE              = 100;
-	public static final int EVENT_TIMEOUT                = 101;
+	public static final int EVENT_AVAILABLE           = 100;
+	public static final int EVENT_TIMEOUT             = 101;
 
 	private static final String THREAD_NAME = "BroadcastListener";
 	private static final String TIMER_NAME  = "BroadcastTimer";
 	private static final String BCAST_PING  = "OnXbmcRemoteTest";
 	
-	private static final int TIMEOUT = 10;
-	private static final int DEFAULT_PORT = 8278;
-	private static final int BUFFER_LENGTH = 256;
-	private static final int BCAST_LEVEL = 2;
-	private static final String BCAST_ADDR = "255.255.255.255";
+	private static final int TIMEOUT        = 10;
+	private static final int DEFAULT_PORT   = 8278;
+	private static final int BUFFER_LENGTH  = 256;
+	private static final int BCAST_LEVEL    = 2;
+	private static final String BCAST_ADDR  = "255.255.255.255";
 	
 	private static final Timer sTimer = new Timer(TIMER_NAME);
 	private static BroadcastListener sInstance;
@@ -135,11 +139,12 @@ public class BroadcastListener extends Observable implements Runnable {
 				final int port = mHttpClient.control.getBroadcast();
 				Log.i(TAG, "current port = " + port);
 				if (port == 0 || port == DEFAULT_PORT) {
-					Random rnd = new Random();
+					final Random rnd = new Random();
 					final int rndPort = (rnd.nextInt() % 22768) + 10000;
 					Log.i(TAG, "new port = " + rndPort);
 					if (!mHttpClient.control.setBroadcast(rndPort, BCAST_LEVEL)) {
 						Log.i(TAG, "SETTING BROADCAST SETTINGS FAILED!");
+						dispatch(EVENT_ERROR);
 						mIsAvailable = false;
 						mPort = 0;
 						return;
