@@ -24,6 +24,7 @@ package org.xbmc.android.remote.activity;
 import java.io.IOException;
 import java.util.Hashtable;
 
+import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.eventclient.ButtonCodes;
@@ -52,6 +53,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	public final static String SUMMARY_VALUE_PLACEHOLDER = "%value%";
 	
 	private final Hashtable<String, String> mSummaries = new Hashtable<String, String>();
+	private ConfigurationManager mConfigurationManager;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +70,8 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			}
 		}
 		updateSummaries();
+		mConfigurationManager = ConfigurationManager.getInstance(this);
+		mConfigurationManager.initKeyguard();
 	}
 	
 	/**
@@ -91,6 +95,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		super.onResume();
 		updateSummaries();
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+		mConfigurationManager.onActivityResume(this);
 	}
 	
 	@Override

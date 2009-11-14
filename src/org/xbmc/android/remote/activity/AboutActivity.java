@@ -21,15 +21,21 @@
 
 package org.xbmc.android.remote.activity;
 
+import java.io.IOException;
+
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
+import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.eventclient.EventClient;
 
 import android.app.Activity;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.KeyEvent;
 import android.widget.TextView;
 
 public class AboutActivity extends Activity {
@@ -67,5 +73,23 @@ public class AboutActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		mConfigurationManager.onActivityPause();
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		EventClient client = ConnectionManager.getEventClient(this);	
+		try {
+			switch (keyCode) {
+				case KeyEvent.KEYCODE_VOLUME_UP:
+					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+					return true;
+				case KeyEvent.KEYCODE_VOLUME_DOWN:
+					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+					return true;
+			}
+		} catch (IOException e) {
+			return false;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

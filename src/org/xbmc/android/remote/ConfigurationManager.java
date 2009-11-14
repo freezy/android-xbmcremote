@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.media.AudioManager;
 import android.preference.PreferenceManager;
 
 public class ConfigurationManager implements OnSharedPreferenceChangeListener {
@@ -98,6 +99,7 @@ public class ConfigurationManager implements OnSharedPreferenceChangeListener {
 			mKeyguardLock = keyguardManager.newKeyguardLock(KEYGUARD_TAG);
 			mKeyguardLock.disableKeyguard();
 		}
+		activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		mActivity = activity;
 	}
 	
