@@ -21,9 +21,22 @@
 
 package org.xbmc.httpapi.type;
 
-public enum MediaType {
-	music,
-	video,
-	pictures,
-	files 
+public abstract class MediaType {
+	
+	public static final int MUSIC = 1;
+	public static final int VIDEO = 2;
+	public static final int PICTURES = 3;
+	
+	public static String getName(int type) {
+		switch (type) {
+			case MUSIC:
+				return "music";
+			case VIDEO:
+				return "video";
+			case PICTURES:
+				return "pictures";
+			default:
+				return "";
+		}
+	}
 }

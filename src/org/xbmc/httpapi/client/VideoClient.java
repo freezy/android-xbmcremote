@@ -144,8 +144,8 @@ public class VideoClient {
 			public String getAlbum() {
 				return map.get("Title");
 			}
-			public MediaType getType() {
-				return MediaType.video;
+			public int getMediaType() {
+				return MediaType.VIDEO;
 			}
 			public boolean isPlaying() {
 				return PlayStatus.parse(map.get("PlayStatus")).equals(PlayStatus.Playing);

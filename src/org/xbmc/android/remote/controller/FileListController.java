@@ -55,7 +55,7 @@ public class FileListController extends ListController {
 	
 	private HashMap<String, MediaLocation> mFileItems;
 	private volatile String mGettingUrl;
-	private MediaType mMediaType;
+	private int mMediaType;
 	
 	// from ListActivity.java
 	protected ListAdapter mAdapter;
@@ -64,8 +64,8 @@ public class FileListController extends ListController {
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
-			final MediaType mediaType = (MediaType)mActivity.getIntent().getSerializableExtra(EXTRA_SHARE_TYPE);
-			mMediaType = mediaType != null ? mediaType : MediaType.music;
+			mMediaType = mActivity.getIntent().getIntExtra(EXTRA_SHARE_TYPE, MediaType.MUSIC);
+			
 			final String path = mActivity.getIntent().getStringExtra(EXTRA_PATH);
 			final String displayPath = mActivity.getIntent().getStringExtra(EXTRA_DISPLAY_PATH);
 			fillUp(path == null ? "" : path, displayPath);

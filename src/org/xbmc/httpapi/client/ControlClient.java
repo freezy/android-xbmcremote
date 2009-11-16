@@ -264,7 +264,7 @@ public class ControlClient {
 		final ICurrentlyPlaying nothingPlaying = new ICurrentlyPlaying() {
 			private static final long serialVersionUID = -1554068775915058884L;
 			public boolean isPlaying() { return false; }
-			public MediaType getType() { return null; }
+			public int getMediaType() { return 0; }
 			public int getPlaylistPosition() { return 0; }
 			public String getTitle() { return ""; }
 			public int getTime() { return 0; }
@@ -278,11 +278,11 @@ public class ControlClient {
 		if (map.get("Filename") != null && map.get("Filename").contains("Nothing Playing")) {
 			return nothingPlaying;
 		} else {
-			final MediaType type = map.get("Type").contains("Audio") ? MediaType.music : MediaType.video;
+			final int type = map.get("Type").contains("Audio") ? MediaType.MUSIC : MediaType.VIDEO;
 			switch (type) {
-				case music:
+				case MediaType.MUSIC:
 					return MusicClient.getCurrentlyPlaying(map);
-				case video:
+				case MediaType.VIDEO:
 					return VideoClient.getCurrentlyPlaying(map);
 				default:
 					return nothingPlaying;
@@ -293,7 +293,7 @@ public class ControlClient {
 	
 	public interface ICurrentlyPlaying extends Serializable {
 		public PlayStatus getPlayStatus();
-		public MediaType getType();
+		public int getMediaType();
 		public boolean isPlaying();
 		public int getPlaylistPosition();
 		

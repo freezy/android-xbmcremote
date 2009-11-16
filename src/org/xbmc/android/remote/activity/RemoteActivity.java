@@ -29,7 +29,6 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
-import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
 import android.content.Context;
@@ -350,7 +349,6 @@ public class RemoteActivity extends Activity {
 		switch (item.getItemId()) {
 		case MENU_NOW_PLAYING:
 			myIntent = new Intent(this, NowPlayingActivity.class);
-			myIntent.putExtra("shareType", MediaType.music.toString());
 			break;
 		}
 		if (myIntent != null) {

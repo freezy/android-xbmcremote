@@ -63,11 +63,11 @@ public class InfoClient {
 	
 	/**
 	 * Returns all defined shares of a media type
-	 * @param type Media type
+	 * @param mediaType Media type
 	 * @return
 	 */
-	public ArrayList<MediaLocation> getShares(MediaType type) {
-		final ArrayList<String> result = mConnection.getArray("GetShares", type.toString());
+	public ArrayList<MediaLocation> getShares(int mediaType) {
+		final ArrayList<String> result = mConnection.getArray("GetShares", MediaType.getName(mediaType));
 		final ArrayList<MediaLocation> shares = new ArrayList<MediaLocation>();
 		for (String share : result) {
 			shares.add(new MediaLocation(share));

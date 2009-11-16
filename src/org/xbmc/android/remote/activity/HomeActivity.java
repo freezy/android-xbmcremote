@@ -190,12 +190,12 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 			break;
 		case HOME_ACTION_VIDEOS:
 			Intent intent = new Intent(v.getContext(), MovieLibraryActivity.class);
-			intent.putExtra(ListController.EXTRA_SHARE_TYPE, MediaType.video);
+			intent.putExtra(ListController.EXTRA_SHARE_TYPE, MediaType.VIDEO);
 			startActivity(intent);
 //			startActivity(createMediaIntent(MediaType.video, v));
 			break;
 		case HOME_ACTION_PICTURES:
-			startActivity(createMediaIntent(MediaType.pictures, v));
+			startActivity(createMediaIntent(MediaType.PICTURES, v));
 			break;
 		case HOME_ACTION_NOWPLAYING:
 			startActivity(new Intent(v.getContext(), NowPlayingActivity.class));
@@ -236,7 +236,7 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 		return super.onKeyDown(keyCode, event);
 	}
 
-	private Intent createMediaIntent(MediaType mediaType, View v) {
+	private Intent createMediaIntent(int mediaType, View v) {
 		Intent nextActivity = new Intent(v.getContext(), ListActivity.class);
 		nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new FileListController());
 		nextActivity.putExtra(ListController.EXTRA_SHARE_TYPE, mediaType);

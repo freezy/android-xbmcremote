@@ -1007,8 +1007,8 @@ public class MusicClient {
 			public String getAlbum() {
 				return map.get("Album");
 			}
-			public MediaType getType() {
-				return MediaType.music;
+			public int getMediaType() {
+				return MediaType.MUSIC;
 			}
 			public boolean isPlaying() {
 				return PlayStatus.parse(map.get("PlayStatus")).equals(PlayStatus.Playing);

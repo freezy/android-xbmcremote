@@ -5,6 +5,7 @@ public interface ICoverArt {
 	public long getCrc();
 	public int getFallbackCrc();
 	
+	
 	public int getId();
 	public String getName();
 }

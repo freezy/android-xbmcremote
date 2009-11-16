@@ -25,7 +25,6 @@ import java.util.ArrayList;
 
 import org.xbmc.httpapi.data.MediaLocation;
 import org.xbmc.httpapi.type.DirectoryMask;
-import org.xbmc.httpapi.type.MediaType;
 
 
 /**
@@ -52,12 +51,12 @@ public class InfoWrapper extends Wrapper {
 	/**
 	 * Returns all defined shares of a media type
 	 * @param handler Wrapped list of media locations
-	 * @param type Media type
+	 * @param mediaType Media type
 	 */
-	public void getShares(final HttpApiHandler<ArrayList<MediaLocation>> handler, final MediaType type) {
+	public void getShares(final HttpApiHandler<ArrayList<MediaLocation>> handler, final int mediaType) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				handler.value = info(handler).getShares(type);
+				handler.value = info(handler).getShares(mediaType);
 				done(handler);
 			}
 		});
