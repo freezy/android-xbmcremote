@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.xbmc.android.widget.slidingtabs.SlidingTabHost 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@id/slidingtabhost"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <org.xbmc.android.widget.slidingtabs.SlidingTabWidget
+            android:id="@id/slidingtabs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" />
+        <FrameLayout
+            android:id="@id/slidingtabcontent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/slidingtabs">
+            
+            <!-- Movies (by title) -->
+			<LinearLayout
+				android:id="@+id/movielist_outer_layout" 
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:orientation="vertical" android:fadingEdge="none" >
+				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					<ListView 
+						android:id="@+id/movielist_list"
+						android:layout_height="fill_parent"
+						android:layout_width="fill_parent" 
+						android:fadingEdge="none"
+						android:scrollbars="none" />
+				</org.xbmc.android.widget.FastScrollView>
+			</LinearLayout>
+			
+			<!-- Files -->
+			<LinearLayout
+				android:id="@+id/filelist_outer_layout"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:orientation="vertical" android:fadingEdge="none">
+				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					<ListView 
+						android:id="@+id/filelist_list"
+						android:layout_height="fill_parent"
+						android:layout_width="fill_parent" 
+						android:fadingEdge="none"
+						android:scrollbars="none" />
+				</org.xbmc.android.widget.FastScrollView>
+			</LinearLayout>
+			
+    	</FrameLayout>
+    </RelativeLayout>
+</org.xbmc.android.widget.slidingtabs.SlidingTabHost>

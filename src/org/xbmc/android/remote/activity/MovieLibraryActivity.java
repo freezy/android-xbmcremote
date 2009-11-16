@@ -27,10 +27,8 @@ import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.controller.AlbumListController;
-import org.xbmc.android.remote.controller.ArtistListController;
 import org.xbmc.android.remote.controller.FileListController;
-import org.xbmc.android.remote.controller.GenreListController;
+import org.xbmc.android.remote.controller.MovieListController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
@@ -50,18 +48,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class MusicLibraryActivity extends SlidingTabActivity  {
+public class MovieLibraryActivity extends SlidingTabActivity  {
 
 	private SlidingTabHost mTabHost;
-	private AlbumListController mAlbumLogic;
-	private ArtistListController mArtistLogic;
-	private GenreListController mGenreLogic;
-	private AlbumListController mCompilationsLogic;
-	private FileListController mFileLogic;
+	private MovieListController mMovieController;
+	private FileListController mFileController;
 	
 	private static final int MENU_NOW_PLAYING = 301;
 	private static final int MENU_UPDATE_LIBRARY = 302;
@@ -73,7 +67,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		ErrorHandler.setActivity(this);
-		setContentView(R.layout.musiclibrary);
+		setContentView(R.layout.movielibrary);
 		
 		// remove nasty top fading edge
 		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
@@ -82,54 +76,28 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mTabHost = getTabHost();
 		
 		// add the tabs
-		mTabHost.addTab(mTabHost.newTabSpec("tab_albums", "Albums", R.drawable.st_album_on, R.drawable.st_album_off).setBigIcon(R.drawable.st_album_over).setContent(R.id.albumlist_outer_layout));
-		mTabHost.addTab(mTabHost.newTabSpec("tab_artists", "Artists", R.drawable.st_artist_on, R.drawable.st_artist_off).setBigIcon(R.drawable.st_artist_over).setContent(R.id.artists_outer_layout));
-		mTabHost.addTab(mTabHost.newTabSpec("tab_genres", "Genres", R.drawable.st_genre_on, R.drawable.st_genre_off).setBigIcon(R.drawable.st_genre_over).setContent(R.id.genres_outer_layout));
-		mTabHost.addTab(mTabHost.newTabSpec("tab_compilations", "Compilations", R.drawable.st_va_on, R.drawable.st_va_off).setBigIcon(R.drawable.st_va_over).setContent(R.id.compilations_outer_layout));
+		mTabHost.addTab(mTabHost.newTabSpec("tab_movies", "Movies", R.drawable.st_album_on, R.drawable.st_album_off).setBigIcon(R.drawable.st_album_over).setContent(R.id.movielist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
 		mTabHost.setCurrentTab(0);
 
 		// assign the gui logic to each tab
-		mAlbumLogic = new AlbumListController();
-		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
-		mAlbumLogic.findMessageView(findViewById(R.id.albumlist_outer_layout));
-		mAlbumLogic.setGrid((GridView)findViewById(R.id.albumlist_grid));
-		mAlbumLogic.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
+		mMovieController = new MovieListController();
+		mMovieController.findTitleView(findViewById(R.id.movielist_outer_layout));
+		mMovieController.findMessageView(findViewById(R.id.movielist_outer_layout));
+		mMovieController.onCreate(this, (ListView)findViewById(R.id.movielist_list)); // first tab can be updated now.
 
-		mFileLogic = new FileListController();
-		mFileLogic.findTitleView(findViewById(R.id.filelist_outer_layout));
-		mFileLogic.findMessageView(findViewById(R.id.filelist_outer_layout));
+		mFileController = new FileListController();
+		mFileController.findTitleView(findViewById(R.id.filelist_outer_layout));
+		mFileController.findMessageView(findViewById(R.id.filelist_outer_layout));
 		
-		mArtistLogic = new ArtistListController();
-		mArtistLogic.findTitleView(findViewById(R.id.artists_outer_layout));
-		mArtistLogic.findMessageView(findViewById(R.id.artists_outer_layout));
-
-		mGenreLogic = new GenreListController();
-		mGenreLogic.findTitleView(findViewById(R.id.genres_outer_layout));
-		mGenreLogic.findMessageView(findViewById(R.id.genres_outer_layout));
-
-		mCompilationsLogic = new AlbumListController();
-		mCompilationsLogic.findTitleView(findViewById(R.id.compilations_outer_layout));
-		mCompilationsLogic.findMessageView(findViewById(R.id.compilations_outer_layout));
-		mCompilationsLogic.setCompilationsOnly(true);
-
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				
-				if (tabId.equals("tab_albums")) {
-					mAlbumLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.albumlist_list));
+				if (tabId.equals("tab_movies")) {
+					mMovieController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.movielist_list));
 				}
 				if (tabId.equals("tab_files")) {
-					mFileLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
-				}
-				if (tabId.equals("tab_artists")) {
-					mArtistLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.artists_list));
-				}
-				if (tabId.equals("tab_genres")) {
-					mGenreLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.genres_list));
-				}
-				if (tabId.equals("tab_compilations")) {
-					mCompilationsLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.compilations_list));
+					mFileController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
 				}
 			}
 		});
@@ -144,19 +112,10 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
 		switch (mTabHost.getCurrentTab()) {
 			case 0:
-				mAlbumLogic.onCreateOptionsMenu(menu);
+				mMovieController.onCreateOptionsMenu(menu);
 				break;
 			case 1:
-				mArtistLogic.onCreateOptionsMenu(menu);
-				break;
-			case 2:
-				mGenreLogic.onCreateOptionsMenu(menu);
-				break;
-			case 3:
-				mCompilationsLogic.onCreateOptionsMenu(menu);
-				break;
-			case 4:
-				mFileLogic.onCreateOptionsMenu(menu);
+				mFileController.onCreateOptionsMenu(menu);
 				break;
 		}
 		menu.add(0, MENU_UPDATE_LIBRARY, 0, "Update Library").setIcon(R.drawable.menu_refresh);
@@ -170,19 +129,10 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		// first, process individual menu events
 		switch (mTabHost.getCurrentTab()) {
 		case 0:
-			mAlbumLogic.onOptionsItemSelected(item);
+			mMovieController.onOptionsItemSelected(item);
 			break;
 		case 1:
-			mArtistLogic.onOptionsItemSelected(item);
-			break;
-		case 2:
-			mGenreLogic.onOptionsItemSelected(item);
-			break;
-		case 3:
-			mCompilationsLogic.onOptionsItemSelected(item);
-			break;
-		case 4:
-			mFileLogic.onOptionsItemSelected(item);
+			mFileController.onOptionsItemSelected(item);
 			break;
 		}
 		
@@ -192,23 +142,23 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 			startActivity(new Intent(this, RemoteActivity.class));
 			return true;
 		case MENU_UPDATE_LIBRARY:
-			final AlertDialog.Builder builder = new AlertDialog.Builder(MusicLibraryActivity.this);
-			builder.setMessage("Are you sure you want XBMC to rescan your music library?")
+			final AlertDialog.Builder builder = new AlertDialog.Builder(MovieLibraryActivity.this);
+			builder.setMessage("Are you sure you want XBMC to rescan your movie library?")
 				.setCancelable(false)
 				.setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						HttpApiThread.control().updateLibrary(new HttpApiHandler<Boolean>(MusicLibraryActivity.this) {
+						HttpApiThread.control().updateLibrary(new HttpApiHandler<Boolean>(MovieLibraryActivity.this) {
 							public void run() {
 								final String message;
 								if (value) {
-									message = "Music library updated has been launched.";
+									message = "Movie library updated has been launched.";
 								} else {
-									message = "Error launching music library update.";
+									message = "Error launching movie library update.";
 								}
-								Toast toast = Toast.makeText(MusicLibraryActivity.this, message, Toast.LENGTH_SHORT);
+								Toast toast = Toast.makeText(MovieLibraryActivity.this, message, Toast.LENGTH_SHORT);
 								toast.show();
 							}
-						}, "music");
+						}, "video");
 					}
 				})
 				.setNegativeButton("Uh, no.", new DialogInterface.OnClickListener() {
@@ -230,19 +180,10 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		switch (mTabHost.getCurrentTab()) {
 			case 0:
-				mAlbumLogic.onCreateContextMenu(menu, v, menuInfo);
+				mMovieController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 			case 1:
-				mArtistLogic.onCreateContextMenu(menu, v, menuInfo);
-				break;
-			case 2:
-				mGenreLogic.onCreateContextMenu(menu, v, menuInfo);
-				break;
-			case 3:
-				mCompilationsLogic.onCreateContextMenu(menu, v, menuInfo);
-				break;
-			case 4:
-				mFileLogic.onCreateContextMenu(menu, v, menuInfo);
+				mFileController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 		}
 	}
@@ -251,19 +192,10 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (mTabHost.getCurrentTab()) {
 		case 0:
-			mAlbumLogic.onContextItemSelected(item);
+			mMovieController.onContextItemSelected(item);
 			break;
 		case 1:
-			mArtistLogic.onContextItemSelected(item);
-			break;
-		case 2:
-			mGenreLogic.onContextItemSelected(item);
-			break;
-		case 3:
-			mCompilationsLogic.onContextItemSelected(item);
-			break;
-		case 4:
-			mFileLogic.onContextItemSelected(item);
+			mFileController.onContextItemSelected(item);
 			break;
 		}
 		return super.onContextItemSelected(item);

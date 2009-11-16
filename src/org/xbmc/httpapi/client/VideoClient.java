@@ -21,11 +21,14 @@
 
 package org.xbmc.httpapi.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.client.ControlClient.PlayStatus;
+import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.type.MediaType;
+import org.xbmc.httpapi.type.SortType;
 
 /**
  * Takes care of everything related to the video database.
@@ -34,31 +37,82 @@ import org.xbmc.httpapi.type.MediaType;
  */
 public class VideoClient {
 	
-//	private final Connection mConnection;
+	private final Connection mConnection;
 
 	/**
 	 * Class constructor needs reference to HTTP client connection
 	 * @param connection
 	 */
 	public VideoClient(Connection connection) {
-//		mConnection = connection;
+		mConnection = connection;
 	}
 	
 	/**
-	 * Get all TVShows in database
-	 * @return list of TV Show names
+	 * Gets all albums from database
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @return All albums
 	 */
-//	public ArrayList<DatabaseItem> getTVShows() {
-//		return null;// getMergedList("idShow", "SELECT idShow, c00 from tvshow ORDER BY c00");
-//	}
+	public ArrayList<Movie> getMovies(int sortBy, String sortOrder) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT idMovie, c00, c07, strPath, c06");
+		sb.append(" FROM movieview WHERE movieview.idmovie NOT IN (SELECT idmovie FROM setlinkmovie)");
+		sb.append(moviesOrderBy(sortBy, sortOrder));
+		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString()));
+	}
+
+	/**
+	 * Converts query response from HTTP API to a list of Album objects. Each
+	 * row must return the following attributes in the following order:
+	 * <ol>
+	 * 	<li><code>idMovie</code></li>
+	 * 	<li><code>c00</code></li>
+	 * 	<li><code>c07</code></li>
+	 * 	<li><code>strPath</code></li>
+	 * 	<li><code>c06</code></li>
+	 * </ol> 
+	 * @param response
+	 * @return List of movies
+	 */
+	private ArrayList<Movie> parseMovies(String response) {
+		ArrayList<Movie> movies = new ArrayList<Movie>();
+		String[] fields = response.split("<field>");
+		try {
+			for (int row = 1; row < fields.length; row += 5) {
+				movies.add(new Movie( // int id, String title, int year, String path, String director
+						Connection.trimInt(fields[row]), 
+						Connection.trim(fields[row + 1]), 
+						Connection.trimInt(fields[row + 2]),
+						Connection.trim(fields[row + 3]),
+						Connection.trim(fields[row + 4])
+				));
+			}
+		} catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
+		}
+		return movies;
+	}
+	
 	
 	/**
-	 * Get all Movies in database
-	 * @return list of Movie names
+	 * Returns an SQL String of given sort options of movies query
+	 * @param sortBy    Sort field
+	 * @param sortOrder Sort order
+	 * @return SQL "ORDER BY" string
 	 */
-//	public ArrayList<DatabaseItem> getMovies() {
-//		return null;//getMergedList("idMovie", "SELECT idMovie, c00 from movie ORDER BY c00");
-//	}
+	private String moviesOrderBy(int sortBy, String sortOrder) {
+		switch (sortBy) {
+			default:
+			case SortType.TITLE:
+				return " ORDER BY lower(c00) " + sortOrder;
+			case SortType.YEAR:
+				return " ORDER BY c07 " + sortOrder + ", lower(c00) " + sortOrder;
+			case SortType.RATING:
+				return " ORDER BY c05" + sortOrder;
+		}
+	}
 	
 	public static ControlClient.ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
 		return new ControlClient.ICurrentlyPlaying() {

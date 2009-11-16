@@ -48,6 +48,7 @@ public abstract class ListController implements Serializable {
 	public static final String EXTRA_LIST_LOGIC = "ListLogic"; 
 	public static final String EXTRA_ALBUM = "album"; 
 	public static final String EXTRA_ARTIST = "artist";
+	public static final String EXTRA_ACTOR = "actor";
 	public static final String EXTRA_GENRE = "genre";
 	public static final String EXTRA_SHARE_TYPE = "shareType"; 
 	public static final String EXTRA_PATH = "path"; 

@@ -26,37 +26,37 @@ import java.io.Serializable;
 import org.xbmc.android.util.Crc32;
 
 /**
- * The album class keeps the basic album information from the album table
- * as well some of the extended info from the albuminfo table.
+ * Stores what we can get from the movieview table.
  * 
- * @author freezy <phreezie@gmail.com>
+ * @author Team XBMC
  */
-public class Album implements ICoverArt, Serializable, NamedResource {
-
+public class Movie implements ICoverArt, Serializable, NamedResource {
+	
 	/**
-	 * Points to where the album thumbs are stored
+	 * Points to where the movie thumbs are stored
 	 */
-	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Music/";
+	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Video/";
 
 	/**
 	 * Constructor
-	 * @param id      Database ID
-	 * @param name    Album name
-	 * @param artist  Artist
-	 * @param year    Year
+	 * @param id		Database ID
+	 * @param name		Album name
+	 * @param artist	Artist
 	 */
-	public Album(int id, String name, String artist, int year) {
+	public Movie(int id, String title, int year, String path, String director) {
 		this.id = id;
-		this.name = name;
-		this.artist = artist;
+		this.title = title;
 		this.year = year;
+		this.director = director;
+		this.localPath = path;
 	}
 
-	public Album(int id, String name, String artist, int year, String thumbPath) {
+	public Movie(int id, String title, int year, String path, String director, String thumbPath) {
 		this.id = id;
-		this.name = name;
-		this.artist = artist;
+		this.title = title;
 		this.year = year;
+		this.director = director;
+		this.localPath = path;
 		thumbPath = thumbPath.replace("\\", "/");
 		if (!thumbPath.equals("NONE")) {
 			try {
@@ -68,11 +68,11 @@ public class Album implements ICoverArt, Serializable, NamedResource {
 	}
 	
 	public String getArtFolder() {
-		return "/Music";
+		return "/Video";
 	}
 
 	public String getShortName() {
-		return this.name;
+		return this.title;
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public class Album implements ICoverArt, Serializable, NamedResource {
 	 */
 	public long getCrc() {
 		if (thumbID == 0) {
-			thumbID = Crc32.computeLowerCase((name + artist));
+			thumbID = Crc32.computeLowerCase(localPath);
 		}
 		return thumbID;
 	}
@@ -131,27 +131,14 @@ public class Album implements ICoverArt, Serializable, NamedResource {
 	 * @return
 	 */
 	public String getName() {
-		return toString();
+		return title + " (" + year + ")";
 	}
 	
-	/**
-	 * Returns true if the album is a compilation, false otherwise. 
-	 * @return True if compilation ("Various Artists"), false otherwise.
-	 */
-	public boolean isVA() {
-		return artist.equalsIgnoreCase("Various Artists") 
-			|| artist.equalsIgnoreCase("VariousArtists")
-			|| artist.equalsIgnoreCase("VA")
-			|| artist.equalsIgnoreCase("V A")
-			|| artist.equalsIgnoreCase("V.A.") 
-			|| artist.equalsIgnoreCase("V. A.");
-	}
-
 	/**
 	 * Something descriptive
 	 */
 	public String toString() {
-		return "[" + this.id + "] " + this.name + " (" + this.artist + ")";
+		return "[" + id + "] " + title + " (" + year + ")";
 	}
 	
 	/**
@@ -159,20 +146,20 @@ public class Album implements ICoverArt, Serializable, NamedResource {
 	 */
 	public int id;
 	/**
-	 * Album name
+	 * Movie title
 	 */
-	public String name;
+	public String title;
 	/**
-	 * Artist name
+	 * Director(s), can be several separated by " / "
 	 */
-	public String artist;
+	public String director;
 	/**
-	 * Year published
+	 * Year released
 	 */
 	public int year = -1;
 	
 	/**
-	 * Local path of the album
+	 * Local path of the movie
 	 */
 	public String localPath;
 	
@@ -184,10 +171,6 @@ public class Album implements ICoverArt, Serializable, NamedResource {
 	 * Genres, separated by " / "
 	 */
 	public String genres = null;
-	/**
-	 * Music label
-	 */
-	public String label = null;	
 	/**
 	 * Save this once it's calculated
 	 */

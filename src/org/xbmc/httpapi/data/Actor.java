@@ -21,54 +21,16 @@
 
 package org.xbmc.httpapi.data;
 
-import java.io.Serializable;
-
-
 /**
- * Genre is basically a name and an ID. Can be a music genre or a movie/tvshow genre.
+ * Actor is (for now) a rip-off of artist. It's the same thing named differently for movies.
  * 
  * @author Team XBMC
  */
-public class Genre implements Serializable, NamedResource {
+public class Actor extends Artist {
 
-	/**
-	 * Constructor
-	 * @param id		Database ID
-	 * @param name		Album name
-	 * @param artist	Artist
-	 */
-	public Genre(int id, String name) {
-		this.id = id;
-		this.name = name;
+	public Actor(int id, String name) {
+		super(id, name);
 	}
 
-	/**
-	 * Returns database ID.
-	 * @return
-	 */
-	public int getId() {
-		return this.id;
-	}
-
-	/**
-	 * Something descriptive
-	 */
-	public String toString() {
-		return "[" + this.id + "] " + this.name;
-	}
-	
-	/**
-	 * Database ID
-	 */
-	public int id;
-	/**
-	 * Genre name
-	 */
-	public String name;
-	
-	public String getShortName() {
-		return this.name;
-	}
-	
-	private static final long serialVersionUID = 9073064679039418773L;
+	private static final long serialVersionUID = -7026393902334967838L;
 }

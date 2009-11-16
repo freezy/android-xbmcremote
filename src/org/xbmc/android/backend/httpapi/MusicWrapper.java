@@ -562,7 +562,6 @@ public class MusicWrapper extends Wrapper {
 		});
 	}
 	
-	
 	/**
 	 * Sets the static reference to the preferences object. Used to obtain
 	 * current sort values.

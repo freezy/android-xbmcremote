@@ -64,8 +64,8 @@ public class FileListController extends ListController {
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
-			final String st = mActivity.getIntent().getStringExtra(EXTRA_SHARE_TYPE);
-			mMediaType = st != null ? MediaType.valueOf(st) : MediaType.music;
+			final MediaType mediaType = (MediaType)mActivity.getIntent().getSerializableExtra(EXTRA_SHARE_TYPE);
+			mMediaType = mediaType != null ? mediaType : MediaType.music;
 			final String path = mActivity.getIntent().getStringExtra(EXTRA_PATH);
 			final String displayPath = mActivity.getIntent().getStringExtra(EXTRA_DISPLAY_PATH);
 			fillUp(path == null ? "" : path, displayPath);
@@ -79,7 +79,7 @@ public class FileListController extends ListController {
 					if (item.isDirectory) {
 						Intent nextActivity = new Intent(mActivity, ListActivity.class);
 						nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new FileListController());
-						nextActivity.putExtra(ListController.EXTRA_SHARE_TYPE, mMediaType.toString());
+						nextActivity.putExtra(ListController.EXTRA_SHARE_TYPE, mMediaType);
 						nextActivity.putExtra(ListController.EXTRA_PATH, item.path);
 						nextActivity.putExtra(ListController.EXTRA_DISPLAY_PATH, item.displayPath);
 						mActivity.startActivity(nextActivity);

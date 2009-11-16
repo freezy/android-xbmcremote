@@ -112,7 +112,7 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 		offlineItems.add(remote);
 		
 		homeItems.add(new HomeItem(HOME_ACTION_MUSIC, R.drawable.icon_music, "Music", "Listen to"));
-		homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.icon_video, "Videos", "Watch your"));
+		homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.icon_video, "Movies", "Watch your"));
 		homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.icon_pictures, "Pictures", "Browse your"));
 		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.icon_playing, "Now Playing", "See what's"));
 		
@@ -189,7 +189,10 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 			startActivity(new Intent(v.getContext(), MusicLibraryActivity.class));
 			break;
 		case HOME_ACTION_VIDEOS:
-			startActivity(createMediaIntent(MediaType.video, v));
+			Intent intent = new Intent(v.getContext(), MovieLibraryActivity.class);
+			intent.putExtra(ListController.EXTRA_SHARE_TYPE, MediaType.video);
+			startActivity(intent);
+//			startActivity(createMediaIntent(MediaType.video, v));
 			break;
 		case HOME_ACTION_PICTURES:
 			startActivity(createMediaIntent(MediaType.pictures, v));
@@ -236,7 +239,7 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 	private Intent createMediaIntent(MediaType mediaType, View v) {
 		Intent nextActivity = new Intent(v.getContext(), ListActivity.class);
 		nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new FileListController());
-		nextActivity.putExtra(ListController.EXTRA_SHARE_TYPE, mediaType.toString());
+		nextActivity.putExtra(ListController.EXTRA_SHARE_TYPE, mediaType);
 		nextActivity.putExtra(ListController.EXTRA_PATH, "");
 		return nextActivity;
 	}
