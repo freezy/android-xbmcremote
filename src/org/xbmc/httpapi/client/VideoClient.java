@@ -26,9 +26,12 @@ import java.util.HashMap;
 
 import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.client.ControlClient.PlayStatus;
+import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.SortType;
+
+import android.util.Log;
 
 /**
  * Takes care of everything related to the video database.
@@ -59,6 +62,21 @@ public class VideoClient {
 		sb.append(" FROM movieview WHERE movieview.idmovie NOT IN (SELECT idmovie FROM setlinkmovie)");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString()));
+	}
+	
+	/**
+	 * Returns album thumbnail as base64-encoded string
+	 * @param album
+	 * @return Base64-encoded content of thumb
+	 */
+	public String getCover(ICoverArt art) {
+		final String data = mConnection.query("FileDownload", Movie.getThumbUri(art));
+		if (data.length() > 0) {
+			return data;
+		} else {
+			Log.i("VideoClient", "*** Downloaded cover has size null, retrying with fallback:");
+			return mConnection.query("FileDownload", Movie.getFallbackThumbUri(art));
+		}
 	}
 
 	/**

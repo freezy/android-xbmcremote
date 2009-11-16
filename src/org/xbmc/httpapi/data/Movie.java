@@ -69,7 +69,7 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 	}
 	
 	public int getMediaType() {
-		return MediaType.MUSIC;
+		return MediaType.VIDEO;
 	}
 
 	public String getShortName() {
@@ -84,13 +84,13 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 		return getThumbUri(this);
 	}
 	
-	public static String getThumbUri(ICoverArt art) {
-		final String hex = String.format("%08x", art.getCrc()).toLowerCase();
+	public static String getThumbUri(ICoverArt cover) {
+		final String hex = String.format("%08x", cover.getCrc()).toLowerCase();
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
 	
-	public static String getFallbackThumbUri(ICoverArt art) {
-		final String hex = String.format("%08x", art.getFallbackCrc()).toLowerCase();
+	public static String getFallbackThumbUri(ICoverArt cover) {
+		final String hex = String.format("%08x", cover.getFallbackCrc()).toLowerCase();
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
 	

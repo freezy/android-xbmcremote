@@ -678,7 +678,7 @@ public class MusicClient {
 	 * @param album
 	 * @return Base64-encoded content of thumb
 	 */
-	public String getAlbumThumb(ICoverArt art) {
+	public String getCover(ICoverArt art) {
 		final String data = mConnection.query("FileDownload", Album.getThumbUri(art));
 		if (data.length() > 0) {
 			return data;

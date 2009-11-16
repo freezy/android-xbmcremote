@@ -23,6 +23,7 @@ package org.xbmc.android.backend.httpapi;
 
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.httpapi.client.MusicClient;
+import org.xbmc.httpapi.client.VideoClient;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -61,6 +62,15 @@ abstract class HttpApiAbstractThread extends Thread {
 	 */
 	protected MusicClient music(HttpApiHandler<?> handler) {
 		return ConnectionManager.getHttpClient(handler.getActivity()).music;
+	}	
+	
+	/**
+	 * Returns the VideoClient class
+	 * @param handler
+	 * @return
+	 */
+	protected VideoClient video(HttpApiHandler<?> handler) {
+		return ConnectionManager.getHttpClient(handler.getActivity()).video;
 	}	
 	
 	/**

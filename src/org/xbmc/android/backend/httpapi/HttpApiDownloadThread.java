@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.xbmc.android.util.Base64;
 import org.xbmc.httpapi.data.ICoverArt;
+import org.xbmc.httpapi.type.MediaType;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -80,7 +81,20 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 						handler.value = HttpApiDiskCacheThread.getCover(cover, thumbSize);
 					} else {
 						Log.i(TAG, "Download START..");
-						String b64enc = music(handler).getAlbumThumb(cover);
+						String b64enc = null;
+						switch (cover.getMediaType()) {
+							case MediaType.MUSIC:
+								b64enc = music(handler).getCover(cover);
+								break;
+							case MediaType.VIDEO:
+								b64enc = video(handler).getCover(cover);
+								break;
+							case MediaType.PICTURES:
+								done(handler);
+								break;
+							default:
+								done(handler);
+						}
 						Log.i(TAG, "Download END.");
 						byte[] bytes;
 						try {
