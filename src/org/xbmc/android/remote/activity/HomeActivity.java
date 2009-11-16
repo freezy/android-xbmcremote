@@ -23,6 +23,8 @@ package org.xbmc.android.remote.activity;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
@@ -35,6 +37,7 @@ import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.util.WakeOnLan;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
+import org.xbmc.httpapi.BroadcastListener;
 import org.xbmc.httpapi.info.SystemInfo;
 import org.xbmc.httpapi.type.MediaType;
 
@@ -44,6 +47,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -57,7 +61,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class HomeActivity extends Activity implements OnItemClickListener {
+public class HomeActivity extends Activity implements OnItemClickListener, Observer {
 
 	private static final int HOME_ACTION_REMOTE = 0;
 	private static final int HOME_ACTION_MUSIC = 1;
@@ -78,9 +82,27 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 	
 	private EventClient mClient;
 	HttpApiHandler<String> mUpdateVersionHandler;
+	
+	public void update(Observable obj, Object arg) {
+		if (arg instanceof BroadcastListener.Event) {
+			BroadcastListener.Event event = (BroadcastListener.Event)arg;
+			switch (event.id) {
+				case BroadcastListener.EVENT_ON_PROGRESS_CHANGED:
+					Log.i("broadcast", "EVENT_ON_PROGRESS_CHANGED: " + event.getInt(0));
+					break;
+				default:
+					Log.i("broadcast", "EVENT: " + event.id + ", int = " + event.getInt(0));
+					break;
+			}
+		}
+	}
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		
+//		BroadcastListener bcl = BroadcastListener.getInstance(ConnectionManager.getHttpClient(this));
+//		bcl.addObserver(this);
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
@@ -112,7 +134,7 @@ public class HomeActivity extends Activity implements OnItemClickListener {
 		offlineItems.add(remote);
 		
 		homeItems.add(new HomeItem(HOME_ACTION_MUSIC, R.drawable.icon_music, "Music", "Listen to"));
-		homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.icon_video, "Movies", "Watch your"));
+		homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.icon_movie, "Movies", "Watch your"));
 		homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.icon_pictures, "Pictures", "Browse your"));
 		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.icon_playing, "Now Playing", "See what's"));
 		

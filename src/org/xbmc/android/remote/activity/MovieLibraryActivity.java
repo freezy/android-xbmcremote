@@ -76,7 +76,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		mTabHost = getTabHost();
 		
 		// add the tabs
-		mTabHost.addTab(mTabHost.newTabSpec("tab_movies", "Movies", R.drawable.st_album_on, R.drawable.st_album_off).setBigIcon(R.drawable.st_album_over).setContent(R.id.movielist_outer_layout));
+		mTabHost.addTab(mTabHost.newTabSpec("tab_movies", "Movies", R.drawable.st_movie_on, R.drawable.st_movie_off).setBigIcon(R.drawable.st_movie_over).setContent(R.id.movielist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
 		mTabHost.setCurrentTab(0);
 

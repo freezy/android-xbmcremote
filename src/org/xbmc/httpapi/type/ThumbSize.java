@@ -28,6 +28,7 @@ public abstract class ThumbSize {
 	public static final int SMALL = 1;
 	public static final int MEDIUM = 2;
 	public static final int BIG = 3;
+	public static final int SCREENWIDTH = 4;
 	
 	private static final float sScale = Resources.getSystem().getDisplayMetrics().density;
 	
@@ -52,6 +53,8 @@ public abstract class ThumbSize {
 				return (int)(103 * sScale);
 			case BIG:
 				return (int)(400 * sScale);
+			case SCREENWIDTH:
+				return (int)(320 * sScale);
 			default:
 				return 0;
 		}

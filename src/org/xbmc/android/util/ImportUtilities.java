@@ -29,6 +29,7 @@ import android.graphics.Bitmap;
 
 public final class ImportUtilities {
     private static final String CACHE_DIRECTORY = "xbmc";
+    private static final double POSTER_AR = 1.8766756032171581769436997319035;
 
     private ImportUtilities() {
     }
@@ -50,7 +51,46 @@ public final class ImportUtilities {
     		FileOutputStream out = null;
     		try {
     			out = new FileOutputStream(coverFile);
-    			final Bitmap resized = Bitmap.createScaledBitmap(bitmap, ThumbSize.getPixel(currentThumbSize), ThumbSize.getPixel(currentThumbSize), true);
+    			int width = 0;
+    			int height = 0;
+    			final float ar = bitmap.getWidth() / bitmap.getHeight();
+    			switch (cover.getMediaType()) {
+    				default:
+    				case MediaType.PICTURES:
+    				case MediaType.MUSIC:
+    					if (ar < 1) {
+    						width = ThumbSize.getPixel(currentThumbSize);
+    						height = (int)(width / ar); 
+    					} else {
+    						height = ThumbSize.getPixel(currentThumbSize);
+    						width = (int)(height * ar); 
+    					}
+    					break;
+    				case MediaType.VIDEO:
+    					if (ar > 0.98 && ar < 1.02) { 	// square
+    						width = ThumbSize.getPixel(currentThumbSize);
+    						height = ThumbSize.getPixel(currentThumbSize);
+    					} else if (ar < 1) {			// portrait
+    						width = ThumbSize.getPixel(currentThumbSize);
+    						final int ph = (int)(POSTER_AR * width);
+    						height = (int)(width / ar); 
+    						if (height < ph) {
+    							height = ph;
+    							width = (int)(height * ar);
+    						}
+    					} else if (ar < 2) {			// landscape 16:9
+    						height = ThumbSize.getPixel(currentThumbSize);
+    						width = (int)(height * ar); 
+    					} else if (ar > 5) {			// wide banner
+    						width = ThumbSize.getPixel(currentThumbSize) * 2;
+    						height = (int)(width / ar); 
+    					} else {						// anything between wide banner and landscape 16:9
+    						height = ThumbSize.getPixel(currentThumbSize);
+    						width = (int)(height * ar); 
+    					}
+    					break;
+    			}
+    			final Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, true);
     			resized.compress(Bitmap.CompressFormat.PNG, 100, out);
     			if (thumbSize == currentThumbSize) {
     				sizeToReturn = resized;
