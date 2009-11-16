@@ -42,7 +42,7 @@ import android.util.Log;
 public abstract class Wrapper {
 	
 	protected static final String TAG = "Wrapper";
-	protected static final Boolean DEBUG = false;
+	protected static final Boolean DEBUG = true;
 	
 	public static final String PREF_SORT_BY_PREFIX = "sort_by_";
 	public static final String PREF_SORT_ORDER_PREFIX = "sort_order_";
@@ -116,19 +116,20 @@ public abstract class Wrapper {
 	 * helper methods below.
 	 * @param handler Callback handler
 	 */
-	public void getCover(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final int thumbSize) {
+	public void getCover(final HttpApiHandler<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				if (album.getCrc() > 0) {
+				if (cover.getCrc() != 0L) {
 					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
 					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
-						if (DEBUG) Log.i(TAG, "[" + album.getId() + " ] trying memory");
-						getCoverFromMem(handler, album, thumbSize);
+						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] trying memory");
+						getCoverFromMem(handler, cover, thumbSize);
 					} else {
-						if (DEBUG) Log.i(TAG, "[" + album.getId() + " ] trying disk directly");
-						getCoverFromDisk(handler, album, thumbSize);
+						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] trying disk directly");
+						getCoverFromDisk(handler, cover, thumbSize);
 					}
 				} else {
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] no crc, skipping.");
 					handler.value = null;
 					done(handler);
 				}
@@ -146,11 +147,11 @@ public abstract class Wrapper {
 		HttpApiMemCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
 				if (value == null) {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + " empty]");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] empty");
 					// then, try sdcard cache
 					getCoverFromDisk(handler, cover, thumbSize);
 				} else {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + " FOUND in memory!]");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] FOUND in memory!");
 					handler.value = value;
 					handler.setCacheType(CacheType.memory);
 					done(handler);
@@ -170,13 +171,13 @@ public abstract class Wrapper {
 		HttpApiDiskCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
 				if (value == null) {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + " empty]");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] empty");
 					if (handler.postCache()) {
 						// well, let's download
 						getCoverFromNetwork(handler, cover, thumbSize);
 					}
 				} else {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + " FOUND on disk!]");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] FOUND on disk!");
 					handler.value = value;
 					handler.setCacheType(CacheType.sdcard);
 					done(handler);
@@ -196,9 +197,9 @@ public abstract class Wrapper {
 		HttpApiDownloadThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
 				if (value == null) {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + " empty]");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] empty");
 				} else {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + " DOWNLOADED!]");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] DOWNLOADED!");
 					handler.setCacheType(CacheType.network);
 					handler.value = value;
 				}

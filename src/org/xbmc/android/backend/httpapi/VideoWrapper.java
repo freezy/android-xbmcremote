@@ -23,15 +23,10 @@ package org.xbmc.android.backend.httpapi;
 
 import java.util.ArrayList;
 
-import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.type.SortType;
-import org.xbmc.httpapi.type.ThumbSize;
 
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.util.Log;
-
 
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.VideoClient} class.
@@ -55,33 +50,6 @@ public class VideoWrapper extends Wrapper {
 			}
 		});
 	}
-	
-	/**
-	 * Returns bitmap of an movie cover. Note that the callback is done by the
-	 * helper methods below.
-	 * @param handler Callback handler
-	 */
-	public void getMovieCover(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final int thumbSize) {
-		mHandler.post(new Runnable() {
-			public void run() {
-				if (album.getCrc() > 0) {
-					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
-					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
-						if (DEBUG) Log.i(TAG, "[" + album.getId() + " ] trying memory");
-						getCoverFromMem(handler, album, thumbSize);
-					} else {
-						if (DEBUG) Log.i(TAG, "[" + album.getId() + " ] trying disk directly");
-						getCoverFromDisk(handler, album, thumbSize);
-					}
-				} else {
-					handler.value = null;
-					done(handler);
-				}
-			}
-		});
-	}
-	
-	
 	
 	/**
 	 * Sets the static reference to the preferences object. Used to obtain

@@ -51,22 +51,6 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 		this.director = director;
 		this.localPath = path;
 	}
-
-	public Movie(int id, String title, int year, String path, String director, String thumbPath) {
-		this.id = id;
-		this.title = title;
-		this.year = year;
-		this.director = director;
-		this.localPath = path;
-		thumbPath = thumbPath.replace("\\", "/");
-		if (!thumbPath.equals("NONE")) {
-			try {
-				this.thumbID = Long.parseLong(thumbPath.substring(thumbPath.lastIndexOf("/") + 1, thumbPath.length() - 4), 16);
-			} catch (NumberFormatException e) {
-				this.thumbID = 0L;
-			}
-		}
-	}
 	
 	public int getMediaType() {
 		return MediaType.VIDEO;
@@ -85,12 +69,12 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 	}
 	
 	public static String getThumbUri(ICoverArt cover) {
-		final String hex = String.format("%08x", cover.getCrc()).toLowerCase();
+		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
 	
 	public static String getFallbackThumbUri(ICoverArt cover) {
-		final String hex = String.format("%08x", cover.getFallbackCrc()).toLowerCase();
+		final String hex = Crc32.formatAsHexLowerCase(cover.getFallbackCrc());
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
 	
@@ -99,7 +83,7 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 	 * @return CRC32
 	 */
 	public long getCrc() {
-		if (thumbID == 0) {
+		if (thumbID == 0L) {
 			thumbID = Crc32.computeLowerCase(localPath);
 		}
 		return thumbID;
@@ -175,7 +159,7 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 	/**
 	 * Save this once it's calculated
 	 */
-	public long thumbID = 0;
+	public long thumbID = 0L;
 	
 	private static final long serialVersionUID = 4779827915067184250L;
 

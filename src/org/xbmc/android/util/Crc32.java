@@ -66,6 +66,10 @@ public class Crc32 {
 	public static String computeAsHexLowerCase(String strValue) {
 		return String.format("%08x", compute(toXbmcLowerCase(strValue)));
 	}
+	
+	public static String formatAsHexLowerCase(long crc) {
+		return String.format("%08x", (int)crc).toLowerCase();
+	}
 
 	public static int computeLowerCase(String strValue) {
 		return compute(toXbmcLowerCase(strValue));

@@ -65,8 +65,8 @@ public class Artist implements ICoverArt, Serializable, NamedResource {
 		return getThumbUri(this);
 	}
 	
-	public static String getThumbUri(ICoverArt art) {
-		final String hex = String.format("%08x", art.getCrc()).toLowerCase();
+	public static String getThumbUri(ICoverArt cover) {
+		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
 	

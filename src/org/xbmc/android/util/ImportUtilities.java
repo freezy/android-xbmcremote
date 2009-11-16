@@ -46,7 +46,7 @@ public final class ImportUtilities {
     		} catch (IOException e) {
     			return null;
     		}
-    		File coverFile = new File(cacheDirectory, String.format("%08x", cover.getCrc()).toLowerCase());
+    		File coverFile = new File(cacheDirectory, Crc32.formatAsHexLowerCase(cover.getCrc()));
     		FileOutputStream out = null;
     		try {
     			out = new FileOutputStream(coverFile);

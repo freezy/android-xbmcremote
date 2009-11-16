@@ -23,6 +23,7 @@ package org.xbmc.android.backend.httpapi;
 
 import java.io.File;
 
+import org.xbmc.android.util.Crc32;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.type.MediaType;
@@ -67,7 +68,7 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
-					final File file = new File(ImportUtilities.getCacheDirectory(MediaType.getArtFolder(cover.getMediaType()), thumbSize), String.format("%08x", cover.getCrc()).toLowerCase());
+					final File file = new File(ImportUtilities.getCacheDirectory(MediaType.getArtFolder(cover.getMediaType()), thumbSize), Crc32.formatAsHexLowerCase(cover.getCrc()));
 				    if (file.exists()) {
 				    	final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 				    	HttpApiMemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
@@ -87,7 +88,7 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 	 * @return Bitmap or null if not available.
 	 */
 	public static Bitmap getCover(ICoverArt cover, int thumbSize) {
-		final File file = new File(ImportUtilities.getCacheDirectory(MediaType.getArtFolder(cover.getMediaType()), thumbSize), String.format("%08x", cover.getCrc()).toLowerCase());
+		final File file = new File(ImportUtilities.getCacheDirectory(MediaType.getArtFolder(cover.getMediaType()), thumbSize), Crc32.formatAsHexLowerCase(cover.getCrc()));
 	    if (file.exists()) {
 	    	final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 	    	HttpApiMemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
@@ -102,7 +103,7 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 	 * @return True if thumb is in disk cache, false otherwise.
 	 */
 	public static boolean isInCache(ICoverArt cover) {
-		return (new File(ImportUtilities.getCacheDirectory(MediaType.getArtFolder(cover.getMediaType()), ThumbSize.BIG), String.format("%08x", cover.getCrc()).toLowerCase())).exists();
+		return (new File(ImportUtilities.getCacheDirectory(MediaType.getArtFolder(cover.getMediaType()), ThumbSize.BIG), Crc32.formatAsHexLowerCase(cover.getCrc()).toLowerCase())).exists();
 	}
 	
 	/**
