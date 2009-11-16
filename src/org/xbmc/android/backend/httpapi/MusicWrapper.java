@@ -28,30 +28,19 @@ import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
-import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.info.GuiSettings;
-import org.xbmc.httpapi.type.CacheType;
 import org.xbmc.httpapi.type.SortType;
-import org.xbmc.httpapi.type.ThumbSize;
 
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.util.Log;
 
 
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.InfoClient} class.
  * 
- * TODO All the asynchronous cover download stuff needs to be abstracted to an
- *      interface so we can use it for video as well.  
- * 
  * @author Team XBMC
  */
 public class MusicWrapper extends Wrapper {
-	
-	private static final String TAG = "MusicWrapper";
-	private static final Boolean DEBUG = false;
 	
 	private static SharedPreferences sPref;
 	private static int sCurrentSortKey;
@@ -538,31 +527,6 @@ public class MusicWrapper extends Wrapper {
 	}
 	
 	/**
-	 * Returns bitmap of an album cover. Note that the callback is done by the
-	 * helper methods below.
-	 * @param handler Callback handler
-	 */
-	public void getAlbumCover(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final int thumbSize) {
-		mHandler.post(new Runnable() {
-			public void run() {
-				if (album.getCrc() > 0) {
-					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
-					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
-						if (DEBUG) Log.i(TAG, "[" + album.getId() + " ] trying memory");
-						getAlbumCoverFromMem(handler, album, thumbSize);
-					} else {
-						if (DEBUG) Log.i(TAG, "[" + album.getId() + " ] trying disk directly");
-						getAlbumCoverFromDisk(handler, album, thumbSize);
-					}
-				} else {
-					handler.value = null;
-					done(handler);
-				}
-			}
-		});
-	}
-	
-	/**
 	 * Sets the static reference to the preferences object. Used to obtain
 	 * current sort values.
 	 * @param pref
@@ -599,77 +563,6 @@ public class MusicWrapper extends Wrapper {
 		}
 	}
 	
-	/**
-	 * Tries to get small cover from memory, then from disk, then download it from XBMC.
-	 * @param handler Callback handler
-	 * @param album   Get cover for this album
-	 */
-	private void getAlbumCoverFromMem(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final int thumbSize) {
-		if (DEBUG) Log.i(TAG, "[" + album.getId() + "] Checking in mem cache..");
-		HttpApiMemCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
-			public void run() {
-				if (value == null) {
-					if (DEBUG) Log.i(TAG, "[" + album.getId() + " empty]");
-					// then, try sdcard cache
-					getAlbumCoverFromDisk(handler, album, thumbSize);
-				} else {
-					if (DEBUG) Log.i(TAG, "[" + album.getId() + " FOUND in memory!]");
-					handler.value = value;
-					handler.setCacheType(CacheType.memory);
-					done(handler);
-				}
-			}
-		}, album, thumbSize);
-	}
-	
-	/**
-	 * Tries to get cover from disk, then download it from XBMC.
-	 * @param handler Callback handler
-	 * @param album   Get cover for this album
-	 * @param thumbSize    Cover size
-	 */
-	private void getAlbumCoverFromDisk(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final int thumbSize) {
-		if (DEBUG) Log.i(TAG, "[" + album.getId() + "] Checking in disk cache..");
-		HttpApiDiskCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
-			public void run() {
-				if (value == null) {
-					if (DEBUG) Log.i(TAG, "[" + album.getId() + " empty]");
-					if (handler.postCache()) {
-						// well, let's download
-						getAlbumCoverFromNetwork(handler, album, thumbSize);
-					}
-				} else {
-					if (DEBUG) Log.i(TAG, "[" + album.getId() + " FOUND on disk!]");
-					handler.value = value;
-					handler.setCacheType(CacheType.sdcard);
-					done(handler);
-				}
-			}
-		}, album, thumbSize);		
-	}
-	
-	/**
-	 * Last stop: try to download from XBMC.
-	 * @param handler Callback handler
-	 * @param album   Get cover for this album
-	 * @param thumbSize    Cover size
-	 */
-	private void getAlbumCoverFromNetwork(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final int thumbSize) {
-		if (DEBUG) Log.i(TAG, "[" + album.getId() + "] Downloading..");
-		HttpApiDownloadThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
-			public void run() {
-				if (value == null) {
-					if (DEBUG) Log.i(TAG, "[" + album.getId() + " empty]");
-				} else {
-					if (DEBUG) Log.i(TAG, "[" + album.getId() + " DOWNLOADED!]");
-					handler.setCacheType(CacheType.network);
-					handler.value = value;
-				}
-				done(handler); // callback in any case, since we don't go further than that.
-			}
-		}, album, thumbSize);
-	}
-
 	/**
 	 * Returns currently saved "sort by" value. If the preference was not set yet, or
 	 * if the current sort key is not set, return default value.

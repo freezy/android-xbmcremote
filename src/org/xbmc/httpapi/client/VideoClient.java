@@ -48,7 +48,7 @@ public class VideoClient {
 	}
 	
 	/**
-	 * Gets all albums from database
+	 * Gets all movies from database
 	 * @param sortBy Sort field, see SortType.* 
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All albums

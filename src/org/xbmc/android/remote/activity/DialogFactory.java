@@ -103,7 +103,7 @@ public abstract class DialogFactory {
 			genresText.setVisibility(View.GONE);
 		}
 		// asynchronously load the cover
-        HttpApiThread.music().getAlbumCover(new HttpApiHandler<Bitmap>(activity) {
+        HttpApiThread.music().getCover(new HttpApiHandler<Bitmap>(activity) {
         	public void run() {
         		if (value == null) {
         			cover.setImageResource(R.drawable.nocover);

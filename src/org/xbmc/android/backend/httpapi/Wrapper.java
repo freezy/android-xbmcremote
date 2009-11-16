@@ -26,8 +26,13 @@ import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.VideoClient;
+import org.xbmc.httpapi.data.ICoverArt;
+import org.xbmc.httpapi.type.CacheType;
+import org.xbmc.httpapi.type.ThumbSize;
 
+import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.Log;
 
 /**
  * Super class of the wrappers, keeps common code.
@@ -35,6 +40,9 @@ import android.os.Handler;
  * @author Team XBMC
  */
 public abstract class Wrapper {
+	
+	protected static final String TAG = "Wrapper";
+	protected static final Boolean DEBUG = false;
 	
 	public static final String PREF_SORT_BY_PREFIX = "sort_by_";
 	public static final String PREF_SORT_ORDER_PREFIX = "sort_order_";
@@ -103,4 +111,99 @@ public abstract class Wrapper {
 		handler.getActivity().runOnUiThread(handler);
 	}
 	
+	/**
+	 * Returns bitmap of any cover. Note that the callback is done by the
+	 * helper methods below.
+	 * @param handler Callback handler
+	 */
+	public void getCover(final HttpApiHandler<Bitmap> handler, final ICoverArt album, final int thumbSize) {
+		mHandler.post(new Runnable() {
+			public void run() {
+				if (album.getCrc() > 0) {
+					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
+					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
+						if (DEBUG) Log.i(TAG, "[" + album.getId() + " ] trying memory");
+						getCoverFromMem(handler, album, thumbSize);
+					} else {
+						if (DEBUG) Log.i(TAG, "[" + album.getId() + " ] trying disk directly");
+						getCoverFromDisk(handler, album, thumbSize);
+					}
+				} else {
+					handler.value = null;
+					done(handler);
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Tries to get small cover from memory, then from disk, then download it from XBMC.
+	 * @param handler Callback handler
+	 * @param cover   Get cover for this object
+	 */
+	protected void getCoverFromMem(final HttpApiHandler<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
+		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in mem cache..");
+		HttpApiMemCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
+			public void run() {
+				if (value == null) {
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + " empty]");
+					// then, try sdcard cache
+					getCoverFromDisk(handler, cover, thumbSize);
+				} else {
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + " FOUND in memory!]");
+					handler.value = value;
+					handler.setCacheType(CacheType.memory);
+					done(handler);
+				}
+			}
+		}, cover, thumbSize);
+	}
+	
+	/**
+	 * Tries to get cover from disk, then download it from XBMC.
+	 * @param handler Callback handler
+	 * @param cover     Get cover for this object
+	 * @param thumbSize    Cover size
+	 */
+	protected void getCoverFromDisk(final HttpApiHandler<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
+		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in disk cache..");
+		HttpApiDiskCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
+			public void run() {
+				if (value == null) {
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + " empty]");
+					if (handler.postCache()) {
+						// well, let's download
+						getCoverFromNetwork(handler, cover, thumbSize);
+					}
+				} else {
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + " FOUND on disk!]");
+					handler.value = value;
+					handler.setCacheType(CacheType.sdcard);
+					done(handler);
+				}
+			}
+		}, cover, thumbSize);
+	}
+	
+	/**
+	 * Last stop: try to download from XBMC.
+	 * @param handler Callback handler
+	 * @param cover     Get cover for this object
+	 * @param thumbSize Cover size
+	 */
+	protected void getCoverFromNetwork(final HttpApiHandler<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
+		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Downloading..");
+		HttpApiDownloadThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
+			public void run() {
+				if (value == null) {
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + " empty]");
+				} else {
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + " DOWNLOADED!]");
+					handler.setCacheType(CacheType.network);
+					handler.value = value;
+				}
+				done(handler); // callback in any case, since we don't go further than that.
+			}
+		}, cover, thumbSize);
+	}
 }

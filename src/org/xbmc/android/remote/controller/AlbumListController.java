@@ -396,7 +396,7 @@ public class AlbumListController extends ListController {
 			if (mLoadCovers) {
 				holder.setTemporaryBind(true);
 				holder.iconView.setImageResource(R.drawable.icon_album_grey);
-				HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.SMALL);
+				HttpApiThread.music().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.icon_album);
 			}		
@@ -441,7 +441,7 @@ public class AlbumListController extends ListController {
 			if (mLoadCovers) {
 				row.setImageResource(R.drawable.icon_album_dark_big);
 				holder.setTemporaryBind(true);
-				HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.MEDIUM);
+				HttpApiThread.music().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.MEDIUM);
 			} else {
 				row.setImageResource(R.drawable.icon_album);
 			}

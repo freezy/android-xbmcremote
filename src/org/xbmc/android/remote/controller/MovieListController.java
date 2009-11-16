@@ -305,7 +305,7 @@ public class MovieListController extends ListController {
 			if (mLoadCovers) {
 				holder.setTemporaryBind(true);
 				holder.iconView.setImageResource(R.drawable.icon_album_grey);
-				HttpApiThread.music().getAlbumCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), movie, ThumbSize.SMALL);
+				HttpApiThread.music().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), movie, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.icon_album);
 			}		
