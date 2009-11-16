@@ -22,6 +22,8 @@
 package org.xbmc.httpapi.data;
 import java.util.Formatter;
 
+import org.xbmc.httpapi.type.MediaType;
+
 
 /**
  * The song class contains everything to know about a song. It's basically a
@@ -127,8 +129,8 @@ public class Song implements ICoverArt, NamedResource {
 		return 0;
 	}	
 	
-	public String getArtFolder() {
-		return "/Music";
+	public int getMediaType() {
+		return MediaType.MUSIC;
 	}
 	
 	/**

@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.xbmc.httpapi.data.ICoverArt;
+import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.graphics.Bitmap;
@@ -36,16 +37,16 @@ public final class ImportUtilities {
         return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + ThumbSize.getDir(size));
     }
 
-    public static Bitmap addCoverToCache(ICoverArt art, Bitmap bitmap, int thumbSize) {
+    public static Bitmap addCoverToCache(ICoverArt cover, Bitmap bitmap, int thumbSize) {
     	Bitmap sizeToReturn = null;
     	File cacheDirectory;
     	for (int currentThumbSize : ThumbSize.values()) {
     		try {
-    			cacheDirectory = ensureCache(art.getArtFolder(), currentThumbSize);
+    			cacheDirectory = ensureCache(MediaType.getArtFolder(cover.getMediaType()), currentThumbSize);
     		} catch (IOException e) {
     			return null;
     		}
-    		File coverFile = new File(cacheDirectory, String.format("%08x", art.getCrc()).toLowerCase());
+    		File coverFile = new File(cacheDirectory, String.format("%08x", cover.getCrc()).toLowerCase());
     		FileOutputStream out = null;
     		try {
     			out = new FileOutputStream(coverFile);

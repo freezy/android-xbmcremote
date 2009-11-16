@@ -39,4 +39,18 @@ public abstract class MediaType {
 				return "";
 		}
 	}
+	
+	public static String getArtFolder(int type) {
+		switch (type) {
+			case MUSIC:
+				return "/Music";
+			case VIDEO:
+				return "/Video";
+			case PICTURES:
+				return "/Pictures";
+			default:
+				return "";
+		}
+	}
+	
 }

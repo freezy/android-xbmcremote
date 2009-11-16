@@ -31,6 +31,7 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Song;
+import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.SortType;
 import org.xbmc.httpapi.type.ThumbSize;
 
@@ -148,7 +149,7 @@ public abstract class DialogFactory {
 			yearText.setVisibility(View.GONE);
 		}
 		
-        final File file = new File(ImportUtilities.getCacheDirectory(album.getArtFolder(), ThumbSize.SMALL), String.format("%08x", album.getCrc()).toLowerCase());
+        final File file = new File(ImportUtilities.getCacheDirectory(MediaType.getArtFolder(album.getMediaType()), ThumbSize.SMALL), String.format("%08x", album.getCrc()).toLowerCase());
         if (file.exists()) {
         	cover.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
         }

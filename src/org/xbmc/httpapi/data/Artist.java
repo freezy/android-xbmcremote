@@ -24,6 +24,7 @@ package org.xbmc.httpapi.data;
 import java.io.Serializable;
 
 import org.xbmc.android.util.Crc32;
+import org.xbmc.httpapi.type.MediaType;
 
 /**
  * Not very much going on, artist is basically a name.
@@ -48,8 +49,8 @@ public class Artist implements ICoverArt, Serializable, NamedResource {
 		this.name = name;
 	}
 	
-	public String getArtFolder() {
-		return "/Artist";
+	public int getMediaType() {
+		return MediaType.MUSIC;
 	}
 
 	public String getShortName() {
