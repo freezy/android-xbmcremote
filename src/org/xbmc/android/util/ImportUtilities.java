@@ -26,13 +26,13 @@ import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
-public final class ImportUtilities {
+public abstract class ImportUtilities {
+	
+	private static final String TAG = "ImportUtilities";
     private static final String CACHE_DIRECTORY = "xbmc";
     private static final double POSTER_AR = 1.8766756032171581769436997319035;
-
-    private ImportUtilities() {
-    }
 
     public static File getCacheDirectory(String type, int size) {
         return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + ThumbSize.getDir(size));
@@ -53,7 +53,7 @@ public final class ImportUtilities {
     			out = new FileOutputStream(coverFile);
     			int width = 0;
     			int height = 0;
-    			final float ar = bitmap.getWidth() / bitmap.getHeight();
+    			final double ar = ((double)bitmap.getWidth()) / ((double)bitmap.getHeight());
     			switch (cover.getMediaType()) {
     				default:
     				case MediaType.PICTURES:
@@ -68,9 +68,11 @@ public final class ImportUtilities {
     					break;
     				case MediaType.VIDEO:
     					if (ar > 0.98 && ar < 1.02) { 	// square
+    						Log.i(TAG, "Format: SQUARE");
     						width = ThumbSize.getPixel(currentThumbSize);
     						height = ThumbSize.getPixel(currentThumbSize);
     					} else if (ar < 1) {			// portrait
+    						Log.i(TAG, "Format: PORTRAIT");
     						width = ThumbSize.getPixel(currentThumbSize);
     						final int ph = (int)(POSTER_AR * width);
     						height = (int)(width / ar); 
@@ -79,17 +81,21 @@ public final class ImportUtilities {
     							width = (int)(height * ar);
     						}
     					} else if (ar < 2) {			// landscape 16:9
+    						Log.i(TAG, "Format: LANDSCAPE 16:9");
     						height = ThumbSize.getPixel(currentThumbSize);
     						width = (int)(height * ar); 
     					} else if (ar > 5) {			// wide banner
+    						Log.i(TAG, "Format: BANNER");
     						width = ThumbSize.getPixel(currentThumbSize) * 2;
     						height = (int)(width / ar); 
     					} else {						// anything between wide banner and landscape 16:9
+    						Log.i(TAG, "Format: BIZARRE");
     						height = ThumbSize.getPixel(currentThumbSize);
     						width = (int)(height * ar); 
     					}
     					break;
     			}
+    			Log.i(TAG, "Resizing to " + width + "x" + height);
     			final Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, true);
     			resized.compress(Bitmap.CompressFormat.PNG, 100, out);
     			if (thumbSize == currentThumbSize) {
@@ -115,10 +121,11 @@ public final class ImportUtilities {
     
     public static void purgeCache() {
     	final int size[] = ThumbSize.values();
-    	final String type[] = { "/music", "/video" };
-    	for (int i = 0; i < type.length; i++) {
+    	final int[] mediaTypes = MediaType.getTypes();
+    	for (int i = 0; i < mediaTypes.length; i++) {
+    		String folder = MediaType.getArtFolder(mediaTypes[i]);
     		for (int j = 0; j < size.length; j++) {
-    			File cacheDirectory = getCacheDirectory(type[i], size[j]);
+    			File cacheDirectory = getCacheDirectory(folder, size[j]);
     			if (cacheDirectory.exists() && cacheDirectory.isDirectory()) {
     				for (File file : cacheDirectory.listFiles()) {
     					file.delete();

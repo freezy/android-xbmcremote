@@ -58,7 +58,7 @@ public class VideoClient {
 	 */
 	public ArrayList<Movie> getMovies(int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, c06");
+		sb.append("SELECT idMovie, c00, c07, strPath, c15, c11, c14, c05");
 		sb.append(" FROM movieview WHERE movieview.idmovie NOT IN (SELECT idmovie FROM setlinkmovie)");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString()));
@@ -84,10 +84,13 @@ public class VideoClient {
 	 * row must return the following attributes in the following order:
 	 * <ol>
 	 * 	<li><code>idMovie</code></li>
-	 * 	<li><code>c00</code></li>
-	 * 	<li><code>c07</code></li>
+	 * 	<li><code>c00</code></li> (title)
+	 * 	<li><code>c07</code></li> (year)
 	 * 	<li><code>strPath</code></li>
-	 * 	<li><code>c06</code></li>
+	 * 	<li><code>c15</code></li> (director)
+	 * 	<li><code>c11</code></li> (runtime)
+	 * 	<li><code>c14</code></li> (genres)
+	 * 	<li><code>c05</code></li> (rating)
 	 * </ol> 
 	 * @param response
 	 * @return List of movies
@@ -96,13 +99,16 @@ public class VideoClient {
 		ArrayList<Movie> movies = new ArrayList<Movie>();
 		String[] fields = response.split("<field>");
 		try {
-			for (int row = 1; row < fields.length; row += 5) {
-				movies.add(new Movie( // int id, String title, int year, String path, String director
+			for (int row = 1; row < fields.length; row += 8) {
+				movies.add(new Movie( // int id, String title, int year, String path, String director, String runtime, String genres
 						Connection.trimInt(fields[row]), 
 						Connection.trim(fields[row + 1]), 
 						Connection.trimInt(fields[row + 2]),
 						Connection.trim(fields[row + 3]),
-						Connection.trim(fields[row + 4])
+						Connection.trim(fields[row + 4]),
+						Connection.trim(fields[row + 5]),
+						Connection.trim(fields[row + 6]),
+						Connection.trimDouble(fields[row + 7])
 				));
 			}
 		} catch (Exception e) {

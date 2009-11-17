@@ -40,6 +40,18 @@ public abstract class MediaType {
 		}
 	}
 	
+	/**
+	 * Returns all media types.
+	 * @return
+	 */
+	public static int[] getTypes() {
+		int[] types = new int[3];
+		types[0] = MUSIC;
+		types[1] = VIDEO;
+		types[2] = PICTURES;
+		return types;
+	}
+	
 	public static String getArtFolder(int type) {
 		switch (type) {
 			case MUSIC:

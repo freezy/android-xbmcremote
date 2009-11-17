@@ -28,9 +28,8 @@ import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.backend.httpapi.MusicWrapper;
 import org.xbmc.android.backend.httpapi.Wrapper;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.activity.DialogFactory;
 import org.xbmc.android.remote.activity.ListActivity;
-import org.xbmc.android.remote.controller.holder.ThreeHolder;
+import org.xbmc.android.remote.controller.holder.MovieHolder;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.httpapi.data.Actor;
 import org.xbmc.httpapi.data.Album;
@@ -106,7 +105,7 @@ public class MovieListController extends ListController {
 				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
-					ThreeHolder<Album> holder = (ThreeHolder<Album>)view.getTag();
+					MovieHolder<Album> holder = (MovieHolder<Album>)view.getTag();
 					nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new SongListController());
 					nextActivity.putExtra(ListController.EXTRA_ALBUM, holder.holderItem);
@@ -168,17 +167,16 @@ public class MovieListController extends ListController {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		final ThreeHolder<Album> holder = (ThreeHolder<Album>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(holder.holderItem.name);
-		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Album");
-		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Album");
-		menu.add(0, ITEM_CONTEXT_INFO, 3, "View Details");
+		final MovieHolder<Movie> holder = (MovieHolder<Movie>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
+		menu.setHeaderTitle(holder.holderItem.title);
+		menu.add(0, ITEM_CONTEXT_PLAY, 1, "Play Movie");
+		menu.add(0, ITEM_CONTEXT_INFO, 2, "View Details");
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void onContextItemSelected(MenuItem item) {
-		final ThreeHolder<Album> holder = (ThreeHolder<Album>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
-		final Album album = holder.holderItem;
+/*		final MovieHolder<Movie> holder = (MovieHolder<Movie>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+		final Movie album = holder.holderItem;
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				HttpApiThread.music().addToPlaylist(new QueryHandler(
@@ -200,7 +198,7 @@ public class MovieListController extends ListController {
 				break;
 			default:
 				return;
-		}
+		}*/
 	}
 	
 	@Override
@@ -271,16 +269,18 @@ public class MovieListController extends ListController {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
 			final View row;
-			final ThreeHolder<Movie> holder;
+			final MovieHolder<Movie> holder;
 			
 			if (convertView == null) {
 
-				row = mInflater.inflate(R.layout.listitem_three, null);
-				holder = new ThreeHolder<Movie>(
-					(ImageView)row.findViewById(R.id.MusicItemImageViewArt),
-					(TextView)row.findViewById(R.id.MusicItemTextViewTitle),
-					(TextView)row.findViewById(R.id.MusicItemTextViewSubtitle),
-					(TextView)row.findViewById(R.id.MusicItemTextViewSubSubtitle)
+				row = mInflater.inflate(R.layout.listitem_movie, null);
+				holder = new MovieHolder<Movie>(
+					(ImageView)row.findViewById(R.id.listitem_image),
+					(TextView)row.findViewById(R.id.listitem_title),
+					(TextView)row.findViewById(R.id.listitem_subtitle),
+					(TextView)row.findViewById(R.id.listitem_subtitle_right),
+					(TextView)row.findViewById(R.id.listitem_bottom_line),
+					(TextView)row.findViewById(R.id.listitem_bottom_right)
 				);
 				row.setTag(holder);
 				
@@ -290,7 +290,7 @@ public class MovieListController extends ListController {
 				
 			} else {
 				row = convertView;
-				holder = (ThreeHolder<Movie>)convertView.getTag();
+				holder = (MovieHolder<Movie>)convertView.getTag();
 			}
 			
 			final Movie movie = getItem(position);
@@ -299,8 +299,10 @@ public class MovieListController extends ListController {
 			holder.id = movie.getCrc();
 			
 			holder.titleView.setText(movie.title);
-			holder.subtitleView.setText(movie.director);
-			holder.subsubtitleView.setText(movie.year > 0 ? String.valueOf(movie.year) : "");
+			holder.subtitleView.setText(movie.genres);
+			holder.subtitleRightView.setText(movie.year > 0 ? String.valueOf(movie.year) : "");
+			holder.bottomView.setText(movie.runtime);
+			holder.bottomRightView.setText(String.valueOf(movie.rating));
 			
 			if (mLoadCovers) {
 				holder.setTemporaryBind(true);

@@ -44,11 +44,14 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 	 * @param name		Album name
 	 * @param artist	Artist
 	 */
-	public Movie(int id, String title, int year, String path, String director) {
+	public Movie(int id, String title, int year, String path, String director, String runtime, String genres, double rating) {
 		this.id = id;
 		this.title = title;
 		this.year = year;
 		this.director = director;
+		this.runtime = runtime;
+		this.genres = genres;
+		this.rating = rating;
 		this.localPath = path;
 	}
 	
@@ -139,6 +142,14 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 	 */
 	public String director;
 	/**
+	 * Runtime, can be several also, separated by " | "
+	 */
+	public String runtime;
+	/**
+	 * Genre(s), can be several, normally separated by " / "
+	 */
+	public String genres;
+	/**
 	 * Year released
 	 */
 	public int year = -1;
@@ -147,15 +158,10 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 	 * Local path of the movie
 	 */
 	public String localPath;
-	
 	/**
 	 * Rating
 	 */
-	public int rating = -1;
-	/**
-	 * Genres, separated by " / "
-	 */
-	public String genres = null;
+	public double rating = 0.0;
 	/**
 	 * Save this once it's calculated
 	 */

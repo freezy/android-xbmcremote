@@ -384,6 +384,26 @@ public class Connection {
 			return -1;
 		}
 	}
+
+	/**
+	 * Removes the trailing "</field>" string from the value and tries to
+	 * parse a double from it. On error, returns -1.0.
+	 * @param value
+	 * @return Parsed double from field value
+	 */
+	public static double trimDouble(String value) {
+		String trimmed = trim(value);
+		if (trimmed.length() > 0) {
+			try {
+				return Double.parseDouble(trimmed);
+			} catch (NumberFormatException e) {
+				return -1.0;
+			}
+		} else {
+			return -1.0;
+		}
+	}
+
 	/**
 	 * Check connection to a XBMC HttpApi session
 	 * @return
