@@ -38,6 +38,25 @@
 				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 			
+            <!-- Actors -->
+			<LinearLayout
+				android:id="@+id/actorlist_outer_layout" 
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:orientation="vertical" android:fadingEdge="none" >
+				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					<ListView 
+						android:id="@+id/actorlist_list"
+						android:layout_height="fill_parent"
+						android:layout_width="fill_parent" 
+						android:fadingEdge="none"
+						android:scrollbars="none" />
+				</org.xbmc.android.widget.FastScrollView>
+			</LinearLayout>
+			
 			<!-- Files -->
 			<LinearLayout
 				android:id="@+id/filelist_outer_layout"

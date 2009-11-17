@@ -11,7 +11,10 @@
 		android:layout_height="50dip"
 		android:adjustViewBounds="false"
 		android:cropToPadding="false" 
-		android:padding="0dip" android:layout_margin="0dip" android:src="@drawable/icon_album_grey" android:scaleType="fitXY"/>
+		android:padding="0dip" 
+		android:layout_margin="0dip" 
+		android:src="@drawable/icon_album_grey" 
+		android:scaleType="center"/>
 	<LinearLayout 
 		android:id="@+id/MusicItemLinearLayoutText" 
 		android:layout_height="wrap_content" 

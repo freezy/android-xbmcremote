@@ -27,6 +27,7 @@ import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.controller.ActorListController;
 import org.xbmc.android.remote.controller.FileListController;
 import org.xbmc.android.remote.controller.MovieListController;
 import org.xbmc.android.util.ConnectionManager;
@@ -55,6 +56,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 
 	private SlidingTabHost mTabHost;
 	private MovieListController mMovieController;
+	private ActorListController mActorController;
 	private FileListController mFileController;
 	
 	private static final int MENU_NOW_PLAYING = 301;
@@ -77,6 +79,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		
 		// add the tabs
 		mTabHost.addTab(mTabHost.newTabSpec("tab_movies", "Movies", R.drawable.st_movie_on, R.drawable.st_movie_off).setBigIcon(R.drawable.st_movie_over).setContent(R.id.movielist_outer_layout));
+		mTabHost.addTab(mTabHost.newTabSpec("tab_actors", "Actors", R.drawable.st_actor_on, R.drawable.st_actor_off).setBigIcon(R.drawable.st_actor_over).setContent(R.id.actorlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
 		mTabHost.setCurrentTab(0);
 
@@ -85,6 +88,10 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		mMovieController.findTitleView(findViewById(R.id.movielist_outer_layout));
 		mMovieController.findMessageView(findViewById(R.id.movielist_outer_layout));
 		mMovieController.onCreate(this, (ListView)findViewById(R.id.movielist_list)); // first tab can be updated now.
+
+		mActorController= new ActorListController();
+		mActorController.findTitleView(findViewById(R.id.actorlist_outer_layout));
+		mActorController.findMessageView(findViewById(R.id.actorlist_outer_layout));
 
 		mFileController = new FileListController();
 		mFileController.findTitleView(findViewById(R.id.filelist_outer_layout));
@@ -95,6 +102,9 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 				
 				if (tabId.equals("tab_movies")) {
 					mMovieController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.movielist_list));
+				}
+				if (tabId.equals("tab_actors")) {
+					mActorController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.actorlist_list));
 				}
 				if (tabId.equals("tab_files")) {
 					mFileController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
@@ -115,6 +125,9 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 				mMovieController.onCreateOptionsMenu(menu);
 				break;
 			case 1:
+				mActorController.onCreateOptionsMenu(menu);
+				break;
+			case 2:
 				mFileController.onCreateOptionsMenu(menu);
 				break;
 		}
@@ -132,6 +145,9 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 			mMovieController.onOptionsItemSelected(item);
 			break;
 		case 1:
+			mActorController.onOptionsItemSelected(item);
+			break;
+		case 2:
 			mFileController.onOptionsItemSelected(item);
 			break;
 		}
@@ -183,6 +199,9 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 				mMovieController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 			case 1:
+				mActorController.onCreateContextMenu(menu, v, menuInfo);
+				break;
+			case 2:
 				mFileController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 		}
@@ -195,6 +214,9 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 			mMovieController.onContextItemSelected(item);
 			break;
 		case 1:
+			mActorController.onContextItemSelected(item);
+			break;
+		case 2:
 			mFileController.onContextItemSelected(item);
 			break;
 		}

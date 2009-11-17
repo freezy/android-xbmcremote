@@ -37,7 +37,7 @@ public class Artist implements ICoverArt, Serializable, NamedResource {
 	 * TODO verify that's correct and test!
 	 * Points to where the artist thumbs are stored
 	 */
-	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Artist/";
+	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Music/Artists/";
 
 	/**
 	 * Constructor
@@ -67,7 +67,7 @@ public class Artist implements ICoverArt, Serializable, NamedResource {
 	
 	public static String getThumbUri(ICoverArt cover) {
 		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+		return THUMB_PREFIX + hex + ".tbn";
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public class Artist implements ICoverArt, Serializable, NamedResource {
 	 */
 	public long getCrc() {
 		if (thumbID == 0) {
-			thumbID = Crc32.computeLowerCase((name));
+			thumbID = Crc32.computeLowerCase("artist" + id);
 		}
 		return thumbID;
 	}
@@ -93,7 +93,7 @@ public class Artist implements ICoverArt, Serializable, NamedResource {
 	 * @return
 	 */
 	public int getId() {
-		return this.id;
+		return id;
 	}
 	
 	/**

@@ -683,8 +683,13 @@ public class MusicClient {
 		if (data.length() > 0) {
 			return data;
 		} else {
-			Log.i("MusicClient", "*** Downloaded cover has size null, retrying with fallback:");
-			return mConnection.query("FileDownload", Album.getFallbackThumbUri(art));
+			final String url = Album.getFallbackThumbUri(art);
+			if (url != null) {
+				Log.i("MusicClient", "*** Downloaded cover has size null, retrying with fallback:");
+				return mConnection.query("FileDownload", url);
+			} else {
+				return "";
+			}
 		}
 	}
 	

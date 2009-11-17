@@ -23,6 +23,7 @@ package org.xbmc.android.backend.httpapi;
 
 import java.util.ArrayList;
 
+import org.xbmc.httpapi.data.Actor;
 import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.type.SortType;
 
@@ -46,6 +47,19 @@ public class VideoWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				handler.value = video(handler).getMovies(getSortBy(SortType.TITLE), getSortOrder());
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Gets all actors from database
+	 * @param handler Callback handler
+	 */
+	public void getActors(final HttpApiHandler<ArrayList<Actor>> handler) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = video(handler).getActors();
 				done(handler);
 			}
 		});

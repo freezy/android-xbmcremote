@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.client.ControlClient.PlayStatus;
+import org.xbmc.httpapi.data.Actor;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.type.MediaType;
@@ -65,6 +66,17 @@ public class VideoClient {
 	}
 	
 	/**
+	 * Gets all actors from database
+	 * @return All albums
+	 */
+	public ArrayList<Actor> getActors() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT idActor, strActor FROM actors");
+		sb.append(" ORDER BY upper(strActor), strActor");
+		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString()));
+	}
+	
+	/**
 	 * Returns album thumbnail as base64-encoded string
 	 * @param album
 	 * @return Base64-encoded content of thumb
@@ -74,8 +86,13 @@ public class VideoClient {
 		if (data.length() > 0) {
 			return data;
 		} else {
-			Log.i("VideoClient", "*** Downloaded cover has size null, retrying with fallback:");
-			return mConnection.query("FileDownload", Movie.getFallbackThumbUri(art));
+			final String url = Movie.getFallbackThumbUri(art);
+			if (url != null) {
+				Log.i("VideoClient", "*** Downloaded cover has size null, retrying with fallback:");
+				return mConnection.query("FileDownload", url);
+			} else {
+				return "";
+			}
 		}
 	}
 
@@ -119,6 +136,33 @@ public class VideoClient {
 		return movies;
 	}
 	
+	/**
+	 * Converts query response from HTTP API to a list of Actor objects. Each
+	 * row must return the following columns in the following order:
+	 * <ol>
+	 * 	<li><code>idActor</code></li>
+	 * 	<li><code>strActor</code></li>
+	 * </ol>
+	 * @param response
+	 * @return List of Actors
+	 */
+	private ArrayList<Actor> parseActors(String response) {
+		ArrayList<Actor> actors = new ArrayList<Actor>();
+		String[] fields = response.split("<field>");
+		try { 
+			for (int row = 1; row < fields.length; row += 2) { 
+				actors.add(new Actor(
+						Connection.trimInt(fields[row]), 
+						Connection.trim(fields[row + 1])
+				));
+			}
+		} catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
+		}
+		return actors;		
+	}
 	
 	/**
 	 * Returns an SQL String of given sort options of movies query

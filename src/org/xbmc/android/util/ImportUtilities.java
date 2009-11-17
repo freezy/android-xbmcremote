@@ -32,7 +32,7 @@ public abstract class ImportUtilities {
 	
 	private static final String TAG = "ImportUtilities";
     private static final String CACHE_DIRECTORY = "xbmc";
-    private static final double POSTER_AR = 1.8766756032171581769436997319035;
+    private static final double POSTER_AR = 1.4799154334038054968287526427061;
 
     public static File getCacheDirectory(String type, int size) {
         return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + ThumbSize.getDir(size));
@@ -76,7 +76,7 @@ public abstract class ImportUtilities {
     						width = ThumbSize.getPixel(currentThumbSize);
     						final int ph = (int)(POSTER_AR * width);
     						height = (int)(width / ar); 
-    						if (height < ph) {
+    						if (height < ph) { 
     							height = ph;
     							width = (int)(height * ar);
     						}

@@ -90,8 +90,13 @@ public class Album implements ICoverArt, Serializable, NamedResource {
 	}
 	
 	public static String getFallbackThumbUri(ICoverArt cover) {
-		final String hex = Crc32.formatAsHexLowerCase(cover.getFallbackCrc());
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+		final int crc = cover.getFallbackCrc();
+		if (crc != 0) {
+			final String hex = Crc32.formatAsHexLowerCase(crc);
+			return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+		} else {
+			return null;
+		}
 	}
 	
 	/**
