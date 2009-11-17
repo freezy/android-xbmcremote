@@ -25,4 +25,13 @@
     </style>
     <style name="SlidingTabScrollView">
     </style>
+    
+    <style name="details_label">
+    	<item name="android:textSize">10dip</item>
+    	<item name="android:textColor">#aaffffff</item>
+    </style>
+    <style name="details_value">
+    	<item name="android:paddingBottom">7dip</item>
+    	<item name="android:textColor">#ffffffff</item>
+    </style>
 </resources>

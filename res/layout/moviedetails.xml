@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent"
+	android:orientation="vertical" >
+	<include layout="@layout/titlebar" />
+	<ScrollView 
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:scrollbars="none">
+		<LinearLayout 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:orientation="vertical" >
+			<ImageView 
+				android:id="@+id/moviedetails_poster" 
+				android:layout_width="300dip"
+				android:layout_height="wrap_content"
+				android:scaleType="centerInside"
+				android:padding="0dip" />
+			<LinearLayout
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:padding="20dip">
+				<!-- DIRECTOR -->
+				<TextView android:text="DIRECTED BY" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/moviedetails_director" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- GENRE -->
+				<TextView android:text="GENRE" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/moviedetails_genre" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- RUNTIME -->
+				<TextView android:text="RUNTIME" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/moviedetails_runtime" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- RATING -->
+				<TextView android:text="RATING" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/moviedetails_rating" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- STUDIO -->
+				<TextView android:text="STUDIO" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/moviedetails_studio" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				
+			</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

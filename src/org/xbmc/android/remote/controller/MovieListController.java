@@ -28,11 +28,10 @@ import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.backend.httpapi.MusicWrapper;
 import org.xbmc.android.backend.httpapi.Wrapper;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.activity.ListActivity;
+import org.xbmc.android.remote.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.controller.holder.MovieHolder;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.httpapi.data.Actor;
-import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.Movie;
@@ -105,14 +104,13 @@ public class MovieListController extends ListController {
 				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
-					MovieHolder<Album> holder = (MovieHolder<Album>)view.getTag();
-					nextActivity = new Intent(view.getContext(), ListActivity.class);
-					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new SongListController());
-					nextActivity.putExtra(ListController.EXTRA_ALBUM, holder.holderItem);
+					MovieHolder<Movie> holder = (MovieHolder<Movie>)view.getTag();
+					nextActivity = new Intent(view.getContext(), MovieDetailsActivity.class);
+					nextActivity.putExtra(ListController.EXTRA_MOVIE, holder.holderItem);
 					mActivity.startActivity(nextActivity);
 				}
 			});
-			mList.setOnKeyListener(new ListLogicOnKeyListener<Album>());
+			mList.setOnKeyListener(new ListLogicOnKeyListener<Movie>());
 			fetch();
 		}
 	}
@@ -173,7 +171,7 @@ public class MovieListController extends ListController {
 		menu.add(0, ITEM_CONTEXT_INFO, 2, "View Details");
 	}
 	
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	public void onContextItemSelected(MenuItem item) {
 /*		final MovieHolder<Movie> holder = (MovieHolder<Movie>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		final Movie album = holder.holderItem;
