@@ -38,14 +38,25 @@ import org.xbmc.android.util.WakeOnLan;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.BroadcastListener;
+import org.xbmc.httpapi.client.VideoClient;
+import org.xbmc.httpapi.data.ICoverArt;
+import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.info.SystemInfo;
 import org.xbmc.httpapi.type.MediaType;
+import org.xbmc.httpapi.type.SortType;
+import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -59,6 +70,7 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class HomeActivity extends Activity implements OnItemClickListener, Observer {
@@ -74,6 +86,14 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 	private static final int MENU_ABOUT = 1;
 	private static final int MENU_SETTINGS = 2;
 	private static final int MENU_EXIT = 3;
+	private static final int MENU_COVER_DOWNLOAD = 4;
+	
+	private static final int DIALOG_MOVIE_POSTERS = 1;
+	
+//	private static final String TAG = "HomeActivity";
+	
+	private ProgressThread mProgressThread;
+    private ProgressDialog mProgressDialog;
 	
 	private HomeAdapter mHomeMenu;
 	private HomeAdapter mOfflineMenu;
@@ -128,6 +148,8 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 			}
 		};
 		
+//		ImportUtilities.purgeCache();
+		
         final HomeItem remote = new HomeItem(HOME_ACTION_REMOTE, R.drawable.icon_remote, "Remote Control", "Use as");
         
 		homeItems.add(remote);
@@ -158,6 +180,7 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_ABOUT, 0, "About").setIcon(R.drawable.menu_about);
 		menu.add(0, MENU_SETTINGS, 0, "Settings").setIcon(R.drawable.menu_settings);
+		menu.add(0, MENU_COVER_DOWNLOAD, 0, "Download Covers").setIcon(R.drawable.menu_download);
 		menu.add(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
 		return true;
 	}
@@ -175,8 +198,26 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 			NowPlayingNotificationManager.getInstance(getBaseContext()).removeNotification();
 			System.exit(0);
 			return true;
+		case MENU_COVER_DOWNLOAD:
+			showDialog(DIALOG_MOVIE_POSTERS);
+			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+			case DIALOG_MOVIE_POSTERS:
+				mProgressDialog = new ProgressDialog(HomeActivity.this);
+				mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				mProgressDialog.setMessage("Downloading movie posters...");
+				mProgressThread  = new ProgressThread(mHandler);
+				mProgressThread.start();
+	            return mProgressDialog;
+			default:
+				return null;
+		}
 	}
 
 	@Override
@@ -303,6 +344,92 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 		}
 	}
 	
+
+	final Handler mHandler = new Handler() {
+		public void handleMessage(Message msg) {
+			int total = msg.getData().getInt("total");
+			int position = msg.getData().getInt("pos");
+			mProgressDialog.setProgress(100 * position / total);
+			if (position < total) {
+				final ICoverArt cover = (ICoverArt)msg.getData().getSerializable("cover"); 
+//				Log.i(TAG, "New download message received for position " + position + ": " + cover.getName());
+				HttpApiThread.video().getCover(new HttpApiHandler<Bitmap>(HomeActivity.this) {
+					public void run() {
+//						Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
+						mProgressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
+					}
+				}, cover, ThumbSize.BIG);
+			} else {
+				dismissDialog(DIALOG_MOVIE_POSTERS);
+				mProgressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);
+				Toast toast = Toast.makeText(HomeActivity.this, total + " posters downloaded.", Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		}
+	};
+
+
+	private class ProgressThread extends Thread {
+		
+		private Handler mHandlerOut;
+		private Handler mHandlerIn;
+		private int mTotal;
+		private int mPosition;
+		
+		public final static int MSG_NEXT = 0;
+		public final static int MSG_QUIT = 1;
+		
+
+		ProgressThread(Handler h) {
+			super("Cover download progress Thread");
+			mHandlerOut = h;
+		}
+		
+		public Handler getHandlerIn() {
+			return mHandlerIn;
+		}
+		
+		public void run() {
+//			Log.i(TAG, "[ProgressThread] Starting progress thread.");
+			final VideoClient vc = ConnectionManager.getHttpClient(HomeActivity.this).video;
+			final ArrayList<Movie> movies = vc.getMovies(SortType.DONT_SORT, SortType.ORDER_ASC);
+			mTotal = movies.size();
+			mPosition = 0;
+			boolean started = false;
+
+			Looper.prepare();
+			mHandlerIn = new Handler() {
+				public void handleMessage(Message msgIn) {
+					switch (msgIn.what) {
+						case MSG_NEXT:
+//							Log.i(TAG, "[ProgressThread] New message received, posting back new cover.");
+							Message msgOut = mHandlerOut.obtainMessage();
+							Bundle b = new Bundle();
+							b.putInt("total", mTotal);
+							b.putInt("pos", mPosition);
+							if (mPosition < mTotal) {
+								b.putSerializable("cover", movies.get(mPosition));
+							}
+							mHandlerOut.sendMessage(msgOut);
+							msgOut.setData(b);
+							mPosition++;
+						break;
+						case MSG_QUIT:
+//							Log.i(TAG, "[ProgressThread] Exiting.");
+							Looper.myLooper().quit();
+							break;
+					}
+				}
+			};
+			if (!started) {
+//				Log.i(TAG, "[ProgressThread] Not started, kicking on....");
+				started = true;
+				mHandlerIn.sendEmptyMessage(MSG_NEXT);
+			}
+			Looper.loop();
+		}
+	}
+
 	public class WoLCounter extends CountDownTimer {
 		private TextView textCount;
 		

@@ -42,7 +42,7 @@ import android.util.Log;
 public abstract class Wrapper {
 	
 	protected static final String TAG = "Wrapper";
-	protected static final Boolean DEBUG = true;
+	protected static final Boolean DEBUG = false;
 	
 	public static final String PREF_SORT_BY_PREFIX = "sort_by_";
 	public static final String PREF_SORT_ORDER_PREFIX = "sort_order_";
