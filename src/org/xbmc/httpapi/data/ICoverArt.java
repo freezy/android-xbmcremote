@@ -21,7 +21,9 @@
 
 package org.xbmc.httpapi.data;
 
-public interface ICoverArt {
+import java.io.Serializable;
+
+public interface ICoverArt extends Serializable {
 	public int getId();
 	public int getMediaType();
 	public int getFallbackCrc();

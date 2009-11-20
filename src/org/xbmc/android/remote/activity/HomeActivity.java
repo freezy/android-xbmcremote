@@ -38,7 +38,9 @@ import org.xbmc.android.util.WakeOnLan;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.BroadcastListener;
+import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.VideoClient;
+import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.info.SystemInfo;
@@ -63,6 +65,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -87,8 +90,11 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 	private static final int MENU_SETTINGS = 2;
 	private static final int MENU_EXIT = 3;
 	private static final int MENU_COVER_DOWNLOAD = 4;
+	private static final int MENU_COVER_DOWNLOAD_MUSIC = 41;
+	private static final int MENU_COVER_DOWNLOAD_MOVIES = 42;
 	
 	private static final int DIALOG_MOVIE_POSTERS = 1;
+	private static final int DIALOG_MUSIC_COVERS = 2;
 	
 //	private static final String TAG = "HomeActivity";
 	
@@ -178,10 +184,15 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		
 		menu.add(0, MENU_ABOUT, 0, "About").setIcon(R.drawable.menu_about);
 		menu.add(0, MENU_SETTINGS, 0, "Settings").setIcon(R.drawable.menu_settings);
-		menu.add(0, MENU_COVER_DOWNLOAD, 0, "Download Covers").setIcon(R.drawable.menu_download);
+		SubMenu downloadMenu = menu.addSubMenu(0, MENU_COVER_DOWNLOAD, 0, "Download Covers").setIcon(R.drawable.menu_download);
 		menu.add(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
+		
+		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MOVIES, 0, "Movie Posters");
+		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MUSIC, 0, "Album Covers");
+		
 		return true;
 	}
 
@@ -198,8 +209,11 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 			NowPlayingNotificationManager.getInstance(getBaseContext()).removeNotification();
 			System.exit(0);
 			return true;
-		case MENU_COVER_DOWNLOAD:
+		case MENU_COVER_DOWNLOAD_MOVIES:
 			showDialog(DIALOG_MOVIE_POSTERS);
+			return true;
+		case MENU_COVER_DOWNLOAD_MUSIC:
+			showDialog(DIALOG_MUSIC_COVERS);
 			return true;
 		}
 		return false;
@@ -212,9 +226,16 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 				mProgressDialog = new ProgressDialog(HomeActivity.this);
 				mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 				mProgressDialog.setMessage("Downloading movie posters...");
-				mProgressThread  = new ProgressThread(mHandler);
+				mProgressThread = new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MOVIES);
 				mProgressThread.start();
 	            return mProgressDialog;
+			case DIALOG_MUSIC_COVERS:
+				mProgressDialog = new ProgressDialog(HomeActivity.this);
+				mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				mProgressDialog.setMessage("Downloading album covers...");
+				mProgressThread = new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MUSIC);
+				mProgressThread.start();
+				return mProgressDialog;
 			default:
 				return null;
 		}
@@ -379,21 +400,38 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 		public final static int MSG_NEXT = 0;
 		public final static int MSG_QUIT = 1;
 		
+		private final int mType;
+		
 
-		ProgressThread(Handler h) {
+		ProgressThread(Handler h, int type) {
 			super("Cover download progress Thread");
 			mHandlerOut = h;
+			mType = type;
 		}
 		
 		public Handler getHandlerIn() {
 			return mHandlerIn;
 		}
 		
+		private ArrayList<ICoverArt> getCovers() {
+			switch (mType) {
+				case MENU_COVER_DOWNLOAD_MOVIES:
+					final VideoClient vc = ConnectionManager.getHttpClient(HomeActivity.this).video;
+					final ArrayList<Movie> movies = vc.getMovies(SortType.DONT_SORT, SortType.ORDER_ASC);
+					return new ArrayList<ICoverArt>(movies);
+				case MENU_COVER_DOWNLOAD_MUSIC:
+					final MusicClient mc = ConnectionManager.getHttpClient(HomeActivity.this).music;
+					final ArrayList<Album> albums = mc.getAlbums(SortType.DONT_SORT, SortType.ORDER_ASC);
+					return new ArrayList<ICoverArt>(albums);
+				default:
+					return null;
+			}
+		}
+		
 		public void run() {
 //			Log.i(TAG, "[ProgressThread] Starting progress thread.");
-			final VideoClient vc = ConnectionManager.getHttpClient(HomeActivity.this).video;
-			final ArrayList<Movie> movies = vc.getMovies(SortType.DONT_SORT, SortType.ORDER_ASC);
-			mTotal = movies.size();
+			final ArrayList<ICoverArt> covers = getCovers();
+			mTotal = covers.size();
 			mPosition = 0;
 			boolean started = false;
 
@@ -408,7 +446,7 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 							b.putInt("total", mTotal);
 							b.putInt("pos", mPosition);
 							if (mPosition < mTotal) {
-								b.putSerializable("cover", movies.get(mPosition));
+								b.putSerializable("cover", covers.get(mPosition));
 							}
 							mHandlerOut.sendMessage(msgOut);
 							msgOut.setData(b);
