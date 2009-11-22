@@ -13,7 +13,7 @@
 		android:paddingTop="30dip"
 		android:text="No media found." 
 		android:textSize="18dip"
-		android:drawableLeft="@drawable/icon_album_grey" 
+		android:drawableLeft="@drawable/icon_album_dark" 
 		android:gravity="center_vertical|center_horizontal" 
 		android:drawablePadding="10dip" />
 </LinearLayout>

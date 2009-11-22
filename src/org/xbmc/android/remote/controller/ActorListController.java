@@ -137,7 +137,7 @@ public class ActorListController extends ListController {
 			
 			if (mLoadCovers) {
 				holder.setTemporaryBind(true);
-				holder.iconView.setImageResource(R.drawable.icon_album_grey);
+				holder.iconView.setImageResource(R.drawable.icon_album_dark);
 				HttpApiThread.video().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), actor, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.icon_album);

@@ -13,7 +13,8 @@
 		android:cropToPadding="false" 
 		android:padding="0dip" 
 		android:layout_margin="0dip" 
-		android:src="@drawable/icon_album_grey" 
+		android:background="#000000" 
+		android:src="@drawable/icon_album_dark" 
 		android:scaleType="center"/>
 	<LinearLayout 
 		android:id="@+id/MusicItemLinearLayoutText" 

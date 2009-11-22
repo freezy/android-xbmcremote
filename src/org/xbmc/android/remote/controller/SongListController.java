@@ -143,7 +143,7 @@ public class SongListController extends ListController {
 					if (value.size() > 0) {
 						mList.setAdapter(new SongAdapter(mActivity, value));
 					} else {
-						setNoDataMessage("No songs found", R.drawable.icon_music_dark);
+						setNoDataMessage("No songs found", R.drawable.icon_song_dark);
 					}
 				}
 			}, album);
@@ -157,7 +157,7 @@ public class SongListController extends ListController {
 						mList.setAdapter(new SongAdapter(mActivity, value));
 					} else {
 						setTitle(artist.name + " - Songs");
-						setNoDataMessage("No songs found.", R.drawable.icon_music_dark);
+						setNoDataMessage("No songs found.", R.drawable.icon_song_dark);
 					}
 				}
 			}, artist);
@@ -171,7 +171,7 @@ public class SongListController extends ListController {
 						mList.setAdapter(new SongAdapter(mActivity, value));
 					} else {
 						setTitle(genre.name + " - Songs");
-						setNoDataMessage("No songs found.", R.drawable.icon_music_dark);
+						setNoDataMessage("No songs found.", R.drawable.icon_song_dark);
 					}
 				}
 			}, genre);
@@ -375,7 +375,7 @@ public class SongListController extends ListController {
 			holder.id = song.getId();
 			holder.coverItem = song;
 			if (mLoadCovers) {
-				holder.iconView.setImageResource(R.drawable.icon_music_dark);
+				holder.iconView.setImageResource(R.drawable.icon_song_dark);
 				holder.setTemporaryBind(true);
 				HttpApiThread.music().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), song, ThumbSize.SMALL);
 			} else {

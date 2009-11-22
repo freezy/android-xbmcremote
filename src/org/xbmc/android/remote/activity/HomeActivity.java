@@ -168,7 +168,7 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 
 		final String wolMac = prefs.getString("setting_wol", "");
 		if (wolMac.compareTo("") != 0)
-			offlineItems.add(new HomeItem(HOME_ACTION_WOL, R.drawable.icon_power, "Power On", "Turn your XBMC's"));
+			offlineItems.add(new HomeItem(HOME_ACTION_WOL, R.drawable.icon_home_power, "Power On", "Turn your XBMC's"));
 
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard();

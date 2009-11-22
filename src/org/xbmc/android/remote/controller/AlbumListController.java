@@ -395,7 +395,7 @@ public class AlbumListController extends ListController {
 			
 			if (mLoadCovers) {
 				holder.setTemporaryBind(true);
-				holder.iconView.setImageResource(R.drawable.icon_album_grey);
+				holder.iconView.setImageResource(R.drawable.icon_album_dark);
 				HttpApiThread.music().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.icon_album);

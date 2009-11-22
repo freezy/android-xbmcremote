@@ -126,7 +126,7 @@ public class MusicPlaylistController extends ListController {
 			int newPos = newSong.getPlaylistPosition();
 			OneHolder<PlaylistItem> holder = adapter.getHolderAtPosition(currentPos);
 			if (currentPos >= 0 && holder != null) {
-				holder.iconView.setImageResource(R.drawable.icon_music_light);
+				holder.iconView.setImageResource(R.drawable.icon_song_light);
 			} else {
 				Log.i(TAG, "NOT resetting previous icon at position " + currentPos);
 			}
@@ -205,7 +205,7 @@ public class MusicPlaylistController extends ListController {
 			}
 			mItemPositions.put(item.position, holder);
 			
-			holder.iconView.setImageResource(item.position == mCurrentPosition ? R.drawable.icon_play : R.drawable.icon_music_light);
+			holder.iconView.setImageResource(item.position == mCurrentPosition ? R.drawable.icon_play : R.drawable.icon_song_light);
 			holder.holderItem = item;
 			holder.id = item.position;
 			holder.titleView.setText(item.filename);
