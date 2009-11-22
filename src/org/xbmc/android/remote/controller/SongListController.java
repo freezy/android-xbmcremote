@@ -101,7 +101,7 @@ public class SongListController extends ListController {
 			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(EXTRA_GENRE);
 			mActivity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_music);
+			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_song);
 			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
@@ -379,7 +379,7 @@ public class SongListController extends ListController {
 				holder.setTemporaryBind(true);
 				HttpApiThread.music().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), song, ThumbSize.SMALL);
 			} else {
-				holder.iconView.setImageResource(R.drawable.icon_music);
+				holder.iconView.setImageResource(R.drawable.icon_song);
 			}
 			return row;
 		}

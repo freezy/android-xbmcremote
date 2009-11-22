@@ -70,7 +70,7 @@ public class MusicPlaylistController extends ListController {
 			
 			activity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_music);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_song);
 			setupIdleListener();
 			
 			HttpApiThread.music().getPlaylistPosition(new HttpApiHandler<Integer>(activity) {

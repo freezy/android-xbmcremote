@@ -154,17 +154,17 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 		
 //		ImportUtilities.purgeCache();
 		
-        final HomeItem remote = new HomeItem(HOME_ACTION_REMOTE, R.drawable.icon_remote, "Remote Control", "Use as");
+        final HomeItem remote = new HomeItem(HOME_ACTION_REMOTE, R.drawable.icon_home_remote, "Remote Control", "Use as");
         
 		homeItems.add(remote);
 		offlineItems.add(remote);
 		
-		homeItems.add(new HomeItem(HOME_ACTION_MUSIC, R.drawable.icon_music, "Music", "Listen to"));
-		homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.icon_movie, "Movies", "Watch your"));
-		homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.icon_pictures, "Pictures", "Browse your"));
+		homeItems.add(new HomeItem(HOME_ACTION_MUSIC, R.drawable.icon_home_music, "Music", "Listen to"));
+		homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.icon_home_movie, "Movies", "Watch your"));
+		homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.icon_home_picture, "Pictures", "Browse your"));
 		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.icon_playing, "Now Playing", "See what's"));
 		
-		offlineItems.add(new HomeItem(HOME_ACTION_RECONNECT, R.drawable.icon_reconnect, "Connect", "Try again to"));
+		offlineItems.add(new HomeItem(HOME_ACTION_RECONNECT, R.drawable.icon_home_reconnect, "Connect", "Try again to"));
 
 		final String wolMac = prefs.getString("setting_wol", "");
 		if (wolMac.compareTo("") != 0)
