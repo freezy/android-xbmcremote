@@ -44,6 +44,7 @@ public class ConfigurationManager implements OnSharedPreferenceChangeListener {
 
 	private boolean mKeyguardDisabled = false;
 	private boolean mKeyguardFromRemote = false;
+	
 	private KeyguardManager.KeyguardLock mKeyguardLock = null;
 
 	private ConfigurationManager(Activity activity) {
@@ -62,6 +63,19 @@ public class ConfigurationManager implements OnSharedPreferenceChangeListener {
 	public void initKeyguard() {
 		initKeyguard(false);
 	}
+	
+	public void disableKeyguard(Activity activity) {
+		KeyguardManager keyguardManager = (KeyguardManager) activity.getSystemService(Activity.KEYGUARD_SERVICE);
+		mKeyguardLock = keyguardManager.newKeyguardLock(KEYGUARD_TAG);
+		mKeyguardLock.disableKeyguard();
+	}
+	
+	public void enableKeyguard() {
+		if (mKeyguardLock != null) {
+			mKeyguardLock.reenableKeyguard();
+		}
+		mKeyguardLock = null;
+	}
 
 	public void initKeyguard(boolean fromRemoteControl) {
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
@@ -73,20 +87,11 @@ public class ConfigurationManager implements OnSharedPreferenceChangeListener {
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		if (key.equals(PREF_KEYGUARD_DISABLED)) {
 			boolean disableKeyguardState = isKeyguardDisabled(prefs);
-			if (disableKeyguardState != mKeyguardDisabled) {
+			if (disableKeyguardState != mKeyguardDisabled && mActivity.hasWindowFocus()) {
 				if (disableKeyguardState) {
-					if (mActivity.hasWindowFocus()) {
-						KeyguardManager keyguardManager = (KeyguardManager) mActivity.getSystemService(Activity.KEYGUARD_SERVICE);
-						mKeyguardLock = keyguardManager.newKeyguardLock(KEYGUARD_TAG);
-						mKeyguardLock.disableKeyguard();
-					}
+					disableKeyguard(mActivity);
 				} else {
-					if (mActivity.hasWindowFocus()) {
-						if (mKeyguardLock != null) {
-							mKeyguardLock.reenableKeyguard();
-						}
-						mKeyguardLock = null;
-					}
+					enableKeyguard();
 				}
 				mKeyguardDisabled = disableKeyguardState;
 			}
@@ -95,9 +100,7 @@ public class ConfigurationManager implements OnSharedPreferenceChangeListener {
 	
 	public void onActivityResume(Activity activity) {
 		if (mKeyguardDisabled) {
-			KeyguardManager keyguardManager = (KeyguardManager) activity.getSystemService(Activity.KEYGUARD_SERVICE);
-			mKeyguardLock = keyguardManager.newKeyguardLock(KEYGUARD_TAG);
-			mKeyguardLock.disableKeyguard();
+			disableKeyguard(activity);
 		}
 		activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		mActivity = activity;

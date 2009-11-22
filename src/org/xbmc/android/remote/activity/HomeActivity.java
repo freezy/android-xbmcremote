@@ -93,10 +93,8 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 	private static final int MENU_COVER_DOWNLOAD_MUSIC = 41;
 	private static final int MENU_COVER_DOWNLOAD_MOVIES = 42;
 	
-	private static final int DIALOG_MOVIE_POSTERS = 1;
-	private static final int DIALOG_MUSIC_COVERS = 2;
 	
-//	private static final String TAG = "HomeActivity";
+	private static final String TAG = "HomeActivity";
 	
 	private ProgressThread mProgressThread;
     private ProgressDialog mProgressDialog;
@@ -210,10 +208,8 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 			System.exit(0);
 			return true;
 		case MENU_COVER_DOWNLOAD_MOVIES:
-			showDialog(DIALOG_MOVIE_POSTERS);
-			return true;
 		case MENU_COVER_DOWNLOAD_MUSIC:
-			showDialog(DIALOG_MUSIC_COVERS);
+			showDialog(item.getItemId());
 			return true;
 		}
 		return false;
@@ -221,24 +217,22 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 	
 	@Override
 	protected Dialog onCreateDialog(int id) {
+		mProgressDialog = new ProgressDialog(HomeActivity.this);
+		mProgressDialog.setCancelable(false);
+		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		switch (id) {
-			case DIALOG_MOVIE_POSTERS:
-				mProgressDialog = new ProgressDialog(HomeActivity.this);
-				mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			case MENU_COVER_DOWNLOAD_MOVIES:
 				mProgressDialog.setMessage("Downloading movie posters...");
 				mProgressThread = new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MOVIES);
-				mProgressThread.start();
-	            return mProgressDialog;
-			case DIALOG_MUSIC_COVERS:
-				mProgressDialog = new ProgressDialog(HomeActivity.this);
-				mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+	            break;
+			case MENU_COVER_DOWNLOAD_MUSIC:
 				mProgressDialog.setMessage("Downloading album covers...");
 				mProgressThread = new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MUSIC);
-				mProgressThread.start();
-				return mProgressDialog;
 			default:
 				return null;
 		}
+		mProgressThread.start();
+		return mProgressDialog;
 	}
 
 	@Override
@@ -368,22 +362,29 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 
 	final Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
-			int total = msg.getData().getInt("total");
-			int position = msg.getData().getInt("pos");
-			mProgressDialog.setProgress(100 * position / total);
-			if (position < total) {
-				final ICoverArt cover = (ICoverArt)msg.getData().getSerializable("cover"); 
-//				Log.i(TAG, "New download message received for position " + position + ": " + cover.getName());
-				HttpApiThread.video().getCover(new HttpApiHandler<Bitmap>(HomeActivity.this) {
-					public void run() {
-//						Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
-						mProgressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
-					}
-				}, cover, ThumbSize.BIG);
+			int total = msg.getData().getInt(ProgressThread.DATA_TOTAL);
+			int position = msg.getData().getInt(ProgressThread.DATA_POSITION);
+			int type = msg.getData().getInt(ProgressThread.DATA_TYPE);
+			if (total > 0) {
+				mProgressDialog.setProgress(100 * position / total);
+				if (position < total) {
+					final ICoverArt cover = (ICoverArt)msg.getData().getSerializable(ProgressThread.DATA_COVER); 
+					Log.i(TAG, "New download message received for position " + position + ": " + cover.getName());
+					HttpApiThread.video().getCover(new HttpApiHandler<Bitmap>(HomeActivity.this) {
+						public void run() {
+							Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
+							mProgressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
+						}
+					}, cover, ThumbSize.BIG);
+				} else {
+					dismissDialog(type);
+					mProgressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);
+					Toast toast = Toast.makeText(HomeActivity.this, total + " posters downloaded.", Toast.LENGTH_SHORT);
+					toast.show();
+				}
 			} else {
-				dismissDialog(DIALOG_MOVIE_POSTERS);
-				mProgressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);
-				Toast toast = Toast.makeText(HomeActivity.this, total + " posters downloaded.", Toast.LENGTH_SHORT);
+				dismissDialog(type);
+				Toast toast = Toast.makeText(HomeActivity.this, "No posters downloaded, libary empty?", Toast.LENGTH_LONG);
 				toast.show();
 			}
 		}
@@ -400,9 +401,13 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 		public final static int MSG_NEXT = 0;
 		public final static int MSG_QUIT = 1;
 		
+		public final static String DATA_TYPE = "type";
+		public final static String DATA_TOTAL = "total";
+		public final static String DATA_POSITION = "pos";
+		public final static String DATA_COVER = "cover";
+		
 		private final int mType;
 		
-
 		ProgressThread(Handler h, int type) {
 			super("Cover download progress Thread");
 			mHandlerOut = h;
@@ -433,6 +438,7 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 			final ArrayList<ICoverArt> covers = getCovers();
 			mTotal = covers.size();
 			mPosition = 0;
+			mConfigurationManager.disableKeyguard(HomeActivity.this);
 			boolean started = false;
 
 			Looper.prepare();
@@ -443,13 +449,14 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 //							Log.i(TAG, "[ProgressThread] New message received, posting back new cover.");
 							Message msgOut = mHandlerOut.obtainMessage();
 							Bundle b = new Bundle();
-							b.putInt("total", mTotal);
-							b.putInt("pos", mPosition);
+							b.putInt(DATA_TOTAL, mTotal);
+							b.putInt(DATA_POSITION, mPosition);
+							b.putInt(DATA_TYPE, mType);
 							if (mPosition < mTotal) {
-								b.putSerializable("cover", covers.get(mPosition));
+								b.putSerializable(DATA_COVER, covers.get(mPosition));
 							}
-							mHandlerOut.sendMessage(msgOut);
 							msgOut.setData(b);
+							mHandlerOut.sendMessage(msgOut);
 							mPosition++;
 						break;
 						case MSG_QUIT:
@@ -460,11 +467,17 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 				}
 			};
 			if (!started) {
-//				Log.i(TAG, "[ProgressThread] Not started, kicking on....");
 				started = true;
-				mHandlerIn.sendEmptyMessage(MSG_NEXT);
+				Message msgStart = mHandlerOut.obtainMessage();
+				Bundle b = new Bundle();
+				b.putInt(DATA_TYPE, mType);
+				msgStart.what = MSG_NEXT;
+				msgStart.setData(b);
+				mHandlerIn.sendMessage(msgStart);
+//				Log.i(TAG, "[ProgressThread] Not started, kicking on....");
 			}
 			Looper.loop();
+			mConfigurationManager.enableKeyguard();
 		}
 	}
 
