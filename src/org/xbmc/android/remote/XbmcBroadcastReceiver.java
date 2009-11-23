@@ -42,6 +42,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Contacts;
 
 public class XbmcBroadcastReceiver extends BroadcastReceiver {
@@ -65,12 +66,12 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 		String action = intent.getAction();
 		EventClient client = ConnectionManager.getEventClient(context);
 		HttpClient http = ConnectionManager.getHttpClient(context);
-		SharedPreferences prefs = context.getSharedPreferences("XBMCRemotePrefsFile", Context.MODE_WORLD_WRITEABLE);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		// currently no new connection to the event server is opened
 		if(client != null) {
 			try {
 				if(action.equals(android.telephony.TelephonyManager.ACTION_PHONE_STATE_CHANGED)
-						&& prefs.getBoolean("settings_show_call", true)) {
+						&& prefs.getBoolean("setting_show_call", false)) {
 					String extra = intent.getStringExtra(android.telephony.TelephonyManager.EXTRA_STATE);
 					if(extra.equals(android.telephony.TelephonyManager.EXTRA_STATE_RINGING)) {
 						// someone is calling, we get all infos and pause the playback
@@ -117,7 +118,7 @@ public class XbmcBroadcastReceiver extends BroadcastReceiver {
 	            	   }
 	            	   PLAY_STATE = PLAY_STATE_NONE;
 	               }
-				}else if(action.equals(SMS_RECVEICED_ACTION) && prefs.getBoolean("setting_show_sms", true)) {
+				}else if(action.equals(SMS_RECVEICED_ACTION) && prefs.getBoolean("setting_show_sms", false)) {
 					if (client != null) {
 					// sms received. extract msg, contact and pic and show it on the tv
 						Bundle bundle = intent.getExtras();
