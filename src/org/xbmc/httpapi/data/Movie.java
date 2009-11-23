@@ -22,6 +22,7 @@
 package org.xbmc.httpapi.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import org.xbmc.android.util.Crc32;
 import org.xbmc.httpapi.type.MediaType;
@@ -167,6 +168,39 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 	 * Rating
 	 */
 	public double rating = 0.0;
+	
+	/**
+	 * URL to the trailer, if available.
+	 */
+	public String trailerUrl = null;
+	/**
+	 * Movie plot
+	 */
+	public String plot = null;
+	/**
+	 * Movie's tagline 
+	 */
+	public String tagline = null;
+	/**
+	 * Number of votes, -1 if not set.
+	 */
+	public int numVotes = -1;
+	/**
+	 * Parental Rating with description (e.g.: "Rated R for strong violence, sexuality, drug use and language.")
+	 */
+	public String rated = null;
+	/**
+	 * Studio
+	 */
+	public String studio = null;
+	
+	/**
+	 * List of actors; 
+	 */
+	public ArrayList<Actor> actors = null;
+	
+	
+	
 	/**
 	 * Save this once it's calculated
 	 */

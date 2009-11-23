@@ -32,6 +32,7 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
+import org.xbmc.httpapi.data.Actor;
 import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.type.ThumbSize;
 
@@ -39,19 +40,28 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MovieDetailsActivity extends Activity {
 	
+	private static final String NO_DATA = "-";
+	
     private ConfigurationManager mConfigurationManager;
+    
+    private static final int[] sStarImages = { R.drawable.stars_0, R.drawable.stars_1, R.drawable.stars_2, R.drawable.stars_3, R.drawable.stars_4, R.drawable.stars_5, R.drawable.stars_6, R.drawable.stars_7, R.drawable.stars_8, R.drawable.stars_9, R.drawable.stars_10 };
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.moviedetails);
 		ErrorHandler.setActivity(this);
+		
+		
 		
 		// remove nasty top fading edge
 		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
@@ -61,6 +71,7 @@ public class MovieDetailsActivity extends Activity {
 		((TextView)findViewById(R.id.titlebar_text)).setText(movie.getName());
 		
 		final ImageView posterView = ((ImageView)findViewById(R.id.moviedetails_poster));
+		((ImageView)findViewById(R.id.moviedetails_rating_stars)).setImageResource(sStarImages[(int)Math.round(movie.rating % 10)]);
 		((TextView)findViewById(R.id.moviedetails_director)).setText(movie.director);
 		((TextView)findViewById(R.id.moviedetails_genre)).setText(movie.genres);
 		((TextView)findViewById(R.id.moviedetails_runtime)).setText(movie.runtime);
@@ -79,6 +90,38 @@ public class MovieDetailsActivity extends Activity {
 				}
 			}
 		}, movie, ThumbSize.BIG);
+		
+		HttpApiThread.video().updateMovieDetails(new HttpApiHandler<Movie>(this) {
+			public void run() {
+				final Movie movie = value;
+				((TextView)findViewById(R.id.moviedetails_rating_numvotes)).setText(movie.numVotes > 0 ? " (" + movie.numVotes + " votes)" : "");
+				((TextView)findViewById(R.id.moviedetails_studio)).setText(movie.studio.equals("") ? NO_DATA : movie.studio);
+				((TextView)findViewById(R.id.moviedetails_plot)).setText(movie.plot.equals("") ? NO_DATA : movie.plot);
+				((TextView)findViewById(R.id.moviedetails_parental)).setText(movie.rated.equals("") ? NO_DATA : movie.rated);
+				if (movie.actors != null) {
+					final LinearLayout dataLayout = ((LinearLayout)findViewById(R.id.moviedetails_datalayout));
+					final LayoutInflater inflater = getLayoutInflater();
+					int n = 0;
+					for (Actor actor : movie.actors) {
+						final View view = inflater.inflate(R.layout.actor_item, null);
+						
+						((TextView)view.findViewById(R.id.actor_name)).setText(actor.name);
+						((TextView)view.findViewById(R.id.actor_role)).setText("as " + actor.role);
+						HttpApiThread.video().getCover(new HttpApiHandler<Bitmap>(MovieDetailsActivity.this) {
+							public void run() {
+								if (value != null) {
+									((ImageView)view.findViewById(R.id.actor_image)).setImageBitmap(value);
+								}
+							}
+						}, actor, ThumbSize.SMALL);
+						
+					
+						dataLayout.addView(view);
+						n++;
+					}
+				}
+			}
+		}, movie);
 	}
 
 	@Override

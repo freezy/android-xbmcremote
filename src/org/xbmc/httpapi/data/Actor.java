@@ -37,6 +37,11 @@ public class Actor extends Artist {
 		super(id, name);
 	}
 	
+	public Actor(int id, String name, String role) {
+		super(id, name);
+		this.role = role;
+	}
+	
 	/**
 	 * Composes the complete path to the artist's thumbnail
 	 * @return Path to thumbnail
@@ -65,6 +70,8 @@ public class Actor extends Artist {
 		}
 		return thumbID;
 	}
+	
+	public String role = null;
 
 	private static final long serialVersionUID = -7026393902334967838L;
 }

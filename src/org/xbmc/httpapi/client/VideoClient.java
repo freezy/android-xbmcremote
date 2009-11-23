@@ -65,6 +65,30 @@ public class VideoClient {
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString()));
 	}
 	
+	
+	
+	/**
+	 * Gets all movies from database
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @return All albums
+	 */
+	public Movie updateMovieDetails(Movie movie) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT c03, c01, c04, c18, c12, c19");
+		sb.append(" FROM movieview WHERE movieview.idmovie = ");
+		sb.append(movie.getId());
+		parseMovieDetails(mConnection.query("QueryVideoDatabase", sb.toString()), movie);
+		sb = new StringBuilder();
+		sb.append("SELECT actors.idActor, strActor, strRole");
+		sb.append(" FROM actors, actorlinkmovie");
+		sb.append(" WHERE actors.idActor = actorlinkmovie.idActor");
+		sb.append(" AND actorlinkmovie.idMovie =");
+		sb.append(movie.getId());
+		movie.actors = parseActorRoles(mConnection.query("QueryVideoDatabase", sb.toString()));
+		return movie;
+	}
+	
 	/**
 	 * Gets all actors from database
 	 * @return All albums
@@ -97,7 +121,7 @@ public class VideoClient {
 	}
 
 	/**
-	 * Converts query response from HTTP API to a list of Album objects. Each
+	 * Converts query response from HTTP API to a list of Movie objects. Each
 	 * row must return the following attributes in the following order:
 	 * <ol>
 	 * 	<li><code>idMovie</code></li>
@@ -137,6 +161,38 @@ public class VideoClient {
 	}
 	
 	/**
+	 * Updates a movie object with some more details. Fields must be the following (in this order):
+	 * <ol>
+	 * 	<li><code>c03</code></li> (tagline)
+	 * 	<li><code>c01</code></li> (plot)
+	 * 	<li><code>c04</code></li> (number of votes)
+	 * 	<li><code>c18</code></li> (studio)
+	 * 	<li><code>c12</code></li> (parental rating)
+	 * 	<li><code>c19</code></li> (trailer)
+	 * </ol> 
+	 * @param response
+	 * @param movie 
+	 * @return Updated movie object
+	 */
+	private Movie parseMovieDetails(String response, Movie movie) {
+		String[] fields = response.split("<field>");
+		try {
+			movie.tagline = Connection.trim(fields[1]);
+			movie.plot = Connection.trim(fields[2]);
+			movie.numVotes = Connection.trimInt(fields[3]);
+			movie.studio = Connection.trim(fields[4]);
+			movie.rated = Connection.trim(fields[5]);
+			movie.trailerUrl = Connection.trim(fields[6]);
+		} catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
+		}
+		return movie;
+	}
+	
+
+	/**
 	 * Converts query response from HTTP API to a list of Actor objects. Each
 	 * row must return the following columns in the following order:
 	 * <ol>
@@ -154,6 +210,37 @@ public class VideoClient {
 				actors.add(new Actor(
 						Connection.trimInt(fields[row]), 
 						Connection.trim(fields[row + 1])
+				));
+			}
+		} catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
+		}
+		return actors;		
+	}
+	
+	/**
+	 * Converts query response from HTTP API to a list of Actor objects with 
+	 * roles attached. Each row must return the following columns in the 
+	 * following order:
+	 * <ol>
+	 * 	<li><code>idActor</code></li>
+	 * 	<li><code>strActor</code></li>
+	 * 	<li><code>strRole</code></li>
+	 * </ol>
+	 * @param response
+	 * @return List of Actors
+	 */
+	private ArrayList<Actor> parseActorRoles(String response) {
+		ArrayList<Actor> actors = new ArrayList<Actor>();
+		String[] fields = response.split("<field>");
+		try { 
+			for (int row = 1; row < fields.length; row += 3) { 
+				actors.add(new Actor(
+						Connection.trimInt(fields[row]), 
+						Connection.trim(fields[row + 1]),
+						Connection.trim(fields[row + 2])
 				));
 			}
 		} catch (Exception e) {

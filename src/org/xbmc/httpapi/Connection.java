@@ -376,7 +376,7 @@ public class Connection {
 		String trimmed = trim(value);
 		if (trimmed.length() > 0) {
 			try {
-				return Integer.parseInt(trimmed);
+				return Integer.parseInt(trimmed.replace(",", ""));
 			} catch (NumberFormatException e) {
 				return -1;
 			}

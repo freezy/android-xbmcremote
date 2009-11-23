@@ -40,6 +40,19 @@ public class VideoWrapper extends Wrapper {
 	private static int sCurrentSortKey;
 	
 	/**
+	 * Updates the movie object with additional data (plot, cast, etc)
+	 * @param handler Callback handler
+	 */
+	public void updateMovieDetails(final HttpApiHandler<Movie> handler, final Movie movie) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = video(handler).updateMovieDetails(movie);
+				done(handler);
+			}
+		});
+	}
+	
+	/**
 	 * Gets all movies from database
 	 * @param handler Callback handler
 	 */
