@@ -37,21 +37,21 @@
 						android:singleLine="true"
 						android:textSize="18dip"
 						android:textColor="#ffffffff"
-						android:paddingTop="7dip" />
+						android:paddingTop="4dip" />
 				<RelativeLayout 
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_gravity="center_horizontal"
-					android:paddingTop="7dip">
+					android:paddingTop="4dip">
 					<ImageView
-						android:layout_width="266dip" 
-						android:layout_height="233dip" 
+						android:layout_width="294dip" 
+						android:layout_height="266dip" 
 						android:scaleType="centerCrop" 
 						android:id="@+id/CoverImage" 
 						android:background="@drawable/coverbox_back" />
 					<ImageView 
-						android:layout_width="266dip"
-						android:layout_height="233dip" 
+						android:layout_width="294dip"
+						android:layout_height="266dip" 
 						android:scaleType="centerCrop" 
 						android:background="@drawable/coverbox_front" />
 				</RelativeLayout>
@@ -63,7 +63,7 @@
 					android:thumb="@drawable/pgbar_thumb" 
 					android:paddingLeft="20dip"
 					android:paddingRight="10dip"
-					android:paddingTop="20dip"
+					android:paddingTop="0dip"
 					/>
 				<LinearLayout 
 					android:layout_width="fill_parent"
@@ -105,6 +105,7 @@
 						android:paddingRight="22dip" />
 					<TextView 
 						android:id="@+id/ArtistTextView"
+						android:layout_marginTop="-5dip"
 						android:layout_width="fill_parent" 
 						android:layout_height="wrap_content"
 						android:singleLine="true"
