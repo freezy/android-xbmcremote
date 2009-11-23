@@ -175,5 +175,5 @@ public class Song implements ICoverArt, NamedResource {
 	 */
 	public long thumbID = 0;
 	
-
+	private static final long serialVersionUID = 911367816075830385L;
 }

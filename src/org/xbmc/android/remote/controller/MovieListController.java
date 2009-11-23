@@ -95,7 +95,7 @@ public class MovieListController extends ListController {
 			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
 			activity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_album_dark_big);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.poster);
 			setupIdleListener();
 			
 //			ImportUtilities.purgeCache();
@@ -127,7 +127,7 @@ public class MovieListController extends ListController {
 						mList.setAdapter(new MovieAdapter(mActivity, value));
 					} else {
 						setTitle(actor.name + " - Movies");
-						setNoDataMessage("No movies found.", R.drawable.icon_album_dark);
+						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
 					}
 				}
 			}/*, actor*/);
@@ -141,7 +141,7 @@ public class MovieListController extends ListController {
 						mList.setAdapter(new MovieAdapter(mActivity, value));
 					} else {
 						setTitle(genre.name + " - Movies");
-						setNoDataMessage("No albums found.", R.drawable.icon_album_dark);
+						setNoDataMessage("No albums found.", R.drawable.icon_movie_dark);
 					}
 				}
 			}/*, genre*/);
@@ -155,7 +155,7 @@ public class MovieListController extends ListController {
 						mList.setAdapter(new MovieAdapter(mActivity, value));
 					} else {
 						setTitle("Movies");
-						setNoDataMessage("No movies found.", R.drawable.icon_album_dark);
+						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
 					}
 				}
 			});
@@ -304,10 +304,10 @@ public class MovieListController extends ListController {
 			
 			if (mLoadCovers) {
 				holder.setTemporaryBind(true);
-				holder.iconView.setImageResource(R.drawable.icon_album_dark);
+				holder.iconView.setImageResource(R.drawable.poster);
 				HttpApiThread.video().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), movie, ThumbSize.SMALL);
 			} else {
-				holder.iconView.setImageResource(R.drawable.icon_album);
+				holder.iconView.setImageResource(R.drawable.poster);
 			}		
 			
 			return row;

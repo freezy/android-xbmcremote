@@ -13,7 +13,7 @@
 		android:padding="0dip" 
 		android:layout_margin="0dip" 
 		android:background="#000000"
-		android:src="@drawable/icon_album_dark" 
+		android:src="@drawable/poster" 
 		android:scaleType="center" />
 	<LinearLayout 
 		android:layout_height="wrap_content" 

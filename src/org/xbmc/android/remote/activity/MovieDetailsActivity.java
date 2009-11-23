@@ -42,6 +42,7 @@ import android.view.KeyEvent;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MovieDetailsActivity extends Activity {
@@ -71,21 +72,15 @@ public class MovieDetailsActivity extends Activity {
 		mConfigurationManager.initKeyguard();
 		
 		// load the cover
-		
-        HttpApiThread.video().getCover(new HttpApiHandler<Bitmap>(this) {
-        	public void run() {
-        		if (value == null) {
-        			posterView.setImageResource(R.drawable.nocover);
-        		} else {
-        			final double ar = ((double)value.getWidth()) / ((double)value.getHeight());
-        			final int width = ThumbSize.getPixel(ThumbSize.SCREENWIDTH);
-        			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, (int)((double)width / ar));
-        			posterView.setLayoutParams(params);
-        			posterView.setImageBitmap(value);
-        		}
-        	}
-        }, movie, ThumbSize.BIG);
-		
+		HttpApiThread.video().getCover(new HttpApiHandler<Bitmap>(this) {
+			public void run() {
+				if (value == null) {
+					posterView.setImageResource(R.drawable.nocover);
+				} else {
+					posterView.setImageBitmap(value);
+				}
+			}
+		}, movie, ThumbSize.BIG);
 	}
 
 	@Override
