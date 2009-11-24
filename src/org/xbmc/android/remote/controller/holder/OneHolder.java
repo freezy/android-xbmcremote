@@ -22,7 +22,6 @@
 package org.xbmc.android.remote.controller.holder;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
-import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.android.widget.IdleListDetector;
 import org.xbmc.httpapi.data.ICoverArt;
