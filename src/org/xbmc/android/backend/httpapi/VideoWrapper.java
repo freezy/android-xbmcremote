@@ -66,13 +66,40 @@ public class VideoWrapper extends Wrapper {
 	}
 	
 	/**
-	 * Gets all actors from database
+	 * Gets all actors from database. Use {@link getMovieActors()} and
+	 * {@link getTvActors()} for filtered actors. 
 	 * @param handler Callback handler
 	 */
 	public void getActors(final HttpApiHandler<ArrayList<Actor>> handler) {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				handler.value = video(handler).getActors();
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Gets all movie actors from database
+	 * @param handler Callback handler
+	 */
+	public void getMovieActors(final HttpApiHandler<ArrayList<Actor>> handler) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = video(handler).getMovieActors();
+				done(handler);
+			}
+		});
+	}
+
+	/**
+	 * Gets all TV show actors from database
+	 * @param handler Callback handler
+	 */
+	public void getTvShowActors(final HttpApiHandler<ArrayList<Actor>> handler) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = video(handler).getTvShowActors();
 				done(handler);
 			}
 		});

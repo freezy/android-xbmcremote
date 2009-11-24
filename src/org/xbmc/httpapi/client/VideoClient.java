@@ -55,7 +55,7 @@ public class VideoClient {
 	 * Gets all movies from database
 	 * @param sortBy Sort field, see SortType.* 
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
-	 * @return All albums
+	 * @return All movies
 	 */
 	public ArrayList<Movie> getMovies(int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
@@ -65,13 +65,11 @@ public class VideoClient {
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString()));
 	}
 	
-	
-	
 	/**
 	 * Gets all movies from database
 	 * @param sortBy Sort field, see SortType.* 
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
-	 * @return All albums
+	 * @return Updated movie
 	 */
 	public Movie updateMovieDetails(Movie movie) {
 		StringBuilder sb = new StringBuilder();
@@ -90,8 +88,9 @@ public class VideoClient {
 	}
 	
 	/**
-	 * Gets all actors from database
-	 * @return All albums
+	 * Gets all actors from database. Use {@link getMovieActors()} and
+	 * {@link getTvActors()} for filtered actors. 
+	 * @return All actors
 	 */
 	public ArrayList<Actor> getActors() {
 		StringBuilder sb = new StringBuilder();
@@ -101,16 +100,40 @@ public class VideoClient {
 	}
 	
 	/**
-	 * Returns album thumbnail as base64-encoded string
-	 * @param album
+	 * Gets all movie actors from database
+	 * @return All movie actors
+	 */
+	public ArrayList<Actor> getMovieActors() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT DISTINCT actors.idActor, strActor FROM actors, actorlinkmovie");
+		sb.append(" WHERE actorlinkmovie.idActor = actors.idActor");
+		sb.append(" ORDER BY upper(strActor), strActor");
+		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString()));
+	}
+	
+	/**
+	 * Gets all movie actors from database
+	 * @return All movie actors
+	 */
+	public ArrayList<Actor> getTvShowActors() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT DISTINCT actors.idActor, strActor FROM actors, actorlinktvshow");
+		sb.append(" WHERE actorlinktvshow.idActor = actors.idActor");
+		sb.append(" ORDER BY upper(strActor), strActor");
+		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString()));
+	}
+	
+	/**
+	 * Returns movie thumbnail as base64-encoded string
+	 * @param cover
 	 * @return Base64-encoded content of thumb
 	 */
-	public String getCover(ICoverArt art) {
-		final String data = mConnection.query("FileDownload", Movie.getThumbUri(art));
+	public String getCover(ICoverArt cover) {
+		final String data = mConnection.query("FileDownload", Movie.getThumbUri(cover));
 		if (data.length() > 0) {
 			return data;
 		} else {
-			final String url = Movie.getFallbackThumbUri(art);
+			final String url = Movie.getFallbackThumbUri(cover);
 			if (url != null) {
 				Log.i("VideoClient", "*** Downloaded cover has size null, retrying with fallback:");
 				return mConnection.query("FileDownload", url);

@@ -22,7 +22,6 @@
 package org.xbmc.android.backend.httpapi;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.httpapi.type.CacheType;
 
 import android.app.Activity;
 import android.graphics.Bitmap;

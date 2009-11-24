@@ -53,7 +53,17 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class ActorListController extends ListController {
 	
+	public static final int TYPE_ALL = 1;
+	public static final int TYPE_MOVIE = 2;
+	public static final int TYPE_TVSHOW = 3;
+	public static final int TYPE_EPISODE = 4;
+	
 	private boolean mLoadCovers = false;
+	private final int mType;
+	
+	public ActorListController(int type) {
+		mType = type;
+	}
 	
 	public void onCreate(Activity activity, ListView list) {
 		if (!isCreated()) {
@@ -80,19 +90,52 @@ public class ActorListController extends ListController {
 			});
 			
 			mList.setOnKeyListener(new ListLogicOnKeyListener<Artist>());
-
-			setTitle("Actors...");
-			HttpApiThread.video().getActors(new HttpApiHandler<ArrayList<Actor>>(mActivity) {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle("Actors (" + value.size() + ")");
-						mList.setAdapter(new ActorAdapter(mActivity, value));
-					} else {
-						setTitle("Actors");
-						setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
+			switch (mType) {
+			case TYPE_ALL:
+				setTitle("Actors...");
+				HttpApiThread.video().getActors(new HttpApiHandler<ArrayList<Actor>>(mActivity) {
+					public void run() {
+						if (value.size() > 0) {
+							setTitle("Actors (" + value.size() + ")");
+							mList.setAdapter(new ActorAdapter(mActivity, value));
+						} else {
+							setTitle("Actors");
+							setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
+						}
 					}
-				}
-			});
+				});
+				break;
+			case TYPE_MOVIE:
+				setTitle("Movie Actors...");
+				HttpApiThread.video().getMovieActors(new HttpApiHandler<ArrayList<Actor>>(mActivity) {
+					public void run() {
+						if (value.size() > 0) {
+							setTitle("Movie Actors (" + value.size() + ")");
+							mList.setAdapter(new ActorAdapter(mActivity, value));
+						} else {
+							setTitle("Movie Actors");
+							setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
+						}
+					}
+				});
+				break;
+			case TYPE_TVSHOW:
+				setTitle("TV Actors...");
+				HttpApiThread.video().getTvShowActors(new HttpApiHandler<ArrayList<Actor>>(mActivity) {
+					public void run() {
+						if (value.size() > 0) {
+							setTitle("TV Show Actors (" + value.size() + ")");
+							mList.setAdapter(new ActorAdapter(mActivity, value));
+						} else {
+							setTitle("TV Show Actors");
+							setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
+						}
+					}
+				});
+				break;
+			case TYPE_EPISODE:
+				break;
+			}
 		}
 	}
 	

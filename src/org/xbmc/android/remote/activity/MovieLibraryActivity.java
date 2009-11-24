@@ -89,7 +89,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		mMovieController.findMessageView(findViewById(R.id.movielist_outer_layout));
 		mMovieController.onCreate(this, (ListView)findViewById(R.id.movielist_list)); // first tab can be updated now.
 
-		mActorController= new ActorListController();
+		mActorController= new ActorListController(ActorListController.TYPE_MOVIE);
 		mActorController.findTitleView(findViewById(R.id.actorlist_outer_layout));
 		mActorController.findMessageView(findViewById(R.id.actorlist_outer_layout));
 
