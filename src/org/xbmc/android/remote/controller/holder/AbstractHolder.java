@@ -28,9 +28,10 @@ import org.xbmc.httpapi.data.ICoverArt;
 import android.app.Activity;
 import android.graphics.Bitmap;
 
-public interface IHolder {
-	public boolean isTemporaryBind();
-	public void setTemporaryBind(boolean temp);
-	public ICoverArt getCoverItem();
-	public HttpApiHandler<Bitmap> getCoverDownloadHandler(Activity activity, IdleListDetector idler);
+public abstract class AbstractHolder {
+	public int defaultCover = 0;
+	public abstract boolean isTemporaryBind();
+	public abstract void setTemporaryBind(boolean temp);
+	public abstract ICoverArt getCoverItem();
+	public abstract HttpApiHandler<Bitmap> getCoverDownloadHandler(Activity activity, IdleListDetector idler);
 }

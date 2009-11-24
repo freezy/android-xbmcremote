@@ -33,7 +33,7 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ThreeHolder<T> implements IHolder {
+public class ThreeHolder<T> extends AbstractHolder {
 
 	public long id = 0;
 
@@ -47,6 +47,7 @@ public class ThreeHolder<T> implements IHolder {
 
 	boolean tempBind;
 	public CrossFadeDrawable transition;
+	public int defaultCover;
 
 	public ThreeHolder(ImageView icon, TextView title, TextView subtitle, TextView subsubtitle) {
 		iconView = icon;

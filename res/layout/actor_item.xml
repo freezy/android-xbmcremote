@@ -12,7 +12,7 @@
 		android:foreground="@drawable/smallborder" >
 		<ImageView 
 			android:id="@+id/actor_image" 
-			android:src="@drawable/nocover" 
+			android:src="@drawable/person_small" 
 			android:layout_width="50dip" 
 			android:layout_height="50dip" 
 			android:scaleType="centerCrop"

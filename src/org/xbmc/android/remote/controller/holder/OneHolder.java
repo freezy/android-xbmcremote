@@ -33,7 +33,7 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class OneHolder<T> implements IHolder {
+public class OneHolder<T> extends AbstractHolder {
 
 	public long id = 0;
 
@@ -58,7 +58,7 @@ public class OneHolder<T> implements IHolder {
 	public class CoverDownloadHandler extends HttpApiHandler<Bitmap> {
 		private final IdleListDetector mIdler;
 		public CoverDownloadHandler(Activity activity, IdleListDetector idler) {
-			super(activity, id);
+			super(activity, id, OneHolder.this.defaultCover);
 			mIdler = idler;
 		}
 		public void run() {
@@ -69,7 +69,7 @@ public class OneHolder<T> implements IHolder {
 			 */
 			if (mTag == id) {
 				if (value == null) {
-					iconView.setImageResource(R.drawable.icon_album_big);
+					iconView.setImageResource(OneHolder.this.defaultCover);
 				} else {
 					// only "fade" if cover was downloaded.
 					if (mCacheType != null && mCacheType.equals(CacheType.network)) {

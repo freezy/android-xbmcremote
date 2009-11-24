@@ -65,7 +65,7 @@ public class ActorListController extends ListController {
 				Toast toast = Toast.makeText(activity, "Your SD card is not mounted. You'll need it for caching thumbs. Displaying place holders only.", Toast.LENGTH_LONG);
 				toast.show();
 			}
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_album_dark_big);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.person_black_small);
 			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
@@ -122,6 +122,7 @@ public class ActorListController extends ListController {
 				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
 				transition.setCrossFadeEnabled(true);
 				holder.transition = transition;
+				holder.defaultCover = R.drawable.person_black_small;
 					
 			} else {
 				row = convertView;
@@ -133,14 +134,11 @@ public class ActorListController extends ListController {
 			holder.id = actor.getCrc();
 			
 			holder.titleView.setText(actor.name);
-			holder.iconView.setImageResource(R.drawable.icon_artist);
+			holder.iconView.setImageResource(holder.defaultCover);
 			
 			if (mLoadCovers) {
 				holder.setTemporaryBind(true);
-				holder.iconView.setImageResource(R.drawable.icon_album_dark);
 				HttpApiThread.video().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), actor, ThumbSize.SMALL);
-			} else {
-				holder.iconView.setImageResource(R.drawable.icon_album);
 			}
 			return row;
 		}

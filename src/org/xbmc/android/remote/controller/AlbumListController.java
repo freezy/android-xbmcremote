@@ -427,7 +427,7 @@ public class AlbumListController extends ListController {
 				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
 				transition.setCrossFadeEnabled(true);
 				holder.transition = transition;
-				
+				holder.defaultCover = R.drawable.icon_album;
 			} else {
 				row = (ImageView)convertView;
 				holder = (OneHolder<Album>)convertView.getTag();

@@ -33,7 +33,7 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MovieHolder<T> implements IHolder {
+public class MovieHolder<T> extends AbstractHolder {
 
 	public long id = 0;
 
@@ -49,6 +49,7 @@ public class MovieHolder<T> implements IHolder {
 
 	boolean tempBind;
 	public CrossFadeDrawable transition;
+	public int defaultCover;
 
 	public MovieHolder(ImageView icon, TextView title, TextView subtitle, TextView subtitleRight, TextView bottom, TextView bottomRight) {
 		iconView = icon;

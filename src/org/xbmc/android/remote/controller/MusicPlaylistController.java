@@ -197,6 +197,7 @@ public class MusicPlaylistController extends ListController {
 					(ImageView)row.findViewById(R.id.MusicItemImageViewArt),
 					(TextView)row.findViewById(R.id.MusicItemTextViewTitle)
 				);
+				holder.defaultCover = R.drawable.icon_song_light;
 				row.setTag(holder);
 			} else {
 				row = convertView;

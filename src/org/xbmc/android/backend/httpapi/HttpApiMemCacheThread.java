@@ -24,12 +24,10 @@ package org.xbmc.android.backend.httpapi;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 
-import org.xbmc.android.remote.R;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 /**
  * This thread asynchronously delivers memory-cached bitmaps.
@@ -78,7 +76,7 @@ class HttpApiMemCacheThread extends HttpApiAbstractThread {
 			            handler.value = ref.get();
 			        } else if (sNotAvailable.containsKey(crc)) {
 //		            	Log.i("HttpApiMemCacheThread", "Delivering not-available image directly from cache (" + crc + ").");
-		            	handler.value = BitmapFactory.decodeResource(handler.getActivity().getResources(), R.drawable.icon_album);
+		            	handler.value = handler.getDefaultCover();
 			        }
 				}
 				done(handler);

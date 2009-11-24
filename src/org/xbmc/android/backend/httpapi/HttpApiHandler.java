@@ -21,9 +21,12 @@
 
 package org.xbmc.android.backend.httpapi;
 
+import org.xbmc.android.remote.R;
 import org.xbmc.httpapi.type.CacheType;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 /**
  * Basically contains two things:
@@ -37,9 +40,16 @@ import android.app.Activity;
  */
 public class HttpApiHandler<T> implements Runnable {
 	public T value;
+	public int defaultCover = R.drawable.icon_genre;
 	protected final Activity mActivity;
 	protected final long mTag;
 	protected CacheType mCacheType;
+	
+	public HttpApiHandler(HttpApiHandler<T> handler) {
+		mTag = handler.mTag;
+		mActivity = handler.mActivity;
+		defaultCover = handler.defaultCover;
+	}
 	public HttpApiHandler(Activity activity) {
 		mActivity = activity;
 		mTag = 0;
@@ -48,11 +58,19 @@ public class HttpApiHandler<T> implements Runnable {
 		mActivity = activity;
 		mTag = tag;
 	}
+	public HttpApiHandler(Activity activity, long tag, int defaultCover) {
+		mActivity = activity;
+		mTag = tag;
+		this.defaultCover = defaultCover;
+	}
 	public void setCacheType(CacheType type) {
 		mCacheType = type;
 	}
 	public Activity getActivity() {
 		return mActivity;
+	}
+	public Bitmap getDefaultCover() {
+		return BitmapFactory.decodeResource(mActivity.getResources(), defaultCover);
 	}
 	public void run () {
 		// do nothing if not overloaded

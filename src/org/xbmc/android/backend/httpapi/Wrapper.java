@@ -144,7 +144,7 @@ public abstract class Wrapper {
 	 */
 	protected void getCoverFromMem(final HttpApiHandler<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in mem cache..");
-		HttpApiMemCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
+		HttpApiMemCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler) {
 			public void run() {
 				if (value == null) {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] empty");
@@ -168,7 +168,7 @@ public abstract class Wrapper {
 	 */
 	protected void getCoverFromDisk(final HttpApiHandler<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in disk cache..");
-		HttpApiDiskCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
+		HttpApiDiskCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler) {
 			public void run() {
 				if (value == null) {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Disk cache empty.");
@@ -194,7 +194,7 @@ public abstract class Wrapper {
 	 */
 	protected void getCoverFromNetwork(final HttpApiHandler<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Downloading..");
-		HttpApiDownloadThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
+		HttpApiDownloadThread.get().getCover(new HttpApiHandler<Bitmap>(handler) {
 			public void run() {
 				if (value == null) {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Download empty");
