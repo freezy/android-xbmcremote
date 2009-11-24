@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.activity.MusicArtistActivity;
+import org.xbmc.android.remote.activity.ListActivity;
 import org.xbmc.android.remote.controller.holder.OneHolder;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.httpapi.data.Actor;
@@ -79,12 +79,13 @@ public class ActorListController extends ListController {
 			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
+				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
-					Artist artist = (Artist)view.getTag();
-					nextActivity = new Intent(view.getContext(), MusicArtistActivity.class);
-					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new AlbumListController());
-					nextActivity.putExtra(ListController.EXTRA_ARTIST, artist);
+					OneHolder<Actor> holder = (OneHolder<Actor>)view.getTag();
+					nextActivity = new Intent(view.getContext(), ListActivity.class);
+					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new MovieListController());
+					nextActivity.putExtra(ListController.EXTRA_ACTOR, holder.holderItem);
 					mActivity.startActivity(nextActivity);
 				}
 			});

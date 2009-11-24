@@ -66,6 +66,27 @@ public class VideoClient {
 	}
 	
 	/**
+	 * Gets all movies with an actor from database
+	 * @param actor Display only movies with this actor.
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @return All movies
+	 */
+	public ArrayList<Movie> getMovies(Actor actor, int sortBy, String sortOrder) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT idMovie, c00, c07, strPath, c15, c11, c14, c05");
+		sb.append(" FROM movieview");
+		sb.append(" WHERE movieview.idmovie IN (");
+		sb.append("   SELECT DISTINCT idMovie ");
+		sb.append("   FROM actorlinkmovie ");
+		sb.append("   WHERE idActor =");
+		sb.append(actor.id);
+		sb.append(" )");
+		sb.append(moviesOrderBy(sortBy, sortOrder));
+		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString()));
+	}
+	
+	/**
 	 * Gets all movies from database
 	 * @param sortBy Sort field, see SortType.* 
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.

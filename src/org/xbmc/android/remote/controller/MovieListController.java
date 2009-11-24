@@ -130,7 +130,7 @@ public class MovieListController extends ListController {
 						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
 					}
 				}
-			}/*, actor*/);
+			}, actor);
 			
 		} else if (genre != null) {					// movies of a genre
 			setTitle(genre.name + " - Movies...");
