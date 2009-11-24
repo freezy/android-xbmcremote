@@ -111,10 +111,10 @@ public class ActorListController extends ListController {
 				HttpApiThread.video().getMovieActors(new HttpApiHandler<ArrayList<Actor>>(mActivity) {
 					public void run() {
 						if (value.size() > 0) {
-							setTitle("Movie Actors (" + value.size() + ")");
+							setTitle("Movie actors (" + value.size() + ")");
 							mList.setAdapter(new ActorAdapter(mActivity, value));
 						} else {
-							setTitle("Movie Actors");
+							setTitle("Movie actors");
 							setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
 						}
 					}
@@ -125,10 +125,10 @@ public class ActorListController extends ListController {
 				HttpApiThread.video().getTvShowActors(new HttpApiHandler<ArrayList<Actor>>(mActivity) {
 					public void run() {
 						if (value.size() > 0) {
-							setTitle("TV Show Actors (" + value.size() + ")");
+							setTitle("TV show actors (" + value.size() + ")");
 							mList.setAdapter(new ActorAdapter(mActivity, value));
 						} else {
-							setTitle("TV Show Actors");
+							setTitle("TV show actors");
 							setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
 						}
 					}

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
 import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.activity.MusicGenreActivity;
+import org.xbmc.android.remote.activity.ListActivity;
 import org.xbmc.httpapi.data.Genre;
 
 import android.app.Activity;
@@ -42,75 +42,37 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class GenreListController extends ListController {
-	
-	public static final int ITEM_CONTEXT_QUEUE = 1;
-	public static final int ITEM_CONTEXT_PLAY = 2;
+public class MovieGenreListController extends ListController {
 	
 	public void onCreate(Activity activity, ListView list) {
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
-			mActivity.registerForContextMenu(mList);
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					Intent nextActivity;
-					Genre genre = (Genre)view.getTag();
-					nextActivity = new Intent(view.getContext(), MusicGenreActivity.class);
-					nextActivity.putExtra(ListController.EXTRA_GENRE, genre);
-					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new SongListController());
+					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
+					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new MovieListController());
+					nextActivity.putExtra(ListController.EXTRA_GENRE, (Genre)view.getTag());
 					mActivity.startActivity(nextActivity);
 				}
 			});
 
-			setTitle("Genres...");
-			HttpApiThread.music().getGenres(new HttpApiHandler<ArrayList<Genre>>(mActivity) {
+			setTitle("Movie genres...");
+			HttpApiThread.video().getMovieGenres(new HttpApiHandler<ArrayList<Genre>>(mActivity) {
 				public void run() {
 					if (value.size() > 0) {
-						setTitle("Genres (" + value.size() + ")");
+						setTitle("Movie genres (" + value.size() + ")");
 						mList.setAdapter(new GenreAdapter(mActivity, value));
 					} else {
-						setTitle("Genres");
+						setTitle("Movie genres");
 						setNoDataMessage("No genres found.", R.drawable.icon_genre_dark);
 					}
 				}
 			});
 			
 			mList.setOnKeyListener(new ListLogicOnKeyListener<Genre>());
-		}
-	}
-	
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		// be aware that this must be explicitly called by your activity!
-		final Genre genre = (Genre)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(genre.name);
-		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue " + genre.name + " songs");
-		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play " + genre.name + " songs");
-	}
-	
-	public void onContextItemSelected(MenuItem item) {
-		// be aware that this must be explicitly called by your activity!
-		final Genre genre = (Genre)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
-		switch (item.getItemId()) {
-			case ITEM_CONTEXT_QUEUE:
-				HttpApiThread.music().addToPlaylist(new QueryHandler(
-						mActivity, 
-						"Adding all songs of genre " + genre.name + " to playlist...", 
-						"Error adding songs!"
-					), genre);
-				break;
-			case ITEM_CONTEXT_PLAY:
-				HttpApiThread.music().play(new QueryHandler(
-						mActivity, 
-						"Playing all songs of genre " + genre.name + "...", 
-						"Error playing songs!",
-						true
-					), genre);
-				break;
 		}
 	}
 	
@@ -139,4 +101,13 @@ public class GenreListController extends ListController {
 		}
 	}
 	private static final long serialVersionUID = 4360738733222799619L;
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		// no context menu here
+	}
+	@Override
+	public void onContextItemSelected(MenuItem item) {
+		// no context menu here
+	}
 }

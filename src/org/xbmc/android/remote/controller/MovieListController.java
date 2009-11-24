@@ -141,11 +141,10 @@ public class MovieListController extends ListController {
 						mList.setAdapter(new MovieAdapter(mActivity, value));
 					} else {
 						setTitle(genre.name + " - Movies");
-						setNoDataMessage("No albums found.", R.drawable.icon_movie_dark);
+						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
 					}
 				}
-			}/*, genre*/);
-			
+			}, genre);
 		} else {
 			setTitle("Movies...");				// all movies
 			HttpApiThread.video().getMovies(new HttpApiHandler<ArrayList<Movie>>(mActivity) {

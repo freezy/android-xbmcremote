@@ -27,6 +27,7 @@ import java.util.HashMap;
 import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.client.ControlClient.PlayStatus;
 import org.xbmc.httpapi.data.Actor;
+import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.type.MediaType;
@@ -81,6 +82,27 @@ public class VideoClient {
 		sb.append("   FROM actorlinkmovie ");
 		sb.append("   WHERE idActor =");
 		sb.append(actor.id);
+		sb.append(" )");
+		sb.append(moviesOrderBy(sortBy, sortOrder));
+		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString()));
+	}
+	
+	/**
+	 * Gets all movies of a genre from database
+	 * @param genre Display only movies of this genre.
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @return All movies
+	 */
+	public ArrayList<Movie> getMovies(Genre genre, int sortBy, String sortOrder) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT idMovie, c00, c07, strPath, c15, c11, c14, c05");
+		sb.append(" FROM movieview");
+		sb.append(" WHERE movieview.idmovie IN (");
+		sb.append("   SELECT DISTINCT idMovie ");
+		sb.append("   FROM genrelinkmovie ");
+		sb.append("   WHERE idGenre =");
+		sb.append(genre.id);
 		sb.append(" )");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString()));
@@ -142,6 +164,18 @@ public class VideoClient {
 		sb.append(" WHERE actorlinktvshow.idActor = actors.idActor");
 		sb.append(" ORDER BY upper(strActor), strActor");
 		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString()));
+	}
+	
+	/**
+	 * Gets all movie genres from database
+	 * @return All movie genres
+	 */
+	public ArrayList<Genre> getMovieGenres() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT idGenre, strGenre FROM genre");
+		sb.append(" WHERE idGenre IN (SELECT idGenre FROM genrelinkmovie)");
+		sb.append(" ORDER BY upper(strGenre)");
+		return parseGenres(mConnection.query("QueryVideoDatabase", sb.toString()));
 	}
 	
 	/**
@@ -294,6 +328,35 @@ public class VideoClient {
 		}
 		return actors;		
 	}
+	
+	/**
+	 * Converts query response from HTTP API to a list of Genre objects. Each
+	 * row must return the following columns in the following order:
+	 * <ol>
+	 * 	<li><code>idGenre</code></li>
+	 * 	<li><code>strGenre</code></li>
+	 * </ol>
+	 * @param response
+	 * @return List of Genres
+	 */
+	private ArrayList<Genre> parseGenres(String response) {
+		ArrayList<Genre> genres = new ArrayList<Genre>();
+		String[] fields = response.split("<field>");
+		try { 
+			for (int row = 1; row < fields.length; row += 2) { 
+				genres.add(new Genre(
+					Connection.trimInt(fields[row]), 
+					Connection.trim(fields[row + 1])
+				));
+			}
+		} catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
+		}
+		return genres;		
+	}
+
 	
 	/**
 	 * Returns an SQL String of given sort options of movies query

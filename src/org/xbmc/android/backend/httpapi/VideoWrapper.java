@@ -24,6 +24,7 @@ package org.xbmc.android.backend.httpapi;
 import java.util.ArrayList;
 
 import org.xbmc.httpapi.data.Actor;
+import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.type.SortType;
 
@@ -77,6 +78,19 @@ public class VideoWrapper extends Wrapper {
 			}
 		});
 	}
+
+	/**
+	 * Gets all movies of a genre from database
+	 * @param handler Callback handler
+	 */
+	public void getMovies(final HttpApiHandler<ArrayList<Movie>> handler, final Genre genre) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = video(handler).getMovies(genre, getSortBy(SortType.TITLE), getSortOrder());
+				done(handler);
+			}
+		});
+	}
 	
 	/**
 	 * Gets all actors from database. Use {@link getMovieActors()} and
@@ -113,6 +127,19 @@ public class VideoWrapper extends Wrapper {
 		mHandler.post(new Runnable() {
 			public void run() { 
 				handler.value = video(handler).getTvShowActors();
+				done(handler);
+			}
+		});
+	}
+	
+	/**
+	 * Gets all movie genres from database
+	 * @param handler Callback handler
+	 */
+	public void getMovieGenres(final HttpApiHandler<ArrayList<Genre>> handler) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				handler.value = video(handler).getMovieGenres();
 				done(handler);
 			}
 		});

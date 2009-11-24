@@ -30,7 +30,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.controller.AlbumListController;
 import org.xbmc.android.remote.controller.ArtistListController;
 import org.xbmc.android.remote.controller.FileListController;
-import org.xbmc.android.remote.controller.GenreListController;
+import org.xbmc.android.remote.controller.MusicGenreListController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
@@ -59,7 +59,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	private SlidingTabHost mTabHost;
 	private AlbumListController mAlbumLogic;
 	private ArtistListController mArtistLogic;
-	private GenreListController mGenreLogic;
+	private MusicGenreListController mGenreLogic;
 	private AlbumListController mCompilationsLogic;
 	private FileListController mFileLogic;
 	
@@ -104,7 +104,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mArtistLogic.findTitleView(findViewById(R.id.artists_outer_layout));
 		mArtistLogic.findMessageView(findViewById(R.id.artists_outer_layout));
 
-		mGenreLogic = new GenreListController();
+		mGenreLogic = new MusicGenreListController();
 		mGenreLogic.findTitleView(findViewById(R.id.genres_outer_layout));
 		mGenreLogic.findMessageView(findViewById(R.id.genres_outer_layout));
 
