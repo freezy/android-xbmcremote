@@ -16,7 +16,8 @@
 			android:layout_width="50dip" 
 			android:layout_height="50dip" 
 			android:scaleType="centerCrop"
-			android:padding="0dip" />
+			android:padding="0dip"
+			android:background="#404040" />
 	</FrameLayout>
 	
 	<LinearLayout 
