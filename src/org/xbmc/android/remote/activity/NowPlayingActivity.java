@@ -70,7 +70,6 @@ public class NowPlayingActivity extends Activity implements Callback {
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ErrorHandler.setActivity(this);
        	setContentView(R.layout.nowplaying);
         	
   	  	mControl = ConnectionManager.getHttpClient(this).control;

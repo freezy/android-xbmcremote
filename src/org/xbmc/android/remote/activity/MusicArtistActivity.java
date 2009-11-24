@@ -60,7 +60,6 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ErrorHandler.setActivity(this);
 		setContentView(R.layout.musicartist);
 		
 		// remove nasty top fading edge

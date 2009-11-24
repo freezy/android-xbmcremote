@@ -28,7 +28,6 @@ import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.controller.MusicPlaylistController;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
@@ -70,7 +69,6 @@ public class PlaylistActivity extends Activity implements Callback {
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ErrorHandler.setActivity(this);
 		setContentView(R.layout.playlist);
 		
 		// remove nasty top fading edge

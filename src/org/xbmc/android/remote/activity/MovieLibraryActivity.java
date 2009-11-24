@@ -32,7 +32,6 @@ import org.xbmc.android.remote.controller.FileListController;
 import org.xbmc.android.remote.controller.MovieGenreListController;
 import org.xbmc.android.remote.controller.MovieListController;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
@@ -70,7 +69,6 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ErrorHandler.setActivity(this);
 		setContentView(R.layout.movielibrary);
 		
 		// remove nasty top fading edge

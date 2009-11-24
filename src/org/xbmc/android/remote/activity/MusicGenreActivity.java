@@ -29,7 +29,6 @@ import org.xbmc.android.remote.controller.AlbumListController;
 import org.xbmc.android.remote.controller.ArtistListController;
 import org.xbmc.android.remote.controller.SongListController;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
@@ -62,7 +61,6 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ErrorHandler.setActivity(this);
 		setContentView(R.layout.musicgenre);
 		
 		// remove nasty top fading edge

@@ -33,7 +33,6 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.controller.FileListController;
 import org.xbmc.android.remote.controller.ListController;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.util.WakeOnLan;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
@@ -133,7 +132,6 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 		mClient = ConnectionManager.getEventClient(this);
-		ErrorHandler.setActivity(this);
 
 		final ArrayList<HomeItem> homeItems = new ArrayList<HomeItem>();
 		final ArrayList<HomeItem> offlineItems = new ArrayList<HomeItem>();

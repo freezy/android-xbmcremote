@@ -26,7 +26,6 @@ import java.io.IOException;
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
@@ -46,7 +45,6 @@ public class AboutActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
-		ErrorHandler.setActivity(this);
 		try {
 			final String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
 			final int versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;

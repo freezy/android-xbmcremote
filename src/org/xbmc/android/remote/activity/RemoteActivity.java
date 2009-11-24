@@ -72,7 +72,6 @@ public class RemoteActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		ErrorHandler.setActivity(this);
 		setContentView(R.layout.remote_xbox);
 		
 		// remove nasty top fading edge
