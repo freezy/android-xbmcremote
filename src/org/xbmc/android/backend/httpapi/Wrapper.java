@@ -122,10 +122,10 @@ public abstract class Wrapper {
 				if (cover.getCrc() != 0L) {
 					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
 					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
-						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] trying memory");
+						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Trying memory");
 						getCoverFromMem(handler, cover, thumbSize);
 					} else {
-						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] trying disk directly");
+						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Trying disk directly (size not mem-cached)");
 						getCoverFromDisk(handler, cover, thumbSize);
 					}
 				} else {
@@ -171,7 +171,7 @@ public abstract class Wrapper {
 		HttpApiDiskCacheThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
 				if (value == null) {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] empty");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Disk cache empty.");
 					if (handler.postCache()) {
 						// well, let's download
 						getCoverFromNetwork(handler, cover, thumbSize);
@@ -197,7 +197,7 @@ public abstract class Wrapper {
 		HttpApiDownloadThread.get().getCover(new HttpApiHandler<Bitmap>(handler.getActivity()) {
 			public void run() {
 				if (value == null) {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] empty");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Download empty");
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] DOWNLOADED!");
 					handler.setCacheType(CacheType.network);

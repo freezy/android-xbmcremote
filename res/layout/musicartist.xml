@@ -32,8 +32,7 @@
 						android:id="@+id/albumlist_list"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent"
-						android:fadingEdge="none"
-						android:scrollbars="none" />
+						style="@style/standard_list" />
 				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 
@@ -50,8 +49,7 @@
 						android:id="@+id/songlist_list"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent"
-						android:fadingEdge="none"
-						android:scrollbars="none" />
+						style="@style/standard_list" />
 				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 

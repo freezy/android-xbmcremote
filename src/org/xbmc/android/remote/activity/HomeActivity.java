@@ -40,6 +40,7 @@ import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.BroadcastListener;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.VideoClient;
+import org.xbmc.httpapi.data.Actor;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.data.Movie;
@@ -92,9 +93,10 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 	private static final int MENU_COVER_DOWNLOAD = 4;
 	private static final int MENU_COVER_DOWNLOAD_MUSIC = 41;
 	private static final int MENU_COVER_DOWNLOAD_MOVIES = 42;
-	
+	private static final int MENU_COVER_DOWNLOAD_ACTORS = 43;
 	
 	private static final String TAG = "HomeActivity";
+	private static final boolean DEBUG = false;
 	
 	private ProgressThread mProgressThread;
     private ProgressDialog mProgressDialog;
@@ -190,6 +192,7 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 		
 		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MOVIES, 0, "Movie Posters");
 		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MUSIC, 0, "Album Covers");
+		downloadMenu.add(2, MENU_COVER_DOWNLOAD_ACTORS, 0, "Actor Shots");
 		
 		return true;
 	}
@@ -209,6 +212,7 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 			return true;
 		case MENU_COVER_DOWNLOAD_MOVIES:
 		case MENU_COVER_DOWNLOAD_MUSIC:
+		case MENU_COVER_DOWNLOAD_ACTORS:
 			showDialog(item.getItemId());
 			return true;
 		}
@@ -228,6 +232,11 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 			case MENU_COVER_DOWNLOAD_MUSIC:
 				mProgressDialog.setMessage("Downloading album covers...");
 				mProgressThread = new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MUSIC);
+				break;
+			case MENU_COVER_DOWNLOAD_ACTORS:
+				mProgressDialog.setMessage("Downloading actor thumbs...");
+				mProgressThread = new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_ACTORS);
+				break;
 			default:
 				return null;
 		}
@@ -366,13 +375,13 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 			int position = msg.getData().getInt(ProgressThread.DATA_POSITION);
 			int type = msg.getData().getInt(ProgressThread.DATA_TYPE);
 			if (total > 0) {
-				mProgressDialog.setProgress(100 * position / total);
+				mProgressDialog.setProgress(position);
 				if (position < total) {
 					final ICoverArt cover = (ICoverArt)msg.getData().getSerializable(ProgressThread.DATA_COVER); 
-					Log.i(TAG, "New download message received for position " + position + ": " + cover.getName());
+					if (DEBUG) Log.i(TAG, "New download message received for position " + position + ": " + cover.getName());
 					HttpApiThread.video().getCover(new HttpApiHandler<Bitmap>(HomeActivity.this) {
 						public void run() {
-							Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
+							if (DEBUG) Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
 							mProgressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
 						}
 					}, cover, ThumbSize.BIG);
@@ -428,17 +437,21 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 					final MusicClient mc = ConnectionManager.getHttpClient(HomeActivity.this).music;
 					final ArrayList<Album> albums = mc.getAlbums(SortType.DONT_SORT, SortType.ORDER_ASC);
 					return new ArrayList<ICoverArt>(albums);
+				case MENU_COVER_DOWNLOAD_ACTORS:
+					final VideoClient vc2 = ConnectionManager.getHttpClient(HomeActivity.this).video;
+					final ArrayList<Actor> actors = vc2.getActors();
+					return new ArrayList<ICoverArt>(actors);
 				default:
 					return null;
 			}
 		}
 		
 		public void run() {
-//			Log.i(TAG, "[ProgressThread] Starting progress thread.");
+			if (DEBUG) Log.i(TAG, "[ProgressThread] Starting progress thread.");
 			final ArrayList<ICoverArt> covers = getCovers();
 			mTotal = covers.size();
 			mPosition = 0;
-			mConfigurationManager.disableKeyguard(HomeActivity.this);
+			mProgressDialog.setMax(covers.size());
 			boolean started = false;
 
 			Looper.prepare();
@@ -446,7 +459,7 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 				public void handleMessage(Message msgIn) {
 					switch (msgIn.what) {
 						case MSG_NEXT:
-//							Log.i(TAG, "[ProgressThread] New message received, posting back new cover.");
+							if (DEBUG) Log.i(TAG, "[ProgressThread] New message received, posting back new cover.");
 							Message msgOut = mHandlerOut.obtainMessage();
 							Bundle b = new Bundle();
 							b.putInt(DATA_TOTAL, mTotal);
@@ -460,7 +473,7 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 							mPosition++;
 						break;
 						case MSG_QUIT:
-//							Log.i(TAG, "[ProgressThread] Exiting.");
+							if (DEBUG) Log.i(TAG, "[ProgressThread] Exiting.");
 							Looper.myLooper().quit();
 							break;
 					}
@@ -474,10 +487,9 @@ public class HomeActivity extends Activity implements OnItemClickListener, Obser
 				msgStart.what = MSG_NEXT;
 				msgStart.setData(b);
 				mHandlerIn.sendMessage(msgStart);
-//				Log.i(TAG, "[ProgressThread] Not started, kicking on....");
+				if (DEBUG) Log.i(TAG, "[ProgressThread] Not started, kicking on....");
 			}
 			Looper.loop();
-			mConfigurationManager.enableKeyguard();
 		}
 	}
 

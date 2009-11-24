@@ -48,6 +48,7 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 	protected static HttpApiDownloadThread sHttpApiThread;
 	
 	private static final String TAG = "HttpApi-Network";
+	private static final boolean DEBUG = false;
 
 	/**
 	 * Constructor is protected, use get().
@@ -67,20 +68,21 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
-					Log.i(TAG, "Downloading cover " + cover);
+					if (DEBUG) Log.i(TAG, "Downloading cover " + cover);
 					/* it can happen that the same cover is queued consecutively several
 					 * times. that's why we check both the disk cache and memory cache if
 					 * the cover is not already available from a previously queued download. 
 					 */
 					if (HttpApiMemCacheThread.isInCache(cover, thumbSize)) { // we're optimistic, let's check the memory first.
-						Log.i(TAG, "Cover is now already in mem cache, directly returning...");
+						if (DEBUG) Log.i(TAG, "Cover is now already in mem cache, directly returning...");
 						handler.value = HttpApiMemCacheThread.getCover(cover, thumbSize);
 						done(handler);
 					} else if (HttpApiDiskCacheThread.isInCache(cover)) {
-						Log.i(TAG, "Cover is not in mem cache anymore but still on disk, directly returning...");
+						if (DEBUG) Log.i(TAG, "Cover is not in mem cache anymore but still on disk, directly returning...");
 						handler.value = HttpApiDiskCacheThread.getCover(cover, thumbSize);
+						done(handler);
 					} else {
-						Log.i(TAG, "Download START..");
+						if (DEBUG) Log.i(TAG, "Download START..");
 						String b64enc = null;
 						switch (cover.getMediaType()) {
 							case MediaType.MUSIC:
@@ -95,23 +97,23 @@ class HttpApiDownloadThread extends HttpApiAbstractThread {
 							default:
 								done(handler);
 						}
-						Log.i(TAG, "Download END.");
+						if (DEBUG) Log.i(TAG, "Download END.");
 						byte[] bytes;
 						try {
 							bytes = Base64.decode(b64enc);
 							if (bytes.length > 0) {
-								Log.i(TAG, "Decoding, resizing and adding to cache");
+								if (DEBUG) Log.i(TAG, "Decoding, resizing and adding to cache");
 								Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 								if (bitmap != null) {
 									// add to disk cache
 									handler.value = HttpApiDiskCacheThread.addCoverToCache(cover, bitmap, thumbSize);
 									// add to mem cache
 									HttpApiMemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
-									Log.i(TAG, "Done");
+									if (DEBUG) Log.i(TAG, "Done");
 								}
 							} else {
 								// still add null value to mem cache so we don't try to fetch it again
-								Log.i(TAG, "Adding null-value (" + cover.getCrc() + ") to mem cache in order to block future downloads");
+								if (DEBUG) Log.i(TAG, "Adding null-value (" + cover.getCrc() + ") to mem cache in order to block future downloads");
 								HttpApiMemCacheThread.addCoverToCache(cover, null, 0);
 							}
 						} catch (IOException e) {

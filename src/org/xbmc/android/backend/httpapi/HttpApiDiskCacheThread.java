@@ -71,8 +71,13 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 					final File file = new File(ImportUtilities.getCacheDirectory(MediaType.getArtFolder(cover.getMediaType()), thumbSize), Crc32.formatAsHexLowerCase(cover.getCrc()));
 				    if (file.exists()) {
 				    	final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-				    	HttpApiMemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
-				    	handler.value = bitmap;
+				    	if (bitmap == null) { // file is available but obviously corruped, so delete it.
+				    		file.delete();
+				    		handler.value = null;
+				    	} else {
+				    		HttpApiMemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
+				    		handler.value = bitmap;
+				    	}
 				    }
 				}
 				done(handler);

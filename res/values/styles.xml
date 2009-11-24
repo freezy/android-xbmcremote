@@ -1,37 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--  Copyright (C) 2005-2009 Team XBMC
-      http://xbmc.org
+	<!--
+		Copyright (C) 2005-2009 Team XBMC http://xbmc.org This Program is free
+		software; you can redistribute it and/or modify it under the terms of
+		the GNU General Public License as published by the Free Software
+		Foundation; either version 2, or (at your option) any later version.
 
-      This Program is free software; you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation; either version 2, or (at your option)
-      any later version.
-
-      This Program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-      GNU General Public License for more details.
-
-      You should have received a copy of the GNU General Public License
-      along with XBMC Remote; see the file license.  If not, write to
-      the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
-      http://www.gnu.org/copyleft/gpl.html
--->
-
+		This Program is distributed in the hope that it will be useful, but
+		WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+		General Public License for more details. You should have received a
+		copy of the GNU General Public License along with XBMC Remote; see the
+		file license. If not, write to the Free Software Foundation, 675 Mass
+		Ave, Cambridge, MA 02139, USA. http://www.gnu.org/copyleft/gpl.html
+	-->
 <resources>
-    <!-- Widget Styles -->
-    <style name="SlidingTabWidget">
-        <item name="separationWidth">75</item>
-    </style>
-    <style name="SlidingTabScrollView">
-    </style>
+	<!-- Widget Styles -->
+	<style name="SlidingTabWidget">
+		<item name="separationWidth">75</item>
+	</style>
+	<style name="SlidingTabScrollView">
+	</style>
+
+	<style name="Theme.NoBackground.NoTitleBar" parent="android:Theme.NoTitleBar">
+		<item name="android:windowBackground">@null</item>
+	</style>
     
-    <style name="details_label">
-    	<item name="android:textSize">10dip</item>
-    	<item name="android:textColor">#aaffffff</item>
+    <style name="standard_list">
+    	<item name="android:fadingEdge">none</item>
+    	<item name="android:scrollbars">none</item>
+    	<item name="android:divider">#000000</item>
+    	<item name="android:dividerHeight">1dip</item>
     </style>
-    <style name="details_value">
-    	<item name="android:paddingBottom">7dip</item>
-    	<item name="android:textColor">#ffffffff</item>
-    </style>
+	<style name="details_label">
+		<item name="android:textSize">10dip</item>
+		<item name="android:textColor">#aaffffff</item>
+	</style>
+	<style name="details_value">
+		<item name="android:paddingBottom">7dip</item>
+		<item name="android:textColor">#ffffffff</item>
+	</style>
 </resources>

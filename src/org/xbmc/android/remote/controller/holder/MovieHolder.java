@@ -81,7 +81,7 @@ public class MovieHolder<T> implements IHolder {
 			 */
 			if (mTag == id) {
 				if (value == null) {
-					iconView.setImageResource(R.drawable.icon_album);
+					iconView.setImageResource(R.drawable.poster);
 				} else {
 					// only "fade" if cover was downloaded.
 					if (mCacheType != null && mCacheType.equals(CacheType.network)) {
