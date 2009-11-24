@@ -10,7 +10,7 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
 		android:foreground="@drawable/smallborder" >
-		<ImageView 
+		<ImageButton 
 			android:id="@+id/actor_image" 
 			android:src="@drawable/person_small" 
 			android:layout_width="50dip" 

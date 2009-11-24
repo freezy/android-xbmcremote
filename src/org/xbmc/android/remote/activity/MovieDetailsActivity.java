@@ -28,6 +28,7 @@ import org.xbmc.android.backend.httpapi.HttpApiThread;
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.controller.ListController;
+import org.xbmc.android.remote.controller.MovieListController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
@@ -37,12 +38,15 @@ import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -107,15 +111,26 @@ public class MovieDetailsActivity extends Activity {
 						
 						((TextView)view.findViewById(R.id.actor_name)).setText(actor.name);
 						((TextView)view.findViewById(R.id.actor_role)).setText("as " + actor.role);
-						HttpApiThread.video().getCover(new HttpApiHandler<Bitmap>(MovieDetailsActivity.this) {
+						ImageButton img = ((ImageButton)view.findViewById(R.id.actor_image));
+						HttpApiThread.video().getCover(new HttpApiHandler<Bitmap>(MovieDetailsActivity.this, 0, R.drawable.person_small) {
 							public void run() {
 								if (value != null) {
-									((ImageView)view.findViewById(R.id.actor_image)).setImageBitmap(value);
+									((ImageButton)view.findViewById(R.id.actor_image)).setImageBitmap(value);
 								}
 							}
 						}, actor, ThumbSize.SMALL);
 						
-					
+						img.setTag(actor);
+						img.setOnClickListener(new OnClickListener() {
+							public void onClick(View v) {
+								Intent nextActivity;
+								Actor actor = (Actor)v.getTag();
+								nextActivity = new Intent(view.getContext(), ListActivity.class);
+								nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new MovieListController());
+								nextActivity.putExtra(ListController.EXTRA_ACTOR, actor);
+								mActivity.startActivity(nextActivity);
+							}
+						});
 						dataLayout.addView(view);
 						n++;
 					}
