@@ -128,7 +128,7 @@ public class Connection {
 			auth.resetCounter();
 			
 			final long responseTimer = System.currentTimeMillis();
-			final BufferedReader rd = new BufferedReader(new InputStreamReader(uc.getInputStream()), 8192);
+			final BufferedReader rd = new BufferedReader(new InputStreamReader(uc.getInputStream()));
 			final StringBuilder sb = new StringBuilder();
 			
 			String line = "";

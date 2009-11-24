@@ -356,6 +356,8 @@ public class SongListController extends ListController {
 				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
 				transition.setCrossFadeEnabled(true);
 				holder.transition = transition;
+				holder.defaultCover = R.drawable.icon_song;
+				
 			} else {
 				row = convertView;
 				holder = (ThreeHolder<Song>)convertView.getTag();
@@ -376,7 +378,7 @@ public class SongListController extends ListController {
 			holder.coverItem = song;
 			if (mLoadCovers) {
 				holder.iconView.setImageResource(R.drawable.icon_song_dark);
-				holder.setTemporaryBind(true);
+				holder.tempBind = true;
 				HttpApiThread.music().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), song, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.icon_song);

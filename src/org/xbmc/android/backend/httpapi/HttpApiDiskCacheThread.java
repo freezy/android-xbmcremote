@@ -68,7 +68,7 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
-					final File file = new File(ImportUtilities.getCacheDirectory(MediaType.getArtFolder(cover.getMediaType()), thumbSize), Crc32.formatAsHexLowerCase(cover.getCrc()));
+					final File file = ImportUtilities.getCacheFile(MediaType.getArtFolder(cover.getMediaType()), thumbSize, Crc32.formatAsHexLowerCase(cover.getCrc()));
 				    if (file.exists()) {
 				    	final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 				    	if (bitmap == null) { // file is available but obviously corruped, so delete it.
@@ -93,7 +93,7 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 	 * @return Bitmap or null if not available.
 	 */
 	public static Bitmap getCover(ICoverArt cover, int thumbSize) {
-		final File file = new File(ImportUtilities.getCacheDirectory(MediaType.getArtFolder(cover.getMediaType()), thumbSize), Crc32.formatAsHexLowerCase(cover.getCrc()));
+		final File file = ImportUtilities.getCacheFile(MediaType.getArtFolder(cover.getMediaType()), thumbSize, Crc32.formatAsHexLowerCase(cover.getCrc()));
 	    if (file.exists()) {
 	    	final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 	    	HttpApiMemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
@@ -108,7 +108,7 @@ class HttpApiDiskCacheThread extends HttpApiAbstractThread {
 	 * @return True if thumb is in disk cache, false otherwise.
 	 */
 	public static boolean isInCache(ICoverArt cover) {
-		return (new File(ImportUtilities.getCacheDirectory(MediaType.getArtFolder(cover.getMediaType()), ThumbSize.BIG), Crc32.formatAsHexLowerCase(cover.getCrc()).toLowerCase())).exists();
+		return ImportUtilities.getCacheFile(MediaType.getArtFolder(cover.getMediaType()), ThumbSize.BIG, Crc32.formatAsHexLowerCase(cover.getCrc()).toLowerCase()).exists();
 	}
 	
 	/**

@@ -41,9 +41,10 @@ import android.graphics.BitmapFactory;
 public class HttpApiHandler<T> implements Runnable {
 	public T value;
 	public int defaultCover = R.drawable.icon_genre;
+	protected int cacheType;
+	
 	protected final Activity mActivity;
 	protected final long mTag;
-	protected CacheType mCacheType;
 	
 	public HttpApiHandler(HttpApiHandler<T> handler) {
 		mTag = handler.mTag;
@@ -62,9 +63,6 @@ public class HttpApiHandler<T> implements Runnable {
 		mActivity = activity;
 		mTag = tag;
 		this.defaultCover = defaultCover;
-	}
-	public void setCacheType(CacheType type) {
-		mCacheType = type;
 	}
 	public Activity getActivity() {
 		return mActivity;

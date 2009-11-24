@@ -41,15 +41,18 @@ public class IdleListener implements OnListIdleListener {
 	public void onListIdle() {
 		int n = mList.getChildCount();
 		Log.i("ImageLoaderIdleListener", "IDLEING, downloading covers");
+		// try to garbage collect before and after idling.
+		System.gc();
 		for (int i = 0; i < n; i++) {
 			View row = mList.getChildAt(i);
 			final AbstractHolder holder = (AbstractHolder)row.getTag();
-			if (holder.isTemporaryBind()) {
+			if (holder.tempBind) {
 				Log.i("ImageLoaderIdleListener", "Album: " + holder.getCoverItem());
 				HttpApiThread.music().getCover(holder.getCoverDownloadHandler(mActivity, null), holder.getCoverItem(), ThumbSize.SMALL);
-				holder.setTemporaryBind(false);
+				holder.tempBind = false;
 			}
 		}
+		System.gc();
 //		mList.invalidate();
 	}
 }

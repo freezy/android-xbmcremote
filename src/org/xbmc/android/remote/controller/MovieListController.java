@@ -285,6 +285,7 @@ public class MovieListController extends ListController {
 				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
 				transition.setCrossFadeEnabled(true);
 				holder.transition = transition;
+				holder.defaultCover = R.drawable.poster;
 				
 			} else {
 				row = convertView;
@@ -303,7 +304,7 @@ public class MovieListController extends ListController {
 			holder.bottomRightView.setText(String.valueOf(movie.rating));
 			
 			if (mLoadCovers) {
-				holder.setTemporaryBind(true);
+				holder.tempBind = true;
 				holder.iconView.setImageResource(R.drawable.poster);
 				HttpApiThread.video().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), movie, ThumbSize.SMALL);
 			} else {

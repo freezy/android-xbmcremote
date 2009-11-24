@@ -21,6 +21,10 @@
 
 package org.xbmc.httpapi.type;
 
-public enum CacheType {
-	memory, sdcard, network
+public abstract class CacheType {
+	
+	public static final int MEMORY = 1;
+	public static final int SDCARD = 2;
+	public static final int NETWORK = 3;
+	
 }

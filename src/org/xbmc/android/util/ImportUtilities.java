@@ -37,6 +37,10 @@ public abstract class ImportUtilities {
     public static File getCacheDirectory(String type, int size) {
         return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + ThumbSize.getDir(size));
     }
+    
+    public static File getCacheFile(String type, int size, String name) {
+    	return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + ThumbSize.getDir(size) + "/" + name);
+    }
 
     public static Bitmap addCoverToCache(ICoverArt cover, Bitmap bitmap, int thumbSize) {
     	Bitmap sizeToReturn = null;

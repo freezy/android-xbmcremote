@@ -22,16 +22,116 @@
 package org.xbmc.android.remote.controller.holder;
 
 import org.xbmc.android.backend.httpapi.HttpApiHandler;
+import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.android.widget.IdleListDetector;
 import org.xbmc.httpapi.data.ICoverArt;
+import org.xbmc.httpapi.type.CacheType;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.widget.ImageView;
 
 public abstract class AbstractHolder {
-	public int defaultCover = 0;
-	public abstract boolean isTemporaryBind();
-	public abstract void setTemporaryBind(boolean temp);
-	public abstract ICoverArt getCoverItem();
-	public abstract HttpApiHandler<Bitmap> getCoverDownloadHandler(Activity activity, IdleListDetector idler);
+	
+	/**
+	 * Typically the CRC of the thumb. We need this in order to know if an image view
+	 * should be updated after a download.
+	 */
+	public long id = 0;
+	
+	/**
+	 * Resource ID of the fallback cover in case nothing is found.
+	 */
+	public int defaultCover = R.drawable.icon_album;
+	
+	/**
+	 * Reference to the image view of the element
+	 */
+	public ImageView iconView;
+	
+	/**
+	 * Reference to the transition object.
+	 */
+	public CrossFadeDrawable transition;
+	
+	/**
+	 * The object containing the cover
+	 */
+	public ICoverArt coverItem;
+	
+	/**
+	 * If true, a download has been started by the view, but not by the idle listener.
+	 */
+	public boolean tempBind;
+	
+	/**
+	 * Cache the download handler object.
+	 */
+	private CoverDownloadHandler mCoverDownloadHandler;
+	
+	/**
+	 * Construct with reference to activity and list idler.
+	 * @param activity
+	 * @param idler
+	 * @return
+	 */
+	public CoverDownloadHandler getCoverDownloadHandler(Activity activity, IdleListDetector idler) {
+		CoverDownloadHandler cdh = mCoverDownloadHandler;
+		if (cdh == null) {
+			cdh = new CoverDownloadHandler(activity, idler); 
+		}
+		return cdh;
+	}
+	
+	public ICoverArt getCoverItem() {
+		return coverItem;
+	}
+	
+	public class CoverDownloadHandler extends HttpApiHandler<Bitmap> {
+		private final IdleListDetector mIdler;
+		public CoverDownloadHandler(Activity activity, IdleListDetector idler) {
+			super(activity, id, AbstractHolder.this.defaultCover);
+			mIdler = idler;
+		}
+		public void run() {
+			/* mTag is the id of the album that finished downloading. holder.id
+			 * is the id of the current view. must be equal,
+			 * otherwise that means that we already scrolled further and the
+			 * downloaded view isn't visible anymore.
+			 */
+			if (mTag == id) {
+				if (value == null) {
+					iconView.setImageResource(AbstractHolder.this.defaultCover);
+				} else {
+					// only "fade" if cover was downloaded.
+					if (cacheType == CacheType.NETWORK) {
+						CrossFadeDrawable t = transition;
+						t.setEnd(value);
+						iconView.setImageDrawable(t);
+						t.startTransition(500);
+					} else {
+						iconView.setImageBitmap(value);
+					}
+					AbstractHolder.this.tempBind = false;
+				}
+			}
+		}
+
+		/**
+		 * This is executed after every cache lookup. It avoids downloading 
+		 * covers while the list is scrolling.
+		 */
+		public boolean postCache() {
+			if (mIdler == null || mIdler.isListIdle()) {
+				// download, list is idleing
+				AbstractHolder.this.tempBind = false;
+				return true;
+			} else {
+				// don't download, list is scrolling.
+				AbstractHolder.this.tempBind = true;
+				return false;
+			}
+		}
+	}
 }

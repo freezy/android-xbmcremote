@@ -153,7 +153,7 @@ public abstract class Wrapper {
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] FOUND in memory!");
 					handler.value = value;
-					handler.setCacheType(CacheType.memory);
+					handler.cacheType = CacheType.MEMORY;
 					done(handler);
 				}
 			}
@@ -179,7 +179,7 @@ public abstract class Wrapper {
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] FOUND on disk!");
 					handler.value = value;
-					handler.setCacheType(CacheType.sdcard);
+					handler.cacheType = CacheType.SDCARD;
 					done(handler);
 				}
 			}
@@ -200,7 +200,7 @@ public abstract class Wrapper {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Download empty");
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] DOWNLOADED!");
-					handler.setCacheType(CacheType.network);
+					handler.cacheType = CacheType.NETWORK;
 					handler.value = value;
 				}
 				done(handler); // callback in any case, since we don't go further than that.

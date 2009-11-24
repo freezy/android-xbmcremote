@@ -378,6 +378,7 @@ public class AlbumListController extends ListController {
 				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
 				transition.setCrossFadeEnabled(true);
 				holder.transition = transition;
+				holder.defaultCover = R.drawable.icon_album;
 				
 			} else {
 				row = convertView;
@@ -394,7 +395,7 @@ public class AlbumListController extends ListController {
 			holder.subsubtitleView.setText(album.year > 0 ? String.valueOf(album.year) : "");
 			
 			if (mLoadCovers) {
-				holder.setTemporaryBind(true);
+				holder.tempBind = true;
 				holder.iconView.setImageResource(R.drawable.icon_album_dark);
 				HttpApiThread.music().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.SMALL);
 			} else {
@@ -427,7 +428,7 @@ public class AlbumListController extends ListController {
 				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
 				transition.setCrossFadeEnabled(true);
 				holder.transition = transition;
-				holder.defaultCover = R.drawable.icon_album;
+				holder.defaultCover = R.drawable.icon_album_big;
 			} else {
 				row = (ImageView)convertView;
 				holder = (OneHolder<Album>)convertView.getTag();
@@ -440,7 +441,7 @@ public class AlbumListController extends ListController {
 			
 			if (mLoadCovers) {
 				row.setImageResource(R.drawable.icon_album_dark_big);
-				holder.setTemporaryBind(true);
+				holder.tempBind = true;
 				HttpApiThread.music().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.MEDIUM);
 			} else {
 				row.setImageResource(R.drawable.icon_album);

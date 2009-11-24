@@ -21,97 +21,21 @@
 
 package org.xbmc.android.remote.controller.holder;
 
-import org.xbmc.android.backend.httpapi.HttpApiHandler;
-import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.drawable.CrossFadeDrawable;
-import org.xbmc.android.widget.IdleListDetector;
-import org.xbmc.httpapi.data.ICoverArt;
-import org.xbmc.httpapi.type.CacheType;
-
-import android.app.Activity;
-import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ThreeHolder<T> extends AbstractHolder {
 
-	public long id = 0;
-
-	public final ImageView iconView;
 	public final TextView titleView;
 	public final TextView subtitleView;
 	public final TextView subsubtitleView;
 	
 	public T holderItem;
-	public ICoverArt coverItem;
-
-	boolean tempBind;
-	public CrossFadeDrawable transition;
-	public int defaultCover;
-
+	
 	public ThreeHolder(ImageView icon, TextView title, TextView subtitle, TextView subsubtitle) {
 		iconView = icon;
 		titleView = title;
 		subtitleView = subtitle;
 		subsubtitleView = subsubtitle;
-	}
-	
-	public CoverDownloadHandler getCoverDownloadHandler(Activity activity, IdleListDetector idler) {
-		return new CoverDownloadHandler(activity, idler);
-	}
-	
-	public ICoverArt getCoverItem() {
-		return coverItem;
-	}
-
-	public class CoverDownloadHandler extends HttpApiHandler<Bitmap> {
-		private final IdleListDetector mIdler;
-		public CoverDownloadHandler(Activity activity, IdleListDetector idler) {
-			super(activity, id);
-			mIdler = idler;
-		}
-		public void run() {
-			/* mTag is the id of the album that finished downloading. holder.id
-			 * is the id of the current view. must be equal,
-			 * otherwise that means that we already scrolled further and the
-			 * downloaded view isn't visible anymore.
-			 */
-			if (mTag == id) {
-				if (value == null) {
-					iconView.setImageResource(R.drawable.icon_album);
-				} else {
-					// only "fade" if cover was downloaded.
-					if (mCacheType != null && mCacheType.equals(CacheType.network)) {
-						CrossFadeDrawable t = transition;
-						t.setEnd(value);
-						iconView.setImageDrawable(t);
-						t.startTransition(500);
-					} else {
-						iconView.setImageBitmap(value);
-					}
-					setTemporaryBind(false);
-				}
-			}
-		}
-
-		public boolean postCache() {
-			if (mIdler == null || mIdler.isListIdle()) {
-				// download, list is idleing
-				setTemporaryBind(false);
-				return true;
-			} else {
-				// don't download, list is scrolling.
-				setTemporaryBind(true);
-				return false;
-			}
-		}
-	}
-
-	public boolean isTemporaryBind() {
-		return tempBind;
-	}
-
-	public void setTemporaryBind(boolean temp) {
-		tempBind = temp;
 	}
 }
