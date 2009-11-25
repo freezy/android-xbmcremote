@@ -118,9 +118,9 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 	 * @return 0-char CRC32
 	 */
 	public int getFallbackCrc() {
-		if (localPath != null) {
-			final String lp = localPath;
-			return Crc32.computeLowerCase(lp.substring(0, lp.length() - 1));
+		if (localPath != null && filename != null) {
+			final String lp = localPath.concat(filename);
+			return Crc32.computeLowerCase(lp);
 		} else {
 			return 0;
 		}
