@@ -44,11 +44,12 @@
 					android:layout_gravity="center_horizontal"
 					android:paddingTop="4dip">
 					<ImageView
-						android:layout_width="294dip" 
-						android:layout_height="266dip" 
+						android:layout_marginTop="12dip"
+						android:layout_marginLeft="41dip"
+						android:layout_width="235dip" 
+						android:layout_height="236dip" 
 						android:scaleType="centerCrop" 
-						android:id="@+id/CoverImage" 
-						android:background="@drawable/coverbox_back" />
+						android:id="@+id/CoverImage" />
 					<ImageView 
 						android:layout_width="294dip"
 						android:layout_height="266dip" 

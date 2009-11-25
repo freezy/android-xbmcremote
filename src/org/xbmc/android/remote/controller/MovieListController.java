@@ -29,6 +29,7 @@ import org.xbmc.android.backend.httpapi.MusicWrapper;
 import org.xbmc.android.backend.httpapi.Wrapper;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.activity.MovieDetailsActivity;
+import org.xbmc.android.remote.activity.NowPlayingActivity;
 import org.xbmc.android.remote.controller.holder.MovieHolder;
 import org.xbmc.android.remote.drawable.CrossFadeDrawable;
 import org.xbmc.httpapi.data.Actor;
@@ -60,9 +61,8 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class MovieListController extends ListController {
 	
-	public static final int ITEM_CONTEXT_QUEUE = 1;
-	public static final int ITEM_CONTEXT_PLAY = 2;
-	public static final int ITEM_CONTEXT_INFO = 3;
+	public static final int ITEM_CONTEXT_PLAY = 1;
+	public static final int ITEM_CONTEXT_INFO = 2;
 	
 	public static final int MENU_PLAY_ALL = 1;
 	public static final int MENU_SORT = 2;
@@ -103,9 +103,8 @@ public class MovieListController extends ListController {
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					Intent nextActivity;
 					MovieHolder<Movie> holder = (MovieHolder<Movie>)view.getTag();
-					nextActivity = new Intent(view.getContext(), MovieDetailsActivity.class);
+					Intent nextActivity = new Intent(view.getContext(), MovieDetailsActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_MOVIE, holder.holderItem);
 					mActivity.startActivity(nextActivity);
 				}
@@ -170,32 +169,28 @@ public class MovieListController extends ListController {
 		menu.add(0, ITEM_CONTEXT_INFO, 2, "View Details");
 	}
 	
-//	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public void onContextItemSelected(MenuItem item) {
-/*		final MovieHolder<Movie> holder = (MovieHolder<Movie>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
-		final Movie album = holder.holderItem;
+		final MovieHolder<Movie> holder = (MovieHolder<Movie>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+		final Movie movie = holder.holderItem;
 		switch (item.getItemId()) {
-			case ITEM_CONTEXT_QUEUE:
-				HttpApiThread.music().addToPlaylist(new QueryHandler(
-						mActivity, 
-						"Adding album \"" + album.name + "\" by " + album.artist + " to playlist...", 
-						"Error adding album!"
-					), album);
-				break;
 			case ITEM_CONTEXT_PLAY:
-				HttpApiThread.music().play(new QueryHandler(
-						mActivity, 
-						"Playing album \"" + album.name + "\" by " + album.artist + "...", 
-						"Error playing album!",
-						true
-					), album);
+				HttpApiThread.control().playFile(new HttpApiHandler<Boolean>(mActivity) {
+					public void run() {
+						if (value) {
+							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+						}
+					}
+				}, movie.getPath());
 				break;
 			case ITEM_CONTEXT_INFO:
-				DialogFactory.getAlbumDetail(mActivity, album).show();
+				Intent nextActivity = new Intent(mActivity, MovieDetailsActivity.class);
+				nextActivity.putExtra(ListController.EXTRA_MOVIE, movie);
+				mActivity.startActivity(nextActivity);
 				break;
 			default:
 				return;
-		}*/
+		}
 	}
 	
 	@Override

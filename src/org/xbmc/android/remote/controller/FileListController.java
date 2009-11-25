@@ -124,6 +124,8 @@ public class FileListController extends ListController {
 				final String ext = fileItem.name.substring(fileItem.name.lastIndexOf(".") + 1).toLowerCase();
 				if (ext.equals("mp3") || ext.equals("ogg")) {
 					icon.setImageResource(R.drawable.icon_song);
+				} else if (ext.equals("avi") || ext.equals("mov") || ext.equals("flv") || ext.equals("mkv") || ext.equals("wmv") || ext.equals("mp4")) {
+					icon.setImageResource(R.drawable.icon_video);
 				} else if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("bmp") || ext.equals("gif") || ext.equals("png") || ext.equals("tbn")) {
 					icon.setImageResource(R.drawable.icon_picture);
 				} else if (ext.equals("m3u")) {

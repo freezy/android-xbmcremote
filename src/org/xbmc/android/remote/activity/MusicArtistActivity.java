@@ -28,7 +28,6 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.controller.AlbumListController;
 import org.xbmc.android.remote.controller.SongListController;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;

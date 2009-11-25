@@ -45,7 +45,7 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 	 * @param name		Album name
 	 * @param artist	Artist
 	 */
-	public Movie(int id, String title, int year, String path, String director, String runtime, String genres, double rating) {
+	public Movie(int id, String title, int year, String path, String filename, String director, String runtime, String genres, double rating) {
 		this.id = id;
 		this.title = title;
 		this.year = year;
@@ -54,10 +54,24 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 		this.genres = genres;
 		this.rating = rating;
 		this.localPath = path;
+		this.filename = filename;
 	}
 	
 	public int getMediaType() {
 		return MediaType.VIDEO;
+	}
+	
+	/**
+	 * Returns the path XBMC needs to play the movie. This can either
+	 * localPath + filename or filename only (in case of stacks) 
+	 * @return
+	 */
+	public String getPath() {
+		if (filename.contains("://")) {
+			return filename;
+		} else {
+			return localPath + filename;
+		}
 	}
 
 	public String getShortName() {
@@ -161,9 +175,15 @@ public class Movie implements ICoverArt, Serializable, NamedResource {
 	public int year = -1;
 	
 	/**
-	 * Local path of the movie
+	 * Local path of the movie (without file name)
 	 */
 	public String localPath;
+	
+	/**
+	 * File name of the movie
+	 */
+	public String filename;
+	
 	/**
 	 * Rating
 	 */

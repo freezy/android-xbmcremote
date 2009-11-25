@@ -30,7 +30,6 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.controller.ListController;
 import org.xbmc.android.remote.controller.MovieListController;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.data.Actor;
@@ -45,11 +44,13 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MovieDetailsActivity extends Activity {
 	
@@ -77,6 +78,17 @@ public class MovieDetailsActivity extends Activity {
 		((TextView)findViewById(R.id.moviedetails_genre)).setText(movie.genres);
 		((TextView)findViewById(R.id.moviedetails_runtime)).setText(movie.runtime);
 		((TextView)findViewById(R.id.moviedetails_rating)).setText(String.valueOf(movie.rating));
+		((Button)findViewById(R.id.moviedetails_playbutton)).setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				HttpApiThread.control().playFile(new HttpApiHandler<Boolean>(MovieDetailsActivity.this) {
+					public void run() {
+						if (value) {
+							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+						}
+					}
+				}, movie.getPath());
+			}
+		});
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard();
@@ -98,7 +110,26 @@ public class MovieDetailsActivity extends Activity {
 				((TextView)findViewById(R.id.moviedetails_rating_numvotes)).setText(movie.numVotes > 0 ? " (" + movie.numVotes + " votes)" : "");
 				((TextView)findViewById(R.id.moviedetails_studio)).setText(movie.studio.equals("") ? NO_DATA : movie.studio);
 				((TextView)findViewById(R.id.moviedetails_plot)).setText(movie.plot.equals("") ? NO_DATA : movie.plot);
-				((TextView)findViewById(R.id.moviedetails_parental)).setText(movie.rated.equals("") ? NO_DATA : movie.rated);
+//				((TextView)findViewById(R.id.moviedetails_parental)).setText(movie.rated.equals("") ? NO_DATA : movie.rated);
+				((TextView)findViewById(R.id.moviedetails_parental)).setText(movie.trailerUrl);
+				if (movie.trailerUrl != null && !movie.trailerUrl.equals("")) {
+					final Button trailerButton = (Button)findViewById(R.id.moviedetails_trailerbutton);
+					trailerButton.setEnabled(true);
+					trailerButton.setOnClickListener(new OnClickListener() {
+						public void onClick(View v) {
+							HttpApiThread.control().playFile(new HttpApiHandler<Boolean>(MovieDetailsActivity.this) {
+								public void run() {
+									if (value) {
+										Toast toast = Toast.makeText(MovieDetailsActivity.this,  "Playing trailer for \"" + movie.getName() + "\"...", Toast.LENGTH_LONG);
+										toast.show();
+									}
+								}
+							}, movie.trailerUrl);
+						}
+					});
+				}
+				
+				
 				if (movie.actors != null) {
 					final LinearLayout dataLayout = ((LinearLayout)findViewById(R.id.moviedetails_datalayout));
 					final LayoutInflater inflater = getLayoutInflater();

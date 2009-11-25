@@ -60,7 +60,7 @@ public class VideoClient {
 	 */
 	public ArrayList<Movie> getMovies(int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, c15, c11, c14, c05");
+		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
 		sb.append(" FROM movieview WHERE movieview.idmovie NOT IN (SELECT idmovie FROM setlinkmovie)");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString()));
@@ -75,7 +75,7 @@ public class VideoClient {
 	 */
 	public ArrayList<Movie> getMovies(Actor actor, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, c15, c11, c14, c05");
+		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
 		sb.append(" FROM movieview");
 		sb.append(" WHERE movieview.idmovie IN (");
 		sb.append("   SELECT DISTINCT idMovie ");
@@ -96,7 +96,7 @@ public class VideoClient {
 	 */
 	public ArrayList<Movie> getMovies(Genre genre, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, c15, c11, c14, c05");
+		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
 		sb.append(" FROM movieview");
 		sb.append(" WHERE movieview.idmovie IN (");
 		sb.append("   SELECT DISTINCT idMovie ");
@@ -206,6 +206,7 @@ public class VideoClient {
 	 * 	<li><code>c00</code></li> (title)
 	 * 	<li><code>c07</code></li> (year)
 	 * 	<li><code>strPath</code></li>
+	 * 	<li><code>strFileName</code></li>
 	 * 	<li><code>c15</code></li> (director)
 	 * 	<li><code>c11</code></li> (runtime)
 	 * 	<li><code>c14</code></li> (genres)
@@ -218,8 +219,8 @@ public class VideoClient {
 		ArrayList<Movie> movies = new ArrayList<Movie>();
 		String[] fields = response.split("<field>");
 		try {
-			for (int row = 1; row < fields.length; row += 8) {
-				movies.add(new Movie( // int id, String title, int year, String path, String director, String runtime, String genres
+			for (int row = 1; row < fields.length; row += 9) {
+				movies.add(new Movie( // int id, String title, int year, String path, String filename, String director, String runtime, String genres
 						Connection.trimInt(fields[row]), 
 						Connection.trim(fields[row + 1]), 
 						Connection.trimInt(fields[row + 2]),
@@ -227,7 +228,8 @@ public class VideoClient {
 						Connection.trim(fields[row + 4]),
 						Connection.trim(fields[row + 5]),
 						Connection.trim(fields[row + 6]),
-						Connection.trimDouble(fields[row + 7])
+						Connection.trim(fields[row + 7]),
+						Connection.trimDouble(fields[row + 8])
 				));
 			}
 		} catch (Exception e) {

@@ -278,7 +278,7 @@ public class ControlClient {
 		if (map.get("Filename") != null && map.get("Filename").contains("Nothing Playing")) {
 			return nothingPlaying;
 		} else {
-			final int type = map.get("Type").contains("Audio") ? MediaType.MUSIC : MediaType.VIDEO;
+			final int type = map.containsKey("Type") && map.get("Type").contains("Audio") ? MediaType.MUSIC : MediaType.VIDEO;
 			switch (type) {
 				case MediaType.MUSIC:
 					return MusicClient.getCurrentlyPlaying(map);

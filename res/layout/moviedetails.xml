@@ -53,6 +53,7 @@
 					android:textSize="14dip"
 					android:paddingTop="8dip"
 					android:paddingLeft="4dip" />
+			
 			</LinearLayout>
 			<LinearLayout
 				android:id="@+id/moviedetails_datalayout" 
@@ -80,7 +81,26 @@
 				<TextView android:id="@+id/moviedetails_parental" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
 				<!-- CAST -->
 				<TextView android:text="CAST" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				
+			</LinearLayout>
+			<LinearLayout
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:padding="20dip"
+				android:gravity="center_horizontal">
+				<Button 
+					android:text="Play Movie" 
+					android:id="@+id/moviedetails_playbutton" 
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content"
+					android:padding="7dip" />
+				<Button 
+					android:text="Play Trailer" 
+					android:id="@+id/moviedetails_trailerbutton" 
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content"
+					android:enabled="false" 
+					android:padding="7dip"/>
 			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>
