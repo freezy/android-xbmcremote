@@ -110,8 +110,7 @@ public class MovieDetailsActivity extends Activity {
 				((TextView)findViewById(R.id.moviedetails_rating_numvotes)).setText(movie.numVotes > 0 ? " (" + movie.numVotes + " votes)" : "");
 				((TextView)findViewById(R.id.moviedetails_studio)).setText(movie.studio.equals("") ? NO_DATA : movie.studio);
 				((TextView)findViewById(R.id.moviedetails_plot)).setText(movie.plot.equals("") ? NO_DATA : movie.plot);
-//				((TextView)findViewById(R.id.moviedetails_parental)).setText(movie.rated.equals("") ? NO_DATA : movie.rated);
-				((TextView)findViewById(R.id.moviedetails_parental)).setText(movie.trailerUrl);
+				((TextView)findViewById(R.id.moviedetails_parental)).setText(movie.rated.equals("") ? NO_DATA : movie.rated);
 				if (movie.trailerUrl != null && !movie.trailerUrl.equals("")) {
 					final Button trailerButton = (Button)findViewById(R.id.moviedetails_trailerbutton);
 					trailerButton.setEnabled(true);
@@ -128,7 +127,6 @@ public class MovieDetailsActivity extends Activity {
 						}
 					});
 				}
-				
 				
 				if (movie.actors != null) {
 					final LinearLayout dataLayout = ((LinearLayout)findViewById(R.id.moviedetails_datalayout));
