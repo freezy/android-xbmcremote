@@ -24,8 +24,9 @@
 		<item>1</item>
 		<item>2</item>
 	</string-array>
-	<string-array name="KeyguardPreferenceEntries"><item>Do not tamper with the Keyguard</item>
-		<item>Disable Keyguard for RC mode</item>
-		<item>Disable Keyguard for whole app</item>
+	<string-array name="KeyguardPreferenceEntries">
+		<item>Never</item>
+		<item>On Remote</item>
+		<item>Always</item>
 	</string-array>
 </resources>
