@@ -22,6 +22,7 @@
 package org.xbmc.android.remote.activity;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -29,6 +30,7 @@ import org.xbmc.android.backend.httpapi.NowPlayingPollerThread;
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.ControlClient;
@@ -42,6 +44,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Handler.Callback;
 import android.util.Log;
@@ -71,6 +74,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 	private SeekBar mSeekBar;
 	
 	private ConfigurationManager mConfigurationManager;
+	private boolean mErrorHandled = false;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,9 +109,9 @@ public class NowPlayingActivity extends Activity implements Callback {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);
 		mConfigurationManager.onActivityResume(this);
 		checkIntent();
+		ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);;
 	}
 
 	@Override
@@ -163,7 +167,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 				mSeekBar.setProgress(Math.round(currentlyPlaying.getPercentage()));
 			}
 			if (currentlyPlaying.isPlaying()) {
-				mSeekBar.setEnabled(currentlyPlaying.getDuration() == 0 ? false : true);
+				mSeekBar.setEnabled(currentlyPlaying.getDuration() != 0);
 				mCounterLeftView.setText(Song.getDuration(currentlyPlaying.getTime() + 1));
 				mCounterRightView.setText(currentlyPlaying.getDuration() == 0 ? "unknown" : "-" + Song.getDuration(currentlyPlaying.getDuration() - currentlyPlaying.getTime() - 1));
 				mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
@@ -187,7 +191,12 @@ public class NowPlayingActivity extends Activity implements Callback {
 			return true;
 			
 		case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
-			finish();
+			Log.i("NOWPLAYNING","Received connection error from poller!");
+			
+			if(!mErrorHandled) {
+				mErrorHandled = true;
+				new ErrorHandler().handle(new ConnectException());
+			}
 			return true;
 			
 		case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
@@ -240,8 +249,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 				if(path == null || path.equals(""))
 					return;
 				try{
-					@SuppressWarnings("unused")
-					URL url = new URL(path);
+					new URL(path);
 				} catch(MalformedURLException e) {
 					return;
 				}
@@ -255,15 +263,19 @@ public class NowPlayingActivity extends Activity implements Callback {
 					public void onClick(DialogInterface dialog, int which) {
 						 new Thread(){
 							 public void run(){
+								 Looper.prepare();
 								 mControl.playUrl(path);
+								 Looper.loop();
 							 }
 						 }.start();
+						 //ConnectionManager.getNowPlayingPoller(NowPlayingActivity.this).subscribe(mNowPlayingHandler);
 					}
 				});
 				builder.setCancelable(true);
 				builder.setNegativeButton("No", new android.content.DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.cancel();
+						finish();
 					}
 				});
 				
@@ -273,12 +285,11 @@ public class NowPlayingActivity extends Activity implements Callback {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				//cleanup so we won't trigger again.
+				intent.setAction(null);
+				intent.setData(null);
 			}
-			
 		}
-		//cleanup so we won't trigger again.
-		intent.setAction(null);
-		intent.setData(null);
 	}
 	
 	/**

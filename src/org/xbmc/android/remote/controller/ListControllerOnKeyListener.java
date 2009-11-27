@@ -31,7 +31,7 @@ import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 
-public class ListLogicOnKeyListener<T extends NamedResource> implements OnKeyListener {
+public class ListControllerOnKeyListener<T extends NamedResource> implements OnKeyListener {
 	
 	public static final String[] DEVICES_HANDLE_MENU_LONGPRESS = {"HTC Magic"};
 	public static final int LONGPRESS_REPEATS = 10;

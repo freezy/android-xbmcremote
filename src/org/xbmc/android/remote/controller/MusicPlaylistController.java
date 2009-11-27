@@ -110,7 +110,7 @@ public class MusicPlaylistController extends ListController {
 				}
 			});
 					
-			mList.setOnKeyListener(new ListLogicOnKeyListener<Song>());
+			mList.setOnKeyListener(new ListControllerOnKeyListener<Song>());
 			setTitle("Music playlist...");
 
 		}

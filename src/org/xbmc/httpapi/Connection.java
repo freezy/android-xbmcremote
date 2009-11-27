@@ -22,6 +22,7 @@
 package org.xbmc.httpapi;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
@@ -66,7 +67,6 @@ public class Connection {
 	private int mTimeout;
 	private URLConnection uc = null;
 	private MyAuthenticator auth = null;
-	private boolean mIsConnected = false;
 	
 	/**
 	 * Class constructor sets host data and error handler.
@@ -91,9 +91,8 @@ public class Connection {
 			}
 			mTimeout = timeout;
 			settingsOK = true;
-			if ( setResponseFormat()) {
-				mIsConnected = true;
-			}
+			if(isConnected())
+				setResponseFormat();
 		}
 		else
 			mErrorHandler.handle(new NoSettingsException());
@@ -409,8 +408,38 @@ public class Connection {
 	 * @return
 	 * TODO Might need implementation change to not mess with response format
 	 */
-	public boolean isConnected() {
-		return mIsConnected;
+	public synchronized boolean isConnected() {
+		try{
+			final URL query = formatQueryString("WebServerStatus", "");
+			uc = query.openConnection();
+			uc.setConnectTimeout(CONNECTION_TIMEOUT);
+			uc.setReadTimeout(mTimeout);
+			
+			auth.resetCounter();
+			
+			final BufferedReader rd = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+			final StringBuilder sb = new StringBuilder();
+			
+			String line = "";
+			while ((line = rd.readLine()) != null) {    
+				sb.append(line);
+			}
+			
+			rd.close();
+			uc = null;
+			
+			final String ret = sb.toString().replace("<html>", "").replace("</html>", "");
+			if (ret.contains("On"))
+				return true;
+			
+		} catch (MalformedURLException e){
+			return false;
+		} catch (URISyntaxException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
+		return false;
 	}
 	
 	public String getBaseURL() {

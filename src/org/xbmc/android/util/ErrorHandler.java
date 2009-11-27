@@ -66,6 +66,14 @@ public class ErrorHandler implements IErrorHandler {
 		sContext = context;
 	}
 	
+	/**
+	 * But sometimes we'll depend on the ConfigurationManager having set the ErrorHandler's Context
+	 * Use this with care!
+	 */
+	public ErrorHandler() {
+		
+	}
+	
 	public static void setActivity(Context context) {
 		sContext = context;
 	}

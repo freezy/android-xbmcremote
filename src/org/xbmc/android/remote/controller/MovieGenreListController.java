@@ -72,7 +72,7 @@ public class MovieGenreListController extends ListController {
 				}
 			});
 			
-			mList.setOnKeyListener(new ListLogicOnKeyListener<Genre>());
+			mList.setOnKeyListener(new ListControllerOnKeyListener<Genre>());
 		}
 	}
 	

@@ -90,7 +90,7 @@ public class ActorListController extends ListController {
 				}
 			});
 			
-			mList.setOnKeyListener(new ListLogicOnKeyListener<Artist>());
+			mList.setOnKeyListener(new ListControllerOnKeyListener<Artist>());
 			switch (mType) {
 			case TYPE_ALL:
 				setTitle("Actors...");

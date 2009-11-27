@@ -1,9 +1,11 @@
 package org.xbmc.httpapi.client;
 
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.data.MediaLocation;
 import org.xbmc.httpapi.info.GuiSettings;
@@ -93,6 +95,8 @@ public class InfoClient {
 	public String getSystemInfo(int field) {
 		if(mConnection.isConnected())
 			return mConnection.getString("GetSystemInfo", String.valueOf(field));
+		
+		new ErrorHandler().handle(new ConnectException() );
 		return "";
 	}
 	

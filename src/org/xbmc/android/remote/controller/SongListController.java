@@ -126,7 +126,7 @@ public class SongListController extends ListController {
 				}
 			});
 					
-			mList.setOnKeyListener(new ListLogicOnKeyListener<Song>());
+			mList.setOnKeyListener(new ListControllerOnKeyListener<Song>());
 			fetch();
 		}
 	}

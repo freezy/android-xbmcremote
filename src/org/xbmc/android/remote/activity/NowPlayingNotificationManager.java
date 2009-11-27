@@ -123,12 +123,17 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 				removeNotification();
 				break;
 			case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
-				try{
-					Thread.sleep(1000);
-				} catch(InterruptedException e) {
-					Log.e("NowPlayingNotificationManager", Log.getStackTraceString(e));
-				}
-				startNotificating();
+				
+				new Thread(){
+					public void run(){
+						try{
+							Thread.sleep(1000);
+						} catch(InterruptedException e) {
+							Log.e("NowPlayingNotificationManager", Log.getStackTraceString(e));
+						}
+						startNotificating();
+					}
+				}.start();
 			}
 		}
 	};

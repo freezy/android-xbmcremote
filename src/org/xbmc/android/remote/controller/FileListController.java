@@ -94,7 +94,7 @@ public class FileListController extends ListController {
 					}
 				}
 			});
-			mList.setOnKeyListener(new ListLogicOnKeyListener<MediaLocation>());
+			mList.setOnKeyListener(new ListControllerOnKeyListener<MediaLocation>());
 		}
 	}
 	

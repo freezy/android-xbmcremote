@@ -25,6 +25,7 @@ import org.xbmc.android.util.ErrorHandler;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.media.AudioManager;
@@ -62,6 +63,16 @@ public class ConfigurationManager implements OnSharedPreferenceChangeListener {
 		return sInstance;
 	}
 
+	//Use with extreme care! this could return null, so you need to null-check
+	//in the calling code! 
+	public static ConfigurationManager getInstance() {
+		return sInstance;
+	}
+	
+	public Context getActiveContext() {
+		return sInstance.mActivity;
+	}
+	
 	public void initKeyguard() {
 		initKeyguard(false);
 	}

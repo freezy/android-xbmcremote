@@ -74,7 +74,7 @@ public class ArtistListController extends ListController {
 				}
 			});
 			
-			mList.setOnKeyListener(new ListLogicOnKeyListener<Artist>());
+			mList.setOnKeyListener(new ListControllerOnKeyListener<Artist>());
 			
 			if (mGenre != null) {
 				setTitle(mGenre.name + " - Artists...");

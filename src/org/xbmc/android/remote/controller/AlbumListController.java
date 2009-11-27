@@ -144,7 +144,7 @@ public class AlbumListController extends ListController {
 					mActivity.startActivity(nextActivity);
 				}
 			});
-			mList.setOnKeyListener(new ListLogicOnKeyListener<Album>());
+			mList.setOnKeyListener(new ListControllerOnKeyListener<Album>());
 			fetch();
 		}
 	}

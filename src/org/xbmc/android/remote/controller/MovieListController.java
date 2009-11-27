@@ -109,7 +109,7 @@ public class MovieListController extends ListController {
 					mActivity.startActivity(nextActivity);
 				}
 			});
-			mList.setOnKeyListener(new ListLogicOnKeyListener<Movie>());
+			mList.setOnKeyListener(new ListControllerOnKeyListener<Movie>());
 			fetch();
 		}
 	}
