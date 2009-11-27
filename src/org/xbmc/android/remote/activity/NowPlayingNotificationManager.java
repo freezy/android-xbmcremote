@@ -5,6 +5,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 import org.xbmc.httpapi.client.ControlClient.PlayStatus;
+import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -87,19 +88,35 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 		return notification;
 	}
 	
+	public void showSlideshowNotification(String fileName, String folder) {
+		Notification notification = buildNotification(folder + "/" + fileName, "Slideshow on XBMC", R.drawable.notif_pic);
+		final String ns = Context.NOTIFICATION_SERVICE;
+		NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(ns);
+		notificationManager.notify(NOW_PLAYING_ID, notification);
+	}
+	
 	private final Handler mPollingHandler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch(msg.what) {
 			case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
 			case NowPlayingPollerThread.MESSAGE_PLAYSTATE_CHANGED:
 				ICurrentlyPlaying curr = (ICurrentlyPlaying)msg.getData().get(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
-				PlayStatus status = curr.getPlayStatus();
-				if(status == PlayStatus.Playing) {
-					showPlayingNotification(curr.getArtist(), curr.getTitle());
-				}else if(status == PlayStatus.Paused) {
-					showPausedNotification(curr.getArtist(), curr.getTitle());
-				}else if(status == PlayStatus.Stopped) {
-					removeNotification();
+				
+				final int mediaType = curr.getMediaType();
+				switch(mediaType){
+					case MediaType.PICTURES:
+						showSlideshowNotification(curr.getTitle(), curr.getAlbum());
+						break;
+					default:
+						PlayStatus status = curr.getPlayStatus();
+						if(status == PlayStatus.Playing) {
+							showPlayingNotification(curr.getArtist(), curr.getTitle());
+						}else if(status == PlayStatus.Paused) {
+							showPausedNotification(curr.getArtist(), curr.getTitle());
+						}else if(status == PlayStatus.Stopped) {
+							removeNotification();
+						}
+						break;
 				}
 				break;
 			case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:

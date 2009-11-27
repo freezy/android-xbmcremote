@@ -984,7 +984,7 @@ public class MusicClient {
 	
 	public static ControlClient.ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
 		return new ControlClient.ICurrentlyPlaying() {
-			private static final long serialVersionUID = 5036994329211476713L;
+			private static final long serialVersionUID = 5036994329211476714L;
 			public String getTitle() {
 				return map.get("Title");
 			}
@@ -997,7 +997,11 @@ public class MusicClient {
 			public int getPlaylistPosition() {
 				return Integer.parseInt(map.get("SongNo"));
 			}
+			//Workarond for bug in Float.valueOf(): http://code.google.com/p/android/issues/detail?id=3156
 			public float getPercentage() {
+				try{
+					return Integer.valueOf(map.get("Percentage"));
+				} catch (NumberFormatException e) { }
 				return Float.valueOf(map.get("Percentage"));
 			}
 			public String getFilename() {
@@ -1017,6 +1021,12 @@ public class MusicClient {
 			}
 			public boolean isPlaying() {
 				return PlayStatus.parse(map.get("PlayStatus")).equals(PlayStatus.Playing);
+			}
+			public int getHeight() {
+				return 0;
+			}
+			public int getWidth() {
+				return 0;
 			}
 			private int parseTime(String time) {
 				String[] s = time.split(":");

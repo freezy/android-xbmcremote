@@ -22,13 +22,13 @@
 package org.xbmc.android.remote.activity;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.xbmc.android.backend.httpapi.NowPlayingPollerThread;
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.ControlClient;
@@ -37,6 +37,8 @@ import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.SeekType;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,6 +56,8 @@ import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class NowPlayingActivity extends Activity implements Callback {
+	
+	static final String ACTION = "android.intent.action.VIEW";
 	
 	private ControlClient mControl;
 	private EventClient mClient;
@@ -103,6 +107,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 		super.onResume();
 		ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);
 		mConfigurationManager.onActivityResume(this);
+		checkIntent();
 	}
 
 	@Override
@@ -158,9 +163,9 @@ public class NowPlayingActivity extends Activity implements Callback {
 				mSeekBar.setProgress(Math.round(currentlyPlaying.getPercentage()));
 			}
 			if (currentlyPlaying.isPlaying()) {
-				mSeekBar.setEnabled(true);
+				mSeekBar.setEnabled(currentlyPlaying.getDuration() == 0 ? false : true);
 				mCounterLeftView.setText(Song.getDuration(currentlyPlaying.getTime() + 1));
-				mCounterRightView.setText("-" + Song.getDuration(currentlyPlaying.getDuration() - currentlyPlaying.getTime() - 1));
+				mCounterRightView.setText(currentlyPlaying.getDuration() == 0 ? "unknown" : "-" + Song.getDuration(currentlyPlaying.getDuration() - currentlyPlaying.getTime() - 1));
 				mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
 			} else {
 				mSeekBar.setEnabled(false);
@@ -182,20 +187,21 @@ public class NowPlayingActivity extends Activity implements Callback {
 			return true;
 			
 		case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
-			ErrorHandler handler = new ErrorHandler(this);
-			handler.handle(new SocketTimeoutException());
-			setResult(NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR);
 			finish();
 			return true;
 			
 		case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
-			//mNowPlayingPoller.unSubscribe(mNowPlayingHandler);
-			try{
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				Log.e("NowPlayingActivity", Log.getStackTraceString(e));
-			}
-			ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);
+			new Thread(){
+				public void run(){
+					try{
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						Log.e("NowPlayingActivity", Log.getStackTraceString(e));
+					}
+					ConnectionManager.getNowPlayingPoller(NowPlayingActivity.this).subscribe(mNowPlayingHandler);					
+				}
+			}.start();
+
 			return true;
 		default:
 			return false;
@@ -220,6 +226,61 @@ public class NowPlayingActivity extends Activity implements Callback {
 		return super.onKeyDown(keyCode, event);
 	}
 
+	/**
+	 * Checks the intent that created/resumed this activity. Used to see if we are being handed
+	 * an URL that should be passed to XBMC.
+	 */
+	private void checkIntent(){
+		Intent intent = getIntent();
+		final String action = intent.getAction();
+		if(action != null) {
+			Log.i("CHECKINTENT", action);
+			if (action.equals(ACTION)){
+				final String path = intent.getData().toString();
+				if(path == null || path.equals(""))
+					return;
+				try{
+					@SuppressWarnings("unused")
+					URL url = new URL(path);
+				} catch(MalformedURLException e) {
+					return;
+				}
+				
+				final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle("Play URL on XBMC?");
+				builder.setMessage("Do you want to play\n" + path + "\non XBMC?");
+				builder.setCancelable(true);
+				builder.setIcon(R.drawable.icon);
+				builder.setNeutralButton("Yes", new android.content.DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						 new Thread(){
+							 public void run(){
+								 mControl.playUrl(path);
+							 }
+						 }.start();
+					}
+				});
+				builder.setCancelable(true);
+				builder.setNegativeButton("No", new android.content.DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
+				
+				final AlertDialog alert = builder.create();
+				try {
+					alert.show();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		//cleanup so we won't trigger again.
+		intent.setAction(null);
+		intent.setData(null);
+	}
+	
 	/**
 	 * Handles the push- release button code. Switches image of the pressed
 	 * button, vibrates and executes command.

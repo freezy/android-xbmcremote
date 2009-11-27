@@ -84,24 +84,24 @@ public class NowPlayingPollerThread extends Thread {
 		Bundle bundle = msg.getData();
 		ControlClient control = mControl; // local access is much faster
 		if (!control.isConnected()){
-			msg.what = NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR;
-			bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, null);
+			msg.what = MESSAGE_CONNECTION_ERROR;
+			bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, null);
 			handler.sendMessage(msg);
 		} else {
 			final ICurrentlyPlaying currPlaying = control.getCurrentlyPlaying();
-			msg.what = NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED;
+			msg.what = MESSAGE_PROGRESS_CHANGED;
 			bundle = msg.getData();
-			bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, currPlaying);
+			bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
 			handler.sendMessage(msg);
 
 	  		msg = Message.obtain(handler);
   	  		bundle = msg.getData();
-  	  		bundle.putSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING, currPlaying);
+  	  		bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
   	  		msg.what = NowPlayingPollerThread.MESSAGE_TRACK_CHANGED;	
   	  		handler.sendMessage(msg);
   	  		
   			msg = Message.obtain(handler);
-  	  		handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_CHANGED);
+  	  		handler.sendEmptyMessage(MESSAGE_COVER_CHANGED);
 		}
 		mSubscribers.add(handler);
 	}
@@ -114,7 +114,7 @@ public class NowPlayingPollerThread extends Thread {
 		return mCover;
 	}
 	
-	public void sendMessage(int what, ICurrentlyPlaying curr) {
+	public synchronized void sendMessage(int what, ICurrentlyPlaying curr) {
 		HashSet<Handler> subscribers = mSubscribers;
 		Message msg;
 		Bundle bundle;
@@ -127,6 +127,13 @@ public class NowPlayingPollerThread extends Thread {
 			handler.sendMessage(msg);
 		}	
 	}
+
+	public synchronized void sendEmptyMessage(int what) {
+		HashSet<Handler> subscribers = mSubscribers;
+		for (Handler handler : subscribers) {
+			handler.sendEmptyMessage(what);
+		}	
+	}
 	
 	public void run() {
 		String lastPos = "-1";
@@ -136,9 +143,15 @@ public class NowPlayingPollerThread extends Thread {
 		while (!isInterrupted() ) {
 			if(subscribers.size() > 0){
 				if (!control.isConnected()) {
-					sendMessage(MESSAGE_CONNECTION_ERROR, null);
+					sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
 				} else {
-					final ICurrentlyPlaying currPlaying = control.getCurrentlyPlaying();
+					ICurrentlyPlaying currPlaying;
+					try{
+						 currPlaying = control.getCurrentlyPlaying();
+					} catch(Exception e) {
+						sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
+						return;
+					}
 					
 					sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
 					
@@ -168,14 +181,14 @@ public class NowPlayingPollerThread extends Thread {
 			  	  						mCover = new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
 
 			  	  					for (Handler handler : subscribers) {
-		  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_CHANGED);
+		  				  	  			handler.sendEmptyMessage(MESSAGE_COVER_CHANGED);
 		  				  	  		}	
 			  	  				}
 			  	  			} else {
 			  	  				mCover = null;
 			  	  				if (mCoverPath != null){
 			  	  					for (Handler handler : subscribers) {
-		  				  	  			handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_COVER_CHANGED);
+		  				  	  			handler.sendEmptyMessage(MESSAGE_COVER_CHANGED);
 		  				  	  		}			  	  					
 			  	  				}
 			  	  				mCoverPath = null;
@@ -194,10 +207,7 @@ public class NowPlayingPollerThread extends Thread {
 				sleep(1000);
 			}
 			catch (InterruptedException e) {
-				for (Handler handler : subscribers) {
-					handler.sendEmptyMessage(NowPlayingPollerThread.MESSAGE_RECONFIGURE);
-					unSubscribe(handler);
-				}
+				sendEmptyMessage(MESSAGE_RECONFIGURE);
 				return;
 			}
 		}

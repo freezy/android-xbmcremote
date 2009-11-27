@@ -26,7 +26,6 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 
 import org.apache.http.HttpException;
-import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.activity.SettingsActivity;
 import org.xbmc.httpapi.IErrorHandler;
 import org.xbmc.httpapi.NoNetworkException;

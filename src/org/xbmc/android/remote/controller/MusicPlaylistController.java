@@ -31,6 +31,7 @@ import org.xbmc.android.remote.activity.PlaylistActivity;
 import org.xbmc.android.remote.controller.holder.OneHolder;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
+import org.xbmc.httpapi.data.NamedResource;
 import org.xbmc.httpapi.data.Song;
 
 import android.app.Activity;
@@ -221,7 +222,7 @@ public class MusicPlaylistController extends ListController {
 		}
 	}
 	
-	private static class PlaylistItem {
+	private static class PlaylistItem implements NamedResource{
 		public final String path;
 		public final String filename;
 		public final int position;
@@ -229,6 +230,9 @@ public class MusicPlaylistController extends ListController {
 			this.path = path;
 			this.filename = path.substring(path.replaceAll("\\\\", "/").lastIndexOf('/') + 1);
 			this.position = position;
+		}
+		public String getShortName() {
+			return filename;
 		}
 	}
 	

@@ -102,6 +102,15 @@ public class ControlClient {
 	}
 	
 	/**
+	 * Start playing the media file at the given URL
+	 * @param url An URL pointing to a supported media file
+	 * @return true on success, false otherwise.
+	 */
+	public boolean playUrl(String url) {
+		return mConnection.getBoolean("ExecBuiltin", "PlayMedia(" + url + ")");
+	}
+	
+	/**
 	 * Sets the volume as a percentage of the maximum possible.
 	 * @param volume New volume (0-100)
 	 * @return true on success, false otherwise.
@@ -274,16 +283,30 @@ public class ControlClient {
 			public int getDuration() { return 0; }
 			public String getArtist() { return ""; }
 			public String getAlbum() { return ""; }
+			public int getHeight() { return 0; }
+			public int getWidth() { return 0; }
 		};
+		if (map == null)
+			return nothingPlaying;
 		if (map.get("Filename") != null && map.get("Filename").contains("Nothing Playing")) {
 			return nothingPlaying;
 		} else {
-			final int type = map.containsKey("Type") && map.get("Type").contains("Audio") ? MediaType.MUSIC : MediaType.VIDEO;
+			//final int type = map.get("Type").contains("Audio") ? MediaType.MUSIC : (map.get("Type").contains("Video") ? MediaType.VIDEO : MediaType.PICTURES );
+			final int type;
+			if(map.get("Type").contains("Audio"))
+				type = MediaType.MUSIC;
+			else if(map.get("Type").contains("Video"))
+				type = MediaType.VIDEO;
+			else
+				type = MediaType.PICTURES;
+			
 			switch (type) {
 				case MediaType.MUSIC:
 					return MusicClient.getCurrentlyPlaying(map);
 				case MediaType.VIDEO:
 					return VideoClient.getCurrentlyPlaying(map);
+				case MediaType.PICTURES:
+					return PictureClient.getCurrentlyPlaying(map);
 				default:
 					return nothingPlaying;
 			}
@@ -306,6 +329,9 @@ public class ControlClient {
 		
 		public String getArtist();
 		public String getAlbum();
+		
+		public int getWidth();
+		public int getHeight();
 		
 	}
 
