@@ -33,7 +33,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 	
 	/**
 	 * Starts playing the media file <code>filename</code> .
-	 * @param response Wrapped boolean return value
+	 * @param response Response object
 	 * @param filename File to play
 	 */
 	public void playFile(final DataResponse<Boolean> response, final String filename) {
@@ -47,7 +47,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 	
 	/**
 	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.
-	 * @param response Wrapped boolean return value
+	 * @param response Response object
 	 * @param fileOrFolder File to play
 	 */
 	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder) {
@@ -63,7 +63,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 	 * Takes either "video" or "music" as a parameter to begin updating the 
 	 * corresponding database.
 	 * 
-	 * @param response Callback response
+	 * @param response Response object
 	 * @param mediaType
 	 */
 	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType) {

@@ -45,10 +45,10 @@ public class DataResponse<T> implements Runnable {
 	protected final Activity mActivity;
 	protected final long mTag;
 	
-	public DataResponse(DataResponse<T> handler) {
-		mTag = handler.mTag;
-		mActivity = handler.mActivity;
-		defaultCover = handler.defaultCover;
+	public DataResponse(DataResponse<T> response) {
+		mTag = response.mTag;
+		mActivity = response.mActivity;
+		defaultCover = response.defaultCover;
 	}
 	public DataResponse(Activity activity) {
 		mActivity = activity;

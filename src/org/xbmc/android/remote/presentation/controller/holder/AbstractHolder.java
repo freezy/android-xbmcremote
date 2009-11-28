@@ -68,7 +68,7 @@ public abstract class AbstractHolder {
 	/**
 	 * Cache the download handler object.
 	 */
-	private CoverDownloadHandler mCoverDownloadHandler;
+	private CoverDownloadResponse mCoverDownloadHandler;
 	
 	/**
 	 * Construct with reference to activity and list idler.
@@ -76,10 +76,10 @@ public abstract class AbstractHolder {
 	 * @param idler
 	 * @return
 	 */
-	public CoverDownloadHandler getCoverDownloadHandler(Activity activity, IdleListDetector idler) {
-		CoverDownloadHandler cdh = mCoverDownloadHandler;
+	public CoverDownloadResponse getCoverDownloadHandler(Activity activity, IdleListDetector idler) {
+		CoverDownloadResponse cdh = mCoverDownloadHandler;
 		if (cdh == null) {
-			cdh = new CoverDownloadHandler(activity, idler); 
+			cdh = new CoverDownloadResponse(activity, idler); 
 		}
 		return cdh;
 	}
@@ -88,9 +88,9 @@ public abstract class AbstractHolder {
 		return coverItem;
 	}
 	
-	public class CoverDownloadHandler extends DataResponse<Bitmap> {
+	public class CoverDownloadResponse extends DataResponse<Bitmap> {
 		private final IdleListDetector mIdler;
-		public CoverDownloadHandler(Activity activity, IdleListDetector idler) {
+		public CoverDownloadResponse(Activity activity, IdleListDetector idler) {
 			super(activity, id, AbstractHolder.this.defaultCover);
 			mIdler = idler;
 		}

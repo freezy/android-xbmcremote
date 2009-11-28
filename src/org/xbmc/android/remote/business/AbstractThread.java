@@ -58,33 +58,33 @@ abstract class AbstractThread extends Thread {
 	
 	/**
 	 * Returns the MusicClient class
-	 * @param handler
+	 * @param response Response object
 	 * @return
 	 */
-	protected MusicClient music(DataResponse<?> handler) {
-		return ConnectionManager.getHttpClient(handler.getActivity()).music;
+	protected MusicClient music(DataResponse<?> response) {
+		return ConnectionManager.getHttpClient(response.getActivity()).music;
 	}	
 	
 	/**
 	 * Returns the VideoClient class
-	 * @param handler
+	 * @param response Response object
 	 * @return
 	 */
-	protected VideoClient video(DataResponse<?> handler) {
-		return ConnectionManager.getHttpClient(handler.getActivity()).video;
+	protected VideoClient video(DataResponse<?> response) {
+		return ConnectionManager.getHttpClient(response.getActivity()).video;
 	}	
 	
 	/**
 	 * Calls the UI thread's callback code.
-	 * @param handler
+	 * @param response Response object
 	 */
-	protected void done(DataResponse<?> handler) {
-		handler.getActivity().runOnUiThread(handler);
+	protected void done(DataResponse<?> response) {
+		response.getActivity().runOnUiThread(response);
 	}
 	
 	/**
 	 * Waits until the thread has completely started and we can be sure
-	 * the handler has been initialized.
+	 * the response has been initialized.
 	 * @param thread 
 	 */
 	protected static void waitForStartup(AbstractThread thread) {

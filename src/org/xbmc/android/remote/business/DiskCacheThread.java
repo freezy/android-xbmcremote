@@ -61,11 +61,11 @@ class DiskCacheThread extends AbstractThread {
 	 * not available. Accessed covers get automatically added to the 
 	 * memory cache.
 	 * 
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param cover   Which cover to return
 	 * @param thumbSize    Which size to return
 	 */
-	public void getCover(final DataResponse<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
@@ -74,14 +74,14 @@ class DiskCacheThread extends AbstractThread {
 				    	final Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 				    	if (bitmap == null) { // file is available but obviously corruped, so delete it.
 				    		file.delete();
-				    		handler.value = null;
+				    		response.value = null;
 				    	} else {
 				    		MemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
-				    		handler.value = bitmap;
+				    		response.value = bitmap;
 				    	}
 				    }
 				}
-				done(handler);
+				done(response);
 			}
 		});
 	}

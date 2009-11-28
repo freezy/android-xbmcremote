@@ -61,11 +61,11 @@ class DownloadThread extends AbstractThread {
 	/**
 	 * Asynchronously downloads a thumb from XBMC and stores it locally.
 	 * 
-	 * @param handler Callback
-	 * @param cover   Which cover to download
-	 * @param thumbSize    Which size to return
+	 * @param response  Response object
+	 * @param cover     Which cover to download
+	 * @param thumbSize Which size to return
 	 */
-	public void getCover(final DataResponse<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
@@ -76,27 +76,27 @@ class DownloadThread extends AbstractThread {
 					 */
 					if (MemCacheThread.isInCache(cover, thumbSize)) { // we're optimistic, let's check the memory first.
 						if (DEBUG) Log.i(TAG, "Cover is now already in mem cache, directly returning...");
-						handler.value = MemCacheThread.getCover(cover, thumbSize);
-						done(handler);
+						response.value = MemCacheThread.getCover(cover, thumbSize);
+						done(response);
 					} else if (DiskCacheThread.isInCache(cover)) {
 						if (DEBUG) Log.i(TAG, "Cover is not in mem cache anymore but still on disk, directly returning...");
-						handler.value = DiskCacheThread.getCover(cover, thumbSize);
-						done(handler);
+						response.value = DiskCacheThread.getCover(cover, thumbSize);
+						done(response);
 					} else {
 						if (DEBUG) Log.i(TAG, "Download START..");
 						String b64enc = null;
 						switch (cover.getMediaType()) {
 							case MediaType.MUSIC:
-								b64enc = music(handler).getCover(cover);
+								b64enc = music(response).getCover(cover);
 								break;
 							case MediaType.VIDEO:
-								b64enc = video(handler).getCover(cover);
+								b64enc = video(response).getCover(cover);
 								break;
 							case MediaType.PICTURES:
-								done(handler);
+								done(response);
 								break;
 							default:
-								done(handler);
+								done(response);
 						}
 						if (DEBUG) Log.i(TAG, "Download END.");
 						byte[] bytes;
@@ -107,7 +107,7 @@ class DownloadThread extends AbstractThread {
 								Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 								if (bitmap != null) {
 									// add to disk cache
-									handler.value = DiskCacheThread.addCoverToCache(cover, bitmap, thumbSize);
+									response.value = DiskCacheThread.addCoverToCache(cover, bitmap, thumbSize);
 									// add to mem cache
 									MemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
 									if (DEBUG) Log.i(TAG, "Done");
@@ -121,11 +121,11 @@ class DownloadThread extends AbstractThread {
 							System.out.println("IOException: " + e.getMessage());
 							System.out.println(e.getStackTrace());
 						} finally {
-							done(handler);
+							done(response);
 						}
 					}
 				} else {
-					done(handler);
+					done(response);
 				}
 			}
 		});

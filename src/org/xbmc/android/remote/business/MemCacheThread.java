@@ -64,23 +64,23 @@ class MemCacheThread extends AbstractThread {
 	 * Asynchronously returns a thumb from the mem cache, or null if 
 	 * not available.
 	 * 
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param cover   Which cover to return
 	 */
-	public void getCover(final DataResponse<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
 					final long crc = cover.getCrc();
 					final SoftReference<Bitmap> ref = getCache(thumbSize).get(crc);
 			        if (ref != null) {
-			            handler.value = ref.get();
+			        	response.value = ref.get();
 			        } else if (sNotAvailable.containsKey(crc)) {
 //		            	Log.i("HttpApiMemCacheThread", "Delivering not-available image directly from cache (" + crc + ").");
-		            	handler.value = handler.getDefaultCover();
+			        	response.value = response.getDefaultCover();
 			        }
 				}
-				done(handler);
+				done(response);
 			}
 		});
 	}

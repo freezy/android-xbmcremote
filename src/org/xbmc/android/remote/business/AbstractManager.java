@@ -70,7 +70,7 @@ public abstract class AbstractManager {
 	
 	/**
 	 * Returns the InfoClient class
-	 * @param response
+	 * @param response Response object
 	 * @return
 	 */
 	protected InfoClient info(DataResponse<?> response) {
@@ -79,7 +79,7 @@ public abstract class AbstractManager {
 	
 	/**
 	 * Returns the ControlClient class
-	 * @param response
+	 * @param response Response object
 	 * @return
 	 */
 	protected ControlClient control(DataResponse<?> response) {
@@ -88,7 +88,7 @@ public abstract class AbstractManager {
 	
 	/**
 	 * Returns the VideoClient class
-	 * @param response
+	 * @param response Response object
 	 * @return
 	 */
 	protected VideoClient video(DataResponse<?> response) {
@@ -97,7 +97,7 @@ public abstract class AbstractManager {
 	
 	/**
 	 * Returns the MusicClient class
-	 * @param response
+	 * @param response Response object
 	 * @return
 	 */
 	protected MusicClient music(DataResponse<?> response) {
@@ -106,7 +106,7 @@ public abstract class AbstractManager {
 	
 	/**
 	 * Calls the UI thread's callback code.
-	 * @param response
+	 * @param response Response object
 	 */
 	protected void done(DataResponse<?> response) {
 		response.getActivity().runOnUiThread(response);
@@ -141,7 +141,7 @@ public abstract class AbstractManager {
 	/**
 	 * Tries to get small cover from memory, then from disk, then download it from XBMC.
 	 * @param response Response object
-	 * @param cover   Get cover for this object
+	 * @param cover    Get cover for this object
 	 */
 	protected void getCoverFromMem(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in mem cache..");
@@ -163,9 +163,9 @@ public abstract class AbstractManager {
 	
 	/**
 	 * Tries to get cover from disk, then download it from XBMC.
-	 * @param response Response object
+	 * @param response  Response object
 	 * @param cover     Get cover for this object
-	 * @param thumbSize    Cover size
+	 * @param thumbSize Cover size
 	 */
 	protected void getCoverFromDisk(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in disk cache..");
@@ -189,7 +189,7 @@ public abstract class AbstractManager {
 	
 	/**
 	 * Last stop: try to download from XBMC.
-	 * @param response Response object
+	 * @param response  Response object
 	 * @param cover     Get cover for this object
 	 * @param thumbSize Cover size
 	 */
