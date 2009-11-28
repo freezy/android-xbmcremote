@@ -8,8 +8,8 @@
 
 package org.xbmc.android.widget;
 
-import org.xbmc.android.backend.httpapi.HttpApiThread;
-import org.xbmc.android.remote.controller.holder.AbstractHolder;
+import org.xbmc.android.remote.business.ManagerThread;
+import org.xbmc.android.remote.presentation.controller.holder.AbstractHolder;
 import org.xbmc.android.widget.IdleListDetector.OnListIdleListener;
 import org.xbmc.httpapi.type.ThumbSize;
 
@@ -48,7 +48,7 @@ public class IdleListener implements OnListIdleListener {
 			final AbstractHolder holder = (AbstractHolder)row.getTag();
 			if (holder.tempBind) {
 				Log.i("ImageLoaderIdleListener", "Album: " + holder.getCoverItem());
-				HttpApiThread.music().getCover(holder.getCoverDownloadHandler(mActivity, null), holder.getCoverItem(), ThumbSize.SMALL);
+				ManagerThread.music().getCover(holder.getCoverDownloadHandler(mActivity, null), holder.getCoverItem(), ThumbSize.SMALL);
 				holder.tempBind = false;
 			}
 		}

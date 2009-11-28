@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.xbmc.android.remote"
-	android:versionName="0.6.1+" android:versionCode="372">
+	android:versionName="0.6.1+" android:versionCode="375">
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="false" >
-        <activity android:name=".activity.HomeActivity"
+        <activity android:name="org.xbmc.android.remote.presentation.activity.HomeActivity"
                   android:label="@string/app_name"
                   android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
@@ -10,14 +10,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.RemoteActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity android:name=".activity.MusicLibraryActivity" android:theme="@android:style/Theme.NoTitleBar" />
-        <activity android:name=".activity.MusicArtistActivity" android:theme="@android:style/Theme.NoTitleBar" />
-        <activity android:name=".activity.MusicGenreActivity" android:theme="@android:style/Theme.NoTitleBar" />
-        <activity android:name=".activity.MovieLibraryActivity" android:theme="@android:style/Theme.NoTitleBar" />
-        <activity android:name=".activity.MovieDetailsActivity" android:theme="@android:style/Theme.NoTitleBar" />
-        <activity android:name=".activity.ListActivity" android:theme="@android:style/Theme.NoTitleBar" />
-        <activity android:name=".activity.NowPlayingActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" android:label="@string/play_on_xbmc">
+        <activity android:name="org.xbmc.android.remote.presentation.activity.RemoteActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity android:name="org.xbmc.android.remote.presentation.activity.MusicLibraryActivity" android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name="org.xbmc.android.remote.presentation.activity.MusicArtistActivity" android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name="org.xbmc.android.remote.presentation.activity.MusicGenreActivity" android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name="org.xbmc.android.remote.presentation.activity.MovieLibraryActivity" android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name="org.xbmc.android.remote.presentation.activity.MovieDetailsActivity" android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name="org.xbmc.android.remote.presentation.activity.ListActivity" android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name="org.xbmc.android.remote.presentation.activity.NowPlayingActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" android:label="@string/play_on_xbmc">
 			<intent-filter>
             	<action android:name="android.intent.action.VIEW" />
             	<category android:name="android.intent.category.DEFAULT" />
@@ -28,16 +28,16 @@
 				<data android:scheme="http" android:mimeType="audio/*"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.PlaylistActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
-        <activity android:name=".activity.AboutActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait"/>
-        <activity android:name=".activity.SettingsActivity" />
+        <activity android:name="org.xbmc.android.remote.presentation.activity.PlaylistActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
+        <activity android:name="org.xbmc.android.remote.presentation.activity.AboutActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait"/>
+        <activity android:name="org.xbmc.android.remote.presentation.activity.SettingsActivity" />
         <receiver android:name=".XbmcBroadcastReceiver" android:label="@string/app_receiver">
 	        <intent-filter>
 				<action android:name="android.provider.Telephony.SMS_RECEIVED" />
 				<action android:name="android.intent.action.PHONE_STATE" />
 			</intent-filter>
 		</receiver>
-    </application>
+</application>
     <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
     <supports-screens
           android:largeScreens="true"
