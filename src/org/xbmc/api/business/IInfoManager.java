@@ -19,50 +19,34 @@
  *
  */
 
-package org.xbmc.android.remote.business;
+package org.xbmc.api.business;
 
 import java.util.ArrayList;
 
-import org.xbmc.api.business.DataResponse;
-import org.xbmc.api.business.IInfoManager;
 import org.xbmc.httpapi.data.MediaLocation;
 import org.xbmc.httpapi.type.DirectoryMask;
 
-
 /**
- * Asynchronously wraps the {@link org.xbmc.httpapi.client.InfoClient} class.
- * 
+ * This is the interface between the presentation layer and the business layer.
+ * All the controller of the presentation layer gets to see is this interface.
+ *  
  * @author Team XBMC
  */
-public class InfoManager extends AbstractManager implements IInfoManager {
+public interface IInfoManager {
 	
 	/**
 	 * Returns any system info variable, see {@link org.xbmc.httpapi.info.SystemInfo}
 	 * @param response Response object
 	 * @param field Field to return
 	 */
-	public void getSystemInfo(final DataResponse<String> response, final int field) {
-		mResponse.post(new Runnable() {
-			public void run() { 
-				response.value = info(response).getSystemInfo(field);
-				done(response);
-			}
-		});
-	}
+	public void getSystemInfo(final DataResponse<String> response, final int field);
 	
 	/**
 	 * Returns all defined shares of a media type
 	 * @param response Response object
 	 * @param mediaType Media type
 	 */
-	public void getShares(final DataResponse<ArrayList<MediaLocation>> response, final int mediaType) {
-		mResponse.post(new Runnable() {
-			public void run() { 
-				response.value = info(response).getShares(mediaType);
-				done(response);
-			}
-		});
-	}
+	public void getShares(final DataResponse<ArrayList<MediaLocation>> response, final int mediaType);
 	
 	/**
 	 * Returns the contents of a directory
@@ -73,14 +57,7 @@ public class InfoManager extends AbstractManager implements IInfoManager {
 	 * @param limit    Limit (0 for none)
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<MediaLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit) {
-		mResponse.post(new Runnable() {
-			public void run() { 
-				response.value = info(response).getDirectory(path, mask, offset, limit);
-				done(response);
-			}
-		});
-	}
+	public void getDirectory(final DataResponse<ArrayList<MediaLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit);
 	
 	/**
 	 * Returns the contents of a directory
@@ -88,13 +65,6 @@ public class InfoManager extends AbstractManager implements IInfoManager {
 	 * @param path     Path to the directory
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<MediaLocation>> response, final String path) {
-		mResponse.post(new Runnable() {
-			public void run() { 
-				response.value = info(response).getDirectory(path);
-				done(response);
-			}
-		});
-	}
-
+	public void getDirectory(final DataResponse<ArrayList<MediaLocation>> response, final String path);
+	
 }

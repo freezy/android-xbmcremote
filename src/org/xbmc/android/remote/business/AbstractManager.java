@@ -22,6 +22,7 @@
 package org.xbmc.android.remote.business;
 
 import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.api.business.DataResponse;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.MusicClient;
@@ -57,81 +58,81 @@ public abstract class AbstractManager {
 	public static final int PREF_SORT_KEY_GENRE = 4;
 	public static final int PREF_SORT_KEY_FILEMODE = 5;
 	
-	protected Handler mHandler;
+	protected Handler mResponse;
 	
 	/**
 	 * Sets the handler used in the looping thread
 	 * @param handler
 	 */
 	public void setHandler(Handler handler) {
-		mHandler = handler;
+		mResponse = handler;
 	}
 	
 	/**
 	 * Returns the InfoClient class
-	 * @param handler
+	 * @param response
 	 * @return
 	 */
-	protected InfoClient info(DataResponse<?> handler) {
-		return ConnectionManager.getHttpClient(handler.getActivity()).info;
+	protected InfoClient info(DataResponse<?> response) {
+		return ConnectionManager.getHttpClient(response.getActivity()).info;
 	}
 	
 	/**
 	 * Returns the ControlClient class
-	 * @param handler
+	 * @param response
 	 * @return
 	 */
-	protected ControlClient control(DataResponse<?> handler) {
-		return ConnectionManager.getHttpClient(handler.getActivity()).control;
+	protected ControlClient control(DataResponse<?> response) {
+		return ConnectionManager.getHttpClient(response.getActivity()).control;
 	}
 	
 	/**
 	 * Returns the VideoClient class
-	 * @param handler
+	 * @param response
 	 * @return
 	 */
-	protected VideoClient video(DataResponse<?> handler) {
-		return ConnectionManager.getHttpClient(handler.getActivity()).video;
+	protected VideoClient video(DataResponse<?> response) {
+		return ConnectionManager.getHttpClient(response.getActivity()).video;
 	}
 	
 	/**
 	 * Returns the MusicClient class
-	 * @param handler
+	 * @param response
 	 * @return
 	 */
-	protected MusicClient music(DataResponse<?> handler) {
-		return ConnectionManager.getHttpClient(handler.getActivity()).music;
+	protected MusicClient music(DataResponse<?> response) {
+		return ConnectionManager.getHttpClient(response.getActivity()).music;
 	}
 	
 	/**
 	 * Calls the UI thread's callback code.
-	 * @param handler
+	 * @param response
 	 */
-	protected void done(DataResponse<?> handler) {
-		handler.getActivity().runOnUiThread(handler);
+	protected void done(DataResponse<?> response) {
+		response.getActivity().runOnUiThread(response);
 	}
 	
 	/**
 	 * Returns bitmap of any cover. Note that the callback is done by the
 	 * helper methods below.
-	 * @param handler Callback handler
+	 * @param response Response object
 	 */
-	public void getCover(final DataResponse<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
-		mHandler.post(new Runnable() {
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
+		mResponse.post(new Runnable() {
 			public void run() {
 				if (cover.getCrc() != 0L) {
 					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
 					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
 						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Trying memory");
-						getCoverFromMem(handler, cover, thumbSize);
+						getCoverFromMem(response, cover, thumbSize);
 					} else {
 						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Trying disk directly (size not mem-cached)");
-						getCoverFromDisk(handler, cover, thumbSize);
+						getCoverFromDisk(response, cover, thumbSize);
 					}
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] no crc, skipping.");
-					handler.value = null;
-					done(handler);
+					response.value = null;
+					done(response);
 				}
 			}
 		});
@@ -139,22 +140,22 @@ public abstract class AbstractManager {
 	
 	/**
 	 * Tries to get small cover from memory, then from disk, then download it from XBMC.
-	 * @param handler Callback handler
+	 * @param response Response object
 	 * @param cover   Get cover for this object
 	 */
-	protected void getCoverFromMem(final DataResponse<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
+	protected void getCoverFromMem(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in mem cache..");
-		MemCacheThread.get().getCover(new DataResponse<Bitmap>(handler) {
+		MemCacheThread.get().getCover(new DataResponse<Bitmap>(response) {
 			public void run() {
 				if (value == null) {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] empty");
 					// then, try sdcard cache
-					getCoverFromDisk(handler, cover, thumbSize);
+					getCoverFromDisk(response, cover, thumbSize);
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] FOUND in memory!");
-					handler.value = value;
-					handler.cacheType = CacheType.MEMORY;
-					done(handler);
+					response.value = value;
+					response.cacheType = CacheType.MEMORY;
+					done(response);
 				}
 			}
 		}, cover, thumbSize);
@@ -162,25 +163,25 @@ public abstract class AbstractManager {
 	
 	/**
 	 * Tries to get cover from disk, then download it from XBMC.
-	 * @param handler Callback handler
+	 * @param response Response object
 	 * @param cover     Get cover for this object
 	 * @param thumbSize    Cover size
 	 */
-	protected void getCoverFromDisk(final DataResponse<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
+	protected void getCoverFromDisk(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in disk cache..");
-		DiskCacheThread.get().getCover(new DataResponse<Bitmap>(handler) {
+		DiskCacheThread.get().getCover(new DataResponse<Bitmap>(response) {
 			public void run() {
 				if (value == null) {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Disk cache empty.");
-					if (handler.postCache()) {
+					if (response.postCache()) {
 						// well, let's download
-						getCoverFromNetwork(handler, cover, thumbSize);
+						getCoverFromNetwork(response, cover, thumbSize);
 					}
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] FOUND on disk!");
-					handler.value = value;
-					handler.cacheType = CacheType.SDCARD;
-					done(handler);
+					response.value = value;
+					response.cacheType = CacheType.SDCARD;
+					done(response);
 				}
 			}
 		}, cover, thumbSize);
@@ -188,22 +189,22 @@ public abstract class AbstractManager {
 	
 	/**
 	 * Last stop: try to download from XBMC.
-	 * @param handler Callback handler
+	 * @param response Response object
 	 * @param cover     Get cover for this object
 	 * @param thumbSize Cover size
 	 */
-	protected void getCoverFromNetwork(final DataResponse<Bitmap> handler, final ICoverArt cover, final int thumbSize) {
+	protected void getCoverFromNetwork(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Downloading..");
-		DownloadThread.get().getCover(new DataResponse<Bitmap>(handler) {
+		DownloadThread.get().getCover(new DataResponse<Bitmap>(response) {
 			public void run() {
 				if (value == null) {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Download empty");
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] DOWNLOADED!");
-					handler.cacheType = CacheType.NETWORK;
-					handler.value = value;
+					response.cacheType = CacheType.NETWORK;
+					response.value = value;
 				}
-				done(handler); // callback in any case, since we don't go further than that.
+				done(response); // callback in any case, since we don't go further than that.
 			}
 		}, cover, thumbSize);
 	}

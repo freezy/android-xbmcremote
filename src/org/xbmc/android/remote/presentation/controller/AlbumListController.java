@@ -24,7 +24,6 @@ package org.xbmc.android.remote.presentation.controller;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.DataResponse;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.business.MusicManager;
@@ -34,6 +33,7 @@ import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
 import org.xbmc.android.remote.presentation.controller.holder.ThreeHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
 import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.api.business.DataResponse;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
@@ -112,8 +112,8 @@ public class AlbumListController extends ListController {
 	
 	public void onCreate(Activity activity, ListView list) {
 		
-		MusicManager.setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
-		MusicManager.setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
+		ManagerThread.music().setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
+		ManagerThread.music().setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		mLoadCovers = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
 		
 		if (!isCreated()) {

@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.remote.business;
+package org.xbmc.api.business;
 
 import org.xbmc.android.remote.R;
 
@@ -40,7 +40,7 @@ import android.graphics.BitmapFactory;
 public class DataResponse<T> implements Runnable {
 	public T value;
 	public int defaultCover = R.drawable.icon_genre;
-	protected int cacheType;
+	public int cacheType;
 	
 	protected final Activity mActivity;
 	protected final long mTag;

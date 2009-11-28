@@ -23,6 +23,9 @@ package org.xbmc.android.remote.business;
 
 import java.util.ArrayList;
 
+import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IMusicManager;
+import org.xbmc.api.business.ISortableManager;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.data.Album;
@@ -34,152 +37,152 @@ import org.xbmc.httpapi.type.SortType;
 
 import android.content.SharedPreferences;
 
-
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.InfoClient} class.
  * 
  * @author Team XBMC
  */
-public class MusicManager extends AbstractManager {
+public class MusicManager extends AbstractManager implements IMusicManager, ISortableManager {
 	
-	private static SharedPreferences sPref;
-	private static int sCurrentSortKey;
+	private SharedPreferences mPref;
+	private int mCurrentSortKey;
 	
 	/**
 	 * Gets all albums from database
-	 * @param handler Callback handler
+	 * @param response Response object
 	 */
-	public void getCompilations(final DataResponse<ArrayList<Album>> handler) {
-		mHandler.post(new Runnable() {
+	public void getCompilations(final DataResponse<ArrayList<Album>> response) {
+		mResponse.post(new Runnable() {
 			public void run() {
-				final MusicClient mc = music(handler);
+				final MusicClient mc = music(response);
 				ArrayList<Integer> compilationArtistIDs = mc.getCompilationArtistIDs();
-				handler.value = mc.getAlbums(compilationArtistIDs);
-				done(handler);
+				response.value = mc.getAlbums(compilationArtistIDs);
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Gets all albums from database
-	 * @param handler Callback handler
+	 * @param response Response object
 	 */
-	public void getAlbums(final DataResponse<ArrayList<Album>> handler) {
-		mHandler.post(new Runnable() {
+	public void getAlbums(final DataResponse<ArrayList<Album>> response) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getAlbums(getSortBy(SortType.ALBUM), getSortOrder());
-				done(handler);
+				response.value = music(response).getAlbums(getSortBy(SortType.ALBUM), getSortOrder());
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Gets all albums of an artist from database
-	 * @param handler Callback handler
+	 * @param response Response object
 	 * @param artist  Artist of the albums
 	 */
-	public void getAlbums(final DataResponse<ArrayList<Album>> handler, final Artist artist) {
-		mHandler.post(new Runnable() {
+	public void getAlbums(final DataResponse<ArrayList<Album>> response, final Artist artist) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getAlbums(artist, getSortBy(SortType.ALBUM), getSortOrder());
-				done(handler);
+				response.value = music(response).getAlbums(artist, getSortBy(SortType.ALBUM), getSortOrder());
+				done(response);
 			}
 		});
 	}
 
 	/**
 	 * Gets all albums of a genre from database
-	 * @param handler Callback handler
+	 * @param response Response object
 	 * @param artist  Genre of the albums
 	 */
-	public void getAlbums(final DataResponse<ArrayList<Album>> handler, final Genre genre) {
-		mHandler.post(new Runnable() {
+	public void getAlbums(final DataResponse<ArrayList<Album>> response, final Genre genre) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getAlbums(genre, getSortBy(SortType.ALBUM), getSortOrder());
-				done(handler);
+				response.value = music(response).getAlbums(genre, getSortBy(SortType.ALBUM), getSortOrder());
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Gets all songs of an album from database
-	 * @param handler Callback handler
-	 * @param album The album
+	 * @param response Response object
+	 * @param album Album
 	 */
-	public void getSongs(final DataResponse<ArrayList<Song>> handler, final Album album) {
-		mHandler.post(new Runnable() {
+	public void getSongs(final DataResponse<ArrayList<Song>> response, final Album album) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getSongs(album, getSortBy(SortType.ARTIST), getSortOrder());
-				done(handler);
+				response.value = music(response).getSongs(album, getSortBy(SortType.ARTIST), getSortOrder());
+				done(response);
 			}
 		});
 	}
 
 	/**
 	 * Gets all songs from an artist from database
-	 * @param handler Callback handler
-	 * @param album The artist
+	 * @param response Response object
+	 * @param album Artist
 	 */
-	public void getSongs(final DataResponse<ArrayList<Song>> handler, final Artist artist) {
-		mHandler.post(new Runnable() {
+	public void getSongs(final DataResponse<ArrayList<Song>> response, final Artist artist) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getSongs(artist, getSortBy(SortType.ARTIST), getSortOrder());
-				done(handler);
+				response.value = music(response).getSongs(artist, getSortBy(SortType.ARTIST), getSortOrder());
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Gets all songs of a genre from database
-	 * @param handler Callback handler
-	 * @param album The genre
+	 * @param response Response object
+	 * @param album Genre
 	 */
-	public void getSongs(final DataResponse<ArrayList<Song>> handler, final Genre genre) {
-		mHandler.post(new Runnable() {
+	public void getSongs(final DataResponse<ArrayList<Song>> response, final Genre genre) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getSongs(genre, getSortBy(SortType.ARTIST), getSortOrder());
-				done(handler);
+				response.value = music(response).getSongs(genre, getSortBy(SortType.ARTIST), getSortOrder());
+				done(response);
 			}
 		});
 	}
 
 	/**
 	 * Gets all artists from database
-	 * @param handler Callback handler
+	 * @param response Response object
 	 */
-	public void getArtists(final DataResponse<ArrayList<Artist>> handler) {
-		mHandler.post(new Runnable() {
+	public void getArtists(final DataResponse<ArrayList<Artist>> response) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				final boolean albumArtistsOnly = info(handler).getGuiSettingBool(GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
-				handler.value = music(handler).getArtists(albumArtistsOnly);
-				done(handler);
+				final boolean albumArtistsOnly = info(response).getGuiSettingBool(GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
+				response.value = music(response).getArtists(albumArtistsOnly);
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Gets all artists with at least one song of a genre.
-	 * @param handler Callback handler
+	 * @param response Response object
+	 * @param genre Genre
 	 */
-	public void getArtists(final DataResponse<ArrayList<Artist>> handler, final Genre genre) {
-		mHandler.post(new Runnable() {
+	public void getArtists(final DataResponse<ArrayList<Artist>> response, final Genre genre) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				final boolean albumArtistsOnly = info(handler).getGuiSettingBool(GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
-				handler.value = music(handler).getArtists(genre, albumArtistsOnly);
-				done(handler);
+				final boolean albumArtistsOnly = info(response).getGuiSettingBool(GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
+				response.value = music(response).getArtists(genre, albumArtistsOnly);
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Gets all artists from database
-	 * @param handler Callback handler
+	 * @param response Response object
 	 */
-	public void getGenres(final DataResponse<ArrayList<Genre>> handler) {
-		mHandler.post(new Runnable() {
+	public void getGenres(final DataResponse<ArrayList<Genre>> response) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).getGenres();
-				done(handler);
+				response.value = music(response).getGenres();
+				done(response);
 			}
 		});
 	}
@@ -189,18 +192,18 @@ public class MusicManager extends AbstractManager {
 	 * the album is added to playlist and the first song is selected to play. 
 	 * If something is playing already, the album is only queued.
 	 * 
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param album Album to add
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> handler, final Album album) {
-		mHandler.post(new Runnable() {
+	public void addToPlaylist(final DataResponse<Boolean> response, final Album album) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				final MusicClient mc = music(handler);
-				final ControlClient cc = control(handler);
+				final MusicClient mc = music(response);
+				final ControlClient cc = control(response);
 				final int numAlreadyQueued = mc.getPlaylistSize();
-				handler.value = mc.addToPlaylist(album);
+				response.value = mc.addToPlaylist(album);
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
-				done(handler);
+				done(response);
 			}
 		});
 	}
@@ -208,32 +211,32 @@ public class MusicManager extends AbstractManager {
 	/**
 	 * Adds all songs of a genre to the current playlist. If current playlist is stopped,
 	 * play is executed. Value is the first song of the added album.
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param genre Genre of songs to add
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> handler, final Genre genre) {
-		mHandler.post(new Runnable() {
+	public void addToPlaylist(final DataResponse<Boolean> response, final Genre genre) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				final MusicClient mc = music(handler);
-				final ControlClient cc = control(handler);
+				final MusicClient mc = music(response);
+				final ControlClient cc = control(response);
 				final int numAlreadyQueued = mc.getPlaylistSize();
-				handler.value = mc.addToPlaylist(genre);
+				response.value = mc.addToPlaylist(genre);
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
-				done(handler);
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Adds a song to the current playlist. Even if the playlist is empty, only this song will be added.
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param album Song to add
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> handler, final Song song) {
-		mHandler.post(new Runnable() {
+	public void addToPlaylist(final DataResponse<Boolean> response, final Song song) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).addToPlaylist(song);
-				done(handler);
+				response.value = music(response).addToPlaylist(song);
+				done(response);
 			}
 		});
 	}
@@ -243,18 +246,18 @@ public class MusicManager extends AbstractManager {
 	 * album will be added with this song playing, otherwise only this song is
 	 * added.
 	 * 
-	 * <b>Attention</b>, the handler.value result is different as usual: True 
+	 * <b>Attention</b>, the response.value result is different as usual: True 
 	 * means the whole album was added, false means ony the song.
 	 *  
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param album Album to add
 	 * @param song Song to play
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> handler, final Album album, final Song song) {
-		mHandler.post(new Runnable() {
+	public void addToPlaylist(final DataResponse<Boolean> response, final Album album, final Song song) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				final MusicClient mc = music(handler);
-				final ControlClient.PlayStatus ps = control(handler).getPlayState();
+				final MusicClient mc = music(response);
+				final ControlClient.PlayStatus ps = control(response).getPlayState();
 				mc.setCurrentPlaylist();
 				final int playlistSize = mc.getPlaylistSize(); 
 				int playPos = -1;
@@ -268,10 +271,10 @@ public class MusicManager extends AbstractManager {
 						n++;
 					}
 					mc.addToPlaylist(album);
-					handler.value = true;
+					response.value = true;
 				} else {                          // otherwise, only add the song
 					mc.addToPlaylist(song);
-					handler.value = false;
+					response.value = false;
 				}
 				if (ps == ControlClient.PlayStatus.Stopped) { // if nothing is playing, play the song
 					if (playPos == 0) {
@@ -285,7 +288,7 @@ public class MusicManager extends AbstractManager {
 						mc.playNext();
 					}
 				}
-				done(handler);
+				done(response);
 			}
 		});
 	}
@@ -295,18 +298,18 @@ public class MusicManager extends AbstractManager {
 	 * stopped, the all songs of the artist are added to playlist and the first
 	 * song is selected to play. If something is playing already, the songs are
 	 * only queued.
-	 * @param handler Callback
-	 * @param artist 
+	 * @param response Response object
+	 * @param artist Artist
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> handler, final Artist artist) {
-		mHandler.post(new Runnable() {
+	public void addToPlaylist(final DataResponse<Boolean> response, final Artist artist) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				final MusicClient mc = music(handler);
-				final ControlClient cc = control(handler);
+				final MusicClient mc = music(response);
+				final ControlClient cc = control(response);
 				final int numAlreadyQueued = mc.getPlaylistSize();
-				handler.value = mc.addToPlaylist(artist);
+				response.value = mc.addToPlaylist(artist);
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
-				done(handler);
+				done(response);
 			}
 		});
 	}
@@ -314,33 +317,33 @@ public class MusicManager extends AbstractManager {
 	/**
 	 * Adds all songs of a genre from an artist to the playlist. If nothing is playing, 
 	 * the first song will be played, otherwise songs are just added to the playlist.
-	 * @param handler Callback
-	 * @param artist 
-	 * @param genre 
+	 * @param response Response object
+	 * @param artist Artist
+	 * @param genre Genre
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> handler, final Artist artist, final Genre genre) {
-		mHandler.post(new Runnable() {
+	public void addToPlaylist(final DataResponse<Boolean> response, final Artist artist, final Genre genre) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				final MusicClient mc = music(handler);
-				final ControlClient cc = control(handler);
+				final MusicClient mc = music(response);
+				final ControlClient cc = control(response);
 				final int numAlreadyQueued = mc.getPlaylistSize();
-				handler.value = mc.addToPlaylist(artist, genre);
+				response.value = mc.addToPlaylist(artist, genre);
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
-				done(handler);
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Sets the media at playlist position position to be the next item to be played.
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param position Position, starting with 0.
 	 */
-	public void setPlaylistSong(final DataResponse<Boolean> handler, final int position) {
-		mHandler.post(new Runnable() {
+	public void setPlaylistSong(final DataResponse<Boolean> response, final int position) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).setPlaylistPosition(position);
-				done(handler);
+				response.value = music(response).setPlaylistPosition(position);
+				done(response);
 			}
 		});
 	}
@@ -350,11 +353,11 @@ public class MusicManager extends AbstractManager {
 	 * @param position Position to remove, starting with 0.
 	 * @return True on success, false otherwise.
 	 */
-	public void removeFromPlaylist(final DataResponse<Boolean> handler, final int position) {
-		mHandler.post(new Runnable() {
+	public void removeFromPlaylist(final DataResponse<Boolean> response, final int position) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).removeFromPlaylist(position);
-				done(handler);
+				response.value = music(response).removeFromPlaylist(position);
+				done(response);
 			}
 		});
 	}
@@ -364,71 +367,71 @@ public class MusicManager extends AbstractManager {
 	 * @param position Complete path (including filename) of the media to be removed.
 	 * @return True on success, false otherwise.
 	 */
-	public void removeFromPlaylist(final DataResponse<Boolean> handler, final String path) {
-		mHandler.post(new Runnable() {
+	public void removeFromPlaylist(final DataResponse<Boolean> response, final String path) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).removeFromPlaylist(path);
-				done(handler);
+				response.value = music(response).removeFromPlaylist(path);
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Plays an album
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param album Album to play
 	 */
-	public void play(final DataResponse<Boolean> handler, final Album album) {
-		mHandler.post(new Runnable() {
+	public void play(final DataResponse<Boolean> response, final Album album) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				control(handler).stop();
-				handler.value = music(handler).play(album, getSortBy(SortType.TRACK), getSortOrder());
-				done(handler);
+				control(response).stop();
+				response.value = music(response).play(album, getSortBy(SortType.TRACK), getSortOrder());
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Plays all songs of a genre
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param genre Genre of songs to play
 	 */
-	public void play(final DataResponse<Boolean> handler, final Genre genre) {
-		mHandler.post(new Runnable() {
+	public void play(final DataResponse<Boolean> response, final Genre genre) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				control(handler).stop();
-				handler.value = music(handler).play(genre, getSortBy(SortType.ARTIST), getSortOrder());
-				done(handler);
+				control(response).stop();
+				response.value = music(response).play(genre, getSortBy(SortType.ARTIST), getSortOrder());
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Plays a song
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param song Song to play
 	 */
-	public void play(final DataResponse<Boolean> handler, final Song song) {
-		mHandler.post(new Runnable() {
+	public void play(final DataResponse<Boolean> response, final Song song) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				control(handler).stop();
-				handler.value = music(handler).play(song);
-				done(handler);
+				control(response).stop();
+				response.value = music(response).play(song);
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Plays a song, but the whole album is added to the playlist.
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param album Album to queue
 	 * @param song Song to play
 	 */
-	public void play(final DataResponse<Boolean> handler, final Album album, final Song song) {
-		mHandler.post(new Runnable() {
+	public void play(final DataResponse<Boolean> response, final Album album, final Song song) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				final MusicClient mc = music(handler);
-				final ControlClient cc = control(handler);
+				final MusicClient mc = music(response);
+				final ControlClient cc = control(response);
 				int n = 0;
 				int playPos = 0;
 				mc.clearPlaylist();
@@ -445,39 +448,39 @@ public class MusicManager extends AbstractManager {
 				if (playPos > 0) {
 					mc.playlistSetSong(playPos - 1);
 				}				
-				handler.value = mc.playNext();
-				done(handler);
+				response.value = mc.playNext();
+				done(response);
 			}
 		});
 	}
 
 	/**
 	 * Plays all songs from an artist
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param artist Artist whose songs to play
 	 */
-	public void play(final DataResponse<Boolean> handler, final Artist artist) {
-		mHandler.post(new Runnable() {
+	public void play(final DataResponse<Boolean> response, final Artist artist) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				control(handler).stop();
-				handler.value = music(handler).play(artist, getSortBy(SortType.ALBUM), getSortOrder());
-				done(handler);
+				control(response).stop();
+				response.value = music(response).play(artist, getSortBy(SortType.ALBUM), getSortOrder());
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Plays songs of a genre from an artist
-	 * @param handler Callback
+	 * @param response Response object
 	 * @param artist Artist whose songs to play
 	 * @param genre  Genre filter
 	 */
-	public void play(final DataResponse<Boolean> handler, final Artist artist, final Genre genre) {
-		mHandler.post(new Runnable() {
+	public void play(final DataResponse<Boolean> response, final Artist artist, final Genre genre) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				control(handler).stop();
-				handler.value = music(handler).play(artist, genre);
-				done(handler);
+				control(response).stop();
+				response.value = music(response).play(artist, genre);
+				done(response);
 			}
 		});
 	}
@@ -485,43 +488,43 @@ public class MusicManager extends AbstractManager {
 	
 	/**
 	 * Starts playing the next media in the current playlist. 
-	 * @param handler Callback
+	 * @param response Response object
 	 */
-	public void playlistNext(final DataResponse<Boolean> handler) {
-		mHandler.post(new Runnable() {
+	public void playlistNext(final DataResponse<Boolean> response) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = music(handler).playNext();
-				done(handler);
+				response.value = music(response).playNext();
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Returns an array of songs on the playlist. Empty array if nothing is playing.
-	 * @param handler Callback
+	 * @param response Response object
 	 */
-	public void getPlaylist(final DataResponse<ArrayList<String>> handler) {
-		mHandler.post(new Runnable() {
+	public void getPlaylist(final DataResponse<ArrayList<String>> response) {
+		mResponse.post(new Runnable() {
 			public void run() {
-				handler.value = music(handler).getPlaylist();
-				final String firstEntry = handler.value.get(0);
+				response.value = music(response).getPlaylist();
+				final String firstEntry = response.value.get(0);
 				if (firstEntry != null && firstEntry.equals("[Empty]")) {
-					handler.value = new ArrayList<String>();
+					response.value = new ArrayList<String>();
 				} 
-				done(handler);
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Returns the position of the currently playing song in the playlist. First position is 0.
-	 * @param handler Callback
+	 * @param response Response object
 	 */
-	public void getPlaylistPosition(final DataResponse<Integer> handler) {
-		mHandler.post(new Runnable() {
+	public void getPlaylistPosition(final DataResponse<Integer> response) {
+		mResponse.post(new Runnable() {
 			public void run() {
-				handler.value = music(handler).getPlaylistPosition();
-				done(handler);
+				response.value = music(response).getPlaylistPosition();
+				done(response);
 			}
 		});
 	}
@@ -531,16 +534,16 @@ public class MusicManager extends AbstractManager {
 	 * current sort values.
 	 * @param pref
 	 */
-	public static void setPreferences(SharedPreferences pref) {
-		sPref = pref;
+	public void setPreferences(SharedPreferences pref) {
+		mPref = pref;
 	}
 	
 	/**
 	 * Sets which kind of view is currently active.
 	 * @param sortKey
 	 */
-	public static void setSortKey(int sortKey) {
-		sCurrentSortKey = sortKey;
+	public void setSortKey(int sortKey) {
+		mCurrentSortKey = sortKey;
 	}
 	
 	/**
@@ -569,9 +572,9 @@ public class MusicManager extends AbstractManager {
 	 * @param type Default value
 	 * @return Sort by field
 	 */
-	private static int getSortBy(int type) {
-		if (sPref != null) {
-			return sPref.getInt(AbstractManager.PREF_SORT_BY_PREFIX + sCurrentSortKey, type);
+	private int getSortBy(int type) {
+		if (mPref != null) {
+			return mPref.getInt(AbstractManager.PREF_SORT_BY_PREFIX + mCurrentSortKey, type);
 		}
 		return type;
 	}
@@ -581,9 +584,9 @@ public class MusicManager extends AbstractManager {
 	 * if the current sort key is not set, return "ASC".
 	 * @return Sort order
 	 */
-	private static String getSortOrder() {
-		if (sPref != null) {
-			return sPref.getString(AbstractManager.PREF_SORT_ORDER_PREFIX + sCurrentSortKey, SortType.ORDER_ASC);
+	private String getSortOrder() {
+		if (mPref != null) {
+			return mPref.getString(AbstractManager.PREF_SORT_ORDER_PREFIX + mCurrentSortKey, SortType.ORDER_ASC);
 		}
 		return SortType.ORDER_ASC;
 	}

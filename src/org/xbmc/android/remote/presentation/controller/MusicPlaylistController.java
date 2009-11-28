@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.DataResponse;
 import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
 import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
+import org.xbmc.api.business.DataResponse;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 import org.xbmc.httpapi.data.NamedResource;

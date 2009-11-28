@@ -24,6 +24,7 @@ package org.xbmc.android.remote.business;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 
+import org.xbmc.api.business.DataResponse;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.type.ThumbSize;
 

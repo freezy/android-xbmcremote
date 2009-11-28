@@ -22,9 +22,9 @@
 package org.xbmc.android.remote.presentation.controller.holder;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.DataResponse;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
 import org.xbmc.android.widget.IdleListDetector;
+import org.xbmc.api.business.DataResponse;
 import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.type.CacheType;
 

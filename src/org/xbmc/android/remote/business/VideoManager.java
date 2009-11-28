@@ -23,6 +23,9 @@ package org.xbmc.android.remote.business;
 
 import java.util.ArrayList;
 
+import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.ISortableManager;
+import org.xbmc.api.business.IVideoManager;
 import org.xbmc.httpapi.data.Actor;
 import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.Movie;
@@ -35,59 +38,62 @@ import android.content.SharedPreferences;
  * 
  * @author Team XBMC
  */
-public class VideoManager extends AbstractManager {
+public class VideoManager extends AbstractManager implements IVideoManager, ISortableManager {
 
-	private static SharedPreferences sPref;
-	private static int sCurrentSortKey;
+	private SharedPreferences mPref;
+	private int mCurrentSortKey;
 	
 	/**
 	 * Updates the movie object with additional data (plot, cast, etc)
-	 * @param handler Callback handler
+	 * @param response Response object
+	 * @param movie Movie
 	 */
-	public void updateMovieDetails(final DataResponse<Movie> handler, final Movie movie) {
-		mHandler.post(new Runnable() {
+	public void updateMovieDetails(final DataResponse<Movie> response, final Movie movie) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = video(handler).updateMovieDetails(movie);
-				done(handler);
+				response.value = video(response).updateMovieDetails(movie);
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Gets all movies from database
-	 * @param handler Callback handler
+	 * @param response Response object
 	 */
-	public void getMovies(final DataResponse<ArrayList<Movie>> handler) {
-		mHandler.post(new Runnable() {
+	public void getMovies(final DataResponse<ArrayList<Movie>> response) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = video(handler).getMovies(getSortBy(SortType.TITLE), getSortOrder());
-				done(handler);
+				response.value = video(response).getMovies(getSortBy(SortType.TITLE), getSortOrder());
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Gets all movies with an actor from database
-	 * @param handler Callback handler
+	 * @param response Response object
+	 * @param actor Actor
 	 */
-	public void getMovies(final DataResponse<ArrayList<Movie>> handler, final Actor actor) {
-		mHandler.post(new Runnable() {
+	public void getMovies(final DataResponse<ArrayList<Movie>> response, final Actor actor) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = video(handler).getMovies(actor, getSortBy(SortType.TITLE), getSortOrder());
-				done(handler);
+				response.value = video(response).getMovies(actor, getSortBy(SortType.TITLE), getSortOrder());
+				done(response);
 			}
 		});
 	}
 
 	/**
 	 * Gets all movies of a genre from database
-	 * @param handler Callback handler
+	 * @param response Response object
+	 * @param genre Genre
 	 */
-	public void getMovies(final DataResponse<ArrayList<Movie>> handler, final Genre genre) {
-		mHandler.post(new Runnable() {
+	public void getMovies(final DataResponse<ArrayList<Movie>> response, final Genre genre) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = video(handler).getMovies(genre, getSortBy(SortType.TITLE), getSortOrder());
-				done(handler);
+				response.value = video(response).getMovies(genre, getSortBy(SortType.TITLE), getSortOrder());
+				done(response);
 			}
 		});
 	}
@@ -95,52 +101,52 @@ public class VideoManager extends AbstractManager {
 	/**
 	 * Gets all actors from database. Use {@link getMovieActors()} and
 	 * {@link getTvActors()} for filtered actors. 
-	 * @param handler Callback handler
+	 * @param response Response object
 	 */
-	public void getActors(final DataResponse<ArrayList<Actor>> handler) {
-		mHandler.post(new Runnable() {
+	public void getActors(final DataResponse<ArrayList<Actor>> response) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = video(handler).getActors();
-				done(handler);
+				response.value = video(response).getActors();
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Gets all movie actors from database
-	 * @param handler Callback handler
+	 * @param response Response object
 	 */
-	public void getMovieActors(final DataResponse<ArrayList<Actor>> handler) {
-		mHandler.post(new Runnable() {
+	public void getMovieActors(final DataResponse<ArrayList<Actor>> response) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = video(handler).getMovieActors();
-				done(handler);
+				response.value = video(response).getMovieActors();
+				done(response);
 			}
 		});
 	}
 
 	/**
 	 * Gets all TV show actors from database
-	 * @param handler Callback handler
+	 * @param response Response object
 	 */
-	public void getTvShowActors(final DataResponse<ArrayList<Actor>> handler) {
-		mHandler.post(new Runnable() {
+	public void getTvShowActors(final DataResponse<ArrayList<Actor>> response) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = video(handler).getTvShowActors();
-				done(handler);
+				response.value = video(response).getTvShowActors();
+				done(response);
 			}
 		});
 	}
 	
 	/**
 	 * Gets all movie genres from database
-	 * @param handler Callback handler
+	 * @param response Response object
 	 */
-	public void getMovieGenres(final DataResponse<ArrayList<Genre>> handler) {
-		mHandler.post(new Runnable() {
+	public void getMovieGenres(final DataResponse<ArrayList<Genre>> response) {
+		mResponse.post(new Runnable() {
 			public void run() { 
-				handler.value = video(handler).getMovieGenres();
-				done(handler);
+				response.value = video(response).getMovieGenres();
+				done(response);
 			}
 		});
 	}
@@ -150,16 +156,16 @@ public class VideoManager extends AbstractManager {
 	 * current sort values.
 	 * @param pref
 	 */
-	public static void setPreferences(SharedPreferences pref) {
-		sPref = pref;
+	public void setPreferences(SharedPreferences pref) {
+		mPref = pref;
 	}
 	
 	/**
 	 * Sets which kind of view is currently active.
 	 * @param sortKey
 	 */
-	public static void setSortKey(int sortKey) {
-		sCurrentSortKey = sortKey;
+	public void setSortKey(int sortKey) {
+		mCurrentSortKey = sortKey;
 	}
 	
 	/**
@@ -168,9 +174,9 @@ public class VideoManager extends AbstractManager {
 	 * @param type Default value
 	 * @return Sort by field
 	 */
-	private static int getSortBy(int type) {
-		if (sPref != null) {
-			return sPref.getInt(AbstractManager.PREF_SORT_BY_PREFIX + sCurrentSortKey, type);
+	private int getSortBy(int type) {
+		if (mPref != null) {
+			return mPref.getInt(AbstractManager.PREF_SORT_BY_PREFIX + mCurrentSortKey, type);
 		}
 		return type;
 	}
@@ -180,9 +186,9 @@ public class VideoManager extends AbstractManager {
 	 * if the current sort key is not set, return "ASC".
 	 * @return Sort order
 	 */
-	private static String getSortOrder() {
-		if (sPref != null) {
-			return sPref.getString(AbstractManager.PREF_SORT_ORDER_PREFIX + sCurrentSortKey, SortType.ORDER_ASC);
+	private String getSortOrder() {
+		if (mPref != null) {
+			return mPref.getString(AbstractManager.PREF_SORT_ORDER_PREFIX + mCurrentSortKey, SortType.ORDER_ASC);
 		}
 		return SortType.ORDER_ASC;
 	}

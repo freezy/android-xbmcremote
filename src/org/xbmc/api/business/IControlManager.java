@@ -19,45 +19,29 @@
  *
  */
 
-package org.xbmc.android.remote.business;
-
-import org.xbmc.api.business.DataResponse;
-import org.xbmc.api.business.IControlManager;
+package org.xbmc.api.business;
 
 /**
- * Asynchronously wraps the {@link org.xbmc.httpapi.client.InfoClient} class.
- * 
+ * This is the interface between the presentation layer and the business layer.
+ * All the controller of the presentation layer gets to see is this interface.
+ *  
  * @author Team XBMC
  */
-public class ControlManager extends AbstractManager implements IControlManager {
+public interface IControlManager {
 	
 	/**
 	 * Starts playing the media file <code>filename</code> .
 	 * @param response Wrapped boolean return value
 	 * @param filename File to play
 	 */
-	public void playFile(final DataResponse<Boolean> response, final String filename) {
-		mResponse.post(new Runnable() {
-			public void run() { 
-				response.value = control(response).playFile(filename);
-				done(response);
-			}
-		});
-	}
+	public void playFile(final DataResponse<Boolean> response, final String filename);
 	
 	/**
 	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.
 	 * @param response Wrapped boolean return value
 	 * @param fileOrFolder File to play
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder) {
-		mResponse.post(new Runnable() {
-			public void run() { 
-				response.value = control(response).addToPlaylist(fileOrFolder);
-				done(response);
-			}
-		});
-	}
+	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder);
 
 	/**
 	 * Takes either "video" or "music" as a parameter to begin updating the 
@@ -66,12 +50,6 @@ public class ControlManager extends AbstractManager implements IControlManager {
 	 * @param response Callback response
 	 * @param mediaType
 	 */
-	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType) {
-		mResponse.post(new Runnable() {
-			public void run() {
-				response.value = control(response).updateLibrary(mediaType);
-				done(response);
-			}
-		});
-	}
+	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType);
+	
 }

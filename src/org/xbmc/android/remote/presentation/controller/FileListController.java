@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.DataResponse;
 import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
+import org.xbmc.api.business.DataResponse;
 import org.xbmc.httpapi.data.MediaLocation;
 import org.xbmc.httpapi.type.MediaType;
 

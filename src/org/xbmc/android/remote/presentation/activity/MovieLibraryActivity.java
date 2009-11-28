@@ -25,7 +25,6 @@ import java.io.IOException;
 
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.DataResponse;
 import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.controller.ActorListController;
 import org.xbmc.android.remote.presentation.controller.FileListController;
@@ -35,6 +34,7 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
+import org.xbmc.api.business.DataResponse;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 

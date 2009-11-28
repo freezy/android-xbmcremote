@@ -24,14 +24,13 @@ package org.xbmc.android.remote.presentation.controller;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.DataResponse;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerThread;
-import org.xbmc.android.remote.business.MusicManager;
 import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.controller.holder.MovieHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
+import org.xbmc.api.business.DataResponse;
 import org.xbmc.httpapi.data.Actor;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
@@ -79,8 +78,8 @@ public class MovieListController extends ListController {
 	
 	public void onCreate(Activity activity, ListView list) {
 		
-		MusicManager.setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
-		MusicManager.setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
+		ManagerThread.video().setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
+		ManagerThread.video().setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		mLoadCovers = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
 		
 		if (!isCreated()) {

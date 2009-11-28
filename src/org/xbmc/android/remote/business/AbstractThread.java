@@ -22,6 +22,7 @@
 package org.xbmc.android.remote.business;
 
 import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.api.business.DataResponse;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.VideoClient;
 
