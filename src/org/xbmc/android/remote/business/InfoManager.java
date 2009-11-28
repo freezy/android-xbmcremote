@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
-import org.xbmc.httpapi.data.MediaLocation;
+import org.xbmc.api.object.FileLocation;
 import org.xbmc.httpapi.type.DirectoryMask;
 
 
@@ -55,7 +55,7 @@ public class InfoManager extends AbstractManager implements IInfoManager {
 	 * @param response Response object
 	 * @param mediaType Media type
 	 */
-	public void getShares(final DataResponse<ArrayList<MediaLocation>> response, final int mediaType) {
+	public void getShares(final DataResponse<ArrayList<FileLocation>> response, final int mediaType) {
 		mResponse.post(new Runnable() {
 			public void run() { 
 				response.value = info(response).getShares(mediaType);
@@ -73,7 +73,7 @@ public class InfoManager extends AbstractManager implements IInfoManager {
 	 * @param limit    Limit (0 for none)
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<MediaLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit) {
+	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit) {
 		mResponse.post(new Runnable() {
 			public void run() { 
 				response.value = info(response).getDirectory(path, mask, offset, limit);
@@ -88,7 +88,7 @@ public class InfoManager extends AbstractManager implements IInfoManager {
 	 * @param path     Path to the directory
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<MediaLocation>> response, final String path) {
+	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path) {
 		mResponse.post(new Runnable() {
 			public void run() { 
 				response.value = info(response).getDirectory(path);

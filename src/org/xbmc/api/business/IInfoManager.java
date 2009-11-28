@@ -23,7 +23,7 @@ package org.xbmc.api.business;
 
 import java.util.ArrayList;
 
-import org.xbmc.httpapi.data.MediaLocation;
+import org.xbmc.api.object.FileLocation;
 import org.xbmc.httpapi.type.DirectoryMask;
 
 /**
@@ -46,7 +46,7 @@ public interface IInfoManager {
 	 * @param response Response object
 	 * @param mediaType Media type
 	 */
-	public void getShares(final DataResponse<ArrayList<MediaLocation>> response, final int mediaType);
+	public void getShares(final DataResponse<ArrayList<FileLocation>> response, final int mediaType);
 	
 	/**
 	 * Returns the contents of a directory
@@ -57,7 +57,7 @@ public interface IInfoManager {
 	 * @param limit    Limit (0 for none)
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<MediaLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit);
+	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit);
 	
 	/**
 	 * Returns the contents of a directory
@@ -65,6 +65,6 @@ public interface IInfoManager {
 	 * @param path     Path to the directory
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<MediaLocation>> response, final String path);
+	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path);
 	
 }

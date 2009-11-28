@@ -29,10 +29,10 @@ import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.controller.holder.ThreeHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
 import org.xbmc.api.business.DataResponse;
-import org.xbmc.httpapi.data.Album;
-import org.xbmc.httpapi.data.Artist;
-import org.xbmc.httpapi.data.Genre;
-import org.xbmc.httpapi.data.Song;
+import org.xbmc.api.object.Album;
+import org.xbmc.api.object.Artist;
+import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.Song;
 import org.xbmc.httpapi.type.SortType;
 import org.xbmc.httpapi.type.ThumbSize;
 

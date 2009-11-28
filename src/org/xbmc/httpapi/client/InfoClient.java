@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.api.data.IInfoClient;
+import org.xbmc.api.object.FileLocation;
 import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.data.MediaLocation;
 import org.xbmc.httpapi.info.GuiSettings;
 import org.xbmc.httpapi.type.DirectoryMask;
 import org.xbmc.httpapi.type.MediaType;
@@ -40,16 +40,16 @@ public class InfoClient implements IInfoClient {
 	 * @param limit   Limit (0 for none)
 	 * @return
 	 */
-	public ArrayList<MediaLocation> getDirectory(String path, DirectoryMask mask, int offset, int limit) {
+	public ArrayList<FileLocation> getDirectory(String path, DirectoryMask mask, int offset, int limit) {
 		final ArrayList<String> result = mConnection.getArray("GetDirectory", 
 			path + ";" +
 			(mask != null ? mask.toString() : " ") + ";" + 
 			(offset > 0 ? offset : " ") + ";" +
 			(limit > 0 ? limit : " ")
 		);
-		final ArrayList<MediaLocation> files = new ArrayList<MediaLocation>();
+		final ArrayList<FileLocation> files = new ArrayList<FileLocation>();
 		for (String file : result) {
-			files.add(new MediaLocation(file));
+			files.add(new FileLocation(file));
 		}
 		return files;
 	}
@@ -59,7 +59,7 @@ public class InfoClient implements IInfoClient {
 	 * @param path    Path to the directory
 	 * @return
 	 */
-	public ArrayList<MediaLocation> getDirectory(String path) {
+	public ArrayList<FileLocation> getDirectory(String path) {
 		return getDirectory(path, null, 0, 0);
 	}
 
@@ -69,11 +69,11 @@ public class InfoClient implements IInfoClient {
 	 * @param mediaType Media type
 	 * @return
 	 */
-	public ArrayList<MediaLocation> getShares(int mediaType) {
+	public ArrayList<FileLocation> getShares(int mediaType) {
 		final ArrayList<String> result = mConnection.getArray("GetShares", MediaType.getName(mediaType));
-		final ArrayList<MediaLocation> shares = new ArrayList<MediaLocation>();
+		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
 		for (String share : result) {
-			shares.add(new MediaLocation(share));
+			shares.add(new FileLocation(share));
 		}
 		return shares;
 	}

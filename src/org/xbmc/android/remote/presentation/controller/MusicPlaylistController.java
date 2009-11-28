@@ -30,9 +30,9 @@ import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
 import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.object.INamedResource;
+import org.xbmc.api.object.Song;
 import org.xbmc.httpapi.client.MusicClient;
-import org.xbmc.httpapi.data.NamedResource;
-import org.xbmc.httpapi.data.Song;
 
 import android.app.Activity;
 import android.graphics.BitmapFactory;
@@ -222,7 +222,7 @@ public class MusicPlaylistController extends ListController {
 		}
 	}
 	
-	private static class PlaylistItem implements NamedResource{
+	private static class PlaylistItem implements INamedResource{
 		public final String path;
 		public final String filename;
 		public final int position;

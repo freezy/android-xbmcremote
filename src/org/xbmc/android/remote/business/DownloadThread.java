@@ -25,7 +25,7 @@ import java.io.IOException;
 
 import org.xbmc.android.util.Base64;
 import org.xbmc.api.business.DataResponse;
-import org.xbmc.httpapi.data.ICoverArt;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.graphics.Bitmap;

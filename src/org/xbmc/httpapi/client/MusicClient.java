@@ -28,12 +28,12 @@ import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.data.IControlClient.PlayStatus;
+import org.xbmc.api.object.Album;
+import org.xbmc.api.object.Artist;
+import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.object.Song;
 import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.data.Album;
-import org.xbmc.httpapi.data.Artist;
-import org.xbmc.httpapi.data.Genre;
-import org.xbmc.httpapi.data.ICoverArt;
-import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.SortType;
 

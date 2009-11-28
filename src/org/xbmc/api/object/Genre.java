@@ -19,9 +19,10 @@
  *
  */
 
-package org.xbmc.httpapi.data;
+package org.xbmc.api.object;
 
 import java.io.Serializable;
+
 
 
 /**
@@ -29,7 +30,7 @@ import java.io.Serializable;
  * 
  * @author Team XBMC
  */
-public class Genre implements Serializable, NamedResource {
+public class Genre implements Serializable, INamedResource {
 
 	/**
 	 * Constructor

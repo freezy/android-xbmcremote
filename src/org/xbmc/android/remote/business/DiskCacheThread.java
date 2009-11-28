@@ -26,7 +26,7 @@ import java.io.File;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
-import org.xbmc.httpapi.data.ICoverArt;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.ThumbSize;
 

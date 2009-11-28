@@ -23,11 +23,11 @@ package org.xbmc.android.remote.business;
 
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.VideoClient;
-import org.xbmc.httpapi.data.ICoverArt;
 import org.xbmc.httpapi.type.CacheType;
 import org.xbmc.httpapi.type.ThumbSize;
 

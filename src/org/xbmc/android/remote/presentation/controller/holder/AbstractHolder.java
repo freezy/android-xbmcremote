@@ -25,7 +25,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
 import org.xbmc.android.widget.IdleListDetector;
 import org.xbmc.api.business.DataResponse;
-import org.xbmc.httpapi.data.ICoverArt;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.httpapi.type.CacheType;
 
 import android.app.Activity;

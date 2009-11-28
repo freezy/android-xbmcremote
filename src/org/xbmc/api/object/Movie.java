@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.httpapi.data;
+package org.xbmc.api.object;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import org.xbmc.httpapi.type.MediaType;
  * 
  * @author Team XBMC
  */
-public class Movie implements ICoverArt, Serializable, NamedResource {
+public class Movie implements ICoverArt, Serializable, INamedResource {
 	
 	/**
 	 * Points to where the movie thumbs are stored

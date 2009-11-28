@@ -23,10 +23,10 @@ package org.xbmc.api.data;
 
 import java.util.ArrayList;
 
-import org.xbmc.httpapi.data.Actor;
-import org.xbmc.httpapi.data.Genre;
-import org.xbmc.httpapi.data.ICoverArt;
-import org.xbmc.httpapi.data.Movie;
+import org.xbmc.api.object.Actor;
+import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.object.Movie;
 
 
 /**

@@ -29,8 +29,8 @@ import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
 import org.xbmc.api.business.DataResponse;
-import org.xbmc.httpapi.data.Actor;
-import org.xbmc.httpapi.data.Artist;
+import org.xbmc.api.object.Actor;
+import org.xbmc.api.object.Artist;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;

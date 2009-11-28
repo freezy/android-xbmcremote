@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.business.IVideoManager;
-import org.xbmc.httpapi.data.Actor;
-import org.xbmc.httpapi.data.Genre;
-import org.xbmc.httpapi.data.Movie;
+import org.xbmc.api.object.Actor;
+import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.Movie;
 import org.xbmc.httpapi.type.SortType;
 
 import android.content.SharedPreferences;

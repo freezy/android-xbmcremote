@@ -19,27 +19,42 @@
  *
  */
 
-package org.xbmc.httpapi.data;
+package org.xbmc.api.object;
+
+import java.io.Serializable;
 
 import org.xbmc.android.util.Crc32;
 import org.xbmc.httpapi.type.MediaType;
 
 /**
- * Actor is (for now) a rip-off of artist. It's the same thing named differently for movies.
+ * Not very much going on, artist is basically a name.
  * 
  * @author Team XBMC
  */
-public class Actor extends Artist {
-	
-	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Video/";
+public class Artist implements ICoverArt, Serializable, INamedResource {
 
-	public Actor(int id, String name) {
-		super(id, name);
+	/**
+	 * TODO verify that's correct and test!
+	 * Points to where the artist thumbs are stored
+	 */
+	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Music/Artists/";
+
+	/**
+	 * Constructor
+	 * @param id		Database ID
+	 * @param name		Artist name
+	 */
+	public Artist(int id, String name) {
+		this.id = id;
+		this.name = name;
 	}
 	
-	public Actor(int id, String name, String role) {
-		super(id, name);
-		this.role = role;
+	public int getMediaType() {
+		return MediaType.MUSIC;
+	}
+
+	public String getShortName() {
+		return this.name;
 	}
 	
 	/**
@@ -52,11 +67,7 @@ public class Actor extends Artist {
 	
 	public static String getThumbUri(ICoverArt cover) {
 		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
-	}
-	
-	public int getMediaType() {
-		return MediaType.VIDEO;
+		return THUMB_PREFIX + hex + ".tbn";
 	}
 	
 	/**
@@ -65,13 +76,51 @@ public class Actor extends Artist {
 	 */
 	public long getCrc() {
 		if (thumbID == 0) {
-//			thumbID = Crc32.computeLowerCase("videodb://1/4/" + id);
-			thumbID = Crc32.computeLowerCase("actor" + name);
+			thumbID = Crc32.computeLowerCase("artist" + id);
 		}
 		return thumbID;
 	}
-	
-	public String role = null;
 
-	private static final long serialVersionUID = -7026393902334967838L;
+	/**
+	 * No fallback here
+	 */
+	public int getFallbackCrc() {
+		return 0;
+	}
+	
+	/**
+	 * Returns database ID.
+	 * @return
+	 */
+	public int getId() {
+		return id;
+	}
+	
+	/**
+	 * Returns database ID.
+	 * @return
+	 */
+	public String getName() {
+		return this.name;
+	}
+
+	/**
+	 * Something descriptive
+	 */
+	public String toString() {
+		return "[" + this.id + "] " + this.name;
+	}
+	
+	/**
+	 * Database ID
+	 */
+	public int id;
+	/**
+	 * Artist name
+	 */
+	public String name;
+	
+	public long thumbID = 0;
+	
+	private static final long serialVersionUID = 9073064679039418773L;
 }

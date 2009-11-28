@@ -19,8 +19,8 @@
  *
  */
 
-package org.xbmc.httpapi.data;
+package org.xbmc.api.object;
 
-public interface NamedResource {
+public interface INamedResource {
 	String getShortName();
 }

@@ -25,7 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-import org.xbmc.httpapi.data.MediaLocation;
+import org.xbmc.api.object.FileLocation;
 import org.xbmc.httpapi.type.DirectoryMask;
 
 
@@ -45,14 +45,14 @@ public interface IInfoClient {
 	 * @param limit   Limit (0 for none)
 	 * @return
 	 */
-	public ArrayList<MediaLocation> getDirectory(String path, DirectoryMask mask, int offset, int limit);
+	public ArrayList<FileLocation> getDirectory(String path, DirectoryMask mask, int offset, int limit);
 	
 	/**
 	 * Returns all the contents of a directory
 	 * @param path    Path to the directory
 	 * @return
 	 */
-	public ArrayList<MediaLocation> getDirectory(String path);
+	public ArrayList<FileLocation> getDirectory(String path);
 
 	
 	/**
@@ -60,7 +60,7 @@ public interface IInfoClient {
 	 * @param mediaType Media type
 	 * @return
 	 */
-	public ArrayList<MediaLocation> getShares(int mediaType);
+	public ArrayList<FileLocation> getShares(int mediaType);
 	
 	/**
 	 * Returns URI of the currently playing's thumbnail.

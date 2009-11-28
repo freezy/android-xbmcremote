@@ -27,11 +27,11 @@ import java.util.HashMap;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.data.IControlClient.PlayStatus;
+import org.xbmc.api.object.Actor;
+import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.object.Movie;
 import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.data.Actor;
-import org.xbmc.httpapi.data.Genre;
-import org.xbmc.httpapi.data.ICoverArt;
-import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.SortType;
 

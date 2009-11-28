@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.httpapi.data;
+package org.xbmc.api.object;
 import java.util.Formatter;
 
 import org.xbmc.httpapi.type.MediaType;
@@ -31,7 +31,7 @@ import org.xbmc.httpapi.type.MediaType;
  *  
  * @author Team XBMC
  */
-public class Song implements ICoverArt, NamedResource {
+public class Song implements ICoverArt, INamedResource {
 	
 	/**
 	 * Constructor

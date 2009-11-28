@@ -23,9 +23,9 @@ package org.xbmc.api.business;
 
 import java.util.ArrayList;
 
-import org.xbmc.httpapi.data.Actor;
-import org.xbmc.httpapi.data.Genre;
-import org.xbmc.httpapi.data.Movie;
+import org.xbmc.api.object.Actor;
+import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.Movie;
 
 /**
  * This is the interface between the presentation layer and the business layer.

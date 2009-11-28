@@ -29,7 +29,7 @@ import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.api.business.DataResponse;
-import org.xbmc.httpapi.data.MediaLocation;
+import org.xbmc.api.object.FileLocation;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
@@ -53,7 +53,7 @@ public class FileListController extends ListController {
 	public static final int MESSAGE_HANDLE_DATA = 1;
 	public static final int MESSAGE_CONNECTION_ERROR = 2;
 	
-	private HashMap<String, MediaLocation> mFileItems;
+	private HashMap<String, FileLocation> mFileItems;
 	private volatile String mGettingUrl;
 	private int mMediaType;
 	
@@ -75,7 +75,7 @@ public class FileListController extends ListController {
 					if (mFileItems == null)
 						return;
 	
-					MediaLocation item = mFileItems.get(((MediaLocation)parent.getAdapter().getItem(position)).name);
+					FileLocation item = mFileItems.get(((FileLocation)parent.getAdapter().getItem(position)).name);
 					if (item.isDirectory) {
 						Intent nextActivity = new Intent(mActivity, ListActivity.class);
 						nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new FileListController());
@@ -94,13 +94,13 @@ public class FileListController extends ListController {
 					}
 				}
 			});
-			mList.setOnKeyListener(new ListControllerOnKeyListener<MediaLocation>());
+			mList.setOnKeyListener(new ListControllerOnKeyListener<FileLocation>());
 		}
 	}
 	
-	private class FileItemAdapter extends ArrayAdapter<MediaLocation> {
+	private class FileItemAdapter extends ArrayAdapter<FileLocation> {
 		private final LayoutInflater mInflater; 
-		FileItemAdapter(Activity activity, ArrayList<MediaLocation> items) {
+		FileItemAdapter(Activity activity, ArrayList<FileLocation> items) {
 			super(activity, R.layout.listitem_oneliner, items);
 			mInflater = activity.getLayoutInflater();
 		}
@@ -111,7 +111,7 @@ public class FileListController extends ListController {
 			} else {
 				row = convertView;
 			}
-			final MediaLocation fileItem = this.getItem(position);
+			final FileLocation fileItem = this.getItem(position);
 			row.setTag(fileItem);
 			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
 			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
@@ -148,12 +148,12 @@ public class FileListController extends ListController {
 		mList.setTextFilterEnabled(false);
 		setTitle("Loading...");
 		
-		DataResponse<ArrayList<MediaLocation>> mediaListHandler = new DataResponse<ArrayList<MediaLocation>>(mActivity) {
+		DataResponse<ArrayList<FileLocation>> mediaListHandler = new DataResponse<ArrayList<FileLocation>>(mActivity) {
 			public void run() {
 				setTitle(url.equals("") ? "/" : displayPath);
 				if (value.size() > 0) {
-					mFileItems = new HashMap<String, MediaLocation>();
-					for (MediaLocation item : value) {
+					mFileItems = new HashMap<String, FileLocation>();
+					for (FileLocation item : value) {
 						mFileItems.put(item.name, item);
 					}
 					setListAdapter(new FileItemAdapter(mActivity, value));

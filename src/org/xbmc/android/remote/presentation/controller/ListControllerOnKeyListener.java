@@ -21,7 +21,7 @@
 
 package org.xbmc.android.remote.presentation.controller;
 
-import org.xbmc.httpapi.data.NamedResource;
+import org.xbmc.api.object.INamedResource;
 
 import android.content.Context;
 import android.os.Build;
@@ -31,7 +31,7 @@ import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 
-public class ListControllerOnKeyListener<T extends NamedResource> implements OnKeyListener {
+public class ListControllerOnKeyListener<T extends INamedResource> implements OnKeyListener {
 	
 	public static final String[] DEVICES_HANDLE_MENU_LONGPRESS = {"HTC Magic"};
 	public static final int LONGPRESS_REPEATS = 10;

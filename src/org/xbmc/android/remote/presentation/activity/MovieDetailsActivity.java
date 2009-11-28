@@ -30,10 +30,10 @@ import org.xbmc.android.remote.presentation.controller.ListController;
 import org.xbmc.android.remote.presentation.controller.MovieListController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.object.Actor;
+import org.xbmc.api.object.Movie;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
-import org.xbmc.httpapi.data.Actor;
-import org.xbmc.httpapi.data.Movie;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;

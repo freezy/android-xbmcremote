@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.httpapi.data;
+package org.xbmc.api.object;
 
 import java.io.Serializable;
 
@@ -32,7 +32,7 @@ import org.xbmc.httpapi.type.MediaType;
  * 
  * @author freezy <phreezie@gmail.com>
  */
-public class Album implements ICoverArt, Serializable, NamedResource {
+public class Album implements ICoverArt, Serializable, INamedResource {
 
 	/**
 	 * Points to where the album thumbs are stored

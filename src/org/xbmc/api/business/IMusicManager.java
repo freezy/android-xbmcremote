@@ -23,10 +23,10 @@ package org.xbmc.api.business;
 
 import java.util.ArrayList;
 
-import org.xbmc.httpapi.data.Album;
-import org.xbmc.httpapi.data.Artist;
-import org.xbmc.httpapi.data.Genre;
-import org.xbmc.httpapi.data.Song;
+import org.xbmc.api.object.Album;
+import org.xbmc.api.object.Artist;
+import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.Song;
 
 /**
  * This is the interface between the presentation layer and the business layer.

@@ -27,7 +27,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.api.business.DataResponse;
-import org.xbmc.httpapi.data.Genre;
+import org.xbmc.api.object.Genre;
 
 import android.app.Activity;
 import android.content.Intent;

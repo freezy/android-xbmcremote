@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.httpapi.data;
+package org.xbmc.api.object;
 
 import java.io.Serializable;
 

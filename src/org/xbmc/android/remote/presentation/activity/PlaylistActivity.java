@@ -29,9 +29,9 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.controller.MusicPlaylistController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.object.Song;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
-import org.xbmc.httpapi.data.Song;
 
 import android.app.Activity;
 import android.os.Bundle;

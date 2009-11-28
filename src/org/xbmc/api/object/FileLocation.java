@@ -1,10 +1,10 @@
-package org.xbmc.httpapi.data;
+package org.xbmc.api.object;
 
 import java.net.URLDecoder;
 
 import org.xbmc.httpapi.Connection;
 
-public class MediaLocation implements NamedResource {
+public class FileLocation implements INamedResource {
 	
 	public String name, path, displayPath;
 	public boolean isDirectory;
@@ -16,7 +16,7 @@ public class MediaLocation implements NamedResource {
 	 * @param name Display name
 	 * @param path Path incl filename
 	 */
-	public MediaLocation(String name, String path) {
+	public FileLocation(String name, String path) {
 		this.name = name;
 		this.path = path;
 		isDirectory = path.endsWith("/") || path.endsWith("\\");
@@ -38,7 +38,7 @@ public class MediaLocation implements NamedResource {
 	 * Parses name and path from raw line.
 	 * @param line raw line, either path only or name and path, separated by Connection.VALUE_SEP.
 	 */
-	public MediaLocation(String line) {
+	public FileLocation(String line) {
 		if (line.endsWith(".m3u\\") || line.endsWith(".m3u/")) {
 			line = line.substring(0, line.length() - 1);
 		}
