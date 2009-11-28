@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.business.ISortableManager;
+import org.xbmc.api.data.IControlClient.PlayStatus;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.data.Album;
@@ -257,7 +258,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 		mResponse.post(new Runnable() {
 			public void run() { 
 				final MusicClient mc = music(response);
-				final ControlClient.PlayStatus ps = control(response).getPlayState();
+				final PlayStatus ps = control(response).getPlayState();
 				mc.setCurrentPlaylist();
 				final int playlistSize = mc.getPlaylistSize(); 
 				int playPos = -1;
@@ -276,7 +277,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 					mc.addToPlaylist(song);
 					response.value = false;
 				}
-				if (ps == ControlClient.PlayStatus.Stopped) { // if nothing is playing, play the song
+				if (ps == PlayStatus.Stopped) { // if nothing is playing, play the song
 					if (playPos == 0) {
 						mc.playlistSetSong(playPos + 1);
 						mc.playPrev();
@@ -555,8 +556,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	 * @param numAlreadyQueued Number of previously queued items
 	 */
 	private void checkForPlayAfterQueue(final MusicClient mc, final ControlClient cc, int numAlreadyQueued) {
-		final ControlClient.PlayStatus ps = cc.getPlayState();
-		if (ps == ControlClient.PlayStatus.Stopped) { // if nothing is playing, play the song
+		final PlayStatus ps = cc.getPlayState();
+		if (ps == PlayStatus.Stopped) { // if nothing is playing, play the song
 			mc.setCurrentPlaylist();
 			if (numAlreadyQueued == 0) {
 				mc.playNext();

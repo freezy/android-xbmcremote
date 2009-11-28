@@ -24,8 +24,11 @@ package org.xbmc.httpapi.client;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.xbmc.api.data.IControlClient;
+import org.xbmc.api.data.IMusicClient;
+import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.data.IControlClient.PlayStatus;
 import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.client.ControlClient.PlayStatus;
 import org.xbmc.httpapi.data.Album;
 import org.xbmc.httpapi.data.Artist;
 import org.xbmc.httpapi.data.Genre;
@@ -41,7 +44,7 @@ import android.util.Log;
  * 
  * @author Team XBMC
  */
-public class MusicClient {
+public class MusicClient implements IMusicClient {
 	
 	public static final String TAG = "MusicClient";
 	
@@ -982,8 +985,8 @@ public class MusicClient {
 		return genres;		
 	}
 	
-	public static ControlClient.ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
-		return new ControlClient.ICurrentlyPlaying() {
+	static ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
+		return new IControlClient.ICurrentlyPlaying() {
 			private static final long serialVersionUID = 5036994329211476714L;
 			public String getTitle() {
 				return map.get("Title");
@@ -1020,7 +1023,7 @@ public class MusicClient {
 				return MediaType.MUSIC;
 			}
 			public boolean isPlaying() {
-				return PlayStatus.parse(map.get("PlayStatus")).equals(PlayStatus.Playing);
+				return IControlClient.PlayStatus.parse(map.get("PlayStatus")).equals(PlayStatus.Playing);
 			}
 			public int getHeight() {
 				return 0;

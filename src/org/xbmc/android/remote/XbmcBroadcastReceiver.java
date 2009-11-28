@@ -27,11 +27,11 @@ import java.io.IOException;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.SmsMmsMessage;
 import org.xbmc.android.util.SmsPopupUtils;
+import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.eventclient.Packet;
 import org.xbmc.httpapi.HttpClient;
-import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

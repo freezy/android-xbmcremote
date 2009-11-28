@@ -23,8 +23,8 @@ package org.xbmc.httpapi.client;
 
 import java.util.HashMap;
 
-import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.client.ControlClient.PlayStatus;
+import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.data.IControlClient.PlayStatus;
 import org.xbmc.httpapi.type.MediaType;
 
 /**
@@ -37,15 +37,8 @@ public class PictureClient {
 
 	public static final String TAG = "PictureClient";
 	
-	private final Connection mConnection;
-	
-	public PictureClient(Connection connection) {
-		mConnection = connection;
-	}
-	
-	
-	public static ControlClient.ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
-		return new ControlClient.ICurrentlyPlaying() {
+	static ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
+		return new ICurrentlyPlaying() {
 			private static final long serialVersionUID = 5036994329211476713L;
 			
 			public int getMediaType() {
@@ -127,7 +120,4 @@ public class PictureClient {
 			}			
 		};
 	}
-	
-	
-	
 }

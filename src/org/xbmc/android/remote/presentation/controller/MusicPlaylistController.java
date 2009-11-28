@@ -29,8 +29,8 @@ import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
 import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.httpapi.client.MusicClient;
-import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 import org.xbmc.httpapi.data.NamedResource;
 import org.xbmc.httpapi.data.Song;
 

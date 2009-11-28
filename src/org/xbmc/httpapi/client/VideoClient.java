@@ -24,8 +24,10 @@ package org.xbmc.httpapi.client;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.xbmc.api.data.IVideoClient;
+import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.data.IControlClient.PlayStatus;
 import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.client.ControlClient.PlayStatus;
 import org.xbmc.httpapi.data.Actor;
 import org.xbmc.httpapi.data.Genre;
 import org.xbmc.httpapi.data.ICoverArt;
@@ -40,7 +42,7 @@ import android.util.Log;
  * 
  * @author Team XBMC
  */
-public class VideoClient {
+public class VideoClient implements IVideoClient {
 	
 	private final Connection mConnection;
 
@@ -71,7 +73,7 @@ public class VideoClient {
 	 * @param actor Display only movies with this actor.
 	 * @param sortBy Sort field, see SortType.* 
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
-	 * @return All movies
+	 * @return All movies with an actor
 	 */
 	public ArrayList<Movie> getMovies(Actor actor, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
@@ -92,7 +94,7 @@ public class VideoClient {
 	 * @param genre Display only movies of this genre.
 	 * @param sortBy Sort field, see SortType.* 
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
-	 * @return All movies
+	 * @return All movies of a genre
 	 */
 	public ArrayList<Movie> getMovies(Genre genre, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
@@ -378,8 +380,9 @@ public class VideoClient {
 		}
 	}
 	
-	public static ControlClient.ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
-		return new ControlClient.ICurrentlyPlaying() {
+	static ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
+		
+		return new ICurrentlyPlaying() {
 			private static final long serialVersionUID = 5036994329211476714L;
 			public String getTitle() {
 				return map.get("Tagline");

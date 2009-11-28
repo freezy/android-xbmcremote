@@ -3,8 +3,8 @@ package org.xbmc.android.remote.presentation.activity;
 import org.xbmc.android.backend.httpapi.NowPlayingPollerThread;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
-import org.xbmc.httpapi.client.ControlClient.PlayStatus;
+import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.data.IControlClient.PlayStatus;
 import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Notification;

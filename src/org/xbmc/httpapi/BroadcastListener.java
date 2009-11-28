@@ -31,7 +31,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
+import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 
 import android.util.Log;
 

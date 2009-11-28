@@ -21,9 +21,10 @@
 
 package org.xbmc.httpapi.client;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
+import org.xbmc.api.data.IControlClient;
+import org.xbmc.api.data.IControlClient.PlayStatus;
 import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.info.GuiActions;
 import org.xbmc.httpapi.type.MediaType;
@@ -268,9 +269,9 @@ public class ControlClient {
 	 * Returns state and type of the media currently playing.
 	 * @return
 	 */
-	public ICurrentlyPlaying getCurrentlyPlaying() {
+	public IControlClient.ICurrentlyPlaying getCurrentlyPlaying() {
 		final HashMap<String, String> map = mConnection.getPairs("GetCurrentlyPlaying");
-		final ICurrentlyPlaying nothingPlaying = new ICurrentlyPlaying() {
+		final IControlClient.ICurrentlyPlaying nothingPlaying = new IControlClient.ICurrentlyPlaying() {
 			private static final long serialVersionUID = -1554068775915058884L;
 			public boolean isPlaying() { return false; }
 			public int getMediaType() { return 0; }
@@ -313,45 +314,6 @@ public class ControlClient {
 		}
 	}
 	
-	
-	public interface ICurrentlyPlaying extends Serializable {
-		public PlayStatus getPlayStatus();
-		public int getMediaType();
-		public boolean isPlaying();
-		public int getPlaylistPosition();
-		
-		public String getFilename();
-		public String getTitle();
-		
-		public int getTime();
-		public int getDuration();
-		public float getPercentage();
-		
-		public String getArtist();
-		public String getAlbum();
-		
-		public int getWidth();
-		public int getHeight();
-		
-	}
-
-	/**
-	 * Describes the current play status
-	 */
-	public enum PlayStatus {
-		Stopped,
-		Paused,
-		Playing;
-		public static PlayStatus parse(String response) {
-			if (response.contains("PlayStatus:Paused") || response.equals("Paused")) {
-				return PlayStatus.Paused;
-			} else if (response.contains("PlayStatus:Playing") || response.equals("Playing")) {
-				return PlayStatus.Playing;
-			} else {
-				return PlayStatus.Stopped;
-			}
-		}
-	}
 	
 	public boolean isConnected() {
 		return mConnection.isConnected();

@@ -31,10 +31,10 @@ import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
+import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.ControlClient;
-import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
 import org.xbmc.httpapi.data.Song;
 import org.xbmc.httpapi.type.SeekType;
 

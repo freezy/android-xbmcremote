@@ -31,10 +31,10 @@ import java.util.HashSet;
 
 import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.data.IControlClient.PlayStatus;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
-import org.xbmc.httpapi.client.ControlClient.ICurrentlyPlaying;
-import org.xbmc.httpapi.client.ControlClient.PlayStatus;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;

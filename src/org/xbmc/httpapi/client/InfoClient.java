@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.xbmc.android.util.ErrorHandler;
+import org.xbmc.api.data.IInfoClient;
 import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.data.MediaLocation;
 import org.xbmc.httpapi.info.GuiSettings;
@@ -19,7 +20,7 @@ import org.xbmc.httpapi.type.MediaType;
  * 
  * @author Team XBMC
  */
-public class InfoClient {
+public class InfoClient implements IInfoClient {
 	
 	private final Connection mConnection;
 	
