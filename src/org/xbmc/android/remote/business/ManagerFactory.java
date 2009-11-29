@@ -21,7 +21,9 @@
 
 package org.xbmc.android.remote.business;
 
+import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IInfoManager;
+import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.presentation.INotifiableController;
 
@@ -31,13 +33,33 @@ public abstract class ManagerFactory {
 	
 	public static IInfoManager getInfoManager(Context context, INotifiableController controller) {
 		IInfoManager im = ManagerThread.info(context);
-		im.setController(controller);
+		if (controller != null) {
+			im.setController(controller);
+		}
 		return im;
+	}
+	
+	public static IControlManager getControlManager(Context context, INotifiableController controller) {
+		IControlManager cm = ManagerThread.control(context);
+		if (controller != null) {
+			cm.setController(controller);
+		}
+		return cm;
 	}
 	
 	public static IVideoManager getVideoManager(Context context, INotifiableController controller) {
 		IVideoManager vm = ManagerThread.video(context);
-		vm.setController(controller);
+		if (controller != null) {
+			vm.setController(controller);
+		}
 		return vm;
+	}
+	
+	public static IMusicManager getMusicManager(Context context, INotifiableController controller) {
+		IMusicManager mm = ManagerThread.music(context);
+		if (controller != null) {
+			mm.setController(controller);
+		}
+		return mm;
 	}
 }

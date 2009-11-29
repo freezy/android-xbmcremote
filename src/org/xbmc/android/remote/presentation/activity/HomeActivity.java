@@ -26,10 +26,8 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.controller.HomeController;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.ICoverArt;
@@ -39,13 +37,11 @@ import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.VideoClient;
 import org.xbmc.httpapi.type.SortType;
-import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -206,12 +202,13 @@ public class HomeActivity extends Activity {
 				if (position < total) {
 					final ICoverArt cover = (ICoverArt)msg.getData().getSerializable(ProgressThread.DATA_COVER); 
 					if (DEBUG) Log.i(TAG, "New download message received for position " + position + ": " + cover.getName());
-					ManagerThread.music().getCover(new DataResponse<Bitmap>() {
+/* TODO adapt to new model
+ * 					ManagerThread.music().getCover(new DataResponse<Bitmap>() {
 						public void run() {
 							if (DEBUG) Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
 							mProgressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
 						}
-					}, cover, ThumbSize.BIG);
+					}, cover, ThumbSize.BIG);*/
 				} else {
 					dismissDialog(type);
 					mProgressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);

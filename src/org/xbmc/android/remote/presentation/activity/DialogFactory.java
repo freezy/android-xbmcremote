@@ -25,11 +25,11 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Song;
 import org.xbmc.httpapi.type.MediaType;
@@ -63,7 +63,7 @@ public abstract class DialogFactory {
 	 * @param album    Album to display
 	 * @return Album details dialog
 	 */
-	public static Dialog getAlbumDetail(final Activity activity, final Album album) {
+	public static Dialog getAlbumDetail(final IMusicManager musicManager, final Activity activity, final Album album) {
 		
 		final Dialog dialog = new Dialog(activity);
 		dialog.setContentView(R.layout.albuminfo);
@@ -83,12 +83,12 @@ public abstract class DialogFactory {
 		// set the button's listener
 		queueButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				ManagerThread.music().play(new DataResponse<Boolean>(), album);
+				musicManager.play(new DataResponse<Boolean>(), album);
 			}
 		});
 		playButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				ManagerThread.music().addToPlaylist(new DataResponse<Boolean>(), album);
+				musicManager.addToPlaylist(new DataResponse<Boolean>(), album);
 			}
 		});
 		
@@ -105,7 +105,7 @@ public abstract class DialogFactory {
 			genresText.setVisibility(View.GONE);
 		}
 		// asynchronously load the cover
-        ManagerThread.music().getCover(new DataResponse<Bitmap>() {
+		musicManager.getCover(new DataResponse<Bitmap>() {
         	public void run() {
         		if (value == null) {
         			cover.setImageResource(R.drawable.nocover);

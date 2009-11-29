@@ -26,10 +26,10 @@ import java.util.HashMap;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.httpapi.type.MediaType;
@@ -63,10 +63,12 @@ public class FileListController extends ListController implements IController {
 	protected ListAdapter mAdapter;
 	
 	private IInfoManager mInfoManager;
+	private IControlManager mControlManager;
 	
 	public void onCreate(Activity activity, ListView list) {
 		
 		mInfoManager = ManagerFactory.getInfoManager(activity.getApplicationContext(), this);
+		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
 		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
@@ -91,7 +93,7 @@ public class FileListController extends ListController implements IController {
 						nextActivity.putExtra(ListController.EXTRA_DISPLAY_PATH, item.displayPath);
 						mActivity.startActivity(nextActivity);
 					} else {
-						ManagerThread.control().playFile(new DataResponse<Boolean>() {
+						mControlManager.playFile(new DataResponse<Boolean>() {
 							public void run() {
 								if (value) {
 									mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
@@ -201,11 +203,17 @@ public class FileListController extends ListController implements IController {
 		if (mInfoManager != null) {
 			mInfoManager.setController(null);
 		}
+		if (mControlManager != null) {
+			mControlManager.setController(null);
+		}
 	}
 
 	public void onActivityResume(Activity activity) {
 		if (mInfoManager != null) {
 			mInfoManager.setController(this);
+		}
+		if (mControlManager != null) {
+			mControlManager.setController(this);
 		}
 	}
 	

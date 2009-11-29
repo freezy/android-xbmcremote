@@ -25,10 +25,12 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
-import org.xbmc.android.remote.business.ManagerThread;
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.holder.ThreeHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IMusicManager;
+import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
@@ -57,7 +59,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class SongListController extends ListController {
+public class SongListController extends ListController implements IController {
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
@@ -78,12 +80,16 @@ public class SongListController extends ListController {
 	private Artist mArtist;
 	private Genre mGenre;
 	
+	private IMusicManager mMusicManager;
+	
 	private boolean mLoadCovers = false;
 	
 	public void onCreate(Activity activity, ListView list) {
 		
-		ManagerThread.music().setSortKey(AbstractManager.PREF_SORT_KEY_SONG);
-		ManagerThread.music().setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
+		mMusicManager = ManagerFactory.getMusicManager(activity.getApplicationContext(), this);
+		
+		((ISortableManager)mMusicManager).setSortKey(AbstractManager.PREF_SORT_KEY_SONG);
+		((ISortableManager)mMusicManager).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		
 		mLoadCovers = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
 		
@@ -108,14 +114,14 @@ public class SongListController extends ListController {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					final Song song = ((ThreeHolder<Song>)view.getTag()).holderItem;
 					if (mAlbum == null) {
-						ManagerThread.music().play(new QueryResponse(
+						mMusicManager.play(new QueryResponse(
 							mActivity, 
 							"Playing \"" + song.title + "\" by " + song.artist + "...", 
 							"Error playing song!",
 							true
 						), song);
 					} else {
-						ManagerThread.music().play(new QueryResponse(
+						mMusicManager.play(new QueryResponse(
 							mActivity, 
 							"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
 							"Error playing song!",
@@ -136,7 +142,7 @@ public class SongListController extends ListController {
 		final Artist artist = mArtist; 
 		if (album != null) {
 			setTitle("Songs...");
-			ManagerThread.music().getSongs(new DataResponse<ArrayList<Song>>() {
+			mMusicManager.getSongs(new DataResponse<ArrayList<Song>>() {
 				public void run() {
 					setTitle(album.name);
 					if (value.size() > 0) {
@@ -149,7 +155,7 @@ public class SongListController extends ListController {
 			
 		} else if (artist != null) {
 			setTitle(artist.name + " - Songs...");
-			ManagerThread.music().getSongs(new DataResponse<ArrayList<Song>>() {
+			mMusicManager.getSongs(new DataResponse<ArrayList<Song>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(artist.name + " - Songs (" + value.size() + ")");
@@ -163,7 +169,7 @@ public class SongListController extends ListController {
 			
 		} else if (genre != null) {
 			setTitle(genre.name + " - Songs...");
-			ManagerThread.music().getSongs(new DataResponse<ArrayList<Song>>() {
+			mMusicManager.getSongs(new DataResponse<ArrayList<Song>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(genre.name + " - Songs (" + value.size() + ")");
@@ -194,22 +200,22 @@ public class SongListController extends ListController {
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				if (mAlbum == null) {
-					ManagerThread.music().addToPlaylist(new QueryResponse(mActivity, "Song added to playlist.", "Error adding song!"), holder.holderItem);
+					mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Song added to playlist.", "Error adding song!"), holder.holderItem);
 				} else {
-					ManagerThread.music().addToPlaylist(new QueryResponse(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, holder.holderItem);
+					mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, holder.holderItem);
 				}
 				break;
 			case ITEM_CONTEXT_PLAY:
 				final Song song = holder.holderItem;
 				if (mAlbum == null) {
-					ManagerThread.music().play(new QueryResponse(
+					mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing \"" + song.title + "\" by " + song.artist + "...", 
 						"Error playing song!",
 						true
 					), song);
 				} else {
-					ManagerThread.music().play(new QueryResponse(
+					mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
 						"Error playing song!",
@@ -245,21 +251,21 @@ public class SongListController extends ListController {
 			final Genre genre = mGenre;
 			final Artist artist = mArtist;
 			if (album != null) {
-				ManagerThread.music().play(new QueryResponse(
+				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of album " + album.name + " by " + album.artist + "...", 
 						"Error playing songs!",
 						true
 					), album);			
 			} else if (artist != null) {
-				ManagerThread.music().play(new QueryResponse(
+				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all songs from " + artist.name + "...", 
 						"Error playing songs!",
 						true
 					), artist);
 			} else if (genre != null) {
-				ManagerThread.music().play(new QueryResponse(
+				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of genre " + genre.name + "...", 
 						"Error playing songs!",
@@ -378,11 +384,23 @@ public class SongListController extends ListController {
 			if (mLoadCovers) {
 				holder.iconView.setImageResource(R.drawable.icon_song_dark);
 				holder.tempBind = true;
-				ManagerThread.music().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), song, ThumbSize.SMALL);
+				mMusicManager.getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), song, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.icon_song);
 			}
 			return row;
+		}
+	}
+	
+	public void onActivityPause() {
+		if (mMusicManager != null) {
+			mMusicManager.setController(null);
+		}
+	}
+
+	public void onActivityResume(Activity activity) {
+		if (mMusicManager != null) {
+			mMusicManager.setController(this);
 		}
 	}
 	

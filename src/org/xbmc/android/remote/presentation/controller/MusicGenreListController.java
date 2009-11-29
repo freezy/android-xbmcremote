@@ -24,9 +24,10 @@ package org.xbmc.android.remote.presentation.controller;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.ManagerThread;
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.MusicGenreActivity;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.object.Genre;
 
 import android.app.Activity;
@@ -45,12 +46,17 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class MusicGenreListController extends ListController {
+public class MusicGenreListController extends ListController implements IController {
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
 	
+	private IMusicManager mMusicManager;
+	
 	public void onCreate(Activity activity, ListView list) {
+		
+		mMusicManager = ManagerFactory.getMusicManager(activity.getApplicationContext(), this);
+		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
@@ -67,7 +73,7 @@ public class MusicGenreListController extends ListController {
 			});
 
 			setTitle("Genres...");
-			ManagerThread.music().getGenres(new DataResponse<ArrayList<Genre>>() {
+			mMusicManager.getGenres(new DataResponse<ArrayList<Genre>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle("Genres (" + value.size() + ")");
@@ -97,14 +103,14 @@ public class MusicGenreListController extends ListController {
 		final Genre genre = (Genre)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				ManagerThread.music().addToPlaylist(new QueryResponse(
+				mMusicManager.addToPlaylist(new QueryResponse(
 						mActivity, 
 						"Adding all songs of genre " + genre.name + " to playlist...", 
 						"Error adding songs!"
 					), genre);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				ManagerThread.music().play(new QueryResponse(
+				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of genre " + genre.name + "...", 
 						"Error playing songs!",
@@ -139,4 +145,16 @@ public class MusicGenreListController extends ListController {
 		}
 	}
 	private static final long serialVersionUID = 4360738733222799619L;
+
+	public void onActivityPause() {
+		if (mMusicManager != null) {
+			mMusicManager.setController(null);
+		}
+	}
+
+	public void onActivityResume(Activity activity) {
+		if (mMusicManager != null) {
+			mMusicManager.setController(this);
+		}
+	}
 }

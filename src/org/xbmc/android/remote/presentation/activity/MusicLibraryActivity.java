@@ -25,7 +25,6 @@ import java.io.IOException;
 
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.controller.AlbumListController;
 import org.xbmc.android.remote.presentation.controller.ArtistListController;
 import org.xbmc.android.remote.presentation.controller.FileListController;
@@ -34,12 +33,9 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
-import org.xbmc.api.business.DataResponse;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -51,7 +47,6 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class MusicLibraryActivity extends SlidingTabActivity  {
 
@@ -190,31 +185,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 			startActivity(new Intent(this, RemoteActivity.class));
 			return true;
 		case MENU_UPDATE_LIBRARY:
-			final AlertDialog.Builder builder = new AlertDialog.Builder(MusicLibraryActivity.this);
-			builder.setMessage("Are you sure you want XBMC to rescan your music library?")
-				.setCancelable(false)
-				.setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						ManagerThread.control().updateLibrary(new DataResponse<Boolean>() {
-							public void run() {
-								final String message;
-								if (value) {
-									message = "Music library updated has been launched.";
-								} else {
-									message = "Error launching music library update.";
-								}
-								Toast toast = Toast.makeText(MusicLibraryActivity.this, message, Toast.LENGTH_SHORT);
-								toast.show();
-							}
-						}, "music");
-					}
-				})
-				.setNegativeButton("Uh, no.", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.cancel();
-					}
-				});
-			builder.create().show();
+			mAlbumController.updateLibrary();
 			return true;
 		case MENU_NOW_PLAYING:
 			startActivity(new Intent(this,  NowPlayingActivity.class));
@@ -289,12 +260,20 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mArtistController.onActivityResume(this);
+		mGenreController.onActivityResume(this);
+		mCompilationsController.onActivityResume(this);
+		mFileLogic.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
+		mArtistController.onActivityPause();
+		mGenreController.onActivityPause();
+		mCompilationsController.onActivityPause();
+		mFileLogic.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}
 }

@@ -26,12 +26,12 @@ import java.io.IOException;
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.controller.ListController;
 import org.xbmc.android.remote.presentation.controller.MovieListController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Movie;
@@ -101,7 +101,9 @@ public class MovieDetailsActivity extends Activity {
 	
 	
 	private static class MovieDetailsController implements INotifiableController, IController {
+		
 		private IVideoManager mVideoManager;
+		private IControlManager mControlManager;
 		private final Movie mMovie;
 		private Activity mActivity;
 		
@@ -109,12 +111,13 @@ public class MovieDetailsActivity extends Activity {
 			mActivity = activity;
 			mMovie = movie;
 			mVideoManager = ManagerFactory.getVideoManager(activity.getApplicationContext(), this);
+			mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
 		}
 		
 		public void setupPlayButton(Button button) {
 			button.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					ManagerThread.control().playFile(new DataResponse<Boolean>() {
+					mControlManager.playFile(new DataResponse<Boolean>() {
 						public void run() {
 							if (value) {
 								mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
@@ -149,7 +152,7 @@ public class MovieDetailsActivity extends Activity {
 						trailerButton.setEnabled(true);
 						trailerButton.setOnClickListener(new OnClickListener() {
 							public void onClick(View v) {
-								ManagerThread.control().playFile(new DataResponse<Boolean>() {
+								mControlManager.playFile(new DataResponse<Boolean>() {
 									public void run() {
 										if (value) {
 											Toast toast = Toast.makeText(mActivity,  "Playing trailer for \"" + movie.getName() + "\"...", Toast.LENGTH_LONG);
@@ -199,10 +202,12 @@ public class MovieDetailsActivity extends Activity {
 
 		public void onActivityPause() {
 			mVideoManager.setController(null);
+			mControlManager.setController(null);
 		}
 
 		public void onActivityResume(Activity activity) {
 			mVideoManager.setController(this);
+			mControlManager.setController(this);
 		}
 
 		public void onError(String message) {

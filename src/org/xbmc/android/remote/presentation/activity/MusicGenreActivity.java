@@ -206,12 +206,18 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mArtistLogic.onActivityResume(this);
+		mAlbumLogic.onActivityResume(this);
+		mSongLogic.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
+		mArtistLogic.onActivityPause();
+		mAlbumLogic.onActivityPause();
+		mSongLogic.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}
 }

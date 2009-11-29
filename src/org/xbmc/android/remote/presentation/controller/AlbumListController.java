@@ -25,15 +25,17 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.ManagerThread;
-import org.xbmc.android.remote.business.MusicManager;
 import org.xbmc.android.remote.presentation.activity.DialogFactory;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
 import org.xbmc.android.remote.presentation.controller.holder.ThreeHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
-import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IControlManager;
+import org.xbmc.api.business.IMusicManager;
+import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
@@ -41,7 +43,9 @@ import org.xbmc.httpapi.type.SortType;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
@@ -67,7 +71,7 @@ import android.widget.AdapterView.OnItemClickListener;
  * TODO Once we move to 1.6+, waste the deprecated code. 
  */
 @SuppressWarnings("unused")
-public class AlbumListController extends ListController {
+public class AlbumListController extends ListController implements IController {
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
@@ -88,6 +92,10 @@ public class AlbumListController extends ListController {
 	
 	private Artist mArtist;
 	private Genre mGenre;
+	
+	private IMusicManager mMusicManager;
+	private IControlManager mControlManager;
+	
 	private boolean mCompilationsOnly = false;
 	private boolean mLoadCovers = false;
 
@@ -112,8 +120,12 @@ public class AlbumListController extends ListController {
 	
 	public void onCreate(Activity activity, ListView list) {
 		
-		ManagerThread.music().setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
-		ManagerThread.music().setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
+		mMusicManager = ManagerFactory.getMusicManager(activity.getApplicationContext(), this);
+		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
+		
+		((ISortableManager)mMusicManager).setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
+		((ISortableManager)mMusicManager).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
+		
 		mLoadCovers = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
 		
 		if (!isCreated()) {
@@ -171,12 +183,41 @@ public class AlbumListController extends ListController {
 		}
 	}
 	
+	public void updateLibrary() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+		builder.setMessage("Are you sure you want XBMC to rescan your music library?")
+			.setCancelable(false)
+			.setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					mControlManager.updateLibrary(new DataResponse<Boolean>() {
+						public void run() {
+							final String message;
+							if (value) {
+								message = "Music library updated has been launched.";
+							} else {
+								message = "Error launching music library update.";
+							}
+							Toast toast = Toast.makeText(mActivity, message, Toast.LENGTH_SHORT);
+							toast.show();
+						}
+					}, "music");
+				}
+			})
+			.setNegativeButton("Uh, no.", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+		builder.create().show();
+
+	}
+	
 	private void fetch() {
 		final Artist artist = mArtist;
 		final Genre genre = mGenre;
 		if (artist != null) {						// albums of an artist
 			setTitle(artist.name + " - Albums...");
-			ManagerThread.music().getAlbums(new DataResponse<ArrayList<Album>>() {
+			mMusicManager.getAlbums(new DataResponse<ArrayList<Album>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(artist.name + " - Albums (" + value.size() + ")");
@@ -190,7 +231,7 @@ public class AlbumListController extends ListController {
 			
 		} else if (genre != null) {					// albums of a genre
 			setTitle(genre.name + " - Albums...");
-			ManagerThread.music().getAlbums(new DataResponse<ArrayList<Album>>() {
+			mMusicManager.getAlbums(new DataResponse<ArrayList<Album>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(genre.name + " - Albums (" + value.size() + ")");
@@ -205,7 +246,7 @@ public class AlbumListController extends ListController {
 		} else {
 			if (mCompilationsOnly) {				// compilations
 				setTitle("Compilations...");
-				ManagerThread.music().getCompilations(new DataResponse<ArrayList<Album>>() {
+				mMusicManager.getCompilations(new DataResponse<ArrayList<Album>>() {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle("Compilations (" + value.size() + ")");
@@ -218,7 +259,7 @@ public class AlbumListController extends ListController {
 				});
 			} else {
 				setTitle("Albums...");				// all albums
-				ManagerThread.music().getAlbums(new DataResponse<ArrayList<Album>>() {
+				mMusicManager.getAlbums(new DataResponse<ArrayList<Album>>() {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle("Albums (" + value.size() + ")");
@@ -249,14 +290,14 @@ public class AlbumListController extends ListController {
 		final Album album = holder.holderItem;
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				ManagerThread.music().addToPlaylist(new QueryResponse(
+				mMusicManager.addToPlaylist(new QueryResponse(
 						mActivity, 
 						"Adding album \"" + album.name + "\" by " + album.artist + " to playlist...", 
 						"Error adding album!"
 					), album);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				ManagerThread.music().play(new QueryResponse(
+				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing album \"" + album.name + "\" by " + album.artist + "...", 
 						"Error playing album!",
@@ -264,7 +305,7 @@ public class AlbumListController extends ListController {
 					), album);
 				break;
 			case ITEM_CONTEXT_INFO:
-				DialogFactory.getAlbumDetail(mActivity, album).show();
+				DialogFactory.getAlbumDetail(mMusicManager, mActivity, album).show();
 				break;
 			default:
 				return;
@@ -292,21 +333,21 @@ public class AlbumListController extends ListController {
 			final Artist artist = mArtist;
 			final Genre genre = mGenre;
 			if (artist != null && genre == null) {
-				ManagerThread.music().play(new QueryResponse(
+				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all albums by " + artist.name + "...", 
 						"Error playing songs!",
 						true
 					), genre);			
 			} else if (genre != null && artist == null) {
-				ManagerThread.music().play(new QueryResponse(
+				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all albums of genre " + genre.name + "...", 
 						"Error playing songs!",
 						true
 					), genre);
 			} else if (genre != null && artist != null) {
-				ManagerThread.music().play(new QueryResponse(
+				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of genre " + genre.name + " by " + artist.name + "...", 
 						"Error playing songs!",
@@ -397,7 +438,7 @@ public class AlbumListController extends ListController {
 			if (mLoadCovers) {
 				holder.tempBind = true;
 				holder.iconView.setImageResource(R.drawable.icon_album_dark);
-				ManagerThread.music().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.SMALL);
+				mMusicManager.getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.icon_album);
 			}		
@@ -442,11 +483,29 @@ public class AlbumListController extends ListController {
 			if (mLoadCovers) {
 				row.setImageResource(R.drawable.icon_album_dark_big);
 				holder.tempBind = true;
-				ManagerThread.music().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.MEDIUM);
+				mMusicManager.getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), album, ThumbSize.MEDIUM);
 			} else {
 				row.setImageResource(R.drawable.icon_album);
 			}
 			return row;
+		}
+	}
+
+	public void onActivityPause() {
+		if (mMusicManager != null) {
+			mMusicManager.setController(null);
+		}
+		if (mControlManager != null) {
+			mControlManager.setController(null);
+		}
+	}
+
+	public void onActivityResume(Activity activity) {
+		if (mMusicManager != null) {
+			mMusicManager.setController(this);
+		}
+		if (mControlManager != null) {
+			mControlManager.setController(this);
 		}
 	}
 	

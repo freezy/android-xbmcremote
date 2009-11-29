@@ -185,12 +185,16 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mAlbumLogic.onActivityResume(this);
+		mSongLogic.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
+		mAlbumLogic.onActivityPause();
+		mSongLogic.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}
 }

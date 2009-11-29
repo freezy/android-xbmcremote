@@ -78,11 +78,15 @@ public class ManagerThread extends Thread {
 		im.setContext(context);
 		return im;
 	}
-	public static ControlManager control() {
-		return get().mControlManager;
+	public static ControlManager control(Context context) {
+		ControlManager cm = get().mControlManager;
+		cm.setContext(context);
+		return cm;
 	}
-	public static MusicManager music() {
-		return get().mMusicManager;
+	public static MusicManager music(Context context) {
+		MusicManager mm = get().mMusicManager;
+		mm.setContext(context);
+		return mm;
 	}
 	public static VideoManager video(Context context) {
 		VideoManager vm = get().mVideoManager;

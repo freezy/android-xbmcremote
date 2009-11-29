@@ -24,9 +24,10 @@ package org.xbmc.android.remote.presentation.controller;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.ManagerThread;
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.MusicArtistActivity;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 
@@ -47,7 +48,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class ArtistListController extends ListController {
+public class ArtistListController extends ListController implements IController {
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
@@ -55,8 +56,12 @@ public class ArtistListController extends ListController {
 	public static final int ITEM_CONTEXT_PLAY_GENRE = 4;
 	
 	private Genre mGenre;
+	private IMusicManager mMusicManager;
 	
 	public void onCreate(Activity activity, ListView list) {
+		
+		mMusicManager = ManagerFactory.getMusicManager(activity.getApplicationContext(), this);
+		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
@@ -78,7 +83,7 @@ public class ArtistListController extends ListController {
 			
 			if (mGenre != null) {
 				setTitle(mGenre.name + " - Artists...");
-				ManagerThread.music().getArtists(new DataResponse<ArrayList<Artist>>() {
+				mMusicManager.getArtists(new DataResponse<ArrayList<Artist>>() {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle(mGenre.name + " - Artists (" + value.size() + ")");
@@ -91,7 +96,7 @@ public class ArtistListController extends ListController {
 				}, mGenre);
 			} else {
 				setTitle("Artists...");
-				ManagerThread.music().getArtists(new DataResponse<ArrayList<Artist>>() {
+				mMusicManager.getArtists(new DataResponse<ArrayList<Artist>>() {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle("Artists (" + value.size() + ")");
@@ -125,14 +130,14 @@ public class ArtistListController extends ListController {
 		final Artist artist = (Artist)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				ManagerThread.music().addToPlaylist(new QueryResponse(
+				mMusicManager.addToPlaylist(new QueryResponse(
 						mActivity, 
 						"Adding all songs by " + artist.name + " to playlist...", 
 						"Error adding songs!"
 					), artist);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				ManagerThread.music().play(new QueryResponse(
+				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all songs by " + artist.name + "...", 
 						"Error playing songs!",
@@ -140,14 +145,14 @@ public class ArtistListController extends ListController {
 					), artist);
 				break;
 			case ITEM_CONTEXT_QUEUE_GENRE:
-				ManagerThread.music().addToPlaylist(new QueryResponse(
+				mMusicManager.addToPlaylist(new QueryResponse(
 						mActivity, 
 						"Adding all songs of genre " + mGenre.name + " by " + artist.name + " to playlist...", 
 						"Error adding songs!"
 					), artist, mGenre);
 				break;
 			case ITEM_CONTEXT_PLAY_GENRE:
-				ManagerThread.music().play(new QueryResponse(
+				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of genre " + mGenre.name + " by " + artist.name + "...", 
 						"Error playing songs!",
@@ -185,4 +190,17 @@ public class ArtistListController extends ListController {
 		}
 	}
 	private static final long serialVersionUID = 4360738733222799619L;
+
+	
+	public void onActivityPause() {
+		if (mMusicManager != null) {
+			mMusicManager.setController(null);
+		}
+	}
+
+	public void onActivityResume(Activity activity) {
+		if (mMusicManager != null) {
+			mMusicManager.setController(this);
+		}
+	}
 }
