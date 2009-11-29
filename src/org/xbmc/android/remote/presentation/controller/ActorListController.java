@@ -24,11 +24,12 @@ package org.xbmc.android.remote.presentation.controller;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.ManagerThread;
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Artist;
 import org.xbmc.httpapi.type.ThumbSize;
@@ -61,11 +62,16 @@ public class ActorListController extends ListController {
 	private boolean mLoadCovers = false;
 	private final int mType;
 	
+	private IVideoManager mVideoManager;
+	
 	public ActorListController(int type) {
 		mType = type;
 	}
 	
 	public void onCreate(Activity activity, ListView list) {
+		
+		mVideoManager = ManagerFactory.getVideoManager(activity.getApplicationContext(), this);
+		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
@@ -94,7 +100,7 @@ public class ActorListController extends ListController {
 			switch (mType) {
 			case TYPE_ALL:
 				setTitle("Actors...");
-				ManagerThread.video().getActors(new DataResponse<ArrayList<Actor>>(mActivity) {
+				mVideoManager.getActors(new DataResponse<ArrayList<Actor>>() {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle("Actors (" + value.size() + ")");
@@ -108,7 +114,7 @@ public class ActorListController extends ListController {
 				break;
 			case TYPE_MOVIE:
 				setTitle("Movie Actors...");
-				ManagerThread.video().getMovieActors(new DataResponse<ArrayList<Actor>>(mActivity) {
+				mVideoManager.getMovieActors(new DataResponse<ArrayList<Actor>>() {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle("Movie actors (" + value.size() + ")");
@@ -122,7 +128,7 @@ public class ActorListController extends ListController {
 				break;
 			case TYPE_TVSHOW:
 				setTitle("TV Actors...");
-				ManagerThread.video().getTvShowActors(new DataResponse<ArrayList<Actor>>(mActivity) {
+				mVideoManager.getTvShowActors(new DataResponse<ArrayList<Actor>>() {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle("TV show actors (" + value.size() + ")");
@@ -182,7 +188,7 @@ public class ActorListController extends ListController {
 			
 			if (mLoadCovers) {
 				holder.tempBind = true;
-				ManagerThread.video().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), actor, ThumbSize.SMALL);
+				mVideoManager.getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), actor, ThumbSize.SMALL);
 			}
 			return row;
 		}

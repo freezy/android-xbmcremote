@@ -49,7 +49,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * @param movie Movie
 	 */
 	public void updateMovieDetails(final DataResponse<Movie> response, final Movie movie) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = video(response).updateMovieDetails(movie);
 				done(response);
@@ -62,7 +62,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * @param response Response object
 	 */
 	public void getMovies(final DataResponse<ArrayList<Movie>> response) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = video(response).getMovies(getSortBy(SortType.TITLE), getSortOrder());
 				done(response);
@@ -76,7 +76,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * @param actor Actor
 	 */
 	public void getMovies(final DataResponse<ArrayList<Movie>> response, final Actor actor) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = video(response).getMovies(actor, getSortBy(SortType.TITLE), getSortOrder());
 				done(response);
@@ -90,7 +90,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * @param genre Genre
 	 */
 	public void getMovies(final DataResponse<ArrayList<Movie>> response, final Genre genre) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = video(response).getMovies(genre, getSortBy(SortType.TITLE), getSortOrder());
 				done(response);
@@ -104,7 +104,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * @param response Response object
 	 */
 	public void getActors(final DataResponse<ArrayList<Actor>> response) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = video(response).getActors();
 				done(response);
@@ -117,7 +117,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * @param response Response object
 	 */
 	public void getMovieActors(final DataResponse<ArrayList<Actor>> response) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = video(response).getMovieActors();
 				done(response);
@@ -130,7 +130,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * @param response Response object
 	 */
 	public void getTvShowActors(final DataResponse<ArrayList<Actor>> response) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = video(response).getTvShowActors();
 				done(response);
@@ -143,7 +143,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * @param response Response object
 	 */
 	public void getMovieGenres(final DataResponse<ArrayList<Genre>> response) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = video(response).getMovieGenres();
 				done(response);

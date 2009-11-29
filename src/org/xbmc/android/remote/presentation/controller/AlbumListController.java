@@ -176,7 +176,7 @@ public class AlbumListController extends ListController {
 		final Genre genre = mGenre;
 		if (artist != null) {						// albums of an artist
 			setTitle(artist.name + " - Albums...");
-			ManagerThread.music().getAlbums(new DataResponse<ArrayList<Album>>(mActivity) {
+			ManagerThread.music().getAlbums(new DataResponse<ArrayList<Album>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(artist.name + " - Albums (" + value.size() + ")");
@@ -190,7 +190,7 @@ public class AlbumListController extends ListController {
 			
 		} else if (genre != null) {					// albums of a genre
 			setTitle(genre.name + " - Albums...");
-			ManagerThread.music().getAlbums(new DataResponse<ArrayList<Album>>(mActivity) {
+			ManagerThread.music().getAlbums(new DataResponse<ArrayList<Album>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(genre.name + " - Albums (" + value.size() + ")");
@@ -205,7 +205,7 @@ public class AlbumListController extends ListController {
 		} else {
 			if (mCompilationsOnly) {				// compilations
 				setTitle("Compilations...");
-				ManagerThread.music().getCompilations(new DataResponse<ArrayList<Album>>(mActivity) {
+				ManagerThread.music().getCompilations(new DataResponse<ArrayList<Album>>() {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle("Compilations (" + value.size() + ")");
@@ -218,7 +218,7 @@ public class AlbumListController extends ListController {
 				});
 			} else {
 				setTitle("Albums...");				// all albums
-				ManagerThread.music().getAlbums(new DataResponse<ArrayList<Album>>(mActivity) {
+				ManagerThread.music().getAlbums(new DataResponse<ArrayList<Album>>() {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle("Albums (" + value.size() + ")");
@@ -249,14 +249,14 @@ public class AlbumListController extends ListController {
 		final Album album = holder.holderItem;
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				ManagerThread.music().addToPlaylist(new QueryHandler(
+				ManagerThread.music().addToPlaylist(new QueryResponse(
 						mActivity, 
 						"Adding album \"" + album.name + "\" by " + album.artist + " to playlist...", 
 						"Error adding album!"
 					), album);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing album \"" + album.name + "\" by " + album.artist + "...", 
 						"Error playing album!",
@@ -292,21 +292,21 @@ public class AlbumListController extends ListController {
 			final Artist artist = mArtist;
 			final Genre genre = mGenre;
 			if (artist != null && genre == null) {
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing all albums by " + artist.name + "...", 
 						"Error playing songs!",
 						true
 					), genre);			
 			} else if (genre != null && artist == null) {
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing all albums of genre " + genre.name + "...", 
 						"Error playing songs!",
 						true
 					), genre);
 			} else if (genre != null && artist != null) {
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of genre " + genre.name + " by " + artist.name + "...", 
 						"Error playing songs!",

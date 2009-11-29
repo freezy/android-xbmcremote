@@ -23,9 +23,7 @@ package org.xbmc.api.business;
 
 import org.xbmc.android.remote.R;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 /**
  * Basically contains two things:
@@ -42,32 +40,24 @@ public class DataResponse<T> implements Runnable {
 	public int defaultCover = R.drawable.icon_genre;
 	public int cacheType;
 	
-	protected final Activity mActivity;
 	protected final long mTag;
 	
 	public DataResponse(DataResponse<T> response) {
 		mTag = response.mTag;
-		mActivity = response.mActivity;
 		defaultCover = response.defaultCover;
 	}
-	public DataResponse(Activity activity) {
-		mActivity = activity;
+	public DataResponse() {
 		mTag = 0;
 	}
-	public DataResponse(Activity activity, long tag) {
-		mActivity = activity;
+	public DataResponse(long tag) {
 		mTag = tag;
 	}
-	public DataResponse(Activity activity, long tag, int defaultCover) {
-		mActivity = activity;
+	public DataResponse(long tag, int defaultCover) {
 		mTag = tag;
 		this.defaultCover = defaultCover;
 	}
-	public Activity getActivity() {
-		return mActivity;
-	}
 	public Bitmap getDefaultCover() {
-		return BitmapFactory.decodeResource(mActivity.getResources(), defaultCover);
+		return null;
 	}
 	public void run () {
 		// do nothing if not overloaded

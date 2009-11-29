@@ -37,7 +37,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 	 * @param filename File to play
 	 */
 	public void playFile(final DataResponse<Boolean> response, final String filename) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = control(response).playFile(filename);
 				done(response);
@@ -51,7 +51,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 	 * @param fileOrFolder File to play
 	 */
 	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = control(response).addToPlaylist(fileOrFolder);
 				done(response);
@@ -67,7 +67,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 	 * @param mediaType
 	 */
 	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() {
 				response.value = control(response).updateLibrary(mediaType);
 				done(response);

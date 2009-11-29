@@ -288,18 +288,18 @@ public interface IMusicClient {
 	public ArrayList<Song> getSongs(Artist artist, Genre genre, int sortBy, String sortOrder);
 	
 	/**
-	 * Returns album thumbnail as base64-encoded string
-	 * @param album
-	 * @return Base64-encoded content of thumb
-	 */
-	public String getCover(ICoverArt art);
-	
-	/**
 	 * Returns a list containing all artist IDs that stand for "compilation".
 	 * Best case scenario would be only one ID for "Various Artists", though
 	 * there are also just "V.A." or "VA" naming conventions.
 	 * @return List of compilation artist IDs
 	 */
 	public ArrayList<Integer> getCompilationArtistIDs();
+
+	/**
+	 * Returns album thumbnail as base64-encoded string
+	 * @param album
+	 * @return Base64-encoded content of thumb
+	 */
+	public String getCover(ICoverArt art);
 	
 }

@@ -91,7 +91,7 @@ public abstract class AbstractHolder {
 	public class CoverDownloadResponse extends DataResponse<Bitmap> {
 		private final IdleListDetector mIdler;
 		public CoverDownloadResponse(Activity activity, IdleListDetector idler) {
-			super(activity, id, AbstractHolder.this.defaultCover);
+			super(id, AbstractHolder.this.defaultCover);
 			mIdler = idler;
 		}
 		public void run() {

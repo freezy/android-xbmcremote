@@ -78,7 +78,7 @@ public class ArtistListController extends ListController {
 			
 			if (mGenre != null) {
 				setTitle(mGenre.name + " - Artists...");
-				ManagerThread.music().getArtists(new DataResponse<ArrayList<Artist>>(mActivity) {
+				ManagerThread.music().getArtists(new DataResponse<ArrayList<Artist>>() {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle(mGenre.name + " - Artists (" + value.size() + ")");
@@ -91,7 +91,7 @@ public class ArtistListController extends ListController {
 				}, mGenre);
 			} else {
 				setTitle("Artists...");
-				ManagerThread.music().getArtists(new DataResponse<ArrayList<Artist>>(mActivity) {
+				ManagerThread.music().getArtists(new DataResponse<ArrayList<Artist>>() {
 					public void run() {
 						if (value.size() > 0) {
 							setTitle("Artists (" + value.size() + ")");
@@ -125,14 +125,14 @@ public class ArtistListController extends ListController {
 		final Artist artist = (Artist)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				ManagerThread.music().addToPlaylist(new QueryHandler(
+				ManagerThread.music().addToPlaylist(new QueryResponse(
 						mActivity, 
 						"Adding all songs by " + artist.name + " to playlist...", 
 						"Error adding songs!"
 					), artist);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing all songs by " + artist.name + "...", 
 						"Error playing songs!",
@@ -140,14 +140,14 @@ public class ArtistListController extends ListController {
 					), artist);
 				break;
 			case ITEM_CONTEXT_QUEUE_GENRE:
-				ManagerThread.music().addToPlaylist(new QueryHandler(
+				ManagerThread.music().addToPlaylist(new QueryResponse(
 						mActivity, 
 						"Adding all songs of genre " + mGenre.name + " by " + artist.name + " to playlist...", 
 						"Error adding songs!"
 					), artist, mGenre);
 				break;
 			case ITEM_CONTEXT_PLAY_GENRE:
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of genre " + mGenre.name + " by " + artist.name + "...", 
 						"Error playing songs!",

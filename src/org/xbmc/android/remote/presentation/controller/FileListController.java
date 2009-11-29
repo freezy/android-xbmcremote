@@ -25,10 +25,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.httpapi.type.MediaType;
 
@@ -48,7 +50,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class FileListController extends ListController {
+public class FileListController extends ListController implements IController {
 	
 	public static final int MESSAGE_HANDLE_DATA = 1;
 	public static final int MESSAGE_CONNECTION_ERROR = 2;
@@ -60,7 +62,12 @@ public class FileListController extends ListController {
 	// from ListActivity.java
 	protected ListAdapter mAdapter;
 	
+	private IInfoManager mInfoManager;
+	
 	public void onCreate(Activity activity, ListView list) {
+		
+		mInfoManager = ManagerFactory.getInfoManager(activity.getApplicationContext(), this);
+		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
@@ -84,7 +91,7 @@ public class FileListController extends ListController {
 						nextActivity.putExtra(ListController.EXTRA_DISPLAY_PATH, item.displayPath);
 						mActivity.startActivity(nextActivity);
 					} else {
-						ManagerThread.control().playFile(new DataResponse<Boolean>(mActivity) {
+						ManagerThread.control().playFile(new DataResponse<Boolean>() {
 							public void run() {
 								if (value) {
 									mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
@@ -148,7 +155,7 @@ public class FileListController extends ListController {
 		mList.setTextFilterEnabled(false);
 		setTitle("Loading...");
 		
-		DataResponse<ArrayList<FileLocation>> mediaListHandler = new DataResponse<ArrayList<FileLocation>>(mActivity) {
+		DataResponse<ArrayList<FileLocation>> mediaListHandler = new DataResponse<ArrayList<FileLocation>>() {
 			public void run() {
 				setTitle(url.equals("") ? "/" : displayPath);
 				if (value.size() > 0) {
@@ -164,9 +171,9 @@ public class FileListController extends ListController {
 		};
 		
 		if (mGettingUrl.length() == 0) {
-			ManagerThread.info().getShares(mediaListHandler, mMediaType);
+			mInfoManager.getShares(mediaListHandler, mMediaType);
 		} else {
-			ManagerThread.info().getDirectory(mediaListHandler, mGettingUrl);
+			mInfoManager.getDirectory(mediaListHandler, mGettingUrl);
 		}
 	}
 	
@@ -189,5 +196,18 @@ public class FileListController extends ListController {
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
 	}
+	
+	public void onActivityPause() {
+		if (mInfoManager != null) {
+			mInfoManager.setController(null);
+		}
+	}
+
+	public void onActivityResume(Activity activity) {
+		if (mInfoManager != null) {
+			mInfoManager.setController(this);
+		}
+	}
+	
 	private static final long serialVersionUID = -3883887349523448733L;
 }

@@ -23,9 +23,11 @@ package org.xbmc.android.remote.business;
 
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.VideoClient;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -58,28 +60,31 @@ abstract class AbstractThread extends Thread {
 	
 	/**
 	 * Returns the MusicClient class
-	 * @param response Response object
+	 * @param context Application context
 	 * @return
 	 */
-	protected MusicClient music(DataResponse<?> response) {
-		return ConnectionManager.getHttpClient(response.getActivity()).music;
+	protected MusicClient music(Context context) {
+		return ConnectionManager.getHttpClient(context).music;
 	}	
 	
 	/**
 	 * Returns the VideoClient class
-	 * @param response Response object
+	 * @param context Application context
 	 * @return
 	 */
-	protected VideoClient video(DataResponse<?> response) {
-		return ConnectionManager.getHttpClient(response.getActivity()).video;
+	protected VideoClient video(Context context) {
+		return ConnectionManager.getHttpClient(context).video;
 	}	
 	
 	/**
 	 * Calls the UI thread's callback code.
+	 * @param controller Controller reference
 	 * @param response Response object
 	 */
-	protected void done(DataResponse<?> response) {
-		response.getActivity().runOnUiThread(response);
+	protected void done(INotifiableController controller, DataResponse<?> response) {
+		if (controller != null) {
+			controller.runOnUI(response);
+		}
 	}
 	
 	/**

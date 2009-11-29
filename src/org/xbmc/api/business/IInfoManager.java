@@ -32,7 +32,7 @@ import org.xbmc.httpapi.type.DirectoryMask;
  *  
  * @author Team XBMC
  */
-public interface IInfoManager {
+public interface IInfoManager extends IManager {
 	
 	/**
 	 * Returns any system info variable, see {@link org.xbmc.httpapi.info.SystemInfo}

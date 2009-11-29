@@ -25,7 +25,10 @@ import java.util.ArrayList;
 
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
+
+import android.graphics.Bitmap;
 
 /**
  * This is the interface between the presentation layer and the business layer.
@@ -33,7 +36,7 @@ import org.xbmc.api.object.Movie;
  *  
  * @author Team XBMC
  */
-public interface IVideoManager {
+public interface IVideoManager extends IManager {
 
 	/**
 	 * Updates the movie object with additional data (plot, cast, etc)
@@ -84,5 +87,12 @@ public interface IVideoManager {
 	 * @param response Response object
 	 */
 	public void getMovieGenres(final DataResponse<ArrayList<Genre>> response);
+	
+	/**
+	 * Returns bitmap of any cover. Note that the callback is done by the
+	 * helper methods below.
+	 * @param response Response object
+	 */
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize);
 	
 }

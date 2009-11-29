@@ -102,4 +102,5 @@ public interface IVideoClient {
 	 * @return Base64-encoded content of thumb
 	 */
 	public String getCover(ICoverArt cover);
+	 
 }

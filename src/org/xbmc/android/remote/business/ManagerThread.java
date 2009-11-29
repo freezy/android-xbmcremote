@@ -21,7 +21,7 @@
 
 package org.xbmc.android.remote.business;
 
-
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -32,25 +32,28 @@ import android.os.Looper;
  * @author Team XBMC
  */
 public class ManagerThread extends Thread {
-	private static ManagerThread sHttpApiThread;
-	private final InfoManager mInfoWrapper;
-	private final ControlManager mControlWrapper;
-	private final MusicManager mMusicWrapper;
-	private final VideoManager mVideoWrapper;
+
+	private static ManagerThread sManagerThread;
 	private Handler mHandler;
+	
+	private final InfoManager mInfoManager;
+	private final ControlManager mControlManager;
+	private final MusicManager mMusicManager;
+	private final VideoManager mVideoManager;
+	
 	private ManagerThread() {
-		super("HTTP API Connection Thread");
-		mInfoWrapper = new InfoManager();
-		mControlWrapper = new ControlManager();
-		mMusicWrapper = new MusicManager();
-		mVideoWrapper = new VideoManager();
+		super("ManagerThread");
+		mInfoManager = new InfoManager();
+		mControlManager = new ControlManager();
+		mMusicManager = new MusicManager();
+		mVideoManager = new VideoManager();
 	}
 	public static ManagerThread get() {
-		if (sHttpApiThread == null) {
-			sHttpApiThread = new ManagerThread();
-			sHttpApiThread.start();
+		if (sManagerThread == null) {
+			sManagerThread = new ManagerThread();
+			sManagerThread.start();
 			// thread must be entirely started
-			while (sHttpApiThread.mHandler == null) {
+			while (sManagerThread.mHandler == null) {
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
@@ -58,27 +61,32 @@ public class ManagerThread extends Thread {
 				}
 			}
 		}
-		return sHttpApiThread;
+		return sManagerThread;
 	}
+	
 	public void run() {
 		Looper.prepare();
 		mHandler = new Handler();
-		mInfoWrapper.setHandler(mHandler);
-		mControlWrapper.setHandler(mHandler);
-		mMusicWrapper.setHandler(mHandler);
-		mVideoWrapper.setHandler(mHandler);
+		mInfoManager.setHandler(mHandler);
+		mControlManager.setHandler(mHandler);
+		mMusicManager.setHandler(mHandler);
+		mVideoManager.setHandler(mHandler);
 		Looper.loop();
 	}
-	public static InfoManager info() {
-		return get().mInfoWrapper;
+	public static InfoManager info(Context context) {
+		InfoManager im = get().mInfoManager;
+		im.setContext(context);
+		return im;
 	}
 	public static ControlManager control() {
-		return get().mControlWrapper;
+		return get().mControlManager;
 	}
 	public static MusicManager music() {
-		return get().mMusicWrapper;
+		return get().mMusicManager;
 	}
-	public static VideoManager video() {
-		return get().mVideoWrapper;
+	public static VideoManager video(Context context) {
+		VideoManager vm = get().mVideoManager;
+		vm.setContext(context);
+		return vm;
 	}
 }

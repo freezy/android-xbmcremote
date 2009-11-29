@@ -42,7 +42,7 @@ public class InfoManager extends AbstractManager implements IInfoManager {
 	 * @param field Field to return
 	 */
 	public void getSystemInfo(final DataResponse<String> response, final int field) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = info(response).getSystemInfo(field);
 				done(response);
@@ -56,7 +56,7 @@ public class InfoManager extends AbstractManager implements IInfoManager {
 	 * @param mediaType Media type
 	 */
 	public void getShares(final DataResponse<ArrayList<FileLocation>> response, final int mediaType) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = info(response).getShares(mediaType);
 				done(response);
@@ -74,7 +74,7 @@ public class InfoManager extends AbstractManager implements IInfoManager {
 	 * @return
 	 */
 	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = info(response).getDirectory(path, mask, offset, limit);
 				done(response);
@@ -89,7 +89,7 @@ public class InfoManager extends AbstractManager implements IInfoManager {
 	 * @return
 	 */
 	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() { 
 				response.value = info(response).getDirectory(path);
 				done(response);

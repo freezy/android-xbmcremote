@@ -24,6 +24,7 @@ package org.xbmc.android.remote.business;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.MusicClient;
@@ -31,6 +32,7 @@ import org.xbmc.httpapi.client.VideoClient;
 import org.xbmc.httpapi.type.CacheType;
 import org.xbmc.httpapi.type.ThumbSize;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
@@ -42,7 +44,7 @@ import android.util.Log;
  */
 public abstract class AbstractManager {
 	
-	protected static final String TAG = "Wrapper";
+	protected static final String TAG = "AbstractManager";
 	protected static final Boolean DEBUG = false;
 	
 	public static final String PREF_SORT_BY_PREFIX = "sort_by_";
@@ -58,15 +60,31 @@ public abstract class AbstractManager {
 	public static final int PREF_SORT_KEY_GENRE = 4;
 	public static final int PREF_SORT_KEY_FILEMODE = 5;
 	
-	protected Handler mResponse;
+	private INotifiableController mController = null;
+	private Context mContext;
+	
+	protected Handler mHandler;
 	
 	/**
 	 * Sets the handler used in the looping thread
 	 * @param handler
 	 */
-	public void setHandler(Handler handler) {
-		mResponse = handler;
+	void setHandler(Handler handler) {
+		mHandler = handler;
 	}
+	
+	/**
+	 * Sets the context. This should always be the application context, not the activity!
+	 * @param context Application context
+	 */
+	public void setContext(Context context) {
+		mContext = context;
+	}
+	
+	public void setController(INotifiableController controller) {
+		mController = controller;
+	}
+
 	
 	/**
 	 * Returns the InfoClient class
@@ -74,7 +92,7 @@ public abstract class AbstractManager {
 	 * @return
 	 */
 	protected InfoClient info(DataResponse<?> response) {
-		return ConnectionManager.getHttpClient(response.getActivity()).info;
+		return ConnectionManager.getHttpClient(mContext).info;
 	}
 	
 	/**
@@ -83,7 +101,7 @@ public abstract class AbstractManager {
 	 * @return
 	 */
 	protected ControlClient control(DataResponse<?> response) {
-		return ConnectionManager.getHttpClient(response.getActivity()).control;
+		return ConnectionManager.getHttpClient(mContext).control;
 	}
 	
 	/**
@@ -92,7 +110,7 @@ public abstract class AbstractManager {
 	 * @return
 	 */
 	protected VideoClient video(DataResponse<?> response) {
-		return ConnectionManager.getHttpClient(response.getActivity()).video;
+		return ConnectionManager.getHttpClient(mContext).video;
 	}
 	
 	/**
@@ -101,7 +119,7 @@ public abstract class AbstractManager {
 	 * @return
 	 */
 	protected MusicClient music(DataResponse<?> response) {
-		return ConnectionManager.getHttpClient(response.getActivity()).music;
+		return ConnectionManager.getHttpClient(mContext).music;
 	}
 	
 	/**
@@ -109,7 +127,9 @@ public abstract class AbstractManager {
 	 * @param response Response object
 	 */
 	protected void done(DataResponse<?> response) {
-		response.getActivity().runOnUiThread(response);
+		if (mController != null) {
+			mController.runOnUI(response);
+		}
 	}
 	
 	/**
@@ -118,7 +138,7 @@ public abstract class AbstractManager {
 	 * @param response Response object
 	 */
 	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
-		mResponse.post(new Runnable() {
+		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover.getCrc() != 0L) {
 					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
@@ -158,7 +178,7 @@ public abstract class AbstractManager {
 					done(response);
 				}
 			}
-		}, cover, thumbSize);
+		}, cover, thumbSize, mController);
 	}
 	
 	/**
@@ -184,7 +204,7 @@ public abstract class AbstractManager {
 					done(response);
 				}
 			}
-		}, cover, thumbSize);
+		}, cover, thumbSize, mController);
 	}
 	
 	/**
@@ -206,6 +226,6 @@ public abstract class AbstractManager {
 				}
 				done(response); // callback in any case, since we don't go further than that.
 			}
-		}, cover, thumbSize);
+		}, cover, thumbSize, mController, mContext);
 	}
 }

@@ -25,12 +25,14 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.controller.holder.MovieHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
@@ -38,7 +40,9 @@ import org.xbmc.api.object.Movie;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
@@ -58,7 +62,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class MovieListController extends ListController {
+public class MovieListController extends ListController implements IController {
 	
 	public static final int ITEM_CONTEXT_PLAY = 1;
 	public static final int ITEM_CONTEXT_INFO = 2;
@@ -74,12 +78,17 @@ public class MovieListController extends ListController {
 	
 	private Actor mActor;
 	private Genre mGenre;
+	
+	private IVideoManager mVideoManager;
+	
 	private boolean mLoadCovers = false;
 	
 	public void onCreate(Activity activity, ListView list) {
 		
-		ManagerThread.video().setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
-		ManagerThread.video().setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
+		mVideoManager = ManagerFactory.getVideoManager(activity.getApplicationContext(), this);
+		
+		ManagerThread.video(activity.getApplicationContext()).setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
+		ManagerThread.video(activity.getApplicationContext()).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		mLoadCovers = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
 		
 		if (!isCreated()) {
@@ -118,7 +127,7 @@ public class MovieListController extends ListController {
 		final Genre genre = mGenre;
 		if (actor != null) {						// movies with a certain actor
 			setTitle(actor.name + " - Movies...");
-			ManagerThread.video().getMovies(new DataResponse<ArrayList<Movie>>(mActivity) {
+			mVideoManager.getMovies(new DataResponse<ArrayList<Movie>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(actor.name + " - Movies (" + value.size() + ")");
@@ -132,7 +141,7 @@ public class MovieListController extends ListController {
 			
 		} else if (genre != null) {					// movies of a genre
 			setTitle(genre.name + " - Movies...");
-			ManagerThread.video().getMovies(new DataResponse<ArrayList<Movie>>(mActivity) {
+			mVideoManager.getMovies(new DataResponse<ArrayList<Movie>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(genre.name + " - Movies (" + value.size() + ")");
@@ -145,7 +154,7 @@ public class MovieListController extends ListController {
 			}, genre);
 		} else {
 			setTitle("Movies...");				// all movies
-			ManagerThread.video().getMovies(new DataResponse<ArrayList<Movie>>(mActivity) {
+			mVideoManager.getMovies(new DataResponse<ArrayList<Movie>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle("Movies (" + value.size() + ")");
@@ -157,6 +166,38 @@ public class MovieListController extends ListController {
 				}
 			});
 		}
+	}
+	
+	/**
+	 * Shows a dialog and refreshes the movie library if user confirmed.
+	 * @param activity
+	 */
+	public void refreshMovieLibrary(final Activity activity) {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		builder.setMessage("Are you sure you want XBMC to rescan your movie library?")
+			.setCancelable(false)
+			.setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					ManagerThread.control().updateLibrary(new DataResponse<Boolean>() {
+						public void run() {
+							final String message;
+							if (value) {
+								message = "Movie library updated has been launched.";
+							} else {
+								message = "Error launching movie library update.";
+							}
+							Toast toast = Toast.makeText(activity, message, Toast.LENGTH_SHORT);
+							toast.show();
+						}
+					}, "video");
+				}
+			})
+			.setNegativeButton("Uh, no.", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+		builder.create().show();
 	}
 	
 	@Override
@@ -174,7 +215,7 @@ public class MovieListController extends ListController {
 		final Movie movie = holder.holderItem;
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_PLAY:
-				ManagerThread.control().playFile(new DataResponse<Boolean>(mActivity) {
+				ManagerThread.control().playFile(new DataResponse<Boolean>() {
 					public void run() {
 						if (value) {
 							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
@@ -215,21 +256,21 @@ public class MovieListController extends ListController {
 			final Artist artist = mActor;
 			final Genre genre = mGenre;
 			if (artist != null && genre == null) {
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing all albums by " + artist.name + "...", 
 						"Error playing songs!",
 						true
 					), genre);			
 			} else if (genre != null && artist == null) {
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing all albums of genre " + genre.name + "...", 
 						"Error playing songs!",
 						true
 					), genre);
 			} else if (genre != null && artist != null) {
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of genre " + genre.name + " by " + artist.name + "...", 
 						"Error playing songs!",
@@ -299,7 +340,7 @@ public class MovieListController extends ListController {
 			if (mLoadCovers) {
 				holder.tempBind = true;
 				holder.iconView.setImageResource(R.drawable.poster);
-				ManagerThread.video().getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), movie, ThumbSize.SMALL);
+				mVideoManager.getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), movie, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.poster);
 			}		
@@ -309,4 +350,17 @@ public class MovieListController extends ListController {
 	}
 	
 	private static final long serialVersionUID = 1088971882661811256L;
+
+	public void onActivityPause() {
+		if (mVideoManager != null) {
+			mVideoManager.setController(null);
+		}
+	}
+
+	public void onActivityResume(Activity activity) {
+		if (mVideoManager != null) {
+			mVideoManager.setController(this);
+		}
+	}
+
 }

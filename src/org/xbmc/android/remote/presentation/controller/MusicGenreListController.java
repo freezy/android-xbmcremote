@@ -67,7 +67,7 @@ public class MusicGenreListController extends ListController {
 			});
 
 			setTitle("Genres...");
-			ManagerThread.music().getGenres(new DataResponse<ArrayList<Genre>>(mActivity) {
+			ManagerThread.music().getGenres(new DataResponse<ArrayList<Genre>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle("Genres (" + value.size() + ")");
@@ -97,14 +97,14 @@ public class MusicGenreListController extends ListController {
 		final Genre genre = (Genre)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				ManagerThread.music().addToPlaylist(new QueryHandler(
+				ManagerThread.music().addToPlaylist(new QueryResponse(
 						mActivity, 
 						"Adding all songs of genre " + genre.name + " to playlist...", 
 						"Error adding songs!"
 					), genre);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of genre " + genre.name + "...", 
 						"Error playing songs!",

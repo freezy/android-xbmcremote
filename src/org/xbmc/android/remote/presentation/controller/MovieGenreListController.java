@@ -24,9 +24,10 @@ package org.xbmc.android.remote.presentation.controller;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.ManagerThread;
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Genre;
 
 import android.app.Activity;
@@ -46,7 +47,12 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class MovieGenreListController extends ListController {
 	
+	private IVideoManager mVideoManager;
+	
 	public void onCreate(Activity activity, ListView list) {
+		
+		mVideoManager = ManagerFactory.getVideoManager(activity.getApplicationContext(), this);
+		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
@@ -60,7 +66,7 @@ public class MovieGenreListController extends ListController {
 			});
 
 			setTitle("Movie genres...");
-			ManagerThread.video().getMovieGenres(new DataResponse<ArrayList<Genre>>(mActivity) {
+			mVideoManager.getMovieGenres(new DataResponse<ArrayList<Genre>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle("Movie genres (" + value.size() + ")");

@@ -19,10 +19,25 @@
  *
  */
 
-package org.xbmc.api.presentation;
+package org.xbmc.android.remote.business;
 
-public interface INotifiableController {
-	public void onError(String message);
-	public void onMessage(String message);
-	public void runOnUI(Runnable action);
+import org.xbmc.api.business.IInfoManager;
+import org.xbmc.api.business.IVideoManager;
+import org.xbmc.api.presentation.INotifiableController;
+
+import android.content.Context;
+
+public abstract class ManagerFactory {
+	
+	public static IInfoManager getInfoManager(Context context, INotifiableController controller) {
+		IInfoManager im = ManagerThread.info(context);
+		im.setController(controller);
+		return im;
+	}
+	
+	public static IVideoManager getVideoManager(Context context, INotifiableController controller) {
+		IVideoManager vm = ManagerThread.video(context);
+		vm.setController(controller);
+		return vm;
+	}
 }

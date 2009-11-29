@@ -19,10 +19,11 @@
  *
  */
 
-package org.xbmc.api.presentation;
+package org.xbmc.android.remote.presentation.controller;
 
-public interface INotifiableController {
-	public void onError(String message);
-	public void onMessage(String message);
-	public void runOnUI(Runnable action);
+import android.app.Activity;
+
+public interface IController {
+	public void onActivityPause();
+	public void onActivityResume(Activity activity);
 }

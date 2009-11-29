@@ -25,13 +25,17 @@ import java.io.IOException;
 
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.ManagerThread;
+import org.xbmc.android.remote.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.controller.ListController;
 import org.xbmc.android.remote.presentation.controller.MovieListController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Movie;
+import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.type.ThumbSize;
@@ -57,6 +61,7 @@ public class MovieDetailsActivity extends Activity {
 	private static final String NO_DATA = "-";
 	
     private ConfigurationManager mConfigurationManager;
+    private MovieDetailsController mMovieDetailsController;
     
     private static final int[] sStarImages = { R.drawable.stars_0, R.drawable.stars_1, R.drawable.stars_2, R.drawable.stars_3, R.drawable.stars_4, R.drawable.stars_5, R.drawable.stars_6, R.drawable.stars_7, R.drawable.stars_8, R.drawable.stars_9, R.drawable.stars_10 };
 	
@@ -70,110 +75,159 @@ public class MovieDetailsActivity extends Activity {
 		topFrame.setForeground(null);
 		
 		final Movie movie = (Movie)getIntent().getSerializableExtra(ListController.EXTRA_MOVIE);
+		mMovieDetailsController = new MovieDetailsController(this, movie);
+		
 		((TextView)findViewById(R.id.titlebar_text)).setText(movie.getName());
 		
-		final ImageView posterView = ((ImageView)findViewById(R.id.moviedetails_poster));
 		((ImageView)findViewById(R.id.moviedetails_rating_stars)).setImageResource(sStarImages[(int)Math.round(movie.rating % 10)]);
 		((TextView)findViewById(R.id.moviedetails_director)).setText(movie.director);
 		((TextView)findViewById(R.id.moviedetails_genre)).setText(movie.genres);
 		((TextView)findViewById(R.id.moviedetails_runtime)).setText(movie.runtime);
 		((TextView)findViewById(R.id.moviedetails_rating)).setText(String.valueOf(movie.rating));
-		((Button)findViewById(R.id.moviedetails_playbutton)).setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				ManagerThread.control().playFile(new DataResponse<Boolean>(MovieDetailsActivity.this) {
-					public void run() {
-						if (value) {
-							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
-						}
-					}
-				}, movie.getPath());
-			}
-		});
+		
+		mMovieDetailsController.setupPlayButton((Button)findViewById(R.id.moviedetails_playbutton));
+		mMovieDetailsController.loadCover((ImageView)findViewById(R.id.moviedetails_poster));
+		mMovieDetailsController.updateMovieDetails(
+				(TextView)findViewById(R.id.moviedetails_rating_numvotes),
+				(TextView)findViewById(R.id.moviedetails_studio),
+				(TextView)findViewById(R.id.moviedetails_plot),
+				(TextView)findViewById(R.id.moviedetails_parental),
+				(Button)findViewById(R.id.moviedetails_trailerbutton),
+				(LinearLayout)findViewById(R.id.moviedetails_datalayout));
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard();
+	}
+	
+	
+	private static class MovieDetailsController implements INotifiableController, IController {
+		private IVideoManager mVideoManager;
+		private final Movie mMovie;
+		private Activity mActivity;
 		
-		// load the cover
-		ManagerThread.video().getCover(new DataResponse<Bitmap>(this) {
-			public void run() {
-				if (value == null) {
-					posterView.setImageResource(R.drawable.nocover);
-				} else {
-					posterView.setImageBitmap(value);
-				}
-			}
-		}, movie, ThumbSize.BIG);
+		MovieDetailsController(Activity activity, Movie movie) {
+			mActivity = activity;
+			mMovie = movie;
+			mVideoManager = ManagerFactory.getVideoManager(activity.getApplicationContext(), this);
+		}
 		
-		ManagerThread.video().updateMovieDetails(new DataResponse<Movie>(this) {
-			public void run() {
-				final Movie movie = value;
-				((TextView)findViewById(R.id.moviedetails_rating_numvotes)).setText(movie.numVotes > 0 ? " (" + movie.numVotes + " votes)" : "");
-				((TextView)findViewById(R.id.moviedetails_studio)).setText(movie.studio.equals("") ? NO_DATA : movie.studio);
-				((TextView)findViewById(R.id.moviedetails_plot)).setText(movie.plot.equals("") ? NO_DATA : movie.plot);
-				((TextView)findViewById(R.id.moviedetails_parental)).setText(movie.rated.equals("") ? NO_DATA : movie.rated);
-				if (movie.trailerUrl != null && !movie.trailerUrl.equals("")) {
-					final Button trailerButton = (Button)findViewById(R.id.moviedetails_trailerbutton);
-					trailerButton.setEnabled(true);
-					trailerButton.setOnClickListener(new OnClickListener() {
-						public void onClick(View v) {
-							ManagerThread.control().playFile(new DataResponse<Boolean>(MovieDetailsActivity.this) {
-								public void run() {
-									if (value) {
-										Toast toast = Toast.makeText(MovieDetailsActivity.this,  "Playing trailer for \"" + movie.getName() + "\"...", Toast.LENGTH_LONG);
-										toast.show();
-									}
-								}
-							}, movie.trailerUrl);
+		public void setupPlayButton(Button button) {
+			button.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					ManagerThread.control().playFile(new DataResponse<Boolean>() {
+						public void run() {
+							if (value) {
+								mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+							}
 						}
-					});
+					}, mMovie.getPath());
 				}
-				
-				if (movie.actors != null) {
-					final LinearLayout dataLayout = ((LinearLayout)findViewById(R.id.moviedetails_datalayout));
-					final LayoutInflater inflater = getLayoutInflater();
-					int n = 0;
-					for (Actor actor : movie.actors) {
-						final View view = inflater.inflate(R.layout.actor_item, null);
-						
-						((TextView)view.findViewById(R.id.actor_name)).setText(actor.name);
-						((TextView)view.findViewById(R.id.actor_role)).setText("as " + actor.role);
-						ImageButton img = ((ImageButton)view.findViewById(R.id.actor_image));
-						ManagerThread.video().getCover(new DataResponse<Bitmap>(MovieDetailsActivity.this, 0, R.drawable.person_small) {
-							public void run() {
-								if (value != null) {
-									((ImageButton)view.findViewById(R.id.actor_image)).setImageBitmap(value);
-								}
-							}
-						}, actor, ThumbSize.SMALL);
-						
-						img.setTag(actor);
-						img.setOnClickListener(new OnClickListener() {
-							public void onClick(View v) {
-								Intent nextActivity;
-								Actor actor = (Actor)v.getTag();
-								nextActivity = new Intent(view.getContext(), ListActivity.class);
-								nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new MovieListController());
-								nextActivity.putExtra(ListController.EXTRA_ACTOR, actor);
-								mActivity.startActivity(nextActivity);
-							}
-						});
-						dataLayout.addView(view);
-						n++;
+			});
+		}
+		
+		public void loadCover(final ImageView imageView) {
+			mVideoManager.getCover(new DataResponse<Bitmap>() {
+				public void run() {
+					if (value == null) {
+						imageView.setImageResource(R.drawable.nocover);
+					} else {
+						imageView.setImageBitmap(value);
 					}
 				}
-			}
-		}, movie);
+			}, mMovie, ThumbSize.BIG);
+		}
+		
+		public void updateMovieDetails(final TextView numVotesView, final TextView studioView, final TextView plotView, final TextView parentalView, final Button trailerButton, final LinearLayout dataLayout) {
+			mVideoManager.updateMovieDetails(new DataResponse<Movie>() {
+				public void run() {
+					final Movie movie = value;
+					numVotesView.setText(movie.numVotes > 0 ? " (" + movie.numVotes + " votes)" : "");
+					studioView.setText(movie.studio.equals("") ? NO_DATA : movie.studio);
+					plotView.setText(movie.plot.equals("") ? NO_DATA : movie.plot);
+					parentalView.setText(movie.rated.equals("") ? NO_DATA : movie.rated);
+					if (movie.trailerUrl != null && !movie.trailerUrl.equals("")) {
+						trailerButton.setEnabled(true);
+						trailerButton.setOnClickListener(new OnClickListener() {
+							public void onClick(View v) {
+								ManagerThread.control().playFile(new DataResponse<Boolean>() {
+									public void run() {
+										if (value) {
+											Toast toast = Toast.makeText(mActivity,  "Playing trailer for \"" + movie.getName() + "\"...", Toast.LENGTH_LONG);
+											toast.show();
+										}
+									}
+								}, movie.trailerUrl);
+							}
+						});
+					}
+					
+					if (movie.actors != null) {
+						final LayoutInflater inflater = mActivity.getLayoutInflater();
+						int n = 0;
+						for (Actor actor : movie.actors) {
+							final View view = inflater.inflate(R.layout.actor_item, null);
+							
+							((TextView)view.findViewById(R.id.actor_name)).setText(actor.name);
+							((TextView)view.findViewById(R.id.actor_role)).setText("as " + actor.role);
+							ImageButton img = ((ImageButton)view.findViewById(R.id.actor_image));
+							mVideoManager.getCover(new DataResponse<Bitmap>(0, R.drawable.person_small) {
+								public void run() {
+									if (value != null) {
+										((ImageButton)view.findViewById(R.id.actor_image)).setImageBitmap(value);
+									}
+								}
+							}, actor, ThumbSize.SMALL);
+							
+							img.setTag(actor);
+							img.setOnClickListener(new OnClickListener() {
+								public void onClick(View v) {
+									Intent nextActivity;
+									Actor actor = (Actor)v.getTag();
+									nextActivity = new Intent(view.getContext(), ListActivity.class);
+									nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new MovieListController());
+									nextActivity.putExtra(ListController.EXTRA_ACTOR, actor);
+									mActivity.startActivity(nextActivity);
+								}
+							});
+							dataLayout.addView(view);
+							n++;
+						}
+					}
+				}
+			}, mMovie);
+		}
+
+		public void onActivityPause() {
+			mVideoManager.setController(null);
+		}
+
+		public void onActivityResume(Activity activity) {
+			mVideoManager.setController(this);
+		}
+
+		public void onError(String message) {
+		}
+
+		public void onMessage(String message) {
+		}
+
+		public void runOnUI(Runnable action) {
+			mActivity.runOnUiThread(action);
+		}
+		
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mMovieDetailsController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
+		mMovieDetailsController.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}
 	

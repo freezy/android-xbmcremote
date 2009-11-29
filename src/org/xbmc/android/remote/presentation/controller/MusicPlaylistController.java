@@ -74,13 +74,13 @@ public class MusicPlaylistController extends ListController {
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_song);
 			setupIdleListener();
 			
-			ManagerThread.music().getPlaylistPosition(new DataResponse<Integer>(activity) {
+			ManagerThread.music().getPlaylistPosition(new DataResponse<Integer>() {
 				public void run() {
 					MusicPlaylistController.this.mCurrentPosition = value;
 				}
 			});
 			
-	  	  	ManagerThread.music().getPlaylist(new DataResponse<ArrayList<String>>(activity) {
+	  	  	ManagerThread.music().getPlaylist(new DataResponse<ArrayList<String>>() {
 	  	  		public void run() {
 	  	  			if (value.size() > 0) {
 		  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
@@ -106,7 +106,7 @@ public class MusicPlaylistController extends ListController {
 				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					final OneHolder<PlaylistItem> holder = (OneHolder<PlaylistItem>)view.getTag();
-					ManagerThread.music().setPlaylistSong(new DataResponse<Boolean>((Activity)view.getContext()), holder.holderItem.position);
+					ManagerThread.music().setPlaylistSong(new DataResponse<Boolean>(), holder.holderItem.position);
 				}
 			});
 					
@@ -159,10 +159,10 @@ public class MusicPlaylistController extends ListController {
 		
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_PLAY:
-				ManagerThread.music().setPlaylistSong(new DataResponse<Boolean>(mActivity), holder.holderItem.position);
+				ManagerThread.music().setPlaylistSong(new DataResponse<Boolean>(), holder.holderItem.position);
 				break;
 			case ITEM_CONTEXT_REMOVE:
-				ManagerThread.music().removeFromPlaylist(new DataResponse<Boolean>(mActivity), holder.holderItem.path);
+				ManagerThread.music().removeFromPlaylist(new DataResponse<Boolean>(), holder.holderItem.path);
 				break;
 			default:
 				return;

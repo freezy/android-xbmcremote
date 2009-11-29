@@ -25,7 +25,6 @@ import java.io.IOException;
 
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.controller.ActorListController;
 import org.xbmc.android.remote.presentation.controller.FileListController;
 import org.xbmc.android.remote.presentation.controller.MovieGenreListController;
@@ -34,12 +33,9 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
-import org.xbmc.api.business.DataResponse;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -50,11 +46,11 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class MovieLibraryActivity extends SlidingTabActivity  {
 
 	private SlidingTabHost mTabHost;
+	
 	private MovieListController mMovieController;
 	private ActorListController mActorController;
 	private MovieGenreListController mGenresController;
@@ -76,6 +72,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		topFrame.setForeground(null);
 		
 		mTabHost = getTabHost();
+		
 		
 		// add the tabs
 		mTabHost.addTab(mTabHost.newTabSpec("tab_movies", "Movies", R.drawable.st_movie_on, R.drawable.st_movie_off).setBigIcon(R.drawable.st_movie_over).setContent(R.id.movielist_outer_layout));
@@ -171,31 +168,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 				startActivity(new Intent(this, RemoteActivity.class));
 				return true;
 			case MENU_UPDATE_LIBRARY:
-				final AlertDialog.Builder builder = new AlertDialog.Builder(MovieLibraryActivity.this);
-				builder.setMessage("Are you sure you want XBMC to rescan your movie library?")
-					.setCancelable(false)
-					.setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							ManagerThread.control().updateLibrary(new DataResponse<Boolean>(MovieLibraryActivity.this) {
-								public void run() {
-									final String message;
-									if (value) {
-										message = "Movie library updated has been launched.";
-									} else {
-										message = "Error launching movie library update.";
-									}
-									Toast toast = Toast.makeText(MovieLibraryActivity.this, message, Toast.LENGTH_SHORT);
-									toast.show();
-								}
-							}, "video");
-						}
-					})
-					.setNegativeButton("Uh, no.", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.cancel();
-						}
-					});
-				builder.create().show();
+				mMovieController.refreshMovieLibrary(this);
 				return true;
 			case MENU_NOW_PLAYING:
 				startActivity(new Intent(this,  NowPlayingActivity.class));
@@ -264,12 +237,16 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mMovieController.onActivityResume(this);
+		mFileController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
+		mMovieController.onActivityPause();
+		mFileController.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}
 }

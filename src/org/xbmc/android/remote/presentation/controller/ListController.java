@@ -29,6 +29,7 @@ import org.xbmc.android.widget.FastScrollView;
 import org.xbmc.android.widget.IdleListDetector;
 import org.xbmc.android.widget.IdleListener;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.presentation.INotifiableController;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -43,7 +44,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public abstract class ListController implements Serializable {
+public abstract class ListController implements Serializable, INotifiableController {
 	
 	public static final String EXTRA_LIST_LOGIC = "ListLogic"; 
 	public static final String EXTRA_MOVIE = "movie";
@@ -116,18 +117,18 @@ public abstract class ListController implements Serializable {
 		}
 	}
 	
-	protected class QueryHandler extends DataResponse<Boolean> {
+	protected class QueryResponse extends DataResponse<Boolean> {
 		private final String mSuccessMessage;
 		private final String mErrorMessage;
 		private final boolean mGotoNowPlaying;
-		public QueryHandler(Activity activity, String successMessage, String errorMessage) {
-			super(activity);
+		public QueryResponse(Activity activity, String successMessage, String errorMessage) {
+			super();
 			mSuccessMessage = successMessage;
 			mErrorMessage = errorMessage;
 			mGotoNowPlaying = false;
 		}
-		public QueryHandler(Activity activity, String successMessage, String errorMessage, boolean gotoNowPlaying) {
-			super(activity);
+		public QueryResponse(Activity activity, String successMessage, String errorMessage, boolean gotoNowPlaying) {
+			super();
 			mSuccessMessage = successMessage;
 			mErrorMessage = errorMessage;
 			mGotoNowPlaying = gotoNowPlaying;
@@ -139,7 +140,19 @@ public abstract class ListController implements Serializable {
 			}
 		}
 	}
+	
 
+	public void onError(String message) {
+		// TODO Auto-generated method stub
+	}
+
+	public void onMessage(String message) {
+		// TODO Auto-generated method stub
+	}
+
+	public void runOnUI(Runnable action) {
+		mActivity.runOnUiThread(action);
+	}
 
 	private static final long serialVersionUID = 2903701184005613570L;
 }

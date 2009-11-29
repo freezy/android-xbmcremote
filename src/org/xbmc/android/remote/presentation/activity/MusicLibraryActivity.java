@@ -56,10 +56,10 @@ import android.widget.Toast;
 public class MusicLibraryActivity extends SlidingTabActivity  {
 
 	private SlidingTabHost mTabHost;
-	private AlbumListController mAlbumLogic;
-	private ArtistListController mArtistLogic;
-	private MusicGenreListController mGenreLogic;
-	private AlbumListController mCompilationsLogic;
+	private AlbumListController mAlbumController;
+	private ArtistListController mArtistController;
+	private MusicGenreListController mGenreController;
+	private AlbumListController mCompilationsController;
 	private FileListController mFileLogic;
 	
 	private static final int MENU_NOW_PLAYING = 301;
@@ -88,46 +88,46 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mTabHost.setCurrentTab(0);
 
 		// assign the gui logic to each tab
-		mAlbumLogic = new AlbumListController();
-		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
-		mAlbumLogic.findMessageView(findViewById(R.id.albumlist_outer_layout));
-		mAlbumLogic.setGrid((GridView)findViewById(R.id.albumlist_grid));
-		mAlbumLogic.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
+		mAlbumController = new AlbumListController();
+		mAlbumController.findTitleView(findViewById(R.id.albumlist_outer_layout));
+		mAlbumController.findMessageView(findViewById(R.id.albumlist_outer_layout));
+		mAlbumController.setGrid((GridView)findViewById(R.id.albumlist_grid));
+		mAlbumController.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
 
 		mFileLogic = new FileListController();
 		mFileLogic.findTitleView(findViewById(R.id.filelist_outer_layout));
 		mFileLogic.findMessageView(findViewById(R.id.filelist_outer_layout));
 		
-		mArtistLogic = new ArtistListController();
-		mArtistLogic.findTitleView(findViewById(R.id.artists_outer_layout));
-		mArtistLogic.findMessageView(findViewById(R.id.artists_outer_layout));
+		mArtistController = new ArtistListController();
+		mArtistController.findTitleView(findViewById(R.id.artists_outer_layout));
+		mArtistController.findMessageView(findViewById(R.id.artists_outer_layout));
 
-		mGenreLogic = new MusicGenreListController();
-		mGenreLogic.findTitleView(findViewById(R.id.genres_outer_layout));
-		mGenreLogic.findMessageView(findViewById(R.id.genres_outer_layout));
+		mGenreController = new MusicGenreListController();
+		mGenreController.findTitleView(findViewById(R.id.genres_outer_layout));
+		mGenreController.findMessageView(findViewById(R.id.genres_outer_layout));
 
-		mCompilationsLogic = new AlbumListController();
-		mCompilationsLogic.findTitleView(findViewById(R.id.compilations_outer_layout));
-		mCompilationsLogic.findMessageView(findViewById(R.id.compilations_outer_layout));
-		mCompilationsLogic.setCompilationsOnly(true);
+		mCompilationsController = new AlbumListController();
+		mCompilationsController.findTitleView(findViewById(R.id.compilations_outer_layout));
+		mCompilationsController.findMessageView(findViewById(R.id.compilations_outer_layout));
+		mCompilationsController.setCompilationsOnly(true);
 
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				
 				if (tabId.equals("tab_albums")) {
-					mAlbumLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.albumlist_list));
+					mAlbumController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.albumlist_list));
 				}
 				if (tabId.equals("tab_files")) {
 					mFileLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
 				}
 				if (tabId.equals("tab_artists")) {
-					mArtistLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.artists_list));
+					mArtistController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.artists_list));
 				}
 				if (tabId.equals("tab_genres")) {
-					mGenreLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.genres_list));
+					mGenreController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.genres_list));
 				}
 				if (tabId.equals("tab_compilations")) {
-					mCompilationsLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.compilations_list));
+					mCompilationsController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.compilations_list));
 				}
 			}
 		});
@@ -142,16 +142,16 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
 		switch (mTabHost.getCurrentTab()) {
 			case 0:
-				mAlbumLogic.onCreateOptionsMenu(menu);
+				mAlbumController.onCreateOptionsMenu(menu);
 				break;
 			case 1:
-				mArtistLogic.onCreateOptionsMenu(menu);
+				mArtistController.onCreateOptionsMenu(menu);
 				break;
 			case 2:
-				mGenreLogic.onCreateOptionsMenu(menu);
+				mGenreController.onCreateOptionsMenu(menu);
 				break;
 			case 3:
-				mCompilationsLogic.onCreateOptionsMenu(menu);
+				mCompilationsController.onCreateOptionsMenu(menu);
 				break;
 			case 4:
 				mFileLogic.onCreateOptionsMenu(menu);
@@ -168,16 +168,16 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		// first, process individual menu events
 		switch (mTabHost.getCurrentTab()) {
 		case 0:
-			mAlbumLogic.onOptionsItemSelected(item);
+			mAlbumController.onOptionsItemSelected(item);
 			break;
 		case 1:
-			mArtistLogic.onOptionsItemSelected(item);
+			mArtistController.onOptionsItemSelected(item);
 			break;
 		case 2:
-			mGenreLogic.onOptionsItemSelected(item);
+			mGenreController.onOptionsItemSelected(item);
 			break;
 		case 3:
-			mCompilationsLogic.onOptionsItemSelected(item);
+			mCompilationsController.onOptionsItemSelected(item);
 			break;
 		case 4:
 			mFileLogic.onOptionsItemSelected(item);
@@ -195,7 +195,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 				.setCancelable(false)
 				.setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						ManagerThread.control().updateLibrary(new DataResponse<Boolean>(MusicLibraryActivity.this) {
+						ManagerThread.control().updateLibrary(new DataResponse<Boolean>() {
 							public void run() {
 								final String message;
 								if (value) {
@@ -228,16 +228,16 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		switch (mTabHost.getCurrentTab()) {
 			case 0:
-				mAlbumLogic.onCreateContextMenu(menu, v, menuInfo);
+				mAlbumController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 			case 1:
-				mArtistLogic.onCreateContextMenu(menu, v, menuInfo);
+				mArtistController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 			case 2:
-				mGenreLogic.onCreateContextMenu(menu, v, menuInfo);
+				mGenreController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 			case 3:
-				mCompilationsLogic.onCreateContextMenu(menu, v, menuInfo);
+				mCompilationsController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 			case 4:
 				mFileLogic.onCreateContextMenu(menu, v, menuInfo);
@@ -249,16 +249,16 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (mTabHost.getCurrentTab()) {
 		case 0:
-			mAlbumLogic.onContextItemSelected(item);
+			mAlbumController.onContextItemSelected(item);
 			break;
 		case 1:
-			mArtistLogic.onContextItemSelected(item);
+			mArtistController.onContextItemSelected(item);
 			break;
 		case 2:
-			mGenreLogic.onContextItemSelected(item);
+			mGenreController.onContextItemSelected(item);
 			break;
 		case 3:
-			mCompilationsLogic.onContextItemSelected(item);
+			mCompilationsController.onContextItemSelected(item);
 			break;
 		case 4:
 			mFileLogic.onContextItemSelected(item);

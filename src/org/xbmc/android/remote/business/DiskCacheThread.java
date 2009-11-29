@@ -27,6 +27,7 @@ import org.xbmc.android.util.Crc32;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.httpapi.type.MediaType;
 import org.xbmc.httpapi.type.ThumbSize;
 
@@ -65,7 +66,7 @@ class DiskCacheThread extends AbstractThread {
 	 * @param cover   Which cover to return
 	 * @param thumbSize    Which size to return
 	 */
-	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
@@ -81,7 +82,7 @@ class DiskCacheThread extends AbstractThread {
 				    	}
 				    }
 				}
-				done(response);
+				done(controller, response);
 			}
 		});
 	}

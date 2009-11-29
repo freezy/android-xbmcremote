@@ -108,14 +108,14 @@ public class SongListController extends ListController {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					final Song song = ((ThreeHolder<Song>)view.getTag()).holderItem;
 					if (mAlbum == null) {
-						ManagerThread.music().play(new QueryHandler(
+						ManagerThread.music().play(new QueryResponse(
 							mActivity, 
 							"Playing \"" + song.title + "\" by " + song.artist + "...", 
 							"Error playing song!",
 							true
 						), song);
 					} else {
-						ManagerThread.music().play(new QueryHandler(
+						ManagerThread.music().play(new QueryResponse(
 							mActivity, 
 							"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
 							"Error playing song!",
@@ -136,7 +136,7 @@ public class SongListController extends ListController {
 		final Artist artist = mArtist; 
 		if (album != null) {
 			setTitle("Songs...");
-			ManagerThread.music().getSongs(new DataResponse<ArrayList<Song>>(mActivity) {
+			ManagerThread.music().getSongs(new DataResponse<ArrayList<Song>>() {
 				public void run() {
 					setTitle(album.name);
 					if (value.size() > 0) {
@@ -149,7 +149,7 @@ public class SongListController extends ListController {
 			
 		} else if (artist != null) {
 			setTitle(artist.name + " - Songs...");
-			ManagerThread.music().getSongs(new DataResponse<ArrayList<Song>>(mActivity) {
+			ManagerThread.music().getSongs(new DataResponse<ArrayList<Song>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(artist.name + " - Songs (" + value.size() + ")");
@@ -163,7 +163,7 @@ public class SongListController extends ListController {
 			
 		} else if (genre != null) {
 			setTitle(genre.name + " - Songs...");
-			ManagerThread.music().getSongs(new DataResponse<ArrayList<Song>>(mActivity) {
+			ManagerThread.music().getSongs(new DataResponse<ArrayList<Song>>() {
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(genre.name + " - Songs (" + value.size() + ")");
@@ -194,22 +194,22 @@ public class SongListController extends ListController {
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				if (mAlbum == null) {
-					ManagerThread.music().addToPlaylist(new QueryHandler(mActivity, "Song added to playlist.", "Error adding song!"), holder.holderItem);
+					ManagerThread.music().addToPlaylist(new QueryResponse(mActivity, "Song added to playlist.", "Error adding song!"), holder.holderItem);
 				} else {
-					ManagerThread.music().addToPlaylist(new QueryHandler(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, holder.holderItem);
+					ManagerThread.music().addToPlaylist(new QueryResponse(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, holder.holderItem);
 				}
 				break;
 			case ITEM_CONTEXT_PLAY:
 				final Song song = holder.holderItem;
 				if (mAlbum == null) {
-					ManagerThread.music().play(new QueryHandler(
+					ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing \"" + song.title + "\" by " + song.artist + "...", 
 						"Error playing song!",
 						true
 					), song);
 				} else {
-					ManagerThread.music().play(new QueryHandler(
+					ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
 						"Error playing song!",
@@ -245,21 +245,21 @@ public class SongListController extends ListController {
 			final Genre genre = mGenre;
 			final Artist artist = mArtist;
 			if (album != null) {
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of album " + album.name + " by " + album.artist + "...", 
 						"Error playing songs!",
 						true
 					), album);			
 			} else if (artist != null) {
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing all songs from " + artist.name + "...", 
 						"Error playing songs!",
 						true
 					), artist);
 			} else if (genre != null) {
-				ManagerThread.music().play(new QueryHandler(
+				ManagerThread.music().play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of genre " + genre.name + "...", 
 						"Error playing songs!",

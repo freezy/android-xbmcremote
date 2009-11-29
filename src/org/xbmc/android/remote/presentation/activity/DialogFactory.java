@@ -83,12 +83,12 @@ public abstract class DialogFactory {
 		// set the button's listener
 		queueButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				ManagerThread.music().play(new DataResponse<Boolean>(activity), album);
+				ManagerThread.music().play(new DataResponse<Boolean>(), album);
 			}
 		});
 		playButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				ManagerThread.music().addToPlaylist(new DataResponse<Boolean>(activity), album);
+				ManagerThread.music().addToPlaylist(new DataResponse<Boolean>(), album);
 			}
 		});
 		
@@ -105,7 +105,7 @@ public abstract class DialogFactory {
 			genresText.setVisibility(View.GONE);
 		}
 		// asynchronously load the cover
-        ManagerThread.music().getCover(new DataResponse<Bitmap>(activity) {
+        ManagerThread.music().getCover(new DataResponse<Bitmap>() {
         	public void run() {
         		if (value == null) {
         			cover.setImageResource(R.drawable.nocover);

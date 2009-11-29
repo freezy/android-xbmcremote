@@ -27,7 +27,7 @@ package org.xbmc.api.business;
  *  
  * @author Team XBMC
  */
-public interface IControlManager {
+public interface IControlManager extends IManager {
 	
 	/**
 	 * Starts playing the media file <code>filename</code> .

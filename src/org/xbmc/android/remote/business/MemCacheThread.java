@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.graphics.Bitmap;
@@ -67,7 +68,7 @@ class MemCacheThread extends AbstractThread {
 	 * @param response Response object
 	 * @param cover   Which cover to return
 	 */
-	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
@@ -80,7 +81,7 @@ class MemCacheThread extends AbstractThread {
 			        	response.value = response.getDefaultCover();
 			        }
 				}
-				done(response);
+				done(controller, response);
 			}
 		});
 	}
