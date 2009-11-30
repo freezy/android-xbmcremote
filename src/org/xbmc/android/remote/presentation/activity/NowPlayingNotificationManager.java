@@ -5,7 +5,7 @@ import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.data.IControlClient.PlayStatus;
-import org.xbmc.httpapi.type.MediaType;
+import org.xbmc.api.type.MediaType;
 
 import android.app.Notification;
 import android.app.NotificationManager;

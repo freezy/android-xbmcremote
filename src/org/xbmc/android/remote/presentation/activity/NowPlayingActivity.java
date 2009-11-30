@@ -26,7 +26,6 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.remote.presentation.controller.NowPlayingController;

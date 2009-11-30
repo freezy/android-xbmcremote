@@ -25,7 +25,7 @@ import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.presentation.INotifiableController;
-import org.xbmc.httpapi.type.SeekType;
+import org.xbmc.api.type.SeekType;
 
 import android.app.Activity;
 import android.widget.Toast;

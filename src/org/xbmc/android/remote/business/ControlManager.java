@@ -26,7 +26,7 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
-import org.xbmc.httpapi.type.SeekType;
+import org.xbmc.api.type.SeekType;
 
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.InfoClient} class.

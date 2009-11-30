@@ -12,7 +12,7 @@ import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.holder.AbstractHolder;
 import org.xbmc.android.widget.IdleListDetector.OnListIdleListener;
 import org.xbmc.api.business.IMusicManager;
-import org.xbmc.httpapi.type.ThumbSize;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.util.Log;

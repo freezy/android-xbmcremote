@@ -24,7 +24,6 @@ package org.xbmc.android.remote.presentation.activity;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.controller.HomeController;
 import org.xbmc.android.util.ConnectionManager;

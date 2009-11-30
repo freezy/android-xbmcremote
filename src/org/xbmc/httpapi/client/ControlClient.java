@@ -24,10 +24,10 @@ package org.xbmc.httpapi.client;
 import java.util.HashMap;
 
 import org.xbmc.api.data.IControlClient;
+import org.xbmc.api.info.GuiActions;
+import org.xbmc.api.type.MediaType;
+import org.xbmc.api.type.SeekType;
 import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.info.GuiActions;
-import org.xbmc.httpapi.type.MediaType;
-import org.xbmc.httpapi.type.SeekType;
 
 /**
  * The ControlClient class takes care of everything related to controlling

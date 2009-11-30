@@ -22,6 +22,7 @@
 package org.xbmc.android.remote.business;
 
 import org.xbmc.android.remote.data.ClientFactory;
+
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
@@ -30,8 +31,8 @@ import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
-import org.xbmc.httpapi.type.CacheType;
-import org.xbmc.httpapi.type.ThumbSize;
+import org.xbmc.api.type.CacheType;
+import org.xbmc.api.type.ThumbSize;
 
 import android.content.Context;
 import android.graphics.Bitmap;

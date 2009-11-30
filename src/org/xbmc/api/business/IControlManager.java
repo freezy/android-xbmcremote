@@ -22,7 +22,7 @@
 package org.xbmc.api.business;
 
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
-import org.xbmc.httpapi.type.SeekType;
+import org.xbmc.api.type.SeekType;
 
 /**
  * This is the interface between the presentation layer and the business layer.

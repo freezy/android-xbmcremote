@@ -31,8 +31,8 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Song;
-import org.xbmc.httpapi.type.MediaType;
-import org.xbmc.httpapi.type.ThumbSize;
+import org.xbmc.api.type.MediaType;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.Dialog;

@@ -19,31 +19,50 @@
  *
  */
 
-package org.xbmc.httpapi;
+package org.xbmc.api.type;
 
-import java.util.Date;
-
-import org.xbmc.api.type.LogType;
-
-public class Message implements Comparable<Message> {
-	private LogType level;
-	private String message;
-	private Date time;
-
-	public Message(LogType level, String message) {
-		this.level = level;
-		this.message = message;
-		time = new Date();
+public abstract class MediaType {
+	
+	public static final int MUSIC = 1;
+	public static final int VIDEO = 2;
+	public static final int PICTURES = 3;
+	
+	public static String getName(int type) {
+		switch (type) {
+			case MUSIC:
+				return "music";
+			case VIDEO:
+				return "video";
+			case PICTURES:
+				return "pictures";
+			default:
+				return "";
+		}
 	}
 	
-	public String toString() {
-		return level.toString() + ": " + message;
+	/**
+	 * Returns all media types.
+	 * @return
+	 */
+	public static int[] getTypes() {
+		int[] types = new int[3];
+		types[0] = MUSIC;
+		types[1] = VIDEO;
+		types[2] = PICTURES;
+		return types;
 	}
 	
-	public int compareTo(Message arg) {
-		if (arg.level == level)
-			return time.compareTo(arg.time);
-		else
-			return arg.level.compareTo(level);
+	public static String getArtFolder(int type) {
+		switch (type) {
+			case MUSIC:
+				return "/Music";
+			case VIDEO:
+				return "/Video";
+			case PICTURES:
+				return "/Pictures";
+			default:
+				return "";
+		}
 	}
+	
 }

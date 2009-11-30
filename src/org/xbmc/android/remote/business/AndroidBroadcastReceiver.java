@@ -19,19 +19,21 @@
  *
  */
 
-package org.xbmc.android.remote;
+package org.xbmc.android.remote.business;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.R;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.SmsMmsMessage;
 import org.xbmc.android.util.SmsPopupUtils;
+
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.eventclient.Packet;

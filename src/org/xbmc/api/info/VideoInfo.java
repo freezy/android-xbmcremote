@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.httpapi.info;
+package org.xbmc.api.info;
 
 public class VideoInfo {
 	public static final int VIDEOPLAYER_TITLE             = 250;

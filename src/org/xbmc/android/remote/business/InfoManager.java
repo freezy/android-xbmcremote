@@ -27,7 +27,7 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.FileLocation;
-import org.xbmc.httpapi.type.DirectoryMask;
+import org.xbmc.api.type.DirectoryMask;
 
 
 /**
@@ -38,7 +38,7 @@ import org.xbmc.httpapi.type.DirectoryMask;
 public class InfoManager extends AbstractManager implements IInfoManager, INotifiableManager {
 	
 	/**
-	 * Returns any system info variable, see {@link org.xbmc.httpapi.info.SystemInfo}
+	 * Returns any system info variable, see {@link org.xbmc.api.info.SystemInfo}
 	 * @param response Response object
 	 * @param field Field to return
 	 */

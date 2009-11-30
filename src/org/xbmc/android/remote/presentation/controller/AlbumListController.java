@@ -39,8 +39,8 @@ import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
-import org.xbmc.httpapi.type.SortType;
-import org.xbmc.httpapi.type.ThumbSize;
+import org.xbmc.api.type.SortType;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.AlertDialog;

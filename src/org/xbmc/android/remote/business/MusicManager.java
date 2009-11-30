@@ -30,12 +30,12 @@ import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IControlClient.PlayStatus;
+import org.xbmc.api.info.GuiSettings;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Song;
-import org.xbmc.httpapi.info.GuiSettings;
-import org.xbmc.httpapi.type.SortType;
+import org.xbmc.api.type.SortType;
 
 import android.content.SharedPreferences;
 

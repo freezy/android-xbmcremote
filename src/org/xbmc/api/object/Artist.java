@@ -24,7 +24,7 @@ package org.xbmc.api.object;
 import java.io.Serializable;
 
 import org.xbmc.android.util.Crc32;
-import org.xbmc.httpapi.type.MediaType;
+import org.xbmc.api.type.MediaType;
 
 /**
  * Not very much going on, artist is basically a name.

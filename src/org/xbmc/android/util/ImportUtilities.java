@@ -22,8 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.xbmc.api.object.ICoverArt;
-import org.xbmc.httpapi.type.MediaType;
-import org.xbmc.httpapi.type.ThumbSize;
+import org.xbmc.api.type.MediaType;
+import org.xbmc.api.type.ThumbSize;
 
 import android.graphics.Bitmap;
 import android.util.Log;

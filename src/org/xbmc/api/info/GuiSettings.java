@@ -19,31 +19,33 @@
  *
  */
 
-package org.xbmc.httpapi;
+package org.xbmc.api.info;
 
-import java.util.Date;
-
-import org.xbmc.api.type.LogType;
-
-public class Message implements Comparable<Message> {
-	private LogType level;
-	private String message;
-	private Date time;
-
-	public Message(LogType level, String message) {
-		this.level = level;
-		this.message = message;
-		time = new Date();
-	}
+public class GuiSettings {
 	
-	public String toString() {
-		return level.toString() + ": " + message;
+	public static class MusicLibrary {
+		
+		public static final int LIBARY_ENABLED = 418;
+		public static final int ALBUM_ARTISTS_ONLY = 13414;
+		
+		private static final String NAME_PREFIX = "musiclibrary.";
+		
+		public static String getName(int name) {
+			switch (name) {
+				case LIBARY_ENABLED: return NAME_PREFIX + "enabled";
+				case ALBUM_ARTISTS_ONLY: return NAME_PREFIX + "albumartistsonly";
+			}
+			return null;
+		}
+		public static String getType(int name) {
+			switch (name) {
+				// boolean
+				case LIBARY_ENABLED: 
+				case ALBUM_ARTISTS_ONLY: 
+					return "1";
+			}
+			return null;
+		}
 	}
-	
-	public int compareTo(Message arg) {
-		if (arg.level == level)
-			return time.compareTo(arg.time);
-		else
-			return arg.level.compareTo(level);
-	}
+
 }

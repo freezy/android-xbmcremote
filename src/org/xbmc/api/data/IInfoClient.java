@@ -26,7 +26,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.xbmc.api.object.FileLocation;
-import org.xbmc.httpapi.type.DirectoryMask;
+import org.xbmc.api.type.DirectoryMask;
 
 
 /**
@@ -71,7 +71,7 @@ public interface IInfoClient {
 	public String getCurrentlyPlayingThumbURI() throws MalformedURLException, URISyntaxException;
 	
 	/**
-	 * Returns any system info variable, see {@link org.xbmc.httpapi.info.SystemInfo}
+	 * Returns any system info variable, see {@link org.xbmc.api.info.SystemInfo}
 	 * @param field Field to return
 	 * @return
 	 */

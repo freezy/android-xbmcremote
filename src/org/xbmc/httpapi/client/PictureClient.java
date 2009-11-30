@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.data.IControlClient.PlayStatus;
-import org.xbmc.httpapi.type.MediaType;
+import org.xbmc.api.type.MediaType;
 
 /**
  * Takes care of Picture/SlideShow stuff

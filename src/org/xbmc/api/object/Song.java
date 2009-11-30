@@ -22,7 +22,7 @@
 package org.xbmc.api.object;
 import java.util.Formatter;
 
-import org.xbmc.httpapi.type.MediaType;
+import org.xbmc.api.type.MediaType;
 
 
 /**

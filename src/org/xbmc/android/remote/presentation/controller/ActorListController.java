@@ -32,7 +32,7 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Artist;
-import org.xbmc.httpapi.type.ThumbSize;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.content.Intent;

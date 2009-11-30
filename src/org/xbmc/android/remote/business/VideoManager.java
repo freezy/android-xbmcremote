@@ -30,7 +30,7 @@ import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Movie;
-import org.xbmc.httpapi.type.SortType;
+import org.xbmc.api.type.SortType;
 
 import android.content.SharedPreferences;
 

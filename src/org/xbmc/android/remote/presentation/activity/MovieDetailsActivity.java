@@ -23,7 +23,6 @@ package org.xbmc.android.remote.presentation.activity;
 
 import java.io.IOException;
 
-import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.IController;
@@ -36,9 +35,9 @@ import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.presentation.INotifiableController;
+import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
-import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
 import android.content.Intent;

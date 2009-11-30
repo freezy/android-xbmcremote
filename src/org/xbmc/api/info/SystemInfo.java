@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.httpapi.info;
+package org.xbmc.api.info;
 
 public class SystemInfo {
 	public static final int SYSTEM_TEMPERATURE_UNITS    = 106;

@@ -24,7 +24,7 @@ package org.xbmc.api.object;
 import java.io.Serializable;
 
 import org.xbmc.android.util.Crc32;
-import org.xbmc.httpapi.type.MediaType;
+import org.xbmc.api.type.MediaType;
 
 /**
  * The album class keeps the basic album information from the album table

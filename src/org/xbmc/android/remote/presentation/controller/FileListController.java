@@ -32,7 +32,7 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.object.FileLocation;
-import org.xbmc.httpapi.type.MediaType;
+import org.xbmc.api.type.MediaType;
 
 import android.app.Activity;
 import android.content.Intent;

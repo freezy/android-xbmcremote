@@ -19,31 +19,20 @@
  *
  */
 
-package org.xbmc.httpapi;
+package org.xbmc.api.type;
 
-import java.util.Date;
-
-import org.xbmc.api.type.LogType;
-
-public class Message implements Comparable<Message> {
-	private LogType level;
-	private String message;
-	private Date time;
-
-	public Message(LogType level, String message) {
-		this.level = level;
-		this.message = message;
-		time = new Date();
-	}
+public abstract class SortType {
 	
-	public String toString() {
-		return level.toString() + ": " + message;
-	}
+	public static final String ORDER_ASC = "ASC";
+	public static final String ORDER_DESC = "DESC";
 	
-	public int compareTo(Message arg) {
-		if (arg.level == level)
-			return time.compareTo(arg.time);
-		else
-			return arg.level.compareTo(level);
-	}
+	public static final int ALBUM = 1;
+	public static final int ARTIST = 2;
+	public static final int TITLE = 3;
+	public static final int FILENAME = 4;
+	public static final int TRACK = 5;
+	public static final int RATING = 6;
+	public static final int YEAR = 7;
+	
+	public static final int DONT_SORT = -1;
 }

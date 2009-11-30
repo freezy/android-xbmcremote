@@ -27,7 +27,7 @@ import java.util.HashMap;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
-import org.xbmc.httpapi.type.ThumbSize;
+import org.xbmc.api.type.ThumbSize;
 
 import android.graphics.Bitmap;
 

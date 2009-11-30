@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.httpapi.info;
+package org.xbmc.api.info;
 
 public class MusicInfo {
 	public static final int MUSICPLAYER_TITLE           = 200;

@@ -24,7 +24,7 @@ package org.xbmc.api.business;
 import java.util.ArrayList;
 
 import org.xbmc.api.object.FileLocation;
-import org.xbmc.httpapi.type.DirectoryMask;
+import org.xbmc.api.type.DirectoryMask;
 
 /**
  * This is the interface between the presentation layer and the business layer.
@@ -35,7 +35,7 @@ import org.xbmc.httpapi.type.DirectoryMask;
 public interface IInfoManager extends IManager {
 	
 	/**
-	 * Returns any system info variable, see {@link org.xbmc.httpapi.info.SystemInfo}
+	 * Returns any system info variable, see {@link org.xbmc.api.info.SystemInfo}
 	 * @param response Response object
 	 * @param field Field to return
 	 */

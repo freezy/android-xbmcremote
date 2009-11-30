@@ -28,7 +28,7 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
-import org.xbmc.httpapi.type.MediaType;
+import org.xbmc.api.type.MediaType;
 
 import android.content.Context;
 import android.graphics.Bitmap;

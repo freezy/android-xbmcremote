@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.api.data.IInfoClient;
+import org.xbmc.api.info.GuiSettings;
 import org.xbmc.api.object.FileLocation;
+import org.xbmc.api.type.DirectoryMask;
+import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.info.GuiSettings;
-import org.xbmc.httpapi.type.DirectoryMask;
-import org.xbmc.httpapi.type.MediaType;
 
 /**
  * The InfoClient basically takes care of everything else not covered by the
@@ -89,7 +89,7 @@ public class InfoClient implements IInfoClient {
 	}
 	
 	/**
-	 * Returns any system info variable, see {@link org.xbmc.httpapi.info.SystemInfo}
+	 * Returns any system info variable, see {@link org.xbmc.api.info.SystemInfo}
 	 * @param field Field to return
 	 * @return
 	 */

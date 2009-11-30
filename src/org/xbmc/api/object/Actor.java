@@ -22,7 +22,7 @@
 package org.xbmc.api.object;
 
 import org.xbmc.android.util.Crc32;
-import org.xbmc.httpapi.type.MediaType;
+import org.xbmc.api.type.MediaType;
 
 /**
  * Actor is (for now) a rip-off of artist. It's the same thing named differently for movies.

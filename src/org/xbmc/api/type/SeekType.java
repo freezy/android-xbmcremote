@@ -19,33 +19,9 @@
  *
  */
 
-package org.xbmc.httpapi.info;
+package org.xbmc.api.type;
 
-public class GuiSettings {
-	
-	public static class MusicLibrary {
-		
-		public static final int LIBARY_ENABLED = 418;
-		public static final int ALBUM_ARTISTS_ONLY = 13414;
-		
-		private static final String NAME_PREFIX = "musiclibrary.";
-		
-		public static String getName(int name) {
-			switch (name) {
-				case LIBARY_ENABLED: return NAME_PREFIX + "enabled";
-				case ALBUM_ARTISTS_ONLY: return NAME_PREFIX + "albumartistsonly";
-			}
-			return null;
-		}
-		public static String getType(int name) {
-			switch (name) {
-				// boolean
-				case LIBARY_ENABLED: 
-				case ALBUM_ARTISTS_ONLY: 
-					return "1";
-			}
-			return null;
-		}
-	}
-
+public enum SeekType {
+	relative,
+	absolute
 }

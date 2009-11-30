@@ -37,10 +37,10 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.WakeOnLan;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
+import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.presentation.INotifiableController;
+import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.BroadcastListener;
-import org.xbmc.httpapi.info.SystemInfo;
-import org.xbmc.httpapi.type.MediaType;
 
 import android.app.Activity;
 import android.content.Intent;

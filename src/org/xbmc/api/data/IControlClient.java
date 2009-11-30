@@ -23,7 +23,7 @@ package org.xbmc.api.data;
 
 import java.io.Serializable;
 
-import org.xbmc.httpapi.type.SeekType;
+import org.xbmc.api.type.SeekType;
 
 
 /**
@@ -205,6 +205,7 @@ public interface IControlClient {
 	/**
 	 * Data object for "Currently playing" info.
 	 * @TODO rename fields so it doesn't feel wierd using for videos..
+	 * @TODO move class to objects, this is public, not data..
 	 * @author Team XBMC
 	 */
 	public interface ICurrentlyPlaying extends Serializable {

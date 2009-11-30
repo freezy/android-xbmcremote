@@ -19,31 +19,12 @@
  *
  */
 
-package org.xbmc.httpapi;
+package org.xbmc.api.type;
 
-import java.util.Date;
-
-import org.xbmc.api.type.LogType;
-
-public class Message implements Comparable<Message> {
-	private LogType level;
-	private String message;
-	private Date time;
-
-	public Message(LogType level, String message) {
-		this.level = level;
-		this.message = message;
-		time = new Date();
-	}
+public abstract class CacheType {
 	
-	public String toString() {
-		return level.toString() + ": " + message;
-	}
+	public static final int MEMORY = 1;
+	public static final int SDCARD = 2;
+	public static final int NETWORK = 3;
 	
-	public int compareTo(Message arg) {
-		if (arg.level == level)
-			return time.compareTo(arg.time);
-		else
-			return arg.level.compareTo(level);
-	}
 }

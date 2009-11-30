@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.xbmc.android.util.Crc32;
-import org.xbmc.httpapi.type.MediaType;
+import org.xbmc.api.type.MediaType;
 
 /**
  * Stores what we can get from the movieview table.

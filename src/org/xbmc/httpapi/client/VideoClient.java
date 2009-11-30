@@ -31,9 +31,9 @@ import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
+import org.xbmc.api.type.MediaType;
+import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.type.MediaType;
-import org.xbmc.httpapi.type.SortType;
 
 import android.util.Log;
 
