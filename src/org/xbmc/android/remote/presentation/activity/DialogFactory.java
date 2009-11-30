@@ -25,7 +25,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
@@ -33,7 +32,6 @@ import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Song;
 import org.xbmc.httpapi.type.MediaType;
-import org.xbmc.httpapi.type.SortType;
 import org.xbmc.httpapi.type.ThumbSize;
 
 import android.app.Activity;
@@ -68,10 +66,6 @@ public abstract class DialogFactory {
 		final Dialog dialog = new Dialog(activity);
 		dialog.setContentView(R.layout.albuminfo);
 		
-		// DEPRECATED
-		ConnectionManager.getHttpClient(activity).music.updateAlbumInfo(album);
-		dialog.setTitle(album.name);
-
 		// get controls
 		final TextView artistText = (TextView) dialog.findViewById(R.id.album_artistname);
 		final ImageView cover = (ImageView) dialog.findViewById(R.id.album_cover);
@@ -80,6 +74,24 @@ public abstract class DialogFactory {
 		final Button queueButton = (Button) dialog.findViewById(R.id.album_queuebutton);
 		final Button playButton = (Button) dialog.findViewById(R.id.album_playbutton);
 		
+		musicManager.updateAlbumInfo(new DataResponse<Album>() {
+			public void run() {
+				final Album album = value;
+				artistText.setText(album.artist);
+				if (album.year > 0) {
+					yearText.setText(String.valueOf(album.year));
+				} else {
+					yearText.setVisibility(View.GONE);
+				}
+				if (album.genres != null) {
+					genresText.setText(album.genres);
+				} else {
+					genresText.setVisibility(View.GONE);
+				}
+			}
+		}, album);
+		dialog.setTitle(album.name);
+
 		// set the button's listener
 		queueButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -92,18 +104,6 @@ public abstract class DialogFactory {
 			}
 		});
 		
-		// update content
-		artistText.setText(album.artist);
-		if (album.year > 0) {
-			yearText.setText(String.valueOf(album.year));
-		} else {
-			yearText.setVisibility(View.GONE);
-		}
-		if (album.genres != null) {
-			genresText.setText(album.genres);
-		} else {
-			genresText.setVisibility(View.GONE);
-		}
 		// asynchronously load the cover
 		musicManager.getCover(new DataResponse<Bitmap>() {
         	public void run() {
@@ -117,7 +117,7 @@ public abstract class DialogFactory {
         
 		cover.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				getTrackDetail(activity, album).show();
+				getTrackDetail(musicManager, activity, album).show();
 			}
 		});
 		return dialog;
@@ -129,18 +129,18 @@ public abstract class DialogFactory {
 	 * @param album
 	 * @return Track listing dialog
 	 */
-	public static Dialog getTrackDetail(final Activity activity, final Album album) {
+	public static Dialog getTrackDetail(final IMusicManager musicManager, final Activity activity, final Album album) {
 		
 		Dialog dialog = new Dialog(activity);
 		dialog.setContentView(R.layout.albumtracks);
 		dialog.setTitle(album.name);
 
 		// get controls
-		TextView artistText = (TextView) dialog.findViewById(R.id.album_artistname);
-		ImageView cover = (ImageView)dialog.findViewById(R.id.album_cover);
-		TextView numTrackText = (TextView) dialog.findViewById(R.id.album_numtracks);
-		TextView yearText = (TextView) dialog.findViewById(R.id.album_year);
-		TableLayout trackTable = (TableLayout) dialog.findViewById(R.id.album_tracktable);
+		final TextView artistText = (TextView) dialog.findViewById(R.id.album_artistname);
+		final ImageView cover = (ImageView)dialog.findViewById(R.id.album_cover);
+		final TextView numTrackText = (TextView) dialog.findViewById(R.id.album_numtracks);
+		final TextView yearText = (TextView) dialog.findViewById(R.id.album_year);
+		final TableLayout trackTable = (TableLayout) dialog.findViewById(R.id.album_tracktable);
 
 		// update content
 		artistText.setText(album.artist);
@@ -157,39 +157,40 @@ public abstract class DialogFactory {
         
 		trackTable.setScrollContainer(true);
 		
-		ArrayList<Song> songs = ConnectionManager.getHttpClient(activity).music.getSongs(album, SortType.TRACK, SortType.ORDER_ASC);
-		numTrackText.setText(songs.size() + " Tracks");
-		
-		
-		for (Song song: songs) {
-			TableRow tr = new TableRow(activity);
-			
-			TextView txtTrack = new TextView(activity);
-			txtTrack.setText(String.valueOf(song.track));
-			txtTrack.setGravity(Gravity.RIGHT);
-			txtTrack.setWidth(20);
-			txtTrack.setPadding(0, 0, 5, 0);
-			txtTrack.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
-			
-			TextView txtTitle = new TextView(activity);
-			if (album.isVA()) {
-				txtTitle.setText(song.artist + " - " + song.title);
-			} else {
-				txtTitle.setText(song.title);
+		musicManager.getSongs(new DataResponse<ArrayList<Song>>() {
+			public void run() {
+				final ArrayList<Song> songs = value;
+				numTrackText.setText(songs.size() + " Tracks");
+				for (Song song: songs) {
+					TableRow tr = new TableRow(activity);
+					
+					TextView txtTrack = new TextView(activity);
+					txtTrack.setText(String.valueOf(song.track));
+					txtTrack.setGravity(Gravity.RIGHT);
+					txtTrack.setWidth(20);
+					txtTrack.setPadding(0, 0, 5, 0);
+					txtTrack.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+					
+					TextView txtTitle = new TextView(activity);
+					if (album.isVA()) {
+						txtTitle.setText(song.artist + " - " + song.title);
+					} else {
+						txtTitle.setText(song.title);
+					}
+					txtTitle.setWidth(200);
+					
+					TextView txtDuration = new TextView(activity);
+					txtDuration.setText(song.getDuration());
+					txtDuration.setGravity(Gravity.RIGHT);
+					
+					tr.addView(txtTrack);
+					tr.addView(txtTitle);
+					tr.addView(txtDuration);
+					
+					trackTable.addView(tr);
+				}		
 			}
-			txtTitle.setWidth(200);
-			
-			TextView txtDuration = new TextView(activity);
-			txtDuration.setText(song.getDuration());
-			txtDuration.setGravity(Gravity.RIGHT);
-			
-			tr.addView(txtTrack);
-			tr.addView(txtTitle);
-			tr.addView(txtDuration);
-			
-			trackTable.addView(tr);
-		}		
-		
+		}, album);
 		return dialog;
 	}
 }

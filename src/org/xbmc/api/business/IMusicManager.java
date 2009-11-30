@@ -28,6 +28,7 @@ import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Song;
+import org.xbmc.httpapi.type.ThumbSize;
 
 import android.graphics.Bitmap;
 
@@ -251,7 +252,16 @@ public interface IMusicManager extends IManager {
 	 * Returns bitmap of any cover. Note that the callback is done by the
 	 * helper methods below.
 	 * @param response Response object
+	 * @param cover Cover object
+	 * @param thumbSize Thumbnail size, see {@link ThumbSize}
 	 */
 	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize);
+	
+	/**
+	 * Updates the album object with additional data from the albuminfo table
+	 * @param response Response object
+	 * @param album Album to update
+	 */
+	public void updateAlbumInfo(final DataResponse<Album> response, final Album album);
 	
 }

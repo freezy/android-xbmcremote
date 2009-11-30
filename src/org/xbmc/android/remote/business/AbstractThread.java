@@ -21,11 +21,12 @@
 
 package org.xbmc.android.remote.business;
 
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.remote.data.ClientFactory;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.INotifiableManager;
+import org.xbmc.api.data.IMusicClient;
+import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.presentation.INotifiableController;
-import org.xbmc.httpapi.client.MusicClient;
-import org.xbmc.httpapi.client.VideoClient;
 
 import android.content.Context;
 import android.os.Handler;
@@ -63,8 +64,8 @@ abstract class AbstractThread extends Thread {
 	 * @param context Application context
 	 * @return
 	 */
-	protected MusicClient music(Context context) {
-		return ConnectionManager.getHttpClient(context).music;
+	protected IMusicClient music(Context context, INotifiableManager manager) {
+		return ClientFactory.getMusicClient(context, manager);
 	}	
 	
 	/**
@@ -72,8 +73,8 @@ abstract class AbstractThread extends Thread {
 	 * @param context Application context
 	 * @return
 	 */
-	protected VideoClient video(Context context) {
-		return ConnectionManager.getHttpClient(context).video;
+	protected IVideoClient video(Context context, INotifiableManager manager) {
+		return ClientFactory.getVideoClient(context, manager);
 	}	
 	
 	/**

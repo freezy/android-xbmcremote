@@ -25,14 +25,15 @@ import java.util.ArrayList;
 
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.business.ISortableManager;
+import org.xbmc.api.data.IControlClient;
+import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IControlClient.PlayStatus;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Song;
-import org.xbmc.httpapi.client.ControlClient;
-import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.info.GuiSettings;
 import org.xbmc.httpapi.type.SortType;
 
@@ -43,7 +44,7 @@ import android.content.SharedPreferences;
  * 
  * @author Team XBMC
  */
-public class MusicManager extends AbstractManager implements IMusicManager, ISortableManager {
+public class MusicManager extends AbstractManager implements IMusicManager, ISortableManager, INotifiableManager {
 	
 	private SharedPreferences mPref;
 	private int mCurrentSortKey;
@@ -55,7 +56,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getCompilations(final DataResponse<ArrayList<Album>> response) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				final MusicClient mc = music(response);
+				final IMusicClient mc = music(response);
 				ArrayList<Integer> compilationArtistIDs = mc.getCompilationArtistIDs();
 				response.value = mc.getAlbums(compilationArtistIDs);
 				done(response);
@@ -199,8 +200,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void addToPlaylist(final DataResponse<Boolean> response, final Album album) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final MusicClient mc = music(response);
-				final ControlClient cc = control(response);
+				final IMusicClient mc = music(response);
+				final IControlClient cc = control(response);
 				final int numAlreadyQueued = mc.getPlaylistSize();
 				response.value = mc.addToPlaylist(album);
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
@@ -218,8 +219,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void addToPlaylist(final DataResponse<Boolean> response, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final MusicClient mc = music(response);
-				final ControlClient cc = control(response);
+				final IMusicClient mc = music(response);
+				final IControlClient cc = control(response);
 				final int numAlreadyQueued = mc.getPlaylistSize();
 				response.value = mc.addToPlaylist(genre);
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
@@ -257,7 +258,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void addToPlaylist(final DataResponse<Boolean> response, final Album album, final Song song) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final MusicClient mc = music(response);
+				final IMusicClient mc = music(response);
 				final PlayStatus ps = control(response).getPlayState();
 				mc.setCurrentPlaylist();
 				final int playlistSize = mc.getPlaylistSize(); 
@@ -305,8 +306,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void addToPlaylist(final DataResponse<Boolean> response, final Artist artist) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final MusicClient mc = music(response);
-				final ControlClient cc = control(response);
+				final IMusicClient mc = music(response);
+				final IControlClient cc = control(response);
 				final int numAlreadyQueued = mc.getPlaylistSize();
 				response.value = mc.addToPlaylist(artist);
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
@@ -325,8 +326,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void addToPlaylist(final DataResponse<Boolean> response, final Artist artist, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final MusicClient mc = music(response);
-				final ControlClient cc = control(response);
+				final IMusicClient mc = music(response);
+				final IControlClient cc = control(response);
 				final int numAlreadyQueued = mc.getPlaylistSize();
 				response.value = mc.addToPlaylist(artist, genre);
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
@@ -431,8 +432,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void play(final DataResponse<Boolean> response, final Album album, final Song song) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final MusicClient mc = music(response);
-				final ControlClient cc = control(response);
+				final IMusicClient mc = music(response);
+				final IControlClient cc = control(response);
 				int n = 0;
 				int playPos = 0;
 				mc.clearPlaylist();
@@ -531,6 +532,20 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	}
 	
 	/**
+	 * Updates the album object with additional data from the albuminfo table
+	 * @param response Response object
+	 * @param album Album to update
+	 */
+	public void updateAlbumInfo(final DataResponse<Album> response, final Album album) {
+		mHandler.post(new Runnable() {
+			public void run() {
+				response.value = music(response).updateAlbumInfo(album);
+				done(response);
+			}
+		});
+	}
+	
+	/**
 	 * Sets the static reference to the preferences object. Used to obtain
 	 * current sort values.
 	 * @param pref
@@ -555,7 +570,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	 * @param cc Control client
 	 * @param numAlreadyQueued Number of previously queued items
 	 */
-	private void checkForPlayAfterQueue(final MusicClient mc, final ControlClient cc, int numAlreadyQueued) {
+	private void checkForPlayAfterQueue(final IMusicClient mc, final IControlClient cc, int numAlreadyQueued) {
 		final PlayStatus ps = cc.getPlayState();
 		if (ps == PlayStatus.Stopped) { // if nothing is playing, play the song
 			mc.setCurrentPlaylist();
@@ -591,5 +606,4 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 		}
 		return SortType.ORDER_ASC;
 	}
-
 }

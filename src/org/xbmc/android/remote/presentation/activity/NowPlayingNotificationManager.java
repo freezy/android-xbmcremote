@@ -1,7 +1,7 @@
 package org.xbmc.android.remote.presentation.activity;
 
-import org.xbmc.android.backend.httpapi.NowPlayingPollerThread;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.data.IControlClient.PlayStatus;

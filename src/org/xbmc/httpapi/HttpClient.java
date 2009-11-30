@@ -21,6 +21,7 @@
 
 package org.xbmc.httpapi;
 
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.MusicClient;
@@ -79,20 +80,20 @@ public class HttpClient {
 	/**
 	 * Construct with host only
 	 * @param host         Host or IP address to XBMC
-	 * @param errorHandler Error handler
+	 * @param manager      Notifiable manager
 	 */
-	public HttpClient(String host, int timeout, IErrorHandler errorHandler) {
-		this(host, -1, null, null, timeout, errorHandler);
+	public HttpClient(String host, int timeout, INotifiableManager manager) {
+		this(host, -1, null, null, timeout, manager);
 	}
 	
 	/**
 	 * Construct with host and custom port
 	 * @param host         Host or IP address to XBMC
 	 * @param port         Port to the webserver
-	 * @param errorHandler Error handler
+	 * @param manager      Notifiable manager
 	 */
-	public HttpClient(String host, int port, int timeout, IErrorHandler errorHandler) {
-		this(host, port, null, null, timeout, errorHandler);
+	public HttpClient(String host, int port, int timeout, INotifiableManager manager) {
+		this(host, port, null, null, timeout, manager);
 	}
 
 	/**
@@ -100,10 +101,10 @@ public class HttpClient {
 	 * @param host         Host or IP address to XBMC
 	 * @param username     Username
 	 * @param password     Password
-	 * @param errorHandler Error handler
+	 * @param manager      Notifiable manager
 	 */
-	public HttpClient(String host, String username, String password, int timeout, IErrorHandler errorHandler) {
-		this(host, -1, username, password, timeout, errorHandler);
+	public HttpClient(String host, String username, String password, int timeout, INotifiableManager manager) {
+		this(host, -1, username, password, timeout, manager);
 	}
 
 	/**
@@ -112,14 +113,15 @@ public class HttpClient {
 	 * @param port         Port to XBMC's webserver
 	 * @param username     Password
 	 * @param password     Username
-	 * @param errorHandler Error handler
+	 * @param manager      Notifiable manager
 	 */
-	public HttpClient(String host, int port, String username, String password, int timeout, IErrorHandler errorHandler) {		
-		mConnection= new Connection(host, port, username, password, timeout, errorHandler);
-		info = new InfoClient(mConnection);
-		music = new MusicClient(mConnection);
-		video = new VideoClient(mConnection);
-		control = new ControlClient(mConnection);
+	public HttpClient(String host, int port, String username, String password, int timeout, INotifiableManager manager) {		
+		Connection connection = new Connection(host, port, username, password, timeout, manager);
+		info = new InfoClient(connection);
+		music = new MusicClient(connection);
+		video = new VideoClient(connection);
+		control = new ControlClient(connection);
+		mConnection = connection;
 	}
 
 	public boolean isConnected() {

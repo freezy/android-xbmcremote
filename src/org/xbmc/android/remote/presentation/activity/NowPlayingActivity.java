@@ -26,17 +26,16 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.xbmc.android.backend.httpapi.NowPlayingPollerThread;
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.NowPlayingPollerThread;
+import org.xbmc.android.remote.presentation.controller.NowPlayingController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.object.Song;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
-import org.xbmc.httpapi.client.ControlClient;
-import org.xbmc.httpapi.type.SeekType;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -62,7 +61,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 	
 	static final String ACTION = "android.intent.action.VIEW";
 	
-	private ControlClient mControl;
+//	private ControlClient mControl;
 	private EventClient mClient;
 	private Handler mNowPlayingHandler;
 	private TextView mAlbumView;
@@ -76,11 +75,14 @@ public class NowPlayingActivity extends Activity implements Callback {
 	private ConfigurationManager mConfigurationManager;
 	private boolean mErrorHandled = false;
 	
+	private NowPlayingController mNowPlayingController;
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
        	setContentView(R.layout.nowplaying);
+       	
+       	mNowPlayingController = new NowPlayingController(this);
         	
-  	  	mControl = ConnectionManager.getHttpClient(this).control;
   	  	mClient = ConnectionManager.getEventClient(this);
   	  	
 		mSeekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
@@ -105,35 +107,16 @@ public class NowPlayingActivity extends Activity implements Callback {
   	  	
   	  	setupButtons();
 	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		mConfigurationManager.onActivityResume(this);
-		checkIntent();
-		ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);;
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		ConnectionManager.getNowPlayingPoller(this).unSubscribe(mNowPlayingHandler);
-		mConfigurationManager.onActivityPause();
-		if(isTaskRoot()){
-			Intent intent = new Intent(NowPlayingActivity.this, HomeActivity.class );
-			NowPlayingActivity.this.startActivity(intent);
-		}
-	}
 	
 	private void setupButtons() {
 		mSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				if (fromUser && !seekBar.isInTouchMode())
-					mControl.seek(SeekType.absolute, progress);
+					mNowPlayingController.seek(progress);
 			}
 			public void onStartTrackingTouch(SeekBar seekBar) { }
 			public void onStopTrackingTouch(SeekBar seekBar) {
-				mControl.seek(SeekType.absolute, seekBar.getProgress());
+				mNowPlayingController.seek(seekBar.getProgress());
 			}
 		});
 		
@@ -264,7 +247,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 						 new Thread(){
 							 public void run(){
 								 Looper.prepare();
-								 mControl.playUrl(path);
+								 mNowPlayingController.playUrl(path);
 								 Looper.loop();
 							 }
 						 }.start();
@@ -305,6 +288,26 @@ public class NowPlayingActivity extends Activity implements Callback {
 			try {
 				mClient.sendButton("R1", mAction, false, true, true, (short)0, (byte)0);
 			} catch (IOException e) { }
+		}
+	}
+	
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mConfigurationManager.onActivityResume(this);
+		checkIntent();
+		ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);;
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		ConnectionManager.getNowPlayingPoller(this).unSubscribe(mNowPlayingHandler);
+		mConfigurationManager.onActivityPause();
+		if(isTaskRoot()){
+			Intent intent = new Intent(NowPlayingActivity.this, HomeActivity.class );
+			NowPlayingActivity.this.startActivity(intent);
 		}
 	}
 }

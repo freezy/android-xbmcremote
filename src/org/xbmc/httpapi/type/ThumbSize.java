@@ -23,6 +23,17 @@ package org.xbmc.httpapi.type;
 
 import android.content.res.Resources;
 
+/**
+ * Defines a thumb size. Sizes are:
+ * <ul>
+ * 	<li><code>SMALL</code></li>
+ * 	<li><code>MEDIUM</code></li>
+ * 	<li><code>BIG</code></li>
+ * 	<li><code>SCREENWIDTH</code></li>
+ * </ul>
+ * 
+ * @author Team XBMC
+ */
 public abstract class ThumbSize {
 	
 	public static final int SMALL = 1;

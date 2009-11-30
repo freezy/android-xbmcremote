@@ -24,7 +24,6 @@ package org.xbmc.httpapi.client;
 import java.util.HashMap;
 
 import org.xbmc.api.data.IControlClient;
-import org.xbmc.api.data.IControlClient.PlayStatus;
 import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.info.GuiActions;
 import org.xbmc.httpapi.type.MediaType;
@@ -38,7 +37,7 @@ import org.xbmc.httpapi.type.SeekType;
  * 
  * @author Team XBMC
  */
-public class ControlClient {
+public class ControlClient implements IControlClient {
 
 	private final Connection mConnection;
 
@@ -269,7 +268,7 @@ public class ControlClient {
 	 * Returns state and type of the media currently playing.
 	 * @return
 	 */
-	public IControlClient.ICurrentlyPlaying getCurrentlyPlaying() {
+	public ICurrentlyPlaying getCurrentlyPlaying() {
 		final HashMap<String, String> map = mConnection.getPairs("GetCurrentlyPlaying");
 		final IControlClient.ICurrentlyPlaying nothingPlaying = new IControlClient.ICurrentlyPlaying() {
 			private static final long serialVersionUID = -1554068775915058884L;

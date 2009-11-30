@@ -27,7 +27,6 @@ import java.net.SocketTimeoutException;
 
 import org.apache.http.HttpException;
 import org.xbmc.android.remote.presentation.activity.SettingsActivity;
-import org.xbmc.httpapi.IErrorHandler;
 import org.xbmc.httpapi.NoNetworkException;
 import org.xbmc.httpapi.NoSettingsException;
 import org.xbmc.httpapi.WrongDataFormatException;
@@ -54,7 +53,7 @@ import android.content.DialogInterface.OnClickListener;
  * 
  * @author Team XBMC
  */
-public class ErrorHandler implements IErrorHandler {
+public class ErrorHandler {
 	
 	private static Context sContext;
 	
@@ -156,7 +155,7 @@ public class ErrorHandler implements IErrorHandler {
 			builder.setNegativeButton("Close", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();
-					ConnectionManager.resetClient();
+//					ConnectionManager.resetClient();
 				}
 			});
 			

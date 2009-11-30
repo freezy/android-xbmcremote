@@ -56,6 +56,7 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class HomeController implements INotifiableController, IController, Observer {
@@ -139,55 +140,47 @@ public class HomeController implements INotifiableController, IController, Obser
 		return new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> listView, View v, int position, long ID) {
 				HomeItem item = (HomeItem)listView.getAdapter().getItem(position);
-				
 				switch (item.ID) {
-				case HOME_ACTION_REMOTE:
-					mActivity.startActivity(new Intent(v.getContext(), RemoteActivity.class));
-					break;
-				case HOME_ACTION_MUSIC:
-					mActivity.startActivity(new Intent(v.getContext(), MusicLibraryActivity.class));
-					break;
-				case HOME_ACTION_VIDEOS:
-					Intent intent = new Intent(v.getContext(), MovieLibraryActivity.class);
-					intent.putExtra(ListController.EXTRA_SHARE_TYPE, MediaType.VIDEO);
-					mActivity.startActivity(intent);
-//					startActivity(createMediaIntent(MediaType.video, v));
-					break;
-				case HOME_ACTION_PICTURES:
-					mActivity.startActivity(createMediaIntent(MediaType.PICTURES, v));
-					break;
-				case HOME_ACTION_NOWPLAYING:
-					mActivity.startActivity(new Intent(v.getContext(), NowPlayingActivity.class));
-					break;
-				case HOME_ACTION_RECONNECT:
-					((TextView)mActivity.findViewById(R.id.HomeVersionTextView)).setText("Reconnecting...");
-					mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
-					break;
-				case HOME_ACTION_WOL:
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
-					final String wolMac = prefs.getString("setting_wol", "");
-					final int wolWait = Integer.parseInt(prefs.getString("setting_wol_wait", "40"));
-					final int wolPort = Integer.parseInt(prefs.getString("setting_wol_port", "9"));
-					
-					WakeOnLan wol = new WakeOnLan();
-					if (wol.sendMagicPacket(wolMac, wolPort)) { // If succeeded in sending the magic packet, begin the countdown
-						WolCounter counter = new WolCounter(wolWait * 1000,1000);
-						counter.start();
-					}
-					break;
+					case HOME_ACTION_REMOTE:
+						mActivity.startActivity(new Intent(v.getContext(), RemoteActivity.class));
+						break;
+					case HOME_ACTION_MUSIC:
+						mActivity.startActivity(new Intent(v.getContext(), MusicLibraryActivity.class));
+						break;
+					case HOME_ACTION_VIDEOS:
+						mActivity.startActivity(new Intent(v.getContext(), MovieLibraryActivity.class));
+						break;
+					case HOME_ACTION_PICTURES:
+						Intent intent = new Intent(v.getContext(), ListActivity.class);
+						intent.putExtra(ListController.EXTRA_LIST_LOGIC, new FileListController());
+						intent.putExtra(ListController.EXTRA_SHARE_TYPE, MediaType.PICTURES);
+						intent.putExtra(ListController.EXTRA_PATH, "");
+						mActivity.startActivity(intent);
+						break;
+					case HOME_ACTION_NOWPLAYING:
+						mActivity.startActivity(new Intent(v.getContext(), NowPlayingActivity.class));
+						break;
+					case HOME_ACTION_RECONNECT:
+						((TextView)mActivity.findViewById(R.id.HomeVersionTextView)).setText("Reconnecting...");
+						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
+						break;
+					case HOME_ACTION_WOL:
+						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
+						final String wolMac = prefs.getString("setting_wol", "");
+						final int wolWait = Integer.parseInt(prefs.getString("setting_wol_wait", "40"));
+						final int wolPort = Integer.parseInt(prefs.getString("setting_wol_port", "9"));
+						
+						WakeOnLan wol = new WakeOnLan();
+						if (wol.sendMagicPacket(wolMac, wolPort)) { // If succeeded in sending the magic packet, begin the countdown
+							WolCounter counter = new WolCounter(wolWait * 1000,1000);
+							counter.start();
+						}
+						break;
 				}
 			}
 		};
 	}
 	
-	private Intent createMediaIntent(int mediaType, View v) {
-		Intent nextActivity = new Intent(v.getContext(), ListActivity.class);
-		nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new FileListController());
-		nextActivity.putExtra(ListController.EXTRA_SHARE_TYPE, mediaType);
-		nextActivity.putExtra(ListController.EXTRA_PATH, "");
-		return nextActivity;
-	}
-
 	public void update(Observable observable, Object data) {
 		if (data instanceof BroadcastListener.Event) {
 			BroadcastListener.Event event = (BroadcastListener.Event)data;
@@ -259,12 +252,15 @@ public class HomeController implements INotifiableController, IController, Obser
 			textCount.setText("Waiting for " + millisUntilFinished/1000 + " more seconds...");						
 		}
 	}
-	
 
 	public void onError(String message) {
+		Toast toast = Toast.makeText(mActivity, "ERROR FROM DOWN THERE: " + message, Toast.LENGTH_LONG);
+		toast.show();
 	}
 
 	public void onMessage(String message) {
+		Toast toast = Toast.makeText(mActivity, "MESSAGE FROM DOWN THERE: " + message, Toast.LENGTH_LONG);
+		toast.show();
 	}
 
 	public void runOnUI(Runnable action) {

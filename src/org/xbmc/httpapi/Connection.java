@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.http.HttpException;
+import org.xbmc.api.business.INotifiableManager;
 
 import android.util.Log;
 
@@ -62,7 +63,7 @@ public class Connection {
 	
 	private static final String XBMC_HTTP_BOOTSTRAP =  "/xbmcCmds/xbmcHttp";
 	private String mBaseURL;
-	private IErrorHandler mErrorHandler;
+	private INotifiableManager mManager;
 	private boolean settingsOK = false;
 	private int mTimeout;
 	private URLConnection uc = null;
@@ -76,10 +77,10 @@ public class Connection {
 	 * @param password     HTTP password
 	 * @param errorHandler Error handler
 	 */
-	public Connection(String host, int port, String username, String password, int timeout, IErrorHandler errorHandler) {
+	public Connection(String host, int port, String username, String password, int timeout, INotifiableManager errorHandler) {
 		auth = new MyAuthenticator(username, password);
 		Authenticator.setDefault(auth);
-		mErrorHandler = errorHandler;
+		mManager = errorHandler;
 		if (!host.equals("") && port > 0) {
 			mBaseURL = "http://";
 			if (username != null) {
@@ -91,11 +92,12 @@ public class Connection {
 			}
 			mTimeout = timeout;
 			settingsOK = true;
-			if(isConnected())
+			if (isConnected()) {
 				setResponseFormat();
+			}
+		} else {
+			mManager.onError(new NoSettingsException());
 		}
-		else
-			mErrorHandler.handle(new NoSettingsException());
 	}
 	
 	/**
@@ -151,7 +153,7 @@ public class Connection {
 				//do nothing, just tried to check the response code
 			}
 //			mIsConnected = false;
-			mErrorHandler.handle(e);
+			mManager.onError(e);
 			return "";
 		}
 	}

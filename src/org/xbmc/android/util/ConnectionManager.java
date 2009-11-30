@@ -29,9 +29,8 @@ import java.util.HashSet;
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
 
-import org.xbmc.android.backend.httpapi.NowPlayingPollerThread;
+import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.eventclient.EventClient;
-import org.xbmc.httpapi.HttpClient;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -45,7 +44,7 @@ import android.util.Log;
  */
 public class ConnectionManager {
 	
-	private static HttpClient sHttpApiInstance;
+	
 	private static EventClient sEventClientInstance;
 	private static Collection<ServiceInfo> sServiceInfo = new HashSet<ServiceInfo>();
 	private static NowPlayingPollerThread sNowPlayingPoller;
@@ -118,59 +117,7 @@ public class ConnectionManager {
 		return hostInfo;
 	}
 	
-	/**
-	 * Returns an instance of the HTTP Client. Instantiation takes place only
-	 * once, otherwise the first instance is returned.
-	 * 
-	 * @param context
-	 * @return Client for XBMC's HTTP API
-	 */
-	public static HttpClient getHttpClient(Context context) {
-		if (sHttpApiInstance == null) {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-			String prefHost = prefs.getString("setting_ip", "");
 
-			// Define the variables for the connection
-			String host = null;
-			int port = 0;
-			
-			// If we need to use zeroconf, query it, and use that for the connection information
-			// [phreezie] removed for now, please do it async, test, and when youre 100% sure test again, then re-enable. ;)
-/*			if (prefs.getBoolean("setting_mdns", false)) {
-				ServiceInfo mdnsHost = ConnectionManager.getZeroconfServiceInfo(
-						"_xbmc-web._tcp.local.", prefHost);
-
-				// In case the mdns lookup has failed, return a null				
-				if (mdnsHost != null) {
-					host = mdnsHost.getHostAddress();
-					port = mdnsHost.getPort();
-				} else {
-					return null;
-				}
-			} else {*/
-				host = prefHost;
-				port = Integer.parseInt(prefs.getString("setting_http_port", "80"));
-//			}
-			
-			String user = prefs.getString("setting_http_user", "");
-			String pass = prefs.getString("setting_http_pass", "");
-			int timeout = 10000;
-			try {
-				timeout = Integer.parseInt(prefs.getString("setting_socket_timeout", "10000"));
-			} catch (ClassCastException e) {}
-			
-			if (port > 0 && user != null && user.length() > 0) {
-				sHttpApiInstance = new HttpClient(host, port, user, pass, timeout, new ErrorHandler(context));
-			} else if (user != null && user.length() > 0) {
-				sHttpApiInstance = new HttpClient(host, user, pass, timeout, new ErrorHandler(context));
-			} else if (port > 0) {
-				sHttpApiInstance = new HttpClient(host, port, timeout, new ErrorHandler(context));
-			} else {
-				sHttpApiInstance = new HttpClient(host, timeout, new ErrorHandler(context));
-			}
-		}
-		return sHttpApiInstance;
-	}
 	
 	/**
 	 * Returns an instance of the NowPlaying Poller . Instantiation takes place only
@@ -189,21 +136,6 @@ public class ConnectionManager {
 			sNowPlayingPoller.start();			
 		}
 		return sNowPlayingPoller;
-	}
-	
-	/**
-	 * Forces the next HTTP Client access to recreate the client and re-read the settings. 
-	 */
-	public static void resetClient() {
-		if (sHttpApiInstance != null) {
-			sHttpApiInstance = null;
-		}
-		if (sEventClientInstance != null) {
-			sEventClientInstance = null;
-		}
-		if (sNowPlayingPoller != null) {
-			sNowPlayingPoller.interrupt();
-		}
 	}
 	
 	/**

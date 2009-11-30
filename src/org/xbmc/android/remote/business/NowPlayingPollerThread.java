@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.backend.httpapi;
+package org.xbmc.android.remote.business;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -29,12 +29,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
 
+import org.xbmc.android.remote.data.ClientFactory;
 import org.xbmc.android.util.Base64;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.api.business.INotifiableManager;
+import org.xbmc.api.data.IControlClient;
+import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.data.IControlClient.PlayStatus;
-import org.xbmc.httpapi.client.ControlClient;
-import org.xbmc.httpapi.client.InfoClient;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -65,16 +66,21 @@ public class NowPlayingPollerThread extends Thread {
 	public static final int MESSAGE_COVER_CHANGED = 668;
 	public static final int MESSAGE_PLAYSTATE_CHANGED = 669;
 
-	private final InfoClient mInfo;
-	private final ControlClient mControl;
+	private final IInfoClient mInfo;
+	private final IControlClient mControl;
 	private final HashSet<Handler> mSubscribers;
 	
 	private String mCoverPath;
 	private Drawable mCover;
 	
 	public NowPlayingPollerThread(Context context){
-  	  	mControl = ConnectionManager.getHttpClient(context).control;
-  	  	mInfo = ConnectionManager.getHttpClient(context).info;
+  	  	INotifiableManager managerStub = new INotifiableManager() {
+			public void onMessage(int code, String message) { }
+			public void onMessage(String message) { }
+			public void onError(Exception e) { }
+		};
+		mControl = ClientFactory.getControlClient(context, managerStub);
+  	  	mInfo = ClientFactory.getInfoClient(context, managerStub);
   	  	mSubscribers = new HashSet<Handler>();
 	}
 	
@@ -82,7 +88,7 @@ public class NowPlayingPollerThread extends Thread {
 		//update handler on the state of affairs
 		Message msg = Message.obtain(handler);
 		Bundle bundle = msg.getData();
-		ControlClient control = mControl; // local access is much faster
+		IControlClient control = mControl; // local access is much faster
 		if (!control.isConnected()){
 			msg.what = MESSAGE_CONNECTION_ERROR;
 			bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, null);
@@ -138,7 +144,7 @@ public class NowPlayingPollerThread extends Thread {
 	public void run() {
 		String lastPos = "-1";
 		PlayStatus lastPlayStatus = null;
-		ControlClient control = mControl; // use local reference for faster access
+		IControlClient control = mControl; // use local reference for faster access
 		HashSet<Handler> subscribers = mSubscribers;
 		while (!isInterrupted() ) {
 			if(subscribers.size() > 0){

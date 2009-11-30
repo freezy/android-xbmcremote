@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.xbmc.android.util.Base64;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.httpapi.type.MediaType;
@@ -67,7 +68,7 @@ class DownloadThread extends AbstractThread {
 	 * @param cover     Which cover to download
 	 * @param thumbSize Which size to return
 	 */
-	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller, final Context context) {
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller, final Context context, final INotifiableManager manager) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
@@ -89,10 +90,10 @@ class DownloadThread extends AbstractThread {
 						String b64enc = null;
 						switch (cover.getMediaType()) {
 							case MediaType.MUSIC:
-								b64enc = music(context).getCover(cover);
+								b64enc = music(context, manager).getCover(cover);
 								break;
 							case MediaType.VIDEO:
-								b64enc = video(context).getCover(cover);
+								b64enc = video(context, manager).getCover(cover);
 								break;
 							case MediaType.PICTURES:
 								done(controller, response);

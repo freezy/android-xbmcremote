@@ -21,14 +21,15 @@
 
 package org.xbmc.android.remote.business;
 
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.remote.data.ClientFactory;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.INotifiableManager;
+import org.xbmc.api.data.IControlClient;
+import org.xbmc.api.data.IInfoClient;
+import org.xbmc.api.data.IMusicClient;
+import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
-import org.xbmc.httpapi.client.ControlClient;
-import org.xbmc.httpapi.client.InfoClient;
-import org.xbmc.httpapi.client.MusicClient;
-import org.xbmc.httpapi.client.VideoClient;
 import org.xbmc.httpapi.type.CacheType;
 import org.xbmc.httpapi.type.ThumbSize;
 
@@ -42,7 +43,7 @@ import android.util.Log;
  * 
  * @author Team XBMC
  */
-public abstract class AbstractManager {
+public abstract class AbstractManager implements INotifiableManager {
 	
 	protected static final String TAG = "AbstractManager";
 	protected static final Boolean DEBUG = false;
@@ -91,8 +92,8 @@ public abstract class AbstractManager {
 	 * @param response Response object
 	 * @return
 	 */
-	protected InfoClient info(DataResponse<?> response) {
-		return ConnectionManager.getHttpClient(mContext).info;
+	protected IInfoClient info(DataResponse<?> response) {
+		return ClientFactory.getInfoClient(mContext, this);
 	}
 	
 	/**
@@ -100,8 +101,8 @@ public abstract class AbstractManager {
 	 * @param response Response object
 	 * @return
 	 */
-	protected ControlClient control(DataResponse<?> response) {
-		return ConnectionManager.getHttpClient(mContext).control;
+	protected IControlClient control(DataResponse<?> response) {
+		return ClientFactory.getControlClient(mContext, this);
 	}
 	
 	/**
@@ -109,8 +110,8 @@ public abstract class AbstractManager {
 	 * @param response Response object
 	 * @return
 	 */
-	protected VideoClient video(DataResponse<?> response) {
-		return ConnectionManager.getHttpClient(mContext).video;
+	protected IVideoClient video(DataResponse<?> response) {
+		return ClientFactory.getVideoClient(mContext, this);
 	}
 	
 	/**
@@ -118,8 +119,8 @@ public abstract class AbstractManager {
 	 * @param response Response object
 	 * @return
 	 */
-	protected MusicClient music(DataResponse<?> response) {
-		return ConnectionManager.getHttpClient(mContext).music;
+	protected IMusicClient music(DataResponse<?> response) {
+		return ClientFactory.getMusicClient(mContext, this);
 	}
 	
 	/**
@@ -226,6 +227,19 @@ public abstract class AbstractManager {
 				}
 				done(response); // callback in any case, since we don't go further than that.
 			}
-		}, cover, thumbSize, mController, mContext);
+		}, cover, thumbSize, mController, mContext, this);
+	}
+	
+
+	public void onError(Exception e) {
+		mController.onError(e.getMessage());
+	}
+
+	public void onMessage(String message) {
+		mController.onMessage(message);
+	}
+
+	public void onMessage(int code, String message) {
+		onMessage(message);
 	}
 }

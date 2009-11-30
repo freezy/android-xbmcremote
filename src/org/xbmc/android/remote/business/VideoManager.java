@@ -24,6 +24,7 @@ package org.xbmc.android.remote.business;
 import java.util.ArrayList;
 
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
@@ -38,7 +39,7 @@ import android.content.SharedPreferences;
  * 
  * @author Team XBMC
  */
-public class VideoManager extends AbstractManager implements IVideoManager, ISortableManager {
+public class VideoManager extends AbstractManager implements IVideoManager, ISortableManager, INotifiableManager {
 
 	private SharedPreferences mPref;
 	private int mCurrentSortKey;

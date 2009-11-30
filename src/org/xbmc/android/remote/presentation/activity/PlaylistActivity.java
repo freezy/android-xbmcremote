@@ -23,9 +23,9 @@ package org.xbmc.android.remote.presentation.activity;
 
 import java.io.IOException;
 
-import org.xbmc.android.backend.httpapi.NowPlayingPollerThread;
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.remote.presentation.controller.MusicPlaylistController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;

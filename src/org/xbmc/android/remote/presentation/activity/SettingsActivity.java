@@ -26,10 +26,15 @@ import java.util.Hashtable;
 
 import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.presentation.controller.IController;
 import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.api.business.IControlManager;
+import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -48,53 +53,26 @@ import android.view.KeyEvent;
  * 
  * @author Team XBMC
  */
-public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+public class SettingsActivity extends PreferenceActivity {
 	
 	public final static String SUMMARY_VALUE_PLACEHOLDER = "%value%";
 	
-	private final Hashtable<String, String> mSummaries = new Hashtable<String, String>();
 	private ConfigurationManager mConfigurationManager;
+	private SettingsController mSettingsController;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
-		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-		PreferenceScreen ps = getPreferenceScreen();
-		// save original summaries to variable for later update
-		mSummaries.clear();
-		for (String key : ps.getSharedPreferences().getAll().keySet()) {
-			Preference pref = ps.findPreference(key);
-			if (pref != null && pref.getSummary() != null) {
-				mSummaries.put(key, pref.getSummary().toString());
-			}
-		}
-		updateSummaries();
+		mSettingsController = new SettingsController(this);
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard();
-	}
-	
-	/**
-	 * Updates summaries of all known keys with the updated value.
-	 */
-	private void updateSummaries() {
-		PreferenceScreen ps = getPreferenceScreen();
-		for (String key : ps.getSharedPreferences().getAll().keySet()) {
-			Preference pref = ps.findPreference(key);
-			if (pref != null && pref.getSummary() != null) {
-				String summary = pref.getSummary().toString();
-				if (summary.contains(SUMMARY_VALUE_PLACEHOLDER)) {
-					pref.setSummary(summary.replaceAll(SUMMARY_VALUE_PLACEHOLDER, ps.getSharedPreferences().getString(key, "<not set>")));
-				}
-			}
-		}
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		updateSummaries();
-		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+		mSettingsController.updateSummaries();
+		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(mSettingsController);
 		mConfigurationManager.onActivityResume(this);
 	}
 	
@@ -102,19 +80,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	protected void onPause() {
 		super.onPause();
 		// Unregister the listener whenever a key changes
-		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(mSettingsController);
 	}
 	
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		Preference pref = getPreferenceScreen().findPreference(key);
-		String origSummary = mSummaries.get(key);
-		if (origSummary != null && origSummary.contains(SUMMARY_VALUE_PLACEHOLDER)) {
-			pref.setSummary(origSummary.replaceAll(SUMMARY_VALUE_PLACEHOLDER, sharedPreferences.getString(key, "")));
-		}
-		if (key.equals("setting_ip") || key.equals("setting_http_port") || key.equals("setting_eventserver_port") || key.equals("setting_http_user") || key.equals("setting_http_pass")) {
-			ConnectionManager.resetClient();
-		}
-	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -132,5 +100,88 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			return false;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	public static class SettingsController implements INotifiableController, IController, OnSharedPreferenceChangeListener {
+		
+		public static final String SETTING_HTTP_HOST = "setting_ip";
+		public static final String SETTING_HTTP_PORT = "setting_http_port";
+		public static final String SETTING_HTTP_USER = "setting_http_user";
+		public static final String SETTING_HTTP_PASS = "setting_http_pass";
+		public static final String SETTING_HTTP_TIMEOUT = "setting_socket_timeout";
+		public static final String SETTING_ES_PORT = "setting_eventserver_port";
+		
+		private IControlManager mControlManager;
+		private PreferenceActivity mActivity;		
+		private final Hashtable<String, String> mSummaries = new Hashtable<String, String>();
+		
+		SettingsController(PreferenceActivity activity) {
+			mActivity = activity;
+			mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
+			
+			activity.addPreferencesFromResource(R.xml.preferences);
+			activity.getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+			
+			PreferenceScreen ps = activity.getPreferenceScreen();
+			// save original summaries to variable for later update
+			mSummaries.clear();
+			for (String key : ps.getSharedPreferences().getAll().keySet()) {
+				Preference pref = ps.findPreference(key);
+				if (pref != null && pref.getSummary() != null) {
+					mSummaries.put(key, pref.getSummary().toString());
+				}
+			}
+			updateSummaries();
+		}
+		
+		/**
+		 * Updates summaries of all known keys with the updated value.
+		 */
+		public void updateSummaries() {
+			PreferenceScreen ps = mActivity.getPreferenceScreen();
+			for (String key : ps.getSharedPreferences().getAll().keySet()) {
+				Preference pref = ps.findPreference(key);
+				if (pref != null && pref.getSummary() != null) {
+					String summary = pref.getSummary().toString();
+					if (summary.contains(SUMMARY_VALUE_PLACEHOLDER)) {
+						pref.setSummary(summary.replaceAll(SUMMARY_VALUE_PLACEHOLDER, ps.getSharedPreferences().getString(key, "<not set>")));
+					}
+				}
+			}
+		}
+		
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+			Preference pref = mActivity.getPreferenceScreen().findPreference(key);
+			String origSummary = mSummaries.get(key);
+			if (origSummary != null && origSummary.contains(SUMMARY_VALUE_PLACEHOLDER)) {
+				pref.setSummary(origSummary.replaceAll(SUMMARY_VALUE_PLACEHOLDER, sharedPreferences.getString(key, "")));
+			}
+			if (key.equals(SETTING_HTTP_HOST) || key.equals(SETTING_HTTP_PORT) || key.equals(SETTING_ES_PORT) || key.equals(SETTING_HTTP_USER) || key.equals(SETTING_HTTP_PASS)) {
+				mControlManager.resetClient();
+			}
+		}
+		
+		public void onError(String message) {
+		}
+
+		public void onMessage(String message) {
+		}
+
+		public void runOnUI(Runnable action) {
+			mActivity.runOnUiThread(action);
+		}
+
+		public void onActivityPause() {
+			if (mControlManager != null) {
+				mControlManager.setController(null);
+			}
+		}
+
+		public void onActivityResume(Activity activity) {
+			if (mControlManager != null) {
+				mControlManager.setController(this);
+			}
+		}
+		
 	}
 }

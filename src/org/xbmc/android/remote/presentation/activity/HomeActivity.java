@@ -28,15 +28,9 @@ import org.xbmc.android.remote.ConfigurationManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.controller.HomeController;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.api.object.Actor;
-import org.xbmc.api.object.Album;
 import org.xbmc.api.object.ICoverArt;
-import org.xbmc.api.object.Movie;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
-import org.xbmc.httpapi.client.MusicClient;
-import org.xbmc.httpapi.client.VideoClient;
-import org.xbmc.httpapi.type.SortType;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -50,7 +44,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,7 +53,7 @@ public class HomeActivity extends Activity {
 	private static final int MENU_ABOUT = 1;
 	private static final int MENU_SETTINGS = 2;
 	private static final int MENU_EXIT = 3;
-	private static final int MENU_COVER_DOWNLOAD = 4;
+//	private static final int MENU_COVER_DOWNLOAD = 4;
 	private static final int MENU_COVER_DOWNLOAD_MUSIC = 41;
 	private static final int MENU_COVER_DOWNLOAD_MOVIES = 42;
 	private static final int MENU_COVER_DOWNLOAD_ACTORS = 43;
@@ -101,12 +94,12 @@ public class HomeActivity extends Activity {
 		
 		menu.add(0, MENU_ABOUT, 0, "About").setIcon(R.drawable.menu_about);
 		menu.add(0, MENU_SETTINGS, 0, "Settings").setIcon(R.drawable.menu_settings);
-		SubMenu downloadMenu = menu.addSubMenu(0, MENU_COVER_DOWNLOAD, 0, "Download Covers").setIcon(R.drawable.menu_download);
+//		SubMenu downloadMenu = menu.addSubMenu(0, MENU_COVER_DOWNLOAD, 0, "Download Covers").setIcon(R.drawable.menu_download);
 		menu.add(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
 		
-		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MOVIES, 0, "Movie Posters");
-		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MUSIC, 0, "Album Covers");
-		downloadMenu.add(2, MENU_COVER_DOWNLOAD_ACTORS, 0, "Actor Shots");
+//		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MOVIES, 0, "Movie Posters");
+//		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MUSIC, 0, "Album Covers");
+//		downloadMenu.add(2, MENU_COVER_DOWNLOAD_ACTORS, 0, "Actor Shots");
 		
 		return true;
 	}
@@ -251,7 +244,7 @@ public class HomeActivity extends Activity {
 		}
 		
 		private ArrayList<ICoverArt> getCovers() {
-			switch (mType) {
+/*			switch (mType) {
 				case MENU_COVER_DOWNLOAD_MOVIES:
 					final VideoClient vc = ConnectionManager.getHttpClient(HomeActivity.this).video;
 					final ArrayList<Movie> movies = vc.getMovies(SortType.DONT_SORT, SortType.ORDER_ASC);
@@ -266,7 +259,8 @@ public class HomeActivity extends Activity {
 					return new ArrayList<ICoverArt>(actors);
 				default:
 					return null;
-			}
+			}*/
+			return null;
 		}
 		
 		public void run() {
