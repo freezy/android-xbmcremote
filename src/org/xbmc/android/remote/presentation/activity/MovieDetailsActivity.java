@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.presentation.controller.AbstractController;
 import org.xbmc.android.remote.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.controller.ListController;
 import org.xbmc.android.remote.presentation.controller.MovieListController;
@@ -99,7 +100,7 @@ public class MovieDetailsActivity extends Activity {
 	}
 	
 	
-	private static class MovieDetailsController implements INotifiableController, IController {
+	private static class MovieDetailsController extends AbstractController implements INotifiableController, IController {
 		
 		private IVideoManager mVideoManager;
 		private IControlManager mControlManager;
@@ -208,17 +209,6 @@ public class MovieDetailsActivity extends Activity {
 			mVideoManager.setController(this);
 			mControlManager.setController(this);
 		}
-
-		public void onError(String message) {
-		}
-
-		public void onMessage(String message) {
-		}
-
-		public void runOnUI(Runnable action) {
-			mActivity.runOnUiThread(action);
-		}
-		
 	}
 
 	@Override

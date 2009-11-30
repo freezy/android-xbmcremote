@@ -44,7 +44,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public abstract class ListController implements Serializable, INotifiableController {
+public abstract class ListController extends AbstractController implements Serializable, INotifiableController {
 	
 	public static final String EXTRA_LIST_LOGIC = "ListLogic"; 
 	public static final String EXTRA_MOVIE = "movie";
@@ -57,7 +57,6 @@ public abstract class ListController implements Serializable, INotifiableControl
 	public static final String EXTRA_DISPLAY_PATH = "display_path"; 
 	
 	protected ListView mList;
-	protected Activity mActivity;
 	
 	private TextView mTitleView;
 	private ViewGroup mMessageGroup;
@@ -68,6 +67,7 @@ public abstract class ListController implements Serializable, INotifiableControl
 	protected IdleListDetector mPostScrollLoader;
 	
 	public void onCreate(Activity activity, ListView list) {
+		super.onCreate(activity);
 		mList = list;
 		mActivity = activity;
 		isCreated = true;
@@ -139,19 +139,6 @@ public abstract class ListController implements Serializable, INotifiableControl
 				mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 			}
 		}
-	}
-	
-
-	public void onError(String message) {
-		// TODO Auto-generated method stub
-	}
-
-	public void onMessage(String message) {
-		// TODO Auto-generated method stub
-	}
-
-	public void runOnUI(Runnable action) {
-		mActivity.runOnUiThread(action);
 	}
 
 	private static final long serialVersionUID = 2903701184005613570L;

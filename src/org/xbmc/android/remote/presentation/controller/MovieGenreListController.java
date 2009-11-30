@@ -45,7 +45,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class MovieGenreListController extends ListController {
+public class MovieGenreListController extends ListController implements IController {
 	
 	private IVideoManager mVideoManager;
 	
@@ -115,5 +115,17 @@ public class MovieGenreListController extends ListController {
 	@Override
 	public void onContextItemSelected(MenuItem item) {
 		// no context menu here
+	}
+	
+	public void onActivityPause() {
+		if (mVideoManager != null) {
+			mVideoManager.setController(null);
+		}
+	}
+	
+	public void onActivityResume(Activity activity) {
+		if (mVideoManager != null) {
+			mVideoManager.setController(this);
+		}
 	}
 }

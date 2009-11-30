@@ -52,7 +52,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class ActorListController extends ListController {
+public class ActorListController extends ListController implements IController {
 	
 	public static final int TYPE_ALL = 1;
 	public static final int TYPE_MOVIE = 2;
@@ -203,5 +203,17 @@ public class ActorListController extends ListController {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// No context menus in here.
+	}
+
+	public void onActivityPause() {
+		if (mVideoManager != null) {
+			mVideoManager.setController(null);
+		}
+	}
+
+	public void onActivityResume(Activity activity) {
+		if (mVideoManager != null) {
+			mVideoManager.setController(this);
+		}
 	}
 }

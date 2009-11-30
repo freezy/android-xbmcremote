@@ -26,6 +26,7 @@ import java.util.Hashtable;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.presentation.controller.AbstractController;
 import org.xbmc.android.remote.presentation.controller.IController;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.business.IControlManager;
@@ -101,7 +102,7 @@ public class SettingsActivity extends PreferenceActivity {
 		return super.onKeyDown(keyCode, event);
 	}
 	
-	public static class SettingsController implements INotifiableController, IController, OnSharedPreferenceChangeListener {
+	public static class SettingsController extends AbstractController implements INotifiableController, IController, OnSharedPreferenceChangeListener {
 		
 		public static final String SETTING_HTTP_HOST = "setting_ip";
 		public static final String SETTING_HTTP_PORT = "setting_http_port";
@@ -158,16 +159,6 @@ public class SettingsActivity extends PreferenceActivity {
 			if (key.equals(SETTING_HTTP_HOST) || key.equals(SETTING_HTTP_PORT) || key.equals(SETTING_ES_PORT) || key.equals(SETTING_HTTP_USER) || key.equals(SETTING_HTTP_PASS)) {
 				mControlManager.resetClient();
 			}
-		}
-		
-		public void onError(String message) {
-		}
-
-		public void onMessage(String message) {
-		}
-
-		public void runOnUI(Runnable action) {
-			mActivity.runOnUiThread(action);
 		}
 
 		public void onActivityPause() {

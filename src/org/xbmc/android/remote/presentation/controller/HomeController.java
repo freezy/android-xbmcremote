@@ -56,10 +56,9 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class HomeController implements INotifiableController, IController, Observer {
+public class HomeController extends AbstractController implements INotifiableController, IController, Observer {
 	
 	private static final int HOME_ACTION_REMOTE = 0;
 	private static final int HOME_ACTION_MUSIC = 1;
@@ -69,7 +68,6 @@ public class HomeController implements INotifiableController, IController, Obser
 	private static final int HOME_ACTION_RECONNECT = 5;
 	private static final int HOME_ACTION_WOL = 6;
 	
-	private final Activity mActivity;
 	private IInfoManager mInfoManager;
 	
 	private DataResponse<String> mUpdateVersionHandler;
@@ -78,7 +76,7 @@ public class HomeController implements INotifiableController, IController, Obser
 	private HomeAdapter mOfflineMenu;
 	
 	public HomeController(Activity activity, GridView menuGrid) {
-		mActivity = activity;
+		super.onCreate(activity);
 		mInfoManager = ManagerFactory.getInfoManager(activity.getApplicationContext(), this);
 		setupMenuItems(menuGrid);
 		
@@ -251,20 +249,6 @@ public class HomeController implements INotifiableController, IController, Obser
 		public void onTick(long millisUntilFinished) {
 			textCount.setText("Waiting for " + millisUntilFinished/1000 + " more seconds...");						
 		}
-	}
-
-	public void onError(String message) {
-		Toast toast = Toast.makeText(mActivity, "ERROR FROM DOWN THERE: " + message, Toast.LENGTH_LONG);
-		toast.show();
-	}
-
-	public void onMessage(String message) {
-		Toast toast = Toast.makeText(mActivity, "MESSAGE FROM DOWN THERE: " + message, Toast.LENGTH_LONG);
-		toast.show();
-	}
-
-	public void runOnUI(Runnable action) {
-		mActivity.runOnUiThread(action);
 	}
 
 	public void onActivityPause() {
