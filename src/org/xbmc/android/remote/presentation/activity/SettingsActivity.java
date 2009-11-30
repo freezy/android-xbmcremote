@@ -116,6 +116,7 @@ public class SettingsActivity extends PreferenceActivity {
 		private final Hashtable<String, String> mSummaries = new Hashtable<String, String>();
 		
 		SettingsController(PreferenceActivity activity) {
+			mPreferenceActivity = activity;
 			super.onCreate(activity);
 			mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
 			
