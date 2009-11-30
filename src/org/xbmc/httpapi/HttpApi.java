@@ -21,7 +21,6 @@
 
 package org.xbmc.httpapi;
 
-import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.MusicClient;
@@ -52,7 +51,7 @@ import org.xbmc.httpapi.client.VideoClient;
  * 
  * @author Team XBMC
  */
-public class HttpClient {
+public class HttpApi {
 	
 	/**
 	 * Use this client for anything system related
@@ -74,26 +73,21 @@ public class HttpClient {
 	 */
 	public final ControlClient control;
 	
-
-	private final Connection mConnection;
-
 	/**
 	 * Construct with host only
 	 * @param host         Host or IP address to XBMC
-	 * @param manager      Notifiable manager
 	 */
-	public HttpClient(String host, int timeout, INotifiableManager manager) {
-		this(host, -1, null, null, timeout, manager);
+	public HttpApi(String host, int timeout) {
+		this(host, -1, null, null, timeout);
 	}
 	
 	/**
 	 * Construct with host and custom port
 	 * @param host         Host or IP address to XBMC
 	 * @param port         Port to the webserver
-	 * @param manager      Notifiable manager
 	 */
-	public HttpClient(String host, int port, int timeout, INotifiableManager manager) {
-		this(host, port, null, null, timeout, manager);
+	public HttpApi(String host, int port, int timeout) {
+		this(host, port, null, null, timeout);
 	}
 
 	/**
@@ -101,10 +95,9 @@ public class HttpClient {
 	 * @param host         Host or IP address to XBMC
 	 * @param username     Username
 	 * @param password     Password
-	 * @param manager      Notifiable manager
 	 */
-	public HttpClient(String host, String username, String password, int timeout, INotifiableManager manager) {
-		this(host, -1, username, password, timeout, manager);
+	public HttpApi(String host, String username, String password, int timeout) {
+		this(host, -1, username, password, timeout);
 	}
 
 	/**
@@ -113,18 +106,13 @@ public class HttpClient {
 	 * @param port         Port to XBMC's webserver
 	 * @param username     Password
 	 * @param password     Username
-	 * @param manager      Notifiable manager
 	 */
-	public HttpClient(String host, int port, String username, String password, int timeout, INotifiableManager manager) {		
-		Connection connection = new Connection(host, port, username, password, timeout, manager);
+	public HttpApi(String host, int port, String username, String password, int timeout) {		
+		Connection connection = Connection.getInstance(host, port);
 		info = new InfoClient(connection);
 		music = new MusicClient(connection);
 		video = new VideoClient(connection);
 		control = new ControlClient(connection);
-		mConnection = connection;
 	}
 
-	public boolean isConnected() {
-		return mConnection.isConnected();
-	}
 }

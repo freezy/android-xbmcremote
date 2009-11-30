@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.type.DirectoryMask;
 
@@ -45,14 +46,14 @@ public interface IInfoClient {
 	 * @param limit   Limit (0 for none)
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(String path, DirectoryMask mask, int offset, int limit);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit);
 	
 	/**
 	 * Returns all the contents of a directory
 	 * @param path    Path to the directory
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(String path);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path);
 
 	
 	/**
@@ -60,7 +61,7 @@ public interface IInfoClient {
 	 * @param mediaType Media type
 	 * @return
 	 */
-	public ArrayList<FileLocation> getShares(int mediaType);
+	public ArrayList<FileLocation> getShares(INotifiableManager manager, int mediaType);
 	
 	/**
 	 * Returns URI of the currently playing's thumbnail.
@@ -68,41 +69,41 @@ public interface IInfoClient {
 	 * @throws MalformedURLException
 	 * @throws URISyntaxException
 	 */
-	public String getCurrentlyPlayingThumbURI() throws MalformedURLException, URISyntaxException;
+	public String getCurrentlyPlayingThumbURI(INotifiableManager manager) throws MalformedURLException, URISyntaxException;
 	
 	/**
 	 * Returns any system info variable, see {@link org.xbmc.api.info.SystemInfo}
 	 * @param field Field to return
 	 * @return
 	 */
-	public String getSystemInfo(int field);
+	public String getSystemInfo(INotifiableManager manager, int field);
 	
 	/**
 	 * Returns a boolean GUI setting
 	 * @param field
 	 * @return
 	 */
-	public boolean getGuiSettingBool(int field);
+	public boolean getGuiSettingBool(INotifiableManager manager, int field);
 
 	/**
 	 * Returns an integer GUI setting
 	 * @param field
 	 * @return
 	 */
-	public int getGuiSettingInt(int field);
+	public int getGuiSettingInt(INotifiableManager manager, int field);
 	
 	/**
 	 * Returns any music info variable see {@link org.xbmc.http.info.MusicInfo}
 	 * @param field Field to return
 	 * @return
 	 */
-	public String getMusicInfo(int field);
+	public String getMusicInfo(INotifiableManager manager, int field);
 
 	/**
 	 * Returns any video info variable see {@link org.xbmc.http.info.VideoInfo}
 	 * @param field Field to return
 	 * @return
 	 */
-	public String getVideoInfo(int field);
+	public String getVideoInfo(INotifiableManager manager, int field);
 
 }

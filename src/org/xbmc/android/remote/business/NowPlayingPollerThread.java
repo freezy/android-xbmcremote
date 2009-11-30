@@ -73,14 +73,20 @@ public class NowPlayingPollerThread extends Thread {
 	private String mCoverPath;
 	private Drawable mCover;
 	
+	/**
+	 * Since this one is kinda of its own, we use a stub as manager.
+	 * @TODO create some toats or at least logs instead of empty on* methods.
+	 */
+	private final INotifiableManager mManagerStub;
+	
 	public NowPlayingPollerThread(Context context){
-  	  	INotifiableManager managerStub = new INotifiableManager() {
+  	  	mManagerStub = new INotifiableManager() {
 			public void onMessage(int code, String message) { }
 			public void onMessage(String message) { }
 			public void onError(Exception e) { }
 		};
-		mControl = ClientFactory.getControlClient(context, managerStub);
-  	  	mInfo = ClientFactory.getInfoClient(context, managerStub);
+		mControl = ClientFactory.getControlClient(context, mManagerStub);
+  	  	mInfo = ClientFactory.getInfoClient(context, mManagerStub);
   	  	mSubscribers = new HashSet<Handler>();
 	}
 	
@@ -89,12 +95,12 @@ public class NowPlayingPollerThread extends Thread {
 		Message msg = Message.obtain(handler);
 		Bundle bundle = msg.getData();
 		IControlClient control = mControl; // local access is much faster
-		if (!control.isConnected()){
+/*		if (!control.isConnected()){
 			msg.what = MESSAGE_CONNECTION_ERROR;
 			bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, null);
 			handler.sendMessage(msg);
-		} else {
-			final ICurrentlyPlaying currPlaying = control.getCurrentlyPlaying();
+		} else {*/
+			final ICurrentlyPlaying currPlaying = control.getCurrentlyPlaying(mManagerStub);
 			msg.what = MESSAGE_PROGRESS_CHANGED;
 			bundle = msg.getData();
 			bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
@@ -108,7 +114,7 @@ public class NowPlayingPollerThread extends Thread {
   	  		
   			msg = Message.obtain(handler);
   	  		handler.sendEmptyMessage(MESSAGE_COVER_CHANGED);
-		}
+//		}
 		mSubscribers.add(handler);
 	}
 	
@@ -148,12 +154,12 @@ public class NowPlayingPollerThread extends Thread {
 		HashSet<Handler> subscribers = mSubscribers;
 		while (!isInterrupted() ) {
 			if(subscribers.size() > 0){
-				if (!control.isConnected()) {
+/*				if (!control.isConnected()) {
 					sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
-				} else {
+				} else {*/
 					ICurrentlyPlaying currPlaying;
 					try{
-						 currPlaying = control.getCurrentlyPlaying();
+						 currPlaying = control.getCurrentlyPlaying(mManagerStub);
 					} catch(Exception e) {
 						sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
 						return;
@@ -174,7 +180,7 @@ public class NowPlayingPollerThread extends Thread {
 						sendMessage(MESSAGE_TRACK_CHANGED, currPlaying);
 			  	  		
 			  	  		try {				
-			  	  			String downloadURI = mInfo.getCurrentlyPlayingThumbURI();
+			  	  			String downloadURI = mInfo.getCurrentlyPlayingThumbURI(mManagerStub);
 			  	  			if (downloadURI != null && downloadURI.length() > 0) {
 			  	  				if (!downloadURI.equals(mCoverPath)) {
 			  	  					mCoverPath = downloadURI;
@@ -208,7 +214,7 @@ public class NowPlayingPollerThread extends Thread {
 			  	  		}
 					}
 				}
-			}
+//			}
 			try {
 				sleep(1000);
 			}

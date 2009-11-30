@@ -23,6 +23,7 @@ package org.xbmc.api.data;
 
 import java.io.Serializable;
 
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.type.SeekType;
 
 
@@ -39,54 +40,54 @@ public interface IControlClient {
 	 * @param fileOrFolder
 	 * @return true on success, false otherwise.
 	 */
-	public boolean addToPlaylist(String fileOrFolder);
+	public boolean addToPlaylist(INotifiableManager manager, String fileOrFolder);
 	
 	/**
 	 * Starts playing the media file <code>filename</code> .
 	 * @param filename File to play
 	 * @return true on success, false otherwise.
 	 */
-	public boolean playFile(String filename);
+	public boolean playFile(INotifiableManager manager, String filename);
 	
 	/**
 	 * Starts playing/showing the next media/image in the current playlist or,
 	 * if currently showing a slideshow, the slideshow playlist. 
 	 * @return true on success, false otherwise.
 	 */
-	public boolean playNext();
+	public boolean playNext(INotifiableManager manager);
 
 	/**
 	 * Starts playing/showing the previous media/image in the current playlist
 	 * or, if currently showing a slidshow, the slideshow playlist.
 	 * @return true on success, false otherwise.
 	 */
-	public boolean playPrevious();
+	public boolean playPrevious(INotifiableManager manager);
 	
 	/**
 	 * Pauses the currently playing media. 
 	 * @return true on success, false otherwise.
 	 */
-	public boolean pause();
+	public boolean pause(INotifiableManager manager);
 	
 	/**
 	 * Stops the currently playing media. 
 	 * @return true on success, false otherwise.
 	 */
-	public boolean stop();
+	public boolean stop(INotifiableManager manager);
 	
 	/**
 	 * Start playing the media file at the given URL
 	 * @param url An URL pointing to a supported media file
 	 * @return true on success, false otherwise.
 	 */
-	public boolean playUrl(String url);
+	public boolean playUrl(INotifiableManager manager, String url);
 	
 	/**
 	 * Sets the volume as a percentage of the maximum possible.
 	 * @param volume New volume (0-100)
 	 * @return true on success, false otherwise.
 	 */
-	public boolean setVolume(int volume);
+	public boolean setVolume(INotifiableManager manager, int volume);
 	
 	/**
 	 * Seeks to a position. If type is
@@ -100,57 +101,57 @@ public interface IControlClient {
 	 * @param progress Progress
 	 * @return true on success, false otherwise.
 	 */
-	public boolean seek(SeekType type, int progress);
+	public boolean seek(INotifiableManager manager, SeekType type, int progress);
 	
 	/**
 	 * Toggles the sound on/off.
 	 * @return true on success, false otherwise.
 	 */
-	public boolean mute();
+	public boolean mute(INotifiableManager manager);
 	
 	/**
 	 * Retrieves the current playing position of the currently playing media as
 	 * a percentage of the media's length. 
 	 * @return Percentage (0-100)
 	 */
-	public int getPercentage();
+	public int getPercentage(INotifiableManager manager);
 	
 	/**
 	 * Retrieves the current volume setting as a percentage of the maximum 
 	 * possible value.
 	 * @return Volume (0-100)
 	 */
-	public int getVolume();
+	public int getVolume(INotifiableManager manager);
 	
 	/**
 	 * Navigates... UP!
 	 * @return true on success, false otherwise.
 	 */
-	public boolean navUp();
+	public boolean navUp(INotifiableManager manager);
 
 	/**
 	 * Navigates... DOWN!
 	 * @return true on success, false otherwise.
 	 */
-	public boolean navDown();
+	public boolean navDown(INotifiableManager manager);
 	
 	/**
 	 * Navigates... LEFT!
 	 * @return true on success, false otherwise.
 	 */
-	public boolean navLeft();
+	public boolean navLeft(INotifiableManager manager);
 	
 	/**
 	 * Navigates... RIGHT!
 	 * @return true on success, false otherwise.
 	 */
-	public boolean navRight();
+	public boolean navRight(INotifiableManager manager);
 	
 	/**
 	 * Selects current item.
 	 * @return true on success, false otherwise.
 	 */
-	public boolean navSelect();
+	public boolean navSelect(INotifiableManager manager);
 	
 	/**
 	 * Takes either "video" or "music" as a parameter to begin updating the 
@@ -161,20 +162,20 @@ public interface IControlClient {
 	 * @param mediaType Either <code>video</code> or <code>music</code>.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean updateLibrary(String mediaType);
+	public boolean updateLibrary(INotifiableManager manager, String mediaType);
 	
 	/**
 	 * Broadcast a message. Used to test broadcasting feature. 
 	 * @param message
 	 * @return True on success, false otherwise.
 	 */
-	public boolean broadcast(String message);
+	public boolean broadcast(INotifiableManager manager, String message);
 	
 	/**
 	 * Returns the current broadcast port number, or 0 if deactivated.
 	 * @return Current broadcast port number.
 	 */
-	public int getBroadcast();
+	public int getBroadcast(INotifiableManager manager);
 	
 	/**
 	 * Sets the brodcast level and port. Level currently only takes three values:
@@ -188,19 +189,19 @@ public interface IControlClient {
 	 * @param level Broadcast level
 	 * @return True on success, false otherwise.
 	 */
-	public boolean setBroadcast(int port, int level);
+	public boolean setBroadcast(INotifiableManager manager, int port, int level);
 
 	/**
 	 * Returns current play state
 	 * @return
 	 */
-	public PlayStatus getPlayState();
+	public PlayStatus getPlayState(INotifiableManager manager);
 	
 	/**
 	 * Returns state and type of the media currently playing.
 	 * @return
 	 */
-	public ICurrentlyPlaying getCurrentlyPlaying();
+	public ICurrentlyPlaying getCurrentlyPlaying(INotifiableManager manager);
 	
 	/**
 	 * Data object for "Currently playing" info.
@@ -245,7 +246,4 @@ public interface IControlClient {
 			}
 		}
 	}
-	
-	public boolean isConnected();
-
 }

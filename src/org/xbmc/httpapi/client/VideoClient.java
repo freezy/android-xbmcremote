@@ -24,6 +24,7 @@ package org.xbmc.httpapi.client;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.data.IControlClient.PlayStatus;
@@ -60,12 +61,12 @@ public class VideoClient implements IVideoClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies
 	 */
-	public ArrayList<Movie> getMovies(int sortBy, String sortOrder) {
+	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
 		sb.append(" FROM movieview WHERE movieview.idmovie NOT IN (SELECT idmovie FROM setlinkmovie)");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
-		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString()));
+		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
 	/**
@@ -75,7 +76,7 @@ public class VideoClient implements IVideoClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies with an actor
 	 */
-	public ArrayList<Movie> getMovies(Actor actor, int sortBy, String sortOrder) {
+	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
 		sb.append(" FROM movieview");
@@ -86,7 +87,7 @@ public class VideoClient implements IVideoClient {
 		sb.append(actor.id);
 		sb.append(" )");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
-		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString()));
+		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
 	/**
@@ -96,7 +97,7 @@ public class VideoClient implements IVideoClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies of a genre
 	 */
-	public ArrayList<Movie> getMovies(Genre genre, int sortBy, String sortOrder) {
+	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
 		sb.append(" FROM movieview");
@@ -107,7 +108,7 @@ public class VideoClient implements IVideoClient {
 		sb.append(genre.id);
 		sb.append(" )");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
-		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString()));
+		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
 	/**
@@ -116,19 +117,19 @@ public class VideoClient implements IVideoClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return Updated movie
 	 */
-	public Movie updateMovieDetails(Movie movie) {
+	public Movie updateMovieDetails(INotifiableManager manager, Movie movie) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT c03, c01, c04, c18, c12, c19");
 		sb.append(" FROM movieview WHERE movieview.idmovie = ");
 		sb.append(movie.getId());
-		parseMovieDetails(mConnection.query("QueryVideoDatabase", sb.toString()), movie);
+		parseMovieDetails(mConnection.query("QueryVideoDatabase", sb.toString(), manager), movie);
 		sb = new StringBuilder();
 		sb.append("SELECT actors.idActor, strActor, strRole");
 		sb.append(" FROM actors, actorlinkmovie");
 		sb.append(" WHERE actors.idActor = actorlinkmovie.idActor");
 		sb.append(" AND actorlinkmovie.idMovie =");
 		sb.append(movie.getId());
-		movie.actors = parseActorRoles(mConnection.query("QueryVideoDatabase", sb.toString()));
+		movie.actors = parseActorRoles(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 		return movie;
 	}
 	
@@ -137,47 +138,47 @@ public class VideoClient implements IVideoClient {
 	 * {@link getTvActors()} for filtered actors. 
 	 * @return All actors
 	 */
-	public ArrayList<Actor> getActors() {
+	public ArrayList<Actor> getActors(INotifiableManager manager) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idActor, strActor FROM actors");
 		sb.append(" ORDER BY upper(strActor), strActor");
-		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString()));
+		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
 	/**
 	 * Gets all movie actors from database
 	 * @return All movie actors
 	 */
-	public ArrayList<Actor> getMovieActors() {
+	public ArrayList<Actor> getMovieActors(INotifiableManager manager) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT DISTINCT actors.idActor, strActor FROM actors, actorlinkmovie");
 		sb.append(" WHERE actorlinkmovie.idActor = actors.idActor");
 		sb.append(" ORDER BY upper(strActor), strActor");
-		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString()));
+		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
 	/**
 	 * Gets all movie actors from database
 	 * @return All movie actors
 	 */
-	public ArrayList<Actor> getTvShowActors() {
+	public ArrayList<Actor> getTvShowActors(INotifiableManager manager) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT DISTINCT actors.idActor, strActor FROM actors, actorlinktvshow");
 		sb.append(" WHERE actorlinktvshow.idActor = actors.idActor");
 		sb.append(" ORDER BY upper(strActor), strActor");
-		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString()));
+		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
 	/**
 	 * Gets all movie genres from database
 	 * @return All movie genres
 	 */
-	public ArrayList<Genre> getMovieGenres() {
+	public ArrayList<Genre> getMovieGenres(INotifiableManager manager) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idGenre, strGenre FROM genre");
 		sb.append(" WHERE idGenre IN (SELECT idGenre FROM genrelinkmovie)");
 		sb.append(" ORDER BY upper(strGenre)");
-		return parseGenres(mConnection.query("QueryVideoDatabase", sb.toString()));
+		return parseGenres(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
 	/**
@@ -185,15 +186,15 @@ public class VideoClient implements IVideoClient {
 	 * @param cover
 	 * @return Base64-encoded content of thumb
 	 */
-	public String getCover(ICoverArt cover) {
-		final String data = mConnection.query("FileDownload", Movie.getThumbUri(cover));
+	public String getCover(INotifiableManager manager, ICoverArt cover) {
+		final String data = mConnection.query("FileDownload", Movie.getThumbUri(cover), manager);
 		if (data.length() > 0) {
 			return data;
 		} else {
 			final String url = Movie.getFallbackThumbUri(cover);
 			if (url != null) {
 				Log.i("VideoClient", "*** Downloaded cover has size null, retrying with fallback:");
-				return mConnection.query("FileDownload", url);
+				return mConnection.query("FileDownload", url, manager);
 			} else {
 				return "";
 			}

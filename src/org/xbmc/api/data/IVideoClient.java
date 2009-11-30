@@ -23,6 +23,7 @@ package org.xbmc.api.data;
 
 import java.util.ArrayList;
 
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.ICoverArt;
@@ -43,7 +44,7 @@ public interface IVideoClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies
 	 */
-	public ArrayList<Movie> getMovies(int sortBy, String sortOrder);
+	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder);
 	
 	/**
 	 * Gets all movies with an actor from database
@@ -52,7 +53,7 @@ public interface IVideoClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies with an actor
 	 */
-	public ArrayList<Movie> getMovies(Actor actor, int sortBy, String sortOrder);
+	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, int sortBy, String sortOrder);
 	
 	/**
 	 * Gets all movies of a genre from database
@@ -61,7 +62,7 @@ public interface IVideoClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies of a genre
 	 */
-	public ArrayList<Movie> getMovies(Genre genre, int sortBy, String sortOrder);
+	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, int sortBy, String sortOrder);
 	
 	/**
 	 * Gets all movies from database
@@ -69,38 +70,38 @@ public interface IVideoClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return Updated movie
 	 */
-	public Movie updateMovieDetails(Movie movie);
+	public Movie updateMovieDetails(INotifiableManager manager, Movie movie);
 	
 	/**
 	 * Gets all actors from database. Use {@link getMovieActors()} and
 	 * {@link getTvActors()} for filtered actors. 
 	 * @return All actors
 	 */
-	public ArrayList<Actor> getActors();
+	public ArrayList<Actor> getActors(INotifiableManager manager);
 	
 	/**
 	 * Gets all movie actors from database
 	 * @return All movie actors
 	 */
-	public ArrayList<Actor> getMovieActors();
+	public ArrayList<Actor> getMovieActors(INotifiableManager manager);
 	
 	/**
 	 * Gets all movie actors from database
 	 * @return All movie actors
 	 */
-	public ArrayList<Actor> getTvShowActors();
+	public ArrayList<Actor> getTvShowActors(INotifiableManager manager);
 	
 	/**
 	 * Gets all movie genres from database
 	 * @return All movie genres
 	 */
-	public ArrayList<Genre> getMovieGenres();
+	public ArrayList<Genre> getMovieGenres(INotifiableManager manager);
 	
 	/**
 	 * Returns movie thumbnail as base64-encoded string
 	 * @param cover
 	 * @return Base64-encoded content of thumb
 	 */
-	public String getCover(ICoverArt cover);
+	public String getCover(INotifiableManager manager, ICoverArt cover);
 	 
 }

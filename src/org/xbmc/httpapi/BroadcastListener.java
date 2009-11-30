@@ -31,6 +31,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 
 import android.util.Log;
@@ -92,11 +93,13 @@ public class BroadcastListener extends Observable implements Runnable {
 	private static BroadcastListener sInstance;
 	private static Thread sThread;
 	
-	private final HttpClient mHttpClient;
+	private final HttpApi mHttpClient;
 	
 	private boolean mIsListening = false;
 	private boolean mIsAvailable = false;
 	private int mPort = 0;
+	
+	private final INotifiableManager mManagerStub;
 	
 	/**
 	 * Returns the current instance of the listener, or creates a new one if
@@ -104,7 +107,7 @@ public class BroadcastListener extends Observable implements Runnable {
 	 * @param httpClient Used for HTTP control API.
 	 * @return Current instance
 	 */
-	public static BroadcastListener getInstance(HttpClient httpClient) {
+	public static BroadcastListener getInstance(HttpApi httpClient) {
 		if (sInstance == null) {
 			Log.i(TAG, "creating instance..");
 			sInstance = new BroadcastListener(httpClient);
@@ -117,9 +120,14 @@ public class BroadcastListener extends Observable implements Runnable {
 	 * It's a singleton class, so the class constructor is private. Use getInstance().
 	 * @param httpClient
 	 */
-	private BroadcastListener(HttpClient httpClient) {
+	private BroadcastListener(HttpApi httpClient) {
 		mHttpClient = httpClient;
 		init();
+		mManagerStub = new INotifiableManager() {
+			public void onMessage(int code, String message) { }
+			public void onMessage(String message) { }
+			public void onError(Exception e) { }
+		};
 	}
 	
 	/**
@@ -136,13 +144,13 @@ public class BroadcastListener extends Observable implements Runnable {
 		(new Thread(THREAD_NAME + "-INIT") {
 			public void run() {
 				Log.i(TAG, "init start...");
-				final int port = mHttpClient.control.getBroadcast();
+				final int port = mHttpClient.control.getBroadcast(mManagerStub);
 				Log.i(TAG, "current port = " + port);
 				if (port == 0 || port == DEFAULT_PORT) {
 					final Random rnd = new Random();
 					final int rndPort = (rnd.nextInt() % 22768) + 10000;
 					Log.i(TAG, "new port = " + rndPort);
-					if (!mHttpClient.control.setBroadcast(rndPort, BCAST_LEVEL)) {
+					if (!mHttpClient.control.setBroadcast(mManagerStub, rndPort, BCAST_LEVEL)) {
 						Log.i(TAG, "SETTING BROADCAST SETTINGS FAILED!");
 						dispatch(EVENT_ERROR);
 						mIsAvailable = false;
@@ -159,7 +167,7 @@ public class BroadcastListener extends Observable implements Runnable {
 				int n = 0;
 				while (!mIsAvailable || !mIsListening) {
 					Log.i(TAG, "broadcast PING (" + BCAST_PING + ")...");
-					mHttpClient.control.broadcast(BCAST_PING);
+					mHttpClient.control.broadcast(mManagerStub, BCAST_PING);
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
@@ -256,7 +264,7 @@ public class BroadcastListener extends Observable implements Runnable {
 			params[0] = param;
 		} else if (response.startsWith("OnPlayBackStarted")) {
 			event = EVENT_ON_PLAYBACK_STARTED;
-			ICurrentlyPlaying currPlaying = mHttpClient.control.getCurrentlyPlaying();
+			ICurrentlyPlaying currPlaying = mHttpClient.control.getCurrentlyPlaying(mManagerStub);
 			sTimer.schedule(new BroadcastListener.Counter(currPlaying.getTime(), currPlaying.getDuration()), 0L, 1000L);
 		} else if (response.startsWith("OnPlayBackStopped")) {
 			event = EVENT_ON_PLAYBACK_STOPPED;

@@ -23,6 +23,7 @@ package org.xbmc.httpapi.client;
 
 import java.util.HashMap;
 
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.info.GuiActions;
 import org.xbmc.api.type.MediaType;
@@ -54,8 +55,8 @@ public class ControlClient implements IControlClient {
 	 * @param fileOrFolder
 	 * @return true on success, false otherwise.
 	 */
-	public boolean addToPlaylist(String fileOrFolder) {
-		return mConnection.getBoolean("AddToPlayList", fileOrFolder);
+	public boolean addToPlaylist(INotifiableManager manager, String fileOrFolder) {
+		return mConnection.getBoolean(manager, "AddToPlayList", fileOrFolder);
 	}
 	
 	/**
@@ -63,8 +64,8 @@ public class ControlClient implements IControlClient {
 	 * @param filename File to play
 	 * @return true on success, false otherwise.
 	 */
-	public boolean playFile(String filename) {
-		return mConnection.getBoolean("PlayFile", filename);
+	public boolean playFile(INotifiableManager manager, String filename) {
+		return mConnection.getBoolean(manager, "PlayFile", filename);
 	}
 	
 	/**
@@ -72,8 +73,8 @@ public class ControlClient implements IControlClient {
 	 * if currently showing a slideshow, the slideshow playlist. 
 	 * @return true on success, false otherwise.
 	 */
-	public boolean playNext() {
-		return mConnection.getBoolean("PlayNext");
+	public boolean playNext(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "PlayNext");
 	}
 
 	/**
@@ -81,24 +82,24 @@ public class ControlClient implements IControlClient {
 	 * or, if currently showing a slidshow, the slideshow playlist.
 	 * @return true on success, false otherwise.
 	 */
-	public boolean playPrevious() {
-		return mConnection.getBoolean("PlayPrev");
+	public boolean playPrevious(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "PlayPrev");
 	}
 	
 	/**
 	 * Pauses the currently playing media. 
 	 * @return true on success, false otherwise.
 	 */
-	public boolean pause() {
-		return mConnection.getBoolean("Pause");
+	public boolean pause(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "Pause");
 	}
 	
 	/**
 	 * Stops the currently playing media. 
 	 * @return true on success, false otherwise.
 	 */
-	public boolean stop() {
-		return mConnection.getBoolean("Stop");
+	public boolean stop(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "Stop");
 	}
 	
 	/**
@@ -106,8 +107,8 @@ public class ControlClient implements IControlClient {
 	 * @param url An URL pointing to a supported media file
 	 * @return true on success, false otherwise.
 	 */
-	public boolean playUrl(String url) {
-		return mConnection.getBoolean("ExecBuiltin", "PlayMedia(" + url + ")");
+	public boolean playUrl(INotifiableManager manager, String url) {
+		return mConnection.getBoolean(manager, "ExecBuiltin", "PlayMedia(" + url + ")");
 	}
 	
 	/**
@@ -115,8 +116,8 @@ public class ControlClient implements IControlClient {
 	 * @param volume New volume (0-100)
 	 * @return true on success, false otherwise.
 	 */
-	public boolean setVolume(int volume) {
-		return mConnection.getBoolean("SetVolume", String.valueOf(volume));
+	public boolean setVolume(INotifiableManager manager, int volume) {
+		return mConnection.getBoolean(manager, "SetVolume", String.valueOf(volume));
 	}
 	
 	/**
@@ -131,19 +132,19 @@ public class ControlClient implements IControlClient {
 	 * @param progress Progress
 	 * @return true on success, false otherwise.
 	 */
-	public boolean seek(SeekType type, int progress) {
+	public boolean seek(INotifiableManager manager, SeekType type, int progress) {
 		if (type.compareTo(SeekType.absolute) == 0)
-			return mConnection.getBoolean("SeekPercentage", String.valueOf(progress));
+			return mConnection.getBoolean(manager, "SeekPercentage", String.valueOf(progress));
 		else
-			return mConnection.getBoolean("SeekPercentageRelative", String.valueOf(progress));
+			return mConnection.getBoolean(manager, "SeekPercentageRelative", String.valueOf(progress));
 	}
 	
 	/**
 	 * Toggles the sound on/off.
 	 * @return true on success, false otherwise.
 	 */
-	public boolean mute() {
-		return mConnection.getBoolean("Mute");
+	public boolean mute(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "Mute");
 	}
 	
 	/**
@@ -151,8 +152,8 @@ public class ControlClient implements IControlClient {
 	 * a percentage of the media's length. 
 	 * @return Percentage (0-100)
 	 */
-	public int getPercentage() {
-		return mConnection.getInt("GetPercentage");
+	public int getPercentage(INotifiableManager manager) {
+		return mConnection.getInt(manager, "GetPercentage");
 	}
 	
 	/**
@@ -160,48 +161,48 @@ public class ControlClient implements IControlClient {
 	 * possible value.
 	 * @return Volume (0-100)
 	 */
-	public int getVolume() {
-		return mConnection.getInt("GetVolume");
+	public int getVolume(INotifiableManager manager) {
+		return mConnection.getInt(manager, "GetVolume");
 	}
 	
 	/**
 	 * Navigates... UP!
 	 * @return true on success, false otherwise.
 	 */
-	public boolean navUp() {
-		return mConnection.getBoolean("Action", String.valueOf(GuiActions.ACTION_MOVE_UP));
+	public boolean navUp(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "Action", String.valueOf(GuiActions.ACTION_MOVE_UP));
 	}
 
 	/**
 	 * Navigates... DOWN!
 	 * @return true on success, false otherwise.
 	 */
-	public boolean navDown() {
-		return mConnection.getBoolean("Action", String.valueOf(GuiActions.ACTION_MOVE_DOWN));
+	public boolean navDown(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "Action", String.valueOf(GuiActions.ACTION_MOVE_DOWN));
 	}
 	
 	/**
 	 * Navigates... LEFT!
 	 * @return true on success, false otherwise.
 	 */
-	public boolean navLeft() {
-		return mConnection.getBoolean("Action", String.valueOf(GuiActions.ACTION_MOVE_LEFT));
+	public boolean navLeft(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "Action", String.valueOf(GuiActions.ACTION_MOVE_LEFT));
 	}
 	
 	/**
 	 * Navigates... RIGHT!
 	 * @return true on success, false otherwise.
 	 */
-	public boolean navRight() {
-		return mConnection.getBoolean("Action", String.valueOf(GuiActions.ACTION_MOVE_RIGHT));
+	public boolean navRight(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "Action", String.valueOf(GuiActions.ACTION_MOVE_RIGHT));
 	}
 	
 	/**
 	 * Selects current item.
 	 * @return true on success, false otherwise.
 	 */
-	public boolean navSelect() {
-		return mConnection.getBoolean("Action", String.valueOf(GuiActions.ACTION_SELECT_ITEM));
+	public boolean navSelect(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "Action", String.valueOf(GuiActions.ACTION_SELECT_ITEM));
 	}
 	
 	/**
@@ -213,8 +214,8 @@ public class ControlClient implements IControlClient {
 	 * @param mediaType Either <code>video</code> or <code>music</code>.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean updateLibrary(String mediaType) {
-		return mConnection.getBoolean("ExecBuiltin", "UpdateLibrary(" + mediaType + ")");
+	public boolean updateLibrary(INotifiableManager manager, String mediaType) {
+		return mConnection.getBoolean(manager, "ExecBuiltin", "UpdateLibrary(" + mediaType + ")");
 	}
 	
 	/**
@@ -222,16 +223,16 @@ public class ControlClient implements IControlClient {
 	 * @param message
 	 * @return True on success, false otherwise.
 	 */
-	public boolean broadcast(String message) {
-		return mConnection.getBoolean("Broadcast", message);
+	public boolean broadcast(INotifiableManager manager, String message) {
+		return mConnection.getBoolean(manager, "Broadcast", message);
 	}
 	
 	/**
 	 * Returns the current broadcast port number, or 0 if deactivated.
 	 * @return Current broadcast port number.
 	 */
-	public int getBroadcast() {
-		final String ret[] = mConnection.getString("GetBroadcast").split(";");
+	public int getBroadcast(INotifiableManager manager) {
+		final String ret[] = mConnection.getString(manager, "GetBroadcast").split(";");
 		try {
 			final int port = Integer.parseInt(ret[1]);
 			return port > 1 && !ret[0].equals("0") ? port : 0;
@@ -252,24 +253,24 @@ public class ControlClient implements IControlClient {
 	 * @param level Broadcast level
 	 * @return True on success, false otherwise.
 	 */
-	public boolean setBroadcast(int port, int level) {
-		return mConnection.getBoolean("SetBroadcast", level + ";" + port);
+	public boolean setBroadcast(INotifiableManager manager, int port, int level) {
+		return mConnection.getBoolean(manager, "SetBroadcast", level + ";" + port);
 	}
 
 	/**
 	 * Returns current play state
 	 * @return
 	 */
-	public PlayStatus getPlayState() {
-		return PlayStatus.parse(mConnection.getString("GetCurrentlyPlaying"));
+	public PlayStatus getPlayState(INotifiableManager manager) {
+		return PlayStatus.parse(mConnection.getString(manager, "GetCurrentlyPlaying"));
 	}
 	
 	/**
 	 * Returns state and type of the media currently playing.
 	 * @return
 	 */
-	public ICurrentlyPlaying getCurrentlyPlaying() {
-		final HashMap<String, String> map = mConnection.getPairs("GetCurrentlyPlaying");
+	public ICurrentlyPlaying getCurrentlyPlaying(INotifiableManager manager) {
+		final HashMap<String, String> map = mConnection.getPairs(manager, "GetCurrentlyPlaying");
 		final IControlClient.ICurrentlyPlaying nothingPlaying = new IControlClient.ICurrentlyPlaying() {
 			private static final long serialVersionUID = -1554068775915058884L;
 			public boolean isPlaying() { return false; }
@@ -311,10 +312,5 @@ public class ControlClient implements IControlClient {
 					return nothingPlaying;
 			}
 		}
-	}
-	
-	
-	public boolean isConnected() {
-		return mConnection.isConnected();
 	}
 }

@@ -24,6 +24,7 @@ package org.xbmc.httpapi.client;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
@@ -83,8 +84,8 @@ public class MusicClient implements IMusicClient {
 	 * @param album Album
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(Album album) {
-		return mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(album) + songsOrderBy(SortType.TRACK, SortType.ORDER_ASC));
+	public boolean addToPlaylist(INotifiableManager manager, Album album) {
+		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(album) + songsOrderBy(SortType.TRACK, SortType.ORDER_ASC));
 	}
 
 	/**
@@ -92,8 +93,8 @@ public class MusicClient implements IMusicClient {
 	 * @param artist Artist
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(Artist artist) {
-		return mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist) + songsOrderBy(SortType.ALBUM, SortType.ORDER_ASC));
+	public boolean addToPlaylist(INotifiableManager manager, Artist artist) {
+		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist) + songsOrderBy(SortType.ALBUM, SortType.ORDER_ASC));
 	}
 
 	/**
@@ -101,8 +102,8 @@ public class MusicClient implements IMusicClient {
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(Genre genre) {
-		return mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(genre) + songsOrderBy(SortType.ARTIST, SortType.ORDER_ASC));
+	public boolean addToPlaylist(INotifiableManager manager, Genre genre) {
+		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(genre) + songsOrderBy(SortType.ARTIST, SortType.ORDER_ASC));
 	}
 
 	/**
@@ -111,8 +112,8 @@ public class MusicClient implements IMusicClient {
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(Artist artist, Genre genre) {
-		return mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist, genre) + songsOrderBy(SortType.ARTIST, SortType.ORDER_ASC));
+	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre) {
+		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist, genre) + songsOrderBy(SortType.ARTIST, SortType.ORDER_ASC));
 	}
 	
 	/**
@@ -120,24 +121,24 @@ public class MusicClient implements IMusicClient {
 	 * @param song Song to add
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(Song song) {
-		return mConnection.getBoolean("AddToPlayList", song.path + ";" + PLAYLIST_ID);
+	public boolean addToPlaylist(INotifiableManager manager, Song song) {
+		return mConnection.getBoolean(manager, "AddToPlayList", song.path + ";" + PLAYLIST_ID);
 	}
 	
 	/**
 	 * Returns how many items are in the playlist.
 	 * @return Number of items in the playlist
 	 */
-	public int getPlaylistSize() {
-		return mConnection.getInt("GetPlaylistLength", PLAYLIST_ID);
+	public int getPlaylistSize(INotifiableManager manager) {
+		return mConnection.getInt(manager, "GetPlaylistLength", PLAYLIST_ID);
 	}
 	
 	/**
 	 * Retrieves the currently playing song number in the playlist.
 	 * @return Number of items in the playlist
 	 */
-	public int getPlaylistPosition() {
-		return mConnection.getInt("GetPlaylistSong");
+	public int getPlaylistPosition(INotifiableManager manager) {
+		return mConnection.getInt(manager, "GetPlaylistSong");
 	}
 	
 	/**
@@ -145,8 +146,8 @@ public class MusicClient implements IMusicClient {
 	 * @param position New position, starting with 0.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean setPlaylistPosition(int position) {
-		return mConnection.getBoolean("SetPlaylistSong", String.valueOf(position));
+	public boolean setPlaylistPosition(INotifiableManager manager, int position) {
+		return mConnection.getBoolean(manager, "SetPlaylistSong", String.valueOf(position));
 	}
 	
 	/**
@@ -154,8 +155,8 @@ public class MusicClient implements IMusicClient {
 	 * @param position Position to remove, starting with 0.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean removeFromPlaylist(int position) {
-		return mConnection.getBoolean("RemoveFromPlaylist", PLAYLIST_ID + ";" + position);
+	public boolean removeFromPlaylist(INotifiableManager manager, int position) {
+		return mConnection.getBoolean(manager, "RemoveFromPlaylist", PLAYLIST_ID + ";" + position);
 	}
 	
 	/**
@@ -163,16 +164,16 @@ public class MusicClient implements IMusicClient {
 	 * @param position Complete path (including filename) of the media to be removed.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean removeFromPlaylist(String path) {
-		return mConnection.getBoolean("RemoveFromPlaylist", PLAYLIST_ID + ";" + path);
+	public boolean removeFromPlaylist(INotifiableManager manager, String path) {
+		return mConnection.getBoolean(manager, "RemoveFromPlaylist", PLAYLIST_ID + ";" + path);
 	}
 	
 	/**
 	 * Returns the first {@link PLAYLIST_LIMIT} songs of the playlist. 
 	 * @return Songs in the playlist.
 	 */
-	public ArrayList<String> getPlaylist() {
-		return mConnection.getArray("GetPlaylistContents", PLAYLIST_ID);
+	public ArrayList<String> getPlaylist(INotifiableManager manager) {
+		return mConnection.getArray(manager, "GetPlaylistContents", PLAYLIST_ID);
 		
 		
 		/*
@@ -215,8 +216,8 @@ public class MusicClient implements IMusicClient {
 	 * Clears current playlist
 	 * @return True on success, false otherwise.
 	 */
-	public boolean clearPlaylist() {
-		return mConnection.getBoolean("ClearPlayList", PLAYLIST_ID);
+	public boolean clearPlaylist(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "ClearPlayList", PLAYLIST_ID);
 	}
 	
 	/**
@@ -224,8 +225,8 @@ public class MusicClient implements IMusicClient {
 	 * @param song Song
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Song song) {
-		return play(getSongsCondition(song));
+	public boolean play(INotifiableManager manager, Song song) {
+		return play(manager, getSongsCondition(song));
 	}
 	
 	/**
@@ -235,8 +236,8 @@ public class MusicClient implements IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Album album, int sortBy, String sortOrder) {
-		return play(getSongsCondition(album).append(songsOrderBy(sortBy, sortOrder)));
+	public boolean play(INotifiableManager manager, Album album, int sortBy, String sortOrder) {
+		return play(manager, getSongsCondition(album).append(songsOrderBy(sortBy, sortOrder)));
 	}
 	
 	/**
@@ -246,8 +247,8 @@ public class MusicClient implements IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Genre genre, int sortBy, String sortOrder) {
-		return play(getSongsCondition(genre).append(songsOrderBy(sortBy, sortOrder)));
+	public boolean play(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
+		return play(manager, getSongsCondition(genre).append(songsOrderBy(sortBy, sortOrder)));
 	}
 	
 	/**
@@ -257,8 +258,8 @@ public class MusicClient implements IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Artist artist, int sortBy, String sortOrder) {
-		return play(getSongsCondition(artist).append(songsOrderBy(sortBy, sortOrder)));
+	public boolean play(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
+		return play(manager, getSongsCondition(artist).append(songsOrderBy(sortBy, sortOrder)));
 	}
 	
 	/**
@@ -267,8 +268,8 @@ public class MusicClient implements IMusicClient {
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Artist artist, Genre genre) {
-		return play(getSongsCondition(artist, genre).append(songsOrderBy(SortType.ARTIST, SortType.ORDER_ASC)));
+	public boolean play(INotifiableManager manager, Artist artist, Genre genre) {
+		return play(manager, getSongsCondition(artist, genre).append(songsOrderBy(SortType.ARTIST, SortType.ORDER_ASC)));
 	}
 
 	/**
@@ -276,11 +277,11 @@ public class MusicClient implements IMusicClient {
 	 * @param sqlCondition SQL Condition
 	 * @return True on success, false otherwise.
 	 */
-	private boolean play(StringBuilder sqlCondition) {
-		clearPlaylist();
-		mConnection.getBoolean("AddToPlayListFromDB", LIBRARY_TYPE + ";" + sqlCondition.toString());
-		setCurrentPlaylist();
-		return playNext();
+	private boolean play(INotifiableManager manager, StringBuilder sqlCondition) {
+		clearPlaylist(manager);
+		mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + sqlCondition.toString());
+		setCurrentPlaylist(manager);
+		return playNext(manager);
 	}
 	
 	/**
@@ -288,8 +289,8 @@ public class MusicClient implements IMusicClient {
 	 * or, if currently showing a slidshow, the slideshow playlist.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean playNext() {
-		return mConnection.getBoolean("PlayNext");
+	public boolean playNext(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "PlayNext");
 	}
 
 	/**
@@ -297,8 +298,8 @@ public class MusicClient implements IMusicClient {
 	 * or, if currently showing a slidshow, the slideshow playlist.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean playPrev() {
-		return mConnection.getBoolean("PlayPrev");
+	public boolean playPrev(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "PlayPrev");
 	}
 	
 	/**
@@ -308,16 +309,16 @@ public class MusicClient implements IMusicClient {
 	 * @param pos Position
 	 * @return true on success, false otherwise.
 	 */
-	public boolean playlistSetSong(int pos) {
-		return mConnection.getBoolean("SetPlaylistSong", String.valueOf(pos));
+	public boolean playlistSetSong(INotifiableManager manager, int pos) {
+		return mConnection.getBoolean(manager, "SetPlaylistSong", String.valueOf(pos));
 	}
 	
 	/**
 	 * Sets current playlist to "0"
 	 * @return True on success, false otherwise.
 	 */
-	public boolean setCurrentPlaylist() {
-		return mConnection.getBoolean("SetCurrentPlaylist", PLAYLIST_ID);
+	public boolean setCurrentPlaylist(INotifiableManager manager) {
+		return mConnection.getBoolean(manager, "SetCurrentPlaylist", PLAYLIST_ID);
 	}
 	
 	/**
@@ -325,7 +326,7 @@ public class MusicClient implements IMusicClient {
 	 * @param artistIDs Array of artist IDs
 	 * @return All compilation albums
 	 */
-	public ArrayList<Album> getAlbums(ArrayList<Integer> artistIDs) {
+	public ArrayList<Album> getAlbums(INotifiableManager manager, ArrayList<Integer> artistIDs) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
 		sb.append(" FROM albumview WHERE albumview.strAlbum <> ''");
@@ -339,7 +340,7 @@ public class MusicClient implements IMusicClient {
 			}
 		}
 		sb.append(")");
-		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
+		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
 	
 	/**
@@ -348,12 +349,12 @@ public class MusicClient implements IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All albums
 	 */
-	public ArrayList<Album> getAlbums(int sortBy, String sortOrder) {
+	public ArrayList<Album> getAlbums(INotifiableManager manager, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
 		sb.append(" FROM albumview WHERE albumview.strAlbum <> ''");
 		sb.append(albumsOrderBy(sortBy, sortOrder));
-		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
+		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
 
 	/**
@@ -363,14 +364,14 @@ public class MusicClient implements IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return Albums with an artist
 	 */
-	public ArrayList<Album> getAlbums(Artist artist, int sortBy, String sortOrder) {
+	public ArrayList<Album> getAlbums(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
 		sb.append(" FROM albumview");
 		sb.append(" WHERE albumview.strAlbum <> ''");
 		sb.append(" AND idArtist = " + artist.id);
 		sb.append(albumsOrderBy(sortBy, sortOrder));
-		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
+		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
 
 	/**
@@ -380,7 +381,7 @@ public class MusicClient implements IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return Albums of a genre
 	 */
-	public ArrayList<Album> getAlbums(Genre genre, int sortBy, String sortOrder) {
+	public ArrayList<Album> getAlbums(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
 		sb.append("  FROM albumview");
@@ -395,7 +396,7 @@ public class MusicClient implements IMusicClient {
 		sb.append("        WHERE idGenre = " + genre.id);
 		sb.append("  ))");
 		sb.append(albumsOrderBy(sortBy, sortOrder));
-		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString()));
+		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
 	
 	/**
@@ -403,7 +404,7 @@ public class MusicClient implements IMusicClient {
 	 * @param albumArtistsOnly If set to true, hide artists who appear only on compilations.
 	 * @return All albums
 	 */
-	public ArrayList<Artist> getArtists(boolean albumArtistsOnly) {
+	public ArrayList<Artist> getArtists(INotifiableManager manager, boolean albumArtistsOnly) {
 		StringBuilder sb = new StringBuilder();
 		if (albumArtistsOnly) {
 			sb.append("SELECT idArtist, strArtist ");
@@ -423,7 +424,7 @@ public class MusicClient implements IMusicClient {
 			sb.append("SELECT idArtist, strArtist FROM artist");
 		}
 		sb.append(" ORDER BY upper(strArtist), strArtist");
-		return parseArtists(mConnection.query("QueryMusicDatabase", sb.toString()));
+		return parseArtists(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
 
 	/**
@@ -432,7 +433,7 @@ public class MusicClient implements IMusicClient {
 	 * @param albumArtistsOnly If set to true, hide artists who appear only on compilations.
 	 * @return Albums with a genre
 	 */
-	public ArrayList<Artist> getArtists(Genre genre, boolean albumArtistsOnly) {
+	public ArrayList<Artist> getArtists(INotifiableManager manager, Genre genre, boolean albumArtistsOnly) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT DISTINCT idArtist, strArtist ");
 		sb.append("  FROM artist");
@@ -460,15 +461,15 @@ public class MusicClient implements IMusicClient {
 			sb.append("  ) AND artist.strArtist != ''");
 		}		
 		sb.append(" ORDER BY upper(strArtist), strArtist");
-		return parseArtists(mConnection.query("QueryMusicDatabase", sb.toString()));
+		return parseArtists(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
 	
 	/**
 	 * Gets all genres from database
 	 * @return All genres
 	 */
-	public ArrayList<Genre> getGenres() {
-		return parseGenres(mConnection.query("QueryMusicDatabase", "SELECT idGenre, strGenre FROM genre ORDER BY upper(strGenre), strGenre"));
+	public ArrayList<Genre> getGenres(INotifiableManager manager) {
+		return parseGenres(mConnection.query("QueryMusicDatabase", "SELECT idGenre, strGenre FROM genre ORDER BY upper(strGenre), strGenre", manager));
 	}
 	
 	/**
@@ -476,14 +477,14 @@ public class MusicClient implements IMusicClient {
 	 * @param album
 	 * @return Updated album
 	 */
-	public Album updateAlbumInfo(Album album) {
+	public Album updateAlbumInfo(INotifiableManager manager, Album album) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT g.strGenre, a.strExtraGenres, ai.strLabel, ai.iRating");
 		sb.append("  FROM album a, genre g");
 		sb.append("  LEFT JOIN albuminfo AS ai ON ai.idAlbumInfo = a.idAlbum");
 		sb.append("  WHERE a.idGenre = g.idGenre");
 		sb.append("  AND a.idAlbum = " + album.id);
-		return parseAlbumInfo(album, mConnection.query("QueryMusicDatabase", sb.toString()));
+		return parseAlbumInfo(album, mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
 	
 	/**
@@ -491,14 +492,14 @@ public class MusicClient implements IMusicClient {
 	 * @param sqlCondition SQL condition which tracks to return
 	 * @return Found tracks
 	 */
-	private ArrayList<Song> getSongs(StringBuilder sqlCondition, int sortBy, String sortOrder) {
+	private ArrayList<Song> getSongs(INotifiableManager manager, StringBuilder sqlCondition, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
 		sb.append(" FROM songview WHERE ");
 		sb.append(sqlCondition);
 		sb.append(songsOrderBy(sortBy, sortOrder));
 		
-		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString()));
+		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
 	
 	/**
@@ -638,8 +639,8 @@ public class MusicClient implements IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.	 
 	 * @return All tracks of an album
 	 */
-	public ArrayList<Song> getSongs(Album album, int sortBy, String sortOrder) {
-		return getSongs(getSongsCondition(album), sortBy, sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Album album, int sortBy, String sortOrder) {
+		return getSongs(manager, getSongsCondition(album), sortBy, sortOrder);
 	}
 
 	/**
@@ -649,8 +650,8 @@ public class MusicClient implements IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All tracks of the artist
 	 */
-	public ArrayList<Song> getSongs(Artist artist, int sortBy, String sortOrder) {
-		return getSongs(getSongsCondition(artist), sortBy, sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
+		return getSongs(manager, getSongsCondition(artist), sortBy, sortOrder);
 	}
 	
 	/**
@@ -660,8 +661,8 @@ public class MusicClient implements IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All tracks of the genre
 	 */
-	public ArrayList<Song> getSongs(Genre genre, int sortBy, String sortOrder) {
-		return getSongs(getSongsCondition(genre), sortBy, sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
+		return getSongs(manager, getSongsCondition(genre), sortBy, sortOrder);
 	}
 	
 	/**
@@ -672,8 +673,8 @@ public class MusicClient implements IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All tracks of the genre
 	 */
-	public ArrayList<Song> getSongs(Artist artist, Genre genre, int sortBy, String sortOrder) {
-		return getSongs(getSongsCondition(artist, genre), sortBy, sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, Genre genre, int sortBy, String sortOrder) {
+		return getSongs(manager, getSongsCondition(artist, genre), sortBy, sortOrder);
 	}
 	
 	/**
@@ -681,15 +682,15 @@ public class MusicClient implements IMusicClient {
 	 * @param album
 	 * @return Base64-encoded content of thumb
 	 */
-	public String getCover(ICoverArt art) {
-		final String data = mConnection.query("FileDownload", Album.getThumbUri(art));
+	public String getCover(INotifiableManager manager, ICoverArt art) {
+		final String data = mConnection.query("FileDownload", Album.getThumbUri(art), manager);
 		if (data.length() > 0) {
 			return data;
 		} else {
 			final String url = Album.getFallbackThumbUri(art);
 			if (url != null) {
 				Log.i("MusicClient", "*** Downloaded cover has size null, retrying with fallback:");
-				return mConnection.query("FileDownload", url);
+				return mConnection.query("FileDownload", url, manager);
 			} else {
 				return "";
 			}
@@ -702,14 +703,14 @@ public class MusicClient implements IMusicClient {
 	 * there are also just "V.A." or "VA" naming conventions.
 	 * @return List of compilation artist IDs
 	 */
-	public ArrayList<Integer> getCompilationArtistIDs() {
+	public ArrayList<Integer> getCompilationArtistIDs(INotifiableManager manager) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idArtist");
 		sb.append("  FROM artist");
 		sb.append("  WHERE lower(strArtist) LIKE 'various artists%'");
 		sb.append("  OR lower(strArtist) LIKE 'v.a.%'");
 		sb.append("  OR lower(strArtist) = 'va'");
-		return parseIntArray(mConnection.query("QueryMusicDatabase", sb.toString()));
+		return parseIntArray(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 		
 	}
 	

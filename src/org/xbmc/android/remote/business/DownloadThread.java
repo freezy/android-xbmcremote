@@ -90,10 +90,10 @@ class DownloadThread extends AbstractThread {
 						String b64enc = null;
 						switch (cover.getMediaType()) {
 							case MediaType.MUSIC:
-								b64enc = music(context, manager).getCover(cover);
+								b64enc = music(context, manager).getCover(manager, cover);
 								break;
 							case MediaType.VIDEO:
-								b64enc = video(context, manager).getCover(cover);
+								b64enc = video(context, manager).getCover(manager, cover);
 								break;
 							case MediaType.PICTURES:
 								done(controller, response);

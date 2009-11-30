@@ -27,8 +27,7 @@ import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IVideoClient;
-import org.xbmc.httpapi.HttpClient;
-import org.xbmc.httpapi.NoSettingsException;
+import org.xbmc.httpapi.HttpApi;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -39,7 +38,7 @@ public abstract class ClientFactory {
 	private static final int DEFAULT_TIMEOUT = 10000;
 	private static final int DEFAULT_PORT = 80;
 	
-	private static HttpClient sHttpClient;
+	private static HttpApi sHttpClient;
 	
 	public static IInfoClient getInfoClient(Context context, INotifiableManager manager) {
 		return getHttpClient(context, manager).info;
@@ -72,7 +71,7 @@ public abstract class ClientFactory {
 	 * @param context Context needed for preferences. Use application context and not activity!
 	 * @return Http client
 	 */
-	public static HttpClient getHttpClient(Context context, INotifiableManager manager) {
+	public static HttpApi getHttpClient(Context context, INotifiableManager manager) {
 		if (sHttpClient == null) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 			int port = 0;
@@ -95,16 +94,16 @@ public abstract class ClientFactory {
 			
 			if (!host.equals("")){
 				if (port > 0 && user != null && user.length() > 0) {
-					sHttpClient = new HttpClient(host, port, user, pass, timeout, manager);
+					sHttpClient = new HttpApi(host, port, user, pass, timeout);
 				} else if (user != null && user.length() > 0) {
-					sHttpClient = new HttpClient(host, user, pass, timeout, manager);
+					sHttpClient = new HttpApi(host, user, pass, timeout);
 				} else if (port > 0) {
-					sHttpClient = new HttpClient(host, port, timeout, manager);
+					sHttpClient = new HttpApi(host, port, timeout);
 				} else {
-					sHttpClient = new HttpClient(host, timeout, manager);
+					sHttpClient = new HttpApi(host, timeout);
 				}
 			} else {
-				manager.onError(new NoSettingsException());
+				sHttpClient = new HttpApi(null, -1);
 			}
 		}
 		return sHttpClient;

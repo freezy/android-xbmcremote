@@ -23,6 +23,7 @@ package org.xbmc.api.data;
 
 import java.util.ArrayList;
 
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
@@ -42,21 +43,21 @@ public interface IMusicClient {
 	 * @param album Album
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(Album album);
+	public boolean addToPlaylist(INotifiableManager manager, Album album);
 
 	/**
 	 * Adds all songs from an artist to the current playlist.
 	 * @param artist Artist
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(Artist artist);
+	public boolean addToPlaylist(INotifiableManager manager, Artist artist);
 
 	/**
 	 * Adds all songs from a genre to the current playlist.
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(Genre genre);
+	public boolean addToPlaylist(INotifiableManager manager, Genre genre);
 
 	/**
 	 * Adds songs of a genre from an artist to the current playlist.
@@ -64,66 +65,66 @@ public interface IMusicClient {
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(Artist artist, Genre genre);
+	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre);
 	
 	/**
 	 * Adds a song to the current playlist.
 	 * @param song Song to add
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(Song song);
+	public boolean addToPlaylist(INotifiableManager manager, Song song);
 	
 	/**
 	 * Returns how many items are in the playlist.
 	 * @return Number of items in the playlist
 	 */
-	public int getPlaylistSize();
+	public int getPlaylistSize(INotifiableManager manager);
 	
 	/**
 	 * Retrieves the currently playing song number in the playlist.
 	 * @return Number of items in the playlist
 	 */
-	public int getPlaylistPosition();
+	public int getPlaylistPosition(INotifiableManager manager);
 	
 	/**
 	 * Sets the media at playlist position position to be the next item to be played.
 	 * @param position New position, starting with 0.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean setPlaylistPosition(int position);
+	public boolean setPlaylistPosition(INotifiableManager manager, int position);
 	
 	/**
 	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
 	 * @param position Position to remove, starting with 0.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean removeFromPlaylist(int position);
+	public boolean removeFromPlaylist(INotifiableManager manager, int position);
 	
 	/**
 	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
 	 * @param position Complete path (including filename) of the media to be removed.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean removeFromPlaylist(String path);
+	public boolean removeFromPlaylist(INotifiableManager manager, String path);
 	
 	/**
 	 * Returns the first {@link PLAYLIST_LIMIT} songs of the playlist. 
 	 * @return Songs in the playlist.
 	 */
-	public ArrayList<String> getPlaylist();
+	public ArrayList<String> getPlaylist(INotifiableManager manager);
 	
 	/**
 	 * Clears current playlist
 	 * @return True on success, false otherwise.
 	 */
-	public boolean clearPlaylist();
+	public boolean clearPlaylist(INotifiableManager manager);
 	
 	/**
 	 * Adds a song to the current playlist and plays it.
 	 * @param song Song
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Song song);
+	public boolean play(INotifiableManager manager, Song song);
 	
 	/**
 	 * Plays an album. Playlist is previously cleared.
@@ -132,7 +133,7 @@ public interface IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Album album, int sortBy, String sortOrder);
+	public boolean play(INotifiableManager manager, Album album, int sortBy, String sortOrder);
 	
 	/**
 	 * Plays all songs of a genre. Playlist is previously cleared.
@@ -141,7 +142,7 @@ public interface IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Genre genre, int sortBy, String sortOrder);
+	public boolean play(INotifiableManager manager, Genre genre, int sortBy, String sortOrder);
 	
 	/**
 	 * Plays all songs from an artist. Playlist is previously cleared.
@@ -150,7 +151,7 @@ public interface IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Artist artist, int sortBy, String sortOrder);
+	public boolean play(INotifiableManager manager, Artist artist, int sortBy, String sortOrder);
 	
 	/**
 	 * Plays songs of a genre from an artist. Playlist is previously cleared.
@@ -158,21 +159,21 @@ public interface IMusicClient {
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(Artist artist, Genre genre);
+	public boolean play(INotifiableManager manager, Artist artist, Genre genre);
 
 	/**
 	 * Starts playing/showing the next media/image in the current playlist
 	 * or, if currently showing a slidshow, the slideshow playlist.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean playNext();
+	public boolean playNext(INotifiableManager manager);
 
 	/**
 	 * Starts playing/showing the previous media/image in the current playlist
 	 * or, if currently showing a slidshow, the slideshow playlist.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean playPrev();
+	public boolean playPrev(INotifiableManager manager);
 	
 	/**
 	 * Sets the media at playlist position position to be the next item to be 
@@ -181,20 +182,20 @@ public interface IMusicClient {
 	 * @param pos Position
 	 * @return true on success, false otherwise.
 	 */
-	public boolean playlistSetSong(int pos);
+	public boolean playlistSetSong(INotifiableManager manager, int pos);
 	
 	/**
 	 * Sets current playlist to "0"
 	 * @return True on success, false otherwise.
 	 */
-	public boolean setCurrentPlaylist();
+	public boolean setCurrentPlaylist(INotifiableManager manager);
 	
 	/**
 	 * Gets all albums with given artist IDs
 	 * @param artistIDs Array of artist IDs
 	 * @return All compilation albums
 	 */
-	public ArrayList<Album> getAlbums(ArrayList<Integer> artistIDs);
+	public ArrayList<Album> getAlbums(INotifiableManager manager, ArrayList<Integer> artistIDs);
 	
 	/**
 	 * Gets all albums from database
@@ -202,7 +203,7 @@ public interface IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All albums
 	 */
-	public ArrayList<Album> getAlbums(int sortBy, String sortOrder);
+	public ArrayList<Album> getAlbums(INotifiableManager manager, int sortBy, String sortOrder);
 
 	/**
 	 * Gets all albums of an artist from database
@@ -211,7 +212,7 @@ public interface IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return Albums with an artist
 	 */
-	public ArrayList<Album> getAlbums(Artist artist, int sortBy, String sortOrder);
+	public ArrayList<Album> getAlbums(INotifiableManager manager, Artist artist, int sortBy, String sortOrder);
 
 	/**
 	 * Gets all albums of with at least one song in a genre
@@ -220,14 +221,14 @@ public interface IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return Albums of a genre
 	 */
-	public ArrayList<Album> getAlbums(Genre genre, int sortBy, String sortOrder);
+	public ArrayList<Album> getAlbums(INotifiableManager manager, Genre genre, int sortBy, String sortOrder);
 	
 	/**
 	 * Gets all albums from database
 	 * @param albumArtistsOnly If set to true, hide artists who appear only on compilations.
 	 * @return All albums
 	 */
-	public ArrayList<Artist> getArtists(boolean albumArtistsOnly);
+	public ArrayList<Artist> getArtists(INotifiableManager manager, boolean albumArtistsOnly);
 
 	/**
 	 * Gets all artists with at least one song of a genre.
@@ -235,20 +236,20 @@ public interface IMusicClient {
 	 * @param albumArtistsOnly If set to true, hide artists who appear only on compilations.
 	 * @return Albums with a genre
 	 */
-	public ArrayList<Artist> getArtists(Genre genre, boolean albumArtistsOnly);
+	public ArrayList<Artist> getArtists(INotifiableManager manager, Genre genre, boolean albumArtistsOnly);
 	
 	/**
 	 * Gets all genres from database
 	 * @return All genres
 	 */
-	public ArrayList<Genre> getGenres();
+	public ArrayList<Genre> getGenres(INotifiableManager manager);
 	
 	/**
 	 * Updates the album object with additional data from the albuminfo table
 	 * @param album
 	 * @return Updated album
 	 */
-	public Album updateAlbumInfo(Album album);
+	public Album updateAlbumInfo(INotifiableManager manager, Album album);
 	
 	/**
 	 * Returns a list containing all tracks of an album. The list is sorted by filename.
@@ -257,7 +258,7 @@ public interface IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.	 
 	 * @return All tracks of an album
 	 */
-	public ArrayList<Song> getSongs(Album album, int sortBy, String sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Album album, int sortBy, String sortOrder);
 
 	/**
 	 * Returns a list containing all tracks of an artist. The list is sorted by album name, filename.
@@ -266,7 +267,7 @@ public interface IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All tracks of the artist
 	 */
-	public ArrayList<Song> getSongs(Artist artist, int sortBy, String sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, int sortBy, String sortOrder);
 	
 	/**
 	 * Returns a list containing all tracks of a genre. The list is sorted by artist, album name, filename.
@@ -275,7 +276,7 @@ public interface IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All tracks of the genre
 	 */
-	public ArrayList<Song> getSongs(Genre genre, int sortBy, String sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Genre genre, int sortBy, String sortOrder);
 	
 	/**
 	 * Returns a list containing all tracks of a genre AND and artist. The list is sorted by 
@@ -285,7 +286,7 @@ public interface IMusicClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All tracks of the genre
 	 */
-	public ArrayList<Song> getSongs(Artist artist, Genre genre, int sortBy, String sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, Genre genre, int sortBy, String sortOrder);
 	
 	/**
 	 * Returns a list containing all artist IDs that stand for "compilation".
@@ -293,13 +294,13 @@ public interface IMusicClient {
 	 * there are also just "V.A." or "VA" naming conventions.
 	 * @return List of compilation artist IDs
 	 */
-	public ArrayList<Integer> getCompilationArtistIDs();
+	public ArrayList<Integer> getCompilationArtistIDs(INotifiableManager manager);
 
 	/**
 	 * Returns album thumbnail as base64-encoded string
 	 * @param album
 	 * @return Base64-encoded content of thumb
 	 */
-	public String getCover(ICoverArt art);
+	public String getCover(INotifiableManager manager, ICoverArt art);
 	
 }

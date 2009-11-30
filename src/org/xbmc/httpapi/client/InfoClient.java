@@ -1,11 +1,10 @@
 package org.xbmc.httpapi.client;
 
-import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-import org.xbmc.android.util.ErrorHandler;
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.info.GuiSettings;
 import org.xbmc.api.object.FileLocation;
@@ -40,8 +39,8 @@ public class InfoClient implements IInfoClient {
 	 * @param limit   Limit (0 for none)
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(String path, DirectoryMask mask, int offset, int limit) {
-		final ArrayList<String> result = mConnection.getArray("GetDirectory", 
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit) {
+		final ArrayList<String> result = mConnection.getArray(manager, "GetDirectory", 
 			path + ";" +
 			(mask != null ? mask.toString() : " ") + ";" + 
 			(offset > 0 ? offset : " ") + ";" +
@@ -59,8 +58,8 @@ public class InfoClient implements IInfoClient {
 	 * @param path    Path to the directory
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(String path) {
-		return getDirectory(path, null, 0, 0);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path) {
+		return getDirectory(manager, path, null, 0, 0);
 	}
 
 	
@@ -69,8 +68,8 @@ public class InfoClient implements IInfoClient {
 	 * @param mediaType Media type
 	 * @return
 	 */
-	public ArrayList<FileLocation> getShares(int mediaType) {
-		final ArrayList<String> result = mConnection.getArray("GetShares", MediaType.getName(mediaType));
+	public ArrayList<FileLocation> getShares(INotifiableManager manager, int mediaType) {
+		final ArrayList<String> result = mConnection.getArray(manager, "GetShares", MediaType.getName(mediaType));
 		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
 		for (String share : result) {
 			shares.add(new FileLocation(share));
@@ -78,11 +77,11 @@ public class InfoClient implements IInfoClient {
 		return shares;
 	}
 	
-	public String getCurrentlyPlayingThumbURI() throws MalformedURLException, URISyntaxException {
-		ArrayList<String> array = mConnection.getArray("GetCurrentlyPlaying", "");
+	public String getCurrentlyPlayingThumbURI(INotifiableManager manager) throws MalformedURLException, URISyntaxException {
+		ArrayList<String> array = mConnection.getArray(manager, "GetCurrentlyPlaying", "");
 		for (String s : array) {
 			if (s.startsWith("Thumb")) {
-				return mConnection.generateQuery("FileDownload", s.substring(6));
+				return mConnection.getUrl("FileDownload", s.substring(6));
 			}
 		}
 		return null;
@@ -93,12 +92,8 @@ public class InfoClient implements IInfoClient {
 	 * @param field Field to return
 	 * @return
 	 */
-	public String getSystemInfo(int field) {
-		if (mConnection.isConnected())
-			return mConnection.getString("GetSystemInfo", String.valueOf(field));
-		
-		new ErrorHandler().handle(new ConnectException() );
-		return "";
+	public String getSystemInfo(INotifiableManager manager, int field) {
+		return mConnection.getString(manager, "GetSystemInfo", String.valueOf(field));
 	}
 	
 	/**
@@ -106,8 +101,8 @@ public class InfoClient implements IInfoClient {
 	 * @param field
 	 * @return
 	 */
-	public boolean getGuiSettingBool(int field) {
-		return mConnection.getBoolean("GetGuiSetting", GuiSettings.MusicLibrary.getType(field) + ";" + GuiSettings.MusicLibrary.getName(field));
+	public boolean getGuiSettingBool(INotifiableManager manager, int field) {
+		return mConnection.getBoolean(manager, "GetGuiSetting", GuiSettings.MusicLibrary.getType(field) + ";" + GuiSettings.MusicLibrary.getName(field));
 	}
 
 	/**
@@ -115,8 +110,8 @@ public class InfoClient implements IInfoClient {
 	 * @param field
 	 * @return
 	 */
-	public int getGuiSettingInt(int field) {
-		return mConnection.getInt("GetGuiSetting", GuiSettings.MusicLibrary.getType(field) + ";" + GuiSettings.MusicLibrary.getName(field));
+	public int getGuiSettingInt(INotifiableManager manager, int field) {
+		return mConnection.getInt(manager, "GetGuiSetting", GuiSettings.MusicLibrary.getType(field) + ";" + GuiSettings.MusicLibrary.getName(field));
 	}
 	
 	/**
@@ -124,8 +119,8 @@ public class InfoClient implements IInfoClient {
 	 * @param field Field to return
 	 * @return
 	 */
-	public String getMusicInfo(int field) {
-		return mConnection.getString("GetMusicLabel", String.valueOf(field));
+	public String getMusicInfo(INotifiableManager manager, int field) {
+		return mConnection.getString(manager, "GetMusicLabel", String.valueOf(field));
 	}
 
 	/**
@@ -133,7 +128,7 @@ public class InfoClient implements IInfoClient {
 	 * @param field Field to return
 	 * @return
 	 */
-	public String getVideoInfo(int field) {
-		return mConnection.getString("GetVideoLabel", String.valueOf(field));
+	public String getVideoInfo(INotifiableManager manager, int field) {
+		return mConnection.getString(manager, "GetVideoLabel", String.valueOf(field));
 	}
 }

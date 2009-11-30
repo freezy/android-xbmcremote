@@ -43,7 +43,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void playFile(final DataResponse<Boolean> response, final String filename) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = control(response).playFile(filename);
+				response.value = control(response).playFile(ControlManager.this, filename);
 				done(response);
 			}
 		});
@@ -58,7 +58,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void playUrl(final DataResponse<Boolean> response, final String url) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = control(response).playUrl(url);
+				response.value = control(response).playUrl(ControlManager.this, url);
 				done(response);
 			}
 		});
@@ -72,7 +72,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = control(response).addToPlaylist(fileOrFolder);
+				response.value = control(response).addToPlaylist(ControlManager.this, fileOrFolder);
 				done(response);
 			}
 		});
@@ -95,7 +95,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void seek(final DataResponse<Boolean> response, final SeekType type, final int progress) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = control(response).seek(type, progress);
+				response.value = control(response).seek(ControlManager.this, type, progress);
 				done(response);
 			}
 		});
@@ -111,7 +111,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				response.value = control(response).updateLibrary(mediaType);
+				response.value = control(response).updateLibrary(ControlManager.this, mediaType);
 				done(response);
 			}
 		});
@@ -131,7 +131,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void getCurrentlyPlaying(final DataResponse<ICurrentlyPlaying> response) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				response.value = control(response).getCurrentlyPlaying();
+				response.value = control(response).getCurrentlyPlaying(ControlManager.this);
 				done(response);
 			}
 		});
