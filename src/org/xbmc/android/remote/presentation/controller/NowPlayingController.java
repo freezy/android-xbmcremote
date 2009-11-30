@@ -35,7 +35,6 @@ public class NowPlayingController extends AbstractController implements INotifia
 	
 	public NowPlayingController(Activity activity) {
 		super.onCreate(activity);
-		mActivity = activity;
 		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
 	}
 	

@@ -112,11 +112,11 @@ public class SettingsActivity extends PreferenceActivity {
 		public static final String SETTING_ES_PORT = "setting_eventserver_port";
 		
 		private IControlManager mControlManager;
-		private PreferenceActivity mActivity;		
+		private PreferenceActivity mPreferenceActivity;		
 		private final Hashtable<String, String> mSummaries = new Hashtable<String, String>();
 		
 		SettingsController(PreferenceActivity activity) {
-			mActivity = activity;
+			super.onCreate(activity);
 			mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
 			
 			activity.addPreferencesFromResource(R.xml.preferences);
@@ -138,7 +138,7 @@ public class SettingsActivity extends PreferenceActivity {
 		 * Updates summaries of all known keys with the updated value.
 		 */
 		public void updateSummaries() {
-			PreferenceScreen ps = mActivity.getPreferenceScreen();
+			PreferenceScreen ps = mPreferenceActivity.getPreferenceScreen();
 			for (String key : ps.getSharedPreferences().getAll().keySet()) {
 				Preference pref = ps.findPreference(key);
 				if (pref != null && pref.getSummary() != null) {
@@ -151,7 +151,7 @@ public class SettingsActivity extends PreferenceActivity {
 		}
 		
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-			Preference pref = mActivity.getPreferenceScreen().findPreference(key);
+			Preference pref = mPreferenceActivity.getPreferenceScreen().findPreference(key);
 			String origSummary = mSummaries.get(key);
 			if (origSummary != null && origSummary.contains(SUMMARY_VALUE_PLACEHOLDER)) {
 				pref.setSummary(origSummary.replaceAll(SUMMARY_VALUE_PLACEHOLDER, sharedPreferences.getString(key, "")));
