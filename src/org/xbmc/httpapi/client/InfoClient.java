@@ -94,7 +94,7 @@ public class InfoClient implements IInfoClient {
 	 * @return
 	 */
 	public String getSystemInfo(int field) {
-		if(mConnection.isConnected())
+		if (mConnection.isConnected())
 			return mConnection.getString("GetSystemInfo", String.valueOf(field));
 		
 		new ErrorHandler().handle(new ConnectException() );

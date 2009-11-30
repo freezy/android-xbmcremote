@@ -28,6 +28,7 @@ import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.httpapi.HttpClient;
+import org.xbmc.httpapi.NoSettingsException;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -92,14 +93,18 @@ public abstract class ClientFactory {
 			String user = prefs.getString(SettingsController.SETTING_HTTP_USER, "");
 			String pass = prefs.getString(SettingsController.SETTING_HTTP_PASS, "");
 			
-			if (port > 0 && user != null && user.length() > 0) {
-				sHttpClient = new HttpClient(host, port, user, pass, timeout, manager);
-			} else if (user != null && user.length() > 0) {
-				sHttpClient = new HttpClient(host, user, pass, timeout, manager);
-			} else if (port > 0) {
-				sHttpClient = new HttpClient(host, port, timeout, manager);
+			if (!host.equals("")){
+				if (port > 0 && user != null && user.length() > 0) {
+					sHttpClient = new HttpClient(host, port, user, pass, timeout, manager);
+				} else if (user != null && user.length() > 0) {
+					sHttpClient = new HttpClient(host, user, pass, timeout, manager);
+				} else if (port > 0) {
+					sHttpClient = new HttpClient(host, port, timeout, manager);
+				} else {
+					sHttpClient = new HttpClient(host, timeout, manager);
+				}
 			} else {
-				sHttpClient = new HttpClient(host, timeout, manager);
+				manager.onError(new NoSettingsException());
 			}
 		}
 		return sHttpClient;

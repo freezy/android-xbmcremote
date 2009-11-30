@@ -38,6 +38,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Super class of the wrappers, keeps common code.
@@ -230,14 +231,23 @@ public abstract class AbstractManager implements INotifiableManager {
 			}
 		}, cover, thumbSize, mController, mContext, this);
 	}
-	
 
 	public void onError(Exception e) {
-		mController.onError(e.getMessage());
+		if (mController != null) {
+			mController.onError(e.getMessage());
+		} else {
+			Toast toast = Toast.makeText(mContext.getApplicationContext(), "ERROR: " + e.getMessage(), Toast.LENGTH_LONG);
+			toast.show();
+		}
 	}
 
 	public void onMessage(String message) {
-		mController.onMessage(message);
+		if (mController != null) {
+			mController.onMessage(message);
+		} else {
+			Toast toast = Toast.makeText(mContext.getApplicationContext(), "MESSAGE: " + message, Toast.LENGTH_LONG);
+			toast.show();
+		}
 	}
 
 	public void onMessage(int code, String message) {
