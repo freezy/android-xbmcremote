@@ -30,7 +30,6 @@ import java.net.URLConnection;
 import java.util.HashSet;
 
 import org.xbmc.android.remote.data.ClientFactory;
-import org.xbmc.android.remote.presentation.activity.ConfigurationManager;
 import org.xbmc.android.util.Base64;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
@@ -154,10 +153,6 @@ public class NowPlayingPollerThread extends Thread {
 		IControlClient control = mControl; // use local reference for faster access
 		HashSet<Handler> subscribers = mSubscribers;
 		while (!isInterrupted() ) {
-			ConfigurationManager confmgr = ConfigurationManager.getInstance();
-			if (confmgr != null) {
-				Log.i("POLLER", "Is active context shown? " + confmgr.getActiveActivity().hasWindowFocus());
-			}
 			if(subscribers.size() > 0){
 /*				if (!control.isConnected()) {
 					sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
