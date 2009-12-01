@@ -21,8 +21,6 @@
 
 package org.xbmc.android.remote.presentation.activity;
 
-import org.xbmc.android.util.ErrorHandler;
-
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
@@ -117,7 +115,6 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 		}
 		activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		mActivity = activity;
-		ErrorHandler.setActivity(activity);
 	}
 	
 	public void onActivityPause() {

@@ -21,7 +21,21 @@
 
 package org.xbmc.android.remote.presentation.controller;
 
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+
+import org.apache.http.HttpException;
+import org.xbmc.android.remote.presentation.activity.SettingsActivity;
+import org.xbmc.httpapi.NoNetworkException;
+import org.xbmc.httpapi.NoSettingsException;
+import org.xbmc.httpapi.WrongDataFormatException;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.widget.Toast;
 
 /**
@@ -37,9 +51,91 @@ public abstract class AbstractController {
 		mActivity = activity;
 	}
 	
-	public void onError(String message) {
-		Toast toast = Toast.makeText(mActivity, "MESSAGE FROM DOWN THERE: " + message, Toast.LENGTH_LONG);
-		toast.show();
+	public void onError(Exception exception) {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+		try {
+			throw exception;
+		} catch (NoSettingsException e) {
+			builder.setTitle("No Settings detected");
+			builder.setMessage(e.getMessage());
+			builder.setNeutralButton("Settings", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
+				}
+			});
+		} catch (NoNetworkException e) {
+			builder.setTitle("No Network");
+			builder.setMessage(e.getMessage());
+			builder.setCancelable(true);
+			builder.setNeutralButton("Settings", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					mActivity.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+				}
+			});
+		} catch (WrongDataFormatException e) {
+			builder.setTitle("Internal Error");
+			builder.setMessage("Wrong data from HTTP API; expected '" + e.getExpected() + "', got '" + e.getReceived() + "'.");
+		} catch (SocketTimeoutException e) {
+			builder.setTitle("Socket Timeout");
+			builder.setMessage("Make sure XBMC webserver is enabled and XBMC is running.");
+			builder.setNeutralButton("Settings", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
+				}
+			});
+		} catch (ConnectException e) {
+			builder.setTitle("Connection Refused");
+			builder.setMessage("Make sure XBMC webserver is enabled and XBMC is running.");
+			builder.setNeutralButton("Settings", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
+				}
+			});
+		} catch (IOException e) {
+			if (e.getMessage().startsWith("Network unreachable")) {
+				builder.setTitle("No network");
+				builder.setMessage("XBMC Remote needs local network access. Please make sure that your wireless network is activated. You can click on the Settings button below to directly access your network settings.");
+				builder.setNeutralButton("Settings", new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						mActivity.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+					}
+				});
+			} else {
+				builder.setTitle("Unknown I/O Exception");
+				builder.setMessage(e.getMessage().toString());
+			}
+		} catch (HttpException e) {
+			if (e.getMessage().startsWith("401")) {
+				builder.setTitle("HTTP 401: Unauthorized");
+				builder.setMessage("The supplied username and/or password is incorrect. Please check your settings.");
+				builder.setNeutralButton("Settings", new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
+					}
+				});
+			}
+		} catch (Exception e) {
+			builder.setTitle("Exception");
+			builder.setMessage(e.getStackTrace().toString());
+		} finally {
+			
+			exception.printStackTrace();
+			
+			builder.setCancelable(true);
+			builder.setNegativeButton("Close", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+//					ConnectionManager.resetClient();
+				}
+			});
+			
+			final AlertDialog alert = builder.create();
+			try {
+				alert.show();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void onMessage(String message) {

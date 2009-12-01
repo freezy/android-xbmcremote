@@ -22,7 +22,7 @@
 package org.xbmc.api.presentation;
 
 public interface INotifiableController {
-	public void onError(String message);
+	public void onError(Exception e);
 	public void onMessage(String message);
 	public void runOnUI(Runnable action);
 }

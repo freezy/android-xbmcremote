@@ -234,7 +234,7 @@ public abstract class AbstractManager implements INotifiableManager {
 
 	public void onError(Exception e) {
 		if (mController != null) {
-			mController.onError(e.getMessage());
+			mController.onError(e);
 		} else {
 			Toast toast = Toast.makeText(mContext.getApplicationContext(), "ERROR: " + e.getMessage(), Toast.LENGTH_LONG);
 			toast.show();

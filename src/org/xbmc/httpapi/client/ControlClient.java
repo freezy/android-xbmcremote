@@ -294,13 +294,16 @@ public class ControlClient implements IControlClient {
 		} else {
 			//final int type = map.get("Type").contains("Audio") ? MediaType.MUSIC : (map.get("Type").contains("Video") ? MediaType.VIDEO : MediaType.PICTURES );
 			final int type;
-			if(map.get("Type").contains("Audio"))
-				type = MediaType.MUSIC;
-			else if(map.get("Type").contains("Video"))
-				type = MediaType.VIDEO;
-			else
-				type = MediaType.PICTURES;
-			
+			if (map.containsKey("Type")) {
+				if(map.containsKey("Type") && map.get("Type").contains("Audio"))
+					type = MediaType.MUSIC;
+				else if(map.get("Type").contains("Video"))
+					type = MediaType.VIDEO;
+				else
+					type = MediaType.PICTURES;
+			} else {
+				return nothingPlaying;
+			}
 			switch (type) {
 				case MediaType.MUSIC:
 					return MusicClient.getCurrentlyPlaying(map);

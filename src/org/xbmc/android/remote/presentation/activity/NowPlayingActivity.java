@@ -22,7 +22,6 @@
 package org.xbmc.android.remote.presentation.activity;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -30,7 +29,6 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.remote.presentation.controller.NowPlayingController;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.android.util.ErrorHandler;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.object.Song;
 import org.xbmc.eventclient.ButtonCodes;
@@ -177,7 +175,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 			
 			if(!mErrorHandled) {
 				mErrorHandled = true;
-				new ErrorHandler().handle(new ConnectException());
+//				new ErrorHandler().handle(new ConnectException());
 			}
 			return true;
 			
