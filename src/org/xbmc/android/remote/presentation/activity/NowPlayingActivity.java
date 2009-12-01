@@ -22,8 +22,6 @@
 package org.xbmc.android.remote.presentation.activity;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
@@ -35,12 +33,9 @@ import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.os.Handler.Callback;
 import android.util.Log;
@@ -56,9 +51,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class NowPlayingActivity extends Activity implements Callback {
 	
-	static final String ACTION = "android.intent.action.VIEW";
-	
-//	private ControlClient mControl;
 	private EventClient mClient;
 	private Handler mNowPlayingHandler;
 	private TextView mAlbumView;
@@ -70,8 +62,6 @@ public class NowPlayingActivity extends Activity implements Callback {
 	private SeekBar mSeekBar;
 	
 	private ConfigurationManager mConfigurationManager;
-	private boolean mErrorHandled = false;
-	
 	private NowPlayingController mNowPlayingController;
 	
 	public void onCreate(Bundle savedInstanceState) {
@@ -171,12 +161,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 			return true;
 			
 		case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
-			Log.i("NOWPLAYNING","Received connection error from poller!");
-			
-			if(!mErrorHandled) {
-				mErrorHandled = true;
-//				new ErrorHandler().handle(new ConnectException());
-			}
+			Log.w("NOWPLAYNING","Received connection error from poller!");
 			return true;
 			
 		case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
@@ -216,63 +201,6 @@ public class NowPlayingActivity extends Activity implements Callback {
 	}
 
 	/**
-	 * Checks the intent that created/resumed this activity. Used to see if we are being handed
-	 * an URL that should be passed to XBMC.
-	 */
-	private void checkIntent(){
-		Intent intent = getIntent();
-		final String action = intent.getAction();
-		if(action != null) {
-			Log.i("CHECKINTENT", action);
-			if (action.equals(ACTION)){
-				final String path = intent.getData().toString();
-				if(path == null || path.equals(""))
-					return;
-				try{
-					new URL(path);
-				} catch(MalformedURLException e) {
-					return;
-				}
-				
-				final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setTitle("Play URL on XBMC?");
-				builder.setMessage("Do you want to play\n" + path + "\non XBMC?");
-				builder.setCancelable(true);
-				builder.setIcon(R.drawable.icon);
-				builder.setNeutralButton("Yes", new android.content.DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						 new Thread(){
-							 public void run(){
-								 Looper.prepare();
-								 mNowPlayingController.playUrl(path);
-								 Looper.loop();
-							 }
-						 }.start();
-						 //ConnectionManager.getNowPlayingPoller(NowPlayingActivity.this).subscribe(mNowPlayingHandler);
-					}
-				});
-				builder.setCancelable(true);
-				builder.setNegativeButton("No", new android.content.DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.cancel();
-						finish();
-					}
-				});
-				
-				final AlertDialog alert = builder.create();
-				try {
-					alert.show();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				//cleanup so we won't trigger again.
-				intent.setAction(null);
-				intent.setData(null);
-			}
-		}
-	}
-	
-	/**
 	 * Handles the push- release button code. Switches image of the pressed
 	 * button, vibrates and executes command.
 	 */
@@ -293,8 +221,7 @@ public class NowPlayingActivity extends Activity implements Callback {
 	protected void onResume() {
 		super.onResume();
 		mConfigurationManager.onActivityResume(this);
-		checkIntent();
-		ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);;
+		ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);
 	}
 
 	@Override

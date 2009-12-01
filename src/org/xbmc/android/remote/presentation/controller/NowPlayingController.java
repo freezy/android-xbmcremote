@@ -38,10 +38,6 @@ public class NowPlayingController extends AbstractController implements INotifia
 		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
 	}
 	
-	public void playUrl(String url) {
-		mControlManager.playUrl(new DataResponse<Boolean>(), url);
-	}
-	
 	public void seek(int progress) {
 		mControlManager.seek(new DataResponse<Boolean>(), SeekType.absolute, progress);
 	}
