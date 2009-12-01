@@ -81,6 +81,7 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 	
 	private Notification buildNotification(String title, String text, int icon) {
 		final Intent actintent = new Intent(mContext, NowPlayingActivity.class);
+		actintent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
 		final PendingIntent intent = PendingIntent.getActivity(mContext, 0, actintent, 0);
 		final Notification notification = new Notification(icon, title, System.currentTimeMillis());
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
