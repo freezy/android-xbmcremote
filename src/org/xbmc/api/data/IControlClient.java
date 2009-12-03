@@ -198,6 +198,28 @@ public interface IControlClient {
 	public int getPlayState(INotifiableManager manager);
 	
 	/**
+	 * Returns the current playlist identifier
+	 * @param response Response object
+	 */
+	public int getPlaylistId(INotifiableManager manager);
+	
+	/**
+	 * Sets the current playlist identifier
+	 * @param response Response object
+	 * @param id Playlist identifier
+	 * @return True on success, false otherwise.
+	 */
+	public boolean setPlaylistId(INotifiableManager manager, int id);
+	
+	/**
+	 * Sets the current playlist position
+	 * @param response Response object
+	 * @param position New playlist position
+	 * @return True on success, false otherwise.
+	 */
+	public boolean setPlaylistPos(INotifiableManager manager, int position);
+	
+	/**
 	 * Returns state and type of the media currently playing.
 	 * @return
 	 */

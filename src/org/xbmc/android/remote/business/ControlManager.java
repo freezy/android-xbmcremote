@@ -57,7 +57,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 */
 	public void playUrl(final DataResponse<Boolean> response, final String url) {
 		mHandler.post(new Runnable() {
-			public void run() { 
+			public void run() {
 				response.value = control(response).playUrl(ControlManager.this, url);
 				done(response);
 			}
@@ -146,6 +146,48 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 		mHandler.post(new Runnable() {
 			public void run() {
 				response.value = control(response).getCurrentlyPlaying(ControlManager.this);
+				done(response);
+			}
+		});
+	}
+	
+	
+	/**
+	 * Returns the current playlist identifier
+	 * @param response Response object
+	 */
+	public void getPlaylistId(final DataResponse<Integer> response) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				response.value = control(response).getPlaylistId(ControlManager.this);
+				done(response);
+			}
+		});
+	}
+	
+	/**
+	 * Sets the current playlist identifier
+	 * @param response Response object
+	 * @param id Playlist identifier
+	 */
+	public void setPlaylistId(final DataResponse<Boolean> response, final int id) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				response.value = control(response).setPlaylistId(ControlManager.this, id);
+				done(response);
+			}
+		});
+	}
+	
+	/**
+	 * Sets the current playlist position
+	 * @param response Response object
+	 * @param position New playlist position
+	 */
+	public void setPlaylistPos(final DataResponse<Boolean> response, final int position) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				response.value = control(response).setPlaylistPos(ControlManager.this, position);
 				done(response);
 			}
 		});

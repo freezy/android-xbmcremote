@@ -85,7 +85,6 @@ public interface IControlManager extends IManager {
 	 */
 	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType);
 	
-	
 	/**
 	 * Returns what's currently playing.
 	 * @param response Response object
@@ -96,5 +95,25 @@ public interface IControlManager extends IManager {
 	 * Resets the client so it has to re-read the settings and recreate the instance.
 	 */
 	public void resetClient();
+	
+	/**
+	 * Returns the current playlist identifier
+	 * @param response Response object
+	 */
+	public void getPlaylistId(final DataResponse<Integer> response);
+	
+	/**
+	 * Sets the current playlist identifier
+	 * @param response Response object
+	 * @param id Playlist identifier
+	 */
+	public void setPlaylistId(final DataResponse<Boolean> response, final int id);
+	
+	/**
+	 * Sets the current playlist position
+	 * @param response Response object
+	 * @param position New playlist position
+	 */
+	public void setPlaylistPos(final DataResponse<Boolean> response, final int position);
 	
 }

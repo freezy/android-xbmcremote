@@ -56,6 +56,8 @@ public class NowPlayingController extends AbstractController implements INotifia
 	private Handler mNowPlayingHandler;
 	private EventClient mClient;
 	private int mPlayStatus = PlayStatus.UNKNOWN;
+	private int mPlayList = 0;
+	private int mPosition = -1;
 	
 	public NowPlayingController(NowPlayingActivity activity) {
 		super.onCreate(activity);
@@ -87,7 +89,15 @@ public class NowPlayingController extends AbstractController implements INotifia
 				return true;
 			
 			case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
+				mPlayStatus = currentlyPlaying.getPlayStatus();
+				mPosition = currentlyPlaying.getPlaylistPosition();
+				mControlManager.getPlaylistId(new DataResponse<Integer>() {
+					public void run() {
+						mPlayList = value;
+					}
+				});
 				mNowPlayingActivity.updateInfo(currentlyPlaying.getArtist(), currentlyPlaying.getAlbum(), currentlyPlaying.getTitle());
+				
 		  	  	return true;
 		  	  	
 			case NowPlayingPollerThread.MESSAGE_COVER_CHANGED:
@@ -137,10 +147,19 @@ public class NowPlayingController extends AbstractController implements INotifia
 		playpause.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				try {
-					if (mPlayStatus == PlayStatus.PLAYING) {
-						mClient.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short)0, (byte)0);
-					} else {
-						mClient.sendButton("R1", ButtonCodes.REMOTE_PLAY, false, true, true, (short)0, (byte)0);
+					switch (mPlayStatus) {
+						case PlayStatus.PLAYING:
+							mClient.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short)0, (byte)0);
+							break;
+						case PlayStatus.PAUSED:
+							mClient.sendButton("R1", ButtonCodes.REMOTE_PLAY, false, true, true, (short)0, (byte)0);
+							break;
+						case PlayStatus.STOPPED:
+							final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
+							mControlManager.setPlaylistId(doNothing, mPlayList);
+							mControlManager.setPlaylistPos(doNothing, mPosition > 0 ? mPosition : 1);
+//							mControlManager.playNext(doNothing);
+							break;
 					}
 				} catch (IOException e) { }
 			}

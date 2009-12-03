@@ -9,12 +9,15 @@ import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.http.HttpException;
 import org.xbmc.api.business.INotifiableManager;
+
+import android.util.Log;
 
 
 /**
@@ -24,6 +27,7 @@ import org.xbmc.api.business.INotifiableManager;
  */
 public class Connection {
 
+	private static final String TAG = "Connection";
 	private static final String XBMC_HTTP_BOOTSTRAP =  "/xbmcCmds/xbmcHttp";
 	private static final int SOCKET_CONNECTION_TIMEOUT = 5000;
 	
@@ -154,6 +158,9 @@ public class Connection {
 			uc = url.openConnection();
 			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
 			uc.setReadTimeout(mSocketReadTimeout);
+			
+			final String debugUrl = URLDecoder.decode(url.toString());
+			Log.i(TAG, debugUrl);
 			
 			final BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()), 8192);
 			final StringBuilder response = new StringBuilder();
