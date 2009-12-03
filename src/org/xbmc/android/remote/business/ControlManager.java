@@ -65,6 +65,20 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	}
 	
 	/**
+	 * Plays the next item in the playlist.
+	 * @param response Response object
+	 * @return true on success, false otherwise.
+	 */
+	public void playNext(final DataResponse<Boolean> response) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				response.value = control(response).playNext(ControlManager.this);
+				done(response);
+			}
+		});
+	}
+	
+	/**
 	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.
 	 * @param response Response object
 	 * @param fileOrFolder File to play

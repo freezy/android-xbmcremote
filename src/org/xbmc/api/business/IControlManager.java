@@ -48,6 +48,13 @@ public interface IControlManager extends IManager {
 	public void playUrl(final DataResponse<Boolean> response, String url);
 	
 	/**
+	 * Plays the next item in the playlist.
+	 * @param response Response object
+	 * @return true on success, false otherwise.
+	 */
+	public void playNext(final DataResponse<Boolean> response);
+	
+	/**
 	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.
 	 * @param response Response object
 	 * @param fileOrFolder File to play

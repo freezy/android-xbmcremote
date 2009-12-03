@@ -31,6 +31,7 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.SeekType;
 import org.xbmc.eventclient.ButtonCodes;
@@ -54,6 +55,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 	private NowPlayingActivity mNowPlayingActivity;
 	private Handler mNowPlayingHandler;
 	private EventClient mClient;
+	private int mPlayStatus = PlayStatus.UNKNOWN;
 	
 	public NowPlayingController(NowPlayingActivity activity) {
 		super.onCreate(activity);
@@ -62,7 +64,6 @@ public class NowPlayingController extends AbstractController implements INotifia
 		mNowPlayingHandler = new Handler(this);
 		mClient = ConnectionManager.getEventClient(activity);
 	}
-	
 	
 	/**
 	 * This is called from the thread with a message containing updated
@@ -73,9 +74,10 @@ public class NowPlayingController extends AbstractController implements INotifia
 		
 		final Bundle data = msg.getData();
 		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying)data.getSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
-		
+
 		switch (msg.what) {
 			case NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED: 
+				mPlayStatus = currentlyPlaying.getPlayStatus();
 				mNowPlayingActivity.setProgressPosition(Math.round(currentlyPlaying.getPercentage()));
 				if (currentlyPlaying.isPlaying()) {
 					mNowPlayingActivity.updateProgress(currentlyPlaying.getDuration(), currentlyPlaying.getTime());
@@ -94,10 +96,12 @@ public class NowPlayingController extends AbstractController implements INotifia
 				return true;
 				
 			case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
+				mPlayStatus = PlayStatus.UNKNOWN;
 				Log.w("NOWPLAYNING","Received connection error from poller!");
 				return true;
 				
 			case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
+				mPlayStatus = PlayStatus.UNKNOWN;
 				new Thread(){
 					public void run(){
 						try{
@@ -108,7 +112,6 @@ public class NowPlayingController extends AbstractController implements INotifia
 						ConnectionManager.getNowPlayingPoller(mActivity.getApplicationContext()).subscribe(mNowPlayingHandler);					
 					}
 				}.start();
-	
 				return true;
 			default:
 				return false;
@@ -130,8 +133,18 @@ public class NowPlayingController extends AbstractController implements INotifia
 		// setup buttons
 		prev.setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_MINUS));
 		stop.setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_STOP));
-		playpause.setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_PAUSE));
 		next.setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_PLUS));
+		playpause.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				try {
+					if (mPlayStatus == PlayStatus.PLAYING) {
+						mClient.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short)0, (byte)0);
+					} else {
+						mClient.sendButton("R1", ButtonCodes.REMOTE_PLAY, false, true, true, (short)0, (byte)0);
+					}
+				} catch (IOException e) { }
+			}
+		});
 		
 		// playlist button
 		playlist.setOnClickListener(new OnClickListener() {

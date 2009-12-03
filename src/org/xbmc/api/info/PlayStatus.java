@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2005-2009 Team XBMC
+$ *      Copyright (C) 2005-2009 Team XBMC
  *      http://xbmc.org
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -32,6 +32,7 @@ package org.xbmc.api.info;
  * @author Team XBMC
  */
 public abstract class PlayStatus {
+	public static final int UNKNOWN = -1;
 	public static final int STOPPED = 0;
 	public static final int PAUSED = 1;
 	public static final int PLAYING = 2;
