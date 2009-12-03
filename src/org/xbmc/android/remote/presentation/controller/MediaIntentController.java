@@ -27,7 +27,6 @@ import java.net.URL;
 import org.xbmc.android.remote.R.drawable;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.MediaIntentActivity;
-import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IInfoManager;
@@ -44,8 +43,10 @@ import android.os.Looper;
 import android.util.Log;
 
 /**
+ * Class that is called when XBMC locally tries to open any media content. The
+ * user then has an additional option "Play in XBMC".
+ * 
  * @author Team XBMC
- *
  */
 public class MediaIntentController extends AbstractController implements IController, INotifiableController {
 	
@@ -171,6 +172,4 @@ public class MediaIntentController extends AbstractController implements IContro
 			}
 		}
 	}
-	
-	
 }

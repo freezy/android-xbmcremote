@@ -109,6 +109,8 @@ public class HttpApi {
 	 */
 	public HttpApi(String host, int port, String username, String password, int timeout) {		
 		Connection connection = Connection.getInstance(host, port);
+		connection.setAuth(username, password);
+		connection.setTimeout(timeout);
 		info = new InfoClient(connection);
 		music = new MusicClient(connection);
 		video = new VideoClient(connection);

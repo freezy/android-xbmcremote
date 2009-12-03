@@ -3,13 +3,17 @@ package org.xbmc.httpapi;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Authenticator;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.http.HttpException;
 import org.xbmc.api.business.INotifiableManager;
 
 
@@ -21,11 +25,34 @@ import org.xbmc.api.business.INotifiableManager;
 public class Connection {
 
 	private static final String XBMC_HTTP_BOOTSTRAP =  "/xbmcCmds/xbmcHttp";
+	private static final int SOCKET_CONNECTION_TIMEOUT = 5000;
 	
+	/**
+	 * Singleton class instance
+	 */
 	private static Connection sConnection;
 	
+	/**
+	 * Complete URL without any attached command parameters, for instance:
+	 * <code>http://192.168.0.10:8080/xbmcCmds/xbmcHttp</code>
+	 */
 	private String mUrlSuffix;
 	
+	/**
+	 * Socket read timeout (connection timeout is default)
+	 */
+	private int mSocketReadTimeout;
+	
+	/**
+	 * Performs HTTP Authentication
+	 */
+	private HttpAuthenticator mAuthenticator = null;
+	
+	/**
+	 * Use getInstance() for public class instantiation
+	 * @param host XBMC host
+	 * @param port HTTP API port
+	 */
 	private Connection(String host, int port) {
 		setHost(host, port);
 	}
@@ -34,8 +61,8 @@ public class Connection {
 	 * Returns the singleton instance of this connection. Note that host and 
 	 * port settings are only looked at the first time. Use {@link setHost()}
 	 * if you want to update these parameters.
-	 * @param host Host to connect to
-	 * @param port Port to connect to
+	 * @param host XBMC host
+	 * @param port HTTP API port
 	 * @return Connection instance
 	 */
 	public static Connection getInstance(String host, int port) {
@@ -54,7 +81,7 @@ public class Connection {
 	 * @param port Port the HTTP API is listening to
 	 */
 	public void setHost(String host, int port) {
-		if (host == null || port == 0) {
+		if (host == null || port <= 0) {
 			mUrlSuffix = null;
 		} else {
 			StringBuilder sb = new StringBuilder();
@@ -65,6 +92,29 @@ public class Connection {
 			sb.append(XBMC_HTTP_BOOTSTRAP);
 			mUrlSuffix = sb.toString();
 		}
+	}
+	
+	/**
+	 * Sets authentication info
+	 * @param user HTTP API username
+	 * @param pass HTTP API password
+	 */
+	public void setAuth(String user, String pass) {
+		if (pass != null && pass.length() > 0) {
+			mAuthenticator = new HttpAuthenticator(user, pass);
+			Authenticator.setDefault(mAuthenticator);
+		} else {
+			mAuthenticator = null;
+			Authenticator.setDefault(null);
+		}
+	}
+	
+	/**
+	 * Sets socket read timeout (connection timeout has constant value)
+	 * @param timeout Read timeout in milliseconds.
+	 */
+	public void setTimeout(int timeout) {
+		mSocketReadTimeout = timeout;
 	}
 	
 	/**
@@ -92,14 +142,18 @@ public class Connection {
 	 * @return HTTP response string.
 	 */
 	public String query(String command, String parameters, INotifiableManager manager) {
+		URLConnection uc = null;
 		try {
 			if (mUrlSuffix == null) {
 				throw new NoSettingsException();
 			}
+			if (mAuthenticator != null) {
+				mAuthenticator.resetCounter();
+			}
 			URL url = new URL(getUrl(command, parameters));
-			URLConnection uc = url.openConnection();
-			uc.setConnectTimeout(2000);
-			uc.setReadTimeout(5000);
+			uc = url.openConnection();
+			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
+			uc.setReadTimeout(mSocketReadTimeout);
 			
 			final BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()), 8192);
 			final StringBuilder response = new StringBuilder();
@@ -114,7 +168,15 @@ public class Connection {
 		} catch (MalformedURLException e) {
 			manager.onError(e);
 		} catch (IOException e) {
-			manager.onError(e);
+			int responseCode = -1;
+			try {
+				responseCode = ((HttpURLConnection)uc).getResponseCode();
+			} catch (IOException e1) { } // do nothing, getResponse code failed so treat as default i/o exception.
+			if (uc != null && responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+				manager.onError(new HttpException(Integer.toString(HttpURLConnection.HTTP_UNAUTHORIZED)));
+			} else {
+				manager.onError(e);
+			}
 		} catch (NoSettingsException e) {
 			manager.onError(e);
 		}
@@ -310,6 +372,42 @@ public class Connection {
 			return -1.0;
 		}
 	}
+	
+	/**
+	 * HTTP Authenticator.
+	 * 
+	 * @author Team XBMC
+	 */
+    public class HttpAuthenticator extends Authenticator {
+    	public static final int MAX_RETRY = 5;
+    	
+    	private final String mUser;
+    	private final char[] mPass;
+    	private int mRetryCount = 0;
+    	
+        public HttpAuthenticator(String user, String pass) {
+    		mUser = user;
+    		mPass = pass != null ? pass.toCharArray() : new char[0];
+		}
+
+        /**
+         * This method is called when a password-protected URL is accessed
+         */
+        protected PasswordAuthentication getPasswordAuthentication() {
+        	if (mRetryCount < MAX_RETRY) {
+        		mRetryCount++;
+        		return new PasswordAuthentication(mUser, mPass);
+        	}
+        	return null;
+        }
+        
+        /**
+         * This method has to be called after each successful connection!!!
+         */
+        public void resetCounter() {
+        	mRetryCount = 0;
+        }
+    }
 	
 	public static final String LINE_SEP = "<li>";
 	public static final String VALUE_SEP = ";";
