@@ -21,32 +21,154 @@
 
 package org.xbmc.android.remote.presentation.controller;
 
+import java.io.IOException;
+
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.business.NowPlayingPollerThread;
+import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
+import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
+import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
+import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.SeekType;
+import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.eventclient.EventClient;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Handler.Callback;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class NowPlayingController extends AbstractController implements INotifiableController, IController {
+public class NowPlayingController extends AbstractController implements INotifiableController, IController, Callback  {
 	
 	private IControlManager mControlManager;
+	private NowPlayingActivity mNowPlayingActivity;
+	private Handler mNowPlayingHandler;
+	private EventClient mClient;
 	
-	public NowPlayingController(Activity activity) {
+	public NowPlayingController(NowPlayingActivity activity) {
 		super.onCreate(activity);
+		mNowPlayingActivity = activity;
 		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
+		mNowPlayingHandler = new Handler(this);
+		mClient = ConnectionManager.getEventClient(activity);
 	}
 	
+	
+	/**
+	 * This is called from the thread with a message containing updated
+	 * info of what's currently playing.
+	 * @param msg Message object containing currently playing info
+	 */
+	public synchronized boolean handleMessage(Message msg) {
+		
+		final Bundle data = msg.getData();
+		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying)data.getSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
+
+		switch (msg.what) {
+		case NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED: 
+			mNowPlayingActivity.setProgressPosition(Math.round(currentlyPlaying.getPercentage()));
+			
+			if (currentlyPlaying.isPlaying()) {
+				mNowPlayingActivity.updateProgress(currentlyPlaying.getDuration(), currentlyPlaying.getTime());
+			} else {
+				mNowPlayingActivity.clear();
+			}
+			return true;
+		
+		case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
+			mNowPlayingActivity.updateInfo(currentlyPlaying.getArtist(), currentlyPlaying.getAlbum(), currentlyPlaying.getTitle());
+	  	  	return true;
+	  	  	
+		case NowPlayingPollerThread.MESSAGE_COVER_CHANGED:
+			// TODO: FIX!!
+			mNowPlayingActivity.updateCover(ConnectionManager.getNowPlayingPoller(mActivity).getNowPlayingCover());
+			return true;
+			
+		case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
+			Log.w("NOWPLAYNING","Received connection error from poller!");
+			return true;
+			
+		case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
+			new Thread(){
+				public void run(){
+					try{
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						Log.e("NowPlayingActivity", Log.getStackTraceString(e));
+					}
+					ConnectionManager.getNowPlayingPoller(mActivity.getApplicationContext()).subscribe(mNowPlayingHandler);					
+				}
+			}.start();
+
+			return true;
+		default:
+			return false;
+		}
+	}
+	
+	public void setupButtons(SeekBar seekbar, View prev, View stop, View playpause, View next, View playlist) {
+		seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				if (fromUser && !seekBar.isInTouchMode())
+					seek(progress);
+			}
+			public void onStartTrackingTouch(SeekBar seekBar) { }
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				seek(seekBar.getProgress());
+			}
+		});
+		
+		// setup buttons
+		prev.setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_MINUS));
+		stop.setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_STOP));
+		playpause.setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_PAUSE));
+		next.setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_PLUS));
+		
+		// playlist button
+		playlist.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				mActivity.startActivity(new Intent(mActivity, PlaylistActivity.class));
+			}
+		});
+	}
 	public void seek(int progress) {
 		mControlManager.seek(new DataResponse<Boolean>(), SeekType.absolute, progress);
 	}
 	
+
+	/**
+	 * Handles the push- release button code. Switches image of the pressed
+	 * button, vibrates and executes command.
+	 */
+	private class OnRemoteAction implements OnClickListener {
+		private final String mAction;
+		public OnRemoteAction(String action) {
+			mAction = action;
+		}
+		public void onClick(View v) {
+			try {
+				mClient.sendButton("R1", mAction, false, true, true, (short)0, (byte)0);
+			} catch (IOException e) { }
+		}
+	}
+	
 	public void onActivityPause() {
+		ConnectionManager.getNowPlayingPoller(mActivity.getApplicationContext()).unSubscribe(mNowPlayingHandler);
 		mControlManager.setController(null);
 	}
 
 	public void onActivityResume(Activity activity) {
+		ConnectionManager.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
 		mControlManager.setController(this);
 	}
 }

@@ -126,7 +126,7 @@ public class ConnectionManager {
 	 * @param context
 	 * @return A reference to the NowPlaying Poller
 	 */
-	public static NowPlayingPollerThread getNowPlayingPoller( Context context) {
+	public static NowPlayingPollerThread getNowPlayingPoller(Context context) {
 		if (sNowPlayingPoller == null) {
 			sNowPlayingPoller = new NowPlayingPollerThread(context);
 			sNowPlayingPoller.start();

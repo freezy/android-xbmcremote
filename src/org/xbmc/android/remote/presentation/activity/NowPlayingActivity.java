@@ -24,35 +24,25 @@ package org.xbmc.android.remote.presentation.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.remote.presentation.controller.NowPlayingController;
 import org.xbmc.android.util.ConnectionManager;
-import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.object.Song;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Handler.Callback;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class NowPlayingActivity extends Activity implements Callback {
+public class NowPlayingActivity extends Activity {
 	
-	private EventClient mClient;
-	private Handler mNowPlayingHandler;
 	private TextView mAlbumView;
 	private TextView mArtistView;
 	private TextView mSongTitleView;
@@ -70,8 +60,6 @@ public class NowPlayingActivity extends Activity implements Callback {
        	
        	mNowPlayingController = new NowPlayingController(this);
         	
-  	  	mClient = ConnectionManager.getEventClient(this);
-  	  	
 		mSeekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
 		mArtistView = (TextView) findViewById(R.id.ArtistTextView);
 		mAlbumView = (TextView) findViewById(R.id.AlbumTextView);
@@ -86,100 +74,49 @@ public class NowPlayingActivity extends Activity implements Callback {
   	  	
 		// set titlebar text
   	  	((TextView)findViewById(R.id.titlebar_text)).setText("Now playing");
-  	  	
-  	  	mNowPlayingHandler = new Handler(this);
 
   	  	mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard();
   	  	
-  	  	setupButtons();
+  	  	mNowPlayingController.setupButtons(mSeekBar,
+  	  		findViewById(R.id.MediaPreviousButton),
+  	  		findViewById(R.id.MediaStopButton),
+  	  		findViewById(R.id.MediaPlayPauseButton),
+  	  		findViewById(R.id.MediaNextButton),
+  	  		findViewById(R.id.MediaPlaylistButton)
+  	  	);
+  	  	
 	}
 	
-	private void setupButtons() {
-		mSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				if (fromUser && !seekBar.isInTouchMode())
-					mNowPlayingController.seek(progress);
-			}
-			public void onStartTrackingTouch(SeekBar seekBar) { }
-			public void onStopTrackingTouch(SeekBar seekBar) {
-				mNowPlayingController.seek(seekBar.getProgress());
-			}
-		});
-		
-		// setup buttons
-		findViewById(R.id.MediaPreviousButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_MINUS));
-		findViewById(R.id.MediaStopButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_STOP));
-		findViewById(R.id.MediaPlayPauseButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_PAUSE));
-		findViewById(R.id.MediaNextButton).setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_PLUS));
-		
-		// playlist button
-		findViewById(R.id.MediaPlaylistButton).setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				startActivity(new Intent(NowPlayingActivity.this, PlaylistActivity.class));
-			}
-		});
+	public void setProgressPosition(int pos) {
+		if (!mSeekBar.isPressed()) {
+			mSeekBar.setProgress(pos);
+		}		
 	}
 	
-	/**
-	 * This is called from the thread with a message containing updated
-	 * info of what's currently playing.
-	 * @param msg Message object containing currently playing info
-	 */
-	public synchronized boolean handleMessage(Message msg) {
-		
-		final Bundle data = msg.getData();
-		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying)data.getSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
-
-		switch (msg.what) {
-		case NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED: 
-			if (!mSeekBar.isPressed()) {
-				mSeekBar.setProgress(Math.round(currentlyPlaying.getPercentage()));
-			}
-			if (currentlyPlaying.isPlaying()) {
-				mSeekBar.setEnabled(currentlyPlaying.getDuration() != 0);
-				mCounterLeftView.setText(Song.getDuration(currentlyPlaying.getTime() + 1));
-				mCounterRightView.setText(currentlyPlaying.getDuration() == 0 ? "unknown" : "-" + Song.getDuration(currentlyPlaying.getDuration() - currentlyPlaying.getTime() - 1));
-				mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
-			} else {
-				mSeekBar.setEnabled(false);
-				mCounterLeftView.setText("");
-				mCounterRightView.setText("");
-				mPlayPauseView.setBackgroundResource(R.drawable.now_playing_play);
-			}
-			return true;
-		
-		case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
-			mArtistView.setText(currentlyPlaying.getArtist());
-	  	  	mAlbumView.setText(currentlyPlaying.getAlbum());
-	  	  	mSongTitleView.setText(currentlyPlaying.getTitle());
-	  	  	return true;
-	  	  	
-		case NowPlayingPollerThread.MESSAGE_COVER_CHANGED:
-			final ImageView cover = (ImageView) findViewById(R.id.CoverImage);
-			cover.setImageDrawable(ConnectionManager.getNowPlayingPoller(this).getNowPlayingCover());
-			return true;
-			
-		case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
-			Log.w("NOWPLAYNING","Received connection error from poller!");
-			return true;
-			
-		case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
-			new Thread(){
-				public void run(){
-					try{
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						Log.e("NowPlayingActivity", Log.getStackTraceString(e));
-					}
-					ConnectionManager.getNowPlayingPoller(NowPlayingActivity.this).subscribe(mNowPlayingHandler);					
-				}
-			}.start();
-
-			return true;
-		default:
-			return false;
-		}
+	public void updateInfo(String artist, String album, String title) {
+		mArtistView.setText(artist);
+  	  	mAlbumView.setText(album);
+  	  	mSongTitleView.setText(title);		
+	}
+	
+	public void updateProgress(int duration, int time) {
+		mSeekBar.setEnabled(duration != 0);
+		mCounterLeftView.setText(Song.getDuration(time + 1));
+		mCounterRightView.setText(duration == 0 ? "unknown" : "-" + Song.getDuration(duration - time - 1));
+		mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);		
+	}
+	
+	public void updateCover(Drawable cover) {
+		final ImageView img = (ImageView) findViewById(R.id.CoverImage);
+		img.setImageDrawable(cover);
+	}
+	
+	public void clear() {
+		mSeekBar.setEnabled(false);
+		mCounterLeftView.setText("");
+		mCounterRightView.setText("");
+		mPlayPauseView.setBackgroundResource(R.drawable.now_playing_play);
 	}
 	
 	@Override
@@ -200,34 +137,18 @@ public class NowPlayingActivity extends Activity implements Callback {
 		return super.onKeyDown(keyCode, event);
 	}
 
-	/**
-	 * Handles the push- release button code. Switches image of the pressed
-	 * button, vibrates and executes command.
-	 */
-	private class OnRemoteAction implements OnClickListener {
-		private final String mAction;
-		public OnRemoteAction(String action) {
-			mAction = action;
-		}
-		public void onClick(View v) {
-			try {
-				mClient.sendButton("R1", mAction, false, true, true, (short)0, (byte)0);
-			} catch (IOException e) { }
-		}
-	}
-	
-
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mNowPlayingController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
-		ConnectionManager.getNowPlayingPoller(this).subscribe(mNowPlayingHandler);
+		
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		ConnectionManager.getNowPlayingPoller(this).unSubscribe(mNowPlayingHandler);
+		mNowPlayingController.onActivityPause();
 		mConfigurationManager.onActivityPause();
 		if(isTaskRoot()){
 			Intent intent = new Intent(NowPlayingActivity.this, HomeActivity.class );
