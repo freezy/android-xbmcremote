@@ -24,7 +24,7 @@ package org.xbmc.httpapi.client;
 import java.util.HashMap;
 
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
-import org.xbmc.api.data.IControlClient.PlayStatus;
+import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.type.MediaType;
 
 /**
@@ -67,8 +67,8 @@ public class PictureClient {
 				return 0;
 			}
 
-			public PlayStatus getPlayStatus() {
-				return PlayStatus.Playing;
+			public int getPlayStatus() {
+				return PlayStatus.PLAYING;
 			}
 
 			public int getPlaylistPosition() {

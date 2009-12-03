@@ -28,7 +28,7 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
-import org.xbmc.api.data.IControlClient.PlayStatus;
+import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
@@ -995,7 +995,7 @@ public class MusicClient implements IMusicClient {
 			public int getTime() {
 				return parseTime(map.get("Time"));
 			}
-			public PlayStatus getPlayStatus() {
+			public int getPlayStatus() {
 				return PlayStatus.parse(map.get("PlayStatus"));
 			}
 			public int getPlaylistPosition() {
@@ -1024,7 +1024,7 @@ public class MusicClient implements IMusicClient {
 				return MediaType.MUSIC;
 			}
 			public boolean isPlaying() {
-				return IControlClient.PlayStatus.parse(map.get("PlayStatus")).equals(PlayStatus.Playing);
+				return PlayStatus.parse(map.get("PlayStatus")) == PlayStatus.PLAYING;
 			}
 			public int getHeight() {
 				return 0;

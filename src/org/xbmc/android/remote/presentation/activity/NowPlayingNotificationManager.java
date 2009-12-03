@@ -4,7 +4,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
-import org.xbmc.api.data.IControlClient.PlayStatus;
+import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.type.MediaType;
 
 import android.app.Notification;
@@ -109,12 +109,12 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 						showSlideshowNotification(curr.getTitle(), curr.getAlbum());
 						break;
 					default:
-						PlayStatus status = curr.getPlayStatus();
-						if(status == PlayStatus.Playing) {
+						int status = curr.getPlayStatus();
+						if(status == PlayStatus.PLAYING) {
 							showPlayingNotification(curr.getArtist(), curr.getTitle());
-						}else if(status == PlayStatus.Paused) {
+						}else if(status == PlayStatus.PAUSED) {
 							showPausedNotification(curr.getArtist(), curr.getTitle());
-						}else if(status == PlayStatus.Stopped) {
+						}else if(status == PlayStatus.STOPPED) {
 							removeNotification();
 						}
 						break;

@@ -142,7 +142,6 @@ public class NowPlayingActivity extends Activity {
 		super.onResume();
 		mNowPlayingController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
-		
 	}
 
 	@Override

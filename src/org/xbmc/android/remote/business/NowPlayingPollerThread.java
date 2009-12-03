@@ -35,7 +35,6 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
-import org.xbmc.api.data.IControlClient.PlayStatus;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -149,7 +148,7 @@ public class NowPlayingPollerThread extends Thread {
 	
 	public void run() {
 		String lastPos = "-1";
-		PlayStatus lastPlayStatus = null;
+		int lastPlayStatus = -1;
 		IControlClient control = mControl; // use local reference for faster access
 		HashSet<Handler> subscribers = mSubscribers;
 		while (!isInterrupted() ) {
@@ -168,7 +167,7 @@ public class NowPlayingPollerThread extends Thread {
 					sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
 					
 					String currentPos = currPlaying.getTitle() + currPlaying.getDuration();
-					PlayStatus currentPlayStatus = currPlaying.getPlayStatus();
+					int currentPlayStatus = currPlaying.getPlayStatus();
 					
 					if (currentPlayStatus != lastPlayStatus) {
 						sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);

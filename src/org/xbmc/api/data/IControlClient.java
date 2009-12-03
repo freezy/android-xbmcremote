@@ -195,7 +195,7 @@ public interface IControlClient {
 	 * Returns current play state
 	 * @return
 	 */
-	public PlayStatus getPlayState(INotifiableManager manager);
+	public int getPlayState(INotifiableManager manager);
 	
 	/**
 	 * Returns state and type of the media currently playing.
@@ -210,7 +210,7 @@ public interface IControlClient {
 	 * @author Team XBMC
 	 */
 	public interface ICurrentlyPlaying extends Serializable {
-		public PlayStatus getPlayStatus();
+		public int getPlayStatus();
 		public int getMediaType();
 		public boolean isPlaying();
 		public int getPlaylistPosition();
@@ -227,23 +227,5 @@ public interface IControlClient {
 		
 		public int getWidth();
 		public int getHeight();
-	}
-
-	/**
-	 * Describes the current play status
-	 */
-	public enum PlayStatus {
-		Stopped,
-		Paused,
-		Playing;
-		public static PlayStatus parse(String response) {
-			if (response.contains("PlayStatus:Paused") || response.equals("Paused")) {
-				return PlayStatus.Paused;
-			} else if (response.contains("PlayStatus:Playing") || response.equals("Playing")) {
-				return PlayStatus.Playing;
-			} else {
-				return PlayStatus.Stopped;
-			}
-		}
 	}
 }

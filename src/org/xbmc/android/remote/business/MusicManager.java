@@ -29,8 +29,8 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IMusicClient;
-import org.xbmc.api.data.IControlClient.PlayStatus;
 import org.xbmc.api.info.GuiSettings;
+import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
@@ -259,7 +259,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 		mHandler.post(new Runnable() {
 			public void run() { 
 				final IMusicClient mc = music(response);
-				final PlayStatus ps = control(response).getPlayState(MusicManager.this);
+				final int playStatus = control(response).getPlayState(MusicManager.this);
 				mc.setCurrentPlaylist(MusicManager.this);
 				final int playlistSize = mc.getPlaylistSize(MusicManager.this); 
 				int playPos = -1;
@@ -278,7 +278,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 					mc.addToPlaylist(MusicManager.this, song);
 					response.value = false;
 				}
-				if (ps == PlayStatus.Stopped) { // if nothing is playing, play the song
+				if (playStatus == PlayStatus.STOPPED) { // if nothing is playing, play the song
 					if (playPos == 0) {
 						mc.playlistSetSong(MusicManager.this, playPos + 1);
 						mc.playPrev(MusicManager.this);
@@ -571,8 +571,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	 * @param numAlreadyQueued Number of previously queued items
 	 */
 	private void checkForPlayAfterQueue(final IMusicClient mc, final IControlClient cc, int numAlreadyQueued) {
-		final PlayStatus ps = cc.getPlayState(MusicManager.this);
-		if (ps == PlayStatus.Stopped) { // if nothing is playing, play the song
+		final int ps = cc.getPlayState(MusicManager.this);
+		if (ps == PlayStatus.STOPPED) { // if nothing is playing, play the song
 			mc.setCurrentPlaylist(MusicManager.this);
 			if (numAlreadyQueued == 0) {
 				mc.playNext(MusicManager.this);

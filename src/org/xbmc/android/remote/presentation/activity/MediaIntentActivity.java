@@ -50,14 +50,15 @@ public class MediaIntentActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		mMediaIntentController.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mConfigurationManager.onActivityResume(this);
 		mMediaIntentController.onActivityResume(this);
+		mConfigurationManager.onActivityResume(this);
 	}
 
 }

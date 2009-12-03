@@ -73,46 +73,45 @@ public class NowPlayingController extends AbstractController implements INotifia
 		
 		final Bundle data = msg.getData();
 		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying)data.getSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
-
-		switch (msg.what) {
-		case NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED: 
-			mNowPlayingActivity.setProgressPosition(Math.round(currentlyPlaying.getPercentage()));
-			
-			if (currentlyPlaying.isPlaying()) {
-				mNowPlayingActivity.updateProgress(currentlyPlaying.getDuration(), currentlyPlaying.getTime());
-			} else {
-				mNowPlayingActivity.clear();
-			}
-			return true;
 		
-		case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
-			mNowPlayingActivity.updateInfo(currentlyPlaying.getArtist(), currentlyPlaying.getAlbum(), currentlyPlaying.getTitle());
-	  	  	return true;
-	  	  	
-		case NowPlayingPollerThread.MESSAGE_COVER_CHANGED:
-			// TODO: FIX!!
-			mNowPlayingActivity.updateCover(ConnectionManager.getNowPlayingPoller(mActivity).getNowPlayingCover());
-			return true;
-			
-		case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
-			Log.w("NOWPLAYNING","Received connection error from poller!");
-			return true;
-			
-		case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
-			new Thread(){
-				public void run(){
-					try{
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						Log.e("NowPlayingActivity", Log.getStackTraceString(e));
-					}
-					ConnectionManager.getNowPlayingPoller(mActivity.getApplicationContext()).subscribe(mNowPlayingHandler);					
+		switch (msg.what) {
+			case NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED: 
+				mNowPlayingActivity.setProgressPosition(Math.round(currentlyPlaying.getPercentage()));
+				if (currentlyPlaying.isPlaying()) {
+					mNowPlayingActivity.updateProgress(currentlyPlaying.getDuration(), currentlyPlaying.getTime());
+				} else {
+					mNowPlayingActivity.clear();
 				}
-			}.start();
-
-			return true;
-		default:
-			return false;
+				return true;
+			
+			case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
+				mNowPlayingActivity.updateInfo(currentlyPlaying.getArtist(), currentlyPlaying.getAlbum(), currentlyPlaying.getTitle());
+		  	  	return true;
+		  	  	
+			case NowPlayingPollerThread.MESSAGE_COVER_CHANGED:
+				// TODO: FIX!!
+				mNowPlayingActivity.updateCover(ConnectionManager.getNowPlayingPoller(mActivity).getNowPlayingCover());
+				return true;
+				
+			case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
+				Log.w("NOWPLAYNING","Received connection error from poller!");
+				return true;
+				
+			case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
+				new Thread(){
+					public void run(){
+						try{
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							Log.e("NowPlayingActivity", Log.getStackTraceString(e));
+						}
+						ConnectionManager.getNowPlayingPoller(mActivity.getApplicationContext()).subscribe(mNowPlayingHandler);					
+					}
+				}.start();
+	
+				return true;
+			default:
+				return false;
 		}
 	}
 	

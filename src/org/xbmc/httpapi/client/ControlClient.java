@@ -26,6 +26,7 @@ import java.util.HashMap;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.info.GuiActions;
+import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SeekType;
 import org.xbmc.httpapi.Connection;
@@ -261,7 +262,7 @@ public class ControlClient implements IControlClient {
 	 * Returns current play state
 	 * @return
 	 */
-	public PlayStatus getPlayState(INotifiableManager manager) {
+	public int getPlayState(INotifiableManager manager) {
 		return PlayStatus.parse(mConnection.getString(manager, "GetCurrentlyPlaying"));
 	}
 	
@@ -278,7 +279,7 @@ public class ControlClient implements IControlClient {
 			public int getPlaylistPosition() { return 0; }
 			public String getTitle() { return ""; }
 			public int getTime() { return 0; }
-			public PlayStatus getPlayStatus() { return PlayStatus.Stopped; }
+			public int getPlayStatus() { return PlayStatus.STOPPED; }
 			public float getPercentage() { return 0; }
 			public String getFilename() { return ""; }
 			public int getDuration() { return 0; }

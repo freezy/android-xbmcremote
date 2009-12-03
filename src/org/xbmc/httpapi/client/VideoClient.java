@@ -27,7 +27,7 @@ import java.util.HashMap;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
-import org.xbmc.api.data.IControlClient.PlayStatus;
+import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.ICoverArt;
@@ -391,7 +391,7 @@ public class VideoClient implements IVideoClient {
 			public int getTime() {
 				return parseTime(map.get("Time"));
 			}
-			public PlayStatus getPlayStatus() {
+			public int getPlayStatus() {
 				return PlayStatus.parse(map.get("PlayStatus"));
 			}
 			public int getPlaylistPosition() {
@@ -420,7 +420,7 @@ public class VideoClient implements IVideoClient {
 				return MediaType.VIDEO;
 			}
 			public boolean isPlaying() {
-				return PlayStatus.parse(map.get("PlayStatus")).equals(PlayStatus.Playing);
+				return PlayStatus.parse(map.get("PlayStatus")) == PlayStatus.PLAYING;
 			}
 			public int getHeight() {
 				return 0;
