@@ -99,15 +99,15 @@ public class PlaylistActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mConfigurationManager.onActivityResume(this);
 		mMusicPlaylistController.onActivityResume(this);
+		mConfigurationManager.onActivityResume(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mConfigurationManager.onActivityPause();
 		mMusicPlaylistController.onActivityPause();
+		mConfigurationManager.onActivityPause();
 	}
 
 	@Override

@@ -48,7 +48,7 @@ public class ListActivity extends Activity {
 
 	private ConfigurationManager mConfigurationManager;
 
-	ListController mListLogic;
+	ListController mListController;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -60,11 +60,11 @@ public class ListActivity extends Activity {
 		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
 		topFrame.setForeground(null);
 
-		mListLogic = (ListController) getIntent().getSerializableExtra(ListController.EXTRA_LIST_LOGIC);
+		mListController = (ListController) getIntent().getSerializableExtra(ListController.EXTRA_LIST_LOGIC);
 
-		mListLogic.findTitleView(findViewById(R.id.blanklist_outer_layout));
-		mListLogic.findMessageView(findViewById(R.id.blanklist_outer_layout));
-		mListLogic.onCreate(this, (ListView) findViewById(R.id.blanklist_list));
+		mListController.findTitleView(findViewById(R.id.blanklist_outer_layout));
+		mListController.findMessageView(findViewById(R.id.blanklist_outer_layout));
+		mListController.onCreate(this, (ListView) findViewById(R.id.blanklist_list));
 
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard();
@@ -72,26 +72,26 @@ public class ListActivity extends Activity {
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		mListLogic.onCreateContextMenu(menu, v, menuInfo);
+		mListController.onCreateContextMenu(menu, v, menuInfo);
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		mListLogic.onContextItemSelected(item);
+		mListController.onContextItemSelected(item);
 		return super.onContextItemSelected(item);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
-		mListLogic.onCreateOptionsMenu(menu);
+		mListController.onCreateOptionsMenu(menu);
 		menu.add(0, MENU_REMOTE, 0, "Remote control").setIcon(R.drawable.menu_remote);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		mListLogic.onOptionsItemSelected(item);
+		mListController.onOptionsItemSelected(item);
 		switch (item.getItemId()) {
 			case MENU_REMOTE:
 				startActivity(new Intent(this, RemoteActivity.class));

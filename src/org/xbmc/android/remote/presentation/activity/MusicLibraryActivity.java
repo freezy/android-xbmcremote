@@ -54,7 +54,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	private ArtistListController mArtistController;
 	private MusicGenreListController mGenreController;
 	private AlbumListController mCompilationsController;
-	private FileListController mFileLogic;
+	private FileListController mFileController;
 	
 	private static final int MENU_NOW_PLAYING = 301;
 	private static final int MENU_UPDATE_LIBRARY = 302;
@@ -88,9 +88,9 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mAlbumController.setGrid((GridView)findViewById(R.id.albumlist_grid));
 		mAlbumController.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
 
-		mFileLogic = new FileListController();
-		mFileLogic.findTitleView(findViewById(R.id.filelist_outer_layout));
-		mFileLogic.findMessageView(findViewById(R.id.filelist_outer_layout));
+		mFileController = new FileListController();
+		mFileController.findTitleView(findViewById(R.id.filelist_outer_layout));
+		mFileController.findMessageView(findViewById(R.id.filelist_outer_layout));
 		
 		mArtistController = new ArtistListController();
 		mArtistController.findTitleView(findViewById(R.id.artists_outer_layout));
@@ -112,7 +112,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 					mAlbumController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.albumlist_list));
 				}
 				if (tabId.equals("tab_files")) {
-					mFileLogic.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
+					mFileController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
 				}
 				if (tabId.equals("tab_artists")) {
 					mArtistController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.artists_list));
@@ -148,7 +148,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 				mCompilationsController.onCreateOptionsMenu(menu);
 				break;
 			case 4:
-				mFileLogic.onCreateOptionsMenu(menu);
+				mFileController.onCreateOptionsMenu(menu);
 				break;
 		}
 		menu.add(0, MENU_UPDATE_LIBRARY, 0, "Update Library").setIcon(R.drawable.menu_refresh);
@@ -174,7 +174,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 			mCompilationsController.onOptionsItemSelected(item);
 			break;
 		case 4:
-			mFileLogic.onOptionsItemSelected(item);
+			mFileController.onOptionsItemSelected(item);
 			break;
 		}
 		
@@ -210,7 +210,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 				mCompilationsController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 			case 4:
-				mFileLogic.onCreateContextMenu(menu, v, menuInfo);
+				mFileController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 		}
 	}
@@ -231,7 +231,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 			mCompilationsController.onContextItemSelected(item);
 			break;
 		case 4:
-			mFileLogic.onContextItemSelected(item);
+			mFileController.onContextItemSelected(item);
 			break;
 		}
 		return super.onContextItemSelected(item);
@@ -259,20 +259,22 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mAlbumController.onActivityResume(this);
 		mArtistController.onActivityResume(this);
 		mGenreController.onActivityResume(this);
 		mCompilationsController.onActivityResume(this);
-		mFileLogic.onActivityResume(this);
+		mFileController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
+		mAlbumController.onActivityPause();
 		mArtistController.onActivityPause();
 		mGenreController.onActivityPause();
 		mCompilationsController.onActivityPause();
-		mFileLogic.onActivityPause();
+		mFileController.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}
 }

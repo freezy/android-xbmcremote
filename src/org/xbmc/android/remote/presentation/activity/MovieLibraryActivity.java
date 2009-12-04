@@ -236,6 +236,8 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	protected void onResume() {
 		super.onResume();
 		mMovieController.onActivityResume(this);
+		mActorController.onActivityResume(this);
+		mGenresController.onActivityResume(this);
 		mFileController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
@@ -244,6 +246,8 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	protected void onPause() {
 		super.onPause();
 		mMovieController.onActivityPause();
+		mActorController.onActivityPause();
+		mGenresController.onActivityPause();
 		mFileController.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}

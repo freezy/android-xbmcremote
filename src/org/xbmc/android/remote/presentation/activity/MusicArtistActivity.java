@@ -47,8 +47,8 @@ import android.widget.ListView;
 public class MusicArtistActivity extends SlidingTabActivity  {
 
 	private SlidingTabHost mTabHost;
-	private AlbumListController mAlbumLogic;
-	private SongListController mSongLogic;
+	private AlbumListController mAlbumController;
+	private SongListController mSongController;
 	
 	private ConfigurationManager mConfigurationManager;
 	
@@ -70,22 +70,22 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 		mTabHost.addTab(mTabHost.newTabSpec("musictab2", "Songs", R.drawable.st_song_on, R.drawable.st_song_off).setBigIcon(R.drawable.st_song_over).setContent(R.id.songlist_outer_layout));
 		mTabHost.setCurrentTab(0);
 		
-		mAlbumLogic = new AlbumListController();
-		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
-		mAlbumLogic.findMessageView(findViewById(R.id.albumlist_outer_layout));
-		mAlbumLogic.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
+		mAlbumController = new AlbumListController();
+		mAlbumController.findTitleView(findViewById(R.id.albumlist_outer_layout));
+		mAlbumController.findMessageView(findViewById(R.id.albumlist_outer_layout));
+		mAlbumController.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
 
-		mSongLogic = new SongListController();
-		mSongLogic.findTitleView(findViewById(R.id.songlist_outer_layout));
-		mSongLogic.findMessageView(findViewById(R.id.songlist_outer_layout));
+		mSongController = new SongListController();
+		mSongController.findTitleView(findViewById(R.id.songlist_outer_layout));
+		mSongController.findMessageView(findViewById(R.id.songlist_outer_layout));
 		
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				if (tabId.equals("musictab1")) {
-					mAlbumLogic.onCreate(MusicArtistActivity.this, (ListView)findViewById(R.id.albumlist_list));
+					mAlbumController.onCreate(MusicArtistActivity.this, (ListView)findViewById(R.id.albumlist_list));
 				}
 				if (tabId.equals("musictab2")) {
-					mSongLogic.onCreate(MusicArtistActivity.this, (ListView)findViewById(R.id.songlist_list));
+					mSongController.onCreate(MusicArtistActivity.this, (ListView)findViewById(R.id.songlist_list));
 				}
 			}
 		});
@@ -101,10 +101,10 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
 		switch (mTabHost.getCurrentTab()) {
 			case 0:
-				mAlbumLogic.onCreateOptionsMenu(menu);
+				mAlbumController.onCreateOptionsMenu(menu);
 				break;
 			case 1:
-				mSongLogic.onCreateOptionsMenu(menu);
+				mSongController.onCreateOptionsMenu(menu);
 				break;
 		}
 		menu.add(0, MENU_REMOTE, 0, "Remote control").setIcon(R.drawable.menu_remote);
@@ -117,10 +117,10 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 		// first, process individual menu events
 		switch (mTabHost.getCurrentTab()) {
 		case 0:
-			mAlbumLogic.onOptionsItemSelected(item);
+			mAlbumController.onOptionsItemSelected(item);
 			break;
 		case 1:
-			mSongLogic.onOptionsItemSelected(item);
+			mSongController.onOptionsItemSelected(item);
 			break;
 		}
 		
@@ -142,10 +142,10 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		switch (mTabHost.getCurrentTab()) {
 			case 0:
-				mAlbumLogic.onCreateContextMenu(menu, v, menuInfo);
+				mAlbumController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 			case 1:
-				mSongLogic.onCreateContextMenu(menu, v, menuInfo);
+				mSongController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 		}
 	}
@@ -154,10 +154,10 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (mTabHost.getCurrentTab()) {
 		case 0:
-			mAlbumLogic.onContextItemSelected(item);
+			mAlbumController.onContextItemSelected(item);
 			break;
 		case 1:
-			mSongLogic.onContextItemSelected(item);
+			mSongController.onContextItemSelected(item);
 			break;
 		}
 		return super.onContextItemSelected(item);
@@ -184,16 +184,16 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mAlbumLogic.onActivityResume(this);
-		mSongLogic.onActivityResume(this);
+		mAlbumController.onActivityResume(this);
+		mSongController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mAlbumLogic.onActivityPause();
-		mSongLogic.onActivityPause();
+		mAlbumController.onActivityPause();
+		mSongController.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}
 }

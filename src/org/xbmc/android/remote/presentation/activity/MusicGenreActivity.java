@@ -48,9 +48,9 @@ import android.widget.ListView;
 public class MusicGenreActivity extends SlidingTabActivity  {
 
 	private SlidingTabHost mTabHost;
-	private ArtistListController mArtistLogic;
-	private AlbumListController mAlbumLogic;
-	private SongListController mSongLogic;
+	private ArtistListController mArtistController;
+	private AlbumListController mAlbumController;
+	private SongListController mSongController;
 	
 	private static final int MENU_NOW_PLAYING = 201;
 	private static final int MENU_REMOTE = 202;
@@ -73,29 +73,29 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 		mTabHost.addTab(mTabHost.newTabSpec("genretab_songs", "Songs", R.drawable.st_song_on, R.drawable.st_song_off).setBigIcon(R.drawable.st_song_over).setContent(R.id.songlist_outer_layout));
 		mTabHost.setCurrentTab(0);
 		
-		mArtistLogic = new ArtistListController();
-		mArtistLogic.findTitleView(findViewById(R.id.artistlist_outer_layout));
-		mArtistLogic.findMessageView(findViewById(R.id.artistlist_outer_layout));
-		mArtistLogic.onCreate(this, (ListView)findViewById(R.id.artistlist_list)); // first tab can be updated now.
+		mArtistController = new ArtistListController();
+		mArtistController.findTitleView(findViewById(R.id.artistlist_outer_layout));
+		mArtistController.findMessageView(findViewById(R.id.artistlist_outer_layout));
+		mArtistController.onCreate(this, (ListView)findViewById(R.id.artistlist_list)); // first tab can be updated now.
 
-		mAlbumLogic = new AlbumListController();
-		mAlbumLogic.findTitleView(findViewById(R.id.albumlist_outer_layout));
-		mAlbumLogic.findMessageView(findViewById(R.id.albumlist_outer_layout));
+		mAlbumController = new AlbumListController();
+		mAlbumController.findTitleView(findViewById(R.id.albumlist_outer_layout));
+		mAlbumController.findMessageView(findViewById(R.id.albumlist_outer_layout));
 
-		mSongLogic = new SongListController();
-		mSongLogic.findTitleView(findViewById(R.id.songlist_outer_layout));
-		mSongLogic.findMessageView(findViewById(R.id.songlist_outer_layout));
+		mSongController = new SongListController();
+		mSongController.findTitleView(findViewById(R.id.songlist_outer_layout));
+		mSongController.findMessageView(findViewById(R.id.songlist_outer_layout));
 		
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				if (tabId.equals("genretab_artists")) {
-					mArtistLogic.onCreate(MusicGenreActivity.this, (ListView)findViewById(R.id.artistlist_list));
+					mArtistController.onCreate(MusicGenreActivity.this, (ListView)findViewById(R.id.artistlist_list));
 				}
 				if (tabId.equals("genretab_albums")) {
-					mAlbumLogic.onCreate(MusicGenreActivity.this, (ListView)findViewById(R.id.albumlist_list));
+					mAlbumController.onCreate(MusicGenreActivity.this, (ListView)findViewById(R.id.albumlist_list));
 				}
 				if (tabId.equals("genretab_songs")) {
-					mSongLogic.onCreate(MusicGenreActivity.this, (ListView)findViewById(R.id.songlist_list));
+					mSongController.onCreate(MusicGenreActivity.this, (ListView)findViewById(R.id.songlist_list));
 				}
 			}
 		});
@@ -110,13 +110,13 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
 		switch (mTabHost.getCurrentTab()) {
 			case 0:
-				mArtistLogic.onCreateOptionsMenu(menu);
+				mArtistController.onCreateOptionsMenu(menu);
 				break;
 			case 1:
-				mAlbumLogic.onCreateOptionsMenu(menu);
+				mAlbumController.onCreateOptionsMenu(menu);
 				break;
 			case 2:
-				mSongLogic.onCreateOptionsMenu(menu);
+				mSongController.onCreateOptionsMenu(menu);
 				break;
 		}
 		menu.add(0, MENU_REMOTE, 0, "Remote control").setIcon(R.drawable.menu_remote);
@@ -129,13 +129,13 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 		// first, process individual menu events
 		switch (mTabHost.getCurrentTab()) {
 		case 0:
-			mArtistLogic.onOptionsItemSelected(item);
+			mArtistController.onOptionsItemSelected(item);
 			break;
 		case 1:
-			mAlbumLogic.onOptionsItemSelected(item);
+			mAlbumController.onOptionsItemSelected(item);
 			break;
 		case 2:
-			mSongLogic.onOptionsItemSelected(item);
+			mSongController.onOptionsItemSelected(item);
 			break;
 		}
 		
@@ -157,13 +157,13 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		switch (mTabHost.getCurrentTab()) {
 			case 0:
-				mArtistLogic.onCreateContextMenu(menu, v, menuInfo);
+				mArtistController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 			case 1:
-				mAlbumLogic.onCreateContextMenu(menu, v, menuInfo);
+				mAlbumController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 			case 2:
-				mSongLogic.onCreateContextMenu(menu, v, menuInfo);
+				mSongController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 		}
 	}
@@ -172,13 +172,13 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (mTabHost.getCurrentTab()) {
 		case 0:
-			mArtistLogic.onContextItemSelected(item);
+			mArtistController.onContextItemSelected(item);
 			break;
 		case 1:
-			mAlbumLogic.onContextItemSelected(item);
+			mAlbumController.onContextItemSelected(item);
 			break;
 		case 2:
-			mSongLogic.onContextItemSelected(item);
+			mSongController.onContextItemSelected(item);
 			break;
 		}
 		return super.onContextItemSelected(item);
@@ -205,18 +205,18 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mArtistLogic.onActivityResume(this);
-		mAlbumLogic.onActivityResume(this);
-		mSongLogic.onActivityResume(this);
+		mArtistController.onActivityResume(this);
+		mAlbumController.onActivityResume(this);
+		mSongController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mArtistLogic.onActivityPause();
-		mAlbumLogic.onActivityPause();
-		mSongLogic.onActivityPause();
+		mArtistController.onActivityPause();
+		mAlbumController.onActivityPause();
+		mSongController.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}
 }
