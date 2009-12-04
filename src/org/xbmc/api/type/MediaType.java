@@ -23,6 +23,7 @@ package org.xbmc.api.type;
 
 public abstract class MediaType {
 	
+	public static final int UNKNOWN = -1;
 	public static final int MUSIC = 1;
 	public static final int VIDEO = 2;
 	public static final int PICTURES = 3;

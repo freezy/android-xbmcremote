@@ -32,6 +32,7 @@ import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
+import org.xbmc.api.type.MediaType;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
@@ -93,7 +94,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		mGenresController.findTitleView(findViewById(R.id.genrelist_outer_layout));
 		mGenresController.findMessageView(findViewById(R.id.genrelist_outer_layout));
 
-		mFileController = new FileListController();
+		mFileController = new FileListController(MediaType.VIDEO);
 		mFileController.findTitleView(findViewById(R.id.filelist_outer_layout));
 		mFileController.findMessageView(findViewById(R.id.filelist_outer_layout));
 		

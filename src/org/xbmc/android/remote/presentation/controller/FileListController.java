@@ -57,13 +57,19 @@ public class FileListController extends ListController implements IController {
 	
 	private HashMap<String, FileLocation> mFileItems;
 	private volatile String mGettingUrl;
-	private int mMediaType;
+	private int mMediaType = MediaType.UNKNOWN;
 	
 	// from ListActivity.java
 	protected ListAdapter mAdapter;
 	
 	private IInfoManager mInfoManager;
 	private IControlManager mControlManager;
+	
+	public FileListController() {}
+	
+	public FileListController(int mediaType) {
+		mMediaType = mediaType;
+	}
 	
 	public void onCreate(Activity activity, ListView list) {
 		
@@ -73,7 +79,9 @@ public class FileListController extends ListController implements IController {
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
-			mMediaType = mActivity.getIntent().getIntExtra(EXTRA_SHARE_TYPE, MediaType.MUSIC);
+			if (mMediaType == MediaType.UNKNOWN) {
+				mMediaType = mActivity.getIntent().getIntExtra(EXTRA_SHARE_TYPE, MediaType.MUSIC);
+			}
 			
 			final String path = mActivity.getIntent().getStringExtra(EXTRA_PATH);
 			final String displayPath = mActivity.getIntent().getStringExtra(EXTRA_DISPLAY_PATH);
