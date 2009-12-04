@@ -60,7 +60,7 @@ public class ListActivity extends Activity {
 		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
 		topFrame.setForeground(null);
 
-		mListController = (ListController) getIntent().getSerializableExtra(ListController.EXTRA_LIST_LOGIC);
+		mListController = (ListController) getIntent().getSerializableExtra(ListController.EXTRA_LIST_CONTROLLER);
 
 		mListController.findTitleView(findViewById(R.id.blanklist_outer_layout));
 		mListController.findMessageView(findViewById(R.id.blanklist_outer_layout));

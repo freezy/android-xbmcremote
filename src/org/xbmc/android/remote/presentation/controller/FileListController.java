@@ -95,7 +95,7 @@ public class FileListController extends ListController implements IController {
 					FileLocation item = mFileItems.get(((FileLocation)parent.getAdapter().getItem(position)).name);
 					if (item.isDirectory) {
 						Intent nextActivity = new Intent(mActivity, ListActivity.class);
-						nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new FileListController());
+						nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new FileListController());
 						nextActivity.putExtra(ListController.EXTRA_SHARE_TYPE, mMediaType);
 						nextActivity.putExtra(ListController.EXTRA_PATH, item.path);
 						nextActivity.putExtra(ListController.EXTRA_DISPLAY_PATH, item.displayPath);

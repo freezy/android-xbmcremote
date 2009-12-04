@@ -23,8 +23,9 @@ public class FileLocation implements INamedResource {
 		isArchive = isDirectory && path.startsWith("rar://") || path.startsWith("zip://");
 		isMultipath = path.startsWith("multipath://");
 		
-		if (isArchive || isMultipath) {
-			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
+		if (path.contains("://")) {
+			displayPath = name + "/";
+//			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
 		} else {
 			displayPath = path.replaceAll("\\\\", "/");
 		}
@@ -68,8 +69,9 @@ public class FileLocation implements INamedResource {
 			name = decoded.substring(decoded.lastIndexOf("/") + 1);
 			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
 
-		} else if (path.startsWith("multipath://")) {
-			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
+		} else if (path.contains("://")) {
+			displayPath = name + "/";
+//			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
 			isMultipath = true;
 			
 		} else {

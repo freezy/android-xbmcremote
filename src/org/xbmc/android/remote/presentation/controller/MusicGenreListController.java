@@ -67,7 +67,7 @@ public class MusicGenreListController extends ListController implements IControl
 					Genre genre = (Genre)view.getTag();
 					nextActivity = new Intent(view.getContext(), MusicGenreActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_GENRE, genre);
-					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new SongListController());
+					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new SongListController());
 					mActivity.startActivity(nextActivity);
 				}
 			});

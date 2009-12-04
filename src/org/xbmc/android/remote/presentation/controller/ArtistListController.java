@@ -73,7 +73,7 @@ public class ArtistListController extends ListController implements IController 
 					Intent nextActivity;
 					Artist artist = (Artist)view.getTag();
 					nextActivity = new Intent(view.getContext(), MusicArtistActivity.class);
-					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new AlbumListController());
+					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new AlbumListController());
 					nextActivity.putExtra(ListController.EXTRA_ARTIST, artist);
 					mActivity.startActivity(nextActivity);
 				}

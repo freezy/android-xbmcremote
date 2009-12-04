@@ -150,7 +150,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						break;
 					case HOME_ACTION_PICTURES:
 						Intent intent = new Intent(v.getContext(), ListActivity.class);
-						intent.putExtra(ListController.EXTRA_LIST_LOGIC, new FileListController());
+						intent.putExtra(ListController.EXTRA_LIST_CONTROLLER, new FileListController());
 						intent.putExtra(ListController.EXTRA_SHARE_TYPE, MediaType.PICTURES);
 						intent.putExtra(ListController.EXTRA_PATH, "");
 						mActivity.startActivity(intent);

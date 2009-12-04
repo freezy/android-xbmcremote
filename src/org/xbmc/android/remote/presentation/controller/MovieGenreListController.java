@@ -59,7 +59,7 @@ public class MovieGenreListController extends ListController implements IControl
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
-					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new MovieListController());
+					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new MovieListController());
 					nextActivity.putExtra(ListController.EXTRA_GENRE, (Genre)view.getTag());
 					mActivity.startActivity(nextActivity);
 				}

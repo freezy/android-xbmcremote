@@ -151,7 +151,7 @@ public class AlbumListController extends ListController implements IController {
 					Intent nextActivity;
 					ThreeHolder<Album> holder = (ThreeHolder<Album>)view.getTag();
 					nextActivity = new Intent(view.getContext(), ListActivity.class);
-					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new SongListController());
+					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new SongListController());
 					nextActivity.putExtra(ListController.EXTRA_ALBUM, holder.holderItem);
 					mActivity.startActivity(nextActivity);
 				}

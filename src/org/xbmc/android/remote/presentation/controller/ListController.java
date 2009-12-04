@@ -46,7 +46,7 @@ import android.widget.Toast;
 
 public abstract class ListController extends AbstractController implements Serializable, INotifiableController {
 	
-	public static final String EXTRA_LIST_LOGIC = "ListLogic"; 
+	public static final String EXTRA_LIST_CONTROLLER = "ListController"; 
 	public static final String EXTRA_MOVIE = "movie";
 	public static final String EXTRA_ALBUM = "album"; 
 	public static final String EXTRA_ARTIST = "artist";

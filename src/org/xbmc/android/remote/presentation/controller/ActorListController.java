@@ -90,7 +90,7 @@ public class ActorListController extends ListController implements IController {
 					Intent nextActivity;
 					OneHolder<Actor> holder = (OneHolder<Actor>)view.getTag();
 					nextActivity = new Intent(view.getContext(), ListActivity.class);
-					nextActivity.putExtra(ListController.EXTRA_LIST_LOGIC, new MovieListController());
+					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new MovieListController());
 					nextActivity.putExtra(ListController.EXTRA_ACTOR, holder.holderItem);
 					mActivity.startActivity(nextActivity);
 				}
