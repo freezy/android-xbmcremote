@@ -71,7 +71,7 @@ public abstract class ClientFactory {
 	 * @param context Context needed for preferences. Use application context and not activity!
 	 * @return Http client
 	 */
-	public static HttpApi getHttpClient(Context context, INotifiableManager manager) {
+	public static HttpApi getHttpClient(Context context, final INotifiableManager manager) {
 		if (sHttpClient == null) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 			int port = 0;
@@ -105,6 +105,11 @@ public abstract class ClientFactory {
 			} else {
 				sHttpClient = new HttpApi(null, -1);
 			}
+			(new Thread("Init-Connection") {
+				public void run() {
+					sHttpClient.control.setResponseFormat(manager);
+				}
+			}).start();
 		}
 		return sHttpClient;
 	}

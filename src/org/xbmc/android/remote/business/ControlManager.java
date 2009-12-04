@@ -192,5 +192,4 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 			}
 		});
 	}
-
 }

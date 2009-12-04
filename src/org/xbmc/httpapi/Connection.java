@@ -190,7 +190,6 @@ public class Connection {
 		return "";
 	}
 	
-	
 	/**
 	 * Executes an HTTP API method and returns the result as string.
 	 * @param method      Name of the method to run

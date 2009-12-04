@@ -21,18 +21,25 @@
 
 package org.xbmc.android.remote.presentation.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
 import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
+import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.INamedResource;
 import org.xbmc.api.object.Song;
+import org.xbmc.eventclient.ButtonCodes;
+import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.MusicClient;
 
 import android.app.Activity;
@@ -40,6 +47,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Handler.Callback;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -47,6 +55,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -55,22 +64,36 @@ import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class MusicPlaylistController extends ListController implements IController {
+public class MusicPlaylistController extends ListController implements IController, Callback {
 	
 	public static final String TAG = "MusicPlaylistLogic";
 	
 	public static final int ITEM_CONTEXT_PLAY = 1;
 	public static final int ITEM_CONTEXT_REMOVE = 2;
 	
-	private int mCurrentPosition = -1;
-	private Handler mHandler;
+	public static final int MESSAGE_PLAYLIST_SIZE = 701;
+	public static final String BUNDLE_PLAYLIST_SIZE = "playlist_size";
+	
+	private PlaylistActivity mPlaylistActivity;
+	private Handler mNowPlayingHandler;
 	private SongAdapter mSongAdapter;
 	
+	private IControlManager mControlManager;
 	private IMusicManager mMusicManager;
+	private EventClient mClient;
 	
-	public void onCreate(final Activity activity, final ListView list) {
+	private int mPlayStatus = PlayStatus.UNKNOWN;
+	private int mPlayListId = -1;
+	private int mCurrentPosition = -1;
+	private int mLastPosition = -1;
+	
+	public void onCreate(final PlaylistActivity activity, final ListView list) {
 		
+		mPlaylistActivity = activity;
 		mMusicManager = ManagerFactory.getMusicManager(activity.getApplicationContext(), this);
+		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
+		mClient = ConnectionManager.getEventClient(activity.getApplicationContext());
+		mNowPlayingHandler = new Handler(this);
 		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
@@ -82,7 +105,7 @@ public class MusicPlaylistController extends ListController implements IControll
 			
 			mMusicManager.getPlaylistPosition(new DataResponse<Integer>() {
 				public void run() {
-					MusicPlaylistController.this.mCurrentPosition = value;
+					mCurrentPosition = value;
 				}
 			});
 			
@@ -112,7 +135,9 @@ public class MusicPlaylistController extends ListController implements IControll
 				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					final OneHolder<PlaylistItem> holder = (OneHolder<PlaylistItem>)view.getTag();
-					mMusicManager.setPlaylistSong(new DataResponse<Boolean>(), holder.holderItem.position);
+					final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
+					mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId);
+					mMusicManager.setPlaylistSong(doNothing, holder.holderItem.position);
 				}
 			});
 					
@@ -121,9 +146,96 @@ public class MusicPlaylistController extends ListController implements IControll
 
 		}
 	}
+
+	/**
+	 * This is called from the thread with a message containing updated info of
+	 * what's currently playing.
+	 * 
+	 * @param msg
+	 *            Message object containing currently playing info
+	 */
+	public synchronized boolean handleMessage(Message msg) {
+		final Bundle data = msg.getData();
+		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying) data.getSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
+		switch (msg.what) {
+		case NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED:
+			mPlayStatus = currentlyPlaying.getPlayStatus();
+			if (currentlyPlaying.isPlaying()) {
+				mPlaylistActivity.setTime(Song.getDuration(currentlyPlaying.getTime() + 1));
+			} else {
+				mPlaylistActivity.clear();
+			}
+			return true;
+
+		case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
+			mLastPosition = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYPOSITION);
+			onTrackChanged(currentlyPlaying);
+			return true;
+			
+		case NowPlayingPollerThread.MESSAGE_PLAYSTATE_CHANGED:
+			mPlayListId = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYLIST);
+			return true;
+			
+		case MESSAGE_PLAYLIST_SIZE:
+			final int size = msg.getData().getInt(BUNDLE_PLAYLIST_SIZE);
+			mPlaylistActivity.setNumTracks(size == 0 ? "empty" : size + " tracks");
+			return true;
+			
+		case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
+		case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
+			mPlayStatus = PlayStatus.UNKNOWN;
+			return true;
+			
+		default:
+			return false;
+		}
+	}
 	
-	public void subscribe(Handler handler) {
-		mHandler = handler;
+	public void setupButtons(View prev, View stop, View playpause, View next) {
+
+		// setup buttons
+		prev.setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_MINUS));
+		stop.setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_STOP));
+		next.setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_PLUS));
+		playpause.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				try {
+					switch (mPlayStatus) {
+						case PlayStatus.PLAYING:
+							mClient.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short)0, (byte)0);
+							break;
+						case PlayStatus.PAUSED:
+							mClient.sendButton("R1", ButtonCodes.REMOTE_PLAY, false, true, true, (short)0, (byte)0);
+							break;
+						case PlayStatus.STOPPED:
+							final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
+							mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId);
+							mControlManager.setPlaylistPos(doNothing, mLastPosition < 0 ? 0 : mLastPosition);
+							break;
+					}
+				} catch (IOException e) { }
+			}
+		});
+	}
+	
+
+	/**
+	 * Handles the push- release button code. Switches image of the pressed
+	 * button, vibrates and executes command.
+	 */
+	private class OnRemoteAction implements OnClickListener {
+		private final String mAction;
+
+		public OnRemoteAction(String action) {
+			mAction = action;
+		}
+
+		public void onClick(View v) {
+			try {
+				mClient.sendButton("R1", mAction, false, true, true, (short) 0, (byte) 0);
+			} catch (IOException e) {
+			}
+		}
 	}
 	
 	public void onTrackChanged(ICurrentlyPlaying newSong) {
@@ -176,17 +288,18 @@ public class MusicPlaylistController extends ListController implements IControll
 	}
 	
 	private class SongAdapter extends ArrayAdapter<PlaylistItem> {
+		
 		private final LayoutInflater mInflater;
 		private final HashMap<Integer, OneHolder<PlaylistItem>> mItemPositions = new HashMap<Integer, OneHolder<PlaylistItem>>();
 		SongAdapter(Activity activity, ArrayList<PlaylistItem> items) {
 			super(activity, R.layout.listitem_oneliner, items);
 			mInflater = LayoutInflater.from(activity);
-			Handler handler = mHandler;
+			Handler handler = mNowPlayingHandler;
 			if (handler != null) {
 				Message msg = Message.obtain();
 	  	  		Bundle bundle = msg.getData();
-	  	  		bundle.putInt(PlaylistActivity.BUNDLE_PLAYLIST_SIZE, items.size());
-	  	  		msg.what = PlaylistActivity.MESSAGE_PLAYLIST_SIZE;	
+	  	  		bundle.putInt(BUNDLE_PLAYLIST_SIZE, items.size());
+	  	  		msg.what = MESSAGE_PLAYLIST_SIZE;	
 	  	  		handler.sendMessage(msg);
 			}
 		}
@@ -243,14 +356,22 @@ public class MusicPlaylistController extends ListController implements IControll
 	}
 	
 	public void onActivityPause() {
+		ConnectionManager.getNowPlayingPoller(mActivity.getApplicationContext()).unSubscribe(mNowPlayingHandler);
 		if (mMusicManager != null) {
 			mMusicManager.setController(null);
+		}
+		if (mControlManager != null) {
+			mControlManager.setController(null);
 		}
 	}
 
 	public void onActivityResume(Activity activity) {
+		ConnectionManager.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
 		if (mMusicManager != null) {
 			mMusicManager.setController(this);
+		}
+		if (mControlManager != null) {
+			mControlManager.setController(this);
 		}
 	}
 	

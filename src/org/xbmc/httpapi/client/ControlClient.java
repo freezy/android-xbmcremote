@@ -30,6 +30,7 @@ import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SeekType;
 import org.xbmc.httpapi.Connection;
+import org.xbmc.httpapi.WrongDataFormatException;
 
 /**
  * The ControlClient class takes care of everything related to controlling
@@ -281,7 +282,7 @@ public class ControlClient implements IControlClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean setPlaylistId(INotifiableManager manager, int id) {
-		return mConnection.getBoolean(manager, "GetCurrentPlaylist", String.valueOf(id));
+		return mConnection.getBoolean(manager, "SetCurrentPlaylist", String.valueOf(id));
 	}
 	
 	/**
@@ -295,6 +296,38 @@ public class ControlClient implements IControlClient {
 	}
 	
 	/**
+	 * Sets the correct response format to default values
+	 * @param response Response object	 
+	 * @return True on success, false otherwise.
+	 */
+	public boolean setResponseFormat(INotifiableManager manager) {
+		try {
+			StringBuilder sb = new StringBuilder();
+			sb.append("WebHeader;true;");
+			sb.append("WebFooter;true;");
+			sb.append("Header; ;");
+			sb.append("Footer; ;");
+			sb.append("OpenTag;");sb.append(Connection.LINE_SEP);sb.append(";");
+			sb.append("CloseTag;\n;");
+			sb.append("CloseFinalTag;false");
+			mConnection.assertBoolean(manager, "SetResponseFormat", sb.toString());
+			
+			sb = new StringBuilder();
+			sb.append("OpenRecordSet; ;");
+			sb.append("CloseRecordSet; ;");
+			sb.append("OpenRecord; ;");
+			sb.append("CloseRecord; ;");
+			sb.append("OpenField;<field>;");
+			sb.append("CloseField;</field>");
+			mConnection.assertBoolean(manager, "SetResponseFormat", sb.toString());
+			
+			return true;
+		} catch (WrongDataFormatException e) {
+			return false;
+		}
+	}
+	
+	/**
 	 * Returns state and type of the media currently playing.
 	 * @return
 	 */
@@ -304,7 +337,7 @@ public class ControlClient implements IControlClient {
 			private static final long serialVersionUID = -1554068775915058884L;
 			public boolean isPlaying() { return false; }
 			public int getMediaType() { return 0; }
-			public int getPlaylistPosition() { return 0; }
+			public int getPlaylistPosition() { return -1; }
 			public String getTitle() { return ""; }
 			public int getTime() { return 0; }
 			public int getPlayStatus() { return PlayStatus.STOPPED; }

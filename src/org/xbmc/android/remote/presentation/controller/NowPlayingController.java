@@ -51,20 +51,22 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class NowPlayingController extends AbstractController implements INotifiableController, IController, Callback  {
 	
+	private static final String TAG = "NowPlayingController";
+	
 	private IControlManager mControlManager;
 	private NowPlayingActivity mNowPlayingActivity;
 	private Handler mNowPlayingHandler;
 	private EventClient mClient;
 	private int mPlayStatus = PlayStatus.UNKNOWN;
-	private int mPlayList = 0;
-	private int mPosition = -1;
+	private int mPlayListId = -1;
+	private int mLastPosition = -1;
 	
 	public NowPlayingController(NowPlayingActivity activity) {
 		super.onCreate(activity);
 		mNowPlayingActivity = activity;
 		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
 		mNowPlayingHandler = new Handler(this);
-		mClient = ConnectionManager.getEventClient(activity);
+		mClient = ConnectionManager.getEventClient(activity.getApplicationContext());
 	}
 	
 	/**
@@ -89,16 +91,13 @@ public class NowPlayingController extends AbstractController implements INotifia
 				return true;
 			
 			case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
-				mPlayStatus = currentlyPlaying.getPlayStatus();
-				mPosition = currentlyPlaying.getPlaylistPosition();
-				mControlManager.getPlaylistId(new DataResponse<Integer>() {
-					public void run() {
-						mPlayList = value;
-					}
-				});
 				mNowPlayingActivity.updateInfo(currentlyPlaying.getArtist(), currentlyPlaying.getAlbum(), currentlyPlaying.getTitle());
-				
+				mLastPosition = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYPOSITION);
 		  	  	return true;
+
+			case NowPlayingPollerThread.MESSAGE_PLAYSTATE_CHANGED:
+				mPlayListId = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYLIST);
+				return true;
 		  	  	
 			case NowPlayingPollerThread.MESSAGE_COVER_CHANGED:
 				// TODO: FIX!!
@@ -107,7 +106,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 				
 			case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
 				mPlayStatus = PlayStatus.UNKNOWN;
-				Log.w("NOWPLAYNING","Received connection error from poller!");
+				Log.w(TAG,"Received connection error from poller!");
 				return true;
 				
 			case NowPlayingPollerThread.MESSAGE_RECONFIGURE:
@@ -117,7 +116,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 						try{
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
-							Log.e("NowPlayingActivity", Log.getStackTraceString(e));
+							Log.e(TAG, Log.getStackTraceString(e));
 						}
 						ConnectionManager.getNowPlayingPoller(mActivity.getApplicationContext()).subscribe(mNowPlayingHandler);					
 					}
@@ -156,9 +155,8 @@ public class NowPlayingController extends AbstractController implements INotifia
 							break;
 						case PlayStatus.STOPPED:
 							final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
-							mControlManager.setPlaylistId(doNothing, mPlayList);
-							mControlManager.setPlaylistPos(doNothing, mPosition > 0 ? mPosition : 1);
-//							mControlManager.playNext(doNothing);
+							mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId);
+							mControlManager.setPlaylistPos(doNothing, mLastPosition < 0 ? 0 : mLastPosition);
 							break;
 					}
 				} catch (IOException e) { }
@@ -195,11 +193,15 @@ public class NowPlayingController extends AbstractController implements INotifia
 	
 	public void onActivityPause() {
 		ConnectionManager.getNowPlayingPoller(mActivity.getApplicationContext()).unSubscribe(mNowPlayingHandler);
-		mControlManager.setController(null);
+		if (mControlManager != null) {
+			mControlManager.setController(null);
+		}
 	}
 
 	public void onActivityResume(Activity activity) {
 		ConnectionManager.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
-		mControlManager.setController(this);
+		if (mControlManager != null) {
+			mControlManager.setController(this);
+		}
 	}
 }

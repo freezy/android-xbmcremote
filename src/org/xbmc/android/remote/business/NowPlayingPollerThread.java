@@ -35,6 +35,7 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.info.PlayStatus;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -44,6 +45,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Activities (and other stuff) can subscribe to this thread in order to obtain
@@ -57,7 +59,12 @@ import android.util.Log;
  */
 public class NowPlayingPollerThread extends Thread {
 	
+	private static final String TAG = "NowPlayingPollerThread";
+	
 	public static final String BUNDLE_CURRENTLY_PLAYING = "CurrentlyPlaying";
+	public static final String BUNDLE_LAST_PLAYLIST = "LastPlaylist";
+	public static final String BUNDLE_LAST_PLAYPOSITION = "LastPlayPosition";
+	
 	public static final int MESSAGE_CONNECTION_ERROR = 1;
 	public static final int MESSAGE_RECONFIGURE = 2;
 	public static final int MESSAGE_PROGRESS_CHANGED = 666;
@@ -72,48 +79,36 @@ public class NowPlayingPollerThread extends Thread {
 	private String mCoverPath;
 	private Drawable mCover;
 	
+	private int mPlayList = -1;
+	private int mPosition = -1;
+	
 	/**
 	 * Since this one is kinda of its own, we use a stub as manager.
 	 * @TODO create some toats or at least logs instead of empty on* methods.
 	 */
 	private final INotifiableManager mManagerStub;
 	
-	public NowPlayingPollerThread(Context context){
+	public NowPlayingPollerThread(final Context context){
   	  	mManagerStub = new INotifiableManager() {
 			public void onMessage(int code, String message) { }
 			public void onMessage(String message) { }
-			public void onError(Exception e) { }
+			public void onError(Exception e) {
+				Toast toast = Toast.makeText(context, "Poller Error: " + e.getMessage(), Toast.LENGTH_LONG);
+				toast.show();
+			}
 		};
 		mControl = ClientFactory.getControlClient(context, mManagerStub);
   	  	mInfo = ClientFactory.getInfoClient(context, mManagerStub);
   	  	mSubscribers = new HashSet<Handler>();
 	}
 	
-	public synchronized void subscribe(Handler handler){
-		//update handler on the state of affairs
-		Message msg = Message.obtain(handler);
-		Bundle bundle = msg.getData();
-		IControlClient control = mControl; // local access is much faster
-/*		if (!control.isConnected()){
-			msg.what = MESSAGE_CONNECTION_ERROR;
-			bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, null);
-			handler.sendMessage(msg);
-		} else {*/
-			final ICurrentlyPlaying currPlaying = control.getCurrentlyPlaying(mManagerStub);
-			msg.what = MESSAGE_PROGRESS_CHANGED;
-			bundle = msg.getData();
-			bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
-			handler.sendMessage(msg);
-
-	  		msg = Message.obtain(handler);
-  	  		bundle = msg.getData();
-  	  		bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, currPlaying);
-  	  		msg.what = NowPlayingPollerThread.MESSAGE_TRACK_CHANGED;	
-  	  		handler.sendMessage(msg);
-  	  		
-  			msg = Message.obtain(handler);
-  	  		handler.sendEmptyMessage(MESSAGE_COVER_CHANGED);
-//		}
+	public synchronized void subscribe(Handler handler) {
+		// update handler on the state of affairs
+		final ICurrentlyPlaying currPlaying = mControl.getCurrentlyPlaying(mManagerStub);
+		sendSingleMessage(handler, MESSAGE_PROGRESS_CHANGED, currPlaying);
+		sendSingleMessage(handler, MESSAGE_TRACK_CHANGED, currPlaying);
+		handler.sendEmptyMessage(MESSAGE_COVER_CHANGED);
+		
 		mSubscribers.add(handler);
 	}
 	
@@ -127,16 +122,20 @@ public class NowPlayingPollerThread extends Thread {
 	
 	public synchronized void sendMessage(int what, ICurrentlyPlaying curr) {
 		HashSet<Handler> subscribers = mSubscribers;
-		Message msg;
-		Bundle bundle;
 		for (Handler handler : subscribers) {
-			msg = Message.obtain(handler);
-			msg.what = what;
-			bundle = msg.getData();
-			bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, curr);
-			msg.setTarget(handler);
-			handler.sendMessage(msg);
-		}	
+			sendSingleMessage(handler, what, curr);
+		}
+	}
+	
+	private void sendSingleMessage(Handler handler, int what, ICurrentlyPlaying curr) {
+		Message msg = Message.obtain(handler);
+		msg.what = what;
+		Bundle bundle = msg.getData();
+		bundle.putSerializable(BUNDLE_CURRENTLY_PLAYING, curr);
+		bundle.putInt(BUNDLE_LAST_PLAYLIST, mPlayList);
+		bundle.putInt(BUNDLE_LAST_PLAYPOSITION, mPosition);
+		msg.setTarget(handler);
+		handler.sendMessage(msg);
 	}
 
 	public synchronized void sendEmptyMessage(int what) {
@@ -148,11 +147,12 @@ public class NowPlayingPollerThread extends Thread {
 	
 	public void run() {
 		String lastPos = "-1";
-		int lastPlayStatus = -1;
+		int lastPlayStatus = PlayStatus.UNKNOWN;
+		int currentPlayStatus = PlayStatus.UNKNOWN;
 		IControlClient control = mControl; // use local reference for faster access
 		HashSet<Handler> subscribers = mSubscribers;
 		while (!isInterrupted() ) {
-			if(subscribers.size() > 0){
+			if (subscribers.size() > 0){
 /*				if (!control.isConnected()) {
 					sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
 				} else {*/
@@ -163,19 +163,32 @@ public class NowPlayingPollerThread extends Thread {
 						sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
 						return;
 					}
-					
-					sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
-					
+					currentPlayStatus = currPlaying.getPlayStatus();
 					String currentPos = currPlaying.getTitle() + currPlaying.getDuration();
-					int currentPlayStatus = currPlaying.getPlayStatus();
 					
-					if (currentPlayStatus != lastPlayStatus) {
-						sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);
+					// send changed status
+					if (currentPlayStatus == PlayStatus.PLAYING) {
+						sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
 					}
 					
+					// play state changed?
+					if (currentPlayStatus != lastPlayStatus) {
+						if (currentPlayStatus == PlayStatus.PLAYING) {
+							mPlayList = control.getPlaylistId(mManagerStub);
+							sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);
+						} else {
+							sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);
+							sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
+						}
+					}
+					
+					// play position changed?
 					if (!lastPos.equals(currentPos)) {
 						lastPos = currentPos;
 						
+						if (currPlaying.getPlaylistPosition() >= 0) {
+							mPosition = currPlaying.getPlaylistPosition();
+						}
 						sendMessage(MESSAGE_TRACK_CHANGED, currPlaying);
 			  	  		
 			  	  		try {				
@@ -206,21 +219,21 @@ public class NowPlayingPollerThread extends Thread {
 			  	  			}
 			  	  		} catch (MalformedURLException e) {
 			  	  			//e.printStackTrace();
-			  	  		Log.e("NowPlayingPollerThread", Log.getStackTraceString(e));
+			  	  			Log.e(TAG, Log.getStackTraceString(e));
 			  	  		} catch (URISyntaxException e) {
 			  	  			//e.printStackTrace();
-			  	  		Log.e("NowPlayingPollerThread", Log.getStackTraceString(e));
+			  	  			Log.e(TAG, Log.getStackTraceString(e));
 			  	  		}
 					}
 				}
 //			}
 			try {
 				sleep(1000);
-			}
-			catch (InterruptedException e) {
+			} catch (InterruptedException e) {
 				sendEmptyMessage(MESSAGE_RECONFIGURE);
 				return;
 			}
+			lastPlayStatus = currentPlayStatus;
 		}
 	}
 	
