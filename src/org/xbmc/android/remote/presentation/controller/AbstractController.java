@@ -129,12 +129,16 @@ public abstract class AbstractController {
 				}
 			});
 			
-			final AlertDialog alert = builder.create();
-			try {
-				alert.show();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			mActivity.runOnUiThread(new Runnable() {
+				public void run() {
+					final AlertDialog alert = builder.create();
+					try {
+						alert.show();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
 		}
 	}
 
