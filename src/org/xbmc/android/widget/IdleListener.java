@@ -8,13 +8,9 @@
 
 package org.xbmc.android.widget;
 
-import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.holder.AbstractHolder;
 import org.xbmc.android.widget.IdleListDetector.OnListIdleListener;
-import org.xbmc.api.business.IMusicManager;
-import org.xbmc.api.type.ThumbSize;
 
-import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
@@ -25,15 +21,11 @@ import android.widget.AbsListView;
  * further enhance performance.
  */
 public class IdleListener implements OnListIdleListener {
-	private final Activity mActivity;
 
 	private final AbsListView mList;
-	private final IMusicManager mManager;
 
-	public IdleListener(Activity activity, AbsListView list) {
-		mActivity = activity;
+	public IdleListener(AbsListView list) {
 		mList = list;
-		mManager = ManagerFactory.getMusicManager(activity.getApplicationContext(), null);
 	}
 
 	public void onListIdle() {
@@ -46,7 +38,7 @@ public class IdleListener implements OnListIdleListener {
 			final AbstractHolder holder = (AbstractHolder)row.getTag();
 			if (holder.tempBind) {
 				Log.i("ImageLoaderIdleListener", "Album: " + holder.getCoverItem());
-				mManager.getCover(holder.getCoverDownloadHandler(mActivity, null), holder.getCoverItem(), ThumbSize.SMALL);
+//				mManager.getCover(holder.getCoverDownloadHandler(mActivity, null), holder.getCoverItem(), ThumbSize.SMALL);
 				holder.tempBind = false;
 			}
 		}

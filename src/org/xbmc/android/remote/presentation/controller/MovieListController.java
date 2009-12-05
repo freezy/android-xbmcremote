@@ -318,7 +318,7 @@ public class MovieListController extends ListController implements IController {
 			if (mLoadCovers) {
 				holder.tempBind = true;
 				holder.iconView.setImageResource(R.drawable.poster);
-				mVideoManager.getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), movie, ThumbSize.SMALL);
+//				mVideoManager.getCover(holder.getCoverDownloadHandler(mActivity, null), movie, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.poster);
 			}		

@@ -384,7 +384,7 @@ public class SongListController extends ListController implements IController {
 			if (mLoadCovers) {
 				holder.iconView.setImageResource(R.drawable.icon_song_dark);
 				holder.tempBind = true;
-				mMusicManager.getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), song, ThumbSize.SMALL);
+//				mMusicManager.getCover(holder.getCoverDownloadHandler(mActivity, null), song, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.icon_song);
 			}

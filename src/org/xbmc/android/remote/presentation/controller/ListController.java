@@ -77,7 +77,7 @@ public abstract class ListController extends AbstractController implements Seria
 	 * Hook up the mechanism to load images only when the list "slows" down.
 	 */
 	protected void setupIdleListener() {
-		IdleListener idleListener = new IdleListener(mActivity, mList);
+		IdleListener idleListener = new IdleListener(mList);
 		mPostScrollLoader = new IdleListDetector(idleListener);
 		FastScrollView fastScroller = (FastScrollView)mList.getParent();
 		fastScroller.setOnIdleListDetector(mPostScrollLoader);

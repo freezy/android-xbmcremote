@@ -235,8 +235,6 @@ public class VideoClient implements IVideoClient {
 						Connection.trimDouble(fields[row + 8])
 				));
 			}
-			fields = null;
-			response = null;
 		} catch (Exception e) {
 			System.err.println("ERROR: " + e.getMessage());
 			System.err.println("response = " + response);

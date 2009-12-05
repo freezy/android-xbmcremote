@@ -188,7 +188,7 @@ public class ActorListController extends ListController implements IController {
 			
 			if (mLoadCovers) {
 				holder.tempBind = true;
-				mVideoManager.getCover(holder.getCoverDownloadHandler(mActivity, mPostScrollLoader), actor, ThumbSize.SMALL);
+				mVideoManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), actor, ThumbSize.SMALL);
 			}
 			return row;
 		}

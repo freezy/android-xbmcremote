@@ -28,7 +28,6 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.type.CacheType;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 
@@ -76,10 +75,10 @@ public abstract class AbstractHolder {
 	 * @param idler
 	 * @return
 	 */
-	public CoverDownloadResponse getCoverDownloadHandler(Activity activity, IdleListDetector idler) {
+	public CoverDownloadResponse getCoverDownloadHandler(IdleListDetector idler) {
 		CoverDownloadResponse cdh = mCoverDownloadHandler;
 		if (cdh == null) {
-			cdh = new CoverDownloadResponse(activity, idler); 
+			cdh = new CoverDownloadResponse(idler); 
 		}
 		return cdh;
 	}
@@ -90,7 +89,7 @@ public abstract class AbstractHolder {
 	
 	public class CoverDownloadResponse extends DataResponse<Bitmap> {
 		private final IdleListDetector mIdler;
-		public CoverDownloadResponse(Activity activity, IdleListDetector idler) {
+		public CoverDownloadResponse(IdleListDetector idler) {
 			super(id, AbstractHolder.this.defaultCover);
 			mIdler = idler;
 		}
