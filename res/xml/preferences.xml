@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="XBMCRemotePrefsFile">
+	<org.xbmc.android.remote.presentation.preference.HostPreference
+		android:key="setting_host"
+		android:title="XBMC Instance"
+		android:summary="Connection settings" />
 	<EditTextPreference
 		android:key="setting_ip"
 		android:title="XBMC IP Address / Host"
