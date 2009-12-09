@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="XBMCRemotePrefsFile">
 	<PreferenceScreen
 		android:key="setting_instances"
-		android:title="Manage Instances"
+		android:title="Manage XBMC hosts"
 		android:summary="Add, edit and remove the XBMC instances in your LAN.">
 		<org.xbmc.android.remote.presentation.preference.HostPreference
 			android:key="setting_add_host"

@@ -60,6 +60,8 @@ import android.view.KeyEvent;
 public class SettingsActivity extends PreferenceActivity {
 	
 	public final static String SUMMARY_VALUE_PLACEHOLDER = "%value%";
+	public final static String JUMP_TO = "jump_to";
+	public final static int JUMP_TO_INSTANCES = 1;
 	
 	private ConfigurationManager mConfigurationManager;
 	private SettingsController mSettingsController;
@@ -70,8 +72,13 @@ public class SettingsActivity extends PreferenceActivity {
 		mSettingsController = new SettingsController(this);
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard();
-		
-		
+		final int jumpTo = getIntent().getIntExtra(JUMP_TO, 0);
+		switch (jumpTo) {
+			case JUMP_TO_INSTANCES:
+				setPreferenceScreen((PreferenceScreen)getPreferenceScreen().findPreference("setting_instances"));
+				break;
+			default:
+		}
 	}
 	
 	@Override
@@ -131,7 +138,7 @@ public class SettingsActivity extends PreferenceActivity {
 			activity.addPreferencesFromResource(R.xml.preferences);
 			PreferenceScreen instances = (PreferenceScreen)activity.getPreferenceScreen().findPreference("setting_instances");
 			HostPreference addItem = (HostPreference)activity.getPreferenceScreen().findPreference("setting_add_host");
-			instances.removeAll();
+//			instances.removeAll();
 			
 			for (Host host : Host.getHosts(activity)) {
 				HostPreference pref = new HostPreference(activity);

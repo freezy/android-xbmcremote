@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.http.HttpException;
+import org.xbmc.android.remote.presentation.preference.Host;
 import org.xbmc.api.business.INotifiableManager;
 
 import android.util.Log;
@@ -77,6 +78,15 @@ public class Connection {
 			sConnection.setHost(host, port);
 		}
 		return sConnection;
+	}
+	
+	/**
+	 * Updates host info of the connection instance
+	 * @param host
+	 */
+	public void setHost(Host host) {
+		setHost(host.host, host.port);
+		setAuth(host.user, host.pass);
 	}
 	
 	/**

@@ -39,6 +39,7 @@ public class IdleListener implements OnListIdleListener {
 			final AbstractHolder holder = (AbstractHolder)row.getTag();
 			if (holder.tempBind) {
 				Log.i(TAG, "Cover: " + holder.getCoverItem());
+				// TODO FIX!!
 //				mManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), holder.getCoverItem(), ThumbSize.SMALL);
 				holder.tempBind = false;
 			}
