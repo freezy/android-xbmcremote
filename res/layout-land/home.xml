@@ -12,9 +12,22 @@
             android:id="@+id/home_bottombar"
             android:layout_width="fill_parent"
             android:layout_height="60dip"
-            android:layout_alignParentBottom="true" android:background="@drawable/home_bottom">
-			<TextView android:id="@+id/HomeVersionTextView" android:text="Version Info"
-				android:layout_height="wrap_content" android:typeface="monospace" android:layout_gravity="center_vertical" android:gravity="center_horizontal" android:layout_width="fill_parent"/>
+            android:layout_alignParentBottom="true">
+            <Button 
+	            android:id="@+id/home_about_button"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:background="@drawable/bottom_logo" />
+			<Button 
+				android:id="@+id/home_version_button" 
+				android:layout_height="wrap_content" 
+				android:layout_width="fill_parent"
+				android:text="Version Info"
+				android:layout_gravity="center_vertical" 
+				android:gravity="center_horizontal" 
+				android:typeface="monospace" 
+				android:textColor="#eeffffff"
+				android:background="@drawable/bottom_text" />
 		</LinearLayout>
 		<FrameLayout
 			 android:id="@+id/home_upper"

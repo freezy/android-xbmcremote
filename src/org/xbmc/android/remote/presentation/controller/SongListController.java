@@ -334,11 +334,9 @@ public class SongListController extends ListController implements IController {
 	
 	
 	private class SongAdapter extends ArrayAdapter<Song> {
-		private Activity mActivity;
 		private final LayoutInflater mInflater;
 		SongAdapter(Activity activity, ArrayList<Song> items) {
 			super(activity, R.layout.listitem_three, items);
-			mActivity = activity;
 			mInflater = LayoutInflater.from(activity);
 		}
 		@SuppressWarnings("unchecked")
@@ -384,7 +382,7 @@ public class SongListController extends ListController implements IController {
 			if (mLoadCovers) {
 				holder.iconView.setImageResource(R.drawable.icon_song_dark);
 				holder.tempBind = true;
-//				mMusicManager.getCover(holder.getCoverDownloadHandler(mActivity, null), song, ThumbSize.SMALL);
+				mMusicManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), song, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.icon_song);
 			}

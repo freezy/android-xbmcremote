@@ -22,6 +22,7 @@ import android.widget.AbsListView;
  */
 public class IdleListener implements OnListIdleListener {
 
+	private final static String TAG = "OnListIdleListener";
 	private final AbsListView mList;
 
 	public IdleListener(AbsListView list) {
@@ -30,15 +31,15 @@ public class IdleListener implements OnListIdleListener {
 
 	public void onListIdle() {
 		int n = mList.getChildCount();
-		Log.i("ImageLoaderIdleListener", "IDLEING, downloading covers");
+		Log.i(TAG, "IDLEING, downloading covers");
 		// try to garbage collect before and after idling.
 		System.gc();
 		for (int i = 0; i < n; i++) {
 			View row = mList.getChildAt(i);
 			final AbstractHolder holder = (AbstractHolder)row.getTag();
 			if (holder.tempBind) {
-				Log.i("ImageLoaderIdleListener", "Album: " + holder.getCoverItem());
-//				mManager.getCover(holder.getCoverDownloadHandler(mActivity, null), holder.getCoverItem(), ThumbSize.SMALL);
+				Log.i(TAG, "Cover: " + holder.getCoverItem());
+//				mManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), holder.getCoverItem(), ThumbSize.SMALL);
 				holder.tempBind = false;
 			}
 		}

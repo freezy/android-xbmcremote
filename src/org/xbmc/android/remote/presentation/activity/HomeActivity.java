@@ -43,8 +43,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.GridView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class HomeActivity extends Activity {
@@ -73,19 +75,25 @@ public class HomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 		
+		final Button versionButton = (Button)findViewById(R.id.home_version_button);
 		final GridView menuGrid = (GridView)findViewById(R.id.HomeItemGridView);
 		mHomeController = new HomeController(this, menuGrid);
 
 		mClient = ConnectionManager.getEventClient(this);
 		
-		mHomeController.setupVersionHandler((TextView) findViewById(R.id.HomeVersionTextView), menuGrid);
+		mHomeController.setupVersionHandler(versionButton, menuGrid);
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard();
 		
 //		ImportUtilities.purgeCache();
 		
-        ((TextView) findViewById(R.id.HomeVersionTextView)).setText("Connecting...");
+		versionButton.setText("Connecting...");
+		((Button)findViewById(R.id.home_about_button)).setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				startActivity(new Intent(HomeActivity.this, AboutActivity.class));
+			}
+		});
 	}
 
 	@Override

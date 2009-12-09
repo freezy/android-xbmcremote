@@ -53,6 +53,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -84,7 +85,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 //		bcl.addObserver(this);
 	}
 	
-	public void setupVersionHandler(final TextView versionTextView, final GridView homeItemGrid) {
+	public void setupVersionHandler(final Button versionTextView, final GridView homeItemGrid) {
 		mUpdateVersionHandler = new DataResponse<String>() {
 			public void run() {
 				if (!ConnectionManager.isNetworkAvailable(mActivity.getApplicationContext())) {
@@ -159,7 +160,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						mActivity.startActivity(new Intent(v.getContext(), NowPlayingActivity.class));
 						break;
 					case HOME_ACTION_RECONNECT:
-						((TextView)mActivity.findViewById(R.id.HomeVersionTextView)).setText("Reconnecting...");
+						((Button)mActivity.findViewById(R.id.home_version_button)).setText("Reconnecting...");
 						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
 						break;
 					case HOME_ACTION_WOL:
@@ -231,17 +232,17 @@ public class HomeController extends AbstractController implements INotifiableCon
 	}
 	
 	public class WolCounter extends CountDownTimer {
-		private TextView textCount;
+		private Button textCount;
 		
 		public WolCounter(long millisInFuture, long countDownInterval) {
 			super(millisInFuture, countDownInterval);
 
-			textCount = ((TextView) mActivity.findViewById(R.id.HomeVersionTextView));
+			textCount = ((Button)mActivity.findViewById(R.id.home_version_button));
 		}
 		
 		@Override
 		public void onFinish() {
-			((TextView)mActivity.findViewById(R.id.HomeVersionTextView)).setText("Attempting to reconnect...");
+			((Button)mActivity.findViewById(R.id.home_version_button)).setText("Attempting to reconnect...");
 			mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
 		}
 

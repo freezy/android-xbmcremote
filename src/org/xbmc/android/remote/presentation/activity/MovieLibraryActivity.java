@@ -247,6 +247,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	protected void onPause() {
 		super.onPause();
 		mMovieController.onActivityPause();
+		mMovieController = null;
 		mActorController.onActivityPause();
 		mGenresController.onActivityPause();
 		mFileController.onActivityPause();

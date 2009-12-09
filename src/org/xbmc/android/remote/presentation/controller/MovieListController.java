@@ -267,11 +267,9 @@ public class MovieListController extends ListController implements IController {
 	}
 	
 	private class MovieAdapter extends ArrayAdapter<Movie> {
-		private Activity mActivity;
 		private final LayoutInflater mInflater;
 		MovieAdapter(Activity activity, ArrayList<Movie> items) {
 			super(activity, R.layout.listitem_three, items);
-			mActivity = activity;
 			mInflater = LayoutInflater.from(activity);
 		}
 		
@@ -318,7 +316,7 @@ public class MovieListController extends ListController implements IController {
 			if (mLoadCovers) {
 				holder.tempBind = true;
 				holder.iconView.setImageResource(R.drawable.poster);
-//				mVideoManager.getCover(holder.getCoverDownloadHandler(mActivity, null), movie, ThumbSize.SMALL);
+				mVideoManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), movie, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.poster);
 			}		

@@ -42,6 +42,7 @@ public class HostPreference extends DialogPreference {
 	private EditText mPortView;
 	private EditText mUserView;
 	private EditText mPassView;
+//	private static int ITEM_CONTEXT_DELETE = 1;
 	
 	private Host mHost;
 	
@@ -73,6 +74,19 @@ public class HostPreference extends DialogPreference {
 		mUserView = (EditText)parent.findViewById(R.id.pref_user);
 		mPassView = (EditText)parent.findViewById(R.id.pref_pass);
 		return parent;
+	}
+	
+	@Override
+	protected void onBindView(View view) {
+		super.onBindView(view);
+/*		if (mHost != null) {
+			view.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+				public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+					menu.setHeaderTitle(mHost.name);
+					menu.add(0, ITEM_CONTEXT_DELETE, 1, "Remove instance");
+				}
+			});
+		}*/
 	}
 	
 	@Override

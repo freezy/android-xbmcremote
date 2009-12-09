@@ -151,10 +151,8 @@ public class ActorListController extends ListController implements IController {
 	}
 	
 	private class ActorAdapter extends ArrayAdapter<Actor> {
-		private Activity mActivity;
 		ActorAdapter(Activity activity, ArrayList<Actor> items) {
 			super(activity, R.layout.listitem_oneliner, items);
-			mActivity = activity;
 		}
 		@SuppressWarnings("unchecked")
 		public View getView(int position, View convertView, ViewGroup parent) {

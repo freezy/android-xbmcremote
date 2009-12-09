@@ -438,7 +438,7 @@ public class AlbumListController extends ListController implements IController {
 			if (mLoadCovers) {
 				holder.tempBind = true;
 				holder.iconView.setImageResource(R.drawable.icon_album_dark);
-//				mMusicManager.getCover(holder.getCoverDownloadHandler(mActivity, null), album, ThumbSize.SMALL);
+				mMusicManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), album, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.icon_album);
 			}		
@@ -483,7 +483,7 @@ public class AlbumListController extends ListController implements IController {
 			if (mLoadCovers) {
 				row.setImageResource(R.drawable.icon_album_dark_big);
 				holder.tempBind = true;
-//				mMusicManager.getCover(holder.getCoverDownloadHandler(mActivity, null), album, ThumbSize.MEDIUM);
+				mMusicManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), album, ThumbSize.MEDIUM);
 			} else {
 				row.setImageResource(R.drawable.icon_album);
 			}
