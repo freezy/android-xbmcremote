@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="XBMCRemotePrefsFile">
-	<org.xbmc.android.remote.presentation.preference.HostPreference
-		android:key="setting_host"
-		android:title="XBMC Instance"
-		android:summary="Connection settings" />
+	<PreferenceScreen
+		android:key="setting_instances"
+		android:title="Manage Instances"
+		android:summary="Add, edit and remove the XBMC instances in your LAN.">
+		<org.xbmc.android.remote.presentation.preference.HostPreference
+			android:key="setting_add_host"
+			android:title="New Host"
+			android:summary="Add a new XBMC host" />
+	</PreferenceScreen>
 	<EditTextPreference
 		android:key="setting_ip"
 		android:title="XBMC IP Address / Host"

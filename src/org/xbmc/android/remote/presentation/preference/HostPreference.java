@@ -24,8 +24,6 @@ package org.xbmc.android.remote.presentation.preference;
 import org.xbmc.android.remote.R;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
@@ -46,22 +44,20 @@ public class HostPreference extends DialogPreference {
 	private EditText mPassView;
 	
 	private Host mHost;
+	
+	public static final String ID_PREFIX = "settings_host_";
 
+	public HostPreference(Context context) {
+		this(context, null);
+	}
+	
 	public HostPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setDialogLayoutResource(R.layout.preference_host);
 	}
 	
 	public void setHost(Host host) {
-		final boolean wasBlocking = shouldDisableDependents();
 		mHost = host;
-		
-//		persistString(name);
-		
-		final boolean isBlocking = shouldDisableDependents();
-		if (isBlocking != wasBlocking) {
-			notifyDependencyChange(isBlocking);
-		}
 	}
 	
 	public Host getHost() {
@@ -82,80 +78,40 @@ public class HostPreference extends DialogPreference {
 	@Override
 	protected void onBindDialogView(View view) {
 		super.onBindDialogView(view);
-		final Host host = mHost;
-		if (host != null) {
-			mNameView.setText(host.name);
-			mHostView.setText(host.host);
-			mPortView.setText(String.valueOf(host.port));
-			mUserView.setText(host.user);
-			mPassView.setText(host.pass);
+		if (mHost != null) {
+			mNameView.setText(mHost.name);
+			mHostView.setText(mHost.host);
+			mPortView.setText(String.valueOf(mHost.port));
+			mUserView.setText(mHost.user);
+			mPassView.setText(mHost.pass);
 		}
 	}
 	
-	@Override
-	protected Parcelable onSaveInstanceState() {
-		final Parcelable superState = super.onSaveInstanceState();
-		if (isPersistent()) {
-			// No need to save instance state since it's persistent
-			return superState;
-		}
-
-		final SavedState myState = new SavedState(superState);
-		myState.host = mHost;
-		return myState;
-	}
-
 	@Override
 	protected void onDialogClosed(boolean positiveResult) {
 		super.onDialogClosed(positiveResult);
-
 		if (positiveResult) {
-			Host newHost = new Host();
-			newHost.name = mNameView.getText().toString();
-			newHost.host = mHostView.getText().toString();
+			final Host host = new Host();
+			host.name = mNameView.getText().toString();
+			host.host = mHostView.getText().toString();
 			try {
-				newHost.port = Integer.parseInt(mPortView.getText().toString());
+				host.port = Integer.parseInt(mPortView.getText().toString());
 			} catch (NumberFormatException e) {
-				newHost.port = 0;
+				host.port = 0;
 			}
-			newHost.user = mUserView.getText().toString();
-			newHost.pass = mPassView.getText().toString();
+			host.user = mUserView.getText().toString();
+			host.pass = mPassView.getText().toString();
 			
-			if (callChangeListener(newHost)) {
-				setHost(newHost);
+			if (mHost == null) {
+				Host.addHost(getContext(), host);
+			} else {
+				host.id = mHost.id;
+				Host.updateHost(getContext(), host);
 			}
-		}
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Parcelable state) {
-		if (state == null || !state.getClass().equals(SavedState.class)) {
-			// Didn't save state for us in onSaveInstanceState
-			super.onRestoreInstanceState(state);
-			return;
-		}
-		SavedState myState = (SavedState) state;
-		super.onRestoreInstanceState(myState.getSuperState());
-		setHost(myState.host);
-	}
-	
-	private static class SavedState extends BaseSavedState {
-		
-		Host host;
-
-		public SavedState(Parcel source) {
-			super(source);
-			host = (Host)source.readSerializable();
-		}
-		
-		@Override
-		public void writeToParcel(Parcel dest, int flags) {
-			super.writeToParcel(dest, flags);
-			dest.writeSerializable(host);
-		}
-
-		public SavedState(Parcelable superState) {
-			super(superState);
+			if (callChangeListener(host)) {
+				notifyChanged();
+				setHost(host);
+			}
 		}
 	}
 }
