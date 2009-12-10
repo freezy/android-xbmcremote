@@ -21,7 +21,7 @@
 
 package org.xbmc.android.remote.data;
 
-import org.xbmc.android.remote.presentation.activity.SettingsActivity.SettingsController;
+import org.xbmc.android.remote.presentation.controller.SettingsController;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IInfoClient;
