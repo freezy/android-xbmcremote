@@ -22,6 +22,7 @@
 package org.xbmc.android.remote.presentation.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -33,16 +34,21 @@ import org.xbmc.android.remote.presentation.activity.MusicLibraryActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingNotificationManager;
 import org.xbmc.android.remote.presentation.activity.RemoteActivity;
+import org.xbmc.android.remote.presentation.activity.SettingsActivity;
 import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.WakeOnLan;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.info.SystemInfo;
+import org.xbmc.api.object.Host;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.BroadcastListener;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.CountDownTimer;
@@ -51,12 +57,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class HomeController extends AbstractController implements INotifiableController, IController, Observer {
@@ -83,6 +92,42 @@ public class HomeController extends AbstractController implements INotifiableCon
 		
 //		BroadcastListener bcl = BroadcastListener.getInstance(ConnectionManager.getHttpClient(this));
 //		bcl.addObserver(this);
+	}
+	
+	public View.OnClickListener getOnHostChangeListener() {
+		return new OnClickListener() {
+			public void onClick(View v) {
+				// granted, this is butt-ugly. better ideas, be my guest.
+				final ArrayList<Host> hosts = HostFactory.getHosts(mActivity.getApplicationContext());
+				final HashMap<Integer, Host> hostMap = new HashMap<Integer, Host>();
+				final CharSequence[] names = new CharSequence[hosts.size()];
+				int i = 0;
+				for (Host host : hosts) {
+					names[i] = host.name;
+					hostMap.put(i, host);
+					i++;
+				}
+				if (hosts.size() > 0) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+					builder.setTitle("Pick your XBMC!");
+					builder.setItems(names, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							final Host host = hostMap.get(which);
+							HostFactory.saveHost(mActivity.getApplicationContext(), host);
+							Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
+						}
+					});
+					AlertDialog dialog = builder.create();
+					dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+					dialog.show();
+				} else {
+					Toast.makeText(mActivity.getApplicationContext(), "No XBMC hosts defined, please do that first.", Toast.LENGTH_LONG).show();
+					Intent intent = new Intent(mActivity, SettingsActivity.class);
+					intent.putExtra(SettingsActivity.JUMP_TO, SettingsActivity.JUMP_TO_INSTANCES);
+					mActivity.startActivity(intent);
+				}
+			}
+		};
 	}
 	
 	public void setupVersionHandler(final Button versionTextView, final GridView homeItemGrid) {

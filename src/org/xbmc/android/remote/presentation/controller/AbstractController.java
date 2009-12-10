@@ -27,6 +27,7 @@ import java.net.SocketTimeoutException;
 
 import org.apache.http.HttpException;
 import org.xbmc.android.remote.presentation.activity.SettingsActivity;
+import org.xbmc.android.util.HostFactory;
 import org.xbmc.httpapi.NoNetworkException;
 import org.xbmc.httpapi.NoSettingsException;
 import org.xbmc.httpapi.WrongDataFormatException;
@@ -49,6 +50,7 @@ public abstract class AbstractController {
 	
 	public void onCreate(Activity activity) {
 		mActivity = activity;
+		HostFactory.readHost(activity.getApplicationContext());
 	}
 	
 	public void onError(Exception exception) {

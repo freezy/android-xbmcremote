@@ -26,9 +26,9 @@ import java.util.Hashtable;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.SettingsActivity;
-import org.xbmc.android.remote.presentation.preference.Host;
-import org.xbmc.android.remote.presentation.preference.HostPreference;
+import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.IControlManager;
+import org.xbmc.api.object.Host;
 import org.xbmc.api.presentation.INotifiableController;
 
 import android.app.Activity;
@@ -41,8 +41,6 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.Log;
 
 public class SettingsController extends AbstractController implements INotifiableController, IController, OnSharedPreferenceChangeListener, OnPreferenceChangeListener {
-	
-	public static final String SETTING_HOST_ID = "setting_host_id";
 	
 	public static final String SETTING_HTTP_HOST = "setting_ip";
 	public static final String SETTING_HTTP_PORT = "setting_http_port";
@@ -82,7 +80,7 @@ public class SettingsController extends AbstractController implements INotifiabl
 		HostPreference addItem = (HostPreference)activity.getPreferenceScreen().findPreference("setting_add_host");
 		hosts.removeAll();
 		
-		for (Host host : Host.getHosts(activity)) {
+		for (Host host : HostFactory.getHosts(activity.getApplicationContext())) {
 			HostPreference pref = new HostPreference(activity);
 			pref.setTitle(host.name);
 			pref.setSummary(host.getSummary());
@@ -132,7 +130,7 @@ public class SettingsController extends AbstractController implements INotifiabl
 		}
 		return false;
 	}
-
+	
 	public void onActivityPause() {
 		if (mControlManager != null) {
 			mControlManager.setController(null);

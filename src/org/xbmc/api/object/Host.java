@@ -19,30 +19,52 @@
  *
  */
 
-package org.xbmc.api.business;
+package org.xbmc.api.object;
 
-import org.xbmc.api.object.Host;
-import org.xbmc.api.presentation.INotifiableController;
+import java.io.Serializable;
 
-import android.content.Context;
-
-public interface IManager {
+/**
+ * Just a data container for connection data of an XBMC instance
+ * 
+ * @author Team XBMC
+ */
+public class Host implements Serializable {
+	/**
+	 * Database ID
+	 */
+	public int id;
+	/**
+	 * Name (description/label) of the host
+	 */
+	public String name;
+	/**
+	 * IP address or host name of the host
+	 */
+	public String host;
+	/**
+	 * HTTP API Port
+	 */
+	public int port;
+	/**
+	 * User name of in case of HTTP authentication
+	 */
+	public String user;
+	/**
+	 * Password of in case of HTTP authentication
+	 */
+	public String pass;
 	
 	/**
-	 * Sets the current controller object. Must be set on each activity's onResume().
-	 * @param controller Controller object
+	 * Something readable
 	 */
-	public void setController(INotifiableController controller);
+	public String toString() {
+		return host + ":" + port;
+	}
 	
-	/**
-	 * Sets the context. This should always be the application context, not the activity!
-	 * @param context Application context
-	 */
-	public void setContext(Context context);
+	public String getSummary() {
+		return toString();
+	}
 	
-	/**
-	 * Announces a host change to the lower layers.
-	 * @param host
-	 */
-	public void onHostChanged(Host host);
+	private static final long serialVersionUID = 7886482294339161092L;
+	
 }

@@ -4,16 +4,11 @@
 		android:key="setting_instances"
 		android:title="Manage XBMC hosts"
 		android:summary="Add, edit and remove the XBMC instances in your LAN.">
-		<org.xbmc.android.remote.presentation.preference.HostPreference
+		<org.xbmc.android.remote.presentation.controller.HostPreference
 			android:key="setting_add_host"
 			android:title="New Host"
 			android:summary="Add a new XBMC host" />
 	</PreferenceScreen>
-	<EditTextPreference
-		android:key="setting_ip"
-		android:title="XBMC IP Address / Host"
-		android:defaultValue="" 
-		android:summary="Connect to address %value%" />
 	<EditTextPreference
 		android:key="setting_socket_timeout"
 		android:title="Socket timeout"
@@ -30,25 +25,6 @@
 		android:key="setting_vibrate_on_touch"
 		android:title="Vibrate on Touch"
 		android:summary="Makes the remote control vibrate on touch." />
-	<PreferenceCategory android:title="Web Server">
-		<EditTextPreference
-			android:key="setting_http_port"
-			android:title="Web Server Port"
-			android:numeric="decimal"
-			android:defaultValue="8080" 
-			android:summary="Connect to port %value%" /> <!--  android:dependency="setting_mdns" -->
-		<EditTextPreference
-			android:key="setting_http_user"
-			android:title="Web Server User"
-			android:defaultValue="xbmc" 
-			android:summary="User '%value%'" />
-		<EditTextPreference
-			android:key="setting_http_pass"
-			android:title="Web Server Password"
-			android:password="true"
-			android:defaultValue="xbmc" 
-			android:summary="Password (not displayed)" />
-	</PreferenceCategory>
 	<PreferenceCategory android:title="Event Server">
 		<EditTextPreference
 			android:key="setting_eventserver_port"

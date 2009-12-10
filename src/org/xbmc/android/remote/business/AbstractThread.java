@@ -22,6 +22,7 @@
 package org.xbmc.android.remote.business;
 
 import org.xbmc.android.remote.data.ClientFactory;
+import org.xbmc.android.util.HostFactory;
 
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
@@ -66,7 +67,7 @@ abstract class AbstractThread extends Thread {
 	 * @return
 	 */
 	protected IMusicClient music(Context context, INotifiableManager manager) {
-		return ClientFactory.getMusicClient(context, manager);
+		return ClientFactory.getMusicClient(HostFactory.host, manager);
 	}	
 	
 	/**
@@ -75,7 +76,7 @@ abstract class AbstractThread extends Thread {
 	 * @return
 	 */
 	protected IVideoClient video(Context context, INotifiableManager manager) {
-		return ClientFactory.getVideoClient(context, manager);
+		return ClientFactory.getVideoClient(HostFactory.host, manager);
 	}	
 	
 	/**

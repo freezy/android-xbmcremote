@@ -23,21 +23,17 @@ package org.xbmc.android.remote.presentation.activity;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.controller.HomeController;
-import org.xbmc.android.remote.presentation.preference.Host;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,7 +44,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.GridView;
@@ -94,39 +89,7 @@ public class HomeActivity extends Activity {
 //		ImportUtilities.purgeCache();
 		
 		versionButton.setText("Connecting...");
-		versionButton.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				// granted, this is butt-ugly. better ideas, be my guest.
-				final ArrayList<Host> hosts = Host.getHosts(HomeActivity.this);
-				final HashMap<Integer, Host> hostMap = new HashMap<Integer, Host>();
-				final CharSequence[] names = new CharSequence[hosts.size()];
-				int i = 0;
-				for (Host host : hosts) {
-					names[i] = host.name;
-					hostMap.put(i, host);
-					i++;
-				}
-				if (hosts.size() > 0) {
-					AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
-					builder.setTitle("Pick your XBMC!");
-					builder.setItems(names, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							final Host host = hostMap.get(which);
-							Toast.makeText(getApplicationContext(), host.toString(), Toast.LENGTH_SHORT).show();
-						}
-					});
-					AlertDialog dialog = builder.create();
-					dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-					dialog.show();
-				} else {
-					Toast.makeText(getApplicationContext(), "No XBMC hosts defined, please do that first.", Toast.LENGTH_LONG).show();
-					Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-					intent.putExtra(SettingsActivity.JUMP_TO, SettingsActivity.JUMP_TO_INSTANCES);
-					startActivity(intent);
-				}
-
-			}
-		});
+		versionButton.setOnClickListener(mHomeController.getOnHostChangeListener());
 		
 		((Button)findViewById(R.id.home_about_button)).setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {

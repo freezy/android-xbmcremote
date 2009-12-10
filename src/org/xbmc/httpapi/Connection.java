@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.http.HttpException;
-import org.xbmc.android.remote.presentation.preference.Host;
 import org.xbmc.api.business.INotifiableManager;
+import org.xbmc.api.object.Host;
 
 import android.util.Log;
 

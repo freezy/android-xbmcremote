@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.remote.presentation.preference;
+package org.xbmc.android.remote.business.provider;
 
 import java.util.HashMap;
 

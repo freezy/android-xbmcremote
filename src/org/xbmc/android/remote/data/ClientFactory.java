@@ -21,39 +21,34 @@
 
 package org.xbmc.android.remote.data;
 
-import org.xbmc.android.remote.presentation.controller.SettingsController;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IVideoClient;
+import org.xbmc.api.object.Host;
 import org.xbmc.httpapi.HttpApi;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 public abstract class ClientFactory {
 	
 	private static final int DEFAULT_TIMEOUT = 10000;
-	private static final int DEFAULT_PORT = 80;
 	
 	private static HttpApi sHttpClient;
 	
-	public static IInfoClient getInfoClient(Context context, INotifiableManager manager) {
-		return getHttpClient(context, manager).info;
+	public static IInfoClient getInfoClient(Host host, INotifiableManager manager) {
+		return getHttpClient(host, manager).info;
 	}
 	
-	public static IControlClient getControlClient(Context context, INotifiableManager manager) {
-		return getHttpClient(context, manager).control;
+	public static IControlClient getControlClient(Host host, INotifiableManager manager) {
+		return getHttpClient(host, manager).control;
 	}
 	
-	public static IVideoClient getVideoClient(Context context, INotifiableManager manager) {
-		return getHttpClient(context, manager).video;
+	public static IVideoClient getVideoClient(Host host, INotifiableManager manager) {
+		return getHttpClient(host, manager).video;
 	}
 	
-	public static IMusicClient getMusicClient(Context context, INotifiableManager manager) {
-		return getHttpClient(context, manager).music;
+	public static IMusicClient getMusicClient(Host host, INotifiableManager manager) {
+		return getHttpClient(host, manager).music;
 	}
 	
 	/**
@@ -63,6 +58,9 @@ public abstract class ClientFactory {
 		sHttpClient = null;
 	}
 	
+	public static void resetClient(Host host) {
+		
+	}
 	
 	/**
 	 * Returns an instance of the HTTP Client. Instantiation takes place only
@@ -71,40 +69,23 @@ public abstract class ClientFactory {
 	 * @param context Context needed for preferences. Use application context and not activity!
 	 * @return Http client
 	 */
-	public static HttpApi getHttpClient(Context context, final INotifiableManager manager) {
+	public static HttpApi getHttpClient(Host host, final INotifiableManager manager) {
 		if (sHttpClient == null) {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-			int port = 0;
-			try {
-				port = Integer.parseInt(prefs.getString(SettingsController.SETTING_HTTP_PORT, String.valueOf(DEFAULT_PORT)));
-			} catch (NumberFormatException e) {
-				manager.onError(e);
-				port = DEFAULT_PORT;
-			}
-			int timeout = 0;
-			try {
-				timeout = Integer.parseInt(prefs.getString(SettingsController.SETTING_HTTP_TIMEOUT, String.valueOf(DEFAULT_TIMEOUT)));
-			} catch (NumberFormatException e) {
-				manager.onError(e);
-				timeout = DEFAULT_TIMEOUT;
-			}
-			String host = prefs.getString(SettingsController.SETTING_HTTP_HOST, "");
-			String user = prefs.getString(SettingsController.SETTING_HTTP_USER, "");
-			String pass = prefs.getString(SettingsController.SETTING_HTTP_PASS, "");
-			
-			if (!host.equals("")){
-				if (port > 0 && user != null && user.length() > 0) {
-					sHttpClient = new HttpApi(host, port, user, pass, timeout);
-				} else if (user != null && user.length() > 0) {
-					sHttpClient = new HttpApi(host, user, pass, timeout);
-				} else if (port > 0) {
-					sHttpClient = new HttpApi(host, port, timeout);
+			if (host != null && !host.host.equals("")){
+				if (host.port > 0 && host.user != null && host.user.length() > 0) {
+					sHttpClient = new HttpApi(host.host, host.port, host.user, host.pass, DEFAULT_TIMEOUT);
+				} else if (host.user != null && host.user.length() > 0) {
+					sHttpClient = new HttpApi(host.host, host.user, host.pass, DEFAULT_TIMEOUT);
+				} else if (host.port > 0) {
+					sHttpClient = new HttpApi(host.host, host.port, DEFAULT_TIMEOUT);
 				} else {
-					sHttpClient = new HttpApi(host, timeout);
+					sHttpClient = new HttpApi(host.host, DEFAULT_TIMEOUT);
 				}
 			} else {
 				sHttpClient = new HttpApi(null, -1);
 			}
+			
+			// do some init stuff
 			(new Thread("Init-Connection") {
 				public void run() {
 					sHttpClient.control.setResponseFormat(manager);

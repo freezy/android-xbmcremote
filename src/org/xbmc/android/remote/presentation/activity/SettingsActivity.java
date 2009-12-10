@@ -72,8 +72,8 @@ public class SettingsActivity extends PreferenceActivity {
 		super.onResume();
 		mSettingsController.onActivityResume(this);
 		mSettingsController.updateSummaries();
-		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(mSettingsController);
 		mConfigurationManager.onActivityResume(this);
+		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(mSettingsController);
 	}
 	
 	@Override
@@ -82,8 +82,8 @@ public class SettingsActivity extends PreferenceActivity {
 		// Unregister the listener whenever a key changes
 		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(mSettingsController);
 		mSettingsController.onActivityPause();
+		mConfigurationManager.onActivityPause();
 	}
-	
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

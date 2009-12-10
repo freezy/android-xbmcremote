@@ -19,50 +19,27 @@
  *
  */
 
-package org.xbmc.android.remote.presentation.preference;
+package org.xbmc.android.util;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-import org.xbmc.android.remote.presentation.preference.HostProvider.Hosts;
+import org.xbmc.android.remote.business.provider.HostProvider;
+import org.xbmc.android.remote.business.provider.HostProvider.Hosts;
+import org.xbmc.api.object.Host;
 
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 
-/**
- * Just a data container for connection data of an XBMC instance
- * 
- * @author Team XBMC
- */
-public class Host implements Serializable {
-	/**
-	 * Database ID
-	 */
-	public int id;
-	/**
-	 * Name (description/label) of the host
-	 */
-	public String name;
-	/**
-	 * IP address or host name of the host
-	 */
-	public String host;
-	/**
-	 * HTTP API Port
-	 */
-	public int port;
-	/**
-	 * User name of in case of HTTP authentication
-	 */
-	public String user;
-	/**
-	 * Password of in case of HTTP authentication
-	 */
-	public String pass;
+public abstract class HostFactory {
+	
+	public static Host host = null;
+	
+	public static final String SETTING_HOST_ID = "setting_host_id";
 	
 	/**
 	 * Returns a host based on its database ID.
@@ -70,9 +47,9 @@ public class Host implements Serializable {
 	 * @param id Host database ID
 	 * @return
 	 */
-	public static Host getHost(Activity activity, int id) {
+	public static Host getHost(Context context, int id) {
 		Uri hostUri = ContentUris.withAppendedId(Hosts.CONTENT_URI, id);
-		Cursor cur = activity.managedQuery(hostUri, null, null, null, null);
+		Cursor cur = context.getContentResolver().query(hostUri, null, null, null, null);
 		if (cur.moveToFirst()) {
 			final Host host = new Host();
 			host.id = cur.getInt(cur.getColumnIndex(HostProvider.Hosts._ID));
@@ -87,12 +64,28 @@ public class Host implements Serializable {
 	}
 	
 	/**
+	 * Returns the first host found. This is useful if hosts are defined but
+	 * the settings have been erased and need to be reset to a host. If nothing
+	 * found, return null.
+	 * @param activity Reference to activity
+	 * @return First host found or null if hosts table empty.
+	 */
+	public static Host getHost(Context context) {
+		ArrayList<Host> hosts = getHosts(context);
+		if (hosts.size() > 0) {
+			return hosts.get(0);
+		} else {
+			return null;
+		}
+	}
+	
+	/**
 	 * Returns all hosts
 	 * @param activity Reference to activity
 	 * @return List of all hosts
 	 */
-	public static ArrayList<Host> getHosts(Activity activity) {
-		Cursor cur = activity.managedQuery(HostProvider.Hosts.CONTENT_URI, 
+	public static ArrayList<Host> getHosts(Context context) {
+		Cursor cur = context.getContentResolver().query(HostProvider.Hosts.CONTENT_URI, 
 				null,       // All
 				null,       // Which rows to return (all rows)
 				null,       // Selection arguments (none)
@@ -131,7 +124,7 @@ public class Host implements Serializable {
 		values.put(HostProvider.Hosts.PORT, host.port);
 		values.put(HostProvider.Hosts.USER, host.user);
 		values.put(HostProvider.Hosts.PASS, host.pass);
-		context.getContentResolver().insert(HostProvider.Hosts.CONTENT_URI, values);		
+		context.getContentResolver().insert(HostProvider.Hosts.CONTENT_URI, values);
 	}
 	
 	/**
@@ -149,18 +142,33 @@ public class Host implements Serializable {
 		context.getContentResolver().update(HostProvider.Hosts.CONTENT_URI, values, HostProvider.Hosts._ID + "=" + host.id, null);
 	}
 	
+	
 	/**
-	 * Something readable
+	 * Saves the host to the preference file.
+	 * @param context
+	 * @param host
 	 */
-	public String toString() {
-		return host + ":" + port;
+	public static void saveHost(Context context, Host h) {
+		SharedPreferences.Editor ed = PreferenceManager.getDefaultSharedPreferences(context).edit();
+		ed.putInt(SETTING_HOST_ID, h.id);
+		ed.commit();
+		host = h;
 	}
 	
-	public String getSummary() {
-		return toString();
-	}
+	/**
+	 * Reads the preferences and returns the currently set host. If there is no
+	 * preference set, return the first host. If there is no host set, return
+	 * null.
+	 * @param activity Reference to current activity
+	 * @return Current host
+	 */
+	public static void readHost(Context context) {
+		int hostId = PreferenceManager.getDefaultSharedPreferences(context).getInt(SETTING_HOST_ID, -1);
+		if (hostId < 0) {
+			host = HostFactory.getHost(context);
+		} else {
+			host = HostFactory.getHost(context, hostId);
+		}
+	}	
 
-	
-	private static final long serialVersionUID = 7886482294339161092L;
-	
 }

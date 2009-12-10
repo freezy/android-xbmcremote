@@ -19,9 +19,11 @@
  *
  */
 
-package org.xbmc.android.remote.presentation.preference;
+package org.xbmc.android.remote.presentation.controller;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.util.HostFactory;
+import org.xbmc.api.object.Host;
 
 import android.content.Context;
 import android.preference.DialogPreference;
@@ -117,10 +119,10 @@ public class HostPreference extends DialogPreference {
 			host.pass = mPassView.getText().toString();
 			
 			if (mHost == null) {
-				Host.addHost(getContext(), host);
+				HostFactory.addHost(getContext(), host);
 			} else {
 				host.id = mHost.id;
-				Host.updateHost(getContext(), host);
+				HostFactory.updateHost(getContext(), host);
 			}
 			if (callChangeListener(host)) {
 				notifyChanged();

@@ -19,12 +19,13 @@
  *
  */
 
-package org.xbmc.android.remote.business;
+package org.xbmc.android.remote.business.receiver;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.util.ConnectionManager;
 import org.xbmc.android.util.SmsMmsMessage;
 import org.xbmc.android.util.SmsPopupUtils;
