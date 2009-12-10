@@ -61,9 +61,14 @@ public class HttpApi {
 	 * @param host    Connection data of the host
 	 * @param timeout Read timeout
 	 */
-	public HttpApi(Host host, int timeout) {		
-		Connection connection = Connection.getInstance(host.addr, host.port);
-		connection.setAuth(host.user, host.pass);
+	public HttpApi(Host host, int timeout) {
+		Connection connection;
+		if (host != null) {
+			connection = Connection.getInstance(host.addr, host.port);
+			connection.setAuth(host.user, host.pass);
+		} else {
+			connection = Connection.getInstance(null, 0);
+		}
 		connection.setTimeout(timeout);
 		info = new InfoClient(connection);
 		music = new MusicClient(connection);
