@@ -26,7 +26,7 @@
 				android:layout_gravity="center_vertical" 
 				android:gravity="center_horizontal" 
 				android:typeface="monospace" 
-				android:textColor="#eeffffff"
+				android:textColor="#ddffffff"
 				android:background="@drawable/bottom_text" />
 		</LinearLayout>
 		<FrameLayout
