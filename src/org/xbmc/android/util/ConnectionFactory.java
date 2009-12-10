@@ -41,6 +41,9 @@ import android.util.Log;
 
 /**
  * Globally returns the control objects. 
+ * 
+ * This class will soon retire once the event client is properly moved to the
+ * data layer
  */
 public class ConnectionFactory {
 	

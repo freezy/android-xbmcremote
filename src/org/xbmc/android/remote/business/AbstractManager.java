@@ -237,7 +237,7 @@ public abstract class AbstractManager implements INotifiableManager {
 				}
 				done(response); // callback in any case, since we don't go further than that.
 			}
-		}, cover, thumbSize, mController, mContext, this);
+		}, cover, thumbSize, mController, this);
 	}
 
 	public void onError(Exception e) {

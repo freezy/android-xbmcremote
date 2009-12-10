@@ -30,7 +30,6 @@ import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.MediaType;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -68,7 +67,7 @@ class DownloadThread extends AbstractThread {
 	 * @param cover     Which cover to download
 	 * @param thumbSize Which size to return
 	 */
-	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller, final Context context, final INotifiableManager manager) {
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller, final INotifiableManager manager) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
@@ -90,10 +89,10 @@ class DownloadThread extends AbstractThread {
 						String b64enc = null;
 						switch (cover.getMediaType()) {
 							case MediaType.MUSIC:
-								b64enc = music(context, manager).getCover(manager, cover);
+								b64enc = music(manager).getCover(manager, cover);
 								break;
 							case MediaType.VIDEO:
-								b64enc = video(context, manager).getCover(manager, cover);
+								b64enc = video(manager).getCover(manager, cover);
 								break;
 							case MediaType.PICTURES:
 								done(controller, response);
