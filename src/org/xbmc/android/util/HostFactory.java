@@ -35,49 +35,24 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
+/**
+ * Helper class that keeps 
+ *   a) a reference to the currently used host
+ *   b) all the code between the provider and the settings stuff
+ * 
+ * @author Team XBMC
+ */
 public abstract class HostFactory {
 	
+	/**
+	 * The currently used host
+	 */
 	public static Host host = null;
 	
+	/**
+	 * The setting that remembers which host has been used last
+	 */
 	public static final String SETTING_HOST_ID = "setting_host_id";
-	
-	/**
-	 * Returns a host based on its database ID.
-	 * @param activity Reference to activity
-	 * @param id Host database ID
-	 * @return
-	 */
-	public static Host getHost(Context context, int id) {
-		Uri hostUri = ContentUris.withAppendedId(Hosts.CONTENT_URI, id);
-		Cursor cur = context.getContentResolver().query(hostUri, null, null, null, null);
-		if (cur.moveToFirst()) {
-			final Host host = new Host();
-			host.id = cur.getInt(cur.getColumnIndex(HostProvider.Hosts._ID));
-			host.name = cur.getString(cur.getColumnIndex(HostProvider.Hosts.NAME));
-			host.addr = cur.getString(cur.getColumnIndex(HostProvider.Hosts.ADDR));
-			host.port = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.PORT));
-			host.user = cur.getString(cur.getColumnIndex(HostProvider.Hosts.USER));
-			host.pass = cur.getString(cur.getColumnIndex(HostProvider.Hosts.PASS));
-			return host;
-		}
-		return null;
-	}
-	
-	/**
-	 * Returns the first host found. This is useful if hosts are defined but
-	 * the settings have been erased and need to be reset to a host. If nothing
-	 * found, return null.
-	 * @param activity Reference to activity
-	 * @return First host found or null if hosts table empty.
-	 */
-	public static Host getHost(Context context) {
-		ArrayList<Host> hosts = getHosts(context);
-		if (hosts.size() > 0) {
-			return hosts.get(0);
-		} else {
-			return null;
-		}
-	}
 	
 	/**
 	 * Returns all hosts
@@ -166,10 +141,47 @@ public abstract class HostFactory {
 	public static void readHost(Context context) {
 		int hostId = PreferenceManager.getDefaultSharedPreferences(context).getInt(SETTING_HOST_ID, -1);
 		if (hostId < 0) {
-			host = HostFactory.getHost(context);
+			host = getHost(context);
 		} else {
-			host = HostFactory.getHost(context, hostId);
+			host = getHost(context, hostId);
 		}
-	}	
-
+	}
+	
+	/**
+	 * Returns a host based on its database ID.
+	 * @param activity Reference to activity
+	 * @param id Host database ID
+	 * @return
+	 */
+	private static Host getHost(Context context, int id) {
+		Uri hostUri = ContentUris.withAppendedId(Hosts.CONTENT_URI, id);
+		Cursor cur = context.getContentResolver().query(hostUri, null, null, null, null);
+		if (cur.moveToFirst()) {
+			final Host host = new Host();
+			host.id = cur.getInt(cur.getColumnIndex(HostProvider.Hosts._ID));
+			host.name = cur.getString(cur.getColumnIndex(HostProvider.Hosts.NAME));
+			host.addr = cur.getString(cur.getColumnIndex(HostProvider.Hosts.ADDR));
+			host.port = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.PORT));
+			host.user = cur.getString(cur.getColumnIndex(HostProvider.Hosts.USER));
+			host.pass = cur.getString(cur.getColumnIndex(HostProvider.Hosts.PASS));
+			return host;
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the first host found. This is useful if hosts are defined but
+	 * the settings have been erased and need to be reset to a host. If nothing
+	 * found, return null.
+	 * @param activity Reference to activity
+	 * @return First host found or null if hosts table empty.
+	 */
+	private static Host getHost(Context context) {
+		ArrayList<Host> hosts = getHosts(context);
+		if (hosts.size() > 0) {
+			return hosts.get(0);
+		} else {
+			return null;
+		}
+	}
 }
