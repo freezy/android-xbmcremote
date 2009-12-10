@@ -29,7 +29,7 @@ import org.xbmc.android.remote.presentation.controller.AbstractController;
 import org.xbmc.android.remote.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.controller.ListController;
 import org.xbmc.android.remote.presentation.controller.MovieListController;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IVideoManager;
@@ -227,7 +227,7 @@ public class MovieDetailsActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		EventClient client = ConnectionManager.getEventClient(this);	
+		EventClient client = ConnectionFactory.getEventClient(this);	
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

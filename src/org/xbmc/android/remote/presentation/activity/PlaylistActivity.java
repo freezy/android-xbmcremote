@@ -25,7 +25,7 @@ import java.io.IOException;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.controller.MusicPlaylistController;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
@@ -136,7 +136,7 @@ public class PlaylistActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		EventClient client = ConnectionManager.getEventClient(this);	
+		EventClient client = ConnectionFactory.getEventClient(this);	
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

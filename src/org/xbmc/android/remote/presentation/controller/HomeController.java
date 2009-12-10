@@ -35,7 +35,7 @@ import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingNotificationManager;
 import org.xbmc.android.remote.presentation.activity.RemoteActivity;
 import org.xbmc.android.remote.presentation.activity.SettingsActivity;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.WakeOnLan;
 import org.xbmc.api.business.DataResponse;
@@ -133,7 +133,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	public void setupVersionHandler(final Button versionTextView, final GridView homeItemGrid) {
 		mUpdateVersionHandler = new DataResponse<String>() {
 			public void run() {
-				if (!ConnectionManager.isNetworkAvailable(mActivity.getApplicationContext())) {
+				if (!ConnectionFactory.isNetworkAvailable(mActivity.getApplicationContext())) {
 					versionTextView.setText("No network");
 				}
 				if (!value.equals("")) {

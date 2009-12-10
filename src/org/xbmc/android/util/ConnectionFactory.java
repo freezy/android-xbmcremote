@@ -42,8 +42,7 @@ import android.util.Log;
 /**
  * Globally returns the control objects. 
  */
-public class ConnectionManager {
-	
+public class ConnectionFactory {
 	
 	private static EventClient sEventClientInstance;
 	private static Collection<ServiceInfo> sServiceInfo = new HashSet<ServiceInfo>();

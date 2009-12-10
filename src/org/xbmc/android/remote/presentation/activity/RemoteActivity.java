@@ -24,7 +24,7 @@ package org.xbmc.android.remote.presentation.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
@@ -77,7 +77,7 @@ public class RemoteActivity extends Activity {
 		topFrame.setForeground(null);
 		
 		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-		mClient = ConnectionManager.getEventClient(this);
+		mClient = ConnectionFactory.getEventClient(this);
         
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard(true);

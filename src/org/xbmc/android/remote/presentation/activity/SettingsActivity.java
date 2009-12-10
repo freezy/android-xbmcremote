@@ -24,7 +24,7 @@ package org.xbmc.android.remote.presentation.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.presentation.controller.SettingsController;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
 
@@ -87,7 +87,7 @@ public class SettingsActivity extends PreferenceActivity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		EventClient client = ConnectionManager.getEventClient(this);	
+		EventClient client = ConnectionFactory.getEventClient(this);	
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

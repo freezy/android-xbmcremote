@@ -27,7 +27,7 @@ import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
@@ -66,7 +66,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 		mNowPlayingActivity = activity;
 		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
 		mNowPlayingHandler = new Handler(this);
-		mClient = ConnectionManager.getEventClient(activity.getApplicationContext());
+		mClient = ConnectionFactory.getEventClient(activity.getApplicationContext());
 	}
 	
 	/**
@@ -101,7 +101,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 		  	  	
 			case NowPlayingPollerThread.MESSAGE_COVER_CHANGED:
 				// TODO: FIX!!
-				mNowPlayingActivity.updateCover(ConnectionManager.getNowPlayingPoller(mActivity).getNowPlayingCover());
+				mNowPlayingActivity.updateCover(ConnectionFactory.getNowPlayingPoller(mActivity).getNowPlayingCover());
 				return true;
 				
 			case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
@@ -118,7 +118,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 						} catch (InterruptedException e) {
 							Log.e(TAG, Log.getStackTraceString(e));
 						}
-						ConnectionManager.getNowPlayingPoller(mActivity.getApplicationContext()).subscribe(mNowPlayingHandler);					
+						ConnectionFactory.getNowPlayingPoller(mActivity.getApplicationContext()).subscribe(mNowPlayingHandler);					
 					}
 				}.start();
 				return true;
@@ -192,14 +192,14 @@ public class NowPlayingController extends AbstractController implements INotifia
 	}
 	
 	public void onActivityPause() {
-		ConnectionManager.getNowPlayingPoller(mActivity.getApplicationContext()).unSubscribe(mNowPlayingHandler);
+		ConnectionFactory.getNowPlayingPoller(mActivity.getApplicationContext()).unSubscribe(mNowPlayingHandler);
 		if (mControlManager != null) {
 			mControlManager.setController(null);
 		}
 	}
 
 	public void onActivityResume(Activity activity) {
-		ConnectionManager.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
+		ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
 		if (mControlManager != null) {
 			mControlManager.setController(this);
 		}

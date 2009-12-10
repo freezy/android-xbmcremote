@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.android.util.SmsMmsMessage;
 import org.xbmc.android.util.SmsPopupUtils;
 
@@ -66,7 +66,7 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
-		final EventClient client = ConnectionManager.getEventClient(context);
+		final EventClient client = ConnectionFactory.getEventClient(context);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		// currently no new connection to the event server is opened
 		if (client != null) {

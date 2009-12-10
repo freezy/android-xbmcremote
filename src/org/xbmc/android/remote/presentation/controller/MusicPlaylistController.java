@@ -30,7 +30,7 @@ import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
 import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IMusicManager;
@@ -92,7 +92,7 @@ public class MusicPlaylistController extends ListController implements IControll
 		mPlaylistActivity = activity;
 		mMusicManager = ManagerFactory.getMusicManager(activity.getApplicationContext(), this);
 		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
-		mClient = ConnectionManager.getEventClient(activity.getApplicationContext());
+		mClient = ConnectionFactory.getEventClient(activity.getApplicationContext());
 		mNowPlayingHandler = new Handler(this);
 		
 		if (!isCreated()) {
@@ -356,7 +356,7 @@ public class MusicPlaylistController extends ListController implements IControll
 	}
 	
 	public void onActivityPause() {
-		ConnectionManager.getNowPlayingPoller(mActivity.getApplicationContext()).unSubscribe(mNowPlayingHandler);
+		ConnectionFactory.getNowPlayingPoller(mActivity.getApplicationContext()).unSubscribe(mNowPlayingHandler);
 		if (mMusicManager != null) {
 			mMusicManager.setController(null);
 		}
@@ -366,7 +366,7 @@ public class MusicPlaylistController extends ListController implements IControll
 	}
 
 	public void onActivityResume(Activity activity) {
-		ConnectionManager.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
+		ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
 		if (mMusicManager != null) {
 			mMusicManager.setController(this);
 		}

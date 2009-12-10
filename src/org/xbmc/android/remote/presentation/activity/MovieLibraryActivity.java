@@ -28,7 +28,7 @@ import org.xbmc.android.remote.presentation.controller.ActorListController;
 import org.xbmc.android.remote.presentation.controller.FileListController;
 import org.xbmc.android.remote.presentation.controller.MovieGenreListController;
 import org.xbmc.android.remote.presentation.controller.MovieListController;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
@@ -216,7 +216,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		EventClient client = ConnectionManager.getEventClient(this);	
+		EventClient client = ConnectionFactory.getEventClient(this);	
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

@@ -2,7 +2,7 @@ package org.xbmc.android.remote.presentation.activity;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.type.MediaType;
@@ -42,11 +42,11 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 	
 	public void startNotificating() {
 		if(mEnabled)
-			ConnectionManager.getNowPlayingPoller(mContext).subscribe(mPollingHandler);
+			ConnectionFactory.getNowPlayingPoller(mContext).subscribe(mPollingHandler);
 	}
 	
 	public void stopNotificating() {
-		ConnectionManager.getNowPlayingPoller(mContext).unSubscribe(mPollingHandler);
+		ConnectionFactory.getNowPlayingPoller(mContext).unSubscribe(mPollingHandler);
 		removeNotification();
 	}
 	

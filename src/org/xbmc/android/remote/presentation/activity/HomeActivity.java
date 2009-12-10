@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.controller.HomeController;
-import org.xbmc.android.util.ConnectionManager;
+import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.EventClient;
@@ -79,7 +79,7 @@ public class HomeActivity extends Activity {
 		final GridView menuGrid = (GridView)findViewById(R.id.HomeItemGridView);
 		mHomeController = new HomeController(this, menuGrid);
 
-		mClient = ConnectionManager.getEventClient(this);
+		mClient = ConnectionFactory.getEventClient(this);
 		
 		mHomeController.setupVersionHandler(versionButton, menuGrid);
 		
