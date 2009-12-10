@@ -108,11 +108,11 @@ public class HomeActivity extends Activity {
 				}
 				if (hosts.size() > 0) {
 					AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
-					builder.setTitle("Choose your XBMC!");
+					builder.setTitle("Pick your XBMC!");
 					builder.setItems(names, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							final Host host = hostMap.get(which);
-							Toast.makeText(getApplicationContext(), host.name, Toast.LENGTH_SHORT).show();
+							Toast.makeText(getApplicationContext(), host.toString(), Toast.LENGTH_SHORT).show();
 						}
 					});
 					AlertDialog dialog = builder.create();
