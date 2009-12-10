@@ -21,33 +21,16 @@
 
 package org.xbmc.httpapi;
 
+import org.xbmc.api.object.Host;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.VideoClient;
 
-
 /**
  * Wrapper class for our HTTP clients. The idea is to separate the loads of
  * API method we're going to have into separate classes. The HttpClient class
- * instantiates them and keeps them in a central place, typically accessible by
- * the ConnectionManager. 
- * <p>
- * So in your code, all you have to do to access the API is getting a HttpClient
- * instance and access the clients:
- * <p>
- * <pre>
- *  HttpClient client = ConnectionManager.getHttpClient(this);
- *  String xbmcVersion = client.info.getSystemInfo(SystemInfo.SYSTEM_BUILD_VERSION);
- *  ArrayList&lt;Album&gt; albums = client.music.getAlbums()</pre>
- *   
- * Since the ConnectionManager keeps a static instance of the HttpClient, you
- * can also get the client without passing an activity once it has already been
- * used:
- * <p>
- * <pre>
- *  HttpClient client = ConnectionManager.getHttpClient();
- *</pre>
+ * instantiates them and keeps them in a central place.
  * 
  * @author Team XBMC
  */
@@ -74,47 +57,17 @@ public class HttpApi {
 	public final ControlClient control;
 	
 	/**
-	 * Construct with host only
-	 * @param host         Host or IP address to XBMC
-	 */
-	public HttpApi(String host, int timeout) {
-		this(host, -1, null, null, timeout);
-	}
-	
-	/**
-	 * Construct with host and custom port
-	 * @param host         Host or IP address to XBMC
-	 * @param port         Port to the webserver
-	 */
-	public HttpApi(String host, int port, int timeout) {
-		this(host, port, null, null, timeout);
-	}
-
-	/**
-	 * Construct with additional login credentials
-	 * @param host         Host or IP address to XBMC
-	 * @param username     Username
-	 * @param password     Password
-	 */
-	public HttpApi(String host, String username, String password, int timeout) {
-		this(host, -1, username, password, timeout);
-	}
-
-	/**
 	 * Construct with all paramaters
-	 * @param host         Host or IP address to XBMC
-	 * @param port         Port to XBMC's webserver
-	 * @param username     Password
-	 * @param password     Username
+	 * @param host    Connection data of the host
+	 * @param timeout Read timeout
 	 */
-	public HttpApi(String host, int port, String username, String password, int timeout) {		
-		Connection connection = Connection.getInstance(host, port);
-		connection.setAuth(username, password);
+	public HttpApi(Host host, int timeout) {		
+		Connection connection = Connection.getInstance(host.addr, host.port);
+		connection.setAuth(host.user, host.pass);
 		connection.setTimeout(timeout);
 		info = new InfoClient(connection);
 		music = new MusicClient(connection);
 		video = new VideoClient(connection);
 		control = new ControlClient(connection);
 	}
-
 }

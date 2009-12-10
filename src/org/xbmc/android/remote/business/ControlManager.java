@@ -21,7 +21,7 @@
 
 package org.xbmc.android.remote.business;
 
-import org.xbmc.android.remote.data.ClientFactory;
+import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.INotifiableManager;

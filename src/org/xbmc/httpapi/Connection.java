@@ -85,7 +85,7 @@ public class Connection {
 	 * @param host
 	 */
 	public void setHost(Host host) {
-		setHost(host.host, host.port);
+		setHost(host.addr, host.port);
 		setAuth(host.user, host.pass);
 	}
 	

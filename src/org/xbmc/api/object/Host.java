@@ -40,7 +40,7 @@ public class Host implements Serializable {
 	/**
 	 * IP address or host name of the host
 	 */
-	public String host;
+	public String addr;
 	/**
 	 * HTTP API Port
 	 */
@@ -58,7 +58,7 @@ public class Host implements Serializable {
 	 * Something readable
 	 */
 	public String toString() {
-		return host + ":" + port;
+		return addr + ":" + port;
 	}
 	
 	public String getSummary() {

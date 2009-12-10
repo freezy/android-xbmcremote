@@ -29,8 +29,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
 
-import org.xbmc.android.remote.data.ClientFactory;
 import org.xbmc.android.util.Base64;
+import org.xbmc.android.util.ClientFactory;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;

@@ -21,7 +21,6 @@
 
 package org.xbmc.api.business;
 
-import org.xbmc.api.object.Host;
 import org.xbmc.api.presentation.INotifiableController;
 
 import android.content.Context;
@@ -39,10 +38,4 @@ public interface IManager {
 	 * @param context Application context
 	 */
 	public void setContext(Context context);
-	
-	/**
-	 * Announces a host change to the lower layers.
-	 * @param host
-	 */
-	public void onHostChanged(Host host);
 }

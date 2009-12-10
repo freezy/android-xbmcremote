@@ -21,7 +21,7 @@
 
 package org.xbmc.android.remote.business;
 
-import org.xbmc.android.remote.data.ClientFactory;
+import org.xbmc.android.util.ClientFactory;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
@@ -29,7 +29,6 @@ import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IVideoClient;
-import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.CacheType;
@@ -87,14 +86,6 @@ public abstract class AbstractManager implements INotifiableManager {
 	
 	public void setController(INotifiableController controller) {
 		mController = controller;
-	}
-
-	/**
-	 * Announces a host change to the lower layers.
-	 * @param host
-	 */
-	public void onHostChanged(Host host) {
-		ClientFactory.resetClient(host);
 	}
 	
 	/**

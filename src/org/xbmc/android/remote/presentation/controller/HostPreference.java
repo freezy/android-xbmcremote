@@ -96,7 +96,7 @@ public class HostPreference extends DialogPreference {
 		super.onBindDialogView(view);
 		if (mHost != null) {
 			mNameView.setText(mHost.name);
-			mHostView.setText(mHost.host);
+			mHostView.setText(mHost.addr);
 			mPortView.setText(String.valueOf(mHost.port));
 			mUserView.setText(mHost.user);
 			mPassView.setText(mHost.pass);
@@ -109,7 +109,7 @@ public class HostPreference extends DialogPreference {
 		if (positiveResult) {
 			final Host host = new Host();
 			host.name = mNameView.getText().toString();
-			host.host = mHostView.getText().toString();
+			host.addr = mHostView.getText().toString();
 			try {
 				host.port = Integer.parseInt(mPortView.getText().toString());
 			} catch (NumberFormatException e) {

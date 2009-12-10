@@ -54,7 +54,7 @@ public abstract class HostFactory {
 			final Host host = new Host();
 			host.id = cur.getInt(cur.getColumnIndex(HostProvider.Hosts._ID));
 			host.name = cur.getString(cur.getColumnIndex(HostProvider.Hosts.NAME));
-			host.host = cur.getString(cur.getColumnIndex(HostProvider.Hosts.HOST));
+			host.addr = cur.getString(cur.getColumnIndex(HostProvider.Hosts.ADDR));
 			host.port = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.PORT));
 			host.user = cur.getString(cur.getColumnIndex(HostProvider.Hosts.USER));
 			host.pass = cur.getString(cur.getColumnIndex(HostProvider.Hosts.PASS));
@@ -94,7 +94,7 @@ public abstract class HostFactory {
 		if (cur.moveToFirst()) {
 			final int idCol = cur.getColumnIndex(HostProvider.Hosts._ID);
 			final int nameCol = cur.getColumnIndex(HostProvider.Hosts.NAME);
-			final int hostCol = cur.getColumnIndex(HostProvider.Hosts.HOST);
+			final int hostCol = cur.getColumnIndex(HostProvider.Hosts.ADDR);
 			final int portCol = cur.getColumnIndex(HostProvider.Hosts.PORT);
 			final int userCol = cur.getColumnIndex(HostProvider.Hosts.USER);
 			final int passCol = cur.getColumnIndex(HostProvider.Hosts.PASS);
@@ -102,7 +102,7 @@ public abstract class HostFactory {
 				final Host host = new Host();
 				host.id = cur.getInt(idCol);
 				host.name = cur.getString(nameCol);
-				host.host = cur.getString(hostCol);
+				host.addr = cur.getString(hostCol);
 				host.port = cur.getInt(portCol);
 				host.user = cur.getString(userCol);
 				host.pass = cur.getString(passCol);
@@ -120,7 +120,7 @@ public abstract class HostFactory {
 	public static void addHost(Context context, Host host) {
 		ContentValues values = new ContentValues();
 		values.put(HostProvider.Hosts.NAME, host.name);
-		values.put(HostProvider.Hosts.HOST, host.host);
+		values.put(HostProvider.Hosts.ADDR, host.addr);
 		values.put(HostProvider.Hosts.PORT, host.port);
 		values.put(HostProvider.Hosts.USER, host.user);
 		values.put(HostProvider.Hosts.PASS, host.pass);
@@ -135,7 +135,7 @@ public abstract class HostFactory {
 	public static void updateHost(Context context, Host host) {
 		ContentValues values = new ContentValues();
 		values.put(HostProvider.Hosts.NAME, host.name);
-		values.put(HostProvider.Hosts.HOST, host.host);
+		values.put(HostProvider.Hosts.ADDR, host.addr);
 		values.put(HostProvider.Hosts.PORT, host.port);
 		values.put(HostProvider.Hosts.USER, host.user);
 		values.put(HostProvider.Hosts.PASS, host.pass);
@@ -146,13 +146,14 @@ public abstract class HostFactory {
 	/**
 	 * Saves the host to the preference file.
 	 * @param context
-	 * @param host
+	 * @param addr
 	 */
 	public static void saveHost(Context context, Host h) {
 		SharedPreferences.Editor ed = PreferenceManager.getDefaultSharedPreferences(context).edit();
 		ed.putInt(SETTING_HOST_ID, h.id);
 		ed.commit();
 		host = h;
+		ClientFactory.resetClient();
 	}
 	
 	/**

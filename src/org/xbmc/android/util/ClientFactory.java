@@ -19,7 +19,7 @@
  *
  */
 
-package org.xbmc.android.remote.data;
+package org.xbmc.android.util;
 
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
@@ -57,11 +57,7 @@ public abstract class ClientFactory {
 	public static void resetClient() {
 		sHttpClient = null;
 	}
-	
-	public static void resetClient(Host host) {
-		
-	}
-	
+
 	/**
 	 * Returns an instance of the HTTP Client. Instantiation takes place only
 	 * once, otherwise the first instance is returned.
@@ -71,16 +67,8 @@ public abstract class ClientFactory {
 	 */
 	public static HttpApi getHttpClient(Host host, final INotifiableManager manager) {
 		if (sHttpClient == null) {
-			if (host != null && !host.host.equals("")){
-				if (host.port > 0 && host.user != null && host.user.length() > 0) {
-					sHttpClient = new HttpApi(host.host, host.port, host.user, host.pass, DEFAULT_TIMEOUT);
-				} else if (host.user != null && host.user.length() > 0) {
-					sHttpClient = new HttpApi(host.host, host.user, host.pass, DEFAULT_TIMEOUT);
-				} else if (host.port > 0) {
-					sHttpClient = new HttpApi(host.host, host.port, DEFAULT_TIMEOUT);
-				} else {
-					sHttpClient = new HttpApi(host.host, DEFAULT_TIMEOUT);
-				}
+			if (host != null && !host.addr.equals("")){
+				sHttpClient = new HttpApi(host, DEFAULT_TIMEOUT);
 			} else {
 				sHttpClient = new HttpApi(null, -1);
 			}

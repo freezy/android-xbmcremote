@@ -70,7 +70,7 @@ public class HostProvider extends ContentProvider {
 			db.execSQL("CREATE TABLE " + HOSTS_TABLE_NAME + " (" 
 					+ Hosts._ID + " INTEGER PRIMARY KEY," 
 					+ Hosts.NAME + " TEXT," 
-					+ Hosts.HOST + " TEXT,"
+					+ Hosts.ADDR + " TEXT,"
 					+ Hosts.PORT + " INTEGER," 
 					+ Hosts.USER + " TEXT," 
 					+ Hosts.PASS + " TEXT" 
@@ -164,8 +164,8 @@ public class HostProvider extends ContentProvider {
 			values.put(Hosts.NAME, r.getString(android.R.string.untitled));
 		}
 
-		if (values.containsKey(Hosts.HOST) == false) {
-			values.put(Hosts.HOST, "");
+		if (values.containsKey(Hosts.ADDR) == false) {
+			values.put(Hosts.ADDR, "");
 		}
 		if (values.containsKey(Hosts.PORT) == false) {
 			values.put(Hosts.PORT, 0);
@@ -178,7 +178,7 @@ public class HostProvider extends ContentProvider {
 		}
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-		long rowId = db.insert(HOSTS_TABLE_NAME, Hosts.HOST, values);
+		long rowId = db.insert(HOSTS_TABLE_NAME, Hosts.ADDR, values);
 		if (rowId > 0) {
 			Uri noteUri = ContentUris.withAppendedId(Hosts.CONTENT_URI, rowId);
 			getContext().getContentResolver().notifyChange(noteUri, null);
@@ -239,7 +239,7 @@ public class HostProvider extends ContentProvider {
 		sHostsProjectionMap = new HashMap<String, String>();
 		sHostsProjectionMap.put(Hosts._ID, Hosts._ID);
 		sHostsProjectionMap.put(Hosts.NAME, Hosts.NAME);
-		sHostsProjectionMap.put(Hosts.HOST, Hosts.HOST);
+		sHostsProjectionMap.put(Hosts.ADDR, Hosts.ADDR);
 		sHostsProjectionMap.put(Hosts.PORT, Hosts.PORT);
 		sHostsProjectionMap.put(Hosts.USER, Hosts.USER);
 		sHostsProjectionMap.put(Hosts.PASS, Hosts.PASS);
@@ -268,7 +268,7 @@ public class HostProvider extends ContentProvider {
 		 * Type: TEXT
 		 * </P>
 		 */
-		public static final String HOST = "address";
+		public static final String ADDR = "address";
 
 		/**
 		 * The note itself
