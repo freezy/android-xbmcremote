@@ -32,6 +32,7 @@ import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Song;
 import org.xbmc.api.type.MediaType;
@@ -78,6 +79,15 @@ public class MusicClient implements IMusicClient {
 	public MusicClient(Connection connection) {
 		mConnection = connection;
 	}
+	
+	/**
+	 * Updates host info on the connection.
+	 * @param host
+	 */
+	public void setHost(Host host) {
+		mConnection.setHost(host);
+	}
+
 	
 	/**
 	 * Adds an album to the current playlist.

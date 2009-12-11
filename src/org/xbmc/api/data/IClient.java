@@ -21,14 +21,22 @@
 
 package org.xbmc.api.data;
 
+import org.xbmc.api.object.Host;
 
 
 /**
  * This is the interface between the business layer and the presentation layer.
  * All the business layer gets to see is this interface.
+ * 
+ * Common interface for all clients
  *  
  * @author Team XBMC
  */
-public interface IPictureClient extends IClient {
+public interface IClient {
 	
+	/**
+	 * Updates host info on the connection.
+	 * @param host
+	 */
+	public void setHost(Host host);
 }

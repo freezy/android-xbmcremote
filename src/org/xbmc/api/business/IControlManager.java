@@ -92,11 +92,6 @@ public interface IControlManager extends IManager {
 	public void getCurrentlyPlaying(final DataResponse<ICurrentlyPlaying> response);
 	
 	/**
-	 * Resets the client so it has to re-read the settings and recreate the instance.
-	 */
-	public void resetClient();
-	
-	/**
 	 * Returns the current playlist identifier
 	 * @param response Response object
 	 */

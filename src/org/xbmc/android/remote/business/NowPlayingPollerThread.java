@@ -31,7 +31,6 @@ import java.util.HashSet;
 
 import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ClientFactory;
-import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IInfoClient;
@@ -98,8 +97,8 @@ public class NowPlayingPollerThread extends Thread {
 				toast.show();
 			}
 		};
-		mControl = ClientFactory.getControlClient(HostFactory.host, mManagerStub);
-  	  	mInfo = ClientFactory.getInfoClient(HostFactory.host, mManagerStub);
+		mControl = ClientFactory.getControlClient(mManagerStub);
+  	  	mInfo = ClientFactory.getInfoClient(mManagerStub);
   	  	mSubscribers = new HashSet<Handler>();
 	}
 	

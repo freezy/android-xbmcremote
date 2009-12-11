@@ -22,7 +22,6 @@
 package org.xbmc.android.remote.business;
 
 import org.xbmc.android.util.ClientFactory;
-import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
@@ -94,7 +93,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @return
 	 */
 	protected IInfoClient info(DataResponse<?> response) {
-		return ClientFactory.getInfoClient(HostFactory.host, this);
+		return ClientFactory.getInfoClient(this);
 	}
 	
 	/**
@@ -103,7 +102,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @return
 	 */
 	protected IControlClient control(DataResponse<?> response) {
-		return ClientFactory.getControlClient(HostFactory.host, this);
+		return ClientFactory.getControlClient(this);
 	}
 	
 	/**
@@ -112,7 +111,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @return
 	 */
 	protected IVideoClient video(DataResponse<?> response) {
-		return ClientFactory.getVideoClient(HostFactory.host, this);
+		return ClientFactory.getVideoClient(this);
 	}
 	
 	/**
@@ -121,7 +120,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @return
 	 */
 	protected IMusicClient music(DataResponse<?> response) {
-		return ClientFactory.getMusicClient(HostFactory.host, this);
+		return ClientFactory.getMusicClient(this);
 	}
 	
 	/**

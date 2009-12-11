@@ -33,7 +33,7 @@ import org.xbmc.api.type.SeekType;
  *  
  * @author Team XBMC
  */
-public interface IControlClient {
+public interface IControlClient extends IClient {
 	
 	/**
 	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.

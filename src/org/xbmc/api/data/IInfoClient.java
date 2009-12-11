@@ -36,7 +36,7 @@ import org.xbmc.api.type.DirectoryMask;
  *  
  * @author Team XBMC
  */
-public interface IInfoClient {
+public interface IInfoClient extends IClient {
 	
 	/**
 	 * Returns the contents of a directory

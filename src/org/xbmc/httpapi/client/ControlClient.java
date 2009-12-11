@@ -27,6 +27,7 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.info.GuiActions;
 import org.xbmc.api.info.PlayStatus;
+import org.xbmc.api.object.Host;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SeekType;
 import org.xbmc.httpapi.Connection;
@@ -50,6 +51,14 @@ public class ControlClient implements IControlClient {
 	 */
 	public ControlClient(Connection connection) {
 		mConnection = connection;
+	}
+	
+	/**
+	 * Updates host info on the connection.
+	 * @param host
+	 */
+	public void setHost(Host host) {
+		mConnection.setHost(host);
 	}
 	
 	/**

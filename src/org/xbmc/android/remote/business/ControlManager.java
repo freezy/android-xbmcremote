@@ -21,7 +21,6 @@
 
 package org.xbmc.android.remote.business;
 
-import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.INotifiableManager;
@@ -129,13 +128,6 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 				done(response);
 			}
 		});
-	}
-	
-	/**
-	 * Resets the client so it has to re-read the settings and recreate the instance.
-	 */
-	public void resetClient() {
-		ClientFactory.resetClient();
 	}
 
 	/**

@@ -138,7 +138,7 @@ public abstract class HostFactory {
 		ed.putInt(SETTING_HOST_ID, h.id);
 		ed.commit();
 		host = h;
-		ClientFactory.resetClient();
+		ClientFactory.resetClient(h);
 	}
 	
 	/**

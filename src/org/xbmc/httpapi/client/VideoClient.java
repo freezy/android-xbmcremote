@@ -30,6 +30,7 @@ import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.MediaType;
@@ -54,6 +55,15 @@ public class VideoClient implements IVideoClient {
 	public VideoClient(Connection connection) {
 		mConnection = connection;
 	}
+	
+	/**
+	 * Updates host info on the connection.
+	 * @param host
+	 */
+	public void setHost(Host host) {
+		mConnection.setHost(host);
+	}
+
 	
 	/**
 	 * Gets all movies from database

@@ -36,7 +36,7 @@ import org.xbmc.api.object.Movie;
  *  
  * @author Team XBMC
  */
-public interface IVideoClient {
+public interface IVideoClient extends IClient {
 	
 	/**
 	 * Gets all movies from database

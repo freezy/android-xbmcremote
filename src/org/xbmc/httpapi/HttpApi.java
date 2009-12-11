@@ -75,4 +75,15 @@ public class HttpApi {
 		video = new VideoClient(connection);
 		control = new ControlClient(connection);
 	}
+	
+	/**
+	 * Updates host info on all clients
+	 * @param host
+	 */
+	public void setHost(Host host) {
+		info.setHost(host);
+		music.setHost(host);
+		video.setHost(host);
+		control.setHost(host);
+	}
 }

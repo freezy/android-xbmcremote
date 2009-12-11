@@ -35,27 +35,27 @@ public abstract class ClientFactory {
 	
 	private static HttpApi sHttpClient;
 	
-	public static IInfoClient getInfoClient(Host host, INotifiableManager manager) {
-		return getHttpClient(host, manager).info;
+	public static IInfoClient getInfoClient(INotifiableManager manager) {
+		return getHttpClient(manager).info;
 	}
 	
-	public static IControlClient getControlClient(Host host, INotifiableManager manager) {
-		return getHttpClient(host, manager).control;
+	public static IControlClient getControlClient(INotifiableManager manager) {
+		return getHttpClient(manager).control;
 	}
 	
-	public static IVideoClient getVideoClient(Host host, INotifiableManager manager) {
-		return getHttpClient(host, manager).video;
+	public static IVideoClient getVideoClient(INotifiableManager manager) {
+		return getHttpClient(manager).video;
 	}
 	
-	public static IMusicClient getMusicClient(Host host, INotifiableManager manager) {
-		return getHttpClient(host, manager).music;
+	public static IMusicClient getMusicClient(INotifiableManager manager) {
+		return getHttpClient(manager).music;
 	}
 	
 	/**
 	 * Resets the client so it has to re-read the settings and recreate the instance.
 	 */
-	public static void resetClient() {
-		sHttpClient = null;
+	public static void resetClient(Host host) {
+		sHttpClient.setHost(host);
 	}
 
 	/**
@@ -65,8 +65,9 @@ public abstract class ClientFactory {
 	 * @param context Context needed for preferences. Use application context and not activity!
 	 * @return Http client
 	 */
-	public static HttpApi getHttpClient(Host host, final INotifiableManager manager) {
+	public static HttpApi getHttpClient(final INotifiableManager manager) {
 		if (sHttpClient == null) {
+			final Host host = HostFactory.host;
 			if (host != null && !host.addr.equals("")){
 				sHttpClient = new HttpApi(host, DEFAULT_TIMEOUT);
 			} else {

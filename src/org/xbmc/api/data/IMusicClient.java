@@ -36,7 +36,7 @@ import org.xbmc.api.object.Song;
  *  
  * @author Team XBMC
  */
-public interface IMusicClient {
+public interface IMusicClient extends IClient {
 
 	/**
 	 * Adds an album to the current playlist.

@@ -115,9 +115,6 @@ public class SettingsController extends AbstractController implements INotifiabl
 		if (origSummary != null && origSummary.contains(SettingsActivity.SUMMARY_VALUE_PLACEHOLDER)) {
 			pref.setSummary(origSummary.replaceAll(SettingsActivity.SUMMARY_VALUE_PLACEHOLDER, sharedPreferences.getString(key, "")));
 		}
-		if (key.equals(SETTING_HTTP_HOST) || key.equals(SETTING_HTTP_PORT) || key.equals(SETTING_ES_PORT) || key.equals(SETTING_HTTP_USER) || key.equals(SETTING_HTTP_PASS)) {
-			mControlManager.resetClient();
-		}
 	}
 	
 	public boolean onPreferenceChange(Preference preference, Object newValue) {

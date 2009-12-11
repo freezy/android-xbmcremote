@@ -113,8 +113,13 @@ public class HomeController extends AbstractController implements INotifiableCon
 					builder.setItems(names, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							final Host host = hostMap.get(which);
-							HostFactory.saveHost(mActivity.getApplicationContext(), host);
-							Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
+							if (HostFactory.host != null && HostFactory.host.id == host.id) {
+								Toast.makeText(mActivity.getApplicationContext(), "You've picked the same host as the current.", Toast.LENGTH_SHORT).show();
+							} else {
+								HostFactory.saveHost(mActivity.getApplicationContext(), host);
+								Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
+								mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
+							}
 						}
 					});
 					AlertDialog dialog = builder.create();

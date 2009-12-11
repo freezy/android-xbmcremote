@@ -8,6 +8,7 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.info.GuiSettings;
 import org.xbmc.api.object.FileLocation;
+import org.xbmc.api.object.Host;
 import org.xbmc.api.type.DirectoryMask;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.Connection;
@@ -29,6 +30,14 @@ public class InfoClient implements IInfoClient {
 	 */
 	public InfoClient(Connection connection) {
 		mConnection = connection;
+	}
+
+	/**
+	 * Updates host info on the connection.
+	 * @param host
+	 */
+	public void setHost(Host host) {
+		mConnection.setHost(host);
 	}
 	
 	/**
