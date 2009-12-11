@@ -25,12 +25,16 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.object.Host;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 /**
  * One of those contains name, host, port, user and pass of an XBMC instance.
@@ -44,7 +48,6 @@ public class HostPreference extends DialogPreference {
 	private EditText mPortView;
 	private EditText mUserView;
 	private EditText mPassView;
-//	private static int ITEM_CONTEXT_DELETE = 1;
 	
 	private Host mHost;
 	
@@ -68,6 +71,35 @@ public class HostPreference extends DialogPreference {
 	}
 	
 	@Override
+	protected View onCreateView(ViewGroup parent) {
+		final ViewGroup view = (ViewGroup)super.onCreateView(parent);
+		if (mHost != null) {
+			ImageView btn = new ImageView(getContext());
+			btn.setImageResource(R.drawable.bubble_del_up);
+			btn.setClickable(true);
+			btn.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+					builder.setMessage("Are you sure you want to delete the XBMC host \"" + mHost.name + "\"?");
+					builder.setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							HostFactory.deleteHost(getContext(), mHost);
+						}
+					});
+					builder.setNegativeButton("Nah.", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();
+						}
+					});
+					builder.create().show();
+				}
+			});
+			view.addView(btn);
+		}
+		return view;
+	}
+	
+	@Override
 	protected View onCreateDialogView() {
 		final ViewGroup parent = (ViewGroup)super.onCreateDialogView();
 		mNameView = (EditText)parent.findViewById(R.id.pref_name);
@@ -76,19 +108,6 @@ public class HostPreference extends DialogPreference {
 		mUserView = (EditText)parent.findViewById(R.id.pref_user);
 		mPassView = (EditText)parent.findViewById(R.id.pref_pass);
 		return parent;
-	}
-	
-	@Override
-	protected void onBindView(View view) {
-		super.onBindView(view);
-/*		if (mHost != null) {
-			view.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
-				public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-					menu.setHeaderTitle(mHost.name);
-					menu.add(0, ITEM_CONTEXT_DELETE, 1, "Remove instance");
-				}
-			});
-		}*/
 	}
 	
 	@Override

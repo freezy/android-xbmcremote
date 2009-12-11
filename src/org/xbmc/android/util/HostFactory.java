@@ -117,6 +117,16 @@ public abstract class HostFactory {
 		context.getContentResolver().update(HostProvider.Hosts.CONTENT_URI, values, HostProvider.Hosts._ID + "=" + host.id, null);
 	}
 	
+	/**
+	 * Deletes a host.
+	 * @param activity Reference to activity
+	 * @param host Host to delete
+	 * @return
+	 */
+	public static void deleteHost(Context context, Host host) {
+		Uri hostUri = ContentUris.withAppendedId(Hosts.CONTENT_URI, host.id);
+		context.getContentResolver().delete(hostUri, null, null);
+	}
 	
 	/**
 	 * Saves the host to the preference file.
