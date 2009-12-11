@@ -23,11 +23,11 @@
 				android:layout_height="wrap_content" 
 				android:layout_width="fill_parent"
 				android:text="Version Info"
-				android:layout_gravity="center_vertical" 
-				android:gravity="center_horizontal" 
 				android:typeface="monospace" 
 				android:textColor="#ddffffff"
-				android:background="@drawable/bottom_text" />
+				android:background="@drawable/bottom_text"
+				android:layout_gravity="center_vertical" 
+				android:gravity="center_vertical|center_horizontal"/>
 		</LinearLayout>
 		<FrameLayout
 			 android:id="@+id/home_upper"
