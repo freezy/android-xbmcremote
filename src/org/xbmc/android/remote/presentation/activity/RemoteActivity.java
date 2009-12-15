@@ -43,7 +43,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
-import android.widget.Button;
 import android.widget.FrameLayout;
 
 /**
@@ -188,11 +187,8 @@ public class RemoteActivity extends Activity {
 	 */
 	private class OnRemoteAction implements OnTouchListener {
 		private final String mAction;
-		private final int mUp, mDown;
-		public OnRemoteAction(String action, int up, int down) {
+		public OnRemoteAction(String action) {
 			mAction = action;
-			mUp = up;
-			mDown = down;
 		}
 		public boolean onTouch(View v, MotionEvent event) {
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -203,7 +199,6 @@ public class RemoteActivity extends Activity {
 				} catch (IOException e) {
 					return false;
 				}
-				((Button)v).setBackgroundResource(mDown);
 				return true;
 			} else if (event.getAction() == MotionEvent.ACTION_UP) {
 				try {
@@ -211,7 +206,6 @@ public class RemoteActivity extends Activity {
 				} catch (IOException e) {
 					return false;
 				}
-				((Button)v).setBackgroundResource(mUp);
 				return true;
 			}
 			return false;
@@ -225,8 +219,8 @@ public class RemoteActivity extends Activity {
 	 * @param resourceButtonUp     Resource ID of the button up image
 	 * @param resourceButtonDown   Resource ID of the button down image
 	 */
-	private void setupButton(int resourceButton, String action, int resourceButtonUp, int resourceButtonDown) {
-		findViewById(resourceButton).setOnTouchListener(new OnRemoteAction(action, resourceButtonUp, resourceButtonDown));		
+	private void setupButton(int resourceButton, String action) {
+		findViewById(resourceButton).setOnTouchListener(new OnRemoteAction(action));		
 	}
 	
 	/**
@@ -235,44 +229,44 @@ public class RemoteActivity extends Activity {
 	private void setupButtonsPortrait() {
 		
 		// display
-		setupButton(R.id.RemoteXboxImgBtnDisplay, ButtonCodes.REMOTE_DISPLAY, R.drawable.remote_xbox_display, R.drawable.remote_xbox_display_down);
+		setupButton(R.id.RemoteXboxImgBtnDisplay, ButtonCodes.REMOTE_DISPLAY);
 		
 		// seek back
-		setupButton(R.id.RemoteXboxImgBtnSeekBack, ButtonCodes.REMOTE_REVERSE, R.drawable.remote_xbox_seek_back, R.drawable.remote_xbox_seek_back_down);
+		setupButton(R.id.RemoteXboxImgBtnSeekBack, ButtonCodes.REMOTE_REVERSE);
 		// play
-		setupButton(R.id.RemoteXboxImgBtnPlay, ButtonCodes.REMOTE_PLAY, R.drawable.remote_xbox_play, R.drawable.remote_xbox_play_down);
+		setupButton(R.id.RemoteXboxImgBtnPlay, ButtonCodes.REMOTE_PLAY);
 		// seek forward
-		setupButton(R.id.RemoteXboxImgBtnSeekForward, ButtonCodes.REMOTE_FORWARD, R.drawable.remote_xbox_seek_forward, R.drawable.remote_xbox_seek_forward_down);
+		setupButton(R.id.RemoteXboxImgBtnSeekForward, ButtonCodes.REMOTE_FORWARD);
 
 		// previous
-		setupButton(R.id.RemoteXboxImgBtnPrevious, ButtonCodes.REMOTE_SKIP_MINUS, R.drawable.remote_xbox_previous, R.drawable.remote_xbox_previous_down);
+		setupButton(R.id.RemoteXboxImgBtnPrevious, ButtonCodes.REMOTE_SKIP_MINUS);
 		// stop
-		setupButton(R.id.RemoteXboxImgBtnStop, ButtonCodes.REMOTE_STOP, R.drawable.remote_xbox_stop, R.drawable.remote_xbox_stop_down);
+		setupButton(R.id.RemoteXboxImgBtnStop, ButtonCodes.REMOTE_STOP);
 		// pause
-		setupButton(R.id.RemoteXboxImgBtnPause, ButtonCodes.REMOTE_PAUSE, R.drawable.remote_xbox_pause, R.drawable.remote_xbox_pause_down);
+		setupButton(R.id.RemoteXboxImgBtnPause, ButtonCodes.REMOTE_PAUSE);
 		// next
-		setupButton(R.id.RemoteXboxImgBtnNext, ButtonCodes.REMOTE_SKIP_PLUS, R.drawable.remote_xbox_next, R.drawable.remote_xbox_next_down);
+		setupButton(R.id.RemoteXboxImgBtnNext, ButtonCodes.REMOTE_SKIP_PLUS);
 		
 		// title
-		setupButton(R.id.RemoteXboxImgBtnTitle, ButtonCodes.REMOTE_TITLE, R.drawable.remote_xbox_title, R.drawable.remote_xbox_title_down);
+		setupButton(R.id.RemoteXboxImgBtnTitle, ButtonCodes.REMOTE_TITLE);
 		// up
-		setupButton(R.id.RemoteXboxImgBtnUp, ButtonCodes.REMOTE_UP, R.drawable.remote_xbox_up, R.drawable.remote_xbox_up_down);
+		setupButton(R.id.RemoteXboxImgBtnUp, ButtonCodes.REMOTE_UP);
 		// info
-		setupButton(R.id.RemoteXboxImgBtnInfo, ButtonCodes.REMOTE_INFO, R.drawable.remote_xbox_info, R.drawable.remote_xbox_info_down);
+		setupButton(R.id.RemoteXboxImgBtnInfo, ButtonCodes.REMOTE_INFO);
 		
 		// left
-		setupButton(R.id.RemoteXboxImgBtnLeft, ButtonCodes.REMOTE_LEFT, R.drawable.remote_xbox_left, R.drawable.remote_xbox_left_down);
+		setupButton(R.id.RemoteXboxImgBtnLeft, ButtonCodes.REMOTE_LEFT);
 		// select
-		setupButton(R.id.RemoteXboxImgBtnSelect, ButtonCodes.REMOTE_SELECT, R.drawable.remote_xbox_select, R.drawable.remote_xbox_select_down);
+		setupButton(R.id.RemoteXboxImgBtnSelect, ButtonCodes.REMOTE_SELECT);
 		// right
-		setupButton(R.id.RemoteXboxImgBtnRight, ButtonCodes.REMOTE_RIGHT, R.drawable.remote_xbox_right, R.drawable.remote_xbox_right_down);
+		setupButton(R.id.RemoteXboxImgBtnRight, ButtonCodes.REMOTE_RIGHT);
 		
 		// menu
-		setupButton(R.id.RemoteXboxImgBtnMenu, ButtonCodes.REMOTE_MENU, R.drawable.remote_xbox_menu, R.drawable.remote_xbox_menu_down);
+		setupButton(R.id.RemoteXboxImgBtnMenu, ButtonCodes.REMOTE_MENU);
 		// down
-		setupButton(R.id.RemoteXboxImgBtnDown, ButtonCodes.REMOTE_DOWN, R.drawable.remote_xbox_down, R.drawable.remote_xbox_down_down);
+		setupButton(R.id.RemoteXboxImgBtnDown, ButtonCodes.REMOTE_DOWN);
 		// back 
-		setupButton(R.id.RemoteXboxImgBtnBack, ButtonCodes.REMOTE_BACK, R.drawable.remote_xbox_back, R.drawable.remote_xbox_back_down);
+		setupButton(R.id.RemoteXboxImgBtnBack, ButtonCodes.REMOTE_BACK);
 	}
 	
 	/**
@@ -280,59 +274,18 @@ public class RemoteActivity extends Activity {
 	 */
 	private void setupButtonsLandscape() {
 		
-		// display
-		setupButton(R.id.RemoteXboxImgBtnDisplay, ButtonCodes.REMOTE_DISPLAY, R.drawable.remote_xbox_landscape_display, R.drawable.remote_xbox_landscape_display_down);
+		setupButtonsPortrait();
 		
-		// seek back
-		setupButton(R.id.RemoteXboxImgBtnSeekBack, ButtonCodes.REMOTE_REVERSE, R.drawable.remote_xbox_landscape_seek_back, R.drawable.remote_xbox_landscape_seek_back_down);
-		// play
-		setupButton(R.id.RemoteXboxImgBtnPlay, ButtonCodes.REMOTE_PLAY, R.drawable.remote_xbox_landscape_play, R.drawable.remote_xbox_landscape_play_down);
-		// seek forward
-		setupButton(R.id.RemoteXboxImgBtnSeekForward, ButtonCodes.REMOTE_FORWARD, R.drawable.remote_xbox_landscape_seek_forward, R.drawable.remote_xbox_landscape_seek_forward_down);
-		
-		// previous
-		setupButton(R.id.RemoteXboxImgBtnPrevious, ButtonCodes.REMOTE_SKIP_MINUS, R.drawable.remote_xbox_landscape_previous, R.drawable.remote_xbox_landscape_previous_down);
-		// stop
-		setupButton(R.id.RemoteXboxImgBtnStop, ButtonCodes.REMOTE_STOP, R.drawable.remote_xbox_landscape_stop, R.drawable.remote_xbox_landscape_stop_down);
-		// pause
-		setupButton(R.id.RemoteXboxImgBtnPause, ButtonCodes.REMOTE_PAUSE, R.drawable.remote_xbox_landscape_pause, R.drawable.remote_xbox_landscape_pause_down);
-		// next
-		setupButton(R.id.RemoteXboxImgBtnNext, ButtonCodes.REMOTE_SKIP_PLUS, R.drawable.remote_xbox_landscape_next, R.drawable.remote_xbox_landscape_next_down);
-		
-		// title
-		setupButton(R.id.RemoteXboxImgBtnTitle, ButtonCodes.REMOTE_TITLE, R.drawable.remote_xbox_landscape_title, R.drawable.remote_xbox_landscape_title_down);
-		// up
-		setupButton(R.id.RemoteXboxImgBtnUp, ButtonCodes.REMOTE_UP, R.drawable.remote_xbox_landscape_up, R.drawable.remote_xbox_landscape_up_down);
-		// info
-		setupButton(R.id.RemoteXboxImgBtnInfo, ButtonCodes.REMOTE_INFO, R.drawable.remote_xbox_landscape_info, R.drawable.remote_xbox_landscape_info_down);
-		
-		// left
-		setupButton(R.id.RemoteXboxImgBtnLeft, ButtonCodes.REMOTE_LEFT, R.drawable.remote_xbox_landscape_left, R.drawable.remote_xbox_landscape_left_down);
-		// select
-		setupButton(R.id.RemoteXboxImgBtnSelect, ButtonCodes.REMOTE_SELECT, R.drawable.remote_xbox_landscape_select, R.drawable.remote_xbox_landscape_select_down);
-		// right
-		setupButton(R.id.RemoteXboxImgBtnRight, ButtonCodes.REMOTE_RIGHT, R.drawable.remote_xbox_landscape_right, R.drawable.remote_xbox_landscape_right_down);
-		
-		// menu
-		setupButton(R.id.RemoteXboxImgBtnMenu, ButtonCodes.REMOTE_MENU, R.drawable.remote_xbox_landscape_menu, R.drawable.remote_xbox_landscape_menu_down);
-		// down
-		setupButton(R.id.RemoteXboxImgBtnDown, ButtonCodes.REMOTE_DOWN, R.drawable.remote_xbox_landscape_down, R.drawable.remote_xbox_landscape_down_down);
-		// back 
-		setupButton(R.id.RemoteXboxImgBtnBack, ButtonCodes.REMOTE_BACK, R.drawable.remote_xbox_landscape_back, R.drawable.remote_xbox_landscape_back_down);
-		
-		/* now those are the special keys */
 		// tv
-		setupButton(R.id.RemoteXboxImgBtnTv, ButtonCodes.REMOTE_MY_TV, R.drawable.remote_xbox_landscape_tv, R.drawable.remote_xbox_landscape_tv_down);
+		setupButton(R.id.RemoteXboxImgBtnTv, ButtonCodes.REMOTE_MY_TV);
 		// music
-		setupButton(R.id.RemoteXboxImgBtnMusic, ButtonCodes.REMOTE_MY_MUSIC, R.drawable.remote_xbox_landscape_music, R.drawable.remote_xbox_landscape_music_down);
+		setupButton(R.id.RemoteXboxImgBtnMusic, ButtonCodes.REMOTE_MY_MUSIC);
 		// pictures
-		setupButton(R.id.RemoteXboxImgBtnPictures, ButtonCodes.REMOTE_MY_PICTURES, R.drawable.remote_xbox_landscape_pictures, R.drawable.remote_xbox_landscape_pictures_down);
+		setupButton(R.id.RemoteXboxImgBtnPictures, ButtonCodes.REMOTE_MY_PICTURES);
 		// videos
-		setupButton(R.id.RemoteXboxImgBtnVideos, ButtonCodes.REMOTE_MY_VIDEOS, R.drawable.remote_xbox_landscape_videos, R.drawable.remote_xbox_landscape_videos_down);
+		setupButton(R.id.RemoteXboxImgBtnVideos, ButtonCodes.REMOTE_MY_VIDEOS);
 		// settings
-		setupButton(R.id.RemoteXboxImgBtnPower, ButtonCodes.REMOTE_POWER, R.drawable.remote_xbox_landscape_power, R.drawable.remote_xbox_landscape_power_down);
-		
-		
+		setupButton(R.id.RemoteXboxImgBtnPower, ButtonCodes.REMOTE_POWER);
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
