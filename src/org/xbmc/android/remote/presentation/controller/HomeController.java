@@ -28,6 +28,7 @@ import java.util.Observer;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.presentation.activity.HostSettingsActivity;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.MovieLibraryActivity;
 import org.xbmc.android.remote.presentation.activity.MusicLibraryActivity;
@@ -127,8 +128,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 					dialog.show();
 				} else {
 					Toast.makeText(mActivity.getApplicationContext(), "No XBMC hosts defined, please do that first.", Toast.LENGTH_LONG).show();
-					Intent intent = new Intent(mActivity, SettingsActivity.class);
-					intent.putExtra(SettingsActivity.JUMP_TO, SettingsActivity.JUMP_TO_INSTANCES);
+					Intent intent = new Intent(mActivity, HostSettingsActivity.class);
 					mActivity.startActivity(intent);
 				}
 			}

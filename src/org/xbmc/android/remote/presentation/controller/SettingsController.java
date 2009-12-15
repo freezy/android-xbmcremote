@@ -21,26 +21,28 @@
 
 package org.xbmc.android.remote.presentation.controller;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.SettingsActivity;
 import org.xbmc.android.util.HostFactory;
-import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.presentation.INotifiableController;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
-public class SettingsController extends AbstractController implements INotifiableController, IController, OnSharedPreferenceChangeListener, OnPreferenceChangeListener {
+public class SettingsController extends AbstractController implements INotifiableController, IController, OnSharedPreferenceChangeListener {
 	
 	public static final String SETTING_HTTP_HOST = "setting_ip";
 	public static final String SETTING_HTTP_PORT = "setting_http_port";
@@ -49,18 +51,24 @@ public class SettingsController extends AbstractController implements INotifiabl
 	public static final String SETTING_HTTP_TIMEOUT = "setting_socket_timeout";
 	public static final String SETTING_ES_PORT = "setting_eventserver_port";
 	
-	private IControlManager mControlManager;
+	public static final int MENU_ADD_HOST = 1;
+	public static final int MENU_EXIT = 2;
+	
 	private PreferenceActivity mPreferenceActivity;		
 	private final Hashtable<String, String> mSummaries = new Hashtable<String, String>();
 	
 	public SettingsController(PreferenceActivity activity) {
 		mPreferenceActivity = activity;
 		super.onCreate(activity);
-		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
-		
-		activity.addPreferencesFromResource(R.xml.preferences);
+	}
+	
+	/**
+	 * Used in SettingsActivity in order to update the %value% placeholder in 
+	 * the summaries.
+	 * @param activity Reference to activity
+	 */
+	public void registerOnSharedPreferenceChangeListener(PreferenceActivity activity) {
 		activity.getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-		
 		PreferenceScreen ps = activity.getPreferenceScreen();
 		// save original summaries to variable for later update
 		mSummaries.clear();
@@ -70,26 +78,37 @@ public class SettingsController extends AbstractController implements INotifiabl
 				mSummaries.put(key, pref.getSummary().toString());
 			}
 		}
-		
 		updateSummaries();
-		updateHosts(activity);
 	}
 	
-	public void updateHosts(PreferenceActivity activity) {
-		PreferenceScreen hosts = (PreferenceScreen)activity.getPreferenceScreen().findPreference("setting_instances");
-		HostPreference addItem = (HostPreference)activity.getPreferenceScreen().findPreference("setting_add_host");
-		hosts.removeAll();
-		
-		for (Host host : HostFactory.getHosts(activity.getApplicationContext())) {
-			HostPreference pref = new HostPreference(activity);
-			pref.setTitle(host.name);
-			pref.setSummary(host.getSummary());
-			pref.setHost(host);
-			pref.setKey(HostPreference.ID_PREFIX + host.id);
-			pref.setOnPreferenceChangeListener(this);
-			hosts.addPreference(pref);
+	/**
+	 * Creates the preference screen that contains all the listed hosts.
+	 * @param root Root node
+	 * @param activity Reference to activity
+	 * @return 
+	 */
+	public PreferenceScreen createHostsPreferences(PreferenceScreen root, Activity activity) {
+		final ArrayList<Host> hosts = HostFactory.getHosts(activity.getApplicationContext());
+		if (hosts.size() > 0) {
+			for (Host host : hosts) {
+				HostPreference pref = new HostPreference(activity);
+				pref.setTitle(host.name);
+				pref.setSummary(host.getSummary());
+				pref.setHost(host);
+				pref.setKey(HostPreference.ID_PREFIX + host.id);
+				root.addPreference(pref);
+			}
+		} else {
+			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+			builder.setMessage("No hosts defined. In order to add hosts, press \"Menu\" and choose \"Add host\".");
+			builder.setPositiveButton("Okay.", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			builder.create().show();
 		}
-		hosts.addPreference(addItem);
+		return root;
 	}
 	
 	/**
@@ -108,6 +127,9 @@ public class SettingsController extends AbstractController implements INotifiabl
 		}
 	}
 	
+	/**
+	 * Used in order to replace the %value% placeholders with real values.
+	 */
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		Log.i("SettingsActivity", "onSharedPreferenceChanged(" + key + ")");
 		Preference pref = mPreferenceActivity.getPreferenceScreen().findPreference(key);
@@ -116,28 +138,26 @@ public class SettingsController extends AbstractController implements INotifiabl
 			pref.setSummary(origSummary.replaceAll(SettingsActivity.SUMMARY_VALUE_PLACEHOLDER, sharedPreferences.getString(key, "")));
 		}
 	}
-	
-	public boolean onPreferenceChange(Preference preference, Object newValue) {
-		Log.i("SettingsActivity", "onPreferenceChange(" + newValue + ")");
-		if (preference instanceof HostPreference) {
-			((HostPreference)preference).setTitle(((Host)newValue).name);
-			((HostPreference)preference).setSummary(((Host)newValue).getSummary());
-			updateHosts(mPreferenceActivity);
-			return true;
-		}
-		return false;
-	}
-	
-	public void onActivityPause() {
-		if (mControlManager != null) {
-			mControlManager.setController(null);
-		}
-	}
 
-	public void onActivityResume(Activity activity) {
-		if (mControlManager != null) {
-			mControlManager.setController(this);
+	public void onCreateOptionsMenu(Menu menu) {
+		menu.addSubMenu(0, MENU_ADD_HOST, 0, "Add host").setIcon(R.drawable.menu_add_host);
+		menu.addSubMenu(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
+	}
+	
+	public void onMenuItemSelected(int featureId, MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_ADD_HOST:
+				HostPreference pref = new HostPreference(mActivity);
+				pref.setTitle("New XBMC host");
+				pref.create(mPreferenceActivity.getPreferenceManager());
+				mPreferenceActivity.getPreferenceScreen().addPreference(pref);
+				break;
+			case MENU_EXIT:
+				System.exit(0);
+				break;
 		}
 	}
 	
+	public void onActivityPause() { }
+	public void onActivityResume(Activity activity) { }	
 }

@@ -23,7 +23,6 @@ package org.xbmc.android.remote.presentation.activity;
 
 import java.io.IOException;
 
-import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.controller.SettingsController;
 import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.eventclient.ButtonCodes;
@@ -31,24 +30,17 @@ import org.xbmc.eventclient.EventClient;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceScreen;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 
 /**
- * The XBMC remote's preferences page. This is a little special since we want
- * the actual value of the setting in the summary text. It can be set using the
- * %value% place holder.
- * <p>
- * For that we needed to cache the original (with %value% intact) summaries,
- * which then will be replaced upon change or application start. 
+ * Because we can't add menus to child PreferenceScreens, we're forced to 
+ * create a separate activity for it.
  * 
  * @author Team XBMC
  */
-public class SettingsActivity extends PreferenceActivity {
-	
-	public final static String SUMMARY_VALUE_PLACEHOLDER = "%value%";
-	public final static String JUMP_TO = "jump_to";
-	public final static int JUMP_TO_INSTANCES = 1;
+public class HostSettingsActivity extends PreferenceActivity {
 	
 	private ConfigurationManager mConfigurationManager;
 	private SettingsController mSettingsController;
@@ -56,19 +48,23 @@ public class SettingsActivity extends PreferenceActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
-		
+		setTitle("XBMC Hosts");
 		mSettingsController = new SettingsController(this);
-		mSettingsController.registerOnSharedPreferenceChangeListener(this);
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard();
-		final int jumpTo = getIntent().getIntExtra(JUMP_TO, 0);
-		switch (jumpTo) {
-			case JUMP_TO_INSTANCES:
-				setPreferenceScreen((PreferenceScreen)getPreferenceScreen().findPreference("setting_instances"));
-				break;
-			default:
-		}
+		setPreferenceScreen(mSettingsController.createHostsPreferences(getPreferenceManager().createPreferenceScreen(this), this));
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		mSettingsController.onCreateOptionsMenu(menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		mSettingsController.onMenuItemSelected(featureId, item);
+		return super.onMenuItemSelected(featureId, item);
 	}
 	
 	@Override

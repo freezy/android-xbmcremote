@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.xbmc.android.remote"
-	android:versionName="0.6.1+" android:versionCode="433">
+	android:versionName="0.6.1+" android:versionCode="434">
 	<application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="false" >
 		<activity android:name=".presentation.activity.HomeActivity"
 			android:label="@string/app_name"
@@ -21,6 +21,7 @@
 		<activity android:name=".presentation.activity.PlaylistActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
 		<activity android:name=".presentation.activity.AboutActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait"/>
 		<activity android:name=".presentation.activity.SettingsActivity" />
+		<activity android:name=".presentation.activity.HostSettingsActivity" />
 		<activity android:name=".presentation.activity.MediaIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" android:label="@string/play_on_xbmc">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />

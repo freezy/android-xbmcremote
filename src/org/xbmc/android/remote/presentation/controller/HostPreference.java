@@ -29,6 +29,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.preference.DialogPreference;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,10 +62,21 @@ public class HostPreference extends DialogPreference {
 	public HostPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setDialogLayoutResource(R.layout.preference_host);
+		setDialogTitle("Add new host");
+		setDialogIcon(R.drawable.bubble_add);
+	}
+	
+	public void create(PreferenceManager preferenceManager) {
+		onAttachedToHierarchy(preferenceManager);
+		showDialog(null);
 	}
 	
 	public void setHost(Host host) {
 		mHost = host;
+		setTitle(host.name);
+		setSummary(host.getSummary());
+		setDialogTitle(host.name);
+		setDialogIcon(null);
 	}
 	
 	public Host getHost() {
@@ -71,7 +84,7 @@ public class HostPreference extends DialogPreference {
 	}
 	
 	@Override
-	protected View onCreateView(ViewGroup parent) {
+	protected View onCreateView(final ViewGroup parent) {
 		final ViewGroup view = (ViewGroup)super.onCreateView(parent);
 		if (mHost != null) {
 			ImageView btn = new ImageView(getContext());
@@ -84,6 +97,7 @@ public class HostPreference extends DialogPreference {
 					builder.setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							HostFactory.deleteHost(getContext(), mHost);
+							((PreferenceActivity)view.getContext()).getPreferenceScreen().removePreference(HostPreference.this);
 						}
 					});
 					builder.setNegativeButton("Nah.", new DialogInterface.OnClickListener() {
@@ -145,8 +159,8 @@ public class HostPreference extends DialogPreference {
 			}
 			if (callChangeListener(host)) {
 				notifyChanged();
-				setHost(host);
 			}
+			setHost(host);
 		}
 	}
 }

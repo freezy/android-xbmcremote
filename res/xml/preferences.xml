@@ -4,6 +4,11 @@
 		android:key="setting_instances"
 		android:title="Manage XBMC hosts"
 		android:summary="Add, edit and remove the XBMC instances in your LAN.">
+		<intent 
+			android:action="android.intent.action.MAIN" 
+			android:targetPackage="org.xbmc.android.remote" 
+			android:targetClass="org.xbmc.android.remote.presentation.activity.HostSettingsActivity" 
+			android:data="" /> 
 		<org.xbmc.android.remote.presentation.controller.HostPreference
 			android:key="setting_add_host"
 			android:title="New Host"
