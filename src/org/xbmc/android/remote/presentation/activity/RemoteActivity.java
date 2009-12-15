@@ -191,22 +191,17 @@ public class RemoteActivity extends Activity {
 			mAction = action;
 		}
 		public boolean onTouch(View v, MotionEvent event) {
-			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				if (isVibrationSet())
-					mVibrator.vibrate(45);
-				try {
+			try {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					if (isVibrationSet()) {
+						mVibrator.vibrate(45);
+					}
 					mClient.sendButton("R1", mAction, true, true, true, (short)0, (byte)0);
-				} catch (IOException e) {
-					return false;
-				}
-				return true;
-			} else if (event.getAction() == MotionEvent.ACTION_UP) {
-				try {
+				} else if (event.getAction() == MotionEvent.ACTION_UP) {
 					mClient.sendButton("R1", mAction, false, false, true, (short)0, (byte)0);
-				} catch (IOException e) {
-					return false;
 				}
-				return true;
+			} catch (IOException e) {
+				return false;
 			}
 			return false;
 		}
@@ -220,7 +215,10 @@ public class RemoteActivity extends Activity {
 	 * @param resourceButtonDown   Resource ID of the button down image
 	 */
 	private void setupButton(int resourceButton, String action) {
-		findViewById(resourceButton).setOnTouchListener(new OnRemoteAction(action));		
+		final View btn = findViewById(resourceButton);
+		if (btn != null) {
+			findViewById(resourceButton).setOnTouchListener(new OnRemoteAction(action));
+		}
 	}
 	
 	/**
@@ -230,6 +228,11 @@ public class RemoteActivity extends Activity {
 		
 		// display
 		setupButton(R.id.RemoteXboxImgBtnDisplay, ButtonCodes.REMOTE_DISPLAY);
+		
+		setupButton(R.id.RemoteXboxImgBtnVideo, ButtonCodes.REMOTE_MY_VIDEOS);
+		setupButton(R.id.RemoteXboxImgBtnMusic, ButtonCodes.REMOTE_MY_MUSIC);
+		setupButton(R.id.RemoteXboxImgBtnImages, ButtonCodes.REMOTE_MY_PICTURES);
+		setupButton(R.id.RemoteXboxImgBtnTv, ButtonCodes.REMOTE_MY_TV);
 		
 		// seek back
 		setupButton(R.id.RemoteXboxImgBtnSeekBack, ButtonCodes.REMOTE_REVERSE);
