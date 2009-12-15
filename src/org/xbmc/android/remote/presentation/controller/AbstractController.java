@@ -47,6 +47,7 @@ import android.widget.Toast;
 public abstract class AbstractController {
 	
 	protected Activity mActivity;
+	private boolean mDialogShowing = false;
 	
 	public void onCreate(Activity activity) {
 		mActivity = activity;
@@ -54,6 +55,7 @@ public abstract class AbstractController {
 	}
 	
 	public void onError(Exception exception) {
+		
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 		try {
 			throw exception;
@@ -63,6 +65,7 @@ public abstract class AbstractController {
 			builder.setNeutralButton("Settings", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
+					mDialogShowing = false;
 				}
 			});
 		} catch (NoNetworkException e) {
@@ -72,6 +75,7 @@ public abstract class AbstractController {
 			builder.setNeutralButton("Settings", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					mActivity.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+					mDialogShowing = false;
 				}
 			});
 		} catch (WrongDataFormatException e) {
@@ -83,6 +87,7 @@ public abstract class AbstractController {
 			builder.setNeutralButton("Settings", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
+					mDialogShowing = false;
 				}
 			});
 		} catch (ConnectException e) {
@@ -91,6 +96,7 @@ public abstract class AbstractController {
 			builder.setNeutralButton("Settings", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
+					mDialogShowing = false;
 				}
 			});
 		} catch (IOException e) {
@@ -100,6 +106,7 @@ public abstract class AbstractController {
 				builder.setNeutralButton("Settings", new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						mActivity.startActivity(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+						mDialogShowing = false;
 					}
 				});
 			} else {
@@ -113,6 +120,7 @@ public abstract class AbstractController {
 				builder.setNeutralButton("Settings", new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
+						mDialogShowing = false;
 					}
 				});
 			}
@@ -127,6 +135,7 @@ public abstract class AbstractController {
 			builder.setNegativeButton("Close", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();
+					mDialogShowing = false;
 //					ConnectionManager.resetClient();
 				}
 			});
@@ -135,7 +144,10 @@ public abstract class AbstractController {
 				public void run() {
 					final AlertDialog alert = builder.create();
 					try {
-						alert.show();
+						if (!mDialogShowing) {
+							alert.show();
+							mDialogShowing = true;
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

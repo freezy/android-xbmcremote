@@ -46,7 +46,7 @@ public class Connection {
 	/**
 	 * Socket read timeout (connection timeout is default)
 	 */
-	private int mSocketReadTimeout;
+	private int mSocketReadTimeout = 0;
 	
 	/**
 	 * Performs HTTP Authentication
@@ -128,7 +128,9 @@ public class Connection {
 	 * @param timeout Read timeout in milliseconds.
 	 */
 	public void setTimeout(int timeout) {
-		mSocketReadTimeout = timeout;
+		if (timeout > 0) {
+			mSocketReadTimeout = timeout;
+		}
 	}
 	
 	/**
