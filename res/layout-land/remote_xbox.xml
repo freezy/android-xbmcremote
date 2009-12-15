@@ -4,10 +4,10 @@
 	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutInner" android:gravity="center_horizontal" 
 		android:orientation="horizontal" android:layout_gravity="center_vertical|center_horizontal">
 		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutLeft" android:orientation="vertical">
-			<Button android:id="@+id/RemoteXboxImgBtnTv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_tv" />
+			<Button android:id="@+id/RemoteXboxImgBtnVideo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_video" />
 			<Button android:id="@+id/RemoteXboxImgBtnMusic" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_music" />
-			<Button android:id="@+id/RemoteXboxImgBtnPictures" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_pictures" />
-			<Button android:id="@+id/RemoteXboxImgBtnVideos" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_videos" />
+			<Button android:id="@+id/RemoteXboxImgBtnImages" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_images" />
+			<Button android:id="@+id/RemoteXboxImgBtnTv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_tv" />
 			<Button android:id="@+id/RemoteXboxImgBtnDisplay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/remote_xbox_display" />
 		</LinearLayout>
 		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/RemoteXboxLinearLayoutMiddleLeft" android:orientation="vertical">

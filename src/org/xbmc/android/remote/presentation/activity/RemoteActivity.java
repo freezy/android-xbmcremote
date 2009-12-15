@@ -279,14 +279,14 @@ public class RemoteActivity extends Activity {
 		
 		setupButtonsPortrait();
 		
-		// tv
-		setupButton(R.id.RemoteXboxImgBtnTv, ButtonCodes.REMOTE_MY_TV);
+		// videos
+		setupButton(R.id.RemoteXboxImgBtnVideo, ButtonCodes.REMOTE_MY_VIDEOS);
 		// music
 		setupButton(R.id.RemoteXboxImgBtnMusic, ButtonCodes.REMOTE_MY_MUSIC);
 		// pictures
-		setupButton(R.id.RemoteXboxImgBtnPictures, ButtonCodes.REMOTE_MY_PICTURES);
-		// videos
-		setupButton(R.id.RemoteXboxImgBtnVideos, ButtonCodes.REMOTE_MY_VIDEOS);
+		setupButton(R.id.RemoteXboxImgBtnImages, ButtonCodes.REMOTE_MY_PICTURES);
+		// tv
+		setupButton(R.id.RemoteXboxImgBtnTv, ButtonCodes.REMOTE_MY_TV);
 		// settings
 		setupButton(R.id.RemoteXboxImgBtnPower, ButtonCodes.REMOTE_POWER);
 	}
