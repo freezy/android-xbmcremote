@@ -316,7 +316,7 @@ public class MovieListController extends ListController implements IController {
 			if (mLoadCovers) {
 				holder.tempBind = true;
 				holder.iconView.setImageResource(R.drawable.poster);
-				mVideoManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), movie, ThumbSize.SMALL);
+//				mVideoManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), movie, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.poster);
 			}		
@@ -334,9 +334,11 @@ public class MovieListController extends ListController implements IController {
 		if (mControlManager != null) {
 			mControlManager.setController(null);
 		}
+		super.onActivityPause();
 	}
 
 	public void onActivityResume(Activity activity) {
+		super.onActivityResume(activity);
 		if (mVideoManager != null) {
 			mVideoManager.setController(this);
 		}

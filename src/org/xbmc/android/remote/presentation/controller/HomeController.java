@@ -303,9 +303,11 @@ public class HomeController extends AbstractController implements INotifiableCon
 
 	public void onActivityPause() {
 		mInfoManager.setController(null);
+		super.onActivityPause();
 	}
 
 	public void onActivityResume(Activity activity) {
+		super.onActivityResume(activity);
 		mInfoManager.setController(this);
 		mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
 	}

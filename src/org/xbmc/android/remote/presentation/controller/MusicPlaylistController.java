@@ -363,9 +363,11 @@ public class MusicPlaylistController extends ListController implements IControll
 		if (mControlManager != null) {
 			mControlManager.setController(null);
 		}
+		super.onActivityPause();
 	}
 
 	public void onActivityResume(Activity activity) {
+		super.onActivityResume(activity);
 		ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
 		if (mMusicManager != null) {
 			mMusicManager.setController(this);

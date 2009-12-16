@@ -121,9 +121,11 @@ public class MovieGenreListController extends ListController implements IControl
 		if (mVideoManager != null) {
 			mVideoManager.setController(null);
 		}
+		super.onActivityPause();
 	}
 	
 	public void onActivityResume(Activity activity) {
+		super.onActivityResume(activity);
 		if (mVideoManager != null) {
 			mVideoManager.setController(this);
 		}

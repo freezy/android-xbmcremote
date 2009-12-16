@@ -158,6 +158,10 @@ public class SettingsController extends AbstractController implements INotifiabl
 		}
 	}
 	
-	public void onActivityPause() { }
-	public void onActivityResume(Activity activity) { }	
+	public void onActivityPause() {
+		super.onActivityPause();
+	}
+	public void onActivityResume(Activity activity) {
+		super.onActivityResume(activity);
+	}	
 }

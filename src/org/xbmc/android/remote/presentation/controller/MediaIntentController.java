@@ -66,13 +66,14 @@ public class MediaIntentController extends AbstractController implements IContro
 	public void onActivityPause() {
 		mInfoManager.setController(null);
 		mControlManager.setController(null);
-
+		super.onActivityPause();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.xbmc.android.remote.presentation.controller.IController#onActivityResume(android.app.Activity)
 	 */
 	public void onActivityResume(Activity activity) {
+		super.onActivityResume(activity);
 		mInfoManager.setController(this);
 		mControlManager.setController(this);
 		mInfoManager.getSystemInfo(mXbmcStatusHandler, SystemInfo.SYSTEM_BUILD_VERSION);

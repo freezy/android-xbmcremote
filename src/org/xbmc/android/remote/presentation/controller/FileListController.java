@@ -214,6 +214,7 @@ public class FileListController extends ListController implements IController {
 		if (mControlManager != null) {
 			mControlManager.setController(null);
 		}
+		super.onActivityPause();
 	}
 
 	public void onActivityResume(Activity activity) {
@@ -223,6 +224,7 @@ public class FileListController extends ListController implements IController {
 		if (mControlManager != null) {
 			mControlManager.setController(this);
 		}
+		super.onActivityResume(activity);
 	}
 	
 	private static final long serialVersionUID = -3883887349523448733L;

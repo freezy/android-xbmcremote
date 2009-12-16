@@ -110,7 +110,7 @@ public abstract class AbstractController {
 					}
 				});
 			} else {
-				builder.setTitle("Unknown I/O Exception");
+				builder.setTitle("I/O Exception (" + e.getClass().getCanonicalName() + ")");
 				builder.setMessage(e.getMessage().toString());
 			}
 		} catch (HttpException e) {
@@ -163,5 +163,13 @@ public abstract class AbstractController {
 
 	public void runOnUI(Runnable action) {
 		mActivity.runOnUiThread(action);
+	}
+	
+	public void onActivityPause() {
+		mActivity = null;
+	}
+
+	public void onActivityResume(Activity activity) {
+		mActivity = activity;
 	}
 }

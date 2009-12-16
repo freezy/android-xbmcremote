@@ -394,9 +394,11 @@ public class SongListController extends ListController implements IController {
 		if (mMusicManager != null) {
 			mMusicManager.setController(null);
 		}
+		super.onActivityPause();
 	}
 
 	public void onActivityResume(Activity activity) {
+		super.onActivityResume(activity);
 		if (mMusicManager != null) {
 			mMusicManager.setController(this);
 		}
