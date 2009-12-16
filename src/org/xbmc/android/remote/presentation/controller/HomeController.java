@@ -35,7 +35,6 @@ import org.xbmc.android.remote.presentation.activity.MusicLibraryActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingNotificationManager;
 import org.xbmc.android.remote.presentation.activity.RemoteActivity;
-import org.xbmc.android.remote.presentation.activity.SettingsActivity;
 import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.WakeOnLan;
