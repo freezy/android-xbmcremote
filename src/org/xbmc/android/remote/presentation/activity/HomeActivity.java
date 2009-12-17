@@ -171,6 +171,7 @@ public class HomeActivity extends Activity {
 		super.onPause();
 		mHomeController.onActivityPause();
 		mConfigurationManager.onActivityPause();
+		mEventClientManager.setController(null);
 	}
 	
 	

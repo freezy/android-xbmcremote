@@ -116,8 +116,10 @@ public class ListActivity extends Activity {
 					return true;
 			}
 		} catch (IOException e) {
+			client.setController(null);
 			return false;
 		}
+		client.setController(null);
 		return super.onKeyDown(keyCode, event);
 	}
 
