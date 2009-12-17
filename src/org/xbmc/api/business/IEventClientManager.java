@@ -12,7 +12,7 @@ import java.io.IOException;
  * 
  * @author Team XBMC
  */
-public interface IEventClientManager {
+public interface IEventClientManager extends IManager {
 	
 
 	/**

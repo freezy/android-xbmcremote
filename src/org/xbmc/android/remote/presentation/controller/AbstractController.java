@@ -156,9 +156,13 @@ public abstract class AbstractController {
 		}
 	}
 
-	public void onMessage(String message) {
-		Toast toast = Toast.makeText(mActivity, "MESSAGE FROM DOWN THERE: " + message, Toast.LENGTH_LONG);
-		toast.show();
+	public void onMessage(final String message) {
+		mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				Toast toast = Toast.makeText(mActivity, message, Toast.LENGTH_LONG);
+				toast.show();
+			}
+		});
 	}
 
 	public void runOnUI(Runnable action) {
