@@ -25,11 +25,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.HomeController;
-import org.xbmc.android.util.ConnectionFactory;
+import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.eventclient.ButtonCodes;
-import org.xbmc.eventclient.EventClient;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -68,7 +68,7 @@ public class HomeActivity extends Activity {
 	private ConfigurationManager mConfigurationManager;
 	private HomeController mHomeController;
 	
-	private EventClient mClient;
+	private IEventClientManager mEventClientManager;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -78,11 +78,9 @@ public class HomeActivity extends Activity {
 		final Button versionButton = (Button)findViewById(R.id.home_version_button);
 		final GridView menuGrid = (GridView)findViewById(R.id.HomeItemGridView);
 		mHomeController = new HomeController(this, menuGrid);
-
-		mClient = ConnectionFactory.getEventClient(this);
-		
 		mHomeController.setupVersionHandler(versionButton, menuGrid);
 		
+		mEventClientManager = ManagerFactory.getEventClientManager(getApplicationContext(), mHomeController);
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard();
 		
@@ -181,10 +179,10 @@ public class HomeActivity extends Activity {
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:
-					mClient.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
 					return true;
 				case KeyEvent.KEYCODE_VOLUME_DOWN:
-					mClient.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
 					return true;
 			}
 		} catch (IOException e) {

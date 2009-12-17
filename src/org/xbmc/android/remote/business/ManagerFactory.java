@@ -22,6 +22,7 @@
 package org.xbmc.android.remote.business;
 
 import org.xbmc.api.business.IControlManager;
+import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.business.IVideoManager;
@@ -30,6 +31,8 @@ import org.xbmc.api.presentation.INotifiableController;
 import android.content.Context;
 
 public abstract class ManagerFactory {
+	
+	private static EventClientManager sEventClientManager = null;
 	
 	public static IInfoManager getInfoManager(Context context, INotifiableController controller) {
 		IInfoManager im = ManagerThread.info(context);
@@ -61,5 +64,15 @@ public abstract class ManagerFactory {
 			mm.setController(controller);
 		}
 		return mm;
+	}
+	
+	public static IEventClientManager getEventClientManager(Context context, INotifiableController controller) {
+		if (sEventClientManager == null) {
+			sEventClientManager = new EventClientManager();
+		}
+		if (controller != null) {
+			sEventClientManager.setController(controller);
+		}
+		return sEventClientManager;
 	}
 }

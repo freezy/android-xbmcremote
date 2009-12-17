@@ -45,7 +45,7 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	public void getSystemInfo(final DataResponse<String> response, final int field) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = info(response).getSystemInfo(InfoManager.this, field);
+				response.value = info().getSystemInfo(InfoManager.this, field);
 				done(response);
 			}
 		});
@@ -59,7 +59,7 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	public void getShares(final DataResponse<ArrayList<FileLocation>> response, final int mediaType) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = info(response).getShares(InfoManager.this, mediaType);
+				response.value = info().getShares(InfoManager.this, mediaType);
 				done(response);
 			}
 		});
@@ -77,7 +77,7 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = info(response).getDirectory(InfoManager.this, path, mask, offset, limit);
+				response.value = info().getDirectory(InfoManager.this, path, mask, offset, limit);
 				done(response);
 			}
 		});
@@ -92,7 +92,7 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = info(response).getDirectory(InfoManager.this, path);
+				response.value = info().getDirectory(InfoManager.this, path);
 				done(response);
 			}
 		});

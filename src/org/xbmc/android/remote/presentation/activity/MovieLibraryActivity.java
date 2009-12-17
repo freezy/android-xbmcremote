@@ -24,17 +24,17 @@ package org.xbmc.android.remote.presentation.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.ActorListController;
 import org.xbmc.android.remote.presentation.controller.FileListController;
 import org.xbmc.android.remote.presentation.controller.MovieGenreListController;
 import org.xbmc.android.remote.presentation.controller.MovieListController;
-import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
+import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.eventclient.ButtonCodes;
-import org.xbmc.eventclient.EventClient;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -216,7 +216,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		EventClient client = ConnectionFactory.getEventClient(this);	
+		IEventClientManager client = ManagerFactory.getEventClientManager(getApplicationContext(), null);
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

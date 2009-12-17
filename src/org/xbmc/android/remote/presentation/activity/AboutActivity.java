@@ -24,9 +24,9 @@ package org.xbmc.android.remote.presentation.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.util.ConnectionFactory;
+import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.eventclient.ButtonCodes;
-import org.xbmc.eventclient.EventClient;
 
 import android.app.Activity;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -39,12 +39,14 @@ import android.widget.TextView;
 public class AboutActivity extends Activity {
 	
     private ConfigurationManager mConfigurationManager;
+    private IEventClientManager mEventClientManager;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
 		try {
+			mEventClientManager = ManagerFactory.getEventClientManager(getApplicationContext(), null);
 			final String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
 			final int versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
 			((TextView)findViewById(R.id.about_version)).setText("v" + versionName);
@@ -74,14 +76,13 @@ public class AboutActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		EventClient client = ConnectionFactory.getEventClient(this);	
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:
-					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
 					return true;
 				case KeyEvent.KEYCODE_VOLUME_DOWN:
-					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
 					return true;
 			}
 		} catch (IOException e) {

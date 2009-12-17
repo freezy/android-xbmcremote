@@ -21,12 +21,18 @@
 
 package org.xbmc.android.util;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
+import org.xbmc.api.data.IEventClient;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.object.Host;
+import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.HttpApi;
 
 public abstract class ClientFactory {
@@ -34,28 +40,45 @@ public abstract class ClientFactory {
 	private static final int DEFAULT_TIMEOUT = 10000;
 	
 	private static HttpApi sHttpClient;
+	private static EventClient sEventClient;
+	
+	private static final String NAME = "Android XBMC Remote";
+	
+	public static final int EVENT_CLIENT_PORT = 9777;
 	
 	public static IInfoClient getInfoClient(INotifiableManager manager) {
-		return getHttpClient(manager).info;
+		return createHttpClient(manager).info;
 	}
 	
 	public static IControlClient getControlClient(INotifiableManager manager) {
-		return getHttpClient(manager).control;
+		return createHttpClient(manager).control;
 	}
 	
 	public static IVideoClient getVideoClient(INotifiableManager manager) {
-		return getHttpClient(manager).video;
+		return createHttpClient(manager).video;
 	}
 	
 	public static IMusicClient getMusicClient(INotifiableManager manager) {
-		return getHttpClient(manager).music;
+		return createHttpClient(manager).music;
+	}
+	
+	public static IEventClient getEventClient(INotifiableManager manager) {
+		return createEventClient(manager);
 	}
 	
 	/**
 	 * Resets the client so it has to re-read the settings and recreate the instance.
 	 */
 	public static void resetClient(Host host) {
-		sHttpClient.setHost(host);
+		if (sHttpClient != null) {
+			sHttpClient.setHost(host);
+		}
+		if (sEventClient != null) {
+			try {
+				InetAddress addr = Inet4Address.getByName(host.addr);
+				sEventClient.setHost(addr, EVENT_CLIENT_PORT);
+			} catch (UnknownHostException e) { }
+		}
 	}
 
 	/**
@@ -65,7 +88,7 @@ public abstract class ClientFactory {
 	 * @param context Context needed for preferences. Use application context and not activity!
 	 * @return Http client
 	 */
-	public static HttpApi getHttpClient(final INotifiableManager manager) {
+	private static HttpApi createHttpClient(final INotifiableManager manager) {
 		if (sHttpClient == null) {
 			final Host host = HostFactory.host;
 			if (host != null && !host.addr.equals("")){
@@ -82,5 +105,29 @@ public abstract class ClientFactory {
 			}).start();
 		}
 		return sHttpClient;
+	}
+	
+	/**
+	 * Returns an instance of the Event Server Client. Instantiation takes
+	 * place only once, otherwise the first instance is returned.
+	 * 
+	 * @param context
+	 * @return Client for XBMC's Event Server
+	 */
+	private static IEventClient createEventClient(final INotifiableManager manager) {
+		if (sEventClient == null) {
+			final Host host = HostFactory.host;
+			try {
+				final InetAddress addr = Inet4Address.getByName(host.addr);
+				sEventClient = new EventClient(addr, EVENT_CLIENT_PORT, NAME);
+			} catch (UnknownHostException e) {
+				manager.onMessage("EventClient: Cannot parse address \"" + host.addr + "\".");
+				sEventClient = new EventClient(NAME);
+			}
+		} else {
+			manager.onMessage("EventClient: Failed to read host settings.");
+			sEventClient = new EventClient(NAME);
+		}
+		return sEventClient;
 	}
 }

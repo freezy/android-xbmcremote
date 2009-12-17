@@ -26,17 +26,14 @@ import java.io.IOException;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.android.util.SmsMmsMessage;
 import org.xbmc.android.util.SmsPopupUtils;
-
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
+import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
-
 import org.xbmc.eventclient.ButtonCodes;
-import org.xbmc.eventclient.EventClient;
 import org.xbmc.eventclient.Packet;
 
 import android.content.BroadcastReceiver;
@@ -66,10 +63,10 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
-		final EventClient client = ConnectionFactory.getEventClient(context);
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		final IEventClientManager eventClient = ManagerFactory.getEventClientManager(context, null);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		// currently no new connection to the event server is opened
-		if (client != null) {
+		if (eventClient != null) {
 			try {
 				if (action.equals(android.telephony.TelephonyManager.ACTION_PHONE_STATE_CHANGED) && prefs.getBoolean("setting_show_call", false)) {
 
@@ -103,7 +100,7 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 							public void run() {
 								if (value != null && value.isPlaying()) {
 									try {
-										client.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short) 0, (byte) 0);
+										eventClient.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short) 0, (byte) 0);
 									} catch (IOException e) {
 										((INotifiableManager)cm).onError(e);
 									}
@@ -111,20 +108,20 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 								}
 							}
 						});
-						client.sendNotification(callername, "calling", Packet.ICON_PNG, os.toByteArray());
+						eventClient.sendNotification(callername, "calling", Packet.ICON_PNG, os.toByteArray());
 						
 					} else if (extra.equals(android.telephony.TelephonyManager.EXTRA_STATE_IDLE)) {
 						
 						// phone state changed to idle, so if we paused the
 						// playback before, we resume it now
 						if (sPlayState == PLAY_STATE_PAUSED) {
-							client.sendButton("R1", ButtonCodes.REMOTE_PLAY, true, true, true, (short) 0, (byte) 0);
-							client.sendButton("R1", ButtonCodes.REMOTE_PLAY, false, false, true, (short) 0, (byte) 0);
+							eventClient.sendButton("R1", ButtonCodes.REMOTE_PLAY, true, true, true, (short) 0, (byte) 0);
+							eventClient.sendButton("R1", ButtonCodes.REMOTE_PLAY, false, false, true, (short) 0, (byte) 0);
 						}
 						sPlayState = PLAY_STATE_NONE;
 					}
 				} else if (action.equals(SMS_RECVEICED_ACTION) && prefs.getBoolean("setting_show_sms", false)) {
-					if (client != null) {
+					if (eventClient != null) {
 						// sms received. extract msg, contact and pic and show
 						// it on the tv
 						Bundle bundle = intent.getExtras();
@@ -134,9 +131,9 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 							if (pic != null) {
 								ByteArrayOutputStream os = new ByteArrayOutputStream();
 								pic.compress(Bitmap.CompressFormat.PNG, 0, os);
-								client.sendNotification("SMS Received from " + msg.getContactName(), msg.getMessageBody(), Packet.ICON_PNG, os.toByteArray());
+								eventClient.sendNotification("SMS Received from " + msg.getContactName(), msg.getMessageBody(), Packet.ICON_PNG, os.toByteArray());
 							} else
-								client.sendNotification("SMS Received from " + msg.getContactName(), msg.getMessageBody());
+								eventClient.sendNotification("SMS Received from " + msg.getContactName(), msg.getMessageBody());
 						}
 					}
 				}

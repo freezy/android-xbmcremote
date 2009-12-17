@@ -22,7 +22,6 @@
 package org.xbmc.android.util;
 
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -30,13 +29,10 @@ import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
 
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
-import org.xbmc.eventclient.EventClient;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 /**
@@ -47,7 +43,6 @@ import android.util.Log;
  */
 public class ConnectionFactory {
 	
-	private static EventClient sEventClientInstance;
 	private static Collection<ServiceInfo> sServiceInfo = new HashSet<ServiceInfo>();
 	private static NowPlayingPollerThread sNowPlayingPoller;
 	
@@ -119,8 +114,6 @@ public class ConnectionFactory {
 		return hostInfo;
 	}
 	
-
-	
 	/**
 	 * Returns an instance of the NowPlaying Poller . Instantiation takes place only
 	 * once, otherwise the first instance is returned.
@@ -140,46 +133,6 @@ public class ConnectionFactory {
 		return sNowPlayingPoller;
 	}
 	
-	/**
-	 * Returns an instance of the Event Server Client. Instantiation takes
-	 * place only once, otherwise the first instance is returned.
-	 * 
-	 * @param context
-	 * @return Client for XBMC's Event Server
-	 */
-	public static EventClient getEventClient(Context context) {
-		if (sEventClientInstance == null) {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-			
-			String prefHost = prefs.getString("setting_ip", "");
-
-			String host = null;
-			int port = 0;
-			
-/*			if (prefs.getBoolean("setting_mdns", false)) {
-				ServiceInfo mdnsHost = ConnectionManager.getZeroconfServiceInfo(
-						"_xbmc-events._udp.local.", prefHost);
-				
-				// In case the mdns lookup has failed, return a null 
-				if (mdnsHost != null) {
-					host = mdnsHost.getHostAddress();
-					port = mdnsHost.getPort();
-				} else {
-					return null;
-				}
-			} else {*/
-				host = prefHost;
-				port = Integer.parseInt(prefs.getString("setting_eventserver_port", "9777"));
-//			}
-			
-			try {
-				sEventClientInstance = new EventClient(Inet4Address.getByName(host), port, "Android XBMC Remote");
-			} catch (Exception e) {
-				return null;
-			}
-		}
-		return sEventClientInstance;
-	}
 	
 	/**
 	 * Checks whether the device is able to connect to the network

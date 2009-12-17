@@ -56,7 +56,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getCompilations(final DataResponse<ArrayList<Album>> response) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				final IMusicClient mc = music(response);
+				final IMusicClient mc = music();
 				ArrayList<Integer> compilationArtistIDs = mc.getCompilationArtistIDs(MusicManager.this);
 				response.value = mc.getAlbums(MusicManager.this, compilationArtistIDs);
 				done(response);
@@ -71,7 +71,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getAlbums(final DataResponse<ArrayList<Album>> response) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = music(response).getAlbums(MusicManager.this, getSortBy(SortType.ALBUM), getSortOrder());
+				response.value = music().getAlbums(MusicManager.this, getSortBy(SortType.ALBUM), getSortOrder());
 				done(response);
 			}
 		});
@@ -85,7 +85,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getAlbums(final DataResponse<ArrayList<Album>> response, final Artist artist) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = music(response).getAlbums(MusicManager.this, artist, getSortBy(SortType.ALBUM), getSortOrder());
+				response.value = music().getAlbums(MusicManager.this, artist, getSortBy(SortType.ALBUM), getSortOrder());
 				done(response);
 			}
 		});
@@ -99,7 +99,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getAlbums(final DataResponse<ArrayList<Album>> response, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = music(response).getAlbums(MusicManager.this, genre, getSortBy(SortType.ALBUM), getSortOrder());
+				response.value = music().getAlbums(MusicManager.this, genre, getSortBy(SortType.ALBUM), getSortOrder());
 				done(response);
 			}
 		});
@@ -113,7 +113,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getSongs(final DataResponse<ArrayList<Song>> response, final Album album) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = music(response).getSongs(MusicManager.this, album, getSortBy(SortType.ARTIST), getSortOrder());
+				response.value = music().getSongs(MusicManager.this, album, getSortBy(SortType.ARTIST), getSortOrder());
 				done(response);
 			}
 		});
@@ -127,7 +127,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getSongs(final DataResponse<ArrayList<Song>> response, final Artist artist) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = music(response).getSongs(MusicManager.this, artist, getSortBy(SortType.ARTIST), getSortOrder());
+				response.value = music().getSongs(MusicManager.this, artist, getSortBy(SortType.ARTIST), getSortOrder());
 				done(response);
 			}
 		});
@@ -141,7 +141,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getSongs(final DataResponse<ArrayList<Song>> response, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = music(response).getSongs(MusicManager.this, genre, getSortBy(SortType.ARTIST), getSortOrder());
+				response.value = music().getSongs(MusicManager.this, genre, getSortBy(SortType.ARTIST), getSortOrder());
 				done(response);
 			}
 		});
@@ -154,8 +154,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getArtists(final DataResponse<ArrayList<Artist>> response) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final boolean albumArtistsOnly = info(response).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
-				response.value = music(response).getArtists(MusicManager.this, albumArtistsOnly);
+				final boolean albumArtistsOnly = info().getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
+				response.value = music().getArtists(MusicManager.this, albumArtistsOnly);
 				done(response);
 			}
 		});
@@ -169,8 +169,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getArtists(final DataResponse<ArrayList<Artist>> response, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final boolean albumArtistsOnly = info(response).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
-				response.value = music(response).getArtists(MusicManager.this, genre, albumArtistsOnly);
+				final boolean albumArtistsOnly = info().getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
+				response.value = music().getArtists(MusicManager.this, genre, albumArtistsOnly);
 				done(response);
 			}
 		});
@@ -183,7 +183,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getGenres(final DataResponse<ArrayList<Genre>> response) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = music(response).getGenres(MusicManager.this);
+				response.value = music().getGenres(MusicManager.this);
 				done(response);
 			}
 		});
@@ -200,8 +200,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void addToPlaylist(final DataResponse<Boolean> response, final Album album) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final IMusicClient mc = music(response);
-				final IControlClient cc = control(response);
+				final IMusicClient mc = music();
+				final IControlClient cc = control();
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
 				response.value = mc.addToPlaylist(MusicManager.this, album);
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
@@ -219,8 +219,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void addToPlaylist(final DataResponse<Boolean> response, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final IMusicClient mc = music(response);
-				final IControlClient cc = control(response);
+				final IMusicClient mc = music();
+				final IControlClient cc = control();
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
 				response.value = mc.addToPlaylist(MusicManager.this, genre);
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
@@ -237,7 +237,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void addToPlaylist(final DataResponse<Boolean> response, final Song song) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = music(response).addToPlaylist(MusicManager.this, song);
+				response.value = music().addToPlaylist(MusicManager.this, song);
 				done(response);
 			}
 		});
@@ -258,8 +258,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void addToPlaylist(final DataResponse<Boolean> response, final Album album, final Song song) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final IMusicClient mc = music(response);
-				final int playStatus = control(response).getPlayState(MusicManager.this);
+				final IMusicClient mc = music();
+				final int playStatus = control().getPlayState(MusicManager.this);
 				mc.setCurrentPlaylist(MusicManager.this);
 				final int playlistSize = mc.getPlaylistSize(MusicManager.this); 
 				int playPos = -1;
@@ -306,8 +306,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void addToPlaylist(final DataResponse<Boolean> response, final Artist artist) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final IMusicClient mc = music(response);
-				final IControlClient cc = control(response);
+				final IMusicClient mc = music();
+				final IControlClient cc = control();
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
 				response.value = mc.addToPlaylist(MusicManager.this, artist);
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
@@ -326,8 +326,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void addToPlaylist(final DataResponse<Boolean> response, final Artist artist, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final IMusicClient mc = music(response);
-				final IControlClient cc = control(response);
+				final IMusicClient mc = music();
+				final IControlClient cc = control();
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
 				response.value = mc.addToPlaylist(MusicManager.this, artist, genre);
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
@@ -344,7 +344,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void setPlaylistSong(final DataResponse<Boolean> response, final int position) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = music(response).setPlaylistPosition(MusicManager.this, position);
+				response.value = music().setPlaylistPosition(MusicManager.this, position);
 				done(response);
 			}
 		});
@@ -358,7 +358,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void removeFromPlaylist(final DataResponse<Boolean> response, final int position) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = music(response).removeFromPlaylist(MusicManager.this, position);
+				response.value = music().removeFromPlaylist(MusicManager.this, position);
 				done(response);
 			}
 		});
@@ -372,7 +372,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void removeFromPlaylist(final DataResponse<Boolean> response, final String path) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = music(response).removeFromPlaylist(MusicManager.this, path);
+				response.value = music().removeFromPlaylist(MusicManager.this, path);
 				done(response);
 			}
 		});
@@ -386,8 +386,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void play(final DataResponse<Boolean> response, final Album album) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				control(response).stop(MusicManager.this);
-				response.value = music(response).play(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
+				control().stop(MusicManager.this);
+				response.value = music().play(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
 				done(response);
 			}
 		});
@@ -401,8 +401,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void play(final DataResponse<Boolean> response, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				control(response).stop(MusicManager.this);
-				response.value = music(response).play(MusicManager.this, genre, getSortBy(SortType.ARTIST), getSortOrder());
+				control().stop(MusicManager.this);
+				response.value = music().play(MusicManager.this, genre, getSortBy(SortType.ARTIST), getSortOrder());
 				done(response);
 			}
 		});
@@ -416,8 +416,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void play(final DataResponse<Boolean> response, final Song song) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				control(response).stop(MusicManager.this);
-				response.value = music(response).play(MusicManager.this, song);
+				control().stop(MusicManager.this);
+				response.value = music().play(MusicManager.this, song);
 				done(response);
 			}
 		});
@@ -432,8 +432,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void play(final DataResponse<Boolean> response, final Album album, final Song song) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				final IMusicClient mc = music(response);
-				final IControlClient cc = control(response);
+				final IMusicClient mc = music();
+				final IControlClient cc = control();
 				int n = 0;
 				int playPos = 0;
 				mc.clearPlaylist(MusicManager.this);
@@ -464,8 +464,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void play(final DataResponse<Boolean> response, final Artist artist) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				control(response).stop(MusicManager.this);
-				response.value = music(response).play(MusicManager.this, artist, getSortBy(SortType.ALBUM), getSortOrder());
+				control().stop(MusicManager.this);
+				response.value = music().play(MusicManager.this, artist, getSortBy(SortType.ALBUM), getSortOrder());
 				done(response);
 			}
 		});
@@ -480,8 +480,8 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void play(final DataResponse<Boolean> response, final Artist artist, final Genre genre) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				control(response).stop(MusicManager.this);
-				response.value = music(response).play(MusicManager.this, artist, genre);
+				control().stop(MusicManager.this);
+				response.value = music().play(MusicManager.this, artist, genre);
 				done(response);
 			}
 		});
@@ -495,7 +495,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void playlistNext(final DataResponse<Boolean> response) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = music(response).playNext(MusicManager.this);
+				response.value = music().playNext(MusicManager.this);
 				done(response);
 			}
 		});
@@ -508,7 +508,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getPlaylist(final DataResponse<ArrayList<String>> response) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				response.value = music(response).getPlaylist(MusicManager.this);
+				response.value = music().getPlaylist(MusicManager.this);
 				final String firstEntry = response.value.get(0);
 				if (firstEntry != null && firstEntry.equals("[Empty]")) {
 					response.value = new ArrayList<String>();
@@ -525,7 +525,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getPlaylistPosition(final DataResponse<Integer> response) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				response.value = music(response).getPlaylistPosition(MusicManager.this);
+				response.value = music().getPlaylistPosition(MusicManager.this);
 				done(response);
 			}
 		});
@@ -539,7 +539,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void updateAlbumInfo(final DataResponse<Album> response, final Album album) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				response.value = music(response).updateAlbumInfo(MusicManager.this, album);
+				response.value = music().updateAlbumInfo(MusicManager.this, album);
 				done(response);
 			}
 		});

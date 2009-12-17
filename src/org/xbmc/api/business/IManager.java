@@ -23,8 +23,6 @@ package org.xbmc.api.business;
 
 import org.xbmc.api.presentation.INotifiableController;
 
-import android.content.Context;
-
 public interface IManager {
 	
 	/**
@@ -32,10 +30,5 @@ public interface IManager {
 	 * @param controller Controller object
 	 */
 	public void setController(INotifiableController controller);
-	
-	/**
-	 * Sets the context. This should always be the application context, not the activity!
-	 * @param context Application context
-	 */
-	public void setContext(Context context);
+
 }

@@ -73,24 +73,17 @@ public class ManagerThread extends Thread {
 		mVideoManager.setHandler(mHandler);
 		Looper.loop();
 	}
+	//TODO Context not needed?
 	public static InfoManager info(Context context) {
-		InfoManager im = get().mInfoManager;
-		im.setContext(context);
-		return im;
+		return get().mInfoManager;
 	}
 	public static ControlManager control(Context context) {
-		ControlManager cm = get().mControlManager;
-		cm.setContext(context);
-		return cm;
+		return get().mControlManager;
 	}
 	public static MusicManager music(Context context) {
-		MusicManager mm = get().mMusicManager;
-		mm.setContext(context);
-		return mm;
+		return get().mMusicManager;
 	}
 	public static VideoManager video(Context context) {
-		VideoManager vm = get().mVideoManager;
-		vm.setContext(context);
-		return vm;
+		return get().mVideoManager;
 	}
 }

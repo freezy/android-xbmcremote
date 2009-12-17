@@ -30,12 +30,12 @@ import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
 import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
+import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.SeekType;
 import org.xbmc.eventclient.ButtonCodes;
-import org.xbmc.eventclient.EventClient;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -56,7 +56,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 	private IControlManager mControlManager;
 	private NowPlayingActivity mNowPlayingActivity;
 	private Handler mNowPlayingHandler;
-	private EventClient mClient;
+	private IEventClientManager mClient;
 	private int mPlayStatus = PlayStatus.UNKNOWN;
 	private int mPlayListId = -1;
 	private int mLastPosition = -1;
@@ -66,7 +66,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 		mNowPlayingActivity = activity;
 		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
 		mNowPlayingHandler = new Handler(this);
-		mClient = ConnectionFactory.getEventClient(activity.getApplicationContext());
+		mClient = ManagerFactory.getEventClientManager(activity.getApplicationContext(), this);
 	}
 	
 	/**

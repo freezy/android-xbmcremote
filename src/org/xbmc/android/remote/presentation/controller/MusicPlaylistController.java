@@ -33,13 +33,13 @@ import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
 import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
+import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.INamedResource;
 import org.xbmc.api.object.Song;
 import org.xbmc.eventclient.ButtonCodes;
-import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.client.MusicClient;
 
 import android.app.Activity;
@@ -80,7 +80,7 @@ public class MusicPlaylistController extends ListController implements IControll
 	
 	private IControlManager mControlManager;
 	private IMusicManager mMusicManager;
-	private EventClient mClient;
+	private IEventClientManager mEventClient;
 	
 	private int mPlayStatus = PlayStatus.UNKNOWN;
 	private int mPlayListId = -1;
@@ -92,7 +92,7 @@ public class MusicPlaylistController extends ListController implements IControll
 		mPlaylistActivity = activity;
 		mMusicManager = ManagerFactory.getMusicManager(activity.getApplicationContext(), this);
 		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
-		mClient = ConnectionFactory.getEventClient(activity.getApplicationContext());
+		mEventClient = ManagerFactory.getEventClientManager(activity.getApplicationContext(), this);
 		mNowPlayingHandler = new Handler(this);
 		
 		if (!isCreated()) {
@@ -202,10 +202,10 @@ public class MusicPlaylistController extends ListController implements IControll
 				try {
 					switch (mPlayStatus) {
 						case PlayStatus.PLAYING:
-							mClient.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short)0, (byte)0);
+							mEventClient.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short)0, (byte)0);
 							break;
 						case PlayStatus.PAUSED:
-							mClient.sendButton("R1", ButtonCodes.REMOTE_PLAY, false, true, true, (short)0, (byte)0);
+							mEventClient.sendButton("R1", ButtonCodes.REMOTE_PLAY, false, true, true, (short)0, (byte)0);
 							break;
 						case PlayStatus.STOPPED:
 							final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
@@ -232,7 +232,7 @@ public class MusicPlaylistController extends ListController implements IControll
 
 		public void onClick(View v) {
 			try {
-				mClient.sendButton("R1", mAction, false, true, true, (short) 0, (byte) 0);
+				mEventClient.sendButton("R1", mAction, false, true, true, (short) 0, (byte) 0);
 			} catch (IOException e) {
 			}
 		}

@@ -24,9 +24,9 @@ package org.xbmc.android.remote.presentation.activity;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.util.ConnectionFactory;
+import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.eventclient.ButtonCodes;
-import org.xbmc.eventclient.EventClient;
 
 import android.app.Activity;
 import android.content.Context;
@@ -35,13 +35,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
 
@@ -55,7 +53,7 @@ public class RemoteActivity extends Activity {
 	private static final int MENU_NOW_PLAYING = 401;
 	
 	private Vibrator mVibrator;
-	private EventClient mClient;
+	private IEventClientManager mClient;
 	
 	private ConfigurationManager mConfigurationManager;
 	
@@ -76,18 +74,12 @@ public class RemoteActivity extends Activity {
 		topFrame.setForeground(null);
 		
 		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-		mClient = ConnectionFactory.getEventClient(this);
+		mClient = ManagerFactory.getEventClientManager(getApplicationContext(), null);
         
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard(true);
 		
-		WindowManager wm = getWindowManager(); 
-        Display d = wm.getDefaultDisplay();
-        
-		if (d.getWidth() > d.getHeight())
-			setupButtonsLandscape();
-		else
-			setupButtonsPortrait();
+		setupButtons();
 	}
 
 	@Override
@@ -224,7 +216,7 @@ public class RemoteActivity extends Activity {
 	/**
 	 * Assigns the button events to the views.
 	 */
-	private void setupButtonsPortrait() {
+	private void setupButtons() {
 		
 		// display
 		setupButton(R.id.RemoteXboxImgBtnDisplay, ButtonCodes.REMOTE_DISPLAY);
@@ -270,14 +262,7 @@ public class RemoteActivity extends Activity {
 		setupButton(R.id.RemoteXboxImgBtnDown, ButtonCodes.REMOTE_DOWN);
 		// back 
 		setupButton(R.id.RemoteXboxImgBtnBack, ButtonCodes.REMOTE_BACK);
-	}
-	
-	/**
-	 * Assigns the button events to the views.
-	 */
-	private void setupButtonsLandscape() {
 		
-		setupButtonsPortrait();
 		
 		// videos
 		setupButton(R.id.RemoteXboxImgBtnVideo, ButtonCodes.REMOTE_MY_VIDEOS);
@@ -290,6 +275,7 @@ public class RemoteActivity extends Activity {
 		// settings
 		setupButton(R.id.RemoteXboxImgBtnPower, ButtonCodes.REMOTE_POWER);
 	}
+	
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);

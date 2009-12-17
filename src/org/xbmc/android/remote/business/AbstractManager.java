@@ -33,11 +33,9 @@ import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.CacheType;
 import org.xbmc.api.type.ThumbSize;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Super class of the wrappers, keeps common code.
@@ -63,7 +61,6 @@ public abstract class AbstractManager implements INotifiableManager {
 	public static final int PREF_SORT_KEY_FILEMODE = 5;
 	
 	private INotifiableController mController = null;
-	private Context mContext;
 	
 	protected Handler mHandler;
 	
@@ -75,14 +72,6 @@ public abstract class AbstractManager implements INotifiableManager {
 		mHandler = handler;
 	}
 	
-	/**
-	 * Sets the context. This should always be the application context, not the activity!
-	 * @param context Application context
-	 */
-	public void setContext(Context context) {
-		mContext = context;
-	}
-	
 	public void setController(INotifiableController controller) {
 		mController = controller;
 	}
@@ -92,7 +81,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @param response Response object
 	 * @return
 	 */
-	protected IInfoClient info(DataResponse<?> response) {
+	protected IInfoClient info() {
 		return ClientFactory.getInfoClient(this);
 	}
 	
@@ -101,7 +90,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @param response Response object
 	 * @return
 	 */
-	protected IControlClient control(DataResponse<?> response) {
+	protected IControlClient control() {
 		return ClientFactory.getControlClient(this);
 	}
 	
@@ -110,7 +99,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @param response Response object
 	 * @return
 	 */
-	protected IVideoClient video(DataResponse<?> response) {
+	protected IVideoClient video() {
 		return ClientFactory.getVideoClient(this);
 	}
 	
@@ -119,7 +108,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @param response Response object
 	 * @return
 	 */
-	protected IMusicClient music(DataResponse<?> response) {
+	protected IMusicClient music() {
 		return ClientFactory.getMusicClient(this);
 	}
 	
@@ -233,18 +222,12 @@ public abstract class AbstractManager implements INotifiableManager {
 	public void onError(Exception e) {
 		if (mController != null) {
 			mController.onError(e);
-		} else {
-//			Toast toast = Toast.makeText(mContext.getApplicationContext(), "ERROR: " + e.getMessage(), Toast.LENGTH_LONG);
-//			toast.show();
 		}
 	}
 
 	public void onMessage(String message) {
 		if (mController != null) {
 			mController.onMessage(message);
-		} else {
-			Toast toast = Toast.makeText(mContext.getApplicationContext(), "MESSAGE: " + message, Toast.LENGTH_LONG);
-			toast.show();
 		}
 	}
 

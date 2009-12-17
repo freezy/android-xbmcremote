@@ -4,6 +4,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import org.xbmc.api.data.IEventClient;
+
+import android.util.Log;
+
 /**
  * XBMC Event Client Class
  * 
@@ -16,65 +20,23 @@ import java.net.InetAddress;
  * 
  * @author Stefan Agner
  */
-public class EventClient {
+public class EventClient implements IEventClient {
 	
-	private final boolean mHasIcon;
 	private final String mDeviceName;
+	private boolean mHasIcon = false;
 	private PingThread mPingThread;
-	private byte mIconType = Packet.ICON_PNG;
+	private byte mIconType = Packet.ICON_NONE;
 	private byte[] mIconData;
 	private InetAddress mHostAddress;
 	private int mHostPort;
-
+	
+	private static final String TAG = "EventClient";
+	
 	/**
-	 * Starts a XBMC EventClient.
-	 * 
-	 * @param hostAddress  Address of the Host running XBMC
-	 * @param hostPort     Port of the Host running XBMC (default 9777)
-	 * @param deviceName   Name of the Device
-	 * @param iconFile     Path to the Iconfile (PNG, JPEG or GIF)
-	 * @throws IOException
+	 * Creates an empty instance but doesn't start it.
 	 */
-	public EventClient(InetAddress hostAddress, int hostPort, String deviceName, String iconFile) throws IOException {
-		
-		byte iconType = Packet.ICON_PNG;
-
-		// Assume png as icon type
-		if (iconFile.toLowerCase().endsWith(".jpeg"))
-			iconType = Packet.ICON_JPEG;
-		if (iconFile.toLowerCase().endsWith(".jpg"))
-			iconType = Packet.ICON_JPEG;
-		if (iconFile.toLowerCase().endsWith(".gif"))
-			iconType = Packet.ICON_GIF;
-
-		// Read the icon file to the byte array...
-		FileInputStream iconFileStream = new FileInputStream(iconFile);
-		byte[] iconData = new byte[iconFileStream.available()];
-		iconFileStream.read(iconData);
-
-		mHasIcon = true;
+	public EventClient(String deviceName) {
 		mDeviceName = deviceName;
-		
-
-		// Call start-Method...
-		startClient(hostAddress, hostPort, iconType, iconData);
-	}
-
-	/**
-	 * Starts a XBMC EventClient.
-	 * 
-	 * @param hostAddress  Address of the Host running XBMC
-	 * @param hostPort     Port of the Host running XBMC (default 9777)
-	 * @param deviceName   Name of the Device
-	 * @param iconType     Type of the icon file (see Packet.ICON_PNG, 
-	 *                     Packet.ICON_JPEG or Packet.ICON_GIF)
-	 * @param iconData     The icon itself as a Byte-Array
-	 * @throws IOException
-	 */
-	public EventClient(InetAddress hostAddress, int hostPort, String deviceName, byte iconType, byte[] iconData) throws IOException {
-		mHasIcon = true;
-		mDeviceName = deviceName;
-		startClient(hostAddress, hostPort, iconType, iconData);
 	}
 
 	/**
@@ -85,12 +47,9 @@ public class EventClient {
 	 * @param deviceName   Name of the Device
 	 * @throws IOException
 	 */
-	public EventClient(InetAddress hostAddress, int hostPort, String deviceName) throws IOException {
-		mHasIcon = false;
+	public EventClient(InetAddress hostAddress, int hostPort, String deviceName) {
 		mDeviceName = deviceName;
-		byte iconType = Packet.ICON_NONE;
-		byte[] iconData = null;
-		startClient(hostAddress, hostPort, iconType, iconData);
+		startClient(hostAddress, hostPort);
 	}
 
 	/**
@@ -98,33 +57,114 @@ public class EventClient {
 	 * 
 	 * @param hostAddress  Address of the Host running XBMC
 	 * @param hostPort     Port of the Host running XBMC (default 9777)
+	 * @param deviceName   Name of the Device
+	 * @param iconFile     Path to the Iconfile (PNG, JPEG or GIF)
+	 * @throws IOException
+	 */
+	public EventClient(InetAddress hostAddress, int hostPort, String deviceName, String iconFile) {
+		mDeviceName = deviceName;
+		setIcon(iconFile);
+		startClient(hostAddress, hostPort);
+	}
+	
+
+	/**
+	 * Starts a XBMC EventClient.
+	 * 
+	 * @param hostAddress  Address of the Host running XBMC
+	 * @param hostPort     Port of the Host running XBMC (default 9777)
+	 * @param deviceName   Name of the Device
 	 * @param iconType     Type of the icon file (see Packet.ICON_PNG, 
 	 *                     Packet.ICON_JPEG or Packet.ICON_GIF)
 	 * @param iconData     The icon itself as a Byte-Array
 	 * @throws IOException
 	 */
-	private void startClient(InetAddress hostAddress, int hostPort, byte iconType, byte[] iconData) throws IOException {
+	public EventClient(InetAddress hostAddress, int hostPort, String deviceName, byte iconType, byte[] iconData) {
+		mDeviceName = deviceName;
+		setIcon(iconType, iconData);
+		startClient(hostAddress, hostPort);
+	}
+	
+	public void setHost(InetAddress addr, int port) {
+		if (mHostAddress == null) {
+			startClient(addr, port);
+		} else {
+			mHostAddress = addr;
+			mHostPort = port;
+			mPingThread.setHost(addr, port);
+		}
+	}
+	
+	/**
+	 * Sets the icon using a path name to a image file (png, jpg or gif).
+	 * @param iconPath Path to icon
+	 */
+	public void setIcon(String iconPath) {
+		byte iconType = Packet.ICON_PNG;
+
+		// Assume png as icon type
+		if (iconPath.toLowerCase().endsWith(".jpeg"))
+			iconType = Packet.ICON_JPEG;
+		if (iconPath.toLowerCase().endsWith(".jpg"))
+			iconType = Packet.ICON_JPEG;
+		if (iconPath.toLowerCase().endsWith(".gif"))
+			iconType = Packet.ICON_GIF;
+
+		// Read the icon file to the byte array...
+		FileInputStream iconFileStream;
+		byte[] iconData;
+		try {
+			iconFileStream = new FileInputStream(iconPath);
+			iconData = new byte[iconFileStream.available()];
+			iconFileStream.read(iconData);
+		} catch (IOException e) {
+			mHasIcon = false;
+			return;
+		}
+		mHasIcon = true;
+		setIcon(iconType, iconData);
+	}
+	
+	/**
+	 * Sets the icon from raw data
+	 * @param iconType Type of the icon file (see Packet.ICON_PNG, Packet.ICON_JPEG or Packet.ICON_GIF)
+	 * @param iconData The icon itself as a Byte-Array
+	 */
+	public void setIcon(byte iconType, byte[] iconData) {
+		mIconType = iconType;
+		mIconData = iconData;
+	}
+
+	/**
+	 * Starts a XBMC EventClient.
+	 * 
+	 * @param hostAddress  Address of the Host running XBMC
+	 * @param hostPort     Port of the Host running XBMC (default 9777)
+	 * @throws IOException
+	 */
+	private void startClient(InetAddress hostAddress, int hostPort) {
+		
+		Log.i(TAG, "Starting new EventClient at " + hostAddress + ":" + hostPort);
 
 		// Save host address and port
 		mHostAddress = hostAddress;
 		mHostPort = hostPort;
 
-		mIconType = iconType;
-		mIconData = iconData;
-
 		// Send Hello Packet...
 		PacketHELO p;
 		if (mHasIcon)
-			p = new PacketHELO(mDeviceName, iconType, iconData);
+			p = new PacketHELO(mDeviceName, mIconType, mIconData);
 		else
 			p = new PacketHELO(mDeviceName);
 
-		p.send(hostAddress, hostPort);
+		try {
+			p.send(hostAddress, hostPort);
+			// Start Thread (for Ping packets...)
+			mPingThread = new PingThread(hostAddress, hostPort, 20000);
+			mPingThread.start();
+		} catch (IOException e) {
+		}
 
-		// Start Thread (for Ping packets...)
-		mPingThread = new PingThread(hostAddress, hostPort, 20000);
-		mPingThread.start();
-		
 	}
 
 	/**
@@ -133,12 +173,15 @@ public class EventClient {
 	 * @throws IOException
 	 */
 	public void stopClient() throws IOException {
-		// Stop Ping-Thread...
-		mPingThread.giveup();
-		mPingThread.interrupt();
-		
-		PacketBYE p = new PacketBYE();
-		p.send(mHostAddress, mHostPort);
+		final InetAddress addr = mHostAddress;
+		if (addr != null) {
+			// Stop Ping-Thread...
+			mPingThread.giveup();
+			mPingThread.interrupt();
+			
+			PacketBYE p = new PacketBYE();
+			p.send(mHostAddress, mHostPort);
+		}
 	}
 	
 
@@ -149,17 +192,23 @@ public class EventClient {
 	 * @param message  The actual message
 	 */
 	public void sendNotification(String title, String message) throws IOException {
-		PacketNOTIFICATION p;
-		if (mHasIcon)
-			p = new PacketNOTIFICATION(title, message, mIconType, mIconData);
-		else
-			p = new PacketNOTIFICATION(title, message);
-		p.send(mHostAddress, mHostPort);
+		final InetAddress addr = mHostAddress;
+		if (addr != null) {
+			PacketNOTIFICATION p;
+			if (mHasIcon)
+				p = new PacketNOTIFICATION(title, message, mIconType, mIconData);
+			else
+				p = new PacketNOTIFICATION(title, message);
+			p.send(mHostAddress, mHostPort);
+		}
 	}
 	
 	public void sendNotification(String title, String message, byte icontype, byte[] icondata) throws IOException {
-		PacketNOTIFICATION p = new PacketNOTIFICATION(title, message, icontype, icondata);
-		p.send(mHostAddress, mHostPort);
+		final InetAddress addr = mHostAddress;
+		if (addr != null) {
+			PacketNOTIFICATION p = new PacketNOTIFICATION(title, message, icontype, icondata);
+			p.send(mHostAddress, mHostPort);
+		}
 	}
 
 	/**
@@ -179,9 +228,11 @@ public class EventClient {
 	 * @param axis
 	 */
 	public void sendButton(short code, boolean repeat, boolean down, boolean queue, short amount, byte axis) throws IOException {
-		
-		PacketBUTTON p = new PacketBUTTON(code, repeat, down, queue, amount, axis);
-		p.send(mHostAddress, mHostPort);
+		final InetAddress addr = mHostAddress;
+		if (addr != null) {
+			PacketBUTTON p = new PacketBUTTON(code, repeat, down, queue, amount, axis);
+			p.send(mHostAddress, mHostPort);
+		}
 	}
 
 	/**
@@ -224,9 +275,12 @@ public class EventClient {
 	public void sendButton(String map_name, String button_name, boolean repeat,
 			boolean down, boolean queue, short amount, byte axis)
 			throws IOException {
-		
-		PacketBUTTON p = new PacketBUTTON(map_name, button_name, repeat, down, queue, amount, axis);
-		p.send(mHostAddress, mHostPort);
+		Log.i(TAG, "sendButton(" + map_name + ", " + button_name + ", " + (repeat ? "rep, " : "nonrep, ") + (down ? "down)" : "up)"));
+		final InetAddress addr = mHostAddress;
+		if (addr != null) {
+			PacketBUTTON p = new PacketBUTTON(map_name, button_name, repeat, down, queue, amount, axis);
+			p.send(mHostAddress, mHostPort);
+		}
 	}
 
 	/**
@@ -236,8 +290,11 @@ public class EventClient {
 	 * @param y  Vertical position ranging from 0 to 65535
 	 */
 	public void sendMouse(int x, int y) throws IOException {
-		PacketMOUSE p = new PacketMOUSE(x, y);
-		p.send(mHostAddress, mHostPort);
+		final InetAddress addr = mHostAddress;
+		if (addr != null) {
+			PacketMOUSE p = new PacketMOUSE(x, y);
+			p.send(mHostAddress, mHostPort);
+		}
 	}
 
 	/**
@@ -246,8 +303,11 @@ public class EventClient {
 	 * @throws IOException
 	 */
 	public void ping() throws IOException {
-		PacketPING p = new PacketPING();
-		p.send(mHostAddress, mHostPort);
+		final InetAddress addr = mHostAddress;
+		if (addr != null) {
+			PacketPING p = new PacketPING();
+			p.send(addr, mHostPort);
+		}
 	}
 
 	/**
@@ -267,8 +327,11 @@ public class EventClient {
 	 *            The message to log
 	 */
 	public void sendLog(byte loglevel, String logmessage) throws IOException {
-		PacketLOG p = new PacketLOG(loglevel, logmessage);
-		p.send(mHostAddress, mHostPort);
+		final InetAddress addr = mHostAddress;
+		if (addr != null) {
+			PacketLOG p = new PacketLOG(loglevel, logmessage);
+			p.send(mHostAddress, mHostPort);
+		}
 	}
 
 	/**
@@ -278,8 +341,11 @@ public class EventClient {
 	 * @param actionmessage Actionmessage (as in scripting/skinning)
 	 */
 	public void sendAction(String actionmessage) throws IOException {
-		PacketACTION p = new PacketACTION(actionmessage);
-		p.send(mHostAddress, mHostPort);
+		final InetAddress addr = mHostAddress;
+		if (addr != null) {
+			PacketACTION p = new PacketACTION(actionmessage);
+			p.send(mHostAddress, mHostPort);
+		}
 	}
 
 	/**
@@ -288,7 +354,7 @@ public class EventClient {
 	 * 
 	 * @author Stefan Agner
 	 */
-	class PingThread extends Thread {
+	private static class PingThread extends Thread {
 		private InetAddress mHostAddress;
 		private int mHostPort;
 		private int mSleepTime;
@@ -303,6 +369,11 @@ public class EventClient {
 
 		public void giveup() {
 			mGiveup = true;
+		}
+		
+		public void setHost(InetAddress addr, int port) {
+			mHostAddress = addr;
+			mHostPort = port;
 		}
 
 		public void run() {

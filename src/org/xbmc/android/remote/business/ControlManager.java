@@ -42,7 +42,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void playFile(final DataResponse<Boolean> response, final String filename) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = control(response).playFile(ControlManager.this, filename);
+				response.value = control().playFile(ControlManager.this, filename);
 				done(response);
 			}
 		});
@@ -57,7 +57,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void playUrl(final DataResponse<Boolean> response, final String url) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				response.value = control(response).playUrl(ControlManager.this, url);
+				response.value = control().playUrl(ControlManager.this, url);
 				done(response);
 			}
 		});
@@ -71,7 +71,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void playNext(final DataResponse<Boolean> response) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = control(response).playNext(ControlManager.this);
+				response.value = control().playNext(ControlManager.this);
 				done(response);
 			}
 		});
@@ -85,7 +85,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = control(response).addToPlaylist(ControlManager.this, fileOrFolder);
+				response.value = control().addToPlaylist(ControlManager.this, fileOrFolder);
 				done(response);
 			}
 		});
@@ -108,7 +108,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void seek(final DataResponse<Boolean> response, final SeekType type, final int progress) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = control(response).seek(ControlManager.this, type, progress);
+				response.value = control().seek(ControlManager.this, type, progress);
 				done(response);
 			}
 		});
@@ -124,7 +124,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				response.value = control(response).updateLibrary(ControlManager.this, mediaType);
+				response.value = control().updateLibrary(ControlManager.this, mediaType);
 				done(response);
 			}
 		});
@@ -137,7 +137,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void getCurrentlyPlaying(final DataResponse<ICurrentlyPlaying> response) {
 		mHandler.post(new Runnable() {
 			public void run() {
-				response.value = control(response).getCurrentlyPlaying(ControlManager.this);
+				response.value = control().getCurrentlyPlaying(ControlManager.this);
 				done(response);
 			}
 		});
@@ -151,7 +151,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void getPlaylistId(final DataResponse<Integer> response) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = control(response).getPlaylistId(ControlManager.this);
+				response.value = control().getPlaylistId(ControlManager.this);
 				done(response);
 			}
 		});
@@ -165,7 +165,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void setPlaylistId(final DataResponse<Boolean> response, final int id) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = control(response).setPlaylistId(ControlManager.this, id);
+				response.value = control().setPlaylistId(ControlManager.this, id);
 				done(response);
 			}
 		});
@@ -179,7 +179,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	public void setPlaylistPos(final DataResponse<Boolean> response, final int position) {
 		mHandler.post(new Runnable() {
 			public void run() { 
-				response.value = control(response).setPlaylistPos(ControlManager.this, position);
+				response.value = control().setPlaylistPos(ControlManager.this, position);
 				done(response);
 			}
 		});
