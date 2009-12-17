@@ -117,16 +117,18 @@ public abstract class ClientFactory {
 	private static IEventClient createEventClient(final INotifiableManager manager) {
 		if (sEventClient == null) {
 			final Host host = HostFactory.host;
-			try {
-				final InetAddress addr = Inet4Address.getByName(host.addr);
-				sEventClient = new EventClient(addr, EVENT_CLIENT_PORT, NAME);
-			} catch (UnknownHostException e) {
-				manager.onMessage("EventClient: Cannot parse address \"" + host.addr + "\".");
+			if (host != null) {
+				try {
+					final InetAddress addr = Inet4Address.getByName(host.addr);
+					sEventClient = new EventClient(addr, EVENT_CLIENT_PORT, NAME);
+				} catch (UnknownHostException e) {
+					manager.onMessage("EventClient: Cannot parse address \"" + host.addr + "\".");
+					sEventClient = new EventClient(NAME);
+				}
+			} else {
+				manager.onMessage("EventClient: Failed to read host settings.");
 				sEventClient = new EventClient(NAME);
 			}
-		} else {
-			manager.onMessage("EventClient: Failed to read host settings.");
-			sEventClient = new EventClient(NAME);
 		}
 		return sEventClient;
 	}
