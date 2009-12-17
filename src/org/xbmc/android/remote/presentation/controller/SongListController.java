@@ -86,7 +86,7 @@ public class SongListController extends ListController implements IController {
 	
 	public void onCreate(Activity activity, ListView list) {
 		
-		mMusicManager = ManagerFactory.getMusicManager(activity.getApplicationContext(), this);
+		mMusicManager = ManagerFactory.getMusicManager(this);
 		
 		((ISortableManager)mMusicManager).setSortKey(AbstractManager.PREF_SORT_KEY_SONG);
 		((ISortableManager)mMusicManager).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));

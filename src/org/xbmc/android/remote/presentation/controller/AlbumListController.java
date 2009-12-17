@@ -120,8 +120,8 @@ public class AlbumListController extends ListController implements IController {
 	
 	public void onCreate(Activity activity, ListView list) {
 		
-		mMusicManager = ManagerFactory.getMusicManager(activity.getApplicationContext(), this);
-		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
+		mMusicManager = ManagerFactory.getMusicManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 		
 		((ISortableManager)mMusicManager).setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
 		((ISortableManager)mMusicManager).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));

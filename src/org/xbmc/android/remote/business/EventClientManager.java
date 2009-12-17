@@ -43,18 +43,6 @@ public class EventClientManager implements INotifiableManager, IEventClientManag
 	public void setController(INotifiableController controller) {
 		mController = controller;
 	}
-	
-	public void onError(Exception e) {
-		if (mController != null) {
-			mController.onError(e);
-		}
-	}
-
-	public void onMessage(String message) {
-		if (mController != null) {
-			mController.onMessage(message);
-		}
-	}
 
 	public void onMessage(int code, String message) {
 		onMessage(message);
@@ -86,5 +74,17 @@ public class EventClientManager implements INotifiableManager, IEventClientManag
 
 	public void sendNotification(String title, String message, byte icontype, byte[] icondata) throws IOException {
 		ClientFactory.getEventClient(this).sendNotification(title, message, icontype, icondata);
+	}
+	
+	public void onError(Exception e) {
+		if (mController != null) {
+			mController.onError(e);
+		}
+	}
+
+	public void onMessage(String message) {
+		if (mController != null) {
+			mController.onMessage(message);
+		}
 	}
 }

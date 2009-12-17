@@ -165,7 +165,7 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(getApplicationContext(), null);
+		IEventClientManager client = ManagerFactory.getEventClientManager(mAlbumController);
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

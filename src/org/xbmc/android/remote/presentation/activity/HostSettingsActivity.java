@@ -87,7 +87,7 @@ public class HostSettingsActivity extends PreferenceActivity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(getApplicationContext(), mSettingsController);
+		IEventClientManager client = ManagerFactory.getEventClientManager(mSettingsController);
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

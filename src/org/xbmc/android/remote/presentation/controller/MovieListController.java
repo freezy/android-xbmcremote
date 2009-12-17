@@ -85,11 +85,11 @@ public class MovieListController extends ListController implements IController {
 	
 	public void onCreate(Activity activity, ListView list) {
 		
-		mVideoManager = ManagerFactory.getVideoManager(activity.getApplicationContext(), this);
-		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
+		mVideoManager = ManagerFactory.getVideoManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 		
-		ManagerThread.video(activity.getApplicationContext()).setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
-		ManagerThread.video(activity.getApplicationContext()).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
+		ManagerThread.video(this).setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
+		ManagerThread.video(this).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		mLoadCovers = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
 		
 		if (!isCreated()) {

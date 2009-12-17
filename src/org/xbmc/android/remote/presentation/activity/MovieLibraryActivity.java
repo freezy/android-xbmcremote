@@ -216,7 +216,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(getApplicationContext(), null);
+		IEventClientManager client = ManagerFactory.getEventClientManager(mMovieController);
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

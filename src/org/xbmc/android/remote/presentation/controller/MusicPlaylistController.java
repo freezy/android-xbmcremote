@@ -90,9 +90,9 @@ public class MusicPlaylistController extends ListController implements IControll
 	public void onCreate(final PlaylistActivity activity, final ListView list) {
 		
 		mPlaylistActivity = activity;
-		mMusicManager = ManagerFactory.getMusicManager(activity.getApplicationContext(), this);
-		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
-		mEventClient = ManagerFactory.getEventClientManager(activity.getApplicationContext(), this);
+		mMusicManager = ManagerFactory.getMusicManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
+		mEventClient = ManagerFactory.getEventClientManager(this);
 		mNowPlayingHandler = new Handler(this);
 		
 		if (!isCreated()) {

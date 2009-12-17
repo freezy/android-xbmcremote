@@ -31,7 +31,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 	public RemoteController(Context context) {
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-		mEventClientManager = ManagerFactory.getEventClientManager(context, this);
+		mEventClientManager = ManagerFactory.getEventClientManager(this);
 		mVibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
 		mDoVibrate = prefs.getBoolean("setting_vibrate_on_touch", true);
 	}

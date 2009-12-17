@@ -21,7 +21,8 @@
 
 package org.xbmc.android.remote.business;
 
-import android.content.Context;
+import org.xbmc.api.presentation.INotifiableController;
+
 import android.os.Handler;
 import android.os.Looper;
 
@@ -73,17 +74,25 @@ public class ManagerThread extends Thread {
 		mVideoManager.setHandler(mHandler);
 		Looper.loop();
 	}
-	//TODO Context not needed?
-	public static InfoManager info(Context context) {
-		return get().mInfoManager;
+	
+	public static InfoManager info(INotifiableController controller) {
+		final InfoManager im = get().mInfoManager;
+		im.setController(controller);
+		return im;
 	}
-	public static ControlManager control(Context context) {
-		return get().mControlManager;
+	public static ControlManager control(INotifiableController controller) {
+		final ControlManager cm = get().mControlManager;
+		cm.setController(controller);
+		return cm;
 	}
-	public static MusicManager music(Context context) {
-		return get().mMusicManager;
+	public static MusicManager music(INotifiableController controller) {
+		final MusicManager mm = get().mMusicManager;
+		mm.setController(controller);
+		return mm;
 	}
-	public static VideoManager video(Context context) {
-		return get().mVideoManager;
+	public static VideoManager video(INotifiableController controller) {
+		final VideoManager vm = get().mVideoManager;
+		vm.setController(controller);
+		return vm;
 	}
 }

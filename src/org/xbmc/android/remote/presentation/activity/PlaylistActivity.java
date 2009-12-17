@@ -136,7 +136,7 @@ public class PlaylistActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(getApplicationContext(), null);
+		IEventClientManager client = ManagerFactory.getEventClientManager(mMusicPlaylistController);
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

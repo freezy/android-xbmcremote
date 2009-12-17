@@ -46,7 +46,7 @@ public class AboutActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
 		try {
-			mEventClientManager = ManagerFactory.getEventClientManager(getApplicationContext(), null);
+			mEventClientManager = ManagerFactory.getEventClientManager(null);
 			final String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
 			final int versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
 			((TextView)findViewById(R.id.about_version)).setText("v" + versionName);

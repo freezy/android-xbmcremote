@@ -55,7 +55,7 @@ public class MusicGenreListController extends ListController implements IControl
 	
 	public void onCreate(Activity activity, ListView list) {
 		
-		mMusicManager = ManagerFactory.getMusicManager(activity.getApplicationContext(), this);
+		mMusicManager = ManagerFactory.getMusicManager(this);
 		
 		if (!isCreated()) {
 			super.onCreate(activity, list);

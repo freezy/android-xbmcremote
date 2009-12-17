@@ -80,7 +80,7 @@ public class HomeActivity extends Activity {
 		mHomeController = new HomeController(this, menuGrid);
 		mHomeController.setupVersionHandler(versionButton, menuGrid);
 		
-		mEventClientManager = ManagerFactory.getEventClientManager(getApplicationContext(), mHomeController);
+		mEventClientManager = ManagerFactory.getEventClientManager(mHomeController);
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard();
 		

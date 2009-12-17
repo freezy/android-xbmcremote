@@ -73,8 +73,8 @@ public class FileListController extends ListController implements IController {
 	
 	public void onCreate(Activity activity, ListView list) {
 		
-		mInfoManager = ManagerFactory.getInfoManager(activity.getApplicationContext(), this);
-		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
+		mInfoManager = ManagerFactory.getInfoManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 		
 		if (!isCreated()) {
 			super.onCreate(activity, list);

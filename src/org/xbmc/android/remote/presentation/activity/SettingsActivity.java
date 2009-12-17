@@ -91,7 +91,7 @@ public class SettingsActivity extends PreferenceActivity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(getApplicationContext(), null);	
+		IEventClientManager client = ManagerFactory.getEventClientManager(mSettingsController);	
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

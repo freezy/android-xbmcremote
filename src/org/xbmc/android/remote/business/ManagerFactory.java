@@ -28,51 +28,27 @@ import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.presentation.INotifiableController;
 
-import android.content.Context;
-
 public abstract class ManagerFactory {
 	
 	private static EventClientManager sEventClientManager = null;
 	
-	public static IInfoManager getInfoManager(Context context, INotifiableController controller) {
-		IInfoManager im = ManagerThread.info(context);
-		if (controller != null) {
-			im.setController(controller);
-		}
-		return im;
+	public static IInfoManager getInfoManager(INotifiableController controller) {
+		return ManagerThread.info(controller);
 	}
-	
-	public static IControlManager getControlManager(Context context, INotifiableController controller) {
-		IControlManager cm = ManagerThread.control(context);
-		if (controller != null) {
-			cm.setController(controller);
-		}
-		return cm;
+	public static IControlManager getControlManager(INotifiableController controller) {
+		return ManagerThread.control(controller);
 	}
-	
-	public static IVideoManager getVideoManager(Context context, INotifiableController controller) {
-		IVideoManager vm = ManagerThread.video(context);
-		if (controller != null) {
-			vm.setController(controller);
-		}
-		return vm;
+	public static IVideoManager getVideoManager(INotifiableController controller) {
+		return ManagerThread.video(controller);
 	}
-	
-	public static IMusicManager getMusicManager(Context context, INotifiableController controller) {
-		IMusicManager mm = ManagerThread.music(context);
-		if (controller != null) {
-			mm.setController(controller);
-		}
-		return mm;
+	public static IMusicManager getMusicManager(INotifiableController controller) {
+		return ManagerThread.music(controller);
 	}
-	
-	public static IEventClientManager getEventClientManager(Context context, INotifiableController controller) {
+	public static IEventClientManager getEventClientManager(INotifiableController controller) {
 		if (sEventClientManager == null) {
 			sEventClientManager = new EventClientManager();
 		}
-		if (controller != null) {
-			sEventClientManager.setController(controller);
-		}
+		sEventClientManager.setController(controller);
 		return sEventClientManager;
 	}
 }

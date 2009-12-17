@@ -63,7 +63,7 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
-		final IEventClientManager eventClient = ManagerFactory.getEventClientManager(context, null);
+		final IEventClientManager eventClient = ManagerFactory.getEventClientManager(null);
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		// currently no new connection to the event server is opened
 		if (eventClient != null) {
@@ -95,7 +95,7 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 
 						// if xbmc is playing something, we pause it. without
 						// the check paused playback would resume
-						final IControlManager cm = ManagerFactory.getControlManager(context, null);
+						final IControlManager cm = ManagerFactory.getControlManager(null);
 						cm.getCurrentlyPlaying(new DataResponse<ICurrentlyPlaying>() {
 							public void run() {
 								if (value != null && value.isPlaying()) {

@@ -70,7 +70,7 @@ public class ActorListController extends ListController implements IController {
 	
 	public void onCreate(Activity activity, ListView list) {
 		
-		mVideoManager = ManagerFactory.getVideoManager(activity.getApplicationContext(), this);
+		mVideoManager = ManagerFactory.getVideoManager(this);
 		
 		if (!isCreated()) {
 			super.onCreate(activity, list);

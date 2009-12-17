@@ -56,8 +56,8 @@ public class MediaIntentController extends AbstractController implements IContro
 	
 	public MediaIntentController(Activity activity) {
 		super.onCreate(activity);
-		mInfoManager = ManagerFactory.getInfoManager(activity.getApplicationContext(), this);
-		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
+		mInfoManager = ManagerFactory.getInfoManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 	}
 
 	/* (non-Javadoc)

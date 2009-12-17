@@ -87,7 +87,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	
 	public HomeController(Activity activity, GridView menuGrid) {
 		super.onCreate(activity);
-		mInfoManager = ManagerFactory.getInfoManager(activity.getApplicationContext(), this);
+		mInfoManager = ManagerFactory.getInfoManager(this);
 		setupMenuItems(menuGrid);
 		
 //		BroadcastListener bcl = BroadcastListener.getInstance(ConnectionManager.getHttpClient(this));

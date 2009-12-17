@@ -56,7 +56,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 	private IControlManager mControlManager;
 	private NowPlayingActivity mNowPlayingActivity;
 	private Handler mNowPlayingHandler;
-	private IEventClientManager mClient;
+	private IEventClientManager mEventClientManager;
 	private int mPlayStatus = PlayStatus.UNKNOWN;
 	private int mPlayListId = -1;
 	private int mLastPosition = -1;
@@ -64,9 +64,9 @@ public class NowPlayingController extends AbstractController implements INotifia
 	public NowPlayingController(NowPlayingActivity activity) {
 		super.onCreate(activity);
 		mNowPlayingActivity = activity;
-		mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
+		mControlManager = ManagerFactory.getControlManager(this);
+		mEventClientManager = ManagerFactory.getEventClientManager(this);
 		mNowPlayingHandler = new Handler(this);
-		mClient = ManagerFactory.getEventClientManager(activity.getApplicationContext(), this);
 	}
 	
 	/**
@@ -148,10 +148,10 @@ public class NowPlayingController extends AbstractController implements INotifia
 				try {
 					switch (mPlayStatus) {
 						case PlayStatus.PLAYING:
-							mClient.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short)0, (byte)0);
+							mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short)0, (byte)0);
 							break;
 						case PlayStatus.PAUSED:
-							mClient.sendButton("R1", ButtonCodes.REMOTE_PLAY, false, true, true, (short)0, (byte)0);
+							mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_PLAY, false, true, true, (short)0, (byte)0);
 							break;
 						case PlayStatus.STOPPED:
 							final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
@@ -186,7 +186,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 		}
 		public void onClick(View v) {
 			try {
-				mClient.sendButton("R1", mAction, false, true, true, (short)0, (byte)0);
+				mEventClientManager.sendButton("R1", mAction, false, true, true, (short)0, (byte)0);
 			} catch (IOException e) { }
 		}
 	}

@@ -109,8 +109,8 @@ public class MovieDetailsActivity extends Activity {
 			super.onCreate(activity);
 			mActivity = activity;
 			mMovie = movie;
-			mVideoManager = ManagerFactory.getVideoManager(activity.getApplicationContext(), this);
-			mControlManager = ManagerFactory.getControlManager(activity.getApplicationContext(), this);
+			mVideoManager = ManagerFactory.getVideoManager(this);
+			mControlManager = ManagerFactory.getControlManager(this);
 		}
 		
 		public void setupPlayButton(Button button) {
@@ -226,7 +226,7 @@ public class MovieDetailsActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(getApplicationContext(), mMovieDetailsController);
+		IEventClientManager client = ManagerFactory.getEventClientManager(mMovieDetailsController);
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:
