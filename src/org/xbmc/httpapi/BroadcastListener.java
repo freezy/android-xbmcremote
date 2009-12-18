@@ -63,21 +63,23 @@ public class BroadcastListener extends Observable implements Runnable {
 	
 	private static final String TAG = "broadcast";
 	
-	public static final int EVENT_ERROR               = -1;
-	public static final int EVENT_UNKNOWN             = 0;
-	public static final int EVENT_STARTUP             = 1;
-	public static final int EVENT_SHUTDOWN            = 2;
-	public static final int EVENT_ON_ACTION           = 3;
-	public static final int EVENT_ON_PLAYBACK_STARTED = 4;
-	public static final int EVENT_ON_PLAYBACK_ENDED   = 5;
-	public static final int EVENT_ON_PLAYBACK_STOPPED = 6;
-	public static final int EVENT_ON_PLAYBACK_PAUSED  = 7;
-	public static final int EVENT_ON_PLAYBACK_RESUMED = 8;
-	public static final int EVENT_ON_QUEUE_NEXT_ITEM  = 9;
-	public static final int EVENT_ON_MEDIA_CHANGED    = 10;
-	public static final int EVENT_ON_PROGRESS_CHANGED = 11;
-	public static final int EVENT_AVAILABLE           = 100;
-	public static final int EVENT_TIMEOUT             = 101;
+	public static final int EVENT_ERROR                   = -1;
+	public static final int EVENT_UNKNOWN                 = 0;
+	public static final int EVENT_STARTUP                 = 1;
+	public static final int EVENT_SHUTDOWN                = 2;
+	public static final int EVENT_ON_ACTION               = 3;
+	public static final int EVENT_ON_PLAYBACK_STARTED     = 4;
+	public static final int EVENT_ON_PLAYBACK_ENDED       = 5;
+	public static final int EVENT_ON_PLAYBACK_STOPPED     = 6;
+	public static final int EVENT_ON_PLAYBACK_PAUSED      = 7;
+	public static final int EVENT_ON_PLAYBACK_RESUMED     = 8;
+	public static final int EVENT_ON_PLAYBACK_SEEK        = 9;
+	public static final int EVENT_ON_PLAYBACK_SPEEDCHANGE = 10;
+	public static final int EVENT_ON_QUEUE_NEXT_ITEM      = 11;
+	public static final int EVENT_ON_MEDIA_CHANGED        = 12;
+	public static final int EVENT_ON_PROGRESS_CHANGED     = 13;
+	public static final int EVENT_AVAILABLE               = 100;
+	public static final int EVENT_TIMEOUT                 = 101;
 
 	private static final String THREAD_NAME = "BroadcastListener";
 	private static final String TIMER_NAME  = "BroadcastTimer";
@@ -272,6 +274,13 @@ public class BroadcastListener extends Observable implements Runnable {
 		} else if (response.startsWith("OnPlayBackEnded")) {
 			event = EVENT_ON_PLAYBACK_ENDED;
 			sTimer.cancel();
+		} else if (response.startsWith("OnPlayBackPaused")) {
+			event = EVENT_ON_PLAYBACK_PAUSED;
+			sTimer.cancel();
+		} else if (response.startsWith("OnPlayBackResumed")) {
+			event = EVENT_ON_PLAYBACK_RESUMED;
+			ICurrentlyPlaying currPlaying = mHttpClient.control.getCurrentlyPlaying(mManagerStub);
+			sTimer.schedule(new BroadcastListener.Counter(currPlaying.getTime(), currPlaying.getDuration()), 0L, 1000L);
 		} else if (response.startsWith("OnQueueNextItem")) {
 			event = EVENT_ON_QUEUE_NEXT_ITEM;
 		} else if (response.startsWith("MediaChanged")) {
