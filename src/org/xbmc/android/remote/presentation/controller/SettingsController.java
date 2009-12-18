@@ -44,13 +44,6 @@ import android.view.MenuItem;
 
 public class SettingsController extends AbstractController implements INotifiableController, IController, OnSharedPreferenceChangeListener {
 	
-	public static final String SETTING_HTTP_HOST = "setting_ip";
-	public static final String SETTING_HTTP_PORT = "setting_http_port";
-	public static final String SETTING_HTTP_USER = "setting_http_user";
-	public static final String SETTING_HTTP_PASS = "setting_http_pass";
-	public static final String SETTING_HTTP_TIMEOUT = "setting_socket_timeout";
-	public static final String SETTING_ES_PORT = "setting_eventserver_port";
-	
 	public static final int MENU_ADD_HOST = 1;
 	public static final int MENU_EXIT = 2;
 	
