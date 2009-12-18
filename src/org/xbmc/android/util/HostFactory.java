@@ -66,27 +66,31 @@ public abstract class HostFactory {
 				null,       // Selection arguments (none)
 				HostProvider.Hosts.NAME + " ASC"); // Put the results in ascending order by name
 		ArrayList<Host> hosts = new ArrayList<Host>();
-		if (cur.moveToFirst()) {
-			final int idCol = cur.getColumnIndex(HostProvider.Hosts._ID);
-			final int nameCol = cur.getColumnIndex(HostProvider.Hosts.NAME);
-			final int hostCol = cur.getColumnIndex(HostProvider.Hosts.ADDR);
-			final int portCol = cur.getColumnIndex(HostProvider.Hosts.PORT);
-			final int userCol = cur.getColumnIndex(HostProvider.Hosts.USER);
-			final int passCol = cur.getColumnIndex(HostProvider.Hosts.PASS);
-			final int esPortCol = cur.getColumnIndex(HostProvider.Hosts.ESPORT);
-			final int timeoutCol = cur.getColumnIndex(HostProvider.Hosts.TIMEOUT);
-			do {
-				final Host host = new Host();
-				host.id = cur.getInt(idCol);
-				host.name = cur.getString(nameCol);
-				host.addr = cur.getString(hostCol);
-				host.port = cur.getInt(portCol);
-				host.user = cur.getString(userCol);
-				host.pass = cur.getString(passCol);
-				host.esPort = cur.getInt(esPortCol);
-				host.timeout = cur.getInt(timeoutCol);
-				hosts.add(host);
-			} while (cur.moveToNext());
+		try {
+			if (cur.moveToFirst()) {
+				final int idCol = cur.getColumnIndex(HostProvider.Hosts._ID);
+				final int nameCol = cur.getColumnIndex(HostProvider.Hosts.NAME);
+				final int hostCol = cur.getColumnIndex(HostProvider.Hosts.ADDR);
+				final int portCol = cur.getColumnIndex(HostProvider.Hosts.PORT);
+				final int userCol = cur.getColumnIndex(HostProvider.Hosts.USER);
+				final int passCol = cur.getColumnIndex(HostProvider.Hosts.PASS);
+				final int esPortCol = cur.getColumnIndex(HostProvider.Hosts.ESPORT);
+				final int timeoutCol = cur.getColumnIndex(HostProvider.Hosts.TIMEOUT);
+				do {
+					final Host host = new Host();
+					host.id = cur.getInt(idCol);
+					host.name = cur.getString(nameCol);
+					host.addr = cur.getString(hostCol);
+					host.port = cur.getInt(portCol);
+					host.user = cur.getString(userCol);
+					host.pass = cur.getString(passCol);
+					host.esPort = cur.getInt(esPortCol);
+					host.timeout = cur.getInt(timeoutCol);
+					hosts.add(host);
+				} while (cur.moveToNext());
+			}
+		} finally {
+			cur.close();
 		}
 		return hosts;
 	}
@@ -178,17 +182,21 @@ public abstract class HostFactory {
 	private static Host getHost(Context context, int id) {
 		Uri hostUri = ContentUris.withAppendedId(Hosts.CONTENT_URI, id);
 		Cursor cur = context.getContentResolver().query(hostUri, null, null, null, null);
-		if (cur.moveToFirst()) {
-			final Host host = new Host();
-			host.id = cur.getInt(cur.getColumnIndex(HostProvider.Hosts._ID));
-			host.name = cur.getString(cur.getColumnIndex(HostProvider.Hosts.NAME));
-			host.addr = cur.getString(cur.getColumnIndex(HostProvider.Hosts.ADDR));
-			host.port = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.PORT));
-			host.user = cur.getString(cur.getColumnIndex(HostProvider.Hosts.USER));
-			host.pass = cur.getString(cur.getColumnIndex(HostProvider.Hosts.PASS));
-			host.esPort = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.ESPORT));
-			host.timeout = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.TIMEOUT));
-			return host;
+		try {
+			if (cur.moveToFirst()) {
+				final Host host = new Host();
+				host.id = cur.getInt(cur.getColumnIndex(HostProvider.Hosts._ID));
+				host.name = cur.getString(cur.getColumnIndex(HostProvider.Hosts.NAME));
+				host.addr = cur.getString(cur.getColumnIndex(HostProvider.Hosts.ADDR));
+				host.port = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.PORT));
+				host.user = cur.getString(cur.getColumnIndex(HostProvider.Hosts.USER));
+				host.pass = cur.getString(cur.getColumnIndex(HostProvider.Hosts.PASS));
+				host.esPort = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.ESPORT));
+				host.timeout = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.TIMEOUT));
+				return host;
+			}
+		} finally {
+			cur.close();
 		}
 		return null;
 	}
