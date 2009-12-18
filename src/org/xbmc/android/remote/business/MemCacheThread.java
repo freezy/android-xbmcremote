@@ -141,6 +141,7 @@ class MemCacheThread extends AbstractThread {
 	public static void quit() {
 		if (sHttpApiThread != null) {
 			sHttpApiThread.mHandler.getLooper().quit();
+			sHttpApiThread = null;
 		}
 	}
 }

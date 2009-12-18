@@ -166,7 +166,9 @@ public abstract class AbstractController {
 	}
 
 	public void runOnUI(Runnable action) {
-		mActivity.runOnUiThread(action);
+		if (mActivity != null) {
+			mActivity.runOnUiThread(action);
+		}
 	}
 	
 	public void onActivityPause() {
