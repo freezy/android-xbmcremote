@@ -76,6 +76,10 @@ public abstract class AbstractManager implements INotifiableManager {
 		mController = controller;
 	}
 	
+	public void postActivity() {
+		AbstractThread.quitThreads();
+	}
+	
 	/**
 	 * Returns the InfoClient class
 	 * @param response Response object

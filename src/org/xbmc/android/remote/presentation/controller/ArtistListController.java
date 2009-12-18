@@ -195,6 +195,7 @@ public class ArtistListController extends ListController implements IController 
 	public void onActivityPause() {
 		if (mMusicManager != null) {
 			mMusicManager.setController(null);
+			mMusicManager.postActivity();
 		}
 		super.onActivityPause();
 	}

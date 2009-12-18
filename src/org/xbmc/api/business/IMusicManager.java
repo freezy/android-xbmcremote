@@ -264,4 +264,9 @@ public interface IMusicManager extends IManager {
 	 */
 	public void updateAlbumInfo(final DataResponse<Album> response, final Album album);
 	
+	/**
+	 * Put in here everything that has to be cleaned up after leaving an activity.
+	 */
+	public void postActivity();
+	
 }

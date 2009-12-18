@@ -149,6 +149,7 @@ public class MusicGenreListController extends ListController implements IControl
 	public void onActivityPause() {
 		if (mMusicManager != null) {
 			mMusicManager.setController(null);
+			mMusicManager.postActivity();
 		}
 		super.onActivityPause();
 	}

@@ -359,6 +359,7 @@ public class MusicPlaylistController extends ListController implements IControll
 		ConnectionFactory.getNowPlayingPoller(mActivity.getApplicationContext()).unSubscribe(mNowPlayingHandler);
 		if (mMusicManager != null) {
 			mMusicManager.setController(null);
+			mMusicManager.postActivity();
 		}
 		if (mControlManager != null) {
 			mControlManager.setController(null);

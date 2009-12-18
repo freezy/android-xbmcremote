@@ -201,6 +201,7 @@ public class MovieDetailsActivity extends Activity {
 
 		public void onActivityPause() {
 			mVideoManager.setController(null);
+			mVideoManager.postActivity();
 			mControlManager.setController(null);
 		}
 

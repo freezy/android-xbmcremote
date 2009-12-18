@@ -25,7 +25,6 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
-import org.xbmc.android.remote.business.AbstractThread;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
@@ -331,11 +330,11 @@ public class MovieListController extends ListController implements IController {
 	public void onActivityPause() {
 		if (mVideoManager != null) {
 			mVideoManager.setController(null);
+			mVideoManager.postActivity();
 		}
 		if (mControlManager != null) {
 			mControlManager.setController(null);
 		}
-		AbstractThread.quitThreads();
 		super.onActivityPause();
 	}
 

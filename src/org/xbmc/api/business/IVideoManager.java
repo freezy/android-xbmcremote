@@ -95,4 +95,9 @@ public interface IVideoManager extends IManager {
 	 */
 	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize);
 	
+	/**
+	 * Put in here everything that has to be cleaned up after leaving an activity.
+	 */
+	public void postActivity();
+	
 }
