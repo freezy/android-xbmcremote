@@ -101,7 +101,7 @@ public class SettingsController extends AbstractController implements INotifiabl
 		} else {
 			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 			builder.setMessage("No hosts defined. In order to add hosts, press \"Menu\" and choose \"Add host\".");
-			builder.setPositiveButton("Okay.", new DialogInterface.OnClickListener() {
+			builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.cancel();
 				}
@@ -163,5 +163,12 @@ public class SettingsController extends AbstractController implements INotifiabl
 	}
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
+		final ArrayList<Host> hosts = HostFactory.getHosts(activity.getApplicationContext()); 
+		if (hosts.size() == 1) {
+			HostFactory.saveHost(activity.getApplicationContext(), hosts.get(0));
+		}
+		if (hosts.size() == 0) {
+			HostFactory.saveHost(activity.getApplicationContext(), null);
+		}
 	}	
 }

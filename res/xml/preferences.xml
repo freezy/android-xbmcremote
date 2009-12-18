@@ -1,42 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="XBMCRemotePrefsFile">
-	<PreferenceScreen
-		android:key="setting_instances"
-		android:title="Manage XBMC hosts"
-		android:summary="Add, edit and remove the XBMC instances in your LAN.">
-		<intent 
-			android:action="android.intent.action.MAIN" 
-			android:targetPackage="org.xbmc.android.remote" 
-			android:targetClass="org.xbmc.android.remote.presentation.activity.HostSettingsActivity" 
-			android:data="" /> 
-		<org.xbmc.android.remote.presentation.controller.HostPreference
-			android:key="setting_add_host"
-			android:title="New Host"
-			android:summary="Add a new XBMC host" />
-	</PreferenceScreen>
-	<EditTextPreference
-		android:key="setting_socket_timeout"
-		android:title="Socket timeout"
-		android:numeric="decimal"
-		android:defaultValue="10000" 
-		android:summary="Connection times out in %value% milliseconds. Note that this is the response timeout and should be put high enough." />
-	<!-- CheckBoxPreference 
-		android:disableDependentsState="true" 
-		android:key="setting_mdns" android:defaultValue="false" 
-		android:title="Use Zeroconf for IP/Port discovery" 
-		android:summary="Use Zeroconf to discover the IP and Ports of XBMC."
-		android:enabled="false" /--> 
-	<CheckBoxPreference
-		android:key="setting_vibrate_on_touch"
-		android:title="Vibrate on Touch"
-		android:summary="Makes the remote control vibrate on touch." />
-	<PreferenceCategory android:title="Event Server">
-		<EditTextPreference
-			android:key="setting_eventserver_port"
-			android:title="XBMC Event Server Port"
+	<PreferenceCategory android:title="General">
+		<PreferenceScreen
+			android:key="setting_instances"
+			android:title="Manage XBMC hosts"
+			android:summary="Add, edit and remove the XBMC instances in your LAN.">
+			<intent 
+				android:action="android.intent.action.MAIN" 
+				android:targetPackage="org.xbmc.android.remote" 
+				android:targetClass="org.xbmc.android.remote.presentation.activity.HostSettingsActivity" 
+				android:data="" /> 
+		</PreferenceScreen>
+		<!-- EditTextPreference
+			android:key="setting_socket_timeout"
+			android:title="Socket timeout"
 			android:numeric="decimal"
-			android:defaultValue="9777" 
-			android:summary="Connect to port %value%" /> <!--  android:dependency="setting_mdns" -->
+			android:defaultValue="10000" 
+			android:summary="Connection times out in %value% milliseconds. Note that this is the response timeout and should be put high enough." /-->
+		<!-- CheckBoxPreference 
+			android:disableDependentsState="true" 
+			android:key="setting_mdns" android:defaultValue="false" 
+			android:title="Use Zeroconf for IP/Port discovery" 
+			android:summary="Use Zeroconf to discover the IP and Ports of XBMC."
+			android:enabled="false" /--> 
+		<CheckBoxPreference
+			android:key="setting_vibrate_on_touch"
+			android:title="Vibrate on Touch"
+			android:summary="Makes the remote control vibrate on touch." />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Wake On Lan">
 		<EditTextPreference android:key="setting_wol"

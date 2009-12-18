@@ -60,7 +60,7 @@ public abstract class AbstractController {
 		try {
 			throw exception;
 		} catch (NoSettingsException e) {
-			builder.setTitle("No Settings detected");
+			builder.setTitle("No hosts detected");
 			builder.setMessage(e.getMessage());
 			builder.setNeutralButton("Settings", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {

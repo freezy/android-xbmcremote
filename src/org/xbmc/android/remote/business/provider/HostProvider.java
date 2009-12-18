@@ -45,7 +45,7 @@ public class HostProvider extends ContentProvider {
 
 	public static final String AUTHORITY = "org.xbmc.android.provider.remote";
 
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	private static final String DATABASE_NAME = "xbmc_hosts.db";
 	private static final String HOSTS_TABLE_NAME = "hosts";
 
@@ -73,7 +73,9 @@ public class HostProvider extends ContentProvider {
 					+ Hosts.ADDR + " TEXT,"
 					+ Hosts.PORT + " INTEGER," 
 					+ Hosts.USER + " TEXT," 
-					+ Hosts.PASS + " TEXT" 
+					+ Hosts.PASS + " TEXT," 
+					+ Hosts.ESPORT + " INTEGER," 
+					+ Hosts.TIMEOUT + " INTEGER" 
 					+ ");");
 		}
 
@@ -176,6 +178,12 @@ public class HostProvider extends ContentProvider {
 		if (values.containsKey(Hosts.PASS) == false) {
 			values.put(Hosts.PASS, "");
 		}
+		if (values.containsKey(Hosts.ESPORT) == false) {
+			values.put(Hosts.ESPORT, 0);
+		}
+		if (values.containsKey(Hosts.TIMEOUT) == false) {
+			values.put(Hosts.TIMEOUT, -1);
+		}
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		long rowId = db.insert(HOSTS_TABLE_NAME, Hosts.ADDR, values);
@@ -243,6 +251,8 @@ public class HostProvider extends ContentProvider {
 		sHostsProjectionMap.put(Hosts.PORT, Hosts.PORT);
 		sHostsProjectionMap.put(Hosts.USER, Hosts.USER);
 		sHostsProjectionMap.put(Hosts.PASS, Hosts.PASS);
+		sHostsProjectionMap.put(Hosts.ESPORT, Hosts.ESPORT);
+		sHostsProjectionMap.put(Hosts.TIMEOUT, Hosts.TIMEOUT);
 	}
 
 	/**
@@ -293,6 +303,22 @@ public class HostProvider extends ContentProvider {
 		 * </P>
 		 */
 		public static final String PASS = "pass";
+		
+		/**
+		 * The event server port
+		 * <P>
+		 * Type: INTEGER
+		 * </P>
+		 */
+		public static final String ESPORT = "esport";
+		
+		/**
+		 * The socket read timeout in milliseconds
+		 * <P>
+		 * Type: INTEGER
+		 * </P>
+		 */
+		public static final String TIMEOUT = "timeout";
 		
 
 		/**

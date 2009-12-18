@@ -73,6 +73,8 @@ public abstract class HostFactory {
 			final int portCol = cur.getColumnIndex(HostProvider.Hosts.PORT);
 			final int userCol = cur.getColumnIndex(HostProvider.Hosts.USER);
 			final int passCol = cur.getColumnIndex(HostProvider.Hosts.PASS);
+			final int esPortCol = cur.getColumnIndex(HostProvider.Hosts.ESPORT);
+			final int timeoutCol = cur.getColumnIndex(HostProvider.Hosts.TIMEOUT);
 			do {
 				final Host host = new Host();
 				host.id = cur.getInt(idCol);
@@ -81,6 +83,8 @@ public abstract class HostFactory {
 				host.port = cur.getInt(portCol);
 				host.user = cur.getString(userCol);
 				host.pass = cur.getString(passCol);
+				host.esPort = cur.getInt(esPortCol);
+				host.timeout = cur.getInt(timeoutCol);
 				hosts.add(host);
 			} while (cur.moveToNext());
 		}
@@ -99,6 +103,8 @@ public abstract class HostFactory {
 		values.put(HostProvider.Hosts.PORT, host.port);
 		values.put(HostProvider.Hosts.USER, host.user);
 		values.put(HostProvider.Hosts.PASS, host.pass);
+		values.put(HostProvider.Hosts.ESPORT, host.esPort);
+		values.put(HostProvider.Hosts.TIMEOUT, host.timeout);
 		context.getContentResolver().insert(HostProvider.Hosts.CONTENT_URI, values);
 	}
 	
@@ -114,6 +120,8 @@ public abstract class HostFactory {
 		values.put(HostProvider.Hosts.PORT, host.port);
 		values.put(HostProvider.Hosts.USER, host.user);
 		values.put(HostProvider.Hosts.PASS, host.pass);
+		values.put(HostProvider.Hosts.ESPORT, host.esPort);
+		values.put(HostProvider.Hosts.TIMEOUT, host.timeout);
 		context.getContentResolver().update(HostProvider.Hosts.CONTENT_URI, values, HostProvider.Hosts._ID + "=" + host.id, null);
 	}
 	
@@ -135,7 +143,11 @@ public abstract class HostFactory {
 	 */
 	public static void saveHost(Context context, Host h) {
 		SharedPreferences.Editor ed = PreferenceManager.getDefaultSharedPreferences(context).edit();
-		ed.putInt(SETTING_HOST_ID, h.id);
+		if (h != null) {
+			ed.putInt(SETTING_HOST_ID, h.id);
+		} else {
+			ed.putInt(SETTING_HOST_ID, 0);
+		}
 		ed.commit();
 		host = h;
 		ClientFactory.resetClient(h);
@@ -174,6 +186,8 @@ public abstract class HostFactory {
 			host.port = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.PORT));
 			host.user = cur.getString(cur.getColumnIndex(HostProvider.Hosts.USER));
 			host.pass = cur.getString(cur.getColumnIndex(HostProvider.Hosts.PASS));
+			host.esPort = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.ESPORT));
+			host.timeout = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.TIMEOUT));
 			return host;
 		}
 		return null;

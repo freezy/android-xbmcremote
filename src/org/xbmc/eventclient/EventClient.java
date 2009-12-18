@@ -86,12 +86,16 @@ public class EventClient implements IEventClient {
 	}
 	
 	public void setHost(InetAddress addr, int port) {
-		if (mHostAddress == null) {
-			startClient(addr, port);
+		if (addr != null) {
+			if (mHostAddress == null) {
+				startClient(addr, port);
+			} else {
+				mHostAddress = addr;
+				mHostPort = port;
+				mPingThread.setHost(addr, port);
+			}
 		} else {
-			mHostAddress = addr;
-			mHostPort = port;
-			mPingThread.setHost(addr, port);
+			mHostAddress = null;
 		}
 	}
 	

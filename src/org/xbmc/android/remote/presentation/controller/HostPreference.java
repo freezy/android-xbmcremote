@@ -45,11 +45,7 @@ import android.widget.ImageView;
  */
 public class HostPreference extends DialogPreference {
 	
-	private EditText mNameView;
-	private EditText mHostView;
-	private EditText mPortView;
-	private EditText mUserView;
-	private EditText mPassView;
+	private EditText mNameView, mHostView, mPortView, mUserView, mPassView, mEsPortView, mTimeoutView;
 	
 	private Host mHost;
 	
@@ -121,6 +117,8 @@ public class HostPreference extends DialogPreference {
 		mPortView = (EditText)parent.findViewById(R.id.pref_port);
 		mUserView = (EditText)parent.findViewById(R.id.pref_user);
 		mPassView = (EditText)parent.findViewById(R.id.pref_pass);
+		mEsPortView = (EditText)parent.findViewById(R.id.pref_eventserver_port);
+		mTimeoutView = (EditText)parent.findViewById(R.id.pref_timeout);
 		return parent;
 	}
 	
@@ -133,6 +131,8 @@ public class HostPreference extends DialogPreference {
 			mPortView.setText(String.valueOf(mHost.port));
 			mUserView.setText(mHost.user);
 			mPassView.setText(mHost.pass);
+			mEsPortView.setText(String.valueOf(mHost.esPort));
+			mTimeoutView.setText(String.valueOf(mHost.timeout));
 		}
 	}
 	
@@ -146,10 +146,21 @@ public class HostPreference extends DialogPreference {
 			try {
 				host.port = Integer.parseInt(mPortView.getText().toString());
 			} catch (NumberFormatException e) {
-				host.port = 0;
+				host.port = Host.DEFAULT_HTTP_PORT;
 			}
 			host.user = mUserView.getText().toString();
 			host.pass = mPassView.getText().toString();
+
+			try {
+				host.esPort = Integer.parseInt(mEsPortView.getText().toString());
+			} catch (NumberFormatException e) {
+				host.esPort = Host.DEFAULT_EVENTSERVER_PORT;
+			}
+			try {
+				host.timeout = Integer.parseInt(mTimeoutView.getText().toString());
+			} catch (NumberFormatException e) {
+				host.timeout = Host.DEFAULT_TIMEOUT;
+			}
 			
 			if (mHost == null) {
 				HostFactory.addHost(getContext(), host);

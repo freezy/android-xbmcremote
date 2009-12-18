@@ -31,6 +31,6 @@ public class NoSettingsException extends Exception {
 	private static final long serialVersionUID = -5024397978225112156L;
 
 	public NoSettingsException() {
-		super("Click on \"Settings\" or use the menu in order to enter the correct IP address of your XBMC instance.");
+		super("Click on \"Settings\" or use the menu in order to add an XBMC host or IP address to your configuration.");
 	}
 }

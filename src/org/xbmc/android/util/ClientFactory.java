@@ -37,14 +37,10 @@ import org.xbmc.httpapi.HttpApi;
 
 public abstract class ClientFactory {
 	
-	private static final int DEFAULT_TIMEOUT = 10000;
-	
 	private static HttpApi sHttpClient;
 	private static EventClient sEventClient;
 	
 	private static final String NAME = "Android XBMC Remote";
-	
-	public static final int EVENT_CLIENT_PORT = 9777;
 	
 	public static IInfoClient getInfoClient(INotifiableManager manager) {
 		return createHttpClient(manager).info;
@@ -75,8 +71,12 @@ public abstract class ClientFactory {
 		}
 		if (sEventClient != null) {
 			try {
-				InetAddress addr = Inet4Address.getByName(host.addr);
-				sEventClient.setHost(addr, EVENT_CLIENT_PORT);
+				if (host != null) {
+					InetAddress addr = Inet4Address.getByName(host.addr);
+					sEventClient.setHost(addr, host.esPort > 0 ? host.esPort : Host.DEFAULT_EVENTSERVER_PORT);
+				} else {
+					sEventClient.setHost(null, 0);
+				}
 			} catch (UnknownHostException e) { }
 		}
 	}
@@ -92,7 +92,7 @@ public abstract class ClientFactory {
 		if (sHttpClient == null) {
 			final Host host = HostFactory.host;
 			if (host != null && !host.addr.equals("")){
-				sHttpClient = new HttpApi(host, DEFAULT_TIMEOUT);
+				sHttpClient = new HttpApi(host, host.timeout >= 0 ? host.timeout : Host.DEFAULT_TIMEOUT);
 			} else {
 				sHttpClient = new HttpApi(null, -1);
 			}
@@ -120,7 +120,7 @@ public abstract class ClientFactory {
 			if (host != null) {
 				try {
 					final InetAddress addr = Inet4Address.getByName(host.addr);
-					sEventClient = new EventClient(addr, EVENT_CLIENT_PORT, NAME);
+					sEventClient = new EventClient(addr, host.esPort > 0 ? host.esPort : Host.DEFAULT_EVENTSERVER_PORT, NAME);
 				} catch (UnknownHostException e) {
 					manager.onMessage("EventClient: Cannot parse address \"" + host.addr + "\".");
 					sEventClient = new EventClient(NAME);

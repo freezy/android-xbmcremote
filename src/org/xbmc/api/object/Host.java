@@ -29,6 +29,11 @@ import java.io.Serializable;
  * @author Team XBMC
  */
 public class Host implements Serializable {
+	
+	public static final int DEFAULT_HTTP_PORT = 8080;
+	public static final int DEFAULT_EVENTSERVER_PORT = 9777;
+	public static final int DEFAULT_TIMEOUT = 5000;
+	
 	/**
 	 * Database ID
 	 */
@@ -44,7 +49,7 @@ public class Host implements Serializable {
 	/**
 	 * HTTP API Port
 	 */
-	public int port;
+	public int port = DEFAULT_HTTP_PORT;
 	/**
 	 * User name of in case of HTTP authentication
 	 */
@@ -53,6 +58,14 @@ public class Host implements Serializable {
 	 * Password of in case of HTTP authentication
 	 */
 	public String pass;
+	/**
+	 * Event server port
+	 */
+	public int esPort = DEFAULT_EVENTSERVER_PORT;
+	/**
+	 * TCP socket read timeout in milliseconds
+	 */
+	public int timeout = DEFAULT_TIMEOUT;
 	
 	/**
 	 * Something readable
