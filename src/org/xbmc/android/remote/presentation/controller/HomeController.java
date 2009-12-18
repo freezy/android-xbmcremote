@@ -97,41 +97,45 @@ public class HomeController extends AbstractController implements INotifiableCon
 	public View.OnClickListener getOnHostChangeListener() {
 		return new OnClickListener() {
 			public void onClick(View v) {
-				// granted, this is butt-ugly. better ideas, be my guest.
-				final ArrayList<Host> hosts = HostFactory.getHosts(mActivity.getApplicationContext());
-				final HashMap<Integer, Host> hostMap = new HashMap<Integer, Host>();
-				final CharSequence[] names = new CharSequence[hosts.size()];
-				int i = 0;
-				for (Host host : hosts) {
-					names[i] = host.name;
-					hostMap.put(i, host);
-					i++;
-				}
-				if (hosts.size() > 0) {
-					AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-					builder.setTitle("Pick your XBMC!");
-					builder.setItems(names, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							final Host host = hostMap.get(which);
-							if (HostFactory.host != null && HostFactory.host.id == host.id) {
-								Toast.makeText(mActivity.getApplicationContext(), "You've picked the same host as the current.", Toast.LENGTH_SHORT).show();
-							} else {
-								HostFactory.saveHost(mActivity.getApplicationContext(), host);
-								Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
-								mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
-							}
-						}
-					});
-					AlertDialog dialog = builder.create();
-					dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-					dialog.show();
-				} else {
-					Toast.makeText(mActivity.getApplicationContext(), "No XBMC hosts defined, please do that first.", Toast.LENGTH_LONG).show();
-					Intent intent = new Intent(mActivity, HostSettingsActivity.class);
-					mActivity.startActivity(intent);
-				}
+				openHostChanger();
 			}
 		};
+	}
+	
+	public void openHostChanger() {
+		// granted, this is butt-ugly. better ideas, be my guest.
+		final ArrayList<Host> hosts = HostFactory.getHosts(mActivity.getApplicationContext());
+		final HashMap<Integer, Host> hostMap = new HashMap<Integer, Host>();
+		final CharSequence[] names = new CharSequence[hosts.size()];
+		int i = 0;
+		for (Host host : hosts) {
+			names[i] = host.name;
+			hostMap.put(i, host);
+			i++;
+		}
+		if (hosts.size() > 0) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+			builder.setTitle("Pick your XBMC!");
+			builder.setItems(names, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					final Host host = hostMap.get(which);
+					if (HostFactory.host != null && HostFactory.host.id == host.id) {
+						Toast.makeText(mActivity.getApplicationContext(), "You've picked the same host as the current.", Toast.LENGTH_SHORT).show();
+					} else {
+						HostFactory.saveHost(mActivity.getApplicationContext(), host);
+						Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
+						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
+					}
+				}
+			});
+			AlertDialog dialog = builder.create();
+			dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+			dialog.show();
+		} else {
+			Toast.makeText(mActivity.getApplicationContext(), "No XBMC hosts defined, please do that first.", Toast.LENGTH_LONG).show();
+			Intent intent = new Intent(mActivity, HostSettingsActivity.class);
+			mActivity.startActivity(intent);
+		}
 	}
 	
 	public void setupVersionHandler(final Button versionTextView, final GridView homeItemGrid) {

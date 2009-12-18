@@ -54,6 +54,7 @@ public class HomeActivity extends Activity {
 	private static final int MENU_ABOUT = 1;
 	private static final int MENU_SETTINGS = 2;
 	private static final int MENU_EXIT = 3;
+	private static final int MENU_SWITCH_XBMC = 5;
 //	private static final int MENU_COVER_DOWNLOAD = 4;
 	private static final int MENU_COVER_DOWNLOAD_MUSIC = 41;
 	private static final int MENU_COVER_DOWNLOAD_MOVIES = 42;
@@ -101,6 +102,7 @@ public class HomeActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		
 		menu.add(0, MENU_ABOUT, 0, "About").setIcon(R.drawable.menu_about);
+		menu.add(0, MENU_SWITCH_XBMC, 0, "Switch XBMC").setIcon(R.drawable.menu_switch);
 		menu.add(0, MENU_SETTINGS, 0, "Settings").setIcon(R.drawable.menu_settings);
 //		SubMenu downloadMenu = menu.addSubMenu(0, MENU_COVER_DOWNLOAD, 0, "Download Covers").setIcon(R.drawable.menu_download);
 		menu.add(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
@@ -117,6 +119,9 @@ public class HomeActivity extends Activity {
 		switch (item.getItemId()) {
 		case MENU_ABOUT:
 			startActivity(new Intent(this, AboutActivity.class));
+			return true;
+		case MENU_SWITCH_XBMC:
+			mHomeController.openHostChanger();
 			return true;
 		case MENU_SETTINGS:
 			startActivity(new Intent(this, SettingsActivity.class));
