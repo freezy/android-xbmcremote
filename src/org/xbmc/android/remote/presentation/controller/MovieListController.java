@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
+import org.xbmc.android.remote.business.AbstractThread;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
@@ -37,6 +38,7 @@ import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Movie;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -315,7 +317,7 @@ public class MovieListController extends ListController implements IController {
 			if (mLoadCovers) {
 				holder.tempBind = true;
 				holder.iconView.setImageResource(R.drawable.poster);
-//				mVideoManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), movie, ThumbSize.SMALL);
+				mVideoManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), movie, ThumbSize.SMALL);
 			} else {
 				holder.iconView.setImageResource(R.drawable.poster);
 			}		
@@ -333,6 +335,7 @@ public class MovieListController extends ListController implements IController {
 		if (mControlManager != null) {
 			mControlManager.setController(null);
 		}
+		AbstractThread.quitThreads();
 		super.onActivityPause();
 	}
 

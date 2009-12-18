@@ -37,7 +37,7 @@ import android.os.Looper;
  * 
  * @author Team XBMC
  */
-abstract class AbstractThread extends Thread {
+abstract public class AbstractThread extends Thread {
 	
 	protected Handler mHandler;
 	
@@ -101,5 +101,13 @@ abstract class AbstractThread extends Thread {
 			}
 		}
 	}
+	
+	public static void quitThreads() {
+		MemCacheThread.quit();
+		DiskCacheThread.quit();
+		DownloadThread.quit();
+	}
+	
+	
 	
 }

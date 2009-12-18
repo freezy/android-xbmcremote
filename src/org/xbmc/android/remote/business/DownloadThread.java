@@ -146,4 +146,10 @@ class DownloadThread extends AbstractThread {
 		}
 		return sHttpApiThread;
 	}
+	
+	public static void quit() {
+		if (sHttpApiThread != null) {
+			sHttpApiThread.mHandler.getLooper().quit();
+		}
+	}
 }
