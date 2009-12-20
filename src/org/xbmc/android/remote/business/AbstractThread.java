@@ -82,9 +82,7 @@ abstract public class AbstractThread extends Thread {
 	 * @param response Response object
 	 */
 	protected void done(INotifiableController controller, DataResponse<?> response) {
-		if (controller != null) {
-			controller.runOnUI(response);
-		}
+		controller.runOnUI(response);
 	}
 	
 	/**

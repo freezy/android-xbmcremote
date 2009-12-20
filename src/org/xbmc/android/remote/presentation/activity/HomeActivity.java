@@ -61,7 +61,7 @@ public class HomeActivity extends Activity {
 	private static final int MENU_COVER_DOWNLOAD_ACTORS = 43;
 	
 	private static final String TAG = "HomeActivity";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	
 	private ProgressThread mProgressThread;
     private ProgressDialog mProgressDialog;

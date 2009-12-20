@@ -26,11 +26,7 @@ import java.util.ArrayList;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
-import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Song;
-import org.xbmc.api.type.ThumbSize;
-
-import android.graphics.Bitmap;
 
 /**
  * This is the interface between the presentation layer and the business layer.
@@ -247,15 +243,6 @@ public interface IMusicManager extends IManager {
 	 * @param response Response object
 	 */
 	public void getPlaylistPosition(final DataResponse<Integer> response);
-	
-	/**
-	 * Returns bitmap of any cover. Note that the callback is done by the
-	 * helper methods below.
-	 * @param response Response object
-	 * @param cover Cover object
-	 * @param thumbSize Thumbnail size, see {@link ThumbSize}
-	 */
-	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize);
 	
 	/**
 	 * Updates the album object with additional data from the albuminfo table

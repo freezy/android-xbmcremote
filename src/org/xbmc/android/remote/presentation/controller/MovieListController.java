@@ -32,6 +32,7 @@ import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.controller.holder.MovieHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
 import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.widget.IdleListener;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IVideoManager;
@@ -108,7 +109,8 @@ public class MovieListController extends ListController implements IController {
 			activity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.poster);
-			setupIdleListener();
+			IdleListener idleListener = setupIdleListener();
+			idleListener.setPostScrollLoader(mPostScrollLoader, mVideoManager);
 			
 //			ImportUtilities.purgeCache();
 			

@@ -30,6 +30,7 @@ import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.ThumbSize;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 /**
  * This thread asynchronously delivers memory-cached bitmaps.
@@ -41,6 +42,9 @@ import android.graphics.Bitmap;
  * @author Team XBMC
  */
 class MemCacheThread extends AbstractThread {
+	
+	private final static String TAG = "MemCacheThread";
+	private final static boolean DEBUG = AbstractManager.DEBUG;
 	
 	/**
 	 * Singleton instance of this thread
@@ -69,16 +73,23 @@ class MemCacheThread extends AbstractThread {
 	 * @param cover   Which cover to return
 	 */
 	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller) {
+		if (controller == null) {
+			Log.w(TAG, "[" + cover.getId() + "] Controller is null.");
+		}
 		mHandler.post(new Runnable() {
 			public void run() {
+				if (DEBUG) Log.i(TAG,  "[" + cover.getId() + "] Checking if cover in cache..");
 				if (cover != null) {
 					final long crc = cover.getCrc();
 					final SoftReference<Bitmap> ref = getCache(thumbSize).get(crc);
 			        if (ref != null) {
+			        	if (DEBUG) Log.i(TAG, "-> In cache.");
 			        	response.value = ref.get();
 			        } else if (sNotAvailable.containsKey(crc)) {
-//		            	Log.i("HttpApiMemCacheThread", "Delivering not-available image directly from cache (" + crc + ").");
+			        	if (DEBUG) Log.i(TAG, "-> Marked as not-in-cache (" + crc + ").");
 			        	response.value = response.getDefaultCover();
+			        } else {
+			        	if (DEBUG) Log.i(TAG, "-> Not in cache.");
 			        }
 				}
 				done(controller, response);
@@ -130,15 +141,19 @@ class MemCacheThread extends AbstractThread {
 	 */
 	public static MemCacheThread get() {
 		if (sHttpApiThread == null) {
+			Log.i("MemCacheThread", "*** Spawning new thread...");
  			sHttpApiThread = new MemCacheThread();
 			sHttpApiThread.start();
 			// thread must be entirely started
 			waitForStartup(sHttpApiThread);
+			Log.i("MemCacheThread", "*** Spawned!");
+		} else {
+			Log.i("MemCacheThread", "Returning current thread.");
 		}
 		return sHttpApiThread;
 	}
 	
-	public static void quit() {
+	public synchronized static void quit() {
 		if (sHttpApiThread != null) {
 			sHttpApiThread.mHandler.getLooper().quit();
 			sHttpApiThread = null;

@@ -51,7 +51,7 @@ class DownloadThread extends AbstractThread {
 	protected static DownloadThread sHttpApiThread;
 	
 	private static final String TAG = "DownloadThread";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = AbstractManager.DEBUG;
 
 	/**
 	 * Constructor is protected, use get().
@@ -147,7 +147,7 @@ class DownloadThread extends AbstractThread {
 		return sHttpApiThread;
 	}
 	
-	public static void quit() {
+	public static synchronized void quit() {
 		if (sHttpApiThread != null) {
 			sHttpApiThread.mHandler.getLooper().quit();
 			sHttpApiThread = null;

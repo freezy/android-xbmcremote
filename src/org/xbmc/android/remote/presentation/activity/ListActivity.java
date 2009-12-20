@@ -126,6 +126,7 @@ public class ListActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mListController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
 
@@ -133,5 +134,6 @@ public class ListActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		mConfigurationManager.onActivityPause();
+		mListController.onActivityPause();
 	}
 }

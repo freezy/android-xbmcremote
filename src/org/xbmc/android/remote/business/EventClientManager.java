@@ -24,9 +24,13 @@ package org.xbmc.android.remote.business;
 import java.io.IOException;
 
 import org.xbmc.android.util.ClientFactory;
+import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.business.INotifiableManager;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
+
+import android.graphics.Bitmap;
 
 /**
  * Super class of the wrappers, keeps common code.
@@ -86,5 +90,9 @@ public class EventClientManager implements INotifiableManager, IEventClientManag
 		if (mController != null) {
 			mController.onMessage(message);
 		}
+	}
+
+	public void getCover(DataResponse<Bitmap> response, ICoverArt cover, int thumbSize) {
+		// only a stub;
 	}
 }

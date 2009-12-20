@@ -21,7 +21,10 @@
 
 package org.xbmc.api.business;
 
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
+
+import android.graphics.Bitmap;
 
 public interface IManager {
 	
@@ -30,5 +33,12 @@ public interface IManager {
 	 * @param controller Controller object
 	 */
 	public void setController(INotifiableController controller);
+	
+	/**
+	 * Returns bitmap of any cover. Note that the callback is done by the
+	 * helper methods below.
+	 * @param response Response object
+	 */
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize);
 
 }

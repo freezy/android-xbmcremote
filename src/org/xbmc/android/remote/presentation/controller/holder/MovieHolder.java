@@ -26,8 +26,6 @@ import android.widget.TextView;
 
 public class MovieHolder<T> extends AbstractHolder {
 
-	public long id = 0;
-
 	public final TextView titleView;
 	public final TextView subtitleView;
 	public final TextView subtitleRightView;

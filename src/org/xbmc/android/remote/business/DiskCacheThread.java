@@ -33,6 +33,7 @@ import org.xbmc.api.type.ThumbSize;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 /**
  * This thread asynchronously delivers sdcard-cached bitmaps.
@@ -128,15 +129,18 @@ class DiskCacheThread extends AbstractThread {
 	 */
 	public static DiskCacheThread get() {
 		if (sHttpApiThread == null) {
+			Log.i("DiskCacheThread", "Spawning new thread...");
  			sHttpApiThread = new DiskCacheThread();
 			sHttpApiThread.start();
 			// thread must be entirely started
 			waitForStartup(sHttpApiThread);
+		} else {
+			Log.i("DiskCacheThread", "Returning current thread.");
 		}
 		return sHttpApiThread;
 	}
 	
-	public static void quit() {
+	public static synchronized void quit() {
 		if (sHttpApiThread != null) {
 			sHttpApiThread.mHandler.getLooper().quit();
 			sHttpApiThread = null;

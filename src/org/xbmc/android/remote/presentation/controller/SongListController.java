@@ -29,6 +29,7 @@ import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.holder.ThreeHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
 import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.widget.IdleListener;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.business.ISortableManager;
@@ -109,7 +110,8 @@ public class SongListController extends ListController implements IController {
 			mActivity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_song);
-			setupIdleListener();
+			IdleListener idleListener = setupIdleListener();
+			idleListener.setPostScrollLoader(mPostScrollLoader, mMusicManager);
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				@SuppressWarnings("unchecked")

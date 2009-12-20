@@ -29,6 +29,7 @@ import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
 import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.widget.IdleListener;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
@@ -83,7 +84,8 @@ public class ActorListController extends ListController implements IController {
 				toast.show();
 			}
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.person_black_small);
-			setupIdleListener();
+			IdleListener idleListener = setupIdleListener();
+			idleListener.setPostScrollLoader(mPostScrollLoader, mVideoManager);
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				@SuppressWarnings("unchecked")
