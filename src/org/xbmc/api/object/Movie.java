@@ -106,8 +106,11 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	 * @return CRC32
 	 */
 	public long getCrc() {
-		if (thumbID == 0L) {
-			thumbID = Crc32.computeLowerCase(localPath);
+		if (thumbID == 0L && filename.startsWith("stack://")) {
+			final String[] file = filename.substring(8).split(" , ");
+			thumbID = Crc32.computeLowerCase(file[0]);
+		} else if (thumbID == 0L) {
+			thumbID = Crc32.computeLowerCase(localPath.concat(filename));
 		}
 		return thumbID;
 	}
@@ -119,8 +122,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	 */
 	public int getFallbackCrc() {
 		if (localPath != null && filename != null) {
-			final String lp = localPath.concat(filename);
-			return Crc32.computeLowerCase(lp);
+			return Crc32.computeLowerCase(localPath);
 		} else {
 			return 0;
 		}
