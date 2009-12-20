@@ -29,7 +29,6 @@ import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.type.CacheType;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.widget.ImageView;
 
 public abstract class AbstractHolder {
@@ -101,7 +100,6 @@ public abstract class AbstractHolder {
 			 * downloaded view isn't visible anymore.
 			 */
 			if (mTag == id) {
-				Log.i("AbstractHolder", "tag = " + mTag + ", id = " + id);
 				if (value == null) {
 					iconView.setImageResource(AbstractHolder.this.defaultCover);
 				} else {

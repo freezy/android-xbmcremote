@@ -45,6 +45,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.GridView;
@@ -98,10 +99,10 @@ public class HomeActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		
-		menu.add(0, MENU_ABOUT, 0, "About").setIcon(R.drawable.menu_about);
 		menu.add(0, MENU_SWITCH_XBMC, 0, "Switch XBMC").setIcon(R.drawable.menu_switch);
-		menu.add(0, MENU_SETTINGS, 0, "Settings").setIcon(R.drawable.menu_settings);
 		SubMenu downloadMenu = menu.addSubMenu(0, MENU_COVER_DOWNLOAD, 0, "Download Covers").setIcon(R.drawable.menu_download);
+		menu.add(0, MENU_ABOUT, 0, "About").setIcon(R.drawable.menu_about);
+		menu.add(0, MENU_SETTINGS, 0, "Settings").setIcon(R.drawable.menu_settings);
 		menu.add(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
 		
 		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MOVIES, 0, "Movie Posters");
@@ -158,6 +159,7 @@ public class HomeActivity extends Activity {
 		mProgressDialog = new ProgressDialog(this);
 		mProgressDialog.setCancelable(false);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		mProgressDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
 		switch (id) {
 			case MENU_COVER_DOWNLOAD_MOVIES:
 				mProgressDialog.setMessage("Downloading movie posters...");

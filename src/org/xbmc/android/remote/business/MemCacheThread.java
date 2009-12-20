@@ -141,14 +141,10 @@ class MemCacheThread extends AbstractThread {
 	 */
 	public static MemCacheThread get() {
 		if (sHttpApiThread == null) {
-			Log.i("MemCacheThread", "*** Spawning new thread...");
  			sHttpApiThread = new MemCacheThread();
 			sHttpApiThread.start();
 			// thread must be entirely started
 			waitForStartup(sHttpApiThread);
-			Log.i("MemCacheThread", "*** Spawned!");
-		} else {
-			Log.i("MemCacheThread", "Returning current thread.");
 		}
 		return sHttpApiThread;
 	}
