@@ -78,6 +78,14 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	}
 	
 	/**
+	 * SYNCHRONOUSLY gets all albums from database
+	 * @return All albums in database
+	 */
+	public ArrayList<Album> getAlbums() {
+		return music().getAlbums(MusicManager.this, getSortBy(SortType.ALBUM), getSortOrder());
+	}
+	
+	/**
 	 * Gets all albums of an artist from database
 	 * @param response Response object
 	 * @param artist  Artist of the albums

@@ -72,6 +72,14 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	}
 	
 	/**
+	 * SYNCHRONOUSLY gets all movies from database
+	 * @return All movies in database
+	 */
+	public ArrayList<Movie> getMovies() {
+		return video().getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder());
+	}
+	
+	/**
 	 * Gets all movies with an actor from database
 	 * @param response Response object
 	 * @param actor Actor
@@ -111,6 +119,15 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 				done(response);
 			}
 		});
+	}
+	
+	/**
+	 * SYNCHRONOUSLY gets all actors from database. Use {@link getMovieActors()} and
+	 * {@link getTvActors()} for filtered actors.
+	 * @return All actors 
+	 */
+	public ArrayList<Actor> getActors() {
+		return video().getActors(VideoManager.this);
 	}
 	
 	/**

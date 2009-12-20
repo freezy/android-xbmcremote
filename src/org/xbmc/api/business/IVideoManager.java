@@ -48,6 +48,12 @@ public interface IVideoManager extends IManager {
 	public void getMovies(final DataResponse<ArrayList<Movie>> response);
 	
 	/**
+	 * SYNCHRONOUSLY gets all movies from database
+	 * @return All movies in database
+	 */
+	public ArrayList<Movie> getMovies();
+	
+	/**
 	 * Gets all movies with an actor from database
 	 * @param response Response object
 	 * @param actor Actor
@@ -66,6 +72,12 @@ public interface IVideoManager extends IManager {
 	 * @param response Response object
 	 */
 	public void getActors(final DataResponse<ArrayList<Actor>> response);
+	
+	/**
+	 * SYNCHRONOUSLY gets all actors from database.
+	 * @return All actors 
+	 */
+	public ArrayList<Actor> getActors();
 	
 	/**
 	 * Gets all movie actors from database

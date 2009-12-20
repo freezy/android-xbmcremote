@@ -28,6 +28,7 @@ import java.util.Observer;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.presentation.activity.HomeActivity;
 import org.xbmc.android.remote.presentation.activity.HostSettingsActivity;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.MovieLibraryActivity;
@@ -40,18 +41,31 @@ import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.WakeOnLan;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
+import org.xbmc.api.business.IMusicManager;
+import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.info.SystemInfo;
+import org.xbmc.api.object.Actor;
+import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Host;
+import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.object.Movie;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.MediaType;
+import org.xbmc.api.type.ThumbSize;
 import org.xbmc.httpapi.BroadcastListener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -80,11 +94,14 @@ public class HomeController extends AbstractController implements INotifiableCon
 	
 	private IInfoManager mInfoManager;
 	
+	private static final String TAG = "HomeController";
+	private static final boolean DEBUG = false;
+	
 	private DataResponse<String> mUpdateVersionHandler;
 	
 	private HomeAdapter mHomeMenu;
 	private HomeAdapter mOfflineMenu;
-	
+    
 	public HomeController(Activity activity, GridView menuGrid) {
 		super.onCreate(activity);
 		mInfoManager = ManagerFactory.getInfoManager(this);
@@ -303,6 +320,129 @@ public class HomeController extends AbstractController implements INotifiableCon
 		public void onTick(long millisUntilFinished) {
 			textCount.setText("Waiting for " + millisUntilFinished/1000 + " more seconds...");						
 		}
+	}
+	
+	public class ProgressThread extends Thread {
+		
+		private Handler mHandlerOut;
+		private Handler mHandlerIn;
+		private int mTotal;
+		private int mPosition;
+		
+		public final static int MSG_NEXT = 0;
+		public final static int MSG_QUIT = 1;
+		
+		public final static String DATA_TYPE = "type";
+		public final static String DATA_TOTAL = "total";
+		public final static String DATA_POSITION = "pos";
+		public final static String DATA_COVER = "cover";
+		
+		private final int mType;
+		private final ProgressDialog mProgressDialog;
+		
+		public ProgressThread(Handler h, int type, ProgressDialog progressDialog) {
+			super("Cover download progress Thread");
+			mHandlerOut = h;
+			mType = type;
+			mProgressDialog = progressDialog;
+		}
+		
+		public Handler getHandlerIn() {
+			return mHandlerIn;
+		}
+		
+		public ArrayList<ICoverArt> getCovers() {
+			switch (mType) {
+				case HomeActivity.MENU_COVER_DOWNLOAD_MOVIES:
+					final IVideoManager vm = ManagerFactory.getVideoManager(HomeController.this);
+					final ArrayList<Movie> movies = vm.getMovies();
+					return new ArrayList<ICoverArt>(movies);
+				case HomeActivity.MENU_COVER_DOWNLOAD_MUSIC:
+					final IMusicManager mm = ManagerFactory.getMusicManager(HomeController.this);
+					final ArrayList<Album> albums = mm.getAlbums();
+					return new ArrayList<ICoverArt>(albums);
+				case HomeActivity.MENU_COVER_DOWNLOAD_ACTORS:
+					final IVideoManager vm2 = ManagerFactory.getVideoManager(HomeController.this);
+					final ArrayList<Actor> actors = vm2.getActors();
+					return new ArrayList<ICoverArt>(actors);
+				default:
+					return null;
+			}
+		}
+		
+		public void run() {
+			if (DEBUG) Log.i(TAG, "[ProgressThread] Starting progress thread.");
+			final ArrayList<ICoverArt> covers = getCovers();
+			mTotal = covers.size();
+			mPosition = 0;
+			mProgressDialog.setMax(covers.size());
+			boolean started = false;
+
+			Looper.prepare();
+			mHandlerIn = new Handler() {
+				public void handleMessage(Message msgIn) {
+					switch (msgIn.what) {
+						case MSG_NEXT:
+							if (DEBUG) Log.i(TAG, "[ProgressThread] New message received, posting back new cover.");
+							Message msgOut = mHandlerOut.obtainMessage();
+							Bundle b = new Bundle();
+							b.putInt(DATA_TOTAL, mTotal);
+							b.putInt(DATA_POSITION, mPosition);
+							b.putInt(DATA_TYPE, mType);
+							if (mPosition < mTotal) {
+								b.putSerializable(DATA_COVER, covers.get(mPosition));
+							}
+							msgOut.setData(b);
+							mHandlerOut.sendMessage(msgOut);
+							mPosition++;
+						break;
+						case MSG_QUIT:
+							if (DEBUG) Log.i(TAG, "[ProgressThread] Exiting.");
+							Looper.myLooper().quit();
+							break;
+					}
+				}
+			};
+			if (!started) {
+				started = true;
+				Message msgStart = mHandlerOut.obtainMessage();
+				Bundle b = new Bundle();
+				b.putInt(DATA_TYPE, mType);
+				msgStart.what = MSG_NEXT;
+				msgStart.setData(b);
+				mHandlerIn.sendMessage(msgStart);
+				if (DEBUG) Log.i(TAG, "[ProgressThread] Not started, kicking on....");
+			}
+			Looper.loop();
+		}
+	}
+	
+	public void onHandleMessage(Message msg, ProgressDialog progressDialog, final ProgressThread progressThread) {
+		int total = msg.getData().getInt(ProgressThread.DATA_TOTAL);
+		int position = msg.getData().getInt(ProgressThread.DATA_POSITION);
+		int type = msg.getData().getInt(ProgressThread.DATA_TYPE);
+		if (total > 0) {
+			progressDialog.setProgress(position);
+			if (position < total) {
+				final ICoverArt cover = (ICoverArt)msg.getData().getSerializable(ProgressThread.DATA_COVER); 
+				if (DEBUG) Log.i(TAG, "New download message received for position " + position + ": " + cover.getName());
+				ManagerFactory.getMusicManager(HomeController.this).getCover(new DataResponse<Bitmap>() {
+					public void run() {
+						if (DEBUG) Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
+						progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
+					}
+				}, cover, ThumbSize.BIG);
+			} else {
+				mActivity.dismissDialog(type);
+				progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);
+				Toast toast = Toast.makeText(mActivity, total + " posters downloaded.", Toast.LENGTH_SHORT);
+				toast.show();
+			}
+		} else {
+			mActivity.dismissDialog(type);
+			Toast toast = Toast.makeText(mActivity, "No posters downloaded, libary empty?", Toast.LENGTH_LONG);
+			toast.show();
+		}		
 	}
 
 	public void onActivityPause() {

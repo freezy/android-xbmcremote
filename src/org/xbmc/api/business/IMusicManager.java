@@ -49,6 +49,12 @@ public interface IMusicManager extends IManager {
 	public void getAlbums(final DataResponse<ArrayList<Album>> response);
 	
 	/**
+	 * SYNCHRONOUSLY gets all albums from database
+	 * @return All albums in database
+	 */
+	public ArrayList<Album> getAlbums();
+	
+	/**
 	 * Gets all albums of an artist from database
 	 * @param response Response object
 	 * @param artist  Artist of the albums
