@@ -26,6 +26,8 @@ import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.ThumbSize;
 
 import android.graphics.Bitmap;
+import android.os.Environment;
+import android.os.StatFs;
 import android.util.Log;
 
 public abstract class ImportUtilities {
@@ -33,6 +35,7 @@ public abstract class ImportUtilities {
 	private static final String TAG = "ImportUtilities";
     private static final String CACHE_DIRECTORY = "xbmc";
     private static final double POSTER_AR = 1.4799154334038054968287526427061;
+    private static final double MIN_FREE_SPACE = 15;
 
     public static File getCacheDirectory(String type, int size) {
         return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + ThumbSize.getDir(size));
@@ -112,6 +115,50 @@ public abstract class ImportUtilities {
     		}
     	}
         return sizeToReturn;
+    }
+    
+    /**
+     * Returns number of free bytes on the SD card.
+     * @return Number of free bytes on the SD card.
+     */
+    public static long freeSpace() {
+    	StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        long blockSize = stat.getBlockSize();
+        long availableBlocks = stat.getAvailableBlocks();
+        return availableBlocks * blockSize;
+    }
+    
+    /**
+     * Returns total size of SD card in bytes.
+     * @return Total size of SD card in bytes.
+     */
+    public static long totalSpace() {
+    	StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+    	long blockSize = stat.getBlockSize();
+        long totalBlocks = stat.getBlockCount();
+    	return totalBlocks * blockSize;
+    }
+    
+    public static String assertSdCard() {
+    	if (!android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+    		return "Your SD card is not mounted. You'll need it for caching thumbs.";
+    	}
+    	if (freePercentage() < MIN_FREE_SPACE) {
+    		return "You need to have more than " + MIN_FREE_SPACE + "% of free space on your SD card.";
+    	}
+    	return null;
+    }
+    
+    
+    /**
+     * Returns free space in percent.
+     * @return Free space in percent.
+     */
+    public static double freePercentage() {
+    	StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        long availableBlocks = stat.getAvailableBlocks();
+        long totalBlocks = stat.getBlockCount();
+        return (double)availableBlocks / (double)totalBlocks * 100;
     }
 
     private static File ensureCache(String type, int size) throws IOException {

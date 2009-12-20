@@ -50,8 +50,8 @@ class DownloadThread extends AbstractThread {
 	 */
 	protected static DownloadThread sHttpApiThread;
 	
-	private static final String TAG = "HttpApi-Network";
-	private static final boolean DEBUG = false;
+	private static final String TAG = "DownloadThread";
+	private static final boolean DEBUG = true;
 
 	/**
 	 * Constructor is protected, use get().

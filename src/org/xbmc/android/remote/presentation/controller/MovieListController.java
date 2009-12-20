@@ -31,6 +31,7 @@ import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.controller.holder.MovieHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
+import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IVideoManager;
@@ -91,13 +92,14 @@ public class MovieListController extends ListController implements IController {
 		
 		ManagerThread.video(this).setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
 		ManagerThread.video(this).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
-		mLoadCovers = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+		final String sdError = ImportUtilities.assertSdCard();
+		mLoadCovers = sdError == null;
 		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 
 			if (!mLoadCovers) {
-				Toast toast = Toast.makeText(activity, "Your SD card is not mounted. You'll need it for caching covers. Displaying place holders only.", Toast.LENGTH_LONG);
+				Toast toast = Toast.makeText(activity, sdError + " Displaying place holders only.", Toast.LENGTH_LONG);
 				toast.show();
 			}
 			

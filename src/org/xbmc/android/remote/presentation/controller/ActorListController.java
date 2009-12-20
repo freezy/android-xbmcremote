@@ -28,6 +28,7 @@ import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
 import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
+import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
@@ -75,10 +76,10 @@ public class ActorListController extends ListController implements IController {
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
-			mLoadCovers = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
-			
+			final String sdError = ImportUtilities.assertSdCard();
+			mLoadCovers = sdError == null;
 			if (!mLoadCovers) {
-				Toast toast = Toast.makeText(activity, "Your SD card is not mounted. You'll need it for caching thumbs. Displaying place holders only.", Toast.LENGTH_LONG);
+				Toast toast = Toast.makeText(activity, sdError + " Displaying place holders only.", Toast.LENGTH_LONG);
 				toast.show();
 			}
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.person_black_small);
