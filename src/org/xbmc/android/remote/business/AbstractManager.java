@@ -124,6 +124,8 @@ public abstract class AbstractManager implements INotifiableManager {
 	protected void done(DataResponse<?> response) {
 		if (mController != null) {
 			mController.runOnUI(response);
+		}else{
+			mHandler.post(response);
 		}
 	}
 	
