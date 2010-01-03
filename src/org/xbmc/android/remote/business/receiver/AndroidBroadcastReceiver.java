@@ -33,6 +33,7 @@ import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.eventclient.Packet;
 
@@ -45,6 +46,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Contacts;
 
@@ -95,7 +97,8 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 
 						// if xbmc is playing something, we pause it. without
 						// the check paused playback would resume
-						final IControlManager cm = ManagerFactory.getControlManager(null);
+						final IControlManager cm = ManagerFactory.getControlManager(
+								new NullNotifiableController(new Handler()));
 						cm.getCurrentlyPlaying(new DataResponse<ICurrentlyPlaying>() {
 							public void run() {
 								if (value != null && value.isPlaying()) {
@@ -145,6 +148,28 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public class NullNotifiableController implements INotifiableController {
+
+		
+		private Handler mHandler = null;
+		public NullNotifiableController(Handler handler) {
+			mHandler = handler;
+		}
+		
+		public void onError(Exception e) {
+			// shoudln't come up
+		}
+
+		public void onMessage(String message) {
+			// shouldn't come up
+		}
+
+		public void runOnUI(Runnable action) {
+			mHandler.post(action);
+		}
+		
 	}
 
 }
