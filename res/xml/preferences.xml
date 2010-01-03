@@ -20,7 +20,7 @@
 		<CheckBoxPreference
 			android:key="setting_vibrate_on_touch"
 			android:title="Vibrate on Touch"
-			android:summary="Makes the remote control vibrate on touch." />
+			android:summary="Makes the remote control vibrate on touch." android:defaultValue="true"/>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Wake On Lan">
 		<EditTextPreference android:key="setting_wol"
@@ -48,13 +48,13 @@
 			android:key="setting_show_sms"
 			android:title="Show incoming SMS"
 			android:summary="Shows incoming SMS with contact name and picture on your TV."
-			android:selectable="true" />
+			android:selectable="true" android:defaultValue="false"/>
 		<CheckBoxPreference 
 			android:key="setting_show_call" 
 			android:title="Show incoming calls"
 			android:summary="Pauses playback and shows incoming calls with contact name and picture on your TV."
 			android:selectable="true"
-			android:enabled="true" />
+			android:enabled="true" android:defaultValue="false"/>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Screen Behaviour">
 		<ListPreference
