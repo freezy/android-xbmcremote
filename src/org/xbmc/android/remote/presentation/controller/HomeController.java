@@ -106,7 +106,6 @@ public class HomeController extends AbstractController implements INotifiableCon
 		super.onCreate(activity);
 		mInfoManager = ManagerFactory.getInfoManager(this);
 		setupMenuItems(menuGrid);
-		
 //		BroadcastListener bcl = BroadcastListener.getInstance(ConnectionManager.getHttpClient(this));
 //		bcl.addObserver(this);
 	}
@@ -140,6 +139,10 @@ public class HomeController extends AbstractController implements INotifiableCon
 						Toast.makeText(mActivity.getApplicationContext(), "You've picked the same host as the current.", Toast.LENGTH_SHORT).show();
 					} else {
 						HostFactory.saveHost(mActivity.getApplicationContext(), host);
+						final GridView menuGrid = (GridView)mActivity.findViewById(R.id.HomeItemGridView);
+						setHomeAdapter(menuGrid, mOfflineMenu);
+						final Button versionButton = (Button)mActivity.findViewById(R.id.home_version_button);
+						versionButton.setText("Connecting...");
 						Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
 						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
 					}
