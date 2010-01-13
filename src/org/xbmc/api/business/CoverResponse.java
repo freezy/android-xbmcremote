@@ -1,6 +1,6 @@
 package org.xbmc.api.business;
 
-import org.xbmc.android.remote.presentation.widget.IItemView;
+import org.xbmc.android.remote.presentation.widget.AbstractItemView;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.type.ThumbSize;
 
@@ -8,13 +8,13 @@ import android.graphics.Bitmap;
 
 public class CoverResponse extends DataResponse<Bitmap> {
 	
-	private final IItemView mView;
+	private final AbstractItemView mView;
 	private final IManager mManager;
 	
 	private boolean mIsLoading = false;
 	private ICoverArt mMostRecentCover = null;
 	
-	public CoverResponse(IItemView view, IManager manager) {
+	public CoverResponse(AbstractItemView view, IManager manager) {
 		mView = view;
 		mManager = manager;
 	}

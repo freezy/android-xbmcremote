@@ -87,7 +87,7 @@ class MemCacheThread extends AbstractThread {
 			        	response.value = ref.get();
 			        } else if (sNotAvailable.containsKey(crc)) {
 			        	if (DEBUG) Log.i(TAG, "-> Marked as not-in-cache (" + crc + ").");
-			        	response.value = response.getDefaultCover();
+			        	//response.value = response.getDefaultCover();
 			        } else {
 			        	if (DEBUG) Log.i(TAG, "-> Not in cache.");
 			        }

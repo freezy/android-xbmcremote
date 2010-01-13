@@ -21,9 +21,6 @@
 
 package org.xbmc.api.business;
 
-import org.xbmc.android.remote.R;
-
-import android.graphics.Bitmap;
 
 /**
  * Basically contains two things:
@@ -37,32 +34,8 @@ import android.graphics.Bitmap;
  */
 public class DataResponse<T> implements Runnable, Cloneable {
 	public T value;
-	public int defaultCover = R.drawable.icon_genre;
 	public int cacheType;
-	public boolean loading = true;
 	
-	protected long mTag;
-	
-	public DataResponse(DataResponse<T> response) {
-		mTag = response.mTag;
-		defaultCover = response.defaultCover;
-	}
-	public DataResponse() {
-		mTag = 0;
-	}
-	public DataResponse(long tag) {
-		mTag = tag;
-	}
-	public void setTag(long tag) {
-		mTag = tag;
-	}
-	public DataResponse(long tag, int defaultCover) {
-		mTag = tag;
-		this.defaultCover = defaultCover;
-	}
-	public Bitmap getDefaultCover() {
-		return null;
-	}
 	public void run () {
 		// do nothing if not overloaded
 	}

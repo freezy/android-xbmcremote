@@ -172,7 +172,7 @@ public class MovieDetailsActivity extends Activity {
 							((TextView)view.findViewById(R.id.actor_name)).setText(actor.name);
 							((TextView)view.findViewById(R.id.actor_role)).setText("as " + actor.role);
 							ImageButton img = ((ImageButton)view.findViewById(R.id.actor_image));
-							mVideoManager.getCover(new DataResponse<Bitmap>(0, R.drawable.person_small) {
+							mVideoManager.getCover(new DataResponse<Bitmap>() {
 								public void run() {
 									if (value != null) {
 										((ImageButton)view.findViewById(R.id.actor_image)).setImageBitmap(value);

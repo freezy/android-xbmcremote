@@ -1,55 +1,28 @@
 package org.xbmc.android.remote.presentation.widget;
 
-import org.xbmc.android.remote.R;
-import org.xbmc.api.business.CoverResponse;
 import org.xbmc.api.business.IManager;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.view.View;
 
-public class FiveLabelsItemView extends View implements IItemView {
+public class FiveLabelsItemView extends AbstractItemView {
 	
-	private static Bitmap sDefaultCover;
-	
-	private final static Paint PAINT = new Paint();
-	
-	private final CoverResponse mResponse;
-	private Bitmap mCover;
-	
-	public String title;
 	public String subtitle;
 	public String subtitleRight;
 	public String bottomtitle;
 	public String bottomright;
-	public int position;
-
-	public FiveLabelsItemView(Context context, IManager manager) {
-		super(context);
-		mResponse = new CoverResponse(this, manager);
-		if (sDefaultCover == null) {
-			sDefaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.poster);
-		}
-	}
 	
+	public FiveLabelsItemView(Context context, IManager manager) {
+		super(context, manager);
+		
+	}
+
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		setMeasuredDimension(320, 73);
 //		super.onMeasure(150, 50);
-	}
-	
-	public void reset() {
-		mCover = null;
-	}
-	
-	public void setCover(Bitmap cover) {
-		mCover = cover;
-		invalidate();
 	}
 	
 	protected void onDraw(Canvas canvas) {
@@ -98,29 +71,4 @@ public class FiveLabelsItemView extends View implements IItemView {
 		}
 
 	}
-	
-	public String ellipse(String text, int width) {
-		if (PAINT.measureText(text) <= width) {
-			return text;
-		}
-		for (int i = text.length(); i >= 0; i--) {
-			if (PAINT.measureText(text.substring(0, i).concat("...")) <= width) {
-				return text.substring(0, text.charAt(i - 1) == ' ' ? i - 1 : i).concat("...");
-			}
-		}
-		return "";
-	}
-
-	public int getPosition() {
-		return position;
-	}
-
-	public boolean hasBitmap() {
-		return mCover != null;
-	}
-
-	public CoverResponse getResponse() {
-		return mResponse;
-	}
-	
 }

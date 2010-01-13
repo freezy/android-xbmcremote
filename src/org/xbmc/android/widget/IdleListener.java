@@ -8,7 +8,7 @@
 
 package org.xbmc.android.widget;
 
-import org.xbmc.android.remote.presentation.widget.IItemView;
+import org.xbmc.android.remote.presentation.widget.AbstractItemView;
 import org.xbmc.android.widget.IdleListDetector.OnListIdleListener;
 import org.xbmc.api.object.ICoverArt;
 
@@ -35,7 +35,7 @@ public class IdleListener implements OnListIdleListener {
 		// try to garbage collect before and after idling.
 		System.gc();
 		for (int i = 0; i < n; i++) {
-			final IItemView itemView = (IItemView)mList.getChildAt(i);
+			final AbstractItemView itemView = (AbstractItemView)mList.getChildAt(i);
 			if (!itemView.hasBitmap()) {
 				ICoverArt cover = (ICoverArt)mList.getAdapter().getItem(itemView.getPosition());
 				Log.i(TAG, "Cover: " + cover);

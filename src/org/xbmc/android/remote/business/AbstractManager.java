@@ -162,7 +162,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 */
 	protected void getCoverFromMem(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in mem cache..");
-		MemCacheThread.get().getCover(new DataResponse<Bitmap>(response) {
+		MemCacheThread.get().getCover(new DataResponse<Bitmap>() {
 			public void run() {
 				if (value == null) {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] empty");
@@ -186,7 +186,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 */
 	protected void getCoverFromDisk(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in disk cache..");
-		DiskCacheThread.get().getCover(new DataResponse<Bitmap>(response) {
+		DiskCacheThread.get().getCover(new DataResponse<Bitmap>() {
 			public void run() {
 				if (value == null) {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Disk cache empty.");
@@ -212,7 +212,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 */
 	protected void getCoverFromNetwork(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Downloading..");
-		DownloadThread.get().getCover(new DataResponse<Bitmap>(response) {
+		DownloadThread.get().getCover(new DataResponse<Bitmap>() {
 			public void run() {
 				if (value == null) {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Download empty");

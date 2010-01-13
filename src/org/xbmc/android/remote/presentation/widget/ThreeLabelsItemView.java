@@ -1,55 +1,27 @@
 package org.xbmc.android.remote.presentation.widget;
 
-import org.xbmc.android.remote.R;
-import org.xbmc.api.business.CoverResponse;
 import org.xbmc.api.business.IManager;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.view.View;
 
-public class ThreeLabelsItemView extends View implements IItemView {
-	
-	private static Bitmap sDefaultCover;
-	
-	private final static Paint PAINT = new Paint();
-	
-	private final CoverResponse mResponse;
-	private Bitmap mCover;
-	
-	public String title;
+public class ThreeLabelsItemView extends AbstractItemView {
+
 	public String subtitle;
 	public String subsubtitle;
-	public int position;
 
 	public ThreeLabelsItemView(Context context, IManager manager) {
-		super(context);
-		mResponse = new CoverResponse(this, manager);
-		if (sDefaultCover == null) {
-			sDefaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.icon_album_dark);
-		}
+		super(context, manager);
 	}
-	
+
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		setMeasuredDimension(320, 50);
-//		super.onMeasure(150, 50);
 	}
 	
-	public void reset() {
-		mCover = null;
-	}
-	
-	public void setCover(Bitmap cover) {
-		mCover = cover;
-		invalidate();
-	}
-	
+	@Override
 	protected void onDraw(Canvas canvas) {
 		PAINT.setTextAlign(Align.LEFT);
 		PAINT.setColor(Color.WHITE);
@@ -75,17 +47,4 @@ public class ThreeLabelsItemView extends View implements IItemView {
 			canvas.drawText(subsubtitle, 315, 42, PAINT);
 		}
 	}
-
-	public int getPosition() {
-		return position;
-	}
-
-	public boolean hasBitmap() {
-		return mCover != null;
-	}
-
-	public CoverResponse getResponse() {
-		return mResponse;
-	}
-	
 }
