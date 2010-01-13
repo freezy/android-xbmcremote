@@ -38,11 +38,20 @@ public abstract class ImportUtilities {
     private static final double MIN_FREE_SPACE = 15;
 
     public static File getCacheDirectory(String type, int size) {
-        return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + ThumbSize.getDir(size));
+    	StringBuilder sb = new StringBuilder(CACHE_DIRECTORY);
+    	sb.append(type);
+    	sb.append(ThumbSize.getDir(size));
+        return IOUtilities.getExternalFile(sb.toString());
     }
     
     public static File getCacheFile(String type, int size, String name) {
-    	return IOUtilities.getExternalFile(CACHE_DIRECTORY + type + ThumbSize.getDir(size) + "/" + name);
+    	StringBuilder sb = new StringBuilder(32);
+    	sb.append(CACHE_DIRECTORY);
+    	sb.append(type);
+    	sb.append(ThumbSize.getDir(size));
+    	sb.append("/");
+    	sb.append(name);
+    	return IOUtilities.getExternalFile(sb.toString());
     }
 
     public static Bitmap addCoverToCache(ICoverArt cover, Bitmap bitmap, int thumbSize) {

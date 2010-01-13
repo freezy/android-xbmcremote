@@ -26,10 +26,8 @@ import java.util.ArrayList;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.presentation.controller.holder.ThreeHolder;
-import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
+import org.xbmc.android.remote.presentation.widget.ThreeLabelsItemView;
 import org.xbmc.android.util.ImportUtilities;
-import org.xbmc.android.widget.IdleListener;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.business.ISortableManager;
@@ -38,14 +36,12 @@ import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Song;
 import org.xbmc.api.type.SortType;
-import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -54,9 +50,7 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -110,13 +104,11 @@ public class SongListController extends ListController implements IController {
 			mActivity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_song);
-			IdleListener idleListener = setupIdleListener();
-			idleListener.setPostScrollLoader(mPostScrollLoader, mMusicManager);
+			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
-				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					final Song song = ((ThreeHolder<Song>)view.getTag()).holderItem;
+					final Song song = (Song)mList.getAdapter().getItem(((ThreeLabelsItemView)view).position);
 					if (mAlbum == null) {
 						mMusicManager.play(new QueryResponse(
 							mActivity, 
@@ -188,29 +180,26 @@ public class SongListController extends ListController implements IController {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
-		final ThreeHolder<Song> holder = (ThreeHolder<Song>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(holder.holderItem.title);
+		final ThreeLabelsItemView view = (ThreeLabelsItemView)((AdapterContextMenuInfo)menuInfo).targetView;
+		menu.setHeaderTitle(((Song)mList.getItemAtPosition(view.getPosition())).title);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Song");
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Song");
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void onContextItemSelected(MenuItem item) {
 		// be aware that this must be explicitly called by your activity!
-		final ThreeHolder<Song> holder = (ThreeHolder<Song>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+		final Song song = (Song)mList.getAdapter().getItem(((ThreeLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				if (mAlbum == null) {
-					mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Song added to playlist.", "Error adding song!"), holder.holderItem);
+					mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Song added to playlist.", "Error adding song!"), song);
 				} else {
-					mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, holder.holderItem);
+					mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, song);
 				}
 				break;
 			case ITEM_CONTEXT_PLAY:
-				final Song song = holder.holderItem;
 				if (mAlbum == null) {
 					mMusicManager.play(new QueryResponse(
 						mActivity, 
@@ -336,61 +325,35 @@ public class SongListController extends ListController implements IController {
 		}
 	}
 	
-	
 	private class SongAdapter extends ArrayAdapter<Song> {
-		private final LayoutInflater mInflater;
 		SongAdapter(Activity activity, ArrayList<Song> items) {
-			super(activity, R.layout.listitem_three, items);
-			mInflater = LayoutInflater.from(activity);
+			super(activity, 0, items);
 		}
-		@SuppressWarnings("unchecked")
 		public View getView(int position, View convertView, ViewGroup parent) {
-			
-			View row;
-			ThreeHolder<Song> holder;
-			
+			final ThreeLabelsItemView view;
 			if (convertView == null) {
-				
-				row = mInflater.inflate(R.layout.listitem_three, null);
-				holder = new ThreeHolder<Song>(
-					(ImageView)row.findViewById(R.id.MusicItemImageViewArt),
-					(TextView)row.findViewById(R.id.MusicItemTextViewTitle),
-					(TextView)row.findViewById(R.id.MusicItemTextViewSubtitle),
-					(TextView)row.findViewById(R.id.MusicItemTextViewSubSubtitle)
-				);
-				row.setTag(holder);
-				
-				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
-				transition.setCrossFadeEnabled(true);
-				holder.transition = transition;
-				holder.defaultCover = R.drawable.icon_song;
-				
+				view = new ThreeLabelsItemView(mActivity, mMusicManager);
 			} else {
-				row = convertView;
-				holder = (ThreeHolder<Song>)convertView.getTag();
+				view = (ThreeLabelsItemView)convertView;
 			}
-			final Song song = getItem(position);
 			
-			holder.titleView.setText(song.title);
+			final Song song = getItem(position);
+			view.reset();
+			view.position = position;
+			view.title = song.title;
 			if (mAlbum != null) {
-				holder.subtitleView.setText(song.artist);
+				view.subtitle = song.artist;
 			} else if (mArtist != null) {
-				holder.subtitleView.setText(song.album);
+				view.subtitle = song.album;
 			} else if (mGenre != null) {
-				holder.subtitleView.setText(song.artist);
+				view.subtitle = song.artist;
 			}
-			holder.subsubtitleView.setText(song.getDuration());
-			holder.holderItem = song;
-			holder.id = song.getId();
-			holder.coverItem = song;
+			view.subsubtitle = song.getDuration();
+			
 			if (mLoadCovers) {
-				holder.iconView.setImageResource(R.drawable.icon_song_dark);
-				holder.tempBind = true;
-				mMusicManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), song, ThumbSize.SMALL);
-			} else {
-				holder.iconView.setImageResource(R.drawable.icon_song);
+				view.getResponse().load(song);
 			}
-			return row;
+			return view;
 		}
 	}
 	

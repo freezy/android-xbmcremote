@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.MusicArtistActivity;
+import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.object.Artist;
@@ -34,7 +35,6 @@ import org.xbmc.api.object.Genre;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,9 +42,7 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -167,26 +165,21 @@ public class ArtistListController extends ListController implements IController 
 	}
 	
 	private class ArtistAdapter extends ArrayAdapter<Artist> {
-		private Activity mActivity;
 		ArtistAdapter(Activity activity, ArrayList<Artist> items) {
-			super(activity, R.layout.listitem_oneliner, items);
-			mActivity = activity;
+			super(activity, 0, items);
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View row;
+			final OneLabelItemView view;
 			if (convertView == null) {
-				LayoutInflater inflater = mActivity.getLayoutInflater();
-				row = inflater.inflate(R.layout.listitem_oneliner, null);
+				view = new OneLabelItemView(mActivity, R.drawable.icon_artist);
 			} else {
-				row = convertView;
+				view = (OneLabelItemView)convertView;
 			}
 			final Artist artist = this.getItem(position);
-			row.setTag(artist);
-			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
-			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
-			title.setText(artist.name);
-			icon.setImageResource(R.drawable.icon_artist);
-			return row;
+			view.reset();
+			view.position = position;
+			view.title = artist.name;
+			return view;
 		}
 	}
 	private static final long serialVersionUID = 4360738733222799619L;

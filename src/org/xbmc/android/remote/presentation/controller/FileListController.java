@@ -28,6 +28,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
+import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IInfoManager;
@@ -36,18 +37,17 @@ import org.xbmc.api.type.MediaType;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class FileListController extends ListController implements IController {
@@ -116,42 +116,42 @@ public class FileListController extends ListController implements IController {
 	}
 	
 	private class FileItemAdapter extends ArrayAdapter<FileLocation> {
-		private final LayoutInflater mInflater; 
 		FileItemAdapter(Activity activity, ArrayList<FileLocation> items) {
-			super(activity, R.layout.listitem_oneliner, items);
-			mInflater = activity.getLayoutInflater();
+			super(activity, 0, items);
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View row;
+			
+			final OneLabelItemView view;
 			if (convertView == null) {
-				row = mInflater.inflate(R.layout.listitem_oneliner, null);
+				view = new OneLabelItemView(mActivity, R.drawable.icon_artist);
 			} else {
-				row = convertView;
+				view = (OneLabelItemView)convertView;
 			}
 			final FileLocation fileItem = this.getItem(position);
-			row.setTag(fileItem);
-			final TextView title = (TextView)row.findViewById(R.id.MusicItemTextViewTitle);
-			final ImageView icon = (ImageView)row.findViewById(R.id.MusicItemImageViewArt);
-			title.setText(fileItem.name);
+			view.reset();
+			view.position = position;
+			view.title = fileItem.name;
+			final Resources res = mActivity.getResources();
 			if (fileItem.isArchive) {
-				icon.setImageResource(R.drawable.icon_zip);
+				view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_zip));
+				view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_zip));
 			} else if (fileItem.isDirectory) {
-				icon.setImageResource(R.drawable.icon_folder);
+				view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_folder));
 			} else {
 				final String ext = fileItem.name.substring(fileItem.name.lastIndexOf(".") + 1).toLowerCase();
 				if (ext.equals("mp3") || ext.equals("ogg")) {
-					icon.setImageResource(R.drawable.icon_song);
+					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_song));
 				} else if (ext.equals("avi") || ext.equals("mov") || ext.equals("flv") || ext.equals("mkv") || ext.equals("wmv") || ext.equals("mp4")) {
-					icon.setImageResource(R.drawable.icon_video);
+					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_video));
 				} else if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("bmp") || ext.equals("gif") || ext.equals("png") || ext.equals("tbn")) {
-					icon.setImageResource(R.drawable.icon_picture);
+					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_picture));
 				} else if (ext.equals("m3u")) {
-					icon.setImageResource(R.drawable.icon_playing);
+					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_playing));
 				} else {
-					icon.setImageResource(R.drawable.icon_file);
+					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_file));
 				}
 			}
-			return row;
+			return view;
 		}
 	}
 	

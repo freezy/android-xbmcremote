@@ -26,21 +26,17 @@ import java.util.ArrayList;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
-import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
-import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
+import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.android.util.ImportUtilities;
-import org.xbmc.android.widget.IdleListener;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Artist;
-import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,9 +44,7 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -76,7 +70,6 @@ public class ActorListController extends ListController implements IController {
 		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
-			
 			final String sdError = ImportUtilities.assertSdCard();
 			mLoadCovers = sdError == null;
 			if (!mLoadCovers) {
@@ -84,17 +77,15 @@ public class ActorListController extends ListController implements IController {
 				toast.show();
 			}
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.person_black_small);
-			IdleListener idleListener = setupIdleListener();
-			idleListener.setPostScrollLoader(mPostScrollLoader, mVideoManager);
+			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
-				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
-					OneHolder<Actor> holder = (OneHolder<Actor>)view.getTag();
+					final Actor actor = (Actor)mList.getAdapter().getItem(((OneLabelItemView)view).position);
 					nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new MovieListController());
-					nextActivity.putExtra(ListController.EXTRA_ACTOR, holder.holderItem);
+					nextActivity.putExtra(ListController.EXTRA_ACTOR, actor);
 					mActivity.startActivity(nextActivity);
 				}
 			});
@@ -155,43 +146,24 @@ public class ActorListController extends ListController implements IController {
 	
 	private class ActorAdapter extends ArrayAdapter<Actor> {
 		ActorAdapter(Activity activity, ArrayList<Actor> items) {
-			super(activity, R.layout.listitem_oneliner, items);
+			super(activity, 0, items);
 		}
-		@SuppressWarnings("unchecked")
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View row;
-			final OneHolder<Actor> holder;
-			
+			final OneLabelItemView view;
 			if (convertView == null) {
-				LayoutInflater inflater = mActivity.getLayoutInflater();
-				row = inflater.inflate(R.layout.listitem_oneliner, null);
-				holder = new OneHolder<Actor>(
-						(ImageView)row.findViewById(R.id.MusicItemImageViewArt),
-						(TextView)row.findViewById(R.id.MusicItemTextViewTitle)
-					);
-				row.setTag(holder);
-				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
-				transition.setCrossFadeEnabled(true);
-				holder.transition = transition;
-				holder.defaultCover = R.drawable.person_black_small;
-					
+				view = new OneLabelItemView(mActivity, mVideoManager);
 			} else {
-				row = convertView;
-				holder = (OneHolder<Actor>)convertView.getTag();
+				view = (OneLabelItemView)convertView;
 			}
 			final Actor actor = this.getItem(position);
-			holder.holderItem = actor;
-			holder.coverItem = actor;
-			holder.id = actor.getCrc();
-			
-			holder.titleView.setText(actor.name);
-			holder.iconView.setImageResource(holder.defaultCover);
+			view.reset();
+			view.position = position;
+			view.title = actor.name;
 			
 			if (mLoadCovers) {
-				holder.tempBind = true;
-				mVideoManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), actor, ThumbSize.SMALL);
+				view.getResponse().load(actor);
 			}
-			return row;
+			return view;
 		}
 	}
 	private static final long serialVersionUID = 4360738733222799619L;

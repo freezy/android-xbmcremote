@@ -26,14 +26,10 @@ import java.util.ArrayList;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.DialogFactory;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
-import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
-import org.xbmc.android.remote.presentation.controller.holder.ThreeHolder;
-import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
+import org.xbmc.android.remote.presentation.widget.ThreeLabelsItemView;
 import org.xbmc.android.util.ImportUtilities;
-import org.xbmc.android.widget.IdleListener;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IMusicManager;
@@ -42,7 +38,6 @@ import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.type.SortType;
-import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -52,7 +47,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -62,9 +56,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -72,7 +64,6 @@ import android.widget.AdapterView.OnItemClickListener;
 /**
  * TODO Once we move to 1.6+, waste the deprecated code. 
  */
-@SuppressWarnings("unused")
 public class AlbumListController extends ListController implements IController {
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
@@ -145,19 +136,15 @@ public class AlbumListController extends ListController implements IController {
 			activity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_album_dark_big);
-			IdleListener idleListener = setupIdleListener();
-			idleListener.setPostScrollLoader(mPostScrollLoader, mMusicManager);
-			
-//			ImportUtilities.purgeCache();
+			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
-				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
-					ThreeHolder<Album> holder = (ThreeHolder<Album>)view.getTag();
+					final Album album = (Album)mList.getAdapter().getItem(((ThreeLabelsItemView)view).position);
 					nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new SongListController());
-					nextActivity.putExtra(ListController.EXTRA_ALBUM, holder.holderItem);
+					nextActivity.putExtra(ListController.EXTRA_ALBUM, album);
 					mActivity.startActivity(nextActivity);
 				}
 			});
@@ -280,19 +267,18 @@ public class AlbumListController extends ListController implements IController {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		final ThreeHolder<Album> holder = (ThreeHolder<Album>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(holder.holderItem.name);
+		final ThreeLabelsItemView view = (ThreeLabelsItemView)((AdapterContextMenuInfo)menuInfo).targetView;
+		menu.setHeaderTitle(((Album)mList.getItemAtPosition(view.getPosition())).name);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Album");
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Album");
 		menu.add(0, ITEM_CONTEXT_INFO, 3, "View Details");
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void onContextItemSelected(MenuItem item) {
-		final ThreeHolder<Album> holder = (ThreeHolder<Album>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
-		final Album album = holder.holderItem;
+//		final ThreeHolder<Album> holder = (ThreeHolder<Album>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+//		final Album album = holder.holderItem;
+		final Album album = (Album)mList.getAdapter().getItem(((ThreeLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				mMusicManager.addToPlaylist(new QueryResponse(
@@ -396,72 +382,38 @@ public class AlbumListController extends ListController implements IController {
 	}
 	
 	private class AlbumAdapter extends ArrayAdapter<Album> {
-		private Activity mActivity;
-		private final LayoutInflater mInflater;
 		AlbumAdapter(Activity activity, ArrayList<Album> items) {
-			super(activity, R.layout.listitem_three, items);
-			mActivity = activity;
-			mInflater = LayoutInflater.from(activity);
+			super(activity, 0, items);
 		}
-		
-		@SuppressWarnings("unchecked")
 		public View getView(int position, View convertView, ViewGroup parent) {
-			
-			final View row;
-			final ThreeHolder<Album> holder;
-			
+			final ThreeLabelsItemView view;
 			if (convertView == null) {
-
-				row = mInflater.inflate(R.layout.listitem_three, null);
-				holder = new ThreeHolder<Album>(
-					(ImageView)row.findViewById(R.id.MusicItemImageViewArt),
-					(TextView)row.findViewById(R.id.MusicItemTextViewTitle),
-					(TextView)row.findViewById(R.id.MusicItemTextViewSubtitle),
-					(TextView)row.findViewById(R.id.MusicItemTextViewSubSubtitle)
-				);
-				row.setTag(holder);
-				
-				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
-				transition.setCrossFadeEnabled(true);
-				holder.transition = transition;
-				holder.defaultCover = R.drawable.icon_album;
-				
+				view = new ThreeLabelsItemView(mActivity, mMusicManager);
 			} else {
-				row = convertView;
-				holder = (ThreeHolder<Album>)convertView.getTag();
+				view = (ThreeLabelsItemView)convertView;
 			}
 			
 			final Album album = getItem(position);
-			holder.holderItem = album;
-			holder.coverItem = album;
-			holder.id = album.getCrc();
-			
-			holder.titleView.setText(album.name);
-			holder.subtitleView.setText(album.artist);
-			holder.subsubtitleView.setText(album.year > 0 ? String.valueOf(album.year) : "");
+			view.reset();
+			view.position = position;
+			view.title = album.name;
+			view.subtitle = album.artist;
+			view.subsubtitle = album.year > 0 ? String.valueOf(album.year) : "";
 			
 			if (mLoadCovers) {
-				holder.tempBind = true;
-				holder.iconView.setImageResource(R.drawable.icon_album_dark);
-				mMusicManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), album, ThumbSize.SMALL);
-			} else {
-				holder.iconView.setImageResource(R.drawable.icon_album);
-			}		
-			
-			return row;
+				view.getResponse().load(album);
+			}
+			return view;
 		}
 	}
 	
 	private class AlbumGridAdapter extends ArrayAdapter<Album> {
-		private Activity mActivity;
 		AlbumGridAdapter(Activity activity, ArrayList<Album> items) {
-			super(activity, R.layout.listitem_three, items);
-			mActivity = activity;
+			super(activity, 0, items);
 		}
 		
-		@SuppressWarnings("unchecked")
 		public View getView(int position, View convertView, ViewGroup parent) {
-			
+			/*
 			final ImageView row;
 			final OneHolder<Album> holder;
 			
@@ -491,8 +443,8 @@ public class AlbumListController extends ListController implements IController {
 				mMusicManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), album, ThumbSize.MEDIUM);
 			} else {
 				row.setImageResource(R.drawable.icon_album);
-			}
-			return row;
+			}*/
+			return convertView/*row*/;
 		}
 	}
 

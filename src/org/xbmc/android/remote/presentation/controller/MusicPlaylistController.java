@@ -29,7 +29,8 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
-import org.xbmc.android.remote.presentation.controller.holder.OneHolder;
+import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
+import org.xbmc.android.remote.presentation.widget.ThreeLabelsItemView;
 import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
@@ -50,7 +51,6 @@ import android.os.Message;
 import android.os.Handler.Callback;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,9 +58,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -132,18 +130,16 @@ public class MusicPlaylistController extends ListController implements IControll
 	  	  	});
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
-				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					final OneHolder<PlaylistItem> holder = (OneHolder<PlaylistItem>)view.getTag();
+					final PlaylistItem item = (PlaylistItem)mList.getAdapter().getItem(((ThreeLabelsItemView)view).position);
 					final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
 					mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId);
-					mMusicManager.setPlaylistSong(doNothing, holder.holderItem.position);
+					mMusicManager.setPlaylistSong(doNothing, item.position);
 				}
 			});
 					
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Song>());
 			setTitle("Music playlist...");
-
 		}
 	}
 
@@ -242,17 +238,18 @@ public class MusicPlaylistController extends ListController implements IControll
 		final SongAdapter adapter = mSongAdapter;
 		if (adapter != null) {
 			final int currentPos = mCurrentPosition;
-			int newPos = newSong.getPlaylistPosition();
-			OneHolder<PlaylistItem> holder = adapter.getHolderAtPosition(currentPos);
-			if (currentPos >= 0 && holder != null) {
-				holder.iconView.setImageResource(R.drawable.icon_song_light);
+			final int newPos = newSong.getPlaylistPosition();
+			OneLabelItemView view = adapter.getViewAtPosition(currentPos);
+			
+			if (currentPos >= 0 && view != null) {
+				view.setCover(BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_song_light));
 			} else {
 				Log.i(TAG, "NOT resetting previous icon at position " + currentPos);
 			}
-			holder = adapter.getHolderAtPosition(newPos);
+			view = adapter.getViewAtPosition(newPos);
 			mCurrentPosition = newPos;
-			if (holder != null) {
-				holder.iconView.setImageResource(R.drawable.icon_play);
+			if (view != null) {
+				view.setCover(BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_play));
 			} else {
 				mList.setSelection(newPos);
 			}
@@ -261,7 +258,6 @@ public class MusicPlaylistController extends ListController implements IControll
 	}
 	
 	@Override
-//	@SuppressWarnings("unchecked")
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
 /*		final OneHolder<PlaylistItem>holder = (OneHolder<PlaylistItem>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
@@ -270,17 +266,15 @@ public class MusicPlaylistController extends ListController implements IControll
 		menu.add(0, ITEM_CONTEXT_REMOVE, 2, "Remove");*/
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void onContextItemSelected(MenuItem item) {
 		// be aware that this must be explicitly called by your activity!
-		final OneHolder<PlaylistItem> holder = (OneHolder<PlaylistItem>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
-		
+		final PlaylistItem playlistItem = (PlaylistItem)mList.getAdapter().getItem(((OneLabelItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_PLAY:
-				mMusicManager.setPlaylistSong(new DataResponse<Boolean>(), holder.holderItem.position);
+				mMusicManager.setPlaylistSong(new DataResponse<Boolean>(), playlistItem.position);
 				break;
 			case ITEM_CONTEXT_REMOVE:
-				mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), holder.holderItem.path);
+				mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path);
 				break;
 			default:
 				return;
@@ -288,12 +282,9 @@ public class MusicPlaylistController extends ListController implements IControll
 	}
 	
 	private class SongAdapter extends ArrayAdapter<PlaylistItem> {
-		
-		private final LayoutInflater mInflater;
-		private final HashMap<Integer, OneHolder<PlaylistItem>> mItemPositions = new HashMap<Integer, OneHolder<PlaylistItem>>();
+		private final HashMap<Integer, OneLabelItemView> mItemPositions = new HashMap<Integer, OneLabelItemView>();
 		SongAdapter(Activity activity, ArrayList<PlaylistItem> items) {
-			super(activity, R.layout.listitem_oneliner, items);
-			mInflater = LayoutInflater.from(activity);
+			super(activity, 0, items);
 			Handler handler = mNowPlayingHandler;
 			if (handler != null) {
 				Message msg = Message.obtain();
@@ -303,37 +294,22 @@ public class MusicPlaylistController extends ListController implements IControll
 	  	  		handler.sendMessage(msg);
 			}
 		}
-		
-		@SuppressWarnings("unchecked")
 		public View getView(int position, View convertView, ViewGroup parent) {
-			
-			View row;
-			OneHolder<PlaylistItem> holder;
-			final PlaylistItem item = getItem(position);
-			
+			final OneLabelItemView view;
 			if (convertView == null) {
-				row = mInflater.inflate(R.layout.listitem_oneliner, null);
-				holder = new OneHolder<PlaylistItem>(
-					(ImageView)row.findViewById(R.id.MusicItemImageViewArt),
-					(TextView)row.findViewById(R.id.MusicItemTextViewTitle)
-				);
-				holder.defaultCover = R.drawable.icon_song_light;
-				row.setTag(holder);
+				view = new OneLabelItemView(mActivity, R.drawable.icon_song_light);
 			} else {
-				row = convertView;
-				holder = (OneHolder<PlaylistItem>)convertView.getTag();
-				mItemPositions.remove(holder.holderItem.position);
+				view = (OneLabelItemView)convertView;
+				mItemPositions.remove(view.position);
 			}
-			mItemPositions.put(item.position, holder);
-			
-			holder.iconView.setImageResource(item.position == mCurrentPosition ? R.drawable.icon_play : R.drawable.icon_song_light);
-			holder.holderItem = item;
-			holder.id = item.position;
-			holder.titleView.setText(item.filename);
-			return row;
+			mItemPositions.put(view.position, view);
+			final PlaylistItem item = this.getItem(position);
+			view.reset();
+			view.position = position;
+			view.title = item.filename;
+			return view;
 		}
-		
-		public OneHolder<PlaylistItem> getHolderAtPosition(int position) {
+		public OneLabelItemView getViewAtPosition(int position) {
 			if (mItemPositions.containsKey(position)) {
 				return mItemPositions.get(position);
 			}

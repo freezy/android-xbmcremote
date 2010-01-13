@@ -29,17 +29,14 @@ import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
-import org.xbmc.android.remote.presentation.controller.holder.MovieHolder;
-import org.xbmc.android.remote.presentation.drawable.CrossFadeDrawable;
+import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.util.ImportUtilities;
-import org.xbmc.android.widget.IdleListener;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Movie;
-import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -48,7 +45,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -57,9 +53,7 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -109,17 +103,13 @@ public class MovieListController extends ListController implements IController {
 			activity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.poster);
-			IdleListener idleListener = setupIdleListener();
-			idleListener.setPostScrollLoader(mPostScrollLoader, mVideoManager);
-			
-//			ImportUtilities.purgeCache();
+			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
-				@SuppressWarnings("unchecked")
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					MovieHolder<Movie> holder = (MovieHolder<Movie>)view.getTag();
+					final Movie movie = (Movie)mList.getAdapter().getItem(((FiveLabelsItemView)view).position);
 					Intent nextActivity = new Intent(view.getContext(), MovieDetailsActivity.class);
-					nextActivity.putExtra(ListController.EXTRA_MOVIE, holder.holderItem);
+					nextActivity.putExtra(ListController.EXTRA_MOVIE, movie);
 					mActivity.startActivity(nextActivity);
 				}
 			});
@@ -207,18 +197,15 @@ public class MovieListController extends ListController implements IController {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		final MovieHolder<Movie> holder = (MovieHolder<Movie>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
-		menu.setHeaderTitle(holder.holderItem.title);
+		final FiveLabelsItemView view = (FiveLabelsItemView)((AdapterContextMenuInfo)menuInfo).targetView;
+		menu.setHeaderTitle(view.title);
 		menu.add(0, ITEM_CONTEXT_PLAY, 1, "Play Movie");
 		menu.add(0, ITEM_CONTEXT_INFO, 2, "View Details");
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void onContextItemSelected(MenuItem item) {
-		final MovieHolder<Movie> holder = (MovieHolder<Movie>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
-		final Movie movie = holder.holderItem;
+		final Movie movie = (Movie)mList.getAdapter().getItem(((FiveLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_PLAY:
 				mControlManager.playFile(new DataResponse<Boolean>() {
@@ -271,61 +258,31 @@ public class MovieListController extends ListController implements IController {
 	}
 	
 	private class MovieAdapter extends ArrayAdapter<Movie> {
-		private final LayoutInflater mInflater;
 		MovieAdapter(Activity activity, ArrayList<Movie> items) {
-			super(activity, R.layout.listitem_three, items);
-			mInflater = LayoutInflater.from(activity);
+			super(activity, 0, items);
 		}
-		
-		@SuppressWarnings("unchecked")
 		public View getView(int position, View convertView, ViewGroup parent) {
-			
-			final View row;
-			final MovieHolder<Movie> holder;
-			
-			if (convertView == null) {
 
-				row = mInflater.inflate(R.layout.listitem_movie, null);
-				holder = new MovieHolder<Movie>(
-					(ImageView)row.findViewById(R.id.listitem_image),
-					(TextView)row.findViewById(R.id.listitem_title),
-					(TextView)row.findViewById(R.id.listitem_subtitle),
-					(TextView)row.findViewById(R.id.listitem_subtitle_right),
-					(TextView)row.findViewById(R.id.listitem_bottom_line),
-					(TextView)row.findViewById(R.id.listitem_bottom_right)
-				);
-				row.setTag(holder);
-				
-				CrossFadeDrawable transition = new CrossFadeDrawable(mFallbackBitmap, null);
-				transition.setCrossFadeEnabled(true);
-				holder.transition = transition;
-				holder.defaultCover = R.drawable.poster;
-				
+			final FiveLabelsItemView view;
+			if (convertView == null) {
+				view = new FiveLabelsItemView(mActivity, mVideoManager);
 			} else {
-				row = convertView;
-				holder = (MovieHolder<Movie>)convertView.getTag();
+				view = (FiveLabelsItemView)convertView;
 			}
 			
 			final Movie movie = getItem(position);
-			holder.holderItem = movie;
-			holder.coverItem = movie;
-			holder.id = movie.getCrc();
-			
-			holder.titleView.setText(movie.title);
-			holder.subtitleView.setText(movie.genres);
-			holder.subtitleRightView.setText(movie.year > 0 ? String.valueOf(movie.year) : "");
-			holder.bottomView.setText(movie.runtime);
-			holder.bottomRightView.setText(String.valueOf(movie.rating));
+			view.reset();
+			view.position = position;
+			view.title = movie.title;
+			view.subtitle = movie.genres;
+			view.subtitleRight = movie.year > 0 ? String.valueOf(movie.year) : "";
+			view.bottomtitle = movie.runtime;
+			view.bottomright = String.valueOf(movie.rating);
 			
 			if (mLoadCovers) {
-				holder.tempBind = true;
-				holder.iconView.setImageResource(R.drawable.poster);
-				mVideoManager.getCover(holder.getCoverDownloadHandler(mPostScrollLoader), movie, ThumbSize.SMALL);
-			} else {
-				holder.iconView.setImageResource(R.drawable.poster);
-			}		
-			
-			return row;
+				view.getResponse().load(movie);
+			}
+			return view;
 		}
 	}
 	

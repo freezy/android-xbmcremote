@@ -35,12 +35,13 @@ import android.graphics.Bitmap;
  * @author Team XBMC
  * @param <T> Type of the API command's result
  */
-public class DataResponse<T> implements Runnable {
+public class DataResponse<T> implements Runnable, Cloneable {
 	public T value;
 	public int defaultCover = R.drawable.icon_genre;
 	public int cacheType;
+	public boolean loading = true;
 	
-	protected final long mTag;
+	protected long mTag;
 	
 	public DataResponse(DataResponse<T> response) {
 		mTag = response.mTag;
@@ -50,6 +51,9 @@ public class DataResponse<T> implements Runnable {
 		mTag = 0;
 	}
 	public DataResponse(long tag) {
+		mTag = tag;
+	}
+	public void setTag(long tag) {
 		mTag = tag;
 	}
 	public DataResponse(long tag, int defaultCover) {
@@ -62,6 +66,7 @@ public class DataResponse<T> implements Runnable {
 	public void run () {
 		// do nothing if not overloaded
 	}
+
 	/**
 	 * Executed before downloading large files. Overload and return false to 
 	 * skip downloading, for instance when a list with covers is scrolling.
