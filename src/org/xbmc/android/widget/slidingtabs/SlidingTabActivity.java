@@ -24,6 +24,7 @@ package org.xbmc.android.widget.slidingtabs;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.activity.HomeActivity;
 import org.xbmc.android.remote.presentation.activity.MovieLibraryActivity;
+import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
 
 import android.app.Activity;
 import android.app.ActivityGroup;
@@ -52,7 +53,9 @@ public class SlidingTabActivity extends ActivityGroup {
 			@Override
 			public void onLongPressBack(int keyCode, KeyEvent event,
 					Stage stage, int duration) {
-				startActivity(new Intent(SlidingTabActivity.this, HomeActivity.class));
+				Intent intent = new Intent(SlidingTabActivity.this, HomeActivity.class);
+				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				startActivity(intent);
 			}
 
 			@Override

@@ -58,7 +58,9 @@ public class RemoteActivity extends Activity {
 			@Override
 			public void onLongPressBack(int keyCode, KeyEvent event,
 					Stage stage, int duration) {
-				startActivity(new Intent(RemoteActivity.this, HomeActivity.class));
+				Intent intent = new Intent(RemoteActivity.this, HomeActivity.class);
+				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				startActivity(intent);
 			}
 
 			@Override
