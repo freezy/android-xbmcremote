@@ -121,6 +121,7 @@ public abstract class ListController extends AbstractController implements Seria
 		if (mMessageGroup != null) {
 			mMessageText.setText(message);
 			mMessageText.setCompoundDrawablesWithIntrinsicBounds(imageResource, 0, 0, 0);
+			mList.setAdapter(null);
 			mMessageGroup.setVisibility(View.VISIBLE);
 		}
 	}
@@ -128,9 +129,6 @@ public abstract class ListController extends AbstractController implements Seria
 	protected void showOnLoading() {
 		mList.setAdapter(new LoadingAdapter(mActivity));
 		mList.setVisibility(View.VISIBLE);
-	}
-	
-	protected void stopOnLoading() {
 	}
 	
 	protected class QueryResponse extends DataResponse<Boolean> {
