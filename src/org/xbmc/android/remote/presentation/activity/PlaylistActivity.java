@@ -26,10 +26,15 @@ import java.io.IOException;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.MusicPlaylistController;
+import org.xbmc.android.util.KeyTracker;
+import org.xbmc.android.util.OnLongPressBackKeyTracker;
+import org.xbmc.android.util.KeyTracker.Stage;
+import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -51,6 +56,26 @@ public class PlaylistActivity extends Activity {
 	private TextView mLabel2;
 
 	private ConfigurationManager mConfigurationManager;
+
+	private KeyTracker mKeyTracker;
+	
+	public PlaylistActivity() {
+		mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
+
+			@Override
+			public void onLongPressBack(int keyCode, KeyEvent event,
+					Stage stage, int duration) {
+				startActivity(new Intent(PlaylistActivity.this, HomeActivity.class));
+			}
+
+			@Override
+			public void onShortPressBack(int keyCode, KeyEvent event,
+					Stage stage, int duration) {
+				callSuperOnKeyDown(keyCode, event);
+			}
+			
+		});
+	}
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -151,6 +176,17 @@ public class PlaylistActivity extends Activity {
 			return false;
 		}
 		client.setController(null);
-		return super.onKeyDown(keyCode, event);
+		boolean handled =  mKeyTracker.doKeyDown(keyCode, event);
+		return handled || super.onKeyDown(keyCode, event);
+	}
+	
+	protected void callSuperOnKeyDown(int keyCode, KeyEvent event) {
+		super.onKeyDown(keyCode, event);
+	}
+	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		boolean handled = mKeyTracker.doKeyUp(keyCode, event);
+		return handled || super.onKeyUp(keyCode, event);
 	}
 }

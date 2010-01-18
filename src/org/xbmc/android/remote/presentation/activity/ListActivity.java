@@ -26,6 +26,9 @@ import java.io.IOException;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.ListController;
+import org.xbmc.android.util.KeyTracker;
+import org.xbmc.android.util.OnLongPressBackKeyTracker;
+import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.eventclient.ButtonCodes;
 
@@ -49,6 +52,25 @@ public class ListActivity extends Activity {
 	private ConfigurationManager mConfigurationManager;
 
 	ListController mListController;
+	private KeyTracker mKeyTracker;
+	
+	public ListActivity() {
+		mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
+
+			@Override
+			public void onLongPressBack(int keyCode, KeyEvent event,
+					Stage stage, int duration) {
+				startActivity(new Intent(ListActivity.this, HomeActivity.class));
+			}
+
+			@Override
+			public void onShortPressBack(int keyCode, KeyEvent event,
+					Stage stage, int duration) {
+				callSuperOnKeyDown(keyCode, event);
+			}
+			
+		});
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -120,7 +142,8 @@ public class ListActivity extends Activity {
 			return false;
 		}
 		client.setController(null);
-		return super.onKeyDown(keyCode, event);
+		boolean handled =  mKeyTracker.doKeyDown(keyCode, event);
+		return handled || super.onKeyDown(keyCode, event);
 	}
 
 	@Override
@@ -135,5 +158,15 @@ public class ListActivity extends Activity {
 		super.onPause();
 		mConfigurationManager.onActivityPause();
 		mListController.onActivityPause();
+	}
+	
+	protected void callSuperOnKeyDown(int keyCode, KeyEvent event) {
+		super.onKeyDown(keyCode, event);
+	}
+	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		boolean handled = mKeyTracker.doKeyUp(keyCode, event);
+		return handled || super.onKeyUp(keyCode, event);
 	}
 }

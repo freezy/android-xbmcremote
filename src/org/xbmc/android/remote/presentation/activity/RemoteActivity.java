@@ -23,6 +23,9 @@ package org.xbmc.android.remote.presentation.activity;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.controller.RemoteController;
+import org.xbmc.android.util.KeyTracker;
+import org.xbmc.android.util.OnLongPressBackKeyTracker;
+import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
@@ -46,6 +49,26 @@ public class RemoteActivity extends Activity {
 	
 	private ConfigurationManager mConfigurationManager;
 	private RemoteController mRemoteController;
+
+	private KeyTracker mKeyTracker;
+	
+	public RemoteActivity() {
+		mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
+
+			@Override
+			public void onLongPressBack(int keyCode, KeyEvent event,
+					Stage stage, int duration) {
+				startActivity(new Intent(RemoteActivity.this, HomeActivity.class));
+			}
+
+			@Override
+			public void onShortPressBack(int keyCode, KeyEvent event,
+					Stage stage, int duration) {
+				callSuperOnKeyDown(keyCode, event);
+			}
+			
+		});
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -71,7 +94,8 @@ public class RemoteActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		return mRemoteController.onKeyDown(keyCode, event) ? true : super.onKeyDown(keyCode, event);
+		boolean handled =  mKeyTracker.doKeyDown(keyCode, event);
+		return handled || mRemoteController.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
 	}
 	
 	@Override
@@ -170,5 +194,15 @@ public class RemoteActivity extends Activity {
 			return true;
 		}
 		return false;
+	}
+	
+	protected void callSuperOnKeyDown(int keyCode, KeyEvent event) {
+		super.onKeyDown(keyCode, event);
+	}
+	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		boolean handled = mKeyTracker.doKeyUp(keyCode, event);
+		return handled || super.onKeyUp(keyCode, event);
 	}
 }

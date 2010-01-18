@@ -22,22 +22,51 @@
 package org.xbmc.android.widget.slidingtabs;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.presentation.activity.HomeActivity;
+import org.xbmc.android.remote.presentation.activity.MovieLibraryActivity;
 
 import android.app.Activity;
 import android.app.ActivityGroup;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
+import org.xbmc.android.util.KeyTracker;
+import org.xbmc.android.util.OnLongPressBackKeyTracker;
+import org.xbmc.android.util.KeyTracker.Stage;
+import org.xbmc.android.util.KeyTracker.State;
 
 public class SlidingTabActivity extends ActivityGroup {
 	
 	private SlidingTabHost mTabHost;
 	private String mDefaultTab = null;
 	private int mDefaultTabIndex = -1;
+	private KeyTracker mKeyTracker = null;
 
-	public SlidingTabActivity() { }
+	public SlidingTabActivity() { 
+		mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
+
+			@Override
+			public void onLongPressBack(int keyCode, KeyEvent event,
+					Stage stage, int duration) {
+				startActivity(new Intent(SlidingTabActivity.this, HomeActivity.class));
+			}
+
+			@Override
+			public void onShortPressBack(int keyCode, KeyEvent event,
+					Stage stage, int duration) {
+				callSuperOnKeyDown(keyCode, event);
+			}
+			
+		});
+	}
+	
+	protected void callSuperOnKeyDown(int keyCode, KeyEvent event) {
+		super.onKeyDown(keyCode, event);
+	}
 
 	/**
 	 * Sets the default tab that is the first tab highlighted.
@@ -151,5 +180,17 @@ public class SlidingTabActivity extends ActivityGroup {
 	 */
 	public SlidingTabWidget getTabWidget() {
 		return mTabHost.getTabWidget();
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		boolean handled =  mKeyTracker.doKeyDown(keyCode, event);
+		return handled || super.onKeyDown(keyCode, event);
+	}
+	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		boolean handled = mKeyTracker.doKeyUp(keyCode, event);
+		return handled || super.onKeyUp(keyCode, event);
 	}
 }
