@@ -2,6 +2,7 @@ package org.xbmc.api.object;
 
 import java.net.URLDecoder;
 
+import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.Connection;
 
 public class FileLocation implements INamedResource {
@@ -10,6 +11,7 @@ public class FileLocation implements INamedResource {
 	public boolean isDirectory;
 	public boolean isArchive = false;
 	public boolean isMultipath = false;
+	public int mediaType = 0;
 	
 	/**
 	 * Class constructor with already parsed data
@@ -29,6 +31,8 @@ public class FileLocation implements INamedResource {
 		} else {
 			displayPath = path.replaceAll("\\\\", "/");
 		}
+		
+		setMediaType();
 	}
 	
 	public String getShortName(){
@@ -77,6 +81,17 @@ public class FileLocation implements INamedResource {
 		} else {
 			displayPath = path.replaceAll("\\\\", "/");
 		}
-		
+		setMediaType();
+	}
+	
+	private void setMediaType() {
+		final String ext = name.substring(name.lastIndexOf(".") + 1).toLowerCase();
+		if (ext.equals("mp3") || ext.equals("ogg")) {
+			this.mediaType = MediaType.MUSIC;
+		} else if (ext.equals("avi") || ext.equals("mov") || ext.equals("flv") || ext.equals("mkv") || ext.equals("wmv") || ext.equals("mp4")) {
+			this.mediaType = MediaType.VIDEO;
+		} else if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("bmp") || ext.equals("gif") || ext.equals("png") || ext.equals("tbn")) {
+			this.mediaType = MediaType.PICTURES;
+		} 
 	}
 }

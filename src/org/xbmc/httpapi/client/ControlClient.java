@@ -123,6 +123,19 @@ public class ControlClient implements IControlClient {
 	}
 	
 	/**
+	 * Show the picture file <code>filename</code> .
+	 * @param filename File to show
+	 * @return true on success, false otherwise.
+	 */
+	public boolean showPicture(INotifiableManager manager, String filename) {
+		mConnection.getBoolean(manager, "ClearSlideshow");
+		mConnection.getBoolean(manager, "PlaySlideshow", filename.substring(0, filename.lastIndexOf("/") ) + ";false");
+		mConnection.getBoolean(manager, "SlideshowSelect", filename );
+		return playNext(manager);
+		
+	}
+	
+	/**
 	 * Sets the volume as a percentage of the maximum possible.
 	 * @param volume New volume (0-100)
 	 * @return true on success, false otherwise.

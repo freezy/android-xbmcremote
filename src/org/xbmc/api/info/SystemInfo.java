@@ -69,4 +69,5 @@ public class SystemInfo {
 	public static final int SYSTEM_HDD_LOCKSTATE        = 157;
 	public static final int SYSTEM_HDD_LOCKKEY          = 158;
 	public static final int SYSTEM_INTERNET_STATE       = 159;
+	public static final int NETWORK_MAC_ADDRESS         = 191;
 }

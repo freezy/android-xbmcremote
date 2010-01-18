@@ -129,6 +129,21 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 			}
 		});
 	}
+	
+	/**
+	 * Displays the image <code>filename</code> .
+	 * @param response Response object
+	 * @param filename File to show
+	 */
+	public void showPicture(final DataResponse<Boolean> response, final String filename) {
+		mHandler.post(new Runnable() {
+			public void run() { 
+				response.value = control().showPicture(ControlManager.this, filename);
+				done(response);
+			}
+		});
+	}
+	
 
 	/**
 	 * Returns what's currently playing.

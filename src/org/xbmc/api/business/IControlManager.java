@@ -84,6 +84,13 @@ public interface IControlManager extends IManager {
 	 * @param mediaType
 	 */
 	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType);
+
+	/**
+	 * Displays the image <code>filename</code> .
+	 * @param response Response object
+	 * @param filename File to show
+	 */
+	public void showPicture(final DataResponse<Boolean> response, final String filename);
 	
 	/**
 	 * Returns what's currently playing.

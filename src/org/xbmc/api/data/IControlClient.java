@@ -165,6 +165,13 @@ public interface IControlClient extends IClient {
 	public boolean updateLibrary(INotifiableManager manager, String mediaType);
 	
 	/**
+	 * Show the picture file <code>filename</code> .
+	 * @param filename File to show
+	 * @return true on success, false otherwise.
+	 */
+	public boolean showPicture(INotifiableManager manager, String filename);
+	
+	/**
 	 * Broadcast a message. Used to test broadcasting feature. 
 	 * @param message
 	 * @return True on success, false otherwise.
