@@ -121,6 +121,7 @@ public class MovieListController extends ListController implements IController {
 	private void fetch() {
 		final Actor actor = mActor;
 		final Genre genre = mGenre;
+		showOnLoading();
 		if (actor != null) {						// movies with a certain actor
 			setTitle(actor.name + " - Movies...");
 			mVideoManager.getMovies(new DataResponse<ArrayList<Movie>>() {

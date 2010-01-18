@@ -71,6 +71,7 @@ public class MusicGenreListController extends ListController implements IControl
 			});
 
 			setTitle("Genres...");
+			showOnLoading();
 			mMusicManager.getGenres(new DataResponse<ArrayList<Genre>>() {
 				public void run() {
 					if (value.size() > 0) {

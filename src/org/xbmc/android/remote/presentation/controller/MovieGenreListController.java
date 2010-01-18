@@ -64,6 +64,7 @@ public class MovieGenreListController extends ListController implements IControl
 			});
 
 			setTitle("Movie genres...");
+			showOnLoading();
 			mVideoManager.getMovieGenres(new DataResponse<ArrayList<Genre>>() {
 				public void run() {
 					if (value.size() > 0) {

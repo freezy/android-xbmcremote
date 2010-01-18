@@ -209,8 +209,10 @@ public class AlbumListController extends ListController implements IController {
 		final Genre genre = mGenre;
 		if (artist != null) {						// albums of an artist
 			setTitle(artist.name + " - Albums...");
+			showOnLoading();
 			mMusicManager.getAlbums(new DataResponse<ArrayList<Album>>() {
 				public void run() {
+					stopOnLoading();
 					if (value.size() > 0) {
 						setTitle(artist.name + " - Albums (" + value.size() + ")");
 						setAdapter(value);
@@ -223,8 +225,10 @@ public class AlbumListController extends ListController implements IController {
 			
 		} else if (genre != null) {					// albums of a genre
 			setTitle(genre.name + " - Albums...");
+			showOnLoading();
 			mMusicManager.getAlbums(new DataResponse<ArrayList<Album>>() {
 				public void run() {
+					stopOnLoading();
 					if (value.size() > 0) {
 						setTitle(genre.name + " - Albums (" + value.size() + ")");
 						setAdapter(value);
@@ -238,8 +242,10 @@ public class AlbumListController extends ListController implements IController {
 		} else {
 			if (mCompilationsOnly) {				// compilations
 				setTitle("Compilations...");
+				showOnLoading();
 				mMusicManager.getCompilations(new DataResponse<ArrayList<Album>>() {
 					public void run() {
+						stopOnLoading();
 						if (value.size() > 0) {
 							setTitle("Compilations (" + value.size() + ")");
 							setAdapter(value);
@@ -251,8 +257,10 @@ public class AlbumListController extends ListController implements IController {
 				});
 			} else {
 				setTitle("Albums...");				// all albums
+				showOnLoading();
 				mMusicManager.getAlbums(new DataResponse<ArrayList<Album>>() {
 					public void run() {
+						stopOnLoading();
 						if (value.size() > 0) {
 							setTitle("Albums (" + value.size() + ")");
 							setAdapter(value);

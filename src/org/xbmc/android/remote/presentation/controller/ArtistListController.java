@@ -81,6 +81,7 @@ public class ArtistListController extends ListController implements IController 
 			
 			if (mGenre != null) {
 				setTitle(mGenre.name + " - Artists...");
+				showOnLoading();
 				mMusicManager.getArtists(new DataResponse<ArrayList<Artist>>() {
 					public void run() {
 						if (value.size() > 0) {
@@ -94,6 +95,7 @@ public class ArtistListController extends ListController implements IController 
 				}, mGenre);
 			} else {
 				setTitle("Artists...");
+				showOnLoading();
 				mMusicManager.getArtists(new DataResponse<ArrayList<Artist>>() {
 					public void run() {
 						if (value.size() > 0) {

@@ -136,6 +136,7 @@ public class SongListController extends ListController implements IController {
 		final Album album = mAlbum; 
 		final Genre genre = mGenre; 
 		final Artist artist = mArtist; 
+		showOnLoading();
 		if (album != null) {
 			setTitle("Songs...");
 			mMusicManager.getSongs(new DataResponse<ArrayList<Song>>() {

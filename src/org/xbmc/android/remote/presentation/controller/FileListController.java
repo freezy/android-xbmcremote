@@ -158,11 +158,11 @@ public class FileListController extends ListController implements IController {
 				view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_folder));
 			} else {
 				final String ext = fileItem.name.substring(fileItem.name.lastIndexOf(".") + 1).toLowerCase();
-				if (fileItem.mediaType == MediaType.MUSIC) {
+				if (ext.equals("mp3") || ext.equals("ogg")) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_song));
-				} else if (fileItem.mediaType == MediaType.MUSIC) {
+				} else if (ext.equals("avi") || ext.equals("mov") || ext.equals("flv") || ext.equals("mkv") || ext.equals("wmv") || ext.equals("mp4")) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_video));
-				} else if (fileItem.mediaType == MediaType.PICTURES) {
+				} else if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("bmp") || ext.equals("gif") || ext.equals("png") || ext.equals("tbn")) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_picture));
 				} else if (ext.equals("m3u")) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_playing));
@@ -183,7 +183,7 @@ public class FileListController extends ListController implements IController {
 		mFileItems = null;
 		mList.setTextFilterEnabled(false);
 		setTitle("Loading...");
-		
+		showOnLoading();
 		DataResponse<ArrayList<FileLocation>> mediaListHandler = new DataResponse<ArrayList<FileLocation>>() {
 			public void run() {
 				setTitle(url.equals("") ? "/" : displayPath);
