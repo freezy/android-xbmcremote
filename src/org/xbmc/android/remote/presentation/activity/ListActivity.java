@@ -61,7 +61,7 @@ public class ListActivity extends Activity {
 			public void onLongPressBack(int keyCode, KeyEvent event,
 					Stage stage, int duration) {
 				Intent intent = new Intent(ListActivity.this, HomeActivity.class);
-				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				startActivity(intent);
 			}
 
