@@ -10,12 +10,14 @@ import org.xbmc.eventclient.ButtonCodes;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.Button;
 
 public class RemoteController extends AbstractController implements INotifiableController, IController {
 	
@@ -113,6 +115,8 @@ public class RemoteController extends AbstractController implements INotifiableC
 	public void setupButton(View btn, String action) {
 		if (btn != null) {
 			btn.setOnTouchListener(new OnRemoteAction(action));
+			((Button)btn).setSoundEffectsEnabled(true);
+			((Button)btn).setClickable(true);
 		}
 	}
 	
@@ -133,6 +137,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 					}
 					mEventClientManager.sendButton("R1", mAction, true, true, true, (short)0, (byte)0);
 				} else if (event.getAction() == MotionEvent.ACTION_UP) {
+					v.playSoundEffect(AudioManager.FX_KEY_CLICK);
 					mEventClientManager.sendButton("R1", mAction, false, false, true, (short)0, (byte)0);
 				}
 			} catch (IOException e) {
