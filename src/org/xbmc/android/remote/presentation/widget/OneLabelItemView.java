@@ -10,6 +10,11 @@ import android.graphics.Paint.Align;
 
 public class OneLabelItemView extends AbstractItemView {
 	
+	private final static int POSTER_WIDTH = 50;
+	private final static int POSTER_HEIGHT = 50;
+	private final static int PADDING = 5;
+	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
+	
 	public OneLabelItemView(Context context, int iconResourceId) {
 		super(context, iconResourceId);
 	}
@@ -20,34 +25,26 @@ public class OneLabelItemView extends AbstractItemView {
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		setMeasuredDimension(320, 50);
-//		super.onMeasure(150, 50);
+		setMeasuredDimension(mWidth, POSTER_HEIGHT);
 	}
 	
 	protected void onDraw(Canvas canvas) {
+		final int width = mWidth;
 		PAINT.setTextAlign(Align.LEFT);
-		PAINT.setColor(Color.WHITE);
 		
-		// background
-		if (isSelected() || isPressed()) {
-			canvas.drawBitmap(sSelected, null, new Rect(50, 0, getWidth(), 50), PAINT);
-		} else {
-			canvas.drawRect(50, 0, getWidth(), 50, PAINT);
-		}
-		
-		// cover
-		if (mCover != null) {
-			canvas.drawBitmap(mCover, 0.0f, 0.0f, null);
-		} else {
-			canvas.drawBitmap(sDefaultCover, 0.0f, 0.0f, null);
-		}
+		drawPoster(canvas, POSTER_WIDTH, POSTER_HEIGHT, width);
 
 		// label
 		PAINT.setAntiAlias(true);
 		if (title != null) {
 			PAINT.setColor(Color.BLACK);
 			PAINT.setTextSize(18);
-			canvas.drawText(title, 55, 35, PAINT);
+			canvas.drawText(title, POSTER_WIDTH + PADDING, 35, PAINT);
 		}
+	}
+
+	@Override
+	protected Rect getPosterRect() {
+		return POSTER_RECT;
 	}
 }

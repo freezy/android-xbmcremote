@@ -16,7 +16,7 @@ public class ThreeLabelsItemView extends AbstractItemView {
 	private final static int POSTER_WIDTH = 50;
 	private final static int POSTER_HEIGHT = 50;
 	private final static int PADDING = 5;
-	private final static Rect RECT_DEST = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
+	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
 	
 
 	public ThreeLabelsItemView(Context context, IManager manager, int width) {
@@ -30,37 +30,10 @@ public class ThreeLabelsItemView extends AbstractItemView {
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-		final int width = canvas.getWidth();
+		final int width = mWidth;
 		PAINT.setTextAlign(Align.LEFT);
-		PAINT.setColor(Color.WHITE);
 		
-		// background
-		if (isSelected() || isPressed()) {
-			canvas.drawBitmap(sSelected, null, new Rect(POSTER_WIDTH, 0, width, POSTER_HEIGHT), PAINT);
-		} else {
-			canvas.drawRect(POSTER_WIDTH, 0, width, POSTER_HEIGHT, PAINT);
-		}
-		
-		// cover
-		if (mCover != null) {
-			final int w = mCover.getWidth();
-			final int h = mCover.getHeight();
-			int dx = 0;
-			int dy = 0;
-			if (w > POSTER_WIDTH) {
-				dx = (w - POSTER_WIDTH) / 2;  
-			}
-			if (h > POSTER_HEIGHT) {
-				dy = (h - POSTER_HEIGHT) / 2;  
-			}
-			if (dx > 0 || dy > 0) {
-				canvas.drawBitmap(mCover, new Rect(dx, dy, dx + POSTER_WIDTH, dy + POSTER_HEIGHT), RECT_DEST, PAINT);
-			} else {
-				canvas.drawBitmap(mCover, 0.0f, 0.0f, null);
-			}
-		} else {
-			canvas.drawBitmap(sDefaultCover, 0.0f, 0.0f, null);
-		}
+		drawPoster(canvas, POSTER_WIDTH, POSTER_HEIGHT, width);
 		
 		// text
 		PAINT.setAntiAlias(true);
@@ -78,5 +51,10 @@ public class ThreeLabelsItemView extends AbstractItemView {
 			PAINT.setTextAlign(Align.RIGHT);
 			canvas.drawText(subsubtitle, width - PADDING, 42, PAINT);
 		}
+	}
+
+	@Override
+	protected Rect getPosterRect() {
+		return POSTER_RECT;
 	}
 }

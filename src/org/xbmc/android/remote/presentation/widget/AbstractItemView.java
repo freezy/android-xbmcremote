@@ -7,7 +7,10 @@ import org.xbmc.api.business.IManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.View;
 
 public abstract class AbstractItemView extends View {
@@ -24,6 +27,8 @@ public abstract class AbstractItemView extends View {
 	public int position;
 	public String title;
 	
+	protected abstract Rect getPosterRect();
+	
 	public AbstractItemView(Context context, IManager manager, int width) {
 		super(context);
 		mResponse = new CoverResponse(this, manager);
@@ -37,6 +42,40 @@ public abstract class AbstractItemView extends View {
 		mResponse = null;
 		mWidth = 320;
 		sDefaultCover = BitmapFactory.decodeResource(getResources(), iconResourceId);
+	}
+	
+	protected void drawPoster(Canvas canvas, int posterWidth, int posterHeight, int canvasWidth) {
+
+		// background
+		if (isSelected() || isPressed()) {
+			canvas.drawBitmap(sSelected, null, new Rect(posterWidth, 0, canvasWidth, posterHeight), PAINT);
+		} else {
+			PAINT.setColor(Color.WHITE);
+			canvas.drawRect(posterWidth, 0, canvasWidth, posterHeight, PAINT);
+		}
+		
+		// poster
+		if (mCover != null) {
+			final int w = mCover.getWidth();
+			final int h = mCover.getHeight();
+			int dx = 0;
+			int dy = 0;
+			if (w > posterWidth) {
+				dx = (w - posterWidth) / 2;  
+			}
+			if (h > posterHeight) {
+				dy = (h - posterHeight) / 2;  
+			}
+			if (dx > 0 || dy > 0) {
+				canvas.drawBitmap(mCover, new Rect(dx, dy, dx + posterWidth, dy + posterHeight), getPosterRect(), PAINT);
+			} else {
+				canvas.drawBitmap(mCover, 0.0f, 0.0f, null);
+			}
+		} else {
+			PAINT.setColor(Color.WHITE);
+			canvas.drawRect(0, 0, posterWidth, posterHeight, PAINT);
+			canvas.drawBitmap(sDefaultCover, 0.0f, 0.0f, null);
+		}
 	}
 	
 	protected String ellipse(String text, int width) {

@@ -5,9 +5,15 @@ import org.xbmc.api.business.IManager;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.Paint.Align;
 
 public class FiveLabelsItemView extends AbstractItemView {
+	
+	private final static int POSTER_WIDTH = 50;
+	private final static int POSTER_HEIGHT = 73;
+	private final static int PADDING = 5;
+	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
 	
 	public String subtitle;
 	public String subtitleRight;
@@ -16,30 +22,27 @@ public class FiveLabelsItemView extends AbstractItemView {
 	
 	public FiveLabelsItemView(Context context, IManager manager, int width) {
 		super(context, manager, width);
-		
 	}
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		setMeasuredDimension(320, 73);
-//		super.onMeasure(150, 50);
+		setMeasuredDimension(mWidth, POSTER_HEIGHT);
 	}
 	
 	protected void onDraw(Canvas canvas) {
 		PAINT.setTextAlign(Align.LEFT);
 		PAINT.setColor(Color.WHITE);
 		PAINT.setFakeBoldText(false);
-		if (mCover != null) {
-			canvas.drawBitmap(mCover, 0.0f, 0.0f, null);
-		} else {
-			canvas.drawBitmap(sDefaultCover, 0.0f, 0.0f, null);
-		}
-		canvas.drawRect(50, 0, getWidth(), 73, PAINT);
+		final int width = mWidth;
+		PAINT.setTextAlign(Align.LEFT);
+		
+		drawPoster(canvas, POSTER_WIDTH, POSTER_HEIGHT, width);
+		
 		PAINT.setAntiAlias(true);
 		if (title != null) {
 			PAINT.setColor(Color.BLACK);
 			PAINT.setTextSize(18);
-			canvas.drawText(title, 55, 25, PAINT);
+			canvas.drawText(title, POSTER_WIDTH + PADDING, 25, PAINT);
 		}
 		PAINT.setColor(Color.rgb(80, 80, 80));
 		PAINT.setTextSize(12);
@@ -48,7 +51,7 @@ public class FiveLabelsItemView extends AbstractItemView {
 		float subtitleRightWidth = 0;
 		if (subtitleRight != null) {
 			subtitleRightWidth = PAINT.measureText(subtitleRight);
-			canvas.drawText(subtitleRight, 315, 42, PAINT);
+			canvas.drawText(subtitleRight, width - PADDING, 42, PAINT);
 		}
 		float bottomrightWidth = 0;
 		if (bottomright != null) {
@@ -56,7 +59,7 @@ public class FiveLabelsItemView extends AbstractItemView {
 			PAINT.setFakeBoldText(true);
 			PAINT.setColor(Color.argb(68, 0, 0, 0));
 			bottomrightWidth = PAINT.measureText(subtitleRight);
-			canvas.drawText(bottomright, 315, 65, PAINT);
+			canvas.drawText(bottomright, width - PADDING, 65, PAINT);
 		}
 		
 		PAINT.setColor(Color.rgb(80, 80, 80));
@@ -64,11 +67,16 @@ public class FiveLabelsItemView extends AbstractItemView {
 		PAINT.setTextAlign(Align.LEFT);
 		PAINT.setFakeBoldText(false);
 		if (subtitle != null) {
-			canvas.drawText(ellipse(subtitle, 320 - (int)subtitleRightWidth - 50), 55, 42, PAINT);
+			canvas.drawText(ellipse(subtitle, width - (int)subtitleRightWidth - 50), 55, 42, PAINT);
 		}
 		if (bottomtitle != null) {
-			canvas.drawText(ellipse(bottomtitle, 320 - (int)bottomrightWidth - 50), 55, 59, PAINT);
+			canvas.drawText(ellipse(bottomtitle, width - (int)bottomrightWidth - 50), 55, 59, PAINT);
 		}
 
+	}
+
+	@Override
+	protected Rect getPosterRect() {
+		return POSTER_RECT;
 	}
 }
