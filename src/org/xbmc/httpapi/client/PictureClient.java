@@ -46,7 +46,7 @@ public class PictureClient {
 			}
 
 			public String getAlbum() {
-				String[] path = map.get("Filename").split("/");
+				String[] path = map.get("Filename").replaceAll("\\\\", "/").split("/");
 				return path[path.length - 2];
 			}
 

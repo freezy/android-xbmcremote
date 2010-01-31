@@ -129,7 +129,7 @@ public class ControlClient implements IControlClient {
 	 */
 	public boolean showPicture(INotifiableManager manager, String filename) {
 		mConnection.getBoolean(manager, "ClearSlideshow");
-		mConnection.getBoolean(manager, "PlaySlideshow", filename.substring(0, filename.lastIndexOf("/") ) + ";false");
+		mConnection.getBoolean(manager, "PlaySlideshow", filename.substring(0, filename.replaceAll("\\\\", "/").lastIndexOf("/") ) + ";false");
 		mConnection.getBoolean(manager, "SlideshowSelect", filename );
 		return playNext(manager);
 		
