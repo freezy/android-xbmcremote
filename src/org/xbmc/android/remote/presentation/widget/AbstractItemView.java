@@ -15,21 +15,27 @@ public abstract class AbstractItemView extends View {
 	protected final static Paint PAINT = new Paint();
 	
 	protected static Bitmap sDefaultCover;
+	protected static Bitmap sSelected;
 	
 	private final CoverResponse mResponse;
 	protected Bitmap mCover;
+	protected final int mWidth;
 	
 	public int position;
 	public String title;
 	
-	public AbstractItemView(Context context, IManager manager) {
+	public AbstractItemView(Context context, IManager manager, int width) {
 		super(context);
 		mResponse = new CoverResponse(this, manager);
+		mWidth = width;
 		sDefaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.icon_album_dark);
+		sSelected = BitmapFactory.decodeResource(getResources(), R.drawable.selected);
 	}
+	
 	public AbstractItemView(Context context, int iconResourceId) {
 		super(context);
 		mResponse = null;
+		mWidth = 320;
 		sDefaultCover = BitmapFactory.decodeResource(getResources(), iconResourceId);
 	}
 	

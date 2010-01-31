@@ -14,8 +14,8 @@ public class FiveLabelsItemView extends AbstractItemView {
 	public String bottomtitle;
 	public String bottomright;
 	
-	public FiveLabelsItemView(Context context, IManager manager) {
-		super(context, manager);
+	public FiveLabelsItemView(Context context, IManager manager, int width) {
+		super(context, manager, width);
 		
 	}
 

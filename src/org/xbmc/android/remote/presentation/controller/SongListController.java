@@ -333,7 +333,7 @@ public class SongListController extends ListController implements IController {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final ThreeLabelsItemView view;
 			if (convertView == null) {
-				view = new ThreeLabelsItemView(mActivity, mMusicManager);
+				view = new ThreeLabelsItemView(mActivity, mMusicManager, parent.getWidth());
 			} else {
 				view = (ThreeLabelsItemView)convertView;
 			}
