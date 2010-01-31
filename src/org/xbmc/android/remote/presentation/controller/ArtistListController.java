@@ -69,7 +69,7 @@ public class ArtistListController extends ListController implements IController 
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
-					Artist artist = (Artist)view.getTag();
+					Artist artist = (Artist)mList.getAdapter().getItem(((OneLabelItemView)view).position);
 					nextActivity = new Intent(view.getContext(), MusicArtistActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new AlbumListController());
 					nextActivity.putExtra(ListController.EXTRA_ARTIST, artist);
@@ -114,20 +114,19 @@ public class ArtistListController extends ListController implements IController 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
-		final Artist artist = (Artist)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
+		final Artist artist = (Artist)mList.getAdapter().getItem(((OneLabelItemView)(((AdapterContextMenuInfo)menuInfo).targetView)).position);
 		menu.setHeaderTitle(artist.name);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue all songs from Artist");
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play all songs from Artist");
 		if (mGenre != null) {
 			menu.add(0, ITEM_CONTEXT_QUEUE_GENRE, 3, "Queue only " + mGenre.name + " from Artist");
 			menu.add(0, ITEM_CONTEXT_PLAY_GENRE, 4, "Play only " + mGenre.name + " from Artist");
-			
 		}
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
 		// be aware that this must be explicitly called by your activity!
-		final Artist artist = (Artist)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+		final Artist artist = (Artist)mList.getAdapter().getItem(((OneLabelItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				mMusicManager.addToPlaylist(new QueryResponse(

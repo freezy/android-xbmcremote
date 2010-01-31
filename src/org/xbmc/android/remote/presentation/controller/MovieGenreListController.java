@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
+import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IVideoManager;
@@ -57,8 +58,9 @@ public class MovieGenreListController extends ListController implements IControl
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
+					Genre genre = (Genre)mList.getAdapter().getItem(((FiveLabelsItemView)view).position);
 					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new MovieListController());
-					nextActivity.putExtra(ListController.EXTRA_GENRE, (Genre)view.getTag());
+					nextActivity.putExtra(ListController.EXTRA_GENRE, genre);
 					mActivity.startActivity(nextActivity);
 				}
 			});

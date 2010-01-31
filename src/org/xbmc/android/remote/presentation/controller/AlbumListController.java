@@ -280,8 +280,6 @@ public class AlbumListController extends ListController implements IController {
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
-//		final ThreeHolder<Album> holder = (ThreeHolder<Album>)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
-//		final Album album = holder.holderItem;
 		final Album album = (Album)mList.getAdapter().getItem(((ThreeLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:

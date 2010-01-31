@@ -62,7 +62,7 @@ public class MusicGenreListController extends ListController implements IControl
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
-					Genre genre = (Genre)view.getTag();
+					Genre genre = (Genre)mList.getAdapter().getItem(((OneLabelItemView)view).position);
 					nextActivity = new Intent(view.getContext(), MusicGenreActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_GENRE, genre);
 					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new SongListController());
