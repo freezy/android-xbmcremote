@@ -23,8 +23,9 @@ package org.xbmc.android.widget.slidingtabs;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.activity.HomeActivity;
-import org.xbmc.android.remote.presentation.activity.MovieLibraryActivity;
-import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
+import org.xbmc.android.util.KeyTracker;
+import org.xbmc.android.util.OnLongPressBackKeyTracker;
+import org.xbmc.android.util.KeyTracker.Stage;
 
 import android.app.Activity;
 import android.app.ActivityGroup;
@@ -35,10 +36,6 @@ import android.view.View;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
-import org.xbmc.android.util.KeyTracker;
-import org.xbmc.android.util.OnLongPressBackKeyTracker;
-import org.xbmc.android.util.KeyTracker.Stage;
-import org.xbmc.android.util.KeyTracker.State;
 
 public class SlidingTabActivity extends ActivityGroup {
 	

@@ -22,7 +22,6 @@
 package org.xbmc.android.remote.presentation.controller;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
@@ -33,7 +32,6 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.presentation.INotifiableController;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.ContextMenu;
@@ -44,7 +42,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,8 +67,6 @@ public abstract class ListController extends AbstractController implements Seria
 	
 	protected static Bitmap mFallbackBitmap;
 	protected IdleListDetector mPostScrollLoader;
-	
-	protected ProgressDialog mLoadingDialog;
 	
 	public void onCreate(Activity activity, ListView list) {
 		super.onCreate(activity);

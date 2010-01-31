@@ -1,11 +1,9 @@
 package org.xbmc.android.util;
 
-import org.xbmc.android.remote.presentation.activity.HomeActivity;
 import org.xbmc.android.util.KeyTracker.OnKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.android.util.KeyTracker.State;
 
-import android.content.Intent;
 import android.view.KeyEvent;
 
 public abstract class OnLongPressBackKeyTracker implements OnKeyTracker {

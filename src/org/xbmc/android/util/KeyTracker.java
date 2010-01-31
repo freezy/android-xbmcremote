@@ -89,7 +89,7 @@ public class KeyTracker {
         mState = mTracker.onKeyTracker(mKeyCode, mEvent, stage, (int)(now - mStartMS));
     }
     
-    private void dump() {
+    public void dump() {
         System.out.println(" key=" + mKeyCode + " dur=" + (System.currentTimeMillis() - mStartMS) +
                             " state=" + mState);
     }

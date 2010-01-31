@@ -29,7 +29,6 @@ import org.xbmc.android.remote.presentation.controller.NowPlayingController;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
-import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.object.Song;
 import org.xbmc.eventclient.ButtonCodes;
