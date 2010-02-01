@@ -16,8 +16,8 @@ public class OneLabelItemView extends AbstractItemView {
 	private final static int PADDING = 5;
 	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
 	
-	public OneLabelItemView(Context context, int iconResourceId) {
-		super(context, iconResourceId);
+	public OneLabelItemView(Context context, int width, Bitmap defaultCover) {
+		super(context, width, defaultCover);
 	}
 	
 	public OneLabelItemView(Context context, IManager manager, int width, Bitmap defaultCover) {

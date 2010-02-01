@@ -172,7 +172,7 @@ public abstract class AbstractController {
 	}
 	
 	public void onActivityPause() {
-		mActivity = null;
+//		mActivity = null;
 	}
 
 	public void onActivityResume(Activity activity) {

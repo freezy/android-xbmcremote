@@ -131,8 +131,8 @@ public class AlbumListController extends ListController implements IController {
 				toast.show();
 			}
 			
-			mArtist = (Artist)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_ARTIST);
-			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
+			mArtist = (Artist)activity.getIntent().getSerializableExtra(ListController.EXTRA_ARTIST);
+			mGenre = (Genre)activity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
 			activity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_album_dark);

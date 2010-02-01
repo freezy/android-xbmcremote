@@ -34,6 +34,7 @@ import org.xbmc.api.object.Genre;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,7 +66,7 @@ public class ArtistListController extends ListController implements IController 
 			
 			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
 			
-			mActivity.registerForContextMenu(mList);
+			activity.registerForContextMenu(mList);
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
@@ -78,6 +79,7 @@ public class ArtistListController extends ListController implements IController 
 			});
 			
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Artist>());
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_artist);
 			
 			if (mGenre != null) {
 				setTitle(mGenre.name + " - Artists...");
@@ -172,7 +174,7 @@ public class ArtistListController extends ListController implements IController 
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final OneLabelItemView view;
 			if (convertView == null) {
-				view = new OneLabelItemView(mActivity, R.drawable.icon_artist);
+				view = new OneLabelItemView(mActivity, parent.getWidth(), mFallbackBitmap);
 			} else {
 				view = (OneLabelItemView)convertView;
 			}

@@ -33,6 +33,7 @@ import org.xbmc.api.object.Genre;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,7 +70,7 @@ public class MusicGenreListController extends ListController implements IControl
 					mActivity.startActivity(nextActivity);
 				}
 			});
-
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_genre);
 			setTitle("Genres...");
 			showOnLoading();
 			mMusicManager.getGenres(new DataResponse<ArrayList<Genre>>() {
@@ -126,7 +127,7 @@ public class MusicGenreListController extends ListController implements IControl
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final OneLabelItemView view;
 			if (convertView == null) {
-				view = new OneLabelItemView(mActivity, R.drawable.icon_genre);
+				view = new OneLabelItemView(mActivity, parent.getWidth(), mFallbackBitmap);
 			} else {
 				view = (OneLabelItemView)convertView;
 			}

@@ -128,7 +128,6 @@ public class MusicPlaylistController extends ListController implements IControll
 
 	  	  		}
 	  	  	});
-			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					final PlaylistItem item = (PlaylistItem)mList.getAdapter().getItem(((ThreeLabelsItemView)view).position);
@@ -137,7 +136,7 @@ public class MusicPlaylistController extends ListController implements IControll
 					mMusicManager.setPlaylistSong(doNothing, item.position);
 				}
 			});
-					
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_song_light);
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Song>());
 			setTitle("Music playlist...");
 		}
@@ -297,7 +296,7 @@ public class MusicPlaylistController extends ListController implements IControll
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final OneLabelItemView view;
 			if (convertView == null) {
-				view = new OneLabelItemView(mActivity, R.drawable.icon_song_light);
+				view = new OneLabelItemView(mActivity, parent.getWidth(), mFallbackBitmap);
 			} else {
 				view = (OneLabelItemView)convertView;
 				mItemPositions.remove(view.position);
@@ -307,6 +306,7 @@ public class MusicPlaylistController extends ListController implements IControll
 			view.reset();
 			view.position = position;
 			view.title = item.filename;
+			view.setCover(mFallbackBitmap);
 			return view;
 		}
 		public OneLabelItemView getViewAtPosition(int position) {

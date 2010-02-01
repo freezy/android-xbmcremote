@@ -37,11 +37,11 @@ public abstract class AbstractItemView extends View {
 		sSelected = BitmapFactory.decodeResource(getResources(), R.drawable.selected);
 	}
 	
-	public AbstractItemView(Context context, int iconResourceId) {
+	public AbstractItemView(Context context, int width, Bitmap defaultCover) {
 		super(context);
 		mResponse = null;
-		mWidth = 320;
-		mDefaultCover = BitmapFactory.decodeResource(getResources(), iconResourceId);
+		mWidth = width;
+		mDefaultCover = defaultCover;
 	}
 	
 	protected void drawPoster(Canvas canvas, int posterWidth, int posterHeight, int canvasWidth) {

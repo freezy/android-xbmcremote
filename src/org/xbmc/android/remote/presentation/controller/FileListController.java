@@ -83,6 +83,8 @@ public class FileListController extends ListController implements IController {
 				mMediaType = mActivity.getIntent().getIntExtra(EXTRA_SHARE_TYPE, MediaType.MUSIC);
 			}
 			
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_file);
+			
 			final String path = mActivity.getIntent().getStringExtra(EXTRA_PATH);
 			final String displayPath = mActivity.getIntent().getStringExtra(EXTRA_DISPLAY_PATH);
 			fillUp(path == null ? "" : path, displayPath);
@@ -142,7 +144,7 @@ public class FileListController extends ListController implements IController {
 			
 			final OneLabelItemView view;
 			if (convertView == null) {
-				view = new OneLabelItemView(mActivity, R.drawable.icon_artist);
+				view = new OneLabelItemView(mActivity, parent.getWidth(), mFallbackBitmap);
 			} else {
 				view = (OneLabelItemView)convertView;
 			}
