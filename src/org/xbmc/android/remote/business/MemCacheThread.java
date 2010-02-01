@@ -72,7 +72,7 @@ class MemCacheThread extends AbstractThread {
 	 * @param response Response object
 	 * @param cover   Which cover to return
 	 */
-	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller) {
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller, final Bitmap defaultCover) {
 		if (controller == null) {
 			Log.w(TAG, "[" + cover.getId() + "] Controller is null.");
 		}
@@ -83,13 +83,13 @@ class MemCacheThread extends AbstractThread {
 					final long crc = cover.getCrc();
 					final SoftReference<Bitmap> ref = getCache(thumbSize).get(crc);
 			        if (ref != null) {
-			        	if (DEBUG) Log.i(TAG, "-> In cache.");
+			        	if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] -> In cache.");
 			        	response.value = ref.get();
 			        } else if (sNotAvailable.containsKey(crc)) {
-			        	if (DEBUG) Log.i(TAG, "-> Marked as not-in-cache (" + crc + ").");
-			        	//response.value = response.getDefaultCover();
+			        	if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] -> Marked as not-in-cache (" + crc + ").");
+			        	response.value = defaultCover;
 			        } else {
-			        	if (DEBUG) Log.i(TAG, "-> Not in cache.");
+			        	if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] -> Not in cache.");
 			        }
 				}
 				done(controller, response);

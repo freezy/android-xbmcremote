@@ -92,7 +92,7 @@ public class EventClientManager implements INotifiableManager, IEventClientManag
 		}
 	}
 
-	public void getCover(DataResponse<Bitmap> response, ICoverArt cover, int thumbSize) {
+	public void getCover(DataResponse<Bitmap> response, ICoverArt cover, int thumbSize, Bitmap defaultCover) {
 		// only a stub;
 	}
 }

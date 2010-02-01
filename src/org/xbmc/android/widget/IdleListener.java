@@ -22,7 +22,7 @@ import android.widget.AbsListView;
  */
 public class IdleListener implements OnListIdleListener {
 
-	private final static String TAG = "OnListIdleListener";
+	private final static String TAG = "IdleListener";
 	private final AbsListView mList;
 
 	public IdleListener(AbsListView list) {

@@ -17,10 +17,10 @@ public abstract class AbstractItemView extends View {
 
 	protected final static Paint PAINT = new Paint();
 	
-	protected static Bitmap sDefaultCover;
 	protected static Bitmap sSelected;
 	
 	private final CoverResponse mResponse;
+	private final Bitmap mDefaultCover;
 	protected Bitmap mCover;
 	protected final int mWidth;
 	
@@ -29,11 +29,11 @@ public abstract class AbstractItemView extends View {
 	
 	protected abstract Rect getPosterRect();
 	
-	public AbstractItemView(Context context, IManager manager, int width) {
+	public AbstractItemView(Context context, IManager manager, int width, Bitmap defaultCover) {
 		super(context);
-		mResponse = new CoverResponse(this, manager);
+		mResponse = new CoverResponse(this, manager, defaultCover);
 		mWidth = width;
-		sDefaultCover = BitmapFactory.decodeResource(getResources(), R.drawable.icon_album_dark);
+		mDefaultCover = defaultCover;
 		sSelected = BitmapFactory.decodeResource(getResources(), R.drawable.selected);
 	}
 	
@@ -41,7 +41,7 @@ public abstract class AbstractItemView extends View {
 		super(context);
 		mResponse = null;
 		mWidth = 320;
-		sDefaultCover = BitmapFactory.decodeResource(getResources(), iconResourceId);
+		mDefaultCover = BitmapFactory.decodeResource(getResources(), iconResourceId);
 	}
 	
 	protected void drawPoster(Canvas canvas, int posterWidth, int posterHeight, int canvasWidth) {
@@ -74,7 +74,7 @@ public abstract class AbstractItemView extends View {
 		} else {
 			PAINT.setColor(Color.WHITE);
 			canvas.drawRect(0, 0, posterWidth, posterHeight, PAINT);
-			canvas.drawBitmap(sDefaultCover, 0.0f, 0.0f, null);
+			canvas.drawBitmap(mDefaultCover, 0.0f, 0.0f, null);
 		}
 	}
 	

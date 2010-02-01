@@ -136,7 +136,7 @@ public class MovieDetailsActivity extends Activity {
 						imageView.setImageBitmap(value);
 					}
 				}
-			}, mMovie, ThumbSize.BIG);
+			}, mMovie, ThumbSize.BIG, null);
 		}
 		
 		public void updateMovieDetails(final TextView numVotesView, final TextView studioView, final TextView plotView, final TextView parentalView, final Button trailerButton, final LinearLayout dataLayout) {
@@ -178,7 +178,7 @@ public class MovieDetailsActivity extends Activity {
 										((ImageButton)view.findViewById(R.id.actor_image)).setImageBitmap(value);
 									}
 								}
-							}, actor, ThumbSize.SMALL);
+							}, actor, ThumbSize.SMALL, null);
 							
 							img.setTag(actor);
 							img.setOnClickListener(new OnClickListener() {

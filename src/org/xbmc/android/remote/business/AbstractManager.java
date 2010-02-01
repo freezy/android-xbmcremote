@@ -134,14 +134,14 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * helper methods below.
 	 * @param response Response object
 	 */
-	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final Bitmap defaultCover) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover.getCrc() != 0L) {
 					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
 					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
 						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Trying memory");
-						getCoverFromMem(response, cover, thumbSize);
+						getCoverFromMem(response, cover, thumbSize, defaultCover);
 					} else {
 						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Trying disk directly (size not mem-cached)");
 						getCoverFromDisk(response, cover, thumbSize);
@@ -160,7 +160,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @param response Response object
 	 * @param cover    Get cover for this object
 	 */
-	protected void getCoverFromMem(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
+	protected void getCoverFromMem(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, Bitmap defaultCover) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in mem cache..");
 		MemCacheThread.get().getCover(new DataResponse<Bitmap>() {
 			public void run() {
@@ -175,7 +175,7 @@ public abstract class AbstractManager implements INotifiableManager {
 					done(response);
 				}
 			}
-		}, cover, thumbSize, mController);
+		}, cover, thumbSize, mController, defaultCover);
 	}
 	
 	/**

@@ -3,6 +3,7 @@ package org.xbmc.android.remote.presentation.widget;
 import org.xbmc.api.business.IManager;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -19,8 +20,8 @@ public class OneLabelItemView extends AbstractItemView {
 		super(context, iconResourceId);
 	}
 	
-	public OneLabelItemView(Context context, IManager manager, int width) {
-		super(context, manager, width);
+	public OneLabelItemView(Context context, IManager manager, int width, Bitmap defaultCover) {
+		super(context, manager, width, defaultCover);
 	}
 
 	@Override

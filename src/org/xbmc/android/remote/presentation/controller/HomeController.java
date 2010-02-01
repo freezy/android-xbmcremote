@@ -434,7 +434,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						if (DEBUG) Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
 						progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
 					}
-				}, cover, ThumbSize.BIG);
+				}, cover, ThumbSize.BIG, null);
 			} else {
 				mActivity.dismissDialog(type);
 				progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);

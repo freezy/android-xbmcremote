@@ -10,13 +10,15 @@ public class CoverResponse extends DataResponse<Bitmap> {
 	
 	private final AbstractItemView mView;
 	private final IManager mManager;
+	private final Bitmap mDefaultCover;
 	
 	private boolean mIsLoading = false;
 	private ICoverArt mMostRecentCover = null;
 	
-	public CoverResponse(AbstractItemView view, IManager manager) {
+	public CoverResponse(AbstractItemView view, IManager manager, Bitmap defaultCover) {
 		mView = view;
 		mManager = manager;
+		mDefaultCover = defaultCover;
 	}
 	
 	public synchronized void load(ICoverArt cover) {
@@ -25,7 +27,7 @@ public class CoverResponse extends DataResponse<Bitmap> {
 		} else {
 			mIsLoading = true;
 			mMostRecentCover = null;
-			mManager.getCover(this, cover, ThumbSize.SMALL);
+			mManager.getCover(this, cover, ThumbSize.SMALL, mDefaultCover);
 		}
 	}
 	
@@ -34,7 +36,7 @@ public class CoverResponse extends DataResponse<Bitmap> {
 			mView.setCover(value);
 			mIsLoading = false;
 		} else {
-			mManager.getCover(this, mMostRecentCover, ThumbSize.SMALL);
+			mManager.getCover(this, mMostRecentCover, ThumbSize.SMALL, mDefaultCover);
 			mMostRecentCover = null;
 		}
 	}

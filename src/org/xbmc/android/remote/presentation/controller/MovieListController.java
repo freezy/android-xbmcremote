@@ -266,7 +266,7 @@ public class MovieListController extends ListController implements IController {
 
 			final FiveLabelsItemView view;
 			if (convertView == null) {
-				view = new FiveLabelsItemView(mActivity, mVideoManager, parent.getWidth());
+				view = new FiveLabelsItemView(mActivity, mVideoManager, parent.getWidth(), mFallbackBitmap);
 			} else {
 				view = (FiveLabelsItemView)convertView;
 			}
