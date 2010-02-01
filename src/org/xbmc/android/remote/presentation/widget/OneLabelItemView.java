@@ -38,7 +38,7 @@ public class OneLabelItemView extends AbstractItemView {
 		// label
 		PAINT.setAntiAlias(true);
 		if (title != null) {
-			PAINT.setColor(Color.BLACK);
+			PAINT.setColor(isSelected() || isPressed() ? Color.WHITE : Color.BLACK);
 			PAINT.setTextSize(18);
 			canvas.drawText(title, POSTER_WIDTH + PADDING, 35, PAINT);
 		}

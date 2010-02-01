@@ -36,16 +36,17 @@ public class FiveLabelsItemView extends AbstractItemView {
 		PAINT.setFakeBoldText(false);
 		final int width = mWidth;
 		PAINT.setTextAlign(Align.LEFT);
+		final boolean isSelected = isSelected() || isPressed();
 		
 		drawPoster(canvas, POSTER_WIDTH, POSTER_HEIGHT, width);
 		
 		PAINT.setAntiAlias(true);
 		if (title != null) {
-			PAINT.setColor(Color.BLACK);
+			PAINT.setColor(isSelected ? Color.WHITE : Color.BLACK);
 			PAINT.setTextSize(18);
 			canvas.drawText(title, POSTER_WIDTH + PADDING, 25, PAINT);
 		}
-		PAINT.setColor(Color.rgb(80, 80, 80));
+		PAINT.setColor(isSelected ? Color.WHITE : Color.rgb(80, 80, 80));
 		PAINT.setTextSize(12);
 		
 		PAINT.setTextAlign(Align.RIGHT);
@@ -58,12 +59,12 @@ public class FiveLabelsItemView extends AbstractItemView {
 		if (bottomright != null) {
 			PAINT.setTextSize(20);
 			PAINT.setFakeBoldText(true);
-			PAINT.setColor(Color.argb(68, 0, 0, 0));
+			PAINT.setColor(isSelected ? Color.WHITE : Color.argb(68, 0, 0, 0));
 			bottomrightWidth = PAINT.measureText(subtitleRight);
 			canvas.drawText(bottomright, width - PADDING, 65, PAINT);
 		}
 		
-		PAINT.setColor(Color.rgb(80, 80, 80));
+		PAINT.setColor(isSelected ? Color.WHITE : Color.rgb(80, 80, 80));
 		PAINT.setTextSize(12);
 		PAINT.setTextAlign(Align.LEFT);
 		PAINT.setFakeBoldText(false);
