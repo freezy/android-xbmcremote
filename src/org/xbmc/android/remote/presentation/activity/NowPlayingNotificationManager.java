@@ -96,28 +96,39 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 		notificationManager.notify(NOW_PLAYING_ID, notification);
 	}
 	
+	public void showVideoNotification(String movie, String genre, int status) {
+		Notification notification = buildNotification(movie, genre, (status==PlayStatus.PAUSED)?R.drawable.notif_pause:R.drawable.notif_play);
+		final String ns = Context.NOTIFICATION_SERVICE;
+		NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(ns);
+		notificationManager.notify(NOW_PLAYING_ID, notification);
+	}
+	
 	private final Handler mPollingHandler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch(msg.what) {
 			case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
 			case NowPlayingPollerThread.MESSAGE_PLAYSTATE_CHANGED:
 				ICurrentlyPlaying curr = (ICurrentlyPlaying)msg.getData().get(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
-				
-				final int mediaType = curr.getMediaType();
-				switch(mediaType){
-					case MediaType.PICTURES:
-						showSlideshowNotification(curr.getTitle(), curr.getAlbum());
-						break;
-					default:
-						int status = curr.getPlayStatus();
-						if(status == PlayStatus.PLAYING) {
-							showPlayingNotification(curr.getArtist(), curr.getTitle());
-						}else if(status == PlayStatus.PAUSED) {
-							showPausedNotification(curr.getArtist(), curr.getTitle());
-						}else if(status == PlayStatus.STOPPED) {
-							removeNotification();
-						}
-						break;
+				final int status = curr.getPlayStatus();
+				if(status != PlayStatus.STOPPED) {
+					final int mediaType = curr.getMediaType();
+					switch(mediaType){
+						case MediaType.PICTURES:
+							showSlideshowNotification(curr.getTitle(), curr.getAlbum());
+							break;
+						case MediaType.VIDEO:
+							showVideoNotification(curr.getAlbum(), curr.getArtist(),status);
+							break;
+						default:
+							if(status == PlayStatus.PLAYING) {
+								showPlayingNotification(curr.getArtist(), curr.getTitle());
+							}else if(status == PlayStatus.PAUSED) {
+								showPausedNotification(curr.getArtist(), curr.getTitle());
+							}
+							break;
+					}
+				} else {
+					removeNotification();
 				}
 				break;
 			case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
