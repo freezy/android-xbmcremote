@@ -35,6 +35,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -45,7 +46,9 @@ import android.widget.ImageView;
  */
 public class HostPreference extends DialogPreference {
 	
-	private EditText mNameView, mHostView, mPortView, mUserView, mPassView, mEsPortView, mTimeoutView;
+	private EditText mNameView, mHostView, mPortView, mUserView, mPassView, mEsPortView, mTimeoutView, mAccPointView, mMacAddrView;
+	
+	private CheckBox mWifiOnlyView;
 	
 	private Host mHost;
 	
@@ -119,6 +122,9 @@ public class HostPreference extends DialogPreference {
 		mPassView = (EditText)parent.findViewById(R.id.pref_pass);
 		mEsPortView = (EditText)parent.findViewById(R.id.pref_eventserver_port);
 		mTimeoutView = (EditText)parent.findViewById(R.id.pref_timeout);
+		mMacAddrView = (EditText)parent.findViewById(R.id.pref_mac_addr);
+		mAccPointView = (EditText)parent.findViewById(R.id.pref_access_point);
+		mWifiOnlyView = (CheckBox)parent.findViewById(R.id.pref_wifi_only);
 		return parent;
 	}
 	
@@ -133,6 +139,14 @@ public class HostPreference extends DialogPreference {
 			mPassView.setText(mHost.pass);
 			mEsPortView.setText(String.valueOf(mHost.esPort));
 			mTimeoutView.setText(String.valueOf(mHost.timeout));
+			mMacAddrView.setText(mHost.mac_addr);
+			mAccPointView.setText(mHost.access_point);
+			mWifiOnlyView.setChecked(mHost.wifi_only);
+		} else {
+			//set defaults:
+			mPortView.setText(Host.DEFAULT_HTTP_PORT);
+			mEsPortView.setText(Host.DEFAULT_EVENTSERVER_PORT);
+			mTimeoutView.setText(Host.DEFAULT_TIMEOUT);
 		}
 	}
 	
@@ -161,6 +175,9 @@ public class HostPreference extends DialogPreference {
 			} catch (NumberFormatException e) {
 				host.timeout = Host.DEFAULT_TIMEOUT;
 			}
+			host.access_point = mAccPointView.getText().toString();
+			host.mac_addr = mMacAddrView.getText().toString();
+			host.wifi_only = mWifiOnlyView.isChecked();
 			
 			if (mHost == null) {
 				HostFactory.addHost(getContext(), host);

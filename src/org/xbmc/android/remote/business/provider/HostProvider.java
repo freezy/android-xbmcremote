@@ -45,7 +45,7 @@ public class HostProvider extends ContentProvider {
 
 	public static final String AUTHORITY = "org.xbmc.android.provider.remote";
 
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 	private static final String DATABASE_NAME = "xbmc_hosts.db";
 	private static final String HOSTS_TABLE_NAME = "hosts";
 
@@ -75,15 +75,34 @@ public class HostProvider extends ContentProvider {
 					+ Hosts.USER + " TEXT," 
 					+ Hosts.PASS + " TEXT," 
 					+ Hosts.ESPORT + " INTEGER," 
-					+ Hosts.TIMEOUT + " INTEGER" 
+					+ Hosts.TIMEOUT + " INTEGER," 
+					+ Hosts.WIFI_ONLY + " INTEGER,"
+					+ Hosts.ACCESS_POINT + " TEXT,"
+					+ Hosts.MAC_ADDR + " TEXT"
 					+ ");");
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-			db.execSQL("DROP TABLE IF EXISTS " + HOSTS_TABLE_NAME);
-			onCreate(db);
+			if(oldVersion == 2) { //previous version, we just alter the table 
+				Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
+				String altertable = "ALTER TABLE " + HOSTS_TABLE_NAME + " ADD COLUMN " + Hosts.WIFI_ONLY 
+				+ " INTEGER DEFAULT 0;";
+				db.execSQL(altertable);
+				Log.d(TAG, "executed: " + altertable);
+				altertable = "ALTER TABLE " + HOSTS_TABLE_NAME + " ADD COLUMN " + Hosts.ACCESS_POINT 
+				+ " TEXT;";
+				db.execSQL(altertable);
+				Log.d(TAG, "executed: " + altertable);
+				altertable = "ALTER TABLE " + HOSTS_TABLE_NAME + " ADD COLUMN " + Hosts.MAC_ADDR 
+				+ " TEXT;";
+				db.execSQL(altertable);
+				Log.d(TAG, "executed: " + altertable);
+			}else{
+				Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
+				db.execSQL("DROP TABLE IF EXISTS " + HOSTS_TABLE_NAME);
+				onCreate(db);
+			}
 		}
 	}
 
@@ -94,7 +113,7 @@ public class HostProvider extends ContentProvider {
 		mOpenHelper = new DatabaseHelper(getContext());
 		return true;
 	}
-
+	
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -125,6 +144,7 @@ public class HostProvider extends ContentProvider {
 
 		// Get the database and run the query
 		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+		Log.d(TAG, "SQLite database version: " + db.getVersion());
 		Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, orderBy);
 
 		// Tell the cursor what uri to watch, so it knows when its source data
@@ -183,6 +203,15 @@ public class HostProvider extends ContentProvider {
 		}
 		if (values.containsKey(Hosts.TIMEOUT) == false) {
 			values.put(Hosts.TIMEOUT, -1);
+		}
+		if (values.containsKey(Hosts.WIFI_ONLY) == false) {
+			values.put(Hosts.WIFI_ONLY, 0);
+		}
+		if (values.containsKey(Hosts.ACCESS_POINT) == false) {
+			values.put(Hosts.ACCESS_POINT, "");
+		}
+		if (values.containsKey(Hosts.MAC_ADDR) == false) {
+			values.put(Hosts.MAC_ADDR, "");
 		}
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -253,6 +282,9 @@ public class HostProvider extends ContentProvider {
 		sHostsProjectionMap.put(Hosts.PASS, Hosts.PASS);
 		sHostsProjectionMap.put(Hosts.ESPORT, Hosts.ESPORT);
 		sHostsProjectionMap.put(Hosts.TIMEOUT, Hosts.TIMEOUT);
+		sHostsProjectionMap.put(Hosts.WIFI_ONLY, Hosts.WIFI_ONLY);
+		sHostsProjectionMap.put(Hosts.ACCESS_POINT, Hosts.ACCESS_POINT);
+		sHostsProjectionMap.put(Hosts.MAC_ADDR, Hosts.MAC_ADDR);
 	}
 
 	/**
@@ -320,6 +352,29 @@ public class HostProvider extends ContentProvider {
 		 */
 		public static final String TIMEOUT = "timeout";
 		
+		/**
+		 * If this connection is for wireless lan only
+		 * <P>
+		 * Type: BOOLEAN
+		 * </P>
+		 */
+		public static final String WIFI_ONLY = "wifi_only";
+		
+		/**
+		 * If WIFI_ONLY is set this may or may not include an access point name
+		 * <P>
+		 * Type: TEXT
+		 * </P>
+		 */
+		public static final String ACCESS_POINT = "access_point";
+		
+		/**
+		 * The MAC address of this host
+		 * <P>
+		 * Type: TEXT
+		 * </P>
+		 */
+		public static final String MAC_ADDR = "mac_addr";
 
 		/**
 		 * The content:// style URL for this table

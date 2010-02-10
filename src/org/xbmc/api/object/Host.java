@@ -66,6 +66,18 @@ public class Host implements Serializable {
 	 * TCP socket read timeout in milliseconds
 	 */
 	public int timeout = DEFAULT_TIMEOUT;
+	/**
+	 * If this host is only available through wifi
+	 */
+	public boolean wifi_only = false;
+	/**
+	 * If wifi only is true there might be an access point specified to connect to
+	 */
+	public String access_point;
+	/**
+	 * The MAC address of this host
+	 */
+	public String mac_addr;
 	
 	/**
 	 * Something readable
