@@ -33,6 +33,8 @@ public class Host implements Serializable {
 	public static final int DEFAULT_HTTP_PORT = 8080;
 	public static final int DEFAULT_EVENTSERVER_PORT = 9777;
 	public static final int DEFAULT_TIMEOUT = 5000;
+	public static final int DEFAULT_WOL_WAIT = 40;
+	public static final int DEFAULT_WOL_PORT = 9;
 	
 	/**
 	 * Database ID
@@ -78,6 +80,14 @@ public class Host implements Serializable {
 	 * The MAC address of this host
 	 */
 	public String mac_addr;
+	/**
+	 * The time to wait after sending WOL
+	 */
+	public int wol_wait = DEFAULT_WOL_WAIT;
+	/**
+	 * The port to send the WOL to
+	 */
+	public int wol_port = DEFAULT_WOL_PORT;
 	
 	/**
 	 * Something readable

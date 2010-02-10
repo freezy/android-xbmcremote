@@ -78,7 +78,9 @@ public abstract class HostFactory {
 				final int timeoutCol = cur.getColumnIndex(HostProvider.Hosts.TIMEOUT);
 				final int wifiOnlyCol = cur.getColumnIndex(HostProvider.Hosts.WIFI_ONLY);
 				final int accessPointCol = cur.getColumnIndex(HostProvider.Hosts.ACCESS_POINT);
-				final int macAddrColl = cur.getColumnIndex(HostProvider.Hosts.MAC_ADDR);
+				final int macAddrCol = cur.getColumnIndex(HostProvider.Hosts.MAC_ADDR);
+				final int wolPortCol = cur.getColumnIndex(HostProvider.Hosts.WOL_PORT);
+				final int wolWaitCol = cur.getColumnIndex(HostProvider.Hosts.WOL_WAIT);
 				do {
 					final Host host = new Host();
 					host.id = cur.getInt(idCol);
@@ -90,8 +92,10 @@ public abstract class HostFactory {
 					host.esPort = cur.getInt(esPortCol);
 					host.timeout = cur.getInt(timeoutCol);
 					host.access_point = cur.getString(accessPointCol);
-					host.mac_addr = cur.getString(macAddrColl);
+					host.mac_addr = cur.getString(macAddrCol);
 					host.wifi_only = cur.getInt(wifiOnlyCol)==1; //stored as 1 = true and 0 = false in sqlite
+					host.wol_port = cur.getInt(wolPortCol);
+					host.wol_wait = cur.getInt(wolWaitCol);
 					hosts.add(host);
 				} while (cur.moveToNext());
 			}
@@ -118,6 +122,8 @@ public abstract class HostFactory {
 		values.put(HostProvider.Hosts.WIFI_ONLY, host.wifi_only?1:0);
 		values.put(HostProvider.Hosts.MAC_ADDR, host.mac_addr);
 		values.put(HostProvider.Hosts.ACCESS_POINT, host.access_point);
+		values.put(HostProvider.Hosts.WOL_PORT, host.wol_port);
+		values.put(HostProvider.Hosts.WOL_WAIT, host.wol_wait);
 		context.getContentResolver().insert(HostProvider.Hosts.CONTENT_URI, values);
 	}
 	
@@ -138,6 +144,8 @@ public abstract class HostFactory {
 		values.put(HostProvider.Hosts.WIFI_ONLY, host.wifi_only?1:0);
 		values.put(HostProvider.Hosts.MAC_ADDR, host.mac_addr);
 		values.put(HostProvider.Hosts.ACCESS_POINT, host.access_point);
+		values.put(HostProvider.Hosts.WOL_PORT, host.wol_port);
+		values.put(HostProvider.Hosts.WOL_WAIT, host.wol_wait);
 		context.getContentResolver().update(HostProvider.Hosts.CONTENT_URI, values, HostProvider.Hosts._ID + "=" + host.id, null);
 	}
 	
@@ -208,6 +216,8 @@ public abstract class HostFactory {
 				host.wifi_only = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.WIFI_ONLY))==1;
 				host.access_point = cur.getString(cur.getColumnIndex(HostProvider.Hosts.ACCESS_POINT));
 				host.mac_addr = cur.getString(cur.getColumnIndex(HostProvider.Hosts.MAC_ADDR)); 
+				host.wol_port = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.WOL_PORT));
+				host.wol_wait = cur.getInt(cur.getColumnIndex(HostProvider.Hosts.WOL_WAIT));
 				return host;
 			}
 		} finally {

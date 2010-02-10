@@ -45,7 +45,7 @@ public class HostProvider extends ContentProvider {
 
 	public static final String AUTHORITY = "org.xbmc.android.provider.remote";
 
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 	private static final String DATABASE_NAME = "xbmc_hosts.db";
 	private static final String HOSTS_TABLE_NAME = "hosts";
 
@@ -78,15 +78,19 @@ public class HostProvider extends ContentProvider {
 					+ Hosts.TIMEOUT + " INTEGER," 
 					+ Hosts.WIFI_ONLY + " INTEGER,"
 					+ Hosts.ACCESS_POINT + " TEXT,"
-					+ Hosts.MAC_ADDR + " TEXT"
+					+ Hosts.MAC_ADDR + " TEXT,"
+					+ Hosts.WOL_PORT + " INTEGER,"
+					+ Hosts.WOL_WAIT + " INTEGER"
 					+ ");");
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			if(oldVersion == 2) { //previous version, we just alter the table 
-				Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
-				String altertable = "ALTER TABLE " + HOSTS_TABLE_NAME + " ADD COLUMN " + Hosts.WIFI_ONLY 
+			String altertable;
+			switch (oldVersion) {
+			case 2:
+				Log.d(TAG, "Upgrading database from version 2 to 3");
+				altertable = "ALTER TABLE " + HOSTS_TABLE_NAME + " ADD COLUMN " + Hosts.WIFI_ONLY 
 				+ " INTEGER DEFAULT 0;";
 				db.execSQL(altertable);
 				Log.d(TAG, "executed: " + altertable);
@@ -98,10 +102,24 @@ public class HostProvider extends ContentProvider {
 				+ " TEXT;";
 				db.execSQL(altertable);
 				Log.d(TAG, "executed: " + altertable);
-			}else{
+			case 3:
+				Log.d(TAG, "Upgrading database from version 3 to 4");
+				 altertable = "ALTER TABLE " + HOSTS_TABLE_NAME + " ADD COLUMN " + Hosts.WOL_PORT
+				+ " INTEGER;";
+				 db.execSQL(altertable);
+				 Log.d(TAG, "executed: " + altertable);
+				 altertable = "ALTER TABLE " + HOSTS_TABLE_NAME + " ADD COLUMN " + Hosts.WOL_WAIT
+				 + " INTEGER;";
+				 db.execSQL(altertable);
+				 Log.d(TAG, "executed: " + altertable);
+				 
+				//WARNING!!! ADD A break; BEFORE THE DEFAULT BLOCK OF THE DATABASE WILL BE DROPPED!!! 
+				 break;
+			default: 
 				Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
 				db.execSQL("DROP TABLE IF EXISTS " + HOSTS_TABLE_NAME);
 				onCreate(db);
+					
 			}
 		}
 	}
@@ -213,6 +231,12 @@ public class HostProvider extends ContentProvider {
 		if (values.containsKey(Hosts.MAC_ADDR) == false) {
 			values.put(Hosts.MAC_ADDR, "");
 		}
+		if (values.containsKey(Hosts.WOL_PORT) == false) {
+			values.put(Hosts.WOL_PORT, 0);
+		}
+		if (values.containsKey(Hosts.WOL_WAIT) == false) {
+			values.put(Hosts.WOL_WAIT, 0);
+		}
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		long rowId = db.insert(HOSTS_TABLE_NAME, Hosts.ADDR, values);
@@ -285,6 +309,8 @@ public class HostProvider extends ContentProvider {
 		sHostsProjectionMap.put(Hosts.WIFI_ONLY, Hosts.WIFI_ONLY);
 		sHostsProjectionMap.put(Hosts.ACCESS_POINT, Hosts.ACCESS_POINT);
 		sHostsProjectionMap.put(Hosts.MAC_ADDR, Hosts.MAC_ADDR);
+		sHostsProjectionMap.put(Hosts.WOL_PORT, Hosts.WOL_PORT);
+		sHostsProjectionMap.put(Hosts.WOL_WAIT, Hosts.WOL_WAIT);
 	}
 
 	/**
@@ -375,6 +401,22 @@ public class HostProvider extends ContentProvider {
 		 * </P>
 		 */
 		public static final String MAC_ADDR = "mac_addr";
+
+		/**
+		 * The time in seconds to wait after sending WOL paket
+		 * <P>
+		 * Type: INTEGER
+		 * </P>
+		 */
+		public static final String WOL_WAIT = "wol_wait";
+		
+		/**
+		 * The port the WOL packet should be send to
+		 * <P>
+		 * Type: INTEGER
+		 * </P>
+		 */
+		public static final String WOL_PORT = "wol_port";
 
 		/**
 		 * The content:// style URL for this table

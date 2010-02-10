@@ -71,6 +71,33 @@
 			android:inputType="numberDecimal"
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content" />
+			
+		<CheckBox 
+			android:id="@+id/pref_wifi_only" 
+			android:text="WiFi only" 
+			android:checked="false"
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content" />
+			
+		<TextView 
+			android:text="Access Point:" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" />
+		<EditText 
+			android:id="@+id/pref_access_point" 
+			android:text="" 
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content" />
+			
+		<TextView 
+			android:text="Mac Address:" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" />
+		<EditText 
+			android:id="@+id/pref_mac_addr" 
+			android:text="" 
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content" />
 
 		<TextView 
 			android:text="Socket read timeout in milliseconds" 
@@ -78,6 +105,28 @@
 			android:layout_height="wrap_content" />
 		<EditText 
 			android:id="@+id/pref_timeout" 
+			android:text="" 
+			android:inputType="numberDecimal"
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content" />
+			
+		<TextView 
+			android:text="Wait after WOL in seconds" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" />
+		<EditText 
+			android:id="@+id/pref_wol_wait" 
+			android:text="" 
+			android:inputType="numberDecimal"
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content" />
+			
+		<TextView 
+			android:text="WOL Port" 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" />
+		<EditText 
+			android:id="@+id/pref_wol_port" 
 			android:text="" 
 			android:inputType="numberDecimal"
 			android:layout_width="fill_parent" 

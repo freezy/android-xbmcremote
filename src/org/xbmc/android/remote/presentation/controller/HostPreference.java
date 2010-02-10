@@ -46,7 +46,8 @@ import android.widget.ImageView;
  */
 public class HostPreference extends DialogPreference {
 	
-	private EditText mNameView, mHostView, mPortView, mUserView, mPassView, mEsPortView, mTimeoutView, mAccPointView, mMacAddrView;
+	private EditText mNameView, mHostView, mPortView, mUserView, mPassView, 
+				mEsPortView, mTimeoutView, mAccPointView, mMacAddrView, mWolWaitView, mWolPortView;
 	
 	private CheckBox mWifiOnlyView;
 	
@@ -125,6 +126,8 @@ public class HostPreference extends DialogPreference {
 		mMacAddrView = (EditText)parent.findViewById(R.id.pref_mac_addr);
 		mAccPointView = (EditText)parent.findViewById(R.id.pref_access_point);
 		mWifiOnlyView = (CheckBox)parent.findViewById(R.id.pref_wifi_only);
+		mWolPortView = (EditText)parent.findViewById(R.id.pref_wol_port);
+		mWolWaitView = (EditText)parent.findViewById(R.id.pref_wol_wait);
 		return parent;
 	}
 	
@@ -147,6 +150,8 @@ public class HostPreference extends DialogPreference {
 			mPortView.setText(Host.DEFAULT_HTTP_PORT);
 			mEsPortView.setText(Host.DEFAULT_EVENTSERVER_PORT);
 			mTimeoutView.setText(Host.DEFAULT_TIMEOUT);
+			mWolPortView.setText(Host.DEFAULT_WOL_PORT);
+			mWolWaitView.setText(Host.DEFAULT_WOL_WAIT);
 		}
 	}
 	
@@ -178,6 +183,17 @@ public class HostPreference extends DialogPreference {
 			host.access_point = mAccPointView.getText().toString();
 			host.mac_addr = mMacAddrView.getText().toString();
 			host.wifi_only = mWifiOnlyView.isChecked();
+			try {
+				host.wol_port = Integer.parseInt(mWolPortView.getText().toString());
+			}catch (NumberFormatException e) {
+				host.wol_port = Host.DEFAULT_WOL_PORT;
+			}
+			try {
+				host.wol_wait = Integer.parseInt(mWolWaitView.getText().toString());
+			}catch (NumberFormatException e) {
+				host.wol_wait = Host.DEFAULT_WOL_WAIT;
+			}
+			
 			
 			if (mHost == null) {
 				HostFactory.addHost(getContext(), host);
