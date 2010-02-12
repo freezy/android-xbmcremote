@@ -101,6 +101,8 @@ public class HomeController extends AbstractController implements INotifiableCon
 	
 	private HomeAdapter mHomeMenu;
 	private HomeAdapter mOfflineMenu;
+	
+	private final HomeItem mHomeWol = new HomeItem(HOME_ACTION_WOL, R.drawable.icon_home_power, "Power On", "Turn your XBMC's");
     
 	public HomeController(Activity activity, GridView menuGrid) {
 		super.onCreate(activity);
@@ -140,6 +142,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 					} else {
 						HostFactory.saveHost(mActivity.getApplicationContext(), host);
 						final GridView menuGrid = (GridView)mActivity.findViewById(R.id.HomeItemGridView);
+						resetupOfflineMenuItems();
 						setHomeAdapter(menuGrid, mOfflineMenu);
 						final Button versionButton = (Button)mActivity.findViewById(R.id.home_version_button);
 						versionButton.setText("Connecting...");
@@ -189,16 +192,25 @@ public class HomeController extends AbstractController implements INotifiableCon
 		offlineItems.add(remote);
 		offlineItems.add(new HomeItem(HOME_ACTION_RECONNECT, R.drawable.icon_home_reconnect, "Connect", "Try again to"));
 		
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
-		final String wolMac = prefs.getString("setting_wol", "");
-		if (wolMac.compareTo("") != 0)
-			offlineItems.add(new HomeItem(HOME_ACTION_WOL, R.drawable.icon_home_power, "Power On", "Turn your XBMC's"));
+//		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
+//		final String wolMac = prefs.getString("setting_wol", "");
+		if (HostFactory.host != null && !"".equals(HostFactory.host.mac_addr))
+			offlineItems.add(mHomeWol);
 		
 		mHomeMenu = new HomeAdapter(mActivity, homeItems);
 		mOfflineMenu = new HomeAdapter(mActivity, offlineItems);
 		
 		setHomeAdapter(menuGrid, mOfflineMenu);
-
+	}
+	
+	/**
+	 * Due to host changing we need to resetup the offline items with checking of WOL prefs and WiFi activation.
+	 * @param menuGrid
+	 */
+	private void resetupOfflineMenuItems() {
+		mOfflineMenu.remove(mHomeWol);
+		if (HostFactory.host != null && !"".equals(HostFactory.host.mac_addr))
+			mOfflineMenu.add(mHomeWol);
 	}
 	
 	private void setHomeAdapter(GridView menuGrid, HomeAdapter adapter) {
@@ -237,14 +249,10 @@ public class HomeController extends AbstractController implements INotifiableCon
 						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
 						break;
 					case HOME_ACTION_WOL:
-						SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
-						final String wolMac = prefs.getString("setting_wol", "");
-						final int wolWait = Integer.parseInt(prefs.getString("setting_wol_wait", "40"));
-						final int wolPort = Integer.parseInt(prefs.getString("setting_wol_port", "9"));
-						
+						final Host host = HostFactory.host;
 						WakeOnLan wol = new WakeOnLan();
-						if (wol.sendMagicPacket(wolMac, wolPort)) { // If succeeded in sending the magic packet, begin the countdown
-							WolCounter counter = new WolCounter(wolWait * 1000,1000);
+						if (wol.sendMagicPacket(host.mac_addr, host.wol_port)) { // If succeeded in sending the magic packet, begin the countdown
+							WolCounter counter = new WolCounter(host.wol_wait * 1000,1000);
 							counter.start();
 						}
 						break;
