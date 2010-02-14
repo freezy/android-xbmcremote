@@ -147,11 +147,11 @@ public class HostPreference extends DialogPreference {
 			mWifiOnlyView.setChecked(mHost.wifi_only);
 		} else {
 			//set defaults:
-			mPortView.setText(Host.DEFAULT_HTTP_PORT);
-			mEsPortView.setText(Host.DEFAULT_EVENTSERVER_PORT);
-			mTimeoutView.setText(Host.DEFAULT_TIMEOUT);
-			mWolPortView.setText(Host.DEFAULT_WOL_PORT);
-			mWolWaitView.setText(Host.DEFAULT_WOL_WAIT);
+			mPortView.setText("" + Host.DEFAULT_HTTP_PORT);
+			mEsPortView.setText("" + Host.DEFAULT_EVENTSERVER_PORT);
+			mTimeoutView.setText("" + Host.DEFAULT_TIMEOUT);
+			mWolPortView.setText("" + Host.DEFAULT_WOL_PORT);
+			mWolWaitView.setText("" + Host.DEFAULT_WOL_WAIT);
 		}
 	}
 	
