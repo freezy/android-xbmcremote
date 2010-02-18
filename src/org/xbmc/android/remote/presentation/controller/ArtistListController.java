@@ -94,7 +94,7 @@ public class ArtistListController extends ListController implements IController 
 							setNoDataMessage("No artists found.", R.drawable.icon_artist_dark);
 						}
 					}
-				}, mGenre);
+				}, mGenre, mActivity.getApplicationContext());
 			} else {
 				setTitle("Artists...");
 				showOnLoading();
@@ -108,7 +108,7 @@ public class ArtistListController extends ListController implements IController 
 							setNoDataMessage("No artists found.", R.drawable.icon_artist_dark);
 						}
 					}
-				});
+				}, mActivity.getApplicationContext());
 			}
 		}
 	}
@@ -135,7 +135,7 @@ public class ArtistListController extends ListController implements IController 
 						mActivity, 
 						"Adding all songs by " + artist.name + " to playlist...", 
 						"Error adding songs!"
-					), artist);
+					), artist, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_PLAY:
 				mMusicManager.play(new QueryResponse(
@@ -143,14 +143,14 @@ public class ArtistListController extends ListController implements IController 
 						"Playing all songs by " + artist.name + "...", 
 						"Error playing songs!",
 						true
-					), artist);
+					), artist, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_QUEUE_GENRE:
 				mMusicManager.addToPlaylist(new QueryResponse(
 						mActivity, 
 						"Adding all songs of genre " + mGenre.name + " by " + artist.name + " to playlist...", 
 						"Error adding songs!"
-					), artist, mGenre);
+					), artist, mGenre, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_PLAY_GENRE:
 				mMusicManager.play(new QueryResponse(
@@ -158,7 +158,7 @@ public class ArtistListController extends ListController implements IController 
 						"Playing all songs of genre " + mGenre.name + " by " + artist.name + "...", 
 						"Error playing songs!",
 						true
-					), artist, mGenre);
+					), artist, mGenre, mActivity.getApplicationContext());
 				break;
 		}
 	}

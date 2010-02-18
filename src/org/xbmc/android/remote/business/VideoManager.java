@@ -28,10 +28,13 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
+import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.SortType;
+import org.xbmc.httpapi.WifiStateException;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
@@ -49,11 +52,11 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * @param response Response object
 	 * @param movie Movie
 	 */
-	public void updateMovieDetails(final DataResponse<Movie> response, final Movie movie) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = video().updateMovieDetails(VideoManager.this, movie);
-				done(response);
+	public void updateMovieDetails(final DataResponse<Movie> response, final Movie movie, final Context context) {
+		mHandler.post(new Command<Movie>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = video(context).updateMovieDetails(VideoManager.this, movie);
 			}
 		});
 	}
@@ -62,11 +65,11 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * Gets all movies from database
 	 * @param response Response object
 	 */
-	public void getMovies(final DataResponse<ArrayList<Movie>> response) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = video().getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder());
-				done(response);
+	public void getMovies(final DataResponse<ArrayList<Movie>> response, final Context context) {
+		mHandler.post(new Command<ArrayList<Movie>>(response, this) {
+			@Override
+			public void doRun() throws Exception { 
+				response.value = video(context).getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder());
 			}
 		});
 	}
@@ -75,8 +78,13 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * SYNCHRONOUSLY gets all movies from database
 	 * @return All movies in database
 	 */
-	public ArrayList<Movie> getMovies() {
-		return video().getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder());
+	public ArrayList<Movie> getMovies(final Context context) {
+		try {
+			return video(context).getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder());
+		} catch (WifiStateException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	/**
@@ -84,11 +92,11 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * @param response Response object
 	 * @param actor Actor
 	 */
-	public void getMovies(final DataResponse<ArrayList<Movie>> response, final Actor actor) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = video().getMovies(VideoManager.this, actor, getSortBy(SortType.TITLE), getSortOrder());
-				done(response);
+	public void getMovies(final DataResponse<ArrayList<Movie>> response, final Actor actor, final Context context) {
+		mHandler.post(new Command<ArrayList<Movie>>(response, this) {
+			@Override
+			public void doRun() throws Exception { 
+				response.value = video(context).getMovies(VideoManager.this, actor, getSortBy(SortType.TITLE), getSortOrder());
 			}
 		});
 	}
@@ -98,11 +106,11 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * @param response Response object
 	 * @param genre Genre
 	 */
-	public void getMovies(final DataResponse<ArrayList<Movie>> response, final Genre genre) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = video().getMovies(VideoManager.this, genre, getSortBy(SortType.TITLE), getSortOrder());
-				done(response);
+	public void getMovies(final DataResponse<ArrayList<Movie>> response, final Genre genre, final Context context) {
+		mHandler.post(new Command<ArrayList<Movie>>(response, this) {
+			@Override
+			public void doRun() throws Exception { 
+				response.value = video(context).getMovies(VideoManager.this, genre, getSortBy(SortType.TITLE), getSortOrder());
 			}
 		});
 	}
@@ -112,11 +120,11 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * {@link getTvActors()} for filtered actors. 
 	 * @param response Response object
 	 */
-	public void getActors(final DataResponse<ArrayList<Actor>> response) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = video().getActors(VideoManager.this);
-				done(response);
+	public void getActors(final DataResponse<ArrayList<Actor>> response, final Context context) {
+		mHandler.post(new Command<ArrayList<Actor>>(response, this) {
+			@Override
+			public void doRun() throws Exception { 
+				response.value = video(context).getActors(VideoManager.this);
 			}
 		});
 	}
@@ -126,19 +134,24 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * {@link getTvActors()} for filtered actors.
 	 * @return All actors 
 	 */
-	public ArrayList<Actor> getActors() {
-		return video().getActors(VideoManager.this);
+	public ArrayList<Actor> getActors(final Context context) {
+		try {
+			return video(context).getActors(VideoManager.this);
+		} catch (WifiStateException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	/**
 	 * Gets all movie actors from database
 	 * @param response Response object
 	 */
-	public void getMovieActors(final DataResponse<ArrayList<Actor>> response) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = video().getMovieActors(VideoManager.this);
-				done(response);
+	public void getMovieActors(final DataResponse<ArrayList<Actor>> response, final Context context) {
+		mHandler.post(new Command<ArrayList<Actor>>(response, this) {
+			@Override
+			public void doRun() throws Exception { 
+				response.value = video(context).getMovieActors(VideoManager.this);
 			}
 		});
 	}
@@ -147,11 +160,11 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * Gets all TV show actors from database
 	 * @param response Response object
 	 */
-	public void getTvShowActors(final DataResponse<ArrayList<Actor>> response) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = video().getTvShowActors(VideoManager.this);
-				done(response);
+	public void getTvShowActors(final DataResponse<ArrayList<Actor>> response, final Context context) {
+		mHandler.post(new Command<ArrayList<Actor>>(response, this) {
+			@Override
+			public void doRun() throws Exception { 
+				response.value = video(context).getTvShowActors(VideoManager.this);
 			}
 		});
 	}
@@ -160,11 +173,11 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * Gets all movie genres from database
 	 * @param response Response object
 	 */
-	public void getMovieGenres(final DataResponse<ArrayList<Genre>> response) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = video().getMovieGenres(VideoManager.this);
-				done(response);
+	public void getMovieGenres(final DataResponse<ArrayList<Genre>> response, final Context context) {
+		mHandler.post(new Command<ArrayList<Genre>>(response, this) {
+			@Override
+			public void doRun() throws Exception { 
+				response.value = video(context).getMovieGenres(VideoManager.this);
 			}
 		});
 	}
@@ -209,5 +222,10 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 			return mPref.getString(AbstractManager.PREF_SORT_ORDER_PREFIX + mCurrentSortKey, SortType.ORDER_ASC);
 		}
 		return SortType.ORDER_ASC;
+	}
+
+	public void onWrongConnectionState(int state) {
+		// TODO Auto-generated method stub
+		
 	}
 }

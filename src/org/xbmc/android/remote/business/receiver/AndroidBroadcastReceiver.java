@@ -25,12 +25,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.Command;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.util.SmsMmsMessage;
 import org.xbmc.android.util.SmsPopupUtils;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
+import org.xbmc.api.business.IManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.presentation.INotifiableController;
@@ -110,7 +112,7 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 									sPlayState = PLAY_STATE_PAUSED;
 								}
 							}
-						});
+						}, null);
 						eventClient.sendNotification(callername, "calling", Packet.ICON_PNG, os.toByteArray());
 						
 					} else if (extra.equals(android.telephony.TelephonyManager.EXTRA_STATE_IDLE)) {
@@ -168,6 +170,11 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 
 		public void runOnUI(Runnable action) {
 			mHandler.post(action);
+		}
+
+		public void onWrongConnectionState(int state, INotifiableManager manager, Command source) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}

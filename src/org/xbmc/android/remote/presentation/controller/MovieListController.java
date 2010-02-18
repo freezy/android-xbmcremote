@@ -134,7 +134,7 @@ public class MovieListController extends ListController implements IController {
 						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
 					}
 				}
-			}, actor);
+			}, actor, mActivity.getApplicationContext());
 			
 		} else if (genre != null) {					// movies of a genre
 			setTitle(genre.name + " - Movies...");
@@ -148,7 +148,7 @@ public class MovieListController extends ListController implements IController {
 						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
 					}
 				}
-			}, genre);
+			}, genre, mActivity.getApplicationContext());
 		} else {
 			setTitle("Movies...");				// all movies
 			mVideoManager.getMovies(new DataResponse<ArrayList<Movie>>() {
@@ -161,7 +161,7 @@ public class MovieListController extends ListController implements IController {
 						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
 					}
 				}
-			});
+			}, mActivity.getApplicationContext());
 		}
 	}
 	
@@ -186,7 +186,7 @@ public class MovieListController extends ListController implements IController {
 							Toast toast = Toast.makeText(activity, message, Toast.LENGTH_SHORT);
 							toast.show();
 						}
-					}, "video");
+					}, "video", mActivity.getApplicationContext());
 				}
 			})
 			.setNegativeButton("Uh, no.", new DialogInterface.OnClickListener() {
@@ -215,7 +215,7 @@ public class MovieListController extends ListController implements IController {
 							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 						}
 					}
-				}, movie.getPath());
+				}, movie.getPath(), mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_INFO:
 				Intent nextActivity = new Intent(mActivity, MovieDetailsActivity.class);

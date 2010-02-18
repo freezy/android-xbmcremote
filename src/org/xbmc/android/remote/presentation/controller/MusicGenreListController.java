@@ -83,7 +83,7 @@ public class MusicGenreListController extends ListController implements IControl
 						setNoDataMessage("No genres found.", R.drawable.icon_genre_dark);
 					}
 				}
-			});
+			}, mActivity.getApplicationContext());
 			
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Genre>());
 		}
@@ -107,7 +107,7 @@ public class MusicGenreListController extends ListController implements IControl
 						mActivity, 
 						"Adding all songs of genre " + genre.name + " to playlist...", 
 						"Error adding songs!"
-					), genre);
+					), genre, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_PLAY:
 				mMusicManager.play(new QueryResponse(
@@ -115,7 +115,7 @@ public class MusicGenreListController extends ListController implements IControl
 						"Playing all songs of genre " + genre.name + "...", 
 						"Error playing songs!",
 						true
-					), genre);
+					), genre, mActivity.getApplicationContext());
 				break;
 		}
 	}

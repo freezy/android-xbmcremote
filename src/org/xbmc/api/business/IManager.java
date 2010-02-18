@@ -24,6 +24,7 @@ package org.xbmc.api.business;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
 public interface IManager {
@@ -39,6 +40,9 @@ public interface IManager {
 	 * helper methods below.
 	 * @param response Response object
 	 */
-	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, Bitmap defaultCover);
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, 
+			Bitmap defaultCover, final Context context);
+	
+//	public void retry(Runnable r);
 
 }

@@ -21,9 +21,14 @@
 
 package org.xbmc.api.business;
 
+import org.xbmc.android.remote.business.Command;
+
 public interface INotifiableManager {
 	
+	public void onFinish(DataResponse<?> response);
+	public void onWrongConnectionState(int state, Command<?> cmd);
 	public void onError(Exception e);
 	public void onMessage(String message);
 	public void onMessage(int code, String message);
+	public void retryAll();
 }

@@ -78,7 +78,7 @@ public class MovieGenreListController extends ListController implements IControl
 						setNoDataMessage("No genres found.", R.drawable.icon_genre_dark);
 					}
 				}
-			});
+			}, mActivity.getApplicationContext());
 			
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Genre>());
 		}

@@ -34,6 +34,9 @@ import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.object.Host;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.HttpApi;
+import org.xbmc.httpapi.WifiStateException;
+
+import android.content.Context;
 
 public abstract class ClientFactory {
 	
@@ -42,19 +45,57 @@ public abstract class ClientFactory {
 	
 	private static final String NAME = "Android XBMC Remote";
 	
-	public static IInfoClient getInfoClient(INotifiableManager manager) {
+	public static IInfoClient getInfoClient(INotifiableManager manager, Context context) throws WifiStateException {
+		if(context != null){
+			final WifiHelper helper = WifiHelper.getInstance(context);
+			final int state = helper.getWifiState();
+			switch (state) {
+			case WifiHelper.WIFI_STATE_DISABLED:
+			case WifiHelper.WIFI_STATE_UNKNOWN:
+			case WifiHelper.WIFI_STATE_ENABLED:
+				throw new WifiStateException(state);
+			}
+		}
 		return createHttpClient(manager).info;
 	}
 	
-	public static IControlClient getControlClient(INotifiableManager manager) {
+	public static IControlClient getControlClient(INotifiableManager manager, Context context) throws WifiStateException {
+		if(context != null){
+			final WifiHelper helper = WifiHelper.getInstance(context);
+			final int state = helper.getWifiState();
+			switch (state) {
+			case WifiHelper.WIFI_STATE_DISABLED:
+			case WifiHelper.WIFI_STATE_UNKNOWN:
+			case WifiHelper.WIFI_STATE_ENABLED:
+				throw new WifiStateException(state);
+			}
+		}
 		return createHttpClient(manager).control;
 	}
 	
-	public static IVideoClient getVideoClient(INotifiableManager manager) {
+	public static IVideoClient getVideoClient(INotifiableManager manager, Context context) throws WifiStateException {
+		if(context != null){
+			final WifiHelper helper = WifiHelper.getInstance(context);
+			final int state = helper.getWifiState();
+			switch (state) {
+			case WifiHelper.WIFI_STATE_DISABLED:
+			case WifiHelper.WIFI_STATE_UNKNOWN:
+				throw new WifiStateException(state);
+			}
+		}
 		return createHttpClient(manager).video;
 	}
 	
-	public static IMusicClient getMusicClient(INotifiableManager manager) {
+	public static IMusicClient getMusicClient(INotifiableManager manager, Context context) throws WifiStateException {
+		if(context != null){
+			final WifiHelper helper = WifiHelper.getInstance(context);
+			final int state = helper.getWifiState();
+			switch (state) {
+			case WifiHelper.WIFI_STATE_DISABLED:
+			case WifiHelper.WIFI_STATE_UNKNOWN:
+				throw new WifiStateException(state);
+			}
+		}
 		return createHttpClient(manager).music;
 	}
 	

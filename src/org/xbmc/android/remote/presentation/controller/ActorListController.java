@@ -104,7 +104,7 @@ public class ActorListController extends ListController implements IController {
 							setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
 						}
 					}
-				});
+				}, mActivity.getApplicationContext());
 				break;
 			case TYPE_MOVIE:
 				setTitle("Movie Actors...");
@@ -118,7 +118,7 @@ public class ActorListController extends ListController implements IController {
 							setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
 						}
 					}
-				});
+				}, mActivity.getApplicationContext());
 				break;
 			case TYPE_TVSHOW:
 				setTitle("TV Actors...");
@@ -132,7 +132,7 @@ public class ActorListController extends ListController implements IController {
 							setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
 						}
 					}
-				});
+				}, mActivity.getApplicationContext());
 				break;
 			case TYPE_EPISODE:
 				break;

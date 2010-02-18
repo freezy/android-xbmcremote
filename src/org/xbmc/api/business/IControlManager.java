@@ -24,6 +24,8 @@ package org.xbmc.api.business;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.type.SeekType;
 
+import android.content.Context;
+
 /**
  * This is the interface between the presentation layer and the business layer.
  * All the controller of the presentation layer gets to see is this interface.
@@ -37,7 +39,7 @@ public interface IControlManager extends IManager {
 	 * @param response Response object
 	 * @param filename File to play
 	 */
-	public void playFile(final DataResponse<Boolean> response, final String filename);
+	public void playFile(final DataResponse<Boolean> response, final String filename, final Context context);
 	
 	/**
 	 * Start playing the media file at the given URL
@@ -45,21 +47,21 @@ public interface IControlManager extends IManager {
 	 * @param url An URL pointing to a supported media file
 	 * @return true on success, false otherwise.
 	 */
-	public void playUrl(final DataResponse<Boolean> response, String url);
+	public void playUrl(final DataResponse<Boolean> response, String url, final Context context);
 	
 	/**
 	 * Plays the next item in the playlist.
 	 * @param response Response object
 	 * @return true on success, false otherwise.
 	 */
-	public void playNext(final DataResponse<Boolean> response);
+	public void playNext(final DataResponse<Boolean> response, final Context context);
 	
 	/**
 	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.
 	 * @param response Response object
 	 * @param fileOrFolder File to play
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder);
+	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder, final Context context);
 	
 	/**
 	 * Seeks to a position. If type is
@@ -74,7 +76,7 @@ public interface IControlManager extends IManager {
 	 * @param progress Progress
 	 * @return true on success, false otherwise.
 	 */
-	public void seek(final DataResponse<Boolean> response, SeekType type, int progress);
+	public void seek(final DataResponse<Boolean> response, SeekType type, int progress, final Context context);
 	
 	/**
 	 * Takes either "video" or "music" as a parameter to begin updating the 
@@ -83,39 +85,39 @@ public interface IControlManager extends IManager {
 	 * @param response Response object
 	 * @param mediaType
 	 */
-	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType);
+	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType, final Context context);
 
 	/**
 	 * Displays the image <code>filename</code> .
 	 * @param response Response object
 	 * @param filename File to show
 	 */
-	public void showPicture(final DataResponse<Boolean> response, final String filename);
+	public void showPicture(final DataResponse<Boolean> response, final String filename, final Context context);
 	
 	/**
 	 * Returns what's currently playing.
 	 * @param response Response object
 	 */
-	public void getCurrentlyPlaying(final DataResponse<ICurrentlyPlaying> response);
+	public void getCurrentlyPlaying(final DataResponse<ICurrentlyPlaying> response, final Context context);
 	
 	/**
 	 * Returns the current playlist identifier
 	 * @param response Response object
 	 */
-	public void getPlaylistId(final DataResponse<Integer> response);
+	public void getPlaylistId(final DataResponse<Integer> response, final Context context);
 	
 	/**
 	 * Sets the current playlist identifier
 	 * @param response Response object
 	 * @param id Playlist identifier
 	 */
-	public void setPlaylistId(final DataResponse<Boolean> response, final int id);
+	public void setPlaylistId(final DataResponse<Boolean> response, final int id, final Context context);
 	
 	/**
 	 * Sets the current playlist position
 	 * @param response Response object
 	 * @param position New playlist position
 	 */
-	public void setPlaylistPos(final DataResponse<Boolean> response, final int position);
+	public void setPlaylistPos(final DataResponse<Boolean> response, final int position, final Context context);
 	
 }

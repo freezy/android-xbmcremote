@@ -39,7 +39,9 @@
 			</intent-filter>
 		</receiver>
 		<provider android:name=".business.provider.HostProvider" android:authorities="org.xbmc.android.provider.remote" />
-	</application>
+	
+<activity android:name=".presentation.activity.KeyboardAndMouseActivity"></activity>
+</application>
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
 	<supports-screens
 		android:largeScreens="true"
@@ -55,4 +57,6 @@
 	<uses-permission android:name="android.permission.READ_SMS" />
 	<uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
 </manifest>

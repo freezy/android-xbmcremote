@@ -29,6 +29,8 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.type.DirectoryMask;
 
+import android.content.Context;
+
 
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.InfoClient} class.
@@ -42,12 +44,24 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	 * @param response Response object
 	 * @param field Field to return
 	 */
-	public void getSystemInfo(final DataResponse<String> response, final int field) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = info().getSystemInfo(InfoManager.this, field);
-				done(response);
+	public void getSystemInfo(final DataResponse<String> response, final int field, final Context context) {
+//		mHandler.post(new Runnable() {
+//			public void run() { 
+//				try {
+//					response.value = info(context).getSystemInfo(InfoManager.this, field);
+//					done(response);
+//				} catch (WifiStateException e) {
+//					failedRequests.add(this);
+//					onWrongConnectionState(e.getState());
+//				}
+//			}
+//		});
+		mHandler.post(new Command<String>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = info(context).getSystemInfo(InfoManager.this, field);
 			}
+			
 		});
 	}
 	
@@ -56,13 +70,23 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	 * @param response Response object
 	 * @param mediaType Media type
 	 */
-	public void getShares(final DataResponse<ArrayList<FileLocation>> response, final int mediaType) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = info().getShares(InfoManager.this, mediaType);
-				done(response);
+	public void getShares(final DataResponse<ArrayList<FileLocation>> response, final int mediaType, final Context context) {
+		mHandler.post(new Command<ArrayList<FileLocation>>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = info(context).getShares(InfoManager.this, mediaType);
 			}
 		});
+//		mHandler.post(new Runnable() {
+//			public void run() { 
+//				try {
+//					response.value = info(context).getShares(InfoManager.this, mediaType);
+//					onFinish(response);
+//				} catch (WifiStateException e) {
+//					onWrongConnectionState(e.getState(),null);
+//				}
+//			}
+//		});
 	}
 	
 	/**
@@ -74,13 +98,24 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	 * @param limit    Limit (0 for none)
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = info().getDirectory(InfoManager.this, path, mask, offset, limit);
-				done(response);
+	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit, final Context context) {
+		mHandler.post(new Command<ArrayList<FileLocation>>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = info(context).getDirectory(InfoManager.this, path, mask, offset, limit);
 			}
+			
 		});
+//		mHandler.post(new Runnable() {
+//			public void run() { 
+//				try {
+//					response.value = info(context).getDirectory(InfoManager.this, path, mask, offset, limit);
+//					onFinish(response);
+//				} catch (WifiStateException e) {
+//					onWrongConnectionState(e.getState(),null);
+//				}
+//			}
+//		});
 	}
 	
 	/**
@@ -89,13 +124,23 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	 * @param path     Path to the directory
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = info().getDirectory(InfoManager.this, path);
-				done(response);
+	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final Context context) {
+		mHandler.post(new Command<ArrayList<FileLocation>>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = info(context).getDirectory(InfoManager.this, path);
 			}
+			
 		});
+//		mHandler.post(new Runnable() {
+//			public void run() { 
+//				try {
+//					response.value = info(context).getDirectory(InfoManager.this, path);
+//					onFinish(response);
+//				} catch (WifiStateException e) {
+//					onWrongConnectionState(e.getState(),null);
+//				}
+//			}
+//		});
 	}
-
 }

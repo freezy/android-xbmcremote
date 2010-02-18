@@ -115,14 +115,14 @@ public class SongListController extends ListController implements IController {
 							"Playing \"" + song.title + "\" by " + song.artist + "...", 
 							"Error playing song!",
 							true
-						), song);
+						), song, mActivity.getApplicationContext());
 					} else {
 						mMusicManager.play(new QueryResponse(
 							mActivity, 
 							"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
 							"Error playing song!",
 							true
-						), mAlbum, song);
+						), mAlbum, song, mActivity.getApplicationContext());
 					}
 				}
 			});
@@ -148,7 +148,7 @@ public class SongListController extends ListController implements IController {
 						setNoDataMessage("No songs found", R.drawable.icon_song_dark);
 					}
 				}
-			}, album);
+			}, album, mActivity.getApplicationContext());
 			
 		} else if (artist != null) {
 			setTitle(artist.name + " - Songs...");
@@ -162,7 +162,7 @@ public class SongListController extends ListController implements IController {
 						setNoDataMessage("No songs found.", R.drawable.icon_song_dark);
 					}
 				}
-			}, artist);
+			}, artist, mActivity.getApplicationContext());
 			
 		} else if (genre != null) {
 			setTitle(genre.name + " - Songs...");
@@ -176,7 +176,7 @@ public class SongListController extends ListController implements IController {
 						setNoDataMessage("No songs found.", R.drawable.icon_song_dark);
 					}
 				}
-			}, genre);
+			}, genre, mActivity.getApplicationContext());
 		}
 	}
 	
@@ -195,9 +195,9 @@ public class SongListController extends ListController implements IController {
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				if (mAlbum == null) {
-					mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Song added to playlist.", "Error adding song!"), song);
+					mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Song added to playlist.", "Error adding song!"), song, mActivity.getApplicationContext());
 				} else {
-					mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, song);
+					mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, song, mActivity.getApplicationContext());
 				}
 				break;
 			case ITEM_CONTEXT_PLAY:
@@ -207,14 +207,14 @@ public class SongListController extends ListController implements IController {
 						"Playing \"" + song.title + "\" by " + song.artist + "...", 
 						"Error playing song!",
 						true
-					), song);
+					), song, mActivity.getApplicationContext());
 				} else {
 					mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
 						"Error playing song!",
 						true
-					), mAlbum, song);
+					), mAlbum, song, mActivity.getApplicationContext());
 				}
 				break;
 			default:
@@ -250,21 +250,21 @@ public class SongListController extends ListController implements IController {
 						"Playing all songs of album " + album.name + " by " + album.artist + "...", 
 						"Error playing songs!",
 						true
-					), album);			
+					), album, mActivity.getApplicationContext());			
 			} else if (artist != null) {
 				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all songs from " + artist.name + "...", 
 						"Error playing songs!",
 						true
-					), artist);
+					), artist, mActivity.getApplicationContext());
 			} else if (genre != null) {
 				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of genre " + genre.name + "...", 
 						"Error playing songs!",
 						true
-					), genre);
+					), genre, mActivity.getApplicationContext());
 			}
 			break;
 		case MENU_SORT_BY_ALBUM_ASC:

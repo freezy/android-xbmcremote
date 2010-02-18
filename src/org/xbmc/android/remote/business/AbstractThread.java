@@ -27,7 +27,9 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.presentation.INotifiableController;
+import org.xbmc.httpapi.WifiStateException;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -62,18 +64,20 @@ abstract public class AbstractThread extends Thread {
 	 * Returns the MusicClient class
 	 * @param manager Manager reference
 	 * @return
+	 * @throws WifiStateException 
 	 */
-	protected IMusicClient music(INotifiableManager manager) {
-		return ClientFactory.getMusicClient(manager);
+	protected IMusicClient music(INotifiableManager manager, final Context context) throws WifiStateException {
+		return ClientFactory.getMusicClient(manager, context);
 	}	
 	
 	/**
 	 * Returns the VideoClient class
 	 * @param manager Manager referencet
 	 * @return
+	 * @throws WifiStateException 
 	 */
-	protected IVideoClient video(INotifiableManager manager) {
-		return ClientFactory.getVideoClient(manager);
+	protected IVideoClient video(INotifiableManager manager, final Context context) throws WifiStateException {
+		return ClientFactory.getVideoClient(manager, context);
 	}	
 	
 	/**
@@ -82,7 +86,8 @@ abstract public class AbstractThread extends Thread {
 	 * @param response Response object
 	 */
 	protected void done(INotifiableController controller, DataResponse<?> response) {
-		controller.runOnUI(response);
+		if(controller != null)
+			controller.runOnUI(response);
 	}
 	
 	/**

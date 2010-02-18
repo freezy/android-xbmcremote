@@ -31,6 +31,8 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.xbmc.android.remote.business.Command;
+import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 
@@ -129,6 +131,12 @@ public class BroadcastListener extends Observable implements Runnable {
 			public void onMessage(int code, String message) { }
 			public void onMessage(String message) { }
 			public void onError(Exception e) { }
+			public void onFinish(DataResponse<?> response) {
+			}
+			public void onWrongConnectionState(int state, Command<?> cmd) {
+			}
+			public void retryAll() {
+			}
 		};
 	}
 	

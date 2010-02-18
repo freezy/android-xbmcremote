@@ -155,8 +155,8 @@ public class NowPlayingController extends AbstractController implements INotifia
 							break;
 						case PlayStatus.STOPPED:
 							final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
-							mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId);
-							mControlManager.setPlaylistPos(doNothing, mLastPosition < 0 ? 0 : mLastPosition);
+							mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
+							mControlManager.setPlaylistPos(doNothing, mLastPosition < 0 ? 0 : mLastPosition, mActivity.getApplicationContext());
 							break;
 					}
 				} catch (IOException e) { }
@@ -171,7 +171,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 		});
 	}
 	public void seek(int progress) {
-		mControlManager.seek(new DataResponse<Boolean>(), SeekType.absolute, progress);
+		mControlManager.seek(new DataResponse<Boolean>(), SeekType.absolute, progress, mActivity.getApplicationContext());
 	}
 	
 

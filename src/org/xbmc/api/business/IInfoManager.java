@@ -23,8 +23,11 @@ package org.xbmc.api.business;
 
 import java.util.ArrayList;
 
+import org.xbmc.android.remote.business.Command;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.type.DirectoryMask;
+
+import android.content.Context;
 
 /**
  * This is the interface between the presentation layer and the business layer.
@@ -39,14 +42,14 @@ public interface IInfoManager extends IManager {
 	 * @param response Response object
 	 * @param field Field to return
 	 */
-	public void getSystemInfo(final DataResponse<String> response, final int field);
+	public void getSystemInfo(final DataResponse<String> response, final int field, final Context context);
 	
 	/**
 	 * Returns all defined shares of a media type
 	 * @param response Response object
 	 * @param mediaType Media type
 	 */
-	public void getShares(final DataResponse<ArrayList<FileLocation>> response, final int mediaType);
+	public void getShares(final DataResponse<ArrayList<FileLocation>> response, final int mediaType, final Context context);
 	
 	/**
 	 * Returns the contents of a directory
@@ -57,7 +60,7 @@ public interface IInfoManager extends IManager {
 	 * @param limit    Limit (0 for none)
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit);
+	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit, final Context context);
 	
 	/**
 	 * Returns the contents of a directory
@@ -65,6 +68,6 @@ public interface IInfoManager extends IManager {
 	 * @param path     Path to the directory
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path);
+	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final Context context);
 	
 }

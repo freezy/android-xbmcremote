@@ -27,6 +27,8 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.type.SeekType;
 
+import android.content.Context;
+
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.InfoClient} class.
  * 
@@ -39,13 +41,20 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param response Response object
 	 * @param filename File to play
 	 */
-	public void playFile(final DataResponse<Boolean> response, final String filename) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = control().playFile(ControlManager.this, filename);
-				done(response);
+	public void playFile(final DataResponse<Boolean> response, final String filename, final Context context) {
+		mHandler.post(new Command<Boolean>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).playFile(ControlManager.this, filename);
 			}
+			
 		});
+//		mHandler.post(new Runnable() {
+//			public void run() { 
+//				response.value = control(context).playFile(ControlManager.this, filename);
+//				onFinish(response);
+//			}
+//		});
 	}
 	
 	/**
@@ -54,12 +63,19 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param url An URL pointing to a supported media file
 	 * @return true on success, false otherwise.
 	 */
-	public void playUrl(final DataResponse<Boolean> response, final String url) {
-		mHandler.post(new Runnable() {
-			public void run() {
-				response.value = control().playUrl(ControlManager.this, url);
-				done(response);
+	public void playUrl(final DataResponse<Boolean> response, final String url, final Context context) {
+//		mHandler.post(new Runnable() {
+//			public void run() {
+//				response.value = control(context).playUrl(ControlManager.this, url);
+//				onFinish(response);
+//			}
+//		});
+		mHandler.post(new Command<Boolean>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).playUrl(ControlManager.this, url);
 			}
+			
 		});
 	}
 	
@@ -68,11 +84,17 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param response Response object
 	 * @return true on success, false otherwise.
 	 */
-	public void playNext(final DataResponse<Boolean> response) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = control().playNext(ControlManager.this);
-				done(response);
+	public void playNext(final DataResponse<Boolean> response, final Context context) {
+//		mHandler.post(new Runnable() {
+//			public void run() { 
+//				response.value = control(context).playNext(ControlManager.this);
+//				onFinish(response);
+//			}
+//		});
+		mHandler.post(new Command<Boolean>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).playNext(ControlManager.this);
 			}
 		});
 	}
@@ -82,11 +104,17 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param response Response object
 	 * @param fileOrFolder File to play
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = control().addToPlaylist(ControlManager.this, fileOrFolder);
-				done(response);
+	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder, final Context context) {
+//		mHandler.post(new Runnable() {
+//			public void run() { 
+//				response.value = control(context).addToPlaylist(ControlManager.this, fileOrFolder);
+//				onFinish(response);
+//			}
+//		});
+		mHandler.post(new Command<Boolean>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).addToPlaylist(ControlManager.this, fileOrFolder);
 			}
 		});
 	}
@@ -105,11 +133,17 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param progress Progress
 	 * @return true on success, false otherwise.
 	 */
-	public void seek(final DataResponse<Boolean> response, final SeekType type, final int progress) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = control().seek(ControlManager.this, type, progress);
-				done(response);
+	public void seek(final DataResponse<Boolean> response, final SeekType type, final int progress, final Context context) {
+//		mHandler.post(new Runnable() {
+//			public void run() { 
+//				response.value = control(context).seek(ControlManager.this, type, progress);
+//				onFinish(response);
+//			}
+//		});
+		mHandler.post(new Command<Boolean>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).seek(ControlManager.this, type, progress);
 			}
 		});
 	}
@@ -121,11 +155,17 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param response Response object
 	 * @param mediaType
 	 */
-	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType) {
-		mHandler.post(new Runnable() {
-			public void run() {
-				response.value = control().updateLibrary(ControlManager.this, mediaType);
-				done(response);
+	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType, final Context context) {
+//		mHandler.post(new Runnable() {
+//			public void run() {
+//				response.value = control(context).updateLibrary(ControlManager.this, mediaType);
+//				onFinish(response);
+//			}
+//		});
+		mHandler.post(new Command<Boolean>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).updateLibrary(ControlManager.this, mediaType);
 			}
 		});
 	}
@@ -135,11 +175,17 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param response Response object
 	 * @param filename File to show
 	 */
-	public void showPicture(final DataResponse<Boolean> response, final String filename) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = control().showPicture(ControlManager.this, filename);
-				done(response);
+	public void showPicture(final DataResponse<Boolean> response, final String filename, final Context context) {
+//		mHandler.post(new Runnable() {
+//			public void run() { 
+//				response.value = control(context).showPicture(ControlManager.this, filename);
+//				onFinish(response);
+//			}
+//		});
+		mHandler.post(new Command<Boolean>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).showPicture(ControlManager.this, filename);
 			}
 		});
 	}
@@ -149,11 +195,17 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * Returns what's currently playing.
 	 * @param response
 	 */
-	public void getCurrentlyPlaying(final DataResponse<ICurrentlyPlaying> response) {
-		mHandler.post(new Runnable() {
-			public void run() {
-				response.value = control().getCurrentlyPlaying(ControlManager.this);
-				done(response);
+	public void getCurrentlyPlaying(final DataResponse<ICurrentlyPlaying> response, final Context context) {
+//		mHandler.post(new Runnable() {
+//			public void run() {
+//				response.value = control(context).getCurrentlyPlaying(ControlManager.this);
+//				onFinish(response);
+//			}
+//		});
+		mHandler.post(new Command<ICurrentlyPlaying>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).getCurrentlyPlaying(ControlManager.this);
 			}
 		});
 	}
@@ -163,11 +215,17 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * Returns the current playlist identifier
 	 * @param response Response object
 	 */
-	public void getPlaylistId(final DataResponse<Integer> response) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = control().getPlaylistId(ControlManager.this);
-				done(response);
+	public void getPlaylistId(final DataResponse<Integer> response, final Context context) {
+//		mHandler.post(new Runnable() {
+//			public void run() { 
+//				response.value = control(context).getPlaylistId(ControlManager.this);
+//				onFinish(response);
+//			}
+//		});
+		mHandler.post(new Command<Integer>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).getPlaylistId(ControlManager.this);
 			}
 		});
 	}
@@ -177,11 +235,17 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param response Response object
 	 * @param id Playlist identifier
 	 */
-	public void setPlaylistId(final DataResponse<Boolean> response, final int id) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = control().setPlaylistId(ControlManager.this, id);
-				done(response);
+	public void setPlaylistId(final DataResponse<Boolean> response, final int id, final Context context) {
+//		mHandler.post(new Runnable() {
+//			public void run() { 
+//				response.value = control(context).setPlaylistId(ControlManager.this, id);
+//				onFinish(response);
+//			}
+//		});
+		mHandler.post(new Command<Boolean>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).setPlaylistId(ControlManager.this, id);
 			}
 		});
 	}
@@ -191,11 +255,17 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param response Response object
 	 * @param position New playlist position
 	 */
-	public void setPlaylistPos(final DataResponse<Boolean> response, final int position) {
-		mHandler.post(new Runnable() {
-			public void run() { 
-				response.value = control().setPlaylistPos(ControlManager.this, position);
-				done(response);
+	public void setPlaylistPos(final DataResponse<Boolean> response, final int position, final Context context) {
+//		mHandler.post(new Runnable() {
+//			public void run() { 
+//				response.value = control(context).setPlaylistPos(ControlManager.this, position);
+//				onFinish(response);
+//			}
+//		});
+		mHandler.post(new Command<Boolean>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).setPlaylistPos(ControlManager.this, position);
 			}
 		});
 	}

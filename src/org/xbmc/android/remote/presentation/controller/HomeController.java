@@ -147,7 +147,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						final Button versionButton = (Button)mActivity.findViewById(R.id.home_version_button);
 						versionButton.setText("Connecting...");
 						Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
-						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
+						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
 					}
 				}
 			});
@@ -246,7 +246,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						break;
 					case HOME_ACTION_RECONNECT:
 						((Button)mActivity.findViewById(R.id.home_version_button)).setText("Reconnecting...");
-						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
+						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
 						break;
 					case HOME_ACTION_WOL:
 						final Host host = HostFactory.host;
@@ -324,7 +324,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 		@Override
 		public void onFinish() {
 			((Button)mActivity.findViewById(R.id.home_version_button)).setText("Attempting to reconnect...");
-			mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
+			mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
 		}
 
 		@Override
@@ -366,15 +366,15 @@ public class HomeController extends AbstractController implements INotifiableCon
 			switch (mType) {
 				case HomeActivity.MENU_COVER_DOWNLOAD_MOVIES:
 					final IVideoManager vm = ManagerFactory.getVideoManager(HomeController.this);
-					final ArrayList<Movie> movies = vm.getMovies();
+					final ArrayList<Movie> movies = vm.getMovies(mActivity.getApplicationContext());
 					return new ArrayList<ICoverArt>(movies);
 				case HomeActivity.MENU_COVER_DOWNLOAD_MUSIC:
 					final IMusicManager mm = ManagerFactory.getMusicManager(HomeController.this);
-					final ArrayList<Album> albums = mm.getAlbums();
+					final ArrayList<Album> albums = mm.getAlbums(mActivity.getApplicationContext());
 					return new ArrayList<ICoverArt>(albums);
 				case HomeActivity.MENU_COVER_DOWNLOAD_ACTORS:
 					final IVideoManager vm2 = ManagerFactory.getVideoManager(HomeController.this);
-					final ArrayList<Actor> actors = vm2.getActors();
+					final ArrayList<Actor> actors = vm2.getActors(mActivity.getApplicationContext());
 					return new ArrayList<ICoverArt>(actors);
 				default:
 					return null;
@@ -442,7 +442,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						if (DEBUG) Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
 						progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
 					}
-				}, cover, ThumbSize.BIG, null);
+				}, cover, ThumbSize.BIG, null, mActivity.getApplicationContext());
 			} else {
 				mActivity.dismissDialog(type);
 				progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);
@@ -464,6 +464,6 @@ public class HomeController extends AbstractController implements INotifiableCon
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
 		mInfoManager.setController(this);
-		mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION);
+		mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
 	}
 }

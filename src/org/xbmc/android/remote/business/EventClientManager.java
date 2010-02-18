@@ -30,6 +30,7 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
 /**
@@ -92,7 +93,29 @@ public class EventClientManager implements INotifiableManager, IEventClientManag
 		}
 	}
 
-	public void getCover(DataResponse<Bitmap> response, ICoverArt cover, int thumbSize, Bitmap defaultCover) {
+	public void getCover(DataResponse<Bitmap> response, ICoverArt cover, int thumbSize, Bitmap defaultCover,
+			final Context context) {
 		// only a stub;
+	}
+
+	public void onWrongConnectionState(int state) {
+		if (mController != null) {
+			mController.onWrongConnectionState(state, null, null);
+		}
+	}
+
+	public void onFinish(DataResponse<?> response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onWrongConnectionState(int state, Command<?> cmd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void retryAll() {
+		// TODO Auto-generated method stub
+		
 	}
 }

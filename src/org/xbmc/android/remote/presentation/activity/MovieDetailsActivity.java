@@ -40,6 +40,7 @@ import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -98,7 +99,6 @@ public class MovieDetailsActivity extends Activity {
 		mConfigurationManager.initKeyguard();
 	}
 	
-	
 	private static class MovieDetailsController extends AbstractController implements INotifiableController, IController {
 		
 		private IVideoManager mVideoManager;
@@ -122,7 +122,7 @@ public class MovieDetailsActivity extends Activity {
 								mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 							}
 						}
-					}, mMovie.getPath());
+					}, mMovie.getPath(), mActivity.getApplicationContext());
 				}
 			});
 		}
@@ -136,7 +136,7 @@ public class MovieDetailsActivity extends Activity {
 						imageView.setImageBitmap(value);
 					}
 				}
-			}, mMovie, ThumbSize.BIG, null);
+			}, mMovie, ThumbSize.BIG, null, mActivity.getApplicationContext());
 		}
 		
 		public void updateMovieDetails(final TextView numVotesView, final TextView studioView, final TextView plotView, final TextView parentalView, final Button trailerButton, final LinearLayout dataLayout) {
@@ -158,7 +158,7 @@ public class MovieDetailsActivity extends Activity {
 											toast.show();
 										}
 									}
-								}, movie.trailerUrl);
+								}, movie.trailerUrl, mActivity.getApplicationContext());
 							}
 						});
 					}
@@ -178,7 +178,7 @@ public class MovieDetailsActivity extends Activity {
 										((ImageButton)view.findViewById(R.id.actor_image)).setImageBitmap(value);
 									}
 								}
-							}, actor, ThumbSize.SMALL, null);
+							}, actor, ThumbSize.SMALL, null, mActivity.getApplicationContext());
 							
 							img.setTag(actor);
 							img.setOnClickListener(new OnClickListener() {
@@ -196,7 +196,7 @@ public class MovieDetailsActivity extends Activity {
 						}
 					}
 				}
-			}, mMovie);
+			}, mMovie, mActivity.getApplicationContext());
 		}
 
 		public void onActivityPause() {

@@ -105,7 +105,7 @@ public class MusicPlaylistController extends ListController implements IControll
 				public void run() {
 					mCurrentPosition = value;
 				}
-			});
+			}, mActivity.getApplicationContext());
 			
 			mMusicManager.getPlaylist(new DataResponse<ArrayList<String>>() {
 	  	  		public void run() {
@@ -127,13 +127,13 @@ public class MusicPlaylistController extends ListController implements IControll
 					}
 
 	  	  		}
-	  	  	});
+	  	  	}, mActivity.getApplicationContext());
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					final PlaylistItem item = (PlaylistItem)mList.getAdapter().getItem(((ThreeLabelsItemView)view).position);
 					final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
-					mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId);
-					mMusicManager.setPlaylistSong(doNothing, item.position);
+					mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
+					mMusicManager.setPlaylistSong(doNothing, item.position, mActivity.getApplicationContext());
 				}
 			});
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_song_light);
@@ -204,8 +204,8 @@ public class MusicPlaylistController extends ListController implements IControll
 							break;
 						case PlayStatus.STOPPED:
 							final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
-							mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId);
-							mControlManager.setPlaylistPos(doNothing, mLastPosition < 0 ? 0 : mLastPosition);
+							mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
+							mControlManager.setPlaylistPos(doNothing, mLastPosition < 0 ? 0 : mLastPosition, mActivity.getApplicationContext());
 							break;
 					}
 				} catch (IOException e) { }
@@ -270,10 +270,10 @@ public class MusicPlaylistController extends ListController implements IControll
 		final PlaylistItem playlistItem = (PlaylistItem)mList.getAdapter().getItem(((OneLabelItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_PLAY:
-				mMusicManager.setPlaylistSong(new DataResponse<Boolean>(), playlistItem.position);
+				mMusicManager.setPlaylistSong(new DataResponse<Boolean>(), playlistItem.position, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_REMOVE:
-				mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path);
+				mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path, mActivity.getApplicationContext());
 				break;
 			default:
 				return;

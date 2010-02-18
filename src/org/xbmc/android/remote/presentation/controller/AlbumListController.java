@@ -192,7 +192,7 @@ public class AlbumListController extends ListController implements IController {
 							Toast toast = Toast.makeText(mActivity, message, Toast.LENGTH_SHORT);
 							toast.show();
 						}
-					}, "music");
+					}, "music", mActivity.getApplicationContext());
 				}
 			})
 			.setNegativeButton("Uh, no.", new DialogInterface.OnClickListener() {
@@ -220,7 +220,7 @@ public class AlbumListController extends ListController implements IController {
 						setNoDataMessage("No albums found.", R.drawable.icon_album_dark);
 					}
 				}
-			}, artist);
+			}, artist, mActivity.getApplicationContext());
 			
 		} else if (genre != null) {					// albums of a genre
 			setTitle(genre.name + " - Albums...");
@@ -235,7 +235,7 @@ public class AlbumListController extends ListController implements IController {
 						setNoDataMessage("No albums found.", R.drawable.icon_album_dark);
 					}
 				}
-			}, genre);
+			}, genre, mActivity.getApplicationContext());
 			
 		} else {
 			if (mCompilationsOnly) {				// compilations
@@ -251,7 +251,7 @@ public class AlbumListController extends ListController implements IController {
 							setNoDataMessage("No compilations found.", R.drawable.icon_album_dark);
 						}
 					}
-				});
+				}, mActivity.getApplicationContext());
 			} else {
 				setTitle("Albums...");				// all albums
 				showOnLoading();
@@ -265,7 +265,7 @@ public class AlbumListController extends ListController implements IController {
 							setNoDataMessage("No Albums found.", R.drawable.icon_album_dark);
 						}
 					}
-				});
+				}, mActivity.getApplicationContext());
 			}
 		}
 	}
@@ -287,7 +287,7 @@ public class AlbumListController extends ListController implements IController {
 						mActivity, 
 						"Adding album \"" + album.name + "\" by " + album.artist + " to playlist...", 
 						"Error adding album!"
-					), album);
+					), album, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_PLAY:
 				mMusicManager.play(new QueryResponse(
@@ -295,10 +295,10 @@ public class AlbumListController extends ListController implements IController {
 						"Playing album \"" + album.name + "\" by " + album.artist + "...", 
 						"Error playing album!",
 						true
-					), album);
+					), album, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_INFO:
-				DialogFactory.getAlbumDetail(mMusicManager, mActivity, album).show();
+				DialogFactory.getAlbumDetail(mMusicManager, mActivity, album, mActivity.getApplicationContext()).show();
 				break;
 			default:
 				return;
@@ -331,21 +331,21 @@ public class AlbumListController extends ListController implements IController {
 						"Playing all albums by " + artist.name + "...", 
 						"Error playing songs!",
 						true
-					), genre);			
+					), genre, mActivity.getApplicationContext());			
 			} else if (genre != null && artist == null) {
 				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all albums of genre " + genre.name + "...", 
 						"Error playing songs!",
 						true
-					), genre);
+					), genre, mActivity.getApplicationContext());
 			} else if (genre != null && artist != null) {
 				mMusicManager.play(new QueryResponse(
 						mActivity, 
 						"Playing all songs of genre " + genre.name + " by " + artist.name + "...", 
 						"Error playing songs!",
 						true
-					), artist, genre);
+					), artist, genre, mActivity.getApplicationContext());
 			}
 			break;
 		case MENU_SORT_BY_ALBUM_ASC:

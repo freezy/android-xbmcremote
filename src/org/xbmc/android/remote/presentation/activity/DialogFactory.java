@@ -36,6 +36,7 @@ import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.TypedValue;
@@ -61,7 +62,7 @@ public abstract class DialogFactory {
 	 * @param album    Album to display
 	 * @return Album details dialog
 	 */
-	public static Dialog getAlbumDetail(final IMusicManager musicManager, final Activity activity, final Album album) {
+	public static Dialog getAlbumDetail(final IMusicManager musicManager, final Activity activity, final Album album, final Context context) {
 		
 		final Dialog dialog = new Dialog(activity);
 		dialog.setContentView(R.layout.albuminfo);
@@ -89,18 +90,18 @@ public abstract class DialogFactory {
 					genresText.setVisibility(View.GONE);
 				}
 			}
-		}, album);
+		}, album, context);
 		dialog.setTitle(album.name);
 
 		// set the button's listener
 		queueButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				musicManager.play(new DataResponse<Boolean>(), album);
+				musicManager.play(new DataResponse<Boolean>(), album, context);
 			}
 		});
 		playButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				musicManager.addToPlaylist(new DataResponse<Boolean>(), album);
+				musicManager.addToPlaylist(new DataResponse<Boolean>(), album, context);
 			}
 		});
 		
@@ -113,11 +114,11 @@ public abstract class DialogFactory {
         			cover.setImageBitmap(value);
         		}
         	}
-        }, album, ThumbSize.BIG, null);
+        }, album, ThumbSize.BIG, null, context);
         
 		cover.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				getTrackDetail(musicManager, activity, album).show();
+				getTrackDetail(musicManager, activity, album, context).show();
 			}
 		});
 		return dialog;
@@ -129,7 +130,7 @@ public abstract class DialogFactory {
 	 * @param album
 	 * @return Track listing dialog
 	 */
-	public static Dialog getTrackDetail(final IMusicManager musicManager, final Activity activity, final Album album) {
+	public static Dialog getTrackDetail(final IMusicManager musicManager, final Activity activity, final Album album, final Context context) {
 		
 		Dialog dialog = new Dialog(activity);
 		dialog.setContentView(R.layout.albumtracks);
@@ -190,7 +191,7 @@ public abstract class DialogFactory {
 					trackTable.addView(tr);
 				}		
 			}
-		}, album);
+		}, album, context);
 		return dialog;
 	}
 }

@@ -115,7 +115,7 @@ public class FileListController extends ListController implements IController {
 											mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 										}
 									}
-								}, item.path);
+								}, item.path, mActivity.getApplicationContext());
 								break;
 								
 							default:
@@ -125,7 +125,7 @@ public class FileListController extends ListController implements IController {
 											mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 										}
 									}
-								}, item.path);									
+								}, item.path, mActivity.getApplicationContext());									
 						}
 						
 
@@ -202,9 +202,9 @@ public class FileListController extends ListController implements IController {
 		};
 		
 		if (mGettingUrl.length() == 0) {
-			mInfoManager.getShares(mediaListHandler, mMediaType);
+			mInfoManager.getShares(mediaListHandler, mMediaType, mActivity.getApplicationContext());
 		} else {
-			mInfoManager.getDirectory(mediaListHandler, mGettingUrl);
+			mInfoManager.getDirectory(mediaListHandler, mGettingUrl, mActivity.getApplicationContext());
 		}
 	}
 	

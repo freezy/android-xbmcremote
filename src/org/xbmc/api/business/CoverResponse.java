@@ -27,7 +27,7 @@ public class CoverResponse extends DataResponse<Bitmap> {
 		} else {
 			mIsLoading = true;
 			mMostRecentCover = null;
-			mManager.getCover(this, cover, ThumbSize.SMALL, mDefaultCover);
+			mManager.getCover(this, cover, ThumbSize.SMALL, mDefaultCover, mView.getContext());
 		}
 	}
 	
@@ -36,7 +36,7 @@ public class CoverResponse extends DataResponse<Bitmap> {
 			mView.setCover(value);
 			mIsLoading = false;
 		} else {
-			mManager.getCover(this, mMostRecentCover, ThumbSize.SMALL, mDefaultCover);
+			mManager.getCover(this, mMostRecentCover, ThumbSize.SMALL, mDefaultCover, mView.getContext());
 			mMostRecentCover = null;
 		}
 	}

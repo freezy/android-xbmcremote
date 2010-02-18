@@ -31,11 +31,13 @@ import java.util.HashSet;
 
 import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ClientFactory;
+import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.info.PlayStatus;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -72,8 +74,8 @@ public class NowPlayingPollerThread extends Thread {
 	public static final int MESSAGE_COVER_CHANGED = 668;
 	public static final int MESSAGE_PLAYSTATE_CHANGED = 669;
 
-	private final IInfoClient mInfo;
-	private final IControlClient mControl;
+	private IInfoClient mInfo;
+	private IControlClient mControl;
 	private final HashSet<Handler> mSubscribers;
 	
 	private String mCoverPath;
@@ -96,9 +98,23 @@ public class NowPlayingPollerThread extends Thread {
 				Toast toast = Toast.makeText(context, "Poller Error: " + e.getMessage(), Toast.LENGTH_LONG);
 				toast.show();
 			}
+			public void onFinish(DataResponse<?> response) {
+			}
+			public void onWrongConnectionState(int state, Command<?> cmd) {
+			}
+			public void retryAll() {
+			}
 		};
-		mControl = ClientFactory.getControlClient(mManagerStub);
-  	  	mInfo = ClientFactory.getInfoClient(mManagerStub);
+		try {
+			mControl = ClientFactory.getControlClient(mManagerStub, context);
+		} catch (WifiStateException e2) {
+			mControl = null;
+		}
+  	  	try {
+			mInfo = ClientFactory.getInfoClient(mManagerStub, context);
+		} catch (WifiStateException e1) {
+			mInfo = null;
+		}
   	  	mSubscribers = new HashSet<Handler>();
 	}
 	

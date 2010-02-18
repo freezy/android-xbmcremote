@@ -21,8 +21,12 @@
 
 package org.xbmc.android.remote.business;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IInfoClient;
@@ -32,7 +36,9 @@ import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.CacheType;
 import org.xbmc.api.type.ThumbSize;
+import org.xbmc.httpapi.WifiStateException;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
@@ -61,10 +67,11 @@ public abstract class AbstractManager implements INotifiableManager {
 	public static final int PREF_SORT_KEY_GENRE = 4;
 	public static final int PREF_SORT_KEY_FILEMODE = 5;
 	
-	private INotifiableController mController = null;
+	protected INotifiableController mController = null;
 	
 	protected Handler mHandler;
 	
+	protected List<Runnable> failedRequests = new ArrayList<Runnable>();
 	/**
 	 * Sets the handler used in the looping thread
 	 * @param handler
@@ -85,43 +92,47 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * Returns the InfoClient class
 	 * @param response Response object
 	 * @return
+	 * @throws WifiStateException 
 	 */
-	protected IInfoClient info() {
-		return ClientFactory.getInfoClient(this);
+	protected IInfoClient info(Context context) throws WifiStateException {
+		return ClientFactory.getInfoClient(this, context);
 	}
 	
 	/**
 	 * Returns the ControlClient class
 	 * @param response Response object
 	 * @return
+	 * @throws WifiStateException 
 	 */
-	protected IControlClient control() {
-		return ClientFactory.getControlClient(this);
+	protected IControlClient control(Context context) throws WifiStateException {
+		return ClientFactory.getControlClient(this, context);
 	}
 	
 	/**
 	 * Returns the VideoClient class
 	 * @param response Response object
 	 * @return
+	 * @throws WifiStateException 
 	 */
-	protected IVideoClient video() {
-		return ClientFactory.getVideoClient(this);
+	protected IVideoClient video(Context context) throws WifiStateException {
+		return ClientFactory.getVideoClient(this, context);
 	}
 	
 	/**
 	 * Returns the MusicClient class
 	 * @param response Response object
 	 * @return
+	 * @throws WifiStateException 
 	 */
-	protected IMusicClient music() {
-		return ClientFactory.getMusicClient(this);
+	protected IMusicClient music(Context context) throws WifiStateException {
+		return ClientFactory.getMusicClient(this, context);
 	}
 	
 	/**
 	 * Calls the UI thread's callback code.
 	 * @param response Response object
 	 */
-	protected void done(DataResponse<?> response) {
+	public void onFinish(DataResponse<?> response) {
 		if (mController != null) {
 			mController.runOnUI(response);
 		}else{
@@ -134,22 +145,23 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * helper methods below.
 	 * @param response Response object
 	 */
-	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final Bitmap defaultCover) {
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, 
+			final Bitmap defaultCover, final Context context) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover.getCrc() != 0L) {
 					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
 					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
 						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Trying memory");
-						getCoverFromMem(response, cover, thumbSize, defaultCover);
+						getCoverFromMem(response, cover, thumbSize, defaultCover, context);
 					} else {
 						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Trying disk directly (size not mem-cached)");
-						getCoverFromDisk(response, cover, thumbSize);
+						getCoverFromDisk(response, cover, thumbSize, context);
 					}
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] no crc, skipping.");
 					response.value = null;
-					done(response);
+					onFinish(response);
 				}
 			}
 		});
@@ -160,19 +172,20 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @param response Response object
 	 * @param cover    Get cover for this object
 	 */
-	protected void getCoverFromMem(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, Bitmap defaultCover) {
+	protected void getCoverFromMem(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, 
+			Bitmap defaultCover, final Context context) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in mem cache..");
 		MemCacheThread.get().getCover(new DataResponse<Bitmap>() {
 			public void run() {
 				if (value == null) {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] empty");
 					// then, try sdcard cache
-					getCoverFromDisk(response, cover, thumbSize);
+					getCoverFromDisk(response, cover, thumbSize, context);
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] FOUND in memory!");
 					response.value = value;
 					response.cacheType = CacheType.MEMORY;
-					done(response);
+					onFinish(response);
 				}
 			}
 		}, cover, thumbSize, mController, defaultCover);
@@ -184,7 +197,8 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @param cover     Get cover for this object
 	 * @param thumbSize Cover size
 	 */
-	protected void getCoverFromDisk(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
+	protected void getCoverFromDisk(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize,
+			final Context context) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Checking in disk cache..");
 		DiskCacheThread.get().getCover(new DataResponse<Bitmap>() {
 			public void run() {
@@ -192,13 +206,13 @@ public abstract class AbstractManager implements INotifiableManager {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Disk cache empty.");
 					if (response.postCache()) {
 						// well, let's download
-						getCoverFromNetwork(response, cover, thumbSize);
+						getCoverFromNetwork(response, cover, thumbSize, context);
 					}
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] FOUND on disk!");
 					response.value = value;
 					response.cacheType = CacheType.SDCARD;
-					done(response);
+					onFinish(response);
 				}
 			}
 		}, cover, thumbSize, mController);
@@ -210,7 +224,8 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @param cover     Get cover for this object
 	 * @param thumbSize Cover size
 	 */
-	protected void getCoverFromNetwork(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize) {
+	protected void getCoverFromNetwork(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize,
+			final Context context) {
 		if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Downloading..");
 		DownloadThread.get().getCover(new DataResponse<Bitmap>() {
 			public void run() {
@@ -221,9 +236,19 @@ public abstract class AbstractManager implements INotifiableManager {
 					response.cacheType = CacheType.NETWORK;
 					response.value = value;
 				}
-				done(response); // callback in any case, since we don't go further than that.
+				onFinish(response); // callback in any case, since we don't go further than that.
 			}
-		}, cover, thumbSize, mController, this);
+		}, cover, thumbSize, mController, this, context);
+	}
+	
+	/**
+	 * Commands failed because of wrong connection state are special. After the connection has the right state we
+	 * could retry the command
+	 */
+	public void onWrongConnectionState(int state, Command<?> cmd) {
+		failedRequests.add(cmd);
+		if (mController != null)
+			mController.onWrongConnectionState(state, this, cmd);
 	}
 
 	public void onError(Exception e) {
@@ -240,5 +265,21 @@ public abstract class AbstractManager implements INotifiableManager {
 
 	public void onMessage(int code, String message) {
 		onMessage(message);
+	}
+	
+	public void retryAll() {
+		Log.d(TAG, "Posting retries to the queue");
+		mHandler.post(new Runnable() {
+			public void run() {
+				Log.d(TAG, "runnable started, posting retries");
+				while(failedRequests.size() > 0) {
+					if(mHandler.post(failedRequests.get(0)))
+						Log.d(TAG, "Runnable posted");
+					else
+						Log.d(TAG, "Runnable coudln't be posted");
+					failedRequests.remove(0);
+				}
+			}
+		});
 	}
 }

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.http.HttpException;
+import org.xbmc.android.util.HostFactory;
+import org.xbmc.android.util.WifiHelper;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Host;
 
