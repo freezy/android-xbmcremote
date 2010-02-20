@@ -105,7 +105,7 @@ public class HomeActivity extends Activity {
 		menu.add(0, MENU_ABOUT, 0, "About").setIcon(R.drawable.menu_about);
 		menu.add(0, MENU_SETTINGS, 0, "Settings").setIcon(R.drawable.menu_settings);
 		menu.add(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
-		menu.add(0, MENU_INPUT_TEXT, 0, "Send Text");
+//		menu.add(0, MENU_INPUT_TEXT, 0, "Send Text");
 		
 		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MOVIES, 0, "Movie Posters");
 		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MUSIC, 0, "Album Covers");
@@ -131,9 +131,9 @@ public class HomeActivity extends Activity {
 			NowPlayingNotificationManager.getInstance(getBaseContext()).removeNotification();
 			System.exit(0);
 			return true;
-		case MENU_INPUT_TEXT:
-			startActivity(new Intent(this, KeyboardAndMouseActivity.class));
-			return true;
+//		case MENU_INPUT_TEXT:
+//			startActivity(new Intent(this, KeyboardAndMouseActivity.class));
+//			return true;
 		case MENU_COVER_DOWNLOAD_MOVIES:
 		case MENU_COVER_DOWNLOAD_MUSIC:
 		case MENU_COVER_DOWNLOAD_ACTORS:
