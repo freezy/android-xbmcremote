@@ -32,7 +32,6 @@ import org.xbmc.android.util.SmsPopupUtils;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
-import org.xbmc.api.business.IManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.presentation.INotifiableController;
@@ -172,7 +171,7 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 			mHandler.post(action);
 		}
 
-		public void onWrongConnectionState(int state, INotifiableManager manager, Command source) {
+		public void onWrongConnectionState(int state, INotifiableManager manager, Command<?> source) {
 			// TODO Auto-generated method stub
 			
 		}

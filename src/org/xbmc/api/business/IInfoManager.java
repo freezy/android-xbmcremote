@@ -23,7 +23,6 @@ package org.xbmc.api.business;
 
 import java.util.ArrayList;
 
-import org.xbmc.android.remote.business.Command;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.type.DirectoryMask;
 

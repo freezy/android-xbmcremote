@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.DataResponse;
-import org.xbmc.api.business.IManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IInfoClient;

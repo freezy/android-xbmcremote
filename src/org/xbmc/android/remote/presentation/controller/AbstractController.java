@@ -61,7 +61,7 @@ public abstract class AbstractController {
 		HostFactory.readHost(activity.getApplicationContext());
 	}
 	
-	public void onWrongConnectionState(int state, final INotifiableManager manager, final Command source) {
+	public void onWrongConnectionState(int state, final INotifiableManager manager, final Command<?> source) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 		switch (state) {
 		case WifiHelper.WIFI_STATE_DISABLED:

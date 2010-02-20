@@ -2,7 +2,6 @@ package org.xbmc.android.remote.business;
 
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
-import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.httpapi.WifiStateException;
 
 import android.util.Log;

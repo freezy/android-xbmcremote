@@ -57,7 +57,7 @@ public class HomeActivity extends Activity {
 	private static final int MENU_SETTINGS = 2;
 	private static final int MENU_EXIT = 3;
 	private static final int MENU_SWITCH_XBMC = 5;
-	private static final int MENU_INPUT_TEXT = 6;
+//	private static final int MENU_INPUT_TEXT = 6;
 	public static final int MENU_COVER_DOWNLOAD = 4;
 	public static final int MENU_COVER_DOWNLOAD_MUSIC = 41;
 	public static final int MENU_COVER_DOWNLOAD_MOVIES = 42;

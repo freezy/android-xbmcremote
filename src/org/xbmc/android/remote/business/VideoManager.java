@@ -28,7 +28,6 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
-import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.SortType;
