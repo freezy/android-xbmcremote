@@ -53,7 +53,7 @@ public abstract class ClientFactory {
 			case WifiHelper.WIFI_STATE_DISABLED:
 			case WifiHelper.WIFI_STATE_UNKNOWN:
 			case WifiHelper.WIFI_STATE_ENABLED:
-				throw new WifiStateException(state);
+//				throw new WifiStateException(state);
 			}
 		}
 		return createHttpClient(manager).info;
@@ -67,7 +67,7 @@ public abstract class ClientFactory {
 			case WifiHelper.WIFI_STATE_DISABLED:
 			case WifiHelper.WIFI_STATE_UNKNOWN:
 			case WifiHelper.WIFI_STATE_ENABLED:
-				throw new WifiStateException(state);
+//				throw new WifiStateException(state);
 			}
 		}
 		return createHttpClient(manager).control;
@@ -80,7 +80,7 @@ public abstract class ClientFactory {
 			switch (state) {
 			case WifiHelper.WIFI_STATE_DISABLED:
 			case WifiHelper.WIFI_STATE_UNKNOWN:
-				throw new WifiStateException(state);
+//				throw new WifiStateException(state);
 			}
 		}
 		return createHttpClient(manager).video;
