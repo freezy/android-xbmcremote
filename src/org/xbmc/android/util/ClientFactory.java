@@ -93,7 +93,7 @@ public abstract class ClientFactory {
 			switch (state) {
 			case WifiHelper.WIFI_STATE_DISABLED:
 			case WifiHelper.WIFI_STATE_UNKNOWN:
-				throw new WifiStateException(state);
+//				throw new WifiStateException(state);
 			}
 		}
 		return createHttpClient(manager).music;
