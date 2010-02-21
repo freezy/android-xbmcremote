@@ -43,6 +43,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
+import android.net.wifi.WifiManager;
 import android.widget.Toast;
 
 /**
@@ -135,6 +136,7 @@ public abstract class AbstractController {
 									public void onClick(DialogInterface dialog,
 											int which) {
 										mDialogShowing = false;
+										mActivity.startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
 									}
 								});
 								builder.setCancelable(true);
