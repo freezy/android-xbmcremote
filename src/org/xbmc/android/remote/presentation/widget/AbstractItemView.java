@@ -47,7 +47,7 @@ public abstract class AbstractItemView extends View {
 	protected void drawPoster(Canvas canvas, int posterWidth, int posterHeight, int canvasWidth) {
 
 		// background
-		if ((isSelected() || isPressed()) && sSelected != null) {
+		if ((isSelected() || isPressed()) && sSelected != null && !sSelected.isRecycled()) {
 			canvas.drawBitmap(sSelected, null, new Rect(posterWidth, 0, canvasWidth, posterHeight), PAINT);
 		} else {
 			PAINT.setColor(Color.WHITE);
