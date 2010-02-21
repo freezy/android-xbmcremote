@@ -14,7 +14,7 @@
 			android:layout_height="wrap_content" android:background="@drawable/remote_xbox__top_right" />
 	</LinearLayout>
 	
-	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+	<LinearLayout android:id="@+id/RemoteXboxRowSections" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content">
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnVideo"
 			android:background="@drawable/remote_xbox_video" android:focusable="false" android:focusableInTouchMode="false" />
