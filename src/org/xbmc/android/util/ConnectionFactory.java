@@ -21,11 +21,9 @@
 
 package org.xbmc.android.util;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
-import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
 
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
@@ -33,7 +31,6 @@ import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 /**
  * Globally returns the control objects. 
@@ -54,8 +51,9 @@ public class ConnectionFactory {
 	 * @param type The zeroconf connection type
 	 * @param host The hostname to lookup
 	 * @return {@link ServiceInfo} The details of the first matching host
-	 */
+	 *
 	public static ServiceInfo getZeroconfServiceInfo(String type, String host) {
+		
 		// Zeroconf addresses always end with .local.
 		// So, if it ends just with ".local", add a period to it.
 		if (host.endsWith(".local")) {
@@ -112,7 +110,7 @@ public class ConnectionFactory {
 		// Add the host information to the collection, for future reference
 		sServiceInfo.add(hostInfo);
 		return hostInfo;
-	}
+	}*/
 	
 	/**
 	 * Returns an instance of the NowPlaying Poller . Instantiation takes place only
