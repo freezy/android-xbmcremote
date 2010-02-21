@@ -21,11 +21,6 @@
 
 package org.xbmc.android.util;
 
-import java.util.Collection;
-import java.util.HashSet;
-
-import javax.jmdns.ServiceInfo;
-
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
 
 import android.content.Context;
@@ -40,7 +35,7 @@ import android.net.NetworkInfo;
  */
 public class ConnectionFactory {
 	
-	private static Collection<ServiceInfo> sServiceInfo = new HashSet<ServiceInfo>();
+//	private static Collection<ServiceInfo> sServiceInfo = new HashSet<ServiceInfo>();
 	private static NowPlayingPollerThread sNowPlayingPoller;
 	
 	/**
