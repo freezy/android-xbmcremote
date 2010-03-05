@@ -22,22 +22,7 @@
 			android:title="Vibrate on Touch"
 			android:summary="Makes the remote control vibrate on touch." android:defaultValue="true"/>
 	</PreferenceCategory>
-	<PreferenceCategory android:title="Wake On Lan">
-		<EditTextPreference android:key="setting_wol"
-			android:title="XBMC Mac Address" 
-			android:summary="Send WOL Magic Packet to %value%" />
-		<EditTextPreference
-			android:defaultValue="40"
-			android:dependency="setting_wol" 
-			android:key="setting_wol_wait"
-			android:title="Timeout before reconnect" 
-			android:summary="Wait for %value% seconds before trying to reconnect" />
-		<EditTextPreference
-			android:title="Wake On Lan Port"
-			android:defaultValue="9"
-			android:key="setting_wol_port"
-			android:summary="Send WOL Magic Packet to port %value%" />
-	</PreferenceCategory>
+	
 	<PreferenceCategory  android:title="On-Screen Notifications">
 		<CheckBoxPreference 
 			android:key="setting_show_notification" 
