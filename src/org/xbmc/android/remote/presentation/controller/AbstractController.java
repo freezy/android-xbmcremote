@@ -53,10 +53,15 @@ import android.widget.Toast;
  */
 public abstract class AbstractController {
 	
-	protected Activity mActivity;
-	private boolean mDialogShowing = false;
 	public static final int MAX_WAIT_FOR_WIFI = 20;
+
+	protected Activity mActivity;
+	
+	private boolean mDialogShowing = false;
+	protected boolean mPaused = true;
+	
 	private Thread mWaitForWifi;
+	
 	public void onCreate(Activity activity) {
 		mActivity = activity;
 		HostFactory.readHost(activity.getApplicationContext());
@@ -289,10 +294,12 @@ public abstract class AbstractController {
 	}
 	
 	public void onActivityPause() {
-//		mActivity = null;
+		mActivity = null;
+		mPaused = true;
 	}
 
 	public void onActivityResume(Activity activity) {
 		mActivity = activity;
+		mPaused = false;
 	}
 }

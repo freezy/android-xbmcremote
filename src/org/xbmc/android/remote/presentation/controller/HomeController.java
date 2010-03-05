@@ -118,7 +118,11 @@ public class HomeController extends AbstractController implements INotifiableCon
 		};
 	}
 	
+	/**
+	 * Opens the host changer popup.
+	 */
 	public void openHostChanger() {
+		
 		// granted, this is butt-ugly. better ideas, be my guest.
 		final ArrayList<Host> hosts = HostFactory.getHosts(mActivity.getApplicationContext());
 		final HashMap<Integer, Host> hostMap = new HashMap<Integer, Host>();
@@ -162,16 +166,18 @@ public class HomeController extends AbstractController implements INotifiableCon
 	public void setupVersionHandler(final Button versionTextView, final GridView homeItemGrid) {
 		mUpdateVersionHandler = new DataResponse<String>() {
 			public void run() {
-				if (!ConnectionFactory.isNetworkAvailable(mActivity.getApplicationContext())) {
-					versionTextView.setText("No network");
-				}
-				if (!value.equals("")) {
-					versionTextView.setText("XBMC " + value);
-					homeItemGrid.setAdapter(mHomeMenu);
-					NowPlayingNotificationManager.getInstance(mActivity.getApplicationContext()).startNotificating();
-				} else {
-					versionTextView.setText("Check Settings and retry");
-					homeItemGrid.setAdapter(mOfflineMenu);
+				if (!mPaused) {
+					if (!ConnectionFactory.isNetworkAvailable(mActivity.getApplicationContext())) {
+						versionTextView.setText("No network");
+					}
+					if (!value.equals("")) {
+						versionTextView.setText("XBMC " + value);
+						homeItemGrid.setAdapter(mHomeMenu);
+						NowPlayingNotificationManager.getInstance(mActivity.getApplicationContext()).startNotificating();
+					} else {
+						versionTextView.setText("Check Settings and retry");
+						homeItemGrid.setAdapter(mOfflineMenu);
+					}
 				}
 			}
 		};		

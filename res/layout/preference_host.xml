@@ -36,9 +36,8 @@
 		<EditText 
 			android:text="" 
 			android:id="@+id/pref_port" 
-			android:inputType="numberDecimal"
 			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content" android:inputType="number"/>
 	
 		<TextView 
 			android:text="Username:" 
@@ -68,7 +67,7 @@
 		<EditText 
 			android:id="@+id/pref_eventserver_port" 
 			android:text="" 
-			android:inputType="numberDecimal"
+			android:inputType="number"
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content" />
 			
@@ -106,7 +105,7 @@
 		<EditText 
 			android:id="@+id/pref_timeout" 
 			android:text="" 
-			android:inputType="numberDecimal"
+			android:inputType="number"
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content" />
 			
@@ -117,7 +116,7 @@
 		<EditText 
 			android:id="@+id/pref_wol_wait" 
 			android:text="" 
-			android:inputType="numberDecimal"
+			android:inputType="number"
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content" />
 			
@@ -128,7 +127,7 @@
 		<EditText 
 			android:id="@+id/pref_wol_port" 
 			android:text="" 
-			android:inputType="numberDecimal"
+			android:inputType="number"
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content" />
 	</LinearLayout>
