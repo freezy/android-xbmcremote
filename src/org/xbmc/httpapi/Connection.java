@@ -354,7 +354,7 @@ public class Connection {
 	 * @return Trimmed value
 	 */
 	public static String trim(String value) {
-		return new String(value.replace("</record>", "").substring(0, value.length() - 8).toCharArray());
+		return new String(value.replace("</record>", "").replace("</field>", "").toCharArray());
 	}
 	
 	/**
