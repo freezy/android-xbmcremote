@@ -133,7 +133,7 @@ public class SettingsController extends AbstractController implements INotifiabl
 	}
 
 	public void onCreateOptionsMenu(Menu menu) {
-		menu.addSubMenu(0, MENU_ADD_HOST, 0, "Add host").setIcon(R.drawable.menu_add_host);
+		menu.addSubMenu(0, MENU_ADD_HOST, 0, "Add Host").setIcon(R.drawable.menu_add_host);
 		menu.addSubMenu(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
 	}
 	
@@ -141,7 +141,7 @@ public class SettingsController extends AbstractController implements INotifiabl
 		switch (item.getItemId()) {
 			case MENU_ADD_HOST:
 				HostPreference pref = new HostPreference(mActivity);
-				pref.setTitle("New XBMC host");
+				pref.setTitle("New XBMC Host");
 				pref.create(mPreferenceActivity.getPreferenceManager());
 				mPreferenceActivity.getPreferenceScreen().addPreference(pref);
 				break;

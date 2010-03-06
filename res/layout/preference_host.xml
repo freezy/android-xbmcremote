@@ -17,7 +17,8 @@
 			android:id="@+id/pref_name" 
 			android:maxLines="1"
 			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content"
+      android:capitalize="words"/>
 			
 		<TextView 
 			android:text="Host or IP address:" 
@@ -27,7 +28,8 @@
 			android:text="" 
 			android:id="@+id/pref_host" 
 			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content"
+      android:inputType="numberDecimal"/>
 	
 		<TextView 
 			android:text="HTTP API port:" 

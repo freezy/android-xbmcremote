@@ -3,7 +3,7 @@
 	<PreferenceCategory android:title="General">
 		<PreferenceScreen
 			android:key="setting_instances"
-			android:title="Manage XBMC hosts"
+			android:title="Manage XBMC Hosts"
 			android:summary="Add, edit and remove the XBMC instances in your LAN.">
 			<intent 
 				android:action="android.intent.action.MAIN" 

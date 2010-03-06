@@ -133,7 +133,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 			try {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
 					if (mDoVibrate) {
-						mVibrator.vibrate(30);
+						mVibrator.vibrate(45);
 					}
 					mEventClientManager.sendButton("R1", mAction, true, true, true, (short)0, (byte)0);
 				} else if (event.getAction() == MotionEvent.ACTION_UP) {
