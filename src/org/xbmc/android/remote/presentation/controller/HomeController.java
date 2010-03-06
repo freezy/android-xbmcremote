@@ -100,6 +100,8 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private HomeAdapter mHomeMenu;
 	private HomeAdapter mOfflineMenu;
 	
+	private WolCounter mWolCounter;
+	
 	private final HomeItem mHomeWol = new HomeItem(HOME_ACTION_WOL, R.drawable.icon_home_power, "Power On", "Turn your XBMC's");
     
 	public HomeController(Activity activity, GridView menuGrid) {
@@ -226,6 +228,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	
 	private OnItemClickListener getHomeMenuOnClickListener() {
 		return new OnItemClickListener() {
+
 			public void onItemClick(AdapterView<?> listView, View v, int position, long ID) {
 				HomeItem item = (HomeItem)listView.getAdapter().getItem(position);
 				switch (item.ID) {
@@ -256,8 +259,9 @@ public class HomeController extends AbstractController implements INotifiableCon
 						final Host host = HostFactory.host;
 						WakeOnLan wol = new WakeOnLan();
 						if (wol.sendMagicPacket(host.mac_addr, host.wol_port)) { // If succeeded in sending the magic packet, begin the countdown
-							WolCounter counter = new WolCounter(host.wol_wait * 1000,1000);
-							counter.start();
+							if(mWolCounter != null) mWolCounter.cancel();
+							mWolCounter = new WolCounter(host.wol_wait * 1000,1000);
+							mWolCounter.start();
 						}
 						break;
 				}
@@ -329,6 +333,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 		public void onFinish() {
 			((Button)mActivity.findViewById(R.id.home_version_button)).setText("Attempting to reconnect...");
 			mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
+			mWolCounter = null;
 		}
 
 		@Override
