@@ -43,6 +43,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,6 +79,7 @@ public class MovieDetailsActivity extends Activity {
 		
 		((TextView)findViewById(R.id.titlebar_text)).setText(movie.getName());
 		
+		Log.i("MovieDetailsActivity", "rating = " + movie.rating + ", index = " + ((int)Math.round(movie.rating % 10)) + ".");
 		((ImageView)findViewById(R.id.moviedetails_rating_stars)).setImageResource(sStarImages[(int)Math.round(movie.rating % 10)]);
 		((TextView)findViewById(R.id.moviedetails_director)).setText(movie.director);
 		((TextView)findViewById(R.id.moviedetails_genre)).setText(movie.genres);
