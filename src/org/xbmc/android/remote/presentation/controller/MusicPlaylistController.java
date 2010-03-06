@@ -30,7 +30,6 @@ import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.remote.presentation.activity.PlaylistActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
-import org.xbmc.android.remote.presentation.widget.ThreeLabelsItemView;
 import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
@@ -44,6 +43,7 @@ import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.httpapi.client.MusicClient;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
@@ -85,6 +85,8 @@ public class MusicPlaylistController extends ListController implements IControll
 	private int mCurrentPosition = -1;
 	private int mLastPosition = -1;
 	
+	private static Bitmap sPlayingBitmap;
+	
 	public void onCreate(final PlaylistActivity activity, final ListView list) {
 		
 		mPlaylistActivity = activity;
@@ -98,8 +100,9 @@ public class MusicPlaylistController extends ListController implements IControll
 			
 			activity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_song);
 			setupIdleListener();
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_song_light);
+			sPlayingBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_play);
 			
 			mMusicManager.getPlaylistPosition(new DataResponse<Integer>() {
 				public void run() {
@@ -130,13 +133,12 @@ public class MusicPlaylistController extends ListController implements IControll
 	  	  	}, mActivity.getApplicationContext());
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					final PlaylistItem item = (PlaylistItem)mList.getAdapter().getItem(((ThreeLabelsItemView)view).position);
+					final PlaylistItem item = (PlaylistItem)mList.getAdapter().getItem(((OneLabelItemView)view).position);
 					final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
 					mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
 					mMusicManager.setPlaylistSong(doNothing, item.position, mActivity.getApplicationContext());
 				}
 			});
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_song_light);
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Song>());
 			setTitle("Music playlist...");
 		}
@@ -306,7 +308,11 @@ public class MusicPlaylistController extends ListController implements IControll
 			view.reset();
 			view.position = position;
 			view.title = item.filename;
-			view.setCover(mFallbackBitmap);
+			if (position == mCurrentPosition) {
+				view.setCover(sPlayingBitmap);
+			} else {
+				view.setCover(mFallbackBitmap);
+			}
 			return view;
 		}
 		public OneLabelItemView getViewAtPosition(int position) {
