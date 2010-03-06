@@ -173,6 +173,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						versionTextView.setText("No network");
 					}
 					if (!value.equals("")) {
+						if(mWolCounter != null) mWolCounter.cancel();
 						versionTextView.setText("XBMC " + value);
 						homeItemGrid.setAdapter(mHomeMenu);
 						NowPlayingNotificationManager.getInstance(mActivity.getApplicationContext()).startNotificating();
