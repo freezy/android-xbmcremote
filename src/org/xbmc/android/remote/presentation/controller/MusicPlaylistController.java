@@ -240,13 +240,17 @@ public class MusicPlaylistController extends ListController implements IControll
 		if (adapter != null) {
 			final int currentPos = mCurrentPosition;
 			final int newPos = newSong.getPlaylistPosition();
-			OneLabelItemView view = adapter.getViewAtPosition(currentPos);
 			
+			// clear previous song's icon
+			OneLabelItemView view = adapter.getViewAtPosition(currentPos);
 			if (currentPos >= 0 && view != null) {
 				view.setCover(BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_song_light));
+				Log.i(TAG, "Resetting previous icon at position " + currentPos + " (" + view.title + ")");
 			} else {
 				Log.i(TAG, "NOT resetting previous icon at position " + currentPos);
 			}
+			
+			// set new song's play icon
 			view = adapter.getViewAtPosition(newPos);
 			mCurrentPosition = newPos;
 			if (view != null) {
@@ -254,7 +258,6 @@ public class MusicPlaylistController extends ListController implements IControll
 			} else {
 				mList.setSelection(newPos);
 			}
-			Log.i(TAG, "New playing position is at " + newPos);
 		}
 	}
 	
@@ -303,7 +306,6 @@ public class MusicPlaylistController extends ListController implements IControll
 				view = (OneLabelItemView)convertView;
 				mItemPositions.remove(view.position);
 			}
-			mItemPositions.put(view.position, view);
 			final PlaylistItem item = this.getItem(position);
 			view.reset();
 			view.position = position;
@@ -313,6 +315,7 @@ public class MusicPlaylistController extends ListController implements IControll
 			} else {
 				view.setCover(mFallbackBitmap);
 			}
+			mItemPositions.put(view.position, view);
 			return view;
 		}
 		public OneLabelItemView getViewAtPosition(int position) {
