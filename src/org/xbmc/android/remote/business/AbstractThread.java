@@ -111,6 +111,4 @@ abstract public class AbstractThread extends Thread {
 		DownloadThread.quit();
 	}
 	
-	
-	
 }

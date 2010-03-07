@@ -48,8 +48,6 @@ import android.widget.FrameLayout;
  */
 public class RemoteActivity extends Activity {
 	
-	private static final int MENU_NOW_PLAYING = 401;
-	
 	private ConfigurationManager mConfigurationManager;
 	private RemoteController mRemoteController;
 
@@ -192,23 +190,12 @@ public class RemoteActivity extends Activity {
 	
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
-		return true;
+		return mRemoteController.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Intent myIntent = null;
-		switch (item.getItemId()) {
-		case MENU_NOW_PLAYING:
-			myIntent = new Intent(this, NowPlayingActivity.class);
-			break;
-		}
-		if (myIntent != null) {
-			startActivity(myIntent);
-			return true;
-		}
-		return false;
+		return mRemoteController.onOptionsItemSelected(item);
 	}
 	
 	protected void callSuperOnKeyDown(int keyCode, KeyEvent event) {

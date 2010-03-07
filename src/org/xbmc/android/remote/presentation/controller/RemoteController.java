@@ -2,24 +2,33 @@ package org.xbmc.android.remote.presentation.controller;
 
 import java.io.IOException;
 
+import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 
 public class RemoteController extends AbstractController implements INotifiableController, IController {
+
+	private static final int MENU_NOW_PLAYING = 401;
+	private static final int MENU_XBMC_EXIT = 402;
+	private static final int MENU_XBMC_S = 403;
 	
 	IEventClientManager mEventClientManager;
 	
@@ -89,6 +98,32 @@ public class RemoteController extends AbstractController implements INotifiableC
 			}
 		}
 		return false;
+	}
+	
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
+		menu.add(0, MENU_XBMC_EXIT, 0, "Exit XBMC").setIcon(R.drawable.menu_xbmc_exit);
+		menu.add(0, MENU_XBMC_S, 0, "Press \"S\"").setIcon(R.drawable.menu_xbmc_s);
+		return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		try {
+			switch (item.getItemId()) {
+				case MENU_NOW_PLAYING:
+					mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+					break;
+				case MENU_XBMC_EXIT:
+					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_POWER, false, true, true, (short)0, (byte)0);
+					break;
+				case MENU_XBMC_S:
+					mEventClientManager.sendButton("KB", "S", false, true, true, (short)0, (byte)0);
+					break;
+			}
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
 	}
 	
 	/**
