@@ -48,6 +48,8 @@ import android.widget.FrameLayout;
  */
 public class RemoteActivity extends Activity {
 	
+	private final static String TAG = "RemoteActivity";
+	
 	private ConfigurationManager mConfigurationManager;
 	private RemoteController mRemoteController;
 
@@ -92,10 +94,15 @@ public class RemoteActivity extends Activity {
         final int h = d.getHeight();
         final double ar = w > h ? (double)w / (double)h : (double)h / (double)w;
         if (ar > 1.7) {
-        	findViewById(R.id.RemoteXboxRowSections).setVisibility(View.VISIBLE);
-        	Log.i("RemoteActivity", "AR = " + ar + ", setting section bar to visible.");
+        	final View sectionRows = findViewById(R.id.RemoteXboxRowSections);
+        	if (sectionRows != null) {
+        		findViewById(R.id.RemoteXboxRowSections).setVisibility(View.VISIBLE);
+        		Log.i(TAG, "AR = " + ar + ", setting section bar to visible.");
+        	} else {
+        		Log.i(TAG, "AR = " + ar + " but row sections not found.");
+        	}
         } else {
-        	Log.i("RemoteActivity", "AR = " + ar + ", leaving section bar hidden.");
+        	Log.i(TAG, "AR = " + ar + ", leaving section bar hidden.");
         }
 		setupButtons();
 	}
