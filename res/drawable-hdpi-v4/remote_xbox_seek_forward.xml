@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@drawable/remote_xbox_seek_forward_down" />
-    <item android:state_pressed="false" android:drawable="@drawable/remote_xbox_seek_forward_up" />
+    <item android:state_pressed="true" android:drawable="@drawable/remote_xbox_seek_forward_down_hdpi" />
+    <item android:state_pressed="false" android:drawable="@drawable/remote_xbox_seek_forward_up_hdpi" />
 </selector>
