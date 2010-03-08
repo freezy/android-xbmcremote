@@ -1,6 +1,7 @@
 package org.xbmc.android.remote.presentation.widget;
 
 import org.xbmc.api.business.IManager;
+import org.xbmc.api.type.ThumbSize;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,11 +15,9 @@ public class ThreeLabelsItemView extends AbstractItemView {
 	public String subtitle;
 	public String subsubtitle;
 	
-	private final static int POSTER_WIDTH = 50;
-	private final static int POSTER_HEIGHT = 50;
-	private final static int PADDING = 5;
+	private final static int POSTER_WIDTH = ThumbSize.getPixel(ThumbSize.SMALL);;
+	private final static int POSTER_HEIGHT = POSTER_WIDTH;
 	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
-	
 
 	public ThreeLabelsItemView(Context context, IManager manager, int width, Bitmap defaultCover) {
 		super(context, manager, width, defaultCover);
@@ -40,17 +39,17 @@ public class ThreeLabelsItemView extends AbstractItemView {
 		PAINT.setAntiAlias(true);
 		if (title != null) {
 			PAINT.setColor(isSelected() || isPressed() ? Color.WHITE : Color.BLACK);
-			PAINT.setTextSize(18);
-			canvas.drawText(title, POSTER_WIDTH + PADDING, 25, PAINT);
+			PAINT.setTextSize(SIZE18);
+			canvas.drawText(ellipse(title, width - SIZE50 - PADDING), POSTER_WIDTH + PADDING, SIZE25, PAINT);
 		}
 		PAINT.setColor(isSelected() || isPressed() ? Color.WHITE : Color.rgb(80, 80, 80));
-		PAINT.setTextSize(12);
+		PAINT.setTextSize(SIZE12);
 		if (subtitle != null) {
-			canvas.drawText(subtitle, POSTER_WIDTH + PADDING, 42, PAINT);
+			canvas.drawText(subtitle, POSTER_WIDTH + PADDING, SIZE42, PAINT);
 		}
 		if (subsubtitle != null) {
 			PAINT.setTextAlign(Align.RIGHT);
-			canvas.drawText(subsubtitle, width - PADDING, 42, PAINT);
+			canvas.drawText(subsubtitle, width - PADDING, SIZE42, PAINT);
 		}
 	}
 

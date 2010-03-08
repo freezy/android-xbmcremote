@@ -32,9 +32,10 @@ import android.util.Log;
 
 public abstract class ImportUtilities {
 	
+	public static final double POSTER_AR = 1.4799154334038054968287526427061;
+
 	private static final String TAG = "ImportUtilities";
     private static final String CACHE_DIRECTORY = "xbmc";
-    private static final double POSTER_AR = 1.4799154334038054968287526427061;
     private static final double MIN_FREE_SPACE = 15;
 
     public static File getCacheDirectory(String type, int size) {

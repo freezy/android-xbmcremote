@@ -41,7 +41,7 @@ public abstract class ThumbSize {
 	public static final int BIG = 3;
 	public static final int SCREENWIDTH = 4;
 	
-	private static final float sScale = Resources.getSystem().getDisplayMetrics().density;
+	public static final float PIXEL_SCALE = Resources.getSystem().getDisplayMetrics().density;
 	
 	public static String getDir(int size) {
 		switch (size) {
@@ -59,13 +59,13 @@ public abstract class ThumbSize {
 	public static int getPixel(int size) {
 		switch (size) {
 			case SMALL:
-				return (int)(50 * sScale);
+				return (int)(50 * PIXEL_SCALE);
 			case MEDIUM:
-				return (int)(103 * sScale);
+				return (int)(103 * PIXEL_SCALE);
 			case BIG:
-				return (int)(400 * sScale);
+				return (int)(400 * PIXEL_SCALE);
 			case SCREENWIDTH:
-				return (int)(320 * sScale);
+				return (int)(320 * PIXEL_SCALE);
 			default:
 				return 0;
 		}

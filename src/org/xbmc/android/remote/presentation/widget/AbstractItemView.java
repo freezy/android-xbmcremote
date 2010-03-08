@@ -3,6 +3,7 @@ package org.xbmc.android.remote.presentation.widget;
 import org.xbmc.android.remote.R;
 import org.xbmc.api.business.CoverResponse;
 import org.xbmc.api.business.IManager;
+import org.xbmc.api.type.ThumbSize;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,6 +17,18 @@ import android.view.View;
 public abstract class AbstractItemView extends View {
 
 	protected final static Paint PAINT = new Paint();
+	
+	protected final static int PADDING = (int)(5 * ThumbSize.PIXEL_SCALE);
+	protected final static int SIZE12 = (int)(12 * ThumbSize.PIXEL_SCALE);
+	protected final static int SIZE18 = (int)(18 * ThumbSize.PIXEL_SCALE);
+	protected final static int SIZE20 = (int)(20 * ThumbSize.PIXEL_SCALE);
+	protected final static int SIZE25 = (int)(25 * ThumbSize.PIXEL_SCALE);	
+	protected final static int SIZE35 = (int)(35 * ThumbSize.PIXEL_SCALE);	
+	protected final static int SIZE42 = (int)(42 * ThumbSize.PIXEL_SCALE);
+	protected final static int SIZE50 = (int)(50 * ThumbSize.PIXEL_SCALE);
+	protected final static int SIZE55 = (int)(55 * ThumbSize.PIXEL_SCALE);
+	protected final static int SIZE59 = (int)(59 * ThumbSize.PIXEL_SCALE);
+	protected final static int SIZE65 = (int)(65 * ThumbSize.PIXEL_SCALE);
 	
 	protected static Bitmap sSelected;
 	

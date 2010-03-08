@@ -1,6 +1,8 @@
 package org.xbmc.android.remote.presentation.widget;
 
+import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.IManager;
+import org.xbmc.api.type.ThumbSize;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,9 +13,8 @@ import android.graphics.Paint.Align;
 
 public class FiveLabelsItemView extends AbstractItemView {
 	
-	private final static int POSTER_WIDTH = 50;
-	private final static int POSTER_HEIGHT = 73;
-	private final static int PADDING = 5;
+	private final static int POSTER_WIDTH = ThumbSize.getPixel(ThumbSize.SMALL);;
+	private final static int POSTER_HEIGHT = (int)(POSTER_WIDTH * ImportUtilities.POSTER_AR);
 	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
 	
 	public String subtitle;
@@ -43,36 +44,36 @@ public class FiveLabelsItemView extends AbstractItemView {
 		PAINT.setAntiAlias(true);
 		if (title != null) {
 			PAINT.setColor(isSelected ? Color.WHITE : Color.BLACK);
-			PAINT.setTextSize(18);
-			canvas.drawText(title, POSTER_WIDTH + PADDING, 25, PAINT);
+			PAINT.setTextSize(SIZE18);
+			canvas.drawText(title, POSTER_WIDTH + PADDING, SIZE25, PAINT);
 		}
 		PAINT.setColor(isSelected ? Color.WHITE : Color.rgb(80, 80, 80));
-		PAINT.setTextSize(12);
+		PAINT.setTextSize(SIZE12);
 		
 		PAINT.setTextAlign(Align.RIGHT);
 		float subtitleRightWidth = 0;
 		if (subtitleRight != null) {
 			subtitleRightWidth = PAINT.measureText(subtitleRight);
-			canvas.drawText(subtitleRight, width - PADDING, 42, PAINT);
+			canvas.drawText(subtitleRight, width - PADDING, SIZE42, PAINT);
 		}
 		float bottomrightWidth = 0;
 		if (bottomright != null) {
-			PAINT.setTextSize(20);
+			PAINT.setTextSize(SIZE20);
 			PAINT.setFakeBoldText(true);
 			PAINT.setColor(isSelected ? Color.WHITE : Color.argb(68, 0, 0, 0));
 			bottomrightWidth = PAINT.measureText(subtitleRight);
-			canvas.drawText(bottomright, width - PADDING, 65, PAINT);
+			canvas.drawText(bottomright, width - PADDING, SIZE65, PAINT);
 		}
 		
 		PAINT.setColor(isSelected ? Color.WHITE : Color.rgb(80, 80, 80));
-		PAINT.setTextSize(12);
+		PAINT.setTextSize(SIZE12);
 		PAINT.setTextAlign(Align.LEFT);
 		PAINT.setFakeBoldText(false);
 		if (subtitle != null) {
-			canvas.drawText(ellipse(subtitle, width - (int)subtitleRightWidth - 50), 55, 42, PAINT);
+			canvas.drawText(ellipse(subtitle, width - (int)subtitleRightWidth - SIZE50), SIZE55, SIZE42, PAINT);
 		}
 		if (bottomtitle != null) {
-			canvas.drawText(ellipse(bottomtitle, width - (int)bottomrightWidth - 50), 55, 59, PAINT);
+			canvas.drawText(ellipse(bottomtitle, width - (int)bottomrightWidth - SIZE50), SIZE55, SIZE59, PAINT);
 		}
 
 	}

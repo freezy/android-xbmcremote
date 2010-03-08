@@ -1,6 +1,7 @@
 package org.xbmc.android.remote.presentation.widget;
 
 import org.xbmc.api.business.IManager;
+import org.xbmc.api.type.ThumbSize;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,9 +12,8 @@ import android.graphics.Paint.Align;
 
 public class OneLabelItemView extends AbstractItemView {
 	
-	private final static int POSTER_WIDTH = 50;
-	private final static int POSTER_HEIGHT = 50;
-	private final static int PADDING = 5;
+	private final static int POSTER_WIDTH = ThumbSize.getPixel(ThumbSize.SMALL);
+	private final static int POSTER_HEIGHT = POSTER_WIDTH;
 	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
 	
 	public OneLabelItemView(Context context, int width, Bitmap defaultCover) {
@@ -39,8 +39,8 @@ public class OneLabelItemView extends AbstractItemView {
 		PAINT.setAntiAlias(true);
 		if (title != null) {
 			PAINT.setColor(isSelected() || isPressed() ? Color.WHITE : Color.BLACK);
-			PAINT.setTextSize(18);
-			canvas.drawText(title, POSTER_WIDTH + PADDING, 35, PAINT);
+			PAINT.setTextSize(SIZE18);
+			canvas.drawText(title, POSTER_WIDTH + PADDING, SIZE35, PAINT);
 		}
 	}
 
