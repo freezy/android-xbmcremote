@@ -91,7 +91,7 @@ public class MovieGenreListController extends ListController implements IControl
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final OneLabelItemView view;
 			if (convertView == null) {
-				view = new OneLabelItemView(mActivity, parent.getWidth(), mFallbackBitmap);
+				view = new OneLabelItemView(mActivity, parent.getWidth(), mFallbackBitmap, mList.getSelector());
 			} else {
 				view = (OneLabelItemView)convertView;
 			}

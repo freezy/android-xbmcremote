@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Paint.Align;
+import android.graphics.drawable.Drawable;
 
 public class ThreeLabelsItemView extends AbstractItemView {
 
@@ -19,8 +20,8 @@ public class ThreeLabelsItemView extends AbstractItemView {
 	private final static int POSTER_HEIGHT = POSTER_WIDTH;
 	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
 
-	public ThreeLabelsItemView(Context context, IManager manager, int width, Bitmap defaultCover) {
-		super(context, manager, width, defaultCover);
+	public ThreeLabelsItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection) {
+		super(context, manager, width, defaultCover, selection);
 	}
 
 	@Override

@@ -39,6 +39,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,12 +49,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class FileListController extends ListController implements IController {
 	
 	public static final int MESSAGE_HANDLE_DATA = 1;
 	public static final int MESSAGE_CONNECTION_ERROR = 2;
+	private static final int ITEM_CONTEXT_QUEUE = 0;
+	private static final int ITEM_CONTEXT_PLAY = 0;
 	
 	private HashMap<String, FileLocation> mFileItems;
 	private volatile String mGettingUrl;
@@ -82,13 +86,13 @@ public class FileListController extends ListController implements IController {
 			if (mMediaType == MediaType.UNKNOWN) {
 				mMediaType = mActivity.getIntent().getIntExtra(EXTRA_SHARE_TYPE, MediaType.MUSIC);
 			}
-			
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_file);
 			
 			final String path = mActivity.getIntent().getStringExtra(EXTRA_PATH);
 			final String displayPath = mActivity.getIntent().getStringExtra(EXTRA_DISPLAY_PATH);
 			fillUp(path == null ? "" : path, displayPath);
 	
+			activity.registerForContextMenu(mList);
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					if (mFileItems == null)
@@ -144,7 +148,7 @@ public class FileListController extends ListController implements IController {
 			
 			final OneLabelItemView view;
 			if (convertView == null) {
-				view = new OneLabelItemView(mActivity, parent.getWidth(), mFallbackBitmap);
+				view = new OneLabelItemView(mActivity, parent.getWidth(), mFallbackBitmap, mList.getSelector());
 			} else {
 				view = (OneLabelItemView)convertView;
 			}
@@ -221,11 +225,23 @@ public class FileListController extends ListController implements IController {
 	@Override
 	public void onContextItemSelected(MenuItem item) {
 		// be aware that this must be explicitly called by your activity!
+		final FileLocation loc = (FileLocation) mList.getAdapter().getItem(((OneLabelItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
+		switch(item.getItemId()) {
+		case ITEM_CONTEXT_QUEUE:
+			mControlManager.addToPlaylist(new DataResponse<Boolean>(), loc.path,
+					mActivity);
+			break;
+		}
 	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
+		Log.d("FileListController", "Create Context Menu");
+		final OneLabelItemView view = (OneLabelItemView)((AdapterContextMenuInfo)menuInfo).targetView;
+		menu.setHeaderTitle(((FileLocation)mList.getItemAtPosition(view.getPosition())).name);
+		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Folder");
+		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Folder");
 	}
 	
 	public void onActivityPause() {

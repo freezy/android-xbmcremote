@@ -12,7 +12,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.widget.ListView;
 
 public abstract class AbstractItemView extends View {
 
@@ -36,32 +38,37 @@ public abstract class AbstractItemView extends View {
 	private final Bitmap mDefaultCover;
 	protected Bitmap mCover;
 	protected final int mWidth;
+	protected final Drawable mSelection;
 	
 	public int position;
 	public String title;
 	
 	protected abstract Rect getPosterRect();
 	
-	public AbstractItemView(Context context, IManager manager, int width, Bitmap defaultCover) {
+	public AbstractItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection) {
 		super(context);
 		mResponse = new CoverResponse(this, manager, defaultCover);
 		mWidth = width;
 		mDefaultCover = defaultCover;
-		sSelected = BitmapFactory.decodeResource(getResources(), R.drawable.selected);
+		mSelection = selection;
+//		sSelected = BitmapFactory.decodeResource(getResources(), R.drawable.selected);
 	}
 	
-	public AbstractItemView(Context context, int width, Bitmap defaultCover) {
+	public AbstractItemView(Context context, int width, Bitmap defaultCover, Drawable selection) {
 		super(context);
 		mResponse = null;
 		mWidth = width;
 		mDefaultCover = defaultCover;
+		mSelection = selection;
 	}
 	
 	protected void drawPoster(Canvas canvas, int posterWidth, int posterHeight, int canvasWidth) {
 
 		// background
-		if ((isSelected() || isPressed()) && sSelected != null && !sSelected.isRecycled()) {
-			canvas.drawBitmap(sSelected, null, new Rect(posterWidth, 0, canvasWidth, posterHeight), PAINT);
+		if ((isSelected() || isPressed()) && mSelection != null) { // && sSelected != null && !sSelected.isRecycled()) {
+//			canvas.drawBitmap(sSelected, null, new Rect(posterWidth, 0, canvasWidth, posterHeight), PAINT);
+			mSelection.setBounds(posterWidth, 0, canvasWidth, posterHeight);
+			mSelection.draw(canvas);
 		} else {
 			PAINT.setColor(Color.WHITE);
 			canvas.drawRect(posterWidth, 0, canvasWidth, posterHeight, PAINT);

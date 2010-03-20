@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Paint.Align;
+import android.graphics.drawable.Drawable;
 
 public class OneLabelItemView extends AbstractItemView {
 	
@@ -16,12 +17,12 @@ public class OneLabelItemView extends AbstractItemView {
 	private final static int POSTER_HEIGHT = POSTER_WIDTH;
 	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
 	
-	public OneLabelItemView(Context context, int width, Bitmap defaultCover) {
-		super(context, width, defaultCover);
+	public OneLabelItemView(Context context, int width, Bitmap defaultCover, Drawable selection) {
+		super(context, width, defaultCover, selection);
 	}
 	
-	public OneLabelItemView(Context context, IManager manager, int width, Bitmap defaultCover) {
-		super(context, manager, width, defaultCover);
+	public OneLabelItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection) {
+		super(context, manager, width, defaultCover, selection);
 	}
 
 	@Override

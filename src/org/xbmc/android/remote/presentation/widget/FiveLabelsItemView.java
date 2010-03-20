@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Paint.Align;
+import android.graphics.drawable.Drawable;
 
 public class FiveLabelsItemView extends AbstractItemView {
 	
@@ -22,8 +23,8 @@ public class FiveLabelsItemView extends AbstractItemView {
 	public String bottomtitle;
 	public String bottomright;
 	
-	public FiveLabelsItemView(Context context, IManager manager, int width, Bitmap defaultCover) {
-		super(context, manager, width, defaultCover);
+	public FiveLabelsItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection) {
+		super(context, manager, width, defaultCover, selection);
 	}
 
 	@Override
