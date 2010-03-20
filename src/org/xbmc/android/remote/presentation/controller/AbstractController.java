@@ -87,7 +87,7 @@ public abstract class AbstractController {
 							int wait = 0;
 							while(wait <= MAX_WAIT_FOR_WIFI * 1000 && helper.getWifiState() != WifiHelper.WIFI_STATE_ENABLED) {
 								try {
-									sleep(500);
+									wait(500);
 									wait += 500;
 								} catch (InterruptedException e) {}
 							}
@@ -152,15 +152,19 @@ public abstract class AbstractController {
 									}
 								});
 								
-								final AlertDialog alert = builder.create();
-								try {
-									if (!mDialogShowing) {
-										alert.show();
-										mDialogShowing = true;
+								mActivity.runOnUiThread(new Runnable() {
+									public void run() {
+										final AlertDialog alert = builder.create();
+										try {
+											if (!mDialogShowing) {
+												alert.show();
+												mDialogShowing = true;
+											}
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
 									}
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
+								});
 							}
 						}
 						
@@ -294,7 +298,7 @@ public abstract class AbstractController {
 	}
 	
 	public void onActivityPause() {
-		mActivity = null;
+//		mActivity = null;
 		mPaused = true;
 	}
 
