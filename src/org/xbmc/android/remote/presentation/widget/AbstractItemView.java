@@ -75,7 +75,7 @@ public abstract class AbstractItemView extends View {
 		}
 		
 		// poster
-		if (mCover != null) {
+		if (mCover != null && !mCover.isRecycled()) {
 			final int w = mCover.getWidth();
 			final int h = mCover.getHeight();
 			int dx = 0;
