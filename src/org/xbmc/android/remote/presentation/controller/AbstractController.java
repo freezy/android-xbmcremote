@@ -27,6 +27,7 @@ import java.net.SocketTimeoutException;
 
 import org.apache.http.HttpException;
 import org.xbmc.android.remote.business.Command;
+import org.xbmc.android.remote.presentation.activity.HostSettingsActivity;
 import org.xbmc.android.remote.presentation.activity.SettingsActivity;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.WifiHelper;
@@ -177,7 +178,6 @@ public abstract class AbstractController {
 	}
 	
 	public void onError(Exception exception) {
-		
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 		try {
 			throw exception;
@@ -186,7 +186,9 @@ public abstract class AbstractController {
 			builder.setMessage(e.getMessage());
 			builder.setNeutralButton("Settings", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
+					final Intent intent = new Intent(mActivity, HostSettingsActivity.class);
+//					intent.putExtra(SettingsActivity.JUMP_TO, SettingsActivity.JUMP_TO_INSTANCES);
+					mActivity.startActivity(intent);
 					mDialogShowing = false;
 				}
 			});
@@ -252,9 +254,8 @@ public abstract class AbstractController {
 		} finally {
 			
 			exception.printStackTrace();
-			
-			
 		}
+		showDialog(builder);
 	}
 	
 	protected void showDialog(final AlertDialog.Builder builder) {

@@ -46,7 +46,7 @@ public abstract class ClientFactory {
 	private static final String NAME = "Android XBMC Remote";
 	
 	public static IInfoClient getInfoClient(INotifiableManager manager, Context context) throws WifiStateException {
-		if(context != null && HostFactory.host.wifi_only){
+		if(context != null && HostFactory.host != null && HostFactory.host.wifi_only){
 			final WifiHelper helper = WifiHelper.getInstance(context);
 			final int state = helper.getWifiState();
 			switch (state) {
@@ -60,7 +60,7 @@ public abstract class ClientFactory {
 	}
 	
 	public static IControlClient getControlClient(INotifiableManager manager, Context context) throws WifiStateException {
-		if(context != null && HostFactory.host.wifi_only){
+		if(context != null && HostFactory.host != null && HostFactory.host.wifi_only){
 			final WifiHelper helper = WifiHelper.getInstance(context);
 			final int state = helper.getWifiState();
 			switch (state) {
@@ -74,7 +74,7 @@ public abstract class ClientFactory {
 	}
 	
 	public static IVideoClient getVideoClient(INotifiableManager manager, Context context) throws WifiStateException {
-		if(context != null && HostFactory.host.wifi_only){
+		if(context != null && HostFactory.host != null && HostFactory.host.wifi_only){
 			final WifiHelper helper = WifiHelper.getInstance(context);
 			final int state = helper.getWifiState();
 			switch (state) {
@@ -87,7 +87,7 @@ public abstract class ClientFactory {
 	}
 	
 	public static IMusicClient getMusicClient(INotifiableManager manager, Context context) throws WifiStateException {
-		if(context != null && HostFactory.host.wifi_only){
+		if(context != null && HostFactory.host != null && HostFactory.host.wifi_only){
 			final WifiHelper helper = WifiHelper.getInstance(context);
 			final int state = helper.getWifiState();
 			switch (state) {
