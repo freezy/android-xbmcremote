@@ -8,6 +8,7 @@ import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.util.Log;
 
 public class WifiHelper {
@@ -77,6 +78,10 @@ public class WifiHelper {
 			Log.d(TAG, "aquiring WifiLock");
 			mWifiLock.acquire();
 		}
+	}
+	
+	public WifiLock getNewWifiLock(String lock_postfix) {
+		return mManager.createWifiLock(WifiManager.WIFI_MODE_FULL, WIFI_LOCK_TAG + lock_postfix);
 	}
 	
 	public void releaseWifiLock() {

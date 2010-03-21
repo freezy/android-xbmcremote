@@ -39,6 +39,7 @@ import org.xbmc.android.remote.presentation.activity.RemoteActivity;
 import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.WakeOnLan;
+import org.xbmc.android.util.WifiHelper;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.IMusicManager;
@@ -60,6 +61,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -398,7 +400,12 @@ public class HomeController extends AbstractController implements INotifiableCon
 			mPosition = 0;
 			mProgressDialog.setMax(covers.size());
 			boolean started = false;
-
+			final WifiLock lock;
+			if(HostFactory.host.wifi_only) {
+				lock = WifiHelper.getInstance(mActivity).getNewWifiLock("BatchDownloader");
+				lock.acquire();
+			} else
+				lock = null;
 			Looper.prepare();
 			mHandlerIn = new Handler() {
 				public void handleMessage(Message msgIn) {
@@ -435,6 +442,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 				if (DEBUG) Log.i(TAG, "[ProgressThread] Not started, kicking on....");
 			}
 			Looper.loop();
+			if(lock != null) lock.release();
 		}
 	}
 	
