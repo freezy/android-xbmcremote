@@ -41,6 +41,7 @@ public class ManagerThread extends Thread {
 	private final ControlManager mControlManager;
 	private final MusicManager mMusicManager;
 	private final VideoManager mVideoManager;
+	private final TvShowManager mTvShowManager;
 	
 	private ManagerThread() {
 		super("ManagerThread");
@@ -48,6 +49,7 @@ public class ManagerThread extends Thread {
 		mControlManager = new ControlManager();
 		mMusicManager = new MusicManager();
 		mVideoManager = new VideoManager();
+		mTvShowManager = new TvShowManager();
 	}
 	public static ManagerThread get() {
 		if (sManagerThread == null) {
@@ -72,6 +74,7 @@ public class ManagerThread extends Thread {
 		mControlManager.setHandler(mHandler);
 		mMusicManager.setHandler(mHandler);
 		mVideoManager.setHandler(mHandler);
+		mTvShowManager.setHandler(mHandler);
 		Looper.loop();
 	}
 	
@@ -94,5 +97,11 @@ public class ManagerThread extends Thread {
 		final VideoManager vm = get().mVideoManager;
 		vm.setController(controller);
 		return vm;
+	}
+	
+	public static TvShowManager shows(INotifiableController controller) {
+		final TvShowManager shows = get().mTvShowManager;
+		shows.setController(controller);
+		return shows;
 	}
 }

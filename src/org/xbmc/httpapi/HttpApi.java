@@ -25,6 +25,7 @@ import org.xbmc.api.object.Host;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.MusicClient;
+import org.xbmc.httpapi.client.TvShowClient;
 import org.xbmc.httpapi.client.VideoClient;
 
 /**
@@ -57,6 +58,11 @@ public class HttpApi {
 	public final ControlClient control;
 	
 	/**
+	 * Use this client for anything tv show related
+	 */
+	public final TvShowClient shows;
+	
+	/**
 	 * Construct with all paramaters
 	 * @param host    Connection data of the host
 	 * @param timeout Read timeout
@@ -74,6 +80,7 @@ public class HttpApi {
 		music = new MusicClient(connection);
 		video = new VideoClient(connection);
 		control = new ControlClient(connection);
+		shows = new TvShowClient(connection);
 	}
 	
 	/**
@@ -85,5 +92,6 @@ public class HttpApi {
 		music.setHost(host);
 		video.setHost(host);
 		control.setHost(host);
+		shows.setHost(host);
 	}
 }

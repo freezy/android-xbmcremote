@@ -30,6 +30,7 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IMusicClient;
+import org.xbmc.api.data.ITvShowClient;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
@@ -125,6 +126,10 @@ public abstract class AbstractManager implements INotifiableManager {
 	 */
 	protected IMusicClient music(Context context) throws WifiStateException {
 		return ClientFactory.getMusicClient(this, context);
+	}
+	
+	protected ITvShowClient shows(Context context) throws WifiStateException {
+		return ClientFactory.getTvShowClient(this, context);
 	}
 	
 	/**

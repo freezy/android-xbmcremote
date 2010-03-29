@@ -295,7 +295,7 @@ public class VideoClient implements IVideoClient {
 	 * @param response
 	 * @return List of Actors
 	 */
-	private ArrayList<Actor> parseActors(String response) {
+	public static ArrayList<Actor> parseActors(String response) {
 		ArrayList<Actor> actors = new ArrayList<Actor>();
 		String[] fields = response.split("<field>");
 		try { 
@@ -354,7 +354,7 @@ public class VideoClient implements IVideoClient {
 	 * @param response
 	 * @return List of Genres
 	 */
-	private ArrayList<Genre> parseGenres(String response) {
+	public static ArrayList<Genre> parseGenres(String response) {
 		ArrayList<Genre> genres = new ArrayList<Genre>();
 		String[] fields = response.split("<field>");
 		try { 
