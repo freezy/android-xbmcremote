@@ -100,7 +100,6 @@ public class MusicPlaylistController extends ListController implements IControll
 			
 			activity.registerForContextMenu(mList);
 			
-			setupIdleListener();
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_song_light);
 			sPlayingBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_play);
 			
