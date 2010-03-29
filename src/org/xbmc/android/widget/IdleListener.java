@@ -37,9 +37,12 @@ public class IdleListener implements OnListIdleListener {
 		for (int i = 0; i < n; i++) {
 			final AbstractItemView itemView = (AbstractItemView)mList.getChildAt(i);
 			if (!itemView.hasBitmap()) {
-				ICoverArt cover = (ICoverArt)mList.getAdapter().getItem(itemView.getPosition());
-				Log.i(TAG, "Cover: " + cover);
-				itemView.getResponse().load(cover);
+				final Object obj = mList.getAdapter().getItem(itemView.getPosition());
+				if(obj instanceof ICoverArt) {
+					ICoverArt cover = (ICoverArt)obj;
+					Log.i(TAG, "Cover: " + cover);
+					itemView.getResponse().load(cover);
+				}
 			}
 		}
 		System.gc();
