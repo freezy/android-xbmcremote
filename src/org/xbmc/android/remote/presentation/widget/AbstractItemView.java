@@ -1,20 +1,17 @@
 package org.xbmc.android.remote.presentation.widget;
 
-import org.xbmc.android.remote.R;
 import org.xbmc.api.business.CoverResponse;
 import org.xbmc.api.business.IManager;
 import org.xbmc.api.type.ThumbSize;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.view.View;
-import android.widget.ListView;
 
 public abstract class AbstractItemView extends View {
 
@@ -92,9 +89,11 @@ public abstract class AbstractItemView extends View {
 				canvas.drawBitmap(mCover, 0.0f, 0.0f, null);
 			}
 		} else {
-			PAINT.setColor(Color.WHITE);
-			canvas.drawRect(0, 0, posterWidth, posterHeight, PAINT);
-			canvas.drawBitmap(mDefaultCover, 0.0f, 0.0f, null);
+			if (mDefaultCover != null && !mDefaultCover.isRecycled()) {
+				PAINT.setColor(Color.WHITE);
+				canvas.drawRect(0, 0, posterWidth, posterHeight, PAINT);
+				canvas.drawBitmap(mDefaultCover, 0.0f, 0.0f, null);
+			}
 		}
 	}
 	

@@ -79,7 +79,8 @@ public class ArtistListController extends ListController implements IController 
 			});
 			
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Artist>());
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_artist);
+			
+			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getApplicationContext().getResources(), R.drawable.icon_artist);
 			
 			if (mGenre != null) {
 				setTitle(mGenre.name + " - Artists...");
