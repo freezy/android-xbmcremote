@@ -94,7 +94,9 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 						else
 							pic = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
 						ByteArrayOutputStream os = new ByteArrayOutputStream();
-						pic.compress(Bitmap.CompressFormat.PNG, 0, os);
+						if (pic != null) {
+							pic.compress(Bitmap.CompressFormat.PNG, 0, os);
+						}
 
 						// if xbmc is playing something, we pause it. without
 						// the check paused playback would resume
@@ -112,7 +114,7 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 								}
 							}
 						}, null);
-						eventClient.sendNotification(callername, "calling", Packet.ICON_PNG, os.toByteArray());
+						eventClient.sendNotification(callername, "calling", Packet.ICON_PNG, pic == null ? null : os.toByteArray());
 						
 					} else if (extra.equals(android.telephony.TelephonyManager.EXTRA_STATE_IDLE)) {
 						
