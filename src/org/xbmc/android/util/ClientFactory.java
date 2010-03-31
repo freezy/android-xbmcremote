@@ -30,6 +30,7 @@ import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IEventClient;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IMusicClient;
+import org.xbmc.api.data.ITvShowClient;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.object.Host;
 import org.xbmc.eventclient.EventClient;
@@ -97,6 +98,19 @@ public abstract class ClientFactory {
 			}
 		}
 		return createHttpClient(manager).music;
+	}
+	
+	public static ITvShowClient getTvShowClient(INotifiableManager manager, Context context) throws WifiStateException {
+		if(context != null && HostFactory.host != null && HostFactory.host.wifi_only){
+			final WifiHelper helper = WifiHelper.getInstance(context);
+			final int state = helper.getWifiState();
+			switch (state) {
+			case WifiHelper.WIFI_STATE_DISABLED:
+			case WifiHelper.WIFI_STATE_UNKNOWN:
+				throw new WifiStateException(state);
+			}
+		}
+		return createHttpClient(manager).shows;
 	}
 	
 	public static IEventClient getEventClient(INotifiableManager manager) {
