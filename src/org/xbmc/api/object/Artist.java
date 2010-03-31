@@ -26,9 +26,6 @@ import java.io.Serializable;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 /**
  * Not very much going on, artist is basically a name.
  * 
