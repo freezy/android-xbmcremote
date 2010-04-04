@@ -102,7 +102,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	}
 	
 	/**
-	 * Returns the CRC of the album on which the thumb name is based upon.
+	 * Returns the CRC of the movie on which the thumb name is based upon.
 	 * @return CRC32
 	 */
 	public long getCrc() {

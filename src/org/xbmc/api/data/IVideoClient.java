@@ -29,6 +29,8 @@ import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
 
+import android.graphics.Bitmap;
+
 
 /**
  * This is the interface between the business layer and the presentation layer.
@@ -98,10 +100,10 @@ public interface IVideoClient extends IClient {
 	public ArrayList<Genre> getMovieGenres(INotifiableManager manager);
 	
 	/**
-	 * Returns movie thumbnail as base64-encoded string
+	 * Returns a cover as bitmap
 	 * @param cover
-	 * @return Base64-encoded content of thumb
+	 * @return Cover
 	 */
-	public String getCover(INotifiableManager manager, ICoverArt cover);
+	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size);
 	 
 }

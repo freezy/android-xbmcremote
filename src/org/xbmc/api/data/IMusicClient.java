@@ -30,6 +30,8 @@ import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Song;
 
+import android.graphics.Bitmap;
+
 /**
  * This is the interface between the business layer and the presentation layer.
  * All the business layer gets to see is this interface.
@@ -301,6 +303,6 @@ public interface IMusicClient extends IClient {
 	 * @param album
 	 * @return Base64-encoded content of thumb
 	 */
-	public String getCover(INotifiableManager manager, ICoverArt art);
+	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size);
 	
 }

@@ -2,6 +2,7 @@ package org.xbmc.httpapi;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
@@ -152,6 +153,38 @@ public class Connection {
 		sb.append(URLEncoder.encode(parameters));
 		sb.append(")");
 		return sb.toString();
+	}
+	
+	/**
+	 * Returns an input stream pointing to a HTTP API command.
+	 * @param command    Name of the command to execute
+	 * @param parameters Parameters, separated by ";".
+	 * @param manager    Reference back to business layer
+	 * @return
+	 */
+	public InputStream getInputStream(String command, String parameters, INotifiableManager manager) {
+		URLConnection uc = null;
+		try {
+			if (mUrlSuffix == null) {
+				throw new NoSettingsException();
+			}
+			if (mAuthenticator != null) {
+				mAuthenticator.resetCounter();
+			}
+			URL url = new URL(getUrl(command, parameters));
+			uc = url.openConnection();
+			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
+			uc.setReadTimeout(mSocketReadTimeout);
+			Log.i(TAG, "Preparing input stream from " + url);
+			return uc.getInputStream();
+		} catch (MalformedURLException e) {
+			manager.onError(e);
+		} catch (IOException e) {
+			manager.onError(e);
+		} catch (NoSettingsException e) {
+			manager.onError(e);
+		}
+		return null;
 	}
 	
 	/**
@@ -393,6 +426,22 @@ public class Connection {
 		} else {
 			return -1.0;
 		}
+	}
+	
+	/**
+	 * Removes the trailing "</field>" string from the value and tries to
+	 * parse a boolean from it.
+	 * @param value
+	 * @return Parsed boolean from field value
+	 */
+	public static boolean trimBoolean(String value) {
+		if (value.startsWith("0") || value.toLowerCase().startsWith("false")) {
+			return false;
+		}
+		if (value.startsWith("1") || value.toLowerCase().startsWith("true")) {
+			return true;
+		}
+		return false;
 	}
 	
 	/**

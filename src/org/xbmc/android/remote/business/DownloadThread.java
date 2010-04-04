@@ -29,11 +29,13 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.MediaType;
+import org.xbmc.api.type.ThumbSize;
 import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.util.Log;
 
 /**
@@ -79,21 +81,21 @@ class DownloadThread extends AbstractThread {
 					 * times. that's why we check both the disk cache and memory cache if
 					 * the cover is not already available from a previously queued download. 
 					 */
-					if (MemCacheThread.isInCache(cover, thumbSize)) { // we're optimistic, let's check the memory first.
+					if (thumbSize < ThumbSize.BIG && MemCacheThread.isInCache(cover, thumbSize)) { // we're optimistic, let's check the memory first.
 						if (DEBUG) Log.i(TAG, "Cover is now already in mem cache, directly returning...");
 						response.value = MemCacheThread.getCover(cover, thumbSize);
 						done(controller, response);
-					} else if (DiskCacheThread.isInCache(cover)) {
+					} else if (thumbSize < ThumbSize.BIG && DiskCacheThread.isInCache(cover)) {
 						if (DEBUG) Log.i(TAG, "Cover is not in mem cache anymore but still on disk, directly returning...");
 						response.value = DiskCacheThread.getCover(cover, thumbSize);
 						done(controller, response);
 					} else {
 						if (DEBUG) Log.i(TAG, "Download START..");
-						String b64enc = null;
+						Bitmap bitmap = null;
 						switch (cover.getMediaType()) {
 							case MediaType.MUSIC:
 								try {
-									b64enc = music(manager, context).getCover(manager, cover);
+									bitmap = music(manager, context).getCover(manager, cover, thumbSize);
 								} catch (WifiStateException e1) {
 									// TODO Auto-generated catch block
 									e1.printStackTrace();
@@ -101,7 +103,7 @@ class DownloadThread extends AbstractThread {
 								break;
 							case MediaType.VIDEO:
 								try {
-									b64enc = video(manager, context).getCover(manager, cover);
+									bitmap = video(manager, context).getCover(manager, cover, thumbSize);
 								} catch (WifiStateException e1) {
 									// TODO Auto-generated catch block
 									e1.printStackTrace();
@@ -112,32 +114,21 @@ class DownloadThread extends AbstractThread {
 								break;
 							default:
 								done(controller, response);
+								break;
 						}
 						if (DEBUG) Log.i(TAG, "Download END.");
-						byte[] bytes;
-						try {
-							bytes = Base64.decode(b64enc);
-							if (bytes.length > 0) {
-								if (DEBUG) Log.i(TAG, "Decoding, resizing and adding to cache");
-								Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-								if (bitmap != null) {
-									// add to disk cache
-									response.value = DiskCacheThread.addCoverToCache(cover, bitmap, thumbSize);
-									// add to mem cache
-									MemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
-									if (DEBUG) Log.i(TAG, "Done");
-								}
-							} else {
-								// still add null value to mem cache so we don't try to fetch it again
-								if (DEBUG) Log.i(TAG, "Adding null-value (" + cover.getCrc() + ") to mem cache in order to block future downloads");
-								MemCacheThread.addCoverToCache(cover, null, 0);
-							}
-						} catch (IOException e) {
-							System.out.println("IOException: " + e.getMessage());
-							System.out.println(e.getStackTrace());
-						} finally {
-							done(controller, response);
+						if (bitmap != null) {
+							// add to disk cache
+							response.value = DiskCacheThread.addCoverToCache(cover, bitmap, thumbSize);
+							// add to mem cache
+							MemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
+							if (DEBUG) Log.i(TAG, "Done");
+						} else {
+							// still add null value to mem cache so we don't try to fetch it again
+							if (DEBUG) Log.i(TAG, "Adding null-value (" + cover.getCrc() + ") to mem cache in order to block future downloads");
+							MemCacheThread.addCoverToCache(cover, null, 0);
 						}
+						done(controller, response);
 					}
 				} else {
 					done(controller, response);

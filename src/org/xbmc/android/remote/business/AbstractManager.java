@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.xbmc.android.util.ClientFactory;
+import org.xbmc.android.util.Crc32;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
@@ -50,7 +51,7 @@ import android.util.Log;
  */
 public abstract class AbstractManager implements INotifiableManager {
 	
-	public static final Boolean DEBUG = false;
+	public static final Boolean DEBUG = true;
 	
 	protected static final String TAG = "AbstractManager";
 	
@@ -156,7 +157,7 @@ public abstract class AbstractManager implements INotifiableManager {
 				if (cover.getCrc() != 0L) {
 					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
 					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
-						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Trying memory");
+						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Trying memory (" + Crc32.formatAsHexLowerCase(cover.getCrc()) + ")");
 						getCoverFromMem(response, cover, thumbSize, defaultCover, context);
 					} else {
 						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Trying disk directly (size not mem-cached)");

@@ -37,6 +37,24 @@
 				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 			
+            <!-- TV Shows -->
+			<LinearLayout
+				android:id="@+id/tvshowlist_outer_layout" 
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:orientation="vertical" android:fadingEdge="none" >
+				<include layout="@layout/titlebar" />
+				<include layout="@layout/listmessage" />
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					<ListView 
+						android:id="@+id/tvshowlist_list"
+						android:layout_height="fill_parent"
+						android:layout_width="fill_parent" 
+						style="@style/standard_list" />
+				</org.xbmc.android.widget.FastScrollView>
+			</LinearLayout>
+			
             <!-- Actors -->
 			<LinearLayout
 				android:id="@+id/actorlist_outer_layout" 

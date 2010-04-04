@@ -24,16 +24,16 @@ import java.io.IOException;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.ThumbSize;
+import org.xbmc.api.type.ThumbSize.Dimension;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 
 public abstract class ImportUtilities {
 	
-	public static final double POSTER_AR = 1.4799154334038054968287526427061;
-
 	private static final String TAG = "ImportUtilities";
     private static final String CACHE_DIRECTORY = "xbmc";
     private static final double MIN_FREE_SPACE = 15;
@@ -55,66 +55,36 @@ public abstract class ImportUtilities {
     	return IOUtilities.getExternalFile(sb.toString());
     }
 
+    
     public static Bitmap addCoverToCache(ICoverArt cover, Bitmap bitmap, int thumbSize) {
     	Bitmap sizeToReturn = null;
     	File cacheDirectory;
+    	Bitmap resized = null;
+    	final int mediaType = cover.getMediaType();
     	for (int currentThumbSize : ThumbSize.values()) {
+    		// don't save big covers
+    		if (currentThumbSize == ThumbSize.BIG) {
+    			if (thumbSize == currentThumbSize)
+    				return bitmap;
+    			else
+    				continue;
+    		}
     		try {
-    			cacheDirectory = ensureCache(MediaType.getArtFolder(cover.getMediaType()), currentThumbSize);
+    			cacheDirectory = ensureCache(MediaType.getArtFolder(mediaType), currentThumbSize);
     		} catch (IOException e) {
     			return null;
     		}
     		File coverFile = new File(cacheDirectory, Crc32.formatAsHexLowerCase(cover.getCrc()));
     		FileOutputStream out = null;
     		try {
-    			out = new FileOutputStream(coverFile);
-    			int width = 0;
-    			int height = 0;
-    			final double ar = ((double)bitmap.getWidth()) / ((double)bitmap.getHeight());
-    			switch (cover.getMediaType()) {
-    				default:
-    				case MediaType.PICTURES:
-    				case MediaType.MUSIC:
-    					if (ar < 1) {
-    						width = ThumbSize.getPixel(currentThumbSize);
-    						height = (int)(width / ar); 
-    					} else {
-    						height = ThumbSize.getPixel(currentThumbSize);
-    						width = (int)(height * ar); 
-    					}
-    					break;
-    				case MediaType.VIDEO:
-    					if (ar > 0.98 && ar < 1.02) { 	// square
-    						Log.i(TAG, "Format: SQUARE");
-    						width = ThumbSize.getPixel(currentThumbSize);
-    						height = ThumbSize.getPixel(currentThumbSize);
-    					} else if (ar < 1) {			// portrait
-    						Log.i(TAG, "Format: PORTRAIT");
-    						width = ThumbSize.getPixel(currentThumbSize);
-    						final int ph = (int)(POSTER_AR * width);
-    						height = (int)(width / ar); 
-    						if (height < ph) { 
-    							height = ph;
-    							width = (int)(height * ar);
-    						}
-    					} else if (ar < 2) {			// landscape 16:9
-    						Log.i(TAG, "Format: LANDSCAPE 16:9");
-    						height = ThumbSize.getPixel(currentThumbSize);
-    						width = (int)(height * ar); 
-    					} else if (ar > 5) {			// wide banner
-    						Log.i(TAG, "Format: BANNER");
-    						width = ThumbSize.getPixel(currentThumbSize) * 2;
-    						height = (int)(width / ar); 
-    					} else {						// anything between wide banner and landscape 16:9
-    						Log.i(TAG, "Format: BIZARRE");
-    						height = ThumbSize.getPixel(currentThumbSize);
-    						width = (int)(height * ar); 
-    					}
-    					break;
-    			}
-    			Log.i(TAG, "Resizing to " + width + "x" + height);
-    			final Bitmap resized = Bitmap.createScaledBitmap(bitmap, width, height, true);
-    			resized.compress(Bitmap.CompressFormat.PNG, 100, out);
+    			final Bitmap resizing = resized == null ? bitmap : resized;
+    			Dimension uncroppedDim = ThumbSize.getDimension(currentThumbSize, mediaType, resizing.getWidth(), resizing.getHeight());
+    			Dimension targetDim = ThumbSize.getTargetDimension(currentThumbSize, mediaType, resizing.getWidth(), resizing.getHeight());
+    			// TODO: crop
+    			Log.i(TAG, "Resizing to: " + uncroppedDim + " in order to fit into " + targetDim);
+    			
+    			resized = Bitmap.createScaledBitmap(resizing, uncroppedDim.x, uncroppedDim.y, true);
+    			resized.compress(Bitmap.CompressFormat.JPEG, 85, new FileOutputStream(coverFile));
     			if (thumbSize == currentThumbSize) {
     				sizeToReturn = resized;
     			}
@@ -126,6 +96,17 @@ public abstract class ImportUtilities {
     	}
         return sizeToReturn;
     }
+    
+	public static int calculateSampleSize(BitmapFactory.Options options, Dimension targetDimension) {
+		Boolean scaleByHeight = Math.abs(options.outHeight - targetDimension.y) >= Math.abs(options.outWidth - targetDimension.x);
+		if (options.outHeight * options.outWidth * 2 >= 200 * 200 * 2) {
+			// Load, scaling to smallest power of 2 that'll get it <= desired dimensions
+			double sampleSize = scaleByHeight ? options.outHeight / targetDimension.y : options.outWidth / targetDimension.x;
+			return (int) Math.pow(2d, Math.floor(Math.log(sampleSize) / Math.log(2d)));
+		} else {
+			return 1;
+		}
+	}
     
     /**
      * Returns number of free bytes on the SD card.

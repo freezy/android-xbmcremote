@@ -45,12 +45,11 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 		});
 	}
 
-	public void getTvShows(final DataResponse<ArrayList<TvShow>> response,
-			final int sortBy,final String sortOrder, final Context context) {
+	public void getTvShows(final DataResponse<ArrayList<TvShow>> response, final Context context) {
 		mHandler.post(new Command<ArrayList<TvShow>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
-				response.value = shows(context).getTvShows(TvShowManager.this, sortBy, sortOrder);
+				response.value = shows(context).getTvShows(TvShowManager.this);
 			}
 		});
 	}

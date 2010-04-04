@@ -2,7 +2,68 @@ package org.xbmc.api.object;
 
 import java.util.List;
 
-public class TvShow {
+import org.xbmc.android.util.Crc32;
+import org.xbmc.api.type.MediaType;
+
+public class TvShow implements ICoverArt, INamedResource {
+	
+	/**
+	 * Save this once it's calculated
+	 */
+	public long thumbID = 0L;
+	
+	public List<Season> seasons = null;
+	public List<Actor> actors = null;
+	
+	public TvShow(int id, String title, String summary, double rating, String firstAired, 
+			String genre, String contentRating, String network, String path, int numEpisodes, int watchedEpisodes, boolean watched) {
+		this.id = id;
+		this.title = title;
+		this.summary = summary;
+		this.rating = rating;
+		this.firstAired = firstAired;
+		this.contentRating = contentRating;
+		this.network = network;
+		this.genre = genre;
+		this.path = path;
+		this.numEpisodes = numEpisodes;
+		this.watchedEpisodes = watchedEpisodes;
+		this.watched = watched;
+	}
+
+	public String getShortName() {
+		return title;
+	}
+
+	public long getCrc() {
+		if (thumbID == 0L) {
+			thumbID = Crc32.computeLowerCase(path);
+		}
+		return thumbID;
+	}
+
+	public int getFallbackCrc() {
+		return 0;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public int getMediaType() {
+		return MediaType.VIDEO;
+	}
+
+	public String getName() {
+		return title;
+	}
+	
+	/**
+	 * Something descriptive
+	 */
+	public String toString() {
+		return "[" + id + "] " + title;
+	}
 
 	public int id;
 	public String title;
@@ -12,20 +73,11 @@ public class TvShow {
 	public String contentRating;
 	public String network;
 	public String genre;
+	public String path;
+	public int numEpisodes;
+	public int watchedEpisodes;
+	public boolean watched;
 	
-	public List<Season> seasons = null;
-	public List<Actor> actors = null;
-	
-	public TvShow(int id, String title, String summary, double rating, String firstAired, 
-			String contentRating, String network, String genre) {
-		this.id = id;
-		this.title = title;
-		this.summary = summary;
-		this.rating = rating;
-		this.firstAired = firstAired;
-		this.contentRating = contentRating;
-		this.network = network;
-		this.genre = genre;
-	}
+	private static final long serialVersionUID = -902152099894950269L;
 	
 }

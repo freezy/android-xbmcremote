@@ -21,9 +21,15 @@
 
 package org.xbmc.httpapi.client;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.xbmc.android.util.Base64;
+import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
@@ -35,8 +41,13 @@ import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
+import org.xbmc.api.type.ThumbSize;
+import org.xbmc.api.type.ThumbSize.Dimension;
 import org.xbmc.httpapi.Connection;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
 import android.util.Log;
 
 /**
@@ -45,6 +56,8 @@ import android.util.Log;
  * @author Team XBMC
  */
 public class VideoClient implements IVideoClient {
+	
+	public static final String TAG = "VideoClient";
 	
 	private final Connection mConnection;
 
@@ -190,27 +203,71 @@ public class VideoClient implements IVideoClient {
 		sb.append(" ORDER BY upper(strGenre)");
 		return parseGenres(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
-	
+
 	/**
 	 * Returns movie thumbnail as base64-encoded string
 	 * @param cover
-	 * @return Base64-encoded content of thumb
+	 * @return Bitmap
 	 */
-	public String getCover(INotifiableManager manager, ICoverArt cover) {
-		final String data = mConnection.query("FileDownload", Movie.getThumbUri(cover), manager);
-		if (data.length() > 0) {
-			return data;
-		} else {
-			final String url = Movie.getFallbackThumbUri(cover);
-			if (url != null) {
-				Log.i("VideoClient", "*** Downloaded cover has size null, retrying with fallback:");
-				return mConnection.query("FileDownload", url, manager);
-			} else {
-				return "";
+	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
+		// don't fetch small sizes
+		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
+		InputStream is = null;
+		try {
+			Log.i(TAG, "Starting download");
+			is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", Movie.getThumbUri(cover), manager), 8192));
+			BitmapFactory.Options opts = new BitmapFactory.Options();
+			opts.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(is, null, opts);
+			
+			final Dimension dim = ThumbSize.getDimension(size, MediaType.VIDEO, opts.outWidth, opts.outHeight);
+			Log.i(TAG, "Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
+			final int ss = ImportUtilities.calculateSampleSize(opts, dim);
+			Log.i(TAG, "Sample size: " + ss);
+			
+			// TODO: integrate Movie.getFallbackThumbUri(cover);
+			is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", Movie.getThumbUri(cover), manager), 8192));
+			opts.inDither = true;
+			opts.inSampleSize = ss;
+			opts.inJustDecodeBounds = false;
+			
+			Bitmap bitmap = BitmapFactory.decodeStream(is, null, opts);
+			if (ss == 1) {
+				bitmap = blowup(bitmap);
 			}
+			is.close();
+			if (bitmap == null) {
+				Log.i(TAG, "Fetch: Bitmap is null!!");
+				return null;
+			} else {
+				Log.i(TAG, "Fetch: Bitmap: " + bitmap.getWidth() + "x" + bitmap.getHeight());
+				return bitmap;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) { }
 		}
+		return null;
 	}
-
+	
+	private Bitmap blowup(Bitmap source) {
+		if (source != null) {
+			Bitmap big = Bitmap.createScaledBitmap(source, source.getWidth() * 2,  source.getHeight() * 2, true);
+			BitmapFactory.Options opts = new BitmapFactory.Options();
+			opts.inSampleSize = 2;
+			
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			big.compress(CompressFormat.PNG, 100, os);            
+			
+			byte[] array = os.toByteArray();
+			return BitmapFactory.decodeByteArray(array, 0, array.length, opts);
+		}
+		return null;
+	}	
+	
 	/**
 	 * Converts query response from HTTP API to a list of Movie objects. Each
 	 * row must return the following attributes in the following order:
