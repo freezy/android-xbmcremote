@@ -21,9 +21,6 @@
 
 package org.xbmc.android.remote.business;
 
-import java.io.IOException;
-
-import org.xbmc.android.util.Base64;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.ICoverArt;
@@ -34,8 +31,6 @@ import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
 import android.util.Log;
 
 /**

@@ -164,7 +164,7 @@ public class FileListController extends ListController implements IController {
 				view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_folder));
 			} else {
 				final String ext = fileItem.name.substring(fileItem.name.lastIndexOf(".") + 1).toLowerCase();
-				if (ext.equals("mp3") || ext.equals("ogg") || ext.equals("flac")) {
+				if (ext.equals("mp3") || ext.equals("ogg") || ext.equals("flac") || ext.equals("m4a")) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_song));
 				} else if (ext.equals("avi") || ext.equals("mov") || ext.equals("flv") || ext.equals("mkv") || ext.equals("wmv") || ext.equals("mp4")) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_video));
