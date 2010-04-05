@@ -14,6 +14,7 @@
 			android:layout_height="wrap_content" android:background="@drawable/remote_xbox__top_right" />
 	</LinearLayout>
 	
+	<!-- this is the only row that is added compared to the normal "lowres" version of the layout. -->
 	<LinearLayout android:id="@+id/RemoteXboxRowSections" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content">
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnVideo"
