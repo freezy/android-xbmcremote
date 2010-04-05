@@ -15,7 +15,7 @@ import android.util.Log;
 
 /**
  * TV show client for HTTP API.
- * 
+ * <br /><pre>
  * DB Fields:
  * 	- c00: title
  * 	- c01: summary
@@ -28,12 +28,12 @@ import android.util.Log;
  * 	- c09: empty
  * 	- c10: tvdb urls
  * 	- c11: fanart urls
- *  - c12: tvdb show id
- *  - c13: content rating
- *  - c14: network name
- *  - c15-c20: empty
- *  plus strPath, totalCount, watchedCount, watched
- * 
+ *	- c12: tvdb show id
+ *	- c13: content rating
+ *	- c14: network name
+ *	- c15-c20: empty
+ *	-> plus strPath, totalCount, watchedCount, watched
+ * </pre>
  * @author Team XBMC
  */
 public class TvShowClient implements ITvShowClient {
