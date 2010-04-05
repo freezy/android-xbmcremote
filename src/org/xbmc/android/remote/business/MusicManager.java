@@ -221,7 +221,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 //		});
 		mHandler.post(new Command<ArrayList<Artist>>(response, this) {
 			public void doRun() throws Exception{ 
-				final boolean albumArtistsOnly = info(context).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
+				final boolean albumArtistsOnly = !info(context).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.SHOW_COMPLATION_ARTISTS);
 				response.value = music(context).getArtists(MusicManager.this, albumArtistsOnly);
 			}
 		});
@@ -247,7 +247,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 //		});
 		mHandler.post(new Command<ArrayList<Artist>>(response, this) {
 			public void doRun() throws Exception{ 
-				final boolean albumArtistsOnly = info(context).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
+				final boolean albumArtistsOnly = !info(context).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.SHOW_COMPLATION_ARTISTS);
 				response.value = music(context).getArtists(MusicManager.this, genre, albumArtistsOnly);
 			}
 		});
