@@ -86,7 +86,7 @@ public class FileLocation implements INamedResource {
 	
 	private void setMediaType() {
 		final String ext = name.substring(name.lastIndexOf(".") + 1).toLowerCase();
-		if (ext.equals("mp3") || ext.equals("ogg")) {
+		if (ext.equals("mp3") || ext.equals("ogg") || ext.equals("flac")) {
 			this.mediaType = MediaType.MUSIC;
 		} else if (ext.equals("avi") || ext.equals("mov") || ext.equals("flv") || ext.equals("mkv") || ext.equals("wmv") || ext.equals("mp4")) {
 			this.mediaType = MediaType.VIDEO;
