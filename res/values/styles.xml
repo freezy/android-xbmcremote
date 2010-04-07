@@ -28,7 +28,7 @@
     <style name="standard_list">
     	<item name="android:fadingEdge">none</item>
     	<item name="android:scrollbars">none</item>
-    	<item name="android:divider">#000000</item>
+    	<item name="android:divider">#a0a0a0</item>
     	<item name="android:dividerHeight">1dip</item>
     </style>
 	<style name="details_label">
