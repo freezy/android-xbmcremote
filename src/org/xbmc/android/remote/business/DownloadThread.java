@@ -66,8 +66,7 @@ class DownloadThread extends AbstractThread {
 	 * @param cover     Which cover to download
 	 * @param thumbSize Which size to return
 	 */
-	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, 
-			final INotifiableController controller, final INotifiableManager manager, final Context context) {
+	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller, final INotifiableManager manager, final Context context) {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover != null) {
@@ -114,9 +113,11 @@ class DownloadThread extends AbstractThread {
 						if (DEBUG) Log.i(TAG, "Download END.");
 						if (bitmap != null) {
 							// add to disk cache
-							response.value = DiskCacheThread.addCoverToCache(cover, bitmap, thumbSize);
+							final Bitmap v = DiskCacheThread.addCoverToCache(cover, bitmap, thumbSize);
+							Log.i(TAG, "response.value: " + (response.value == null ? "null" : response.value.getWidth() + "x" + response.value.getHeight()));
 							// add to mem cache
-							MemCacheThread.addCoverToCache(cover, bitmap, thumbSize);
+							MemCacheThread.addCoverToCache(cover, v, thumbSize);
+							response.value = v;
 							if (DEBUG) Log.i(TAG, "Done");
 						} else {
 							// still add null value to mem cache so we don't try to fetch it again

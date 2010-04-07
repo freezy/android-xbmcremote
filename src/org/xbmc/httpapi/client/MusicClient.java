@@ -21,14 +21,9 @@
 
 package org.xbmc.httpapi.client;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.xbmc.android.util.Base64;
-import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IMusicClient;
@@ -42,20 +37,16 @@ import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Song;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
-import org.xbmc.api.type.ThumbSize;
-import org.xbmc.api.type.ThumbSize.Dimension;
 import org.xbmc.httpapi.Connection;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 
 /**
  * Takes care of every music related stuff, notably the music database.
  * 
  * @author Team XBMC
  */
-public class MusicClient implements IMusicClient {
+public class MusicClient extends Client implements IMusicClient {
 	
 	public static final String TAG = "MusicClient";
 	
@@ -79,14 +70,12 @@ public class MusicClient implements IMusicClient {
 	
 	public static final int PLAYLIST_LIMIT = 100;
 	
-	private final Connection mConnection;
-
 	/**
 	 * Class constructor needs reference to HTTP client connection
 	 * @param connection
 	 */
 	public MusicClient(Connection connection) {
-		mConnection = connection;
+		super(connection);
 	}
 	
 	/**
@@ -697,49 +686,16 @@ public class MusicClient implements IMusicClient {
 	}
 	
 	/**
-	 * Returns next bigger album cover than the specified size
-	 * @param album
-	 * @return Base64-encoded content of thumb
+	 * Returns a pre-resized album cover. Pre-resizing is done in a way that
+	 * the bitmap at least as large as the specified size but not larger than
+	 * the double.
+	 * @param manager Postback manager
+	 * @param cover Cover object
+	 * @param size Minmal size to pre-resize to.
+	 * @return Thumbnail bitmap
 	 */
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
-		// don't fetch small sizes
-		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
-		InputStream is = null;
-		try {
-			Log.i(TAG, "Starting download");
-			is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", Album.getThumbUri(cover), manager), 8192));
-			BitmapFactory.Options opts = new BitmapFactory.Options();
-			opts.inJustDecodeBounds = true;
-			BitmapFactory.decodeStream(is, null, opts);
-			
-			final Dimension dim = ThumbSize.getDimension(size, MediaType.MUSIC, opts.outWidth, opts.outHeight);
-			final int ss = ImportUtilities.calculateSampleSize(opts, dim);
-
-			Log.i(TAG, "Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim + " at SampleSize " + ss);
-			
-			// TODO: integrate Movie.getFallbackThumbUri(cover);
-			is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", Album.getThumbUri(cover), manager), 8192));
-			opts.inDither = true;
-			opts.inSampleSize = ss;
-			opts.inJustDecodeBounds = false;
-			
-			final Bitmap bitmap = BitmapFactory.decodeStream(is, null, opts);
-			is.close();
-			if (bitmap == null) {
-				Log.i(TAG, "Fetch: Bitmap is null!!");
-				return null;
-			} else {
-				Log.i(TAG, "Fetch: Bitmap: " + bitmap.getWidth() + "x" + bitmap.getHeight());
-				return bitmap;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) { }
-		}
-		return null;
+		return getCover(manager, cover, size, Album.getThumbUri(cover), MediaType.MUSIC);
 	}
 	
 	/**

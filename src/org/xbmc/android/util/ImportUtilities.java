@@ -58,8 +58,8 @@ public abstract class ImportUtilities {
     
     public static Bitmap addCoverToCache(ICoverArt cover, Bitmap bitmap, int thumbSize) {
     	Bitmap sizeToReturn = null;
-    	File cacheDirectory;
     	Bitmap resized = null;
+    	File cacheDirectory;
     	final int mediaType = cover.getMediaType();
     	for (int currentThumbSize : ThumbSize.values()) {
     		// don't save big covers

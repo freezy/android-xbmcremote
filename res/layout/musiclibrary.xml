@@ -32,7 +32,7 @@
 					<ListView 
 						android:id="@+id/albumlist_list"
 						android:layout_height="fill_parent"
-						android:layout_width="fill_parent" 
+						android:layout_width="fill_parent"
 						style="@style/standard_list" />
 					<GridView 
 						android:id="@+id/albumlist_grid"

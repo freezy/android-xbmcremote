@@ -21,15 +21,9 @@
 
 package org.xbmc.httpapi.client;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.xbmc.android.util.Base64;
-import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
@@ -41,32 +35,25 @@ import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
-import org.xbmc.api.type.ThumbSize;
-import org.xbmc.api.type.ThumbSize.Dimension;
 import org.xbmc.httpapi.Connection;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Bitmap.CompressFormat;
-import android.util.Log;
 
 /**
  * Takes care of everything related to the video database.
  * 
  * @author Team XBMC
  */
-public class VideoClient implements IVideoClient {
+public class VideoClient extends Client implements IVideoClient {
 	
 	public static final String TAG = "VideoClient";
 	
-	private final Connection mConnection;
-
 	/**
 	 * Class constructor needs reference to HTTP client connection
 	 * @param connection
 	 */
 	public VideoClient(Connection connection) {
-		mConnection = connection;
+		super(connection);
 	}
 	
 	/**
@@ -76,7 +63,6 @@ public class VideoClient implements IVideoClient {
 	public void setHost(Host host) {
 		mConnection.setHost(host);
 	}
-
 	
 	/**
 	 * Gets all movies from database
@@ -89,6 +75,21 @@ public class VideoClient implements IVideoClient {
 		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
 		sb.append(" FROM movieview WHERE movieview.idmovie NOT IN (SELECT idmovie FROM setlinkmovie)");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
+		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
+	}
+	
+	/**
+	 * Gets movies from database with offset
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @return Movies with offset
+	 */
+	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, int offset) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
+		sb.append(" FROM movieview WHERE movieview.idmovie NOT IN (SELECT idmovie FROM setlinkmovie)");
+		sb.append(moviesOrderBy(sortBy, sortOrder));
+		sb.append(" LIMIT -1 OFFSET " + offset);
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
@@ -205,68 +206,17 @@ public class VideoClient implements IVideoClient {
 	}
 
 	/**
-	 * Returns movie thumbnail as base64-encoded string
-	 * @param cover
-	 * @return Bitmap
+	 * Returns a pre-resized movie cover. Pre-resizing is done in a way that
+	 * the bitmap at least as large as the specified size but not larger than
+	 * the double.
+	 * @param manager Postback manager
+	 * @param cover Cover object
+	 * @param size Minmal size to pre-resize to.
+	 * @return Thumbnail bitmap
 	 */
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
-		// don't fetch small sizes
-		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
-		InputStream is = null;
-		try {
-			Log.i(TAG, "Starting download");
-			is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", Movie.getThumbUri(cover), manager), 8192));
-			BitmapFactory.Options opts = new BitmapFactory.Options();
-			opts.inJustDecodeBounds = true;
-			BitmapFactory.decodeStream(is, null, opts);
-			
-			final Dimension dim = ThumbSize.getDimension(size, MediaType.VIDEO, opts.outWidth, opts.outHeight);
-			Log.i(TAG, "Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
-			final int ss = ImportUtilities.calculateSampleSize(opts, dim);
-			Log.i(TAG, "Sample size: " + ss);
-			
-			// TODO: integrate Movie.getFallbackThumbUri(cover);
-			is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", Movie.getThumbUri(cover), manager), 8192));
-			opts.inDither = true;
-			opts.inSampleSize = ss;
-			opts.inJustDecodeBounds = false;
-			
-			Bitmap bitmap = BitmapFactory.decodeStream(is, null, opts);
-			if (ss == 1) {
-				bitmap = blowup(bitmap);
-			}
-			is.close();
-			if (bitmap == null) {
-				Log.i(TAG, "Fetch: Bitmap is null!!");
-				return null;
-			} else {
-				Log.i(TAG, "Fetch: Bitmap: " + bitmap.getWidth() + "x" + bitmap.getHeight());
-				return bitmap;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) { }
-		}
-		return null;
+		return getCover(manager, cover, size, Movie.getThumbUri(cover), MediaType.VIDEO);
 	}
-	
-	private Bitmap blowup(Bitmap source) {
-		if (source != null) {
-			Bitmap big = Bitmap.createScaledBitmap(source, source.getWidth() * 2,  source.getHeight() * 2, true);
-			BitmapFactory.Options opts = new BitmapFactory.Options();
-			opts.inSampleSize = 2;
-			
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			big.compress(CompressFormat.PNG, 100, os);            
-			
-			byte[] array = os.toByteArray();
-			return BitmapFactory.decodeByteArray(array, 0, array.length, opts);
-		}
-		return null;
-	}	
 	
 	/**
 	 * Converts query response from HTTP API to a list of Movie objects. Each

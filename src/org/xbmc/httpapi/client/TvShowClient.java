@@ -8,7 +8,6 @@ import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.object.TvShow;
-import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.Connection;
 
 import android.util.Log;
@@ -137,7 +136,7 @@ public class TvShowClient implements ITvShowClient {
 		return shows;
 	}
 	
-	private String showsOrderBy(int sortBy, String sortOrder) {
+/*	private String showsOrderBy(int sortBy, String sortOrder) {
 		switch (sortBy) {
 			default:
 			case SortType.TITLE:
@@ -147,7 +146,7 @@ public class TvShowClient implements ITvShowClient {
 			case SortType.RATING:
 				return " ORDER BY c04" + sortOrder;
 		}
-	}
+	}*/
 
 	/**
 	 * Updates host info on the connection.
