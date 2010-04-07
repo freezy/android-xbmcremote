@@ -145,6 +145,8 @@ public class HostPreference extends DialogPreference {
 			mMacAddrView.setText(mHost.mac_addr);
 			mAccPointView.setText(mHost.access_point);
 			mWifiOnlyView.setChecked(mHost.wifi_only);
+			mWolPortView.setText(String.valueOf(mHost.wol_port));
+			mWolWaitView.setText(String.valueOf(mHost.wol_wait));
 		} else {
 			//set defaults:
 			mPortView.setText("" + Host.DEFAULT_HTTP_PORT);
