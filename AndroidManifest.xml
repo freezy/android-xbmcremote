@@ -41,6 +41,7 @@
 		<provider android:name=".business.provider.HostProvider" android:authorities="org.xbmc.android.provider.remote" />
 	
 <!-- <activity android:name=".presentation.activity.KeyboardAndMouseActivity"></activity>-->
+<activity android:name=".presentation.activity.TvShowLibraryActivity"></activity>
 </application>
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
 	<supports-screens
