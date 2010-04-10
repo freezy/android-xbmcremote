@@ -36,6 +36,7 @@ import org.xbmc.android.remote.presentation.activity.MusicLibraryActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingNotificationManager;
 import org.xbmc.android.remote.presentation.activity.RemoteActivity;
+import org.xbmc.android.remote.presentation.activity.TvShowLibraryActivity;
 import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.WakeOnLan;
@@ -91,6 +92,8 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private static final int HOME_ACTION_NOWPLAYING = 4;
 	private static final int HOME_ACTION_RECONNECT = 5;
 	private static final int HOME_ACTION_WOL = 6;
+	private static final int HOME_ACTION_TVSHOWS = 7;
+	
 	
 	private IInfoManager mInfoManager;
 	
@@ -193,6 +196,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 		final ArrayList<HomeItem> homeItems = new ArrayList<HomeItem>();
 		homeItems.add(new HomeItem(HOME_ACTION_MUSIC, R.drawable.icon_home_music, "Music", "Listen to"));
 		homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.icon_home_movie, "Movies", "Watch your"));
+		homeItems.add(new HomeItem(HOME_ACTION_TVSHOWS, R.drawable.icon_home_movie, "Tv Shows", "Watch your"));
 		homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.icon_home_picture, "Pictures", "Browse your"));
 		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.icon_home_playing, "Now Playing", "See what's"));
 		homeItems.add(remote);
@@ -243,6 +247,9 @@ public class HomeController extends AbstractController implements INotifiableCon
 						break;
 					case HOME_ACTION_VIDEOS:
 						mActivity.startActivity(new Intent(v.getContext(), MovieLibraryActivity.class));
+						break;
+					case HOME_ACTION_TVSHOWS:
+						mActivity.startActivity(new Intent(v.getContext(), TvShowLibraryActivity.class));
 						break;
 					case HOME_ACTION_PICTURES:
 						Intent intent = new Intent(v.getContext(), ListActivity.class);

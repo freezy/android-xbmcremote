@@ -100,6 +100,12 @@ public interface IVideoClient extends IClient {
 	public ArrayList<Genre> getMovieGenres(INotifiableManager manager);
 	
 	/**
+	 * Gets all tv show genres from the database
+	 * @return All tv show genres
+	 */
+	public ArrayList<Genre> getTvShowGenres(INotifiableManager manager);
+	
+	/**
 	 * Returns a cover as bitmap
 	 * @param cover
 	 * @return Cover

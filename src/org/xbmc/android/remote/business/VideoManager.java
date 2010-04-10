@@ -227,4 +227,14 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void getTvShowGenres(DataResponse<ArrayList<Genre>> response,
+			final Context context) {
+		mHandler.post(new Command<ArrayList<Genre>>(response, this) {
+			@Override
+			public void doRun() throws Exception { 
+				response.value = video(context).getTvShowGenres(VideoManager.this);
+			}
+		});
+	}
 }

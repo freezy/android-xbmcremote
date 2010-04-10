@@ -228,6 +228,13 @@ public class FileListController extends ListController implements IController {
 		final FileLocation loc = (FileLocation) mList.getAdapter().getItem(((OneLabelItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch(item.getItemId()) {
 		case ITEM_CONTEXT_QUEUE:
+			mControlManager.getPlaylistId(new DataResponse<Integer>() {
+				@Override
+				public void run() {
+					
+				}
+			}, mActivity);
+//			mControlManager.setPlaylistId(response, id, context)
 			mControlManager.addToPlaylist(new DataResponse<Boolean>(), loc.path,
 					mActivity);
 			break;

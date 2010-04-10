@@ -100,6 +100,12 @@ public interface IVideoManager extends IManager {
 	public void getMovieGenres(final DataResponse<ArrayList<Genre>> response, final Context context);
 	
 	/**
+	 * Gets all tv show genres from the database
+	 * @param response Response object
+	 * @param context
+	 */
+	public void getTvShowGenres(final DataResponse< ArrayList<Genre>> response, final Context context);
+	/**
 	 * Put in here everything that has to be cleaned up after leaving an activity.
 	 */
 	public void postActivity();

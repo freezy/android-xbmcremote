@@ -35,6 +35,7 @@ import org.xbmc.eventclient.ButtonCodes;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -83,15 +84,23 @@ public class ListActivity extends Activity {
 		// remove nasty top fading edge
 		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
 		topFrame.setForeground(null);
-
-		mListController = (ListController) getIntent().getSerializableExtra(ListController.EXTRA_LIST_CONTROLLER);
-
-		mListController.findTitleView(findViewById(R.id.blanklist_outer_layout));
-		mListController.findMessageView(findViewById(R.id.blanklist_outer_layout));
-		mListController.onCreate(this, (ListView) findViewById(R.id.blanklist_list));
-
+		mListController = (ListController)getLastNonConfigurationInstance();
+		if(mListController == null) {
+			mListController = (ListController) getIntent().getSerializableExtra(ListController.EXTRA_LIST_CONTROLLER);
+	
+			mListController.findTitleView(findViewById(R.id.blanklist_outer_layout));
+			mListController.findMessageView(findViewById(R.id.blanklist_outer_layout));
+			mListController.onCreate(this, (ListView) findViewById(R.id.blanklist_list));
+		}
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard();
+	}
+	
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+//		// TODO Auto-generated method stub
+//		return super.onRetainNonConfigurationInstance();
+		return mListController;
 	}
 
 	@Override

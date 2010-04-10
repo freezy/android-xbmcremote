@@ -48,11 +48,10 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
-public class MovieLibraryActivity extends SlidingTabActivity  {
+public class TvShowLibraryActivity extends SlidingTabActivity  {
 
 	private SlidingTabHost mTabHost;
 	
-	private MovieListController mMovieController;
 	private TvShowListController mTvShowController;
 	private ActorListController mActorController;
 	private MovieGenreListController mGenresController;
@@ -76,7 +75,6 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		mTabHost = getTabHost();
 		
 		// add the tabs
-		mTabHost.addTab(mTabHost.newTabSpec("tab_movies", "Movies", R.drawable.st_movie_on, R.drawable.st_movie_off).setBigIcon(R.drawable.st_movie_over).setContent(R.id.movielist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_tv", "TV Shows", R.drawable.st_tv_on, R.drawable.st_tv_off).setBigIcon(R.drawable.st_tv_over).setContent(R.id.tvshowlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_actors", "Actors", R.drawable.st_actor_on, R.drawable.st_actor_off).setBigIcon(R.drawable.st_actor_over).setContent(R.id.actorlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_genres", "Genres", R.drawable.st_genre_on, R.drawable.st_genre_off).setBigIcon(R.drawable.st_genre_over).setContent(R.id.genrelist_outer_layout));
@@ -84,20 +82,16 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		mTabHost.setCurrentTab(0);
 
 		// assign the gui logic to each tab
-		mMovieController = new MovieListController();
-		mMovieController.findTitleView(findViewById(R.id.movielist_outer_layout));
-		mMovieController.findMessageView(findViewById(R.id.movielist_outer_layout));
-		mMovieController.onCreate(this, (ListView)findViewById(R.id.movielist_list)); // first tab can be updated now.
-
 		mTvShowController = new TvShowListController();
 		mTvShowController.findTitleView(findViewById(R.id.tvshowlist_outer_layout));
 		mTvShowController.findMessageView(findViewById(R.id.tvshowlist_outer_layout));
+		mTvShowController.onCreate(this, (ListView)findViewById(R.id.tvshowlist_list)); // first tab can be updated now.
 
-		mActorController = new ActorListController(ActorListController.TYPE_MOVIE);
+		mActorController = new ActorListController(ActorListController.TYPE_TVSHOW);
 		mActorController.findTitleView(findViewById(R.id.actorlist_outer_layout));
 		mActorController.findMessageView(findViewById(R.id.actorlist_outer_layout));
 
-		mGenresController = new MovieGenreListController(MovieGenreListController.TYPE_MOVIE);
+		mGenresController = new MovieGenreListController(MovieGenreListController.TYPE_TVSHOW);
 		mGenresController.findTitleView(findViewById(R.id.genrelist_outer_layout));
 		mGenresController.findMessageView(findViewById(R.id.genrelist_outer_layout));
 
@@ -108,20 +102,17 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				
-				if (tabId.equals("tab_movies")) {
-					mMovieController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.movielist_list));
-				}
 				if (tabId.equals("tab_tv")) {
-					mTvShowController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.tvshowlist_list));
+					mTvShowController.onCreate(TvShowLibraryActivity.this, (ListView)findViewById(R.id.movielist_list));
 				}
 				if (tabId.equals("tab_actors")) {
-					mActorController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.actorlist_list));
+					mActorController.onCreate(TvShowLibraryActivity.this, (ListView)findViewById(R.id.actorlist_list));
 				}
 				if (tabId.equals("tab_genres")) {
-					mGenresController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.genrelist_list));
+					mGenresController.onCreate(TvShowLibraryActivity.this, (ListView)findViewById(R.id.genrelist_list));
 				}
 				if (tabId.equals("tab_files")) {
-					mFileController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
+					mFileController.onCreate(TvShowLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
 				}
 			}
 		});
@@ -135,7 +126,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
 		switch (mTabHost.getCurrentTab()) {
 			case 0:
-				mMovieController.onCreateOptionsMenu(menu);
+				mTvShowController.onCreateOptionsMenu(menu);
 				break;
 			case 1:
 				mActorController.onCreateOptionsMenu(menu);
@@ -158,7 +149,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		// first, process individual menu events
 		switch (mTabHost.getCurrentTab()) {
 		case 0:
-			mMovieController.onOptionsItemSelected(item);
+			mTvShowController.onOptionsItemSelected(item);
 			break;
 		case 1:
 			mActorController.onOptionsItemSelected(item);
@@ -177,7 +168,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 				startActivity(new Intent(this, RemoteActivity.class));
 				return true;
 			case MENU_UPDATE_LIBRARY:
-				mMovieController.refreshMovieLibrary(this);
+				mTvShowController.refreshMovieLibrary(this);
 				return true;
 			case MENU_NOW_PLAYING:
 				startActivity(new Intent(this,  NowPlayingActivity.class));
@@ -191,7 +182,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		switch (mTabHost.getCurrentTab()) {
 			case 0:
-				mMovieController.onCreateContextMenu(menu, v, menuInfo);
+				mTvShowController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 			case 1:
 				mActorController.onCreateContextMenu(menu, v, menuInfo);
@@ -209,7 +200,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (mTabHost.getCurrentTab()) {
 		case 0:
-			mMovieController.onContextItemSelected(item);
+			mTvShowController.onContextItemSelected(item);
 			break;
 		case 1:
 			mActorController.onContextItemSelected(item);
@@ -226,7 +217,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(mMovieController);
+		IEventClientManager client = ManagerFactory.getEventClientManager(mTvShowController);
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:
@@ -248,7 +239,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mMovieController.onActivityResume(this);
+		mTvShowController.onActivityResume(this);
 		mActorController.onActivityResume(this);
 		mGenresController.onActivityResume(this);
 		mFileController.onActivityResume(this);
@@ -258,7 +249,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mMovieController.onActivityPause();
+		mTvShowController.onActivityPause();
 		mActorController.onActivityPause();
 		mGenresController.onActivityPause();
 		mFileController.onActivityPause();

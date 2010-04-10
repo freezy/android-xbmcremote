@@ -102,9 +102,27 @@ public class TvShowClient implements ITvShowClient {
 	
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("select idShow, c00, c01, c04, c05, c08, c13, c14 from tvshow ");
-		sb.append("where idShow in (Select idShow from genrelinktvshow where idgenre =");
+		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, tvshow.c04, tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14, ");
+		sb.append("    path.strPath AS strPath,");
+		sb.append("    counts.totalcount AS totalCount,");
+		sb.append("    counts.watchedcount AS watchedCount,");
+		sb.append("    counts.totalcount = counts.watchedcount AS watched");
+		sb.append("  FROM tvshow");
+		sb.append("  JOIN tvshowlinkpath ON tvshow.idShow = tvshowlinkpath.idShow");
+		sb.append("  JOIN path ON path.idpath = tvshowlinkpath.idPath ");
+		sb.append("  LEFT OUTER join (");
+		sb.append("     SELECT tvshow.idShow AS idShow, count(1) AS totalcount, count(files.playCount) AS watchedcount");
+		sb.append("     FROM tvshow");
+		sb.append("     JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
+		sb.append("     JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
+		sb.append("     JOIN files ON files.idFile = episode.idFile");
+		sb.append("     GROUP BY tvshow.idShow");
+		sb.append("  )");
+		sb.append("  counts ON tvshow.idShow = counts.idShow");
+		sb.append("  WHERE tvshow.idShow in (Select idShow from genrelinktvshow where idgenre = ");
 		sb.append(genre.id);
+		sb.append(") ");
+		Log.i(TAG, sb.toString());
 		return parseShows(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	

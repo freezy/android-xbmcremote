@@ -29,6 +29,7 @@ import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Artist;
@@ -79,17 +80,6 @@ public class ActorListController extends ListController implements IController {
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.person_black_small);
 			setupIdleListener();
 			
-			mList.setOnItemClickListener(new OnItemClickListener() {
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					Intent nextActivity;
-					final Actor actor = (Actor)mList.getAdapter().getItem(((OneLabelItemView)view).position);
-					nextActivity = new Intent(view.getContext(), ListActivity.class);
-					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new MovieListController());
-					nextActivity.putExtra(ListController.EXTRA_ACTOR, actor);
-					mActivity.startActivity(nextActivity);
-				}
-			});
-			
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Artist>());
 			switch (mType) {
 			case TYPE_ALL:
@@ -137,6 +127,19 @@ public class ActorListController extends ListController implements IController {
 			case TYPE_EPISODE:
 				break;
 			}
+			mList.setOnItemClickListener(new OnItemClickListener() {
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					Intent nextActivity;
+					final Actor actor = (Actor)mList.getAdapter().getItem(((OneLabelItemView)view).position);
+					nextActivity = new Intent(view.getContext(), ListActivity.class);
+					if(mType == TYPE_TVSHOW)
+						nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new TvShowListController());
+					else
+						nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new MovieListController());
+					nextActivity.putExtra(ListController.EXTRA_ACTOR, actor);
+					mActivity.startActivity(nextActivity);
+				}
+			});
 		}
 	}
 	

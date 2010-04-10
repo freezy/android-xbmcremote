@@ -204,6 +204,18 @@ public class VideoClient extends Client implements IVideoClient {
 		sb.append(" ORDER BY upper(strGenre)");
 		return parseGenres(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
+	
+	/**
+	 * Gets all tv show genres from database
+	 * @return All tv show genres
+	 */
+	public ArrayList<Genre> getTvShowGenres(INotifiableManager manager) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT idGenre, strGenre FROM genre");
+		sb.append(" WHERE idGenre IN (SELECT idGenre FROM genrelinktvshow)");
+		sb.append(" ORDER BY upper(strGenre)");
+		return parseGenres(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
+	}
 
 	/**
 	 * Returns a pre-resized movie cover. Pre-resizing is done in a way that

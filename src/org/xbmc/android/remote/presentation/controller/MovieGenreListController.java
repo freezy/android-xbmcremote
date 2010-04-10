@@ -46,7 +46,15 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class MovieGenreListController extends ListController implements IController {
 	
+	public static final int TYPE_MOVIE = 0;
+	public static final int TYPE_TVSHOW = 1;
+	
 	private IVideoManager mVideoManager;
+	private int mType;
+	
+	public MovieGenreListController(int type) {
+		mType = type;
+	}
 	
 	public void onCreate(Activity activity, ListView list) {
 		
@@ -59,7 +67,10 @@ public class MovieGenreListController extends ListController implements IControl
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
 					Genre genre = (Genre)mList.getAdapter().getItem(((OneLabelItemView)view).position);
-					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new MovieListController());
+					if(mType == TYPE_MOVIE)
+						nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new MovieListController());
+					else
+						nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new TvShowListController());
 					nextActivity.putExtra(ListController.EXTRA_GENRE, genre);
 					mActivity.startActivity(nextActivity);
 				}
@@ -67,17 +78,34 @@ public class MovieGenreListController extends ListController implements IControl
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_genre);
 			setTitle("Movie genres...");
 			showOnLoading();
-			mVideoManager.getMovieGenres(new DataResponse<ArrayList<Genre>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle("Movie genres (" + value.size() + ")");
-						mList.setAdapter(new GenreAdapter(mActivity, value));
-					} else {
-						setTitle("Movie genres");
-						setNoDataMessage("No genres found.", R.drawable.icon_genre_dark);
+			switch(mType) {
+			case TYPE_MOVIE:
+				mVideoManager.getMovieGenres(new DataResponse<ArrayList<Genre>>() {
+					public void run() {
+						if (value.size() > 0) {
+							setTitle("Movie genres (" + value.size() + ")");
+							mList.setAdapter(new GenreAdapter(mActivity, value));
+						} else {
+							setTitle("Movie genres");
+							setNoDataMessage("No genres found.", R.drawable.icon_genre_dark);
+						}
 					}
-				}
-			}, mActivity.getApplicationContext());
+				}, mActivity.getApplicationContext());
+				break;
+			case TYPE_TVSHOW:
+				mVideoManager.getTvShowGenres(new DataResponse<ArrayList<Genre>>() {
+					public void run() {
+						if (value.size() > 0) {
+							setTitle("Tv Show genres (" + value.size() + ")");
+							mList.setAdapter(new GenreAdapter(mActivity, value));
+						} else {
+							setTitle("Tv Show genres");
+							setNoDataMessage("No genres found.", R.drawable.icon_genre_dark);
+						}
+					}
+				}, mActivity.getApplicationContext());
+				break;
+			}
 			
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Genre>());
 		}

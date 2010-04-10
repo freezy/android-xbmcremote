@@ -140,6 +140,7 @@ public class HostPreference extends DialogPreference {
 			mPortView.setText(String.valueOf(mHost.port));
 			mUserView.setText(mHost.user);
 			mPassView.setText(mHost.pass);
+			
 			mEsPortView.setText(String.valueOf(mHost.esPort));
 			mTimeoutView.setText(String.valueOf(mHost.timeout));
 			mMacAddrView.setText(mHost.mac_addr);
