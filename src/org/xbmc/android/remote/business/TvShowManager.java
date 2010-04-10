@@ -7,7 +7,9 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.object.Actor;
+import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
 
 import android.content.Context;
@@ -59,6 +61,35 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 			@Override
 			public void doRun() throws Exception {
 				response.value = shows(context).getTvShows(TvShowManager.this, genre);
+			}
+		});
+	}
+
+	public void getTvShows(DataResponse<ArrayList<TvShow>> response, final Actor actor, final Context context) {
+		mHandler.post(new Command<ArrayList<TvShow>>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = shows(context).getTvShows(TvShowManager.this, actor);
+			}
+		});
+	}
+
+	public void getEpisodes(DataResponse<ArrayList<Episode>> response,
+			final TvShow show, final Context context) {
+		mHandler.post(new Command<ArrayList<Episode>>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = shows(context).getEpisodes(TvShowManager.this, show);
+			}
+		});
+	}
+
+	public void getSeasons(DataResponse<ArrayList<Season>> response,
+			final TvShow show, final Context context) {
+		mHandler.post(new Command<ArrayList<Season>>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = shows(context).getSeasons(TvShowManager.this, show);
 			}
 		});
 	}

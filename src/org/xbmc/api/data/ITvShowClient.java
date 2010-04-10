@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Actor;
+import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
 
 public interface ITvShowClient extends IClient {
@@ -13,5 +15,29 @@ public interface ITvShowClient extends IClient {
 	public ArrayList<Actor> getTvShowActors(INotifiableManager manager) ;
 	public ArrayList<Genre> getTvShowGenres(INotifiableManager manager);
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre);
+	
+	/**
+	 * Gets all tv shows with the specified actor
+	 * @param manager
+	 * @param actor
+	 * @return
+	 */
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Actor actor);
+	
+	/**
+	 * Gets all Episodes for the specified show
+	 * @param manager
+	 * @param show
+	 * @return
+	 */
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show) ;
+	
+	/**
+	 * Gets all seasons for the specified show
+	 * @param manager
+	 * @param show
+	 * @return
+	 */
+	public ArrayList<Season> getSeasons(INotifiableManager manager, TvShow show);
 
 }

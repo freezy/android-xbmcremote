@@ -12,4 +12,18 @@ public class Episode {
 	public String director;
 	public int season;
 	public int episode;
+	
+	public Episode(int id, String title, String plot, double rating, String writer, String firstAired,
+			boolean watched, String director, int season, int episode){
+		this.id = id;
+		this.title = title;
+		this.plot = plot;
+		this.rating = rating;
+		this.writer = writer;
+		this.firstAired = firstAired;
+		this.watched = watched;
+		this.director = director;
+		this.season = season;
+		this.episode = episode;
+	}
 }

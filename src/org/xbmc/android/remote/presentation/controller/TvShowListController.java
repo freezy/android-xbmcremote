@@ -30,6 +30,7 @@ import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
+import org.xbmc.android.remote.presentation.widget.FlexibleItemView;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
@@ -78,7 +79,6 @@ public class TvShowListController extends ListController implements IController 
 	private Genre mGenre;
 	
 	private ITvShowManager mTvManager;
-	private IVideoManager mVideoManager;
 	private IControlManager mControlManager;
 	
 	private boolean mLoadCovers = false;
@@ -86,7 +86,6 @@ public class TvShowListController extends ListController implements IController 
 	public void onCreate(Activity activity, ListView list) {
 		
 		mTvManager = ManagerFactory.getTvManager(this);
-		mVideoManager = ManagerFactory.getVideoManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
 		
 		ManagerThread.video(this).setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
@@ -126,21 +125,21 @@ public class TvShowListController extends ListController implements IController 
 		final Actor actor = mActor;
 		final Genre genre = mGenre;
 		showOnLoading();
-		if (actor != null) {						// movies with a certain actor
+		if (actor != null) {						// TV Shows with a certain actor
 			setTitle(actor.name + " - TV Shows...");
-//			mVideoManager.getTvShows(new DataResponse<ArrayList<Movie>>() {
-//				public void run() {
-//					if (value.size() > 0) {
-//						setTitle(actor.name + " - Movies (" + value.size() + ")");
-//						mList.setAdapter(new MovieAdapter(mActivity, value));
-//					} else {
-//						setTitle(actor.name + " - Movies");
-//						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
-//					}
-//				}
-//			}, actor, mActivity.getApplicationContext());
+			mTvManager.getTvShows(new DataResponse<ArrayList<TvShow>>() {
+				public void run() {
+					if (value.size() > 0) {
+						setTitle(actor.name + " - TV Shows (" + value.size() + ")");
+						mList.setAdapter(new TvShowAdapter(mActivity, value));
+					} else {
+						setTitle(actor.name + " - TV Shows");
+						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
+					}
+				}
+			}, actor, mActivity.getApplicationContext());
 			
-		} else if (genre != null) {					// movies of a genre
+		} else if (genre != null) {					// TV Shows of a genre
 			setTitle(genre.name + " - TV Shows...");
 			mTvManager.getTvShows(new DataResponse<ArrayList<TvShow>>() {
 				public void run() {
@@ -154,7 +153,7 @@ public class TvShowListController extends ListController implements IController 
 				}
 			}, genre, mActivity.getApplicationContext());
 		} else {
-			setTitle("TV Shows...");				// all movies
+			setTitle("TV Shows...");				// all TV Shows
 			mTvManager.getTvShows(new DataResponse<ArrayList<TvShow>>() {
 				public void run() {
 					if (value.size() > 0) {
@@ -268,11 +267,11 @@ public class TvShowListController extends ListController implements IController 
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
 
-			final FiveLabelsItemView view;
+			final FlexibleItemView view;
 			if (convertView == null) {
-				view = new FiveLabelsItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap, mList.getSelector());
+				view = new FlexibleItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap, mList.getSelector());
 			} else {
-				view = (FiveLabelsItemView)convertView;
+				view = (FlexibleItemView)convertView;
 			}
 			
 			final TvShow show = getItem(position);
@@ -281,8 +280,8 @@ public class TvShowListController extends ListController implements IController 
 			view.title = show.title;
 			view.subtitle = show.genre;
 			view.subtitleRight = show.firstAired!=null?show.firstAired:"";
-			view.bottomtitle = "";
-			view.bottomright = String.valueOf(show.rating);
+			view.bottomtitle = show.numEpisodes + " episodes";
+			view.bottomright = String.valueOf(((float)Math.round(show.rating *10))/ 10);
 			
 			if (mLoadCovers) {
 				view.getResponse().load(show);
