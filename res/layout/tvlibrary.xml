@@ -18,10 +18,10 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_above="@id/slidingtabs">
-            
-            <!-- Movies (by title) -->
+
+            <!-- TV Shows -->
 			<LinearLayout
-				android:id="@+id/movielist_outer_layout" 
+				android:id="@+id/tvshowlist_outer_layout" 
 				android:layout_width="fill_parent" android:layout_height="fill_parent"
 				android:orientation="vertical" android:fadingEdge="none" >
 				<include layout="@layout/titlebar" />
@@ -30,14 +30,14 @@
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent">
 					<ListView 
-						android:id="@+id/movielist_list"
+						android:id="@+id/tvshowlist_list"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent" 
 						style="@style/standard_list" />
 				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
-				
-            <!-- Actors -->
+			
+            <!-- (TV) Actors -->
 			<LinearLayout
 				android:id="@+id/actorlist_outer_layout" 
 				android:layout_width="fill_parent" android:layout_height="fill_parent"
@@ -55,7 +55,7 @@
 				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 			
-            <!-- Genres -->
+            <!-- (TV) Genres -->
 			<LinearLayout
 				android:id="@+id/genrelist_outer_layout" 
 				android:layout_width="fill_parent" android:layout_height="fill_parent"

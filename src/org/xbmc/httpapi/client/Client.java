@@ -89,14 +89,19 @@ public abstract class Client {
 			
 			Log.i(TAG, "Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
 			if (opts.outWidth < 0) {
-				Log.i(TAG, "Starting fallback download (" + fallbackUrl + ")");
-				opts = prefetch(manager, fallbackUrl, size, mediaType);
-				dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
-				Log.i(TAG, "FALLBACK-Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
-				if (opts.outWidth < 0) {
-					return null;
+				if (fallbackUrl != null) {
+					Log.i(TAG, "Starting fallback download (" + fallbackUrl + ")");
+					opts = prefetch(manager, fallbackUrl, size, mediaType);
+					dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
+					Log.i(TAG, "FALLBACK-Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
+					if (opts.outWidth < 0) {
+						return null;
+					} else {
+						url = fallbackUrl;
+					}
 				} else {
-					url = fallbackUrl;
+					Log.i(TAG, "Fallback url is null, returning null-bitmap");
+					return null;
 				}
 			}
 			final int ss = ImportUtilities.calculateSampleSize(opts, dim);
