@@ -226,6 +226,10 @@ public class RemoteActivity extends Activity {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent touchEvent) {
+		// ignore all that on hdpi displays
+		if (mViewFlipper == null) {
+			return false;
+		}
 		switch (touchEvent.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 				mOldTouchValue = touchEvent.getX();
