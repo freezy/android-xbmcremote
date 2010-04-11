@@ -33,6 +33,23 @@ public interface ITvShowClient extends IClient {
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show) ;
 	
 	/**
+	 * Gets all Episodes for the specified season
+	 * @param manager
+	 * @param season
+	 * @return
+	 */
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, Season season) ;
+	
+	/**
+	 * Gets all Episodes for the specified show and season
+	 * @param manager
+	 * @param show
+	 * @param season
+	 * @return
+	 */
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season) ;
+	
+	/**
 	 * Gets all seasons for the specified show
 	 * @param manager
 	 * @param show

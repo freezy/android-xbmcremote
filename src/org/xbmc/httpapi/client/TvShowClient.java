@@ -191,13 +191,12 @@ public class TvShowClient implements ITvShowClient {
 	 */
 	public ArrayList<Season> getSeasons(INotifiableManager manager, TvShow show) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT episode.c12,path.strPath,tvshow.c00,tvshow.c08,count(1),");
-		sb.append("count(files.playCount) FROM episode JOIN tvshowlinkepisode ");
-		sb.append("ON tvshowlinkepisode.idEpisode=episode.idEpisode join tvshow ");
-		sb.append("ON tvshow.idShow=tvshowlinkepisode.idShow JOIN files on files.idFile=episode.idFile  ");
-		sb.append("JOIN tvshowlinkpath on tvshowlinkpath.idShow = tvshow.idShow ");
-		sb.append("JOIN path on path.idPath = tvshowlinkpath.idPath where tvshow.idShow = 1  group by episode.c12");
-		return null;
+		sb.append("SELECT distinct(c12) FROM episode WHERE idEpisode in ");
+		sb.append(" (SELECT idEpisode FROM tvshowlinkepisode WHERE idShow = ");
+		sb.append(show.id);
+		sb.append(" )");
+		
+		return parseSeasons(mConnection.query("QueryVideoDatabase", sb.toString(), manager), show);
 	}
 	
 	/**
@@ -207,12 +206,37 @@ public class TvShowClient implements ITvShowClient {
 	 * @return
 	 */
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show) {
+		return getEpisodes(manager, show, null);
+	}
+	
+	/**
+	 * Gets all Episodes for the specified season
+	 * @param manager
+	 * @param season
+	 * @return
+	 */
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, Season season) {
+		return getEpisodes(manager, season.show, season);
+	}
+	
+	/**
+	 * Gets all Episodes for the specified show and season
+	 * @param manager
+	 * @param show
+	 * @param season
+	 * @return
+	 */
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idEpisode, c00, \"\" AS c01, c03, c04, c05, c06, c08, c10, c12, c13, idFile");
-		sb.append(" FROM episode WHEre idEpisode in (select idEpisode FROM tvshowlinkepisode WHERE ");
+		sb.append(" FROM episode WHERE idEpisode in (select idEpisode FROM tvshowlinkepisode WHERE ");
 		sb.append(" idShow = ");
 		sb.append(show.id);
 		sb.append(" )");
+		if(season != null) {
+			sb.append(" AND c12 = ");
+			sb.append(season.number);
+		}
 		sb.append(" GROUP BY c12 ORDER BY c12, c13");
 		return parseEpisodes(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
@@ -267,6 +291,22 @@ public class TvShowClient implements ITvShowClient {
 		return episodes;
 	}
 
+	protected ArrayList<Season> parseSeasons(String response, TvShow show) {
+		ArrayList<Season> seasons = new ArrayList<Season>();
+		String[] fields = response.split("<field>");
+		try {
+			for( int row = 1; row < fields.length; row ++) {
+				seasons.add(new Season(Connection.trimInt(fields[row]),
+						false,
+						show));
+			}
+		}catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
+		}
+		return seasons;
+	}
 	
 	protected ArrayList<TvShow> parseShows(String response) {
 		ArrayList<TvShow> shows = new ArrayList<TvShow>();

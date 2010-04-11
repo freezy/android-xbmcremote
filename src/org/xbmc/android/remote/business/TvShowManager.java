@@ -94,4 +94,25 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 		});
 	}
 
+	public void getEpisodes(DataResponse<ArrayList<Episode>> response,
+			final TvShow show, final Season season, final Context context) {
+		mHandler.post(new Command<ArrayList<Episode>>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = shows(context).getEpisodes(TvShowManager.this, show, season);
+			}
+		});
+		
+	}
+
+	public void getEpisodes(DataResponse<ArrayList<Episode>> response,
+			final Season season, final Context context) {
+		mHandler.post(new Command<ArrayList<Episode>>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = shows(context).getEpisodes(TvShowManager.this, season);
+			}
+		});
+	}
+
 }

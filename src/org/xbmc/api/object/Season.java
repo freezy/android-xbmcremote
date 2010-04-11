@@ -9,4 +9,10 @@ public class Season {
 	
 	public TvShow show = null;
 	public List<Episode> episodes = null;
+	
+	public Season(int number, boolean watched, TvShow show) {
+		this.number = number;
+		this.watched = watched;
+		this.show = show;
+	}
 }
