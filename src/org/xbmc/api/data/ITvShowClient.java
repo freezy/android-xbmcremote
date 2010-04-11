@@ -6,8 +6,11 @@ import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
+
+import android.graphics.Bitmap;
 
 public interface ITvShowClient extends IClient {
 
@@ -56,5 +59,13 @@ public interface ITvShowClient extends IClient {
 	 * @return
 	 */
 	public ArrayList<Season> getSeasons(INotifiableManager manager, TvShow show);
+	
+	
+	/**
+	 * Returns a cover as bitmap
+	 * @param cover
+	 * @return Cover
+	 */
+	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size);
 
 }

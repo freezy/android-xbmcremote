@@ -8,10 +8,14 @@ import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Host;
+import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.object.Movie;
 import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
+import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.Connection;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 /**
@@ -56,14 +60,12 @@ import android.util.Log;
  * </pre>
  * @author Team XBMC
  */
-public class TvShowClient implements ITvShowClient {
+public class TvShowClient extends Client implements ITvShowClient {
 
 	private static final String TAG = "TvShowClient";
 
-	private Connection mConnection;
-
 	public TvShowClient(Connection connection) {
-		this.mConnection = connection;
+		super(connection);
 	}
 	
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager) {
@@ -240,6 +242,20 @@ public class TvShowClient implements ITvShowClient {
 		sb.append(" GROUP BY c12 ORDER BY c12, c13");
 		return parseEpisodes(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
+	
+	/**
+	 * Returns a pre-resized movie cover. Pre-resizing is done in a way that
+	 * the bitmap at least as large as the specified size but not larger than
+	 * the double.
+	 * @param manager Postback manager
+	 * @param cover Cover object
+	 * @param size Minmal size to pre-resize to.
+	 * @return Thumbnail bitmap
+	 */
+	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
+		return getCover(manager, cover, size, Movie.getThumbUri(cover), Movie.getFallbackThumbUri(cover), MediaType.VIDEO);
+	}
+	
 	/*
 	 * public int id;1 
 	public String title;2

@@ -227,7 +227,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 * @return Thumbnail bitmap
 	 */
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
-		return getCover(manager, cover, size, Movie.getThumbUri(cover), MediaType.VIDEO);
+		return getCover(manager, cover, size, Movie.getThumbUri(cover), Movie.getFallbackThumbUri(cover), MediaType.VIDEO);
 	}
 	
 	/**

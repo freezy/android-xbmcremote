@@ -71,23 +71,30 @@ public abstract class Client {
 	 * of the original image.
 	 * @return Bitmap
 	 */
-	protected Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size, String url, int mediaType) {
+	protected Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size, String url, String fallbackUrl, int mediaType) {
 		// don't fetch small sizes
 		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
 		InputStream is = null;
 		try {
 			Log.i(TAG, "Starting download");
-			is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", url, manager), 8192));
-			BitmapFactory.Options opts = new BitmapFactory.Options();
-			opts.inJustDecodeBounds = true;
-			BitmapFactory.decodeStream(is, null, opts);
 			
-			final Dimension dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
+			BitmapFactory.Options opts = prefetch(manager, url, size, mediaType);
+			Dimension dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
+			
 			Log.i(TAG, "Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
+			if (opts.outWidth < 0) {
+				opts = prefetch(manager, fallbackUrl, size, mediaType);
+				dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
+				Log.i(TAG, "FALLBACK-Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
+				if (opts.outWidth < 0) {
+					return null;
+				} else {
+					url = fallbackUrl;
+				}
+			}
 			final int ss = ImportUtilities.calculateSampleSize(opts, dim);
 			Log.i(TAG, "Sample size: " + ss);
 			
-			// TODO: integrate Movie.getFallbackThumbUri(cover);
 			is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", url, manager), 8192));
 			opts.inDither = true;
 			opts.inSampleSize = ss;
@@ -113,6 +120,14 @@ public abstract class Client {
 			} catch (IOException e) { }
 		}
 		return null;
+	}
+	
+	private BitmapFactory.Options prefetch(INotifiableManager manager, String url, int size, int mediaType) {
+		InputStream is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", url, manager), 8192));
+		BitmapFactory.Options opts = new BitmapFactory.Options();
+		opts.inJustDecodeBounds = true;
+		BitmapFactory.decodeStream(is, null, opts);
+		return opts;
 	}
 	
 	/**
