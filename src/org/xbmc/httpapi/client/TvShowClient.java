@@ -1,6 +1,8 @@
 package org.xbmc.httpapi.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.ITvShowClient;
@@ -87,13 +89,14 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("     GROUP BY tvshow.idShow");
 		sb.append("  )");
 		sb.append("  counts ON tvshow.idShow = counts.idShow");
+		sb.append(" ORDER BY upper(tvshow.c00), tvshow.c00");
+		//sb.append(showsOrderBy(sortBy, sortOrder));
 		Log.i(TAG, sb.toString());
 				
 				
 /*		sb.append("SELECT tvshow.idShow, c00, c01, c04, c05, c08, c13, c14, strPath FROM tvshow, path, tvshowlinkpath");
 		sb.append(" WHERE tvshow.idShow = tvshowlinkpath.idShow");
 		sb.append(" AND path.idPath = tvshowlinkpath.idPath");*/
-		//sb.append(showsOrderBy(sortBy, sortOrder));
 		return parseShows(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
@@ -237,7 +240,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 			sb.append(" AND c12 = ");
 			sb.append(season.number);
 		}
-		sb.append(" GROUP BY c12 ORDER BY c12, c13");
+		sb.append(" ORDER BY c12, c13");
 		return parseEpisodes(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
@@ -302,6 +305,11 @@ public class TvShowClient extends Client implements ITvShowClient {
 			System.err.println("response = " + response);
 			e.printStackTrace();
 		}
+		Collections.sort(episodes, new Comparator<Episode>() {
+			public int compare(Episode object1, Episode object2) {
+				return object1.episode - object2.episode;
+			}
+		});
 		return episodes;
 	}
 
