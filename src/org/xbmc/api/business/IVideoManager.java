@@ -56,6 +56,12 @@ public interface IVideoManager extends IManager {
 	public ArrayList<Movie> getMovies(final Context context);
 	
 	/**
+	 * SYNCHRONOUSLY gets all movies from database
+	 * @return Movies in database with offset
+	 */
+	public ArrayList<Movie> getMovies(final Context context, int offset);
+	
+	/**
 	 * Gets all movies with an actor from database
 	 * @param response Response object
 	 * @param actor Actor

@@ -105,6 +105,8 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private HomeAdapter mHomeMenu;
 	private HomeAdapter mOfflineMenu;
 	
+	private int mCoverDownloadOffset = 0;
+	
 	private WolCounter mWolCounter;
 	
 	private final HomeItem mHomeWol = new HomeItem(HOME_ACTION_WOL, R.drawable.icon_home_power, "Power On", "Turn your XBMC's");
@@ -196,7 +198,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 		final ArrayList<HomeItem> homeItems = new ArrayList<HomeItem>();
 		homeItems.add(new HomeItem(HOME_ACTION_MUSIC, R.drawable.icon_home_music, "Music", "Listen to"));
 		homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.icon_home_movie, "Movies", "Watch your"));
-		homeItems.add(new HomeItem(HOME_ACTION_TVSHOWS, R.drawable.icon_home_movie, "Tv Shows", "Watch your"));
+		homeItems.add(new HomeItem(HOME_ACTION_TVSHOWS, R.drawable.icon_home_tv, "TV Shows", "Watch your"));
 		homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.icon_home_picture, "Pictures", "Browse your"));
 		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.icon_home_playing, "Now Playing", "See what's"));
 		homeItems.add(remote);
@@ -385,7 +387,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 			switch (mType) {
 				case HomeActivity.MENU_COVER_DOWNLOAD_MOVIES:
 					final IVideoManager vm = ManagerFactory.getVideoManager(HomeController.this);
-					final ArrayList<Movie> movies = vm.getMovies(mActivity.getApplicationContext());
+					final ArrayList<Movie> movies = vm.getMovies(mActivity.getApplicationContext(), mCoverDownloadOffset);
 					return new ArrayList<ICoverArt>(movies);
 				case HomeActivity.MENU_COVER_DOWNLOAD_MUSIC:
 					final IMusicManager mm = ManagerFactory.getMusicManager(HomeController.this);
@@ -478,7 +480,8 @@ public class HomeController extends AbstractController implements INotifiableCon
 			mActivity.dismissDialog(type);
 			Toast toast = Toast.makeText(mActivity, "No posters downloaded, libary empty?", Toast.LENGTH_LONG);
 			toast.show();
-		}		
+		}	
+		mCoverDownloadOffset = position;
 	}
 
 	public void onActivityPause() {
@@ -491,4 +494,13 @@ public class HomeController extends AbstractController implements INotifiableCon
 		mInfoManager.setController(this);
 		mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
 	}
+	
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("coverOffset", mCoverDownloadOffset);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+    	mCoverDownloadOffset = savedInstanceState.getInt("coverOffset");   
+    }
+
 }

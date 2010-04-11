@@ -122,7 +122,6 @@ public class AlbumListController extends ListController implements IController {
 		final String sdError = ImportUtilities.assertSdCard();
 		mLoadCovers = sdError == null;
 
-		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 
@@ -402,7 +401,7 @@ public class AlbumListController extends ListController implements IController {
 			view.subtitle = album.artist;
 			view.subsubtitle = album.year > 0 ? String.valueOf(album.year) : "";
 			
-			if (mLoadCovers) {
+			if (mLoadCovers && mPostScrollLoader.isListIdle()) {
 				view.getResponse().load(album);
 			}
 			return view;

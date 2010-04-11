@@ -38,7 +38,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
+import android.widget.ViewFlipper;
 
 /**
  * Activity for remote control. At the moment that's the good ol' Xbox remote
@@ -54,6 +58,9 @@ public class RemoteActivity extends Activity {
 	private RemoteController mRemoteController;
 
 	private KeyTracker mKeyTracker;
+	
+	private ViewFlipper mViewFlipper;
+	private float mOldTouchValue;
 	
 	public RemoteActivity() {
 		mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
@@ -85,6 +92,8 @@ public class RemoteActivity extends Activity {
 		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
 		topFrame.setForeground(null);
 		mRemoteController = new RemoteController(getApplicationContext());
+		
+		mViewFlipper = (ViewFlipper) findViewById(R.id.remote_flipper);
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		mConfigurationManager.initKeyguard(true);
@@ -195,7 +204,7 @@ public class RemoteActivity extends Activity {
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnPower), ButtonCodes.REMOTE_POWER);
 	}
 	
-	
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		return mRemoteController.onCreateOptionsMenu(menu);
 	}
@@ -213,5 +222,79 @@ public class RemoteActivity extends Activity {
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		boolean handled = mKeyTracker.doKeyUp(keyCode, event);
 		return handled || super.onKeyUp(keyCode, event);
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent touchEvent) {
+		switch (touchEvent.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				mOldTouchValue = touchEvent.getX();
+				break;
+			case MotionEvent.ACTION_UP: 
+				float currentX = touchEvent.getX();
+				if (mOldTouchValue < currentX) {
+					mViewFlipper.setInAnimation(AnimationHelper.inFromLeftAnimation());
+					mViewFlipper.setOutAnimation(AnimationHelper.outToRightAnimation());
+					mViewFlipper.showNext();
+				}
+				if (mOldTouchValue > currentX) {
+					mViewFlipper.setInAnimation(AnimationHelper.inFromRightAnimation());
+					mViewFlipper.setOutAnimation(AnimationHelper.outToLeftAnimation());
+					mViewFlipper.showPrevious();
+				}
+				break;
+			case MotionEvent.ACTION_MOVE:
+				final View currentView = mViewFlipper.getCurrentView();
+				currentView.layout((int)(touchEvent.getX() - mOldTouchValue), currentView.getTop(), currentView.getRight(), currentView.getBottom());
+			break;
+		}
+		return false;
+	}
+
+	public static class AnimationHelper {
+		public static Animation inFromRightAnimation() {
+			Animation inFromRight = new TranslateAnimation(
+					Animation.RELATIVE_TO_PARENT, +1.0f,
+					Animation.RELATIVE_TO_PARENT, 0.0f,
+					Animation.RELATIVE_TO_PARENT, 0.0f,
+					Animation.RELATIVE_TO_PARENT, 0.0f);
+			inFromRight.setDuration(350);
+			inFromRight.setInterpolator(new AccelerateInterpolator());
+			return inFromRight;
+		}
+
+		public static Animation outToLeftAnimation() {
+			Animation outtoLeft = new TranslateAnimation(
+					Animation.RELATIVE_TO_PARENT, 0.0f,
+					Animation.RELATIVE_TO_PARENT, -1.0f,
+					Animation.RELATIVE_TO_PARENT, 0.0f,
+					Animation.RELATIVE_TO_PARENT, 0.0f);
+			outtoLeft.setDuration(350);
+			outtoLeft.setInterpolator(new AccelerateInterpolator());
+			return outtoLeft;
+		}
+
+		// for the next movement
+		public static Animation inFromLeftAnimation() {
+			Animation inFromLeft = new TranslateAnimation(
+					Animation.RELATIVE_TO_PARENT, -1.0f,
+					Animation.RELATIVE_TO_PARENT, 0.0f,
+					Animation.RELATIVE_TO_PARENT, 0.0f,
+					Animation.RELATIVE_TO_PARENT, 0.0f);
+			inFromLeft.setDuration(350);
+			inFromLeft.setInterpolator(new AccelerateInterpolator());
+			return inFromLeft;
+		}
+
+		public static Animation outToRightAnimation() {
+			Animation outtoRight = new TranslateAnimation(
+					Animation.RELATIVE_TO_PARENT, 0.0f,
+					Animation.RELATIVE_TO_PARENT, +1.0f,
+					Animation.RELATIVE_TO_PARENT, 0.0f,
+					Animation.RELATIVE_TO_PARENT, 0.0f);
+			outtoRight.setDuration(350);
+			outtoRight.setInterpolator(new AccelerateInterpolator());
+			return outtoRight;
+		}
 	}
 }

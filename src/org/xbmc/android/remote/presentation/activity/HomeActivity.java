@@ -230,6 +230,16 @@ public class HomeActivity extends Activity {
 		}
 	};
 	
-	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		mHomeController.onSaveInstanceState(outState);
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		mHomeController.onRestoreInstanceState(savedInstanceState);
+	}
 
 }
