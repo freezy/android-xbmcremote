@@ -12,11 +12,10 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Paint.Align;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 public class FlexibleItemView extends FiveLabelsItemView {
 	
-	private static final String TAG = "FlexibleItemView";
+//	private static final String TAG = "FlexibleItemView";
 	
 	private final static int POSTER_WIDTH = ThumbSize.getPixel(ThumbSize.SMALL);;
 	private final static int POSTER_HEIGHT = (int)(POSTER_WIDTH * ThumbSize.POSTER_AR);
@@ -29,14 +28,12 @@ public class FlexibleItemView extends FiveLabelsItemView {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		if (mCover == null) {
-			Log.i(TAG, "mCover is NULL, d'oh!!");
 			setMeasuredDimension(mWidth, POSTER_HEIGHT);
 		} else {
-			Log.i(TAG, "Cover dimensions: " + mCover.getWidth() + "x" + mCover.getHeight());
 			setMeasuredDimension(mWidth, mCover.getHeight());
 		}
 	}
-	
+
 	protected void onDraw(Canvas canvas) {
 		if (mCover != null && !mCover.isRecycled()) {
 			Dimension renderDim = ThumbSize.getDimension(ThumbSize.SMALL, MediaType.VIDEO, mCover.getWidth(), mCover.getHeight());

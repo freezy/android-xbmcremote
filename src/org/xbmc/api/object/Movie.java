@@ -58,7 +58,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	}
 	
 	public int getMediaType() {
-		return MediaType.VIDEO;
+		return MediaType.VIDEO_MOVIE;
 	}
 	
 	/**

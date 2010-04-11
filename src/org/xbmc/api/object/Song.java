@@ -120,7 +120,9 @@ public class Song implements ICoverArt, INamedResource {
 	public String getName() {
 		return title;
 	}
-	
+	public String getPath() {
+		return path;
+	}
 	public String getShortName() {
 		return getName();
 	}

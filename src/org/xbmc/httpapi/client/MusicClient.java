@@ -695,7 +695,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Thumbnail bitmap
 	 */
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
-		return getCover(manager, cover, size, Album.getThumbUri(cover), Album.getFallbackThumbUri(cover), MediaType.MUSIC);
+		return getCover(manager, cover, size, Album.getThumbUri(cover), Album.getFallbackThumbUri(cover));
 	}
 	
 	/**

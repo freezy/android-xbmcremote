@@ -28,5 +28,6 @@ public interface ICoverArt extends Serializable {
 	public int getMediaType();
 	public int getFallbackCrc();
 	public long getCrc();
+	public String getPath();
 	public String getName();
 }

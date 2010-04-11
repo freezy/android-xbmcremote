@@ -116,6 +116,10 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 						case MediaType.PICTURES:
 							showSlideshowNotification(curr.getTitle(), curr.getAlbum());
 							break;
+						case MediaType.VIDEO_MOVIE:
+						case MediaType.VIDEO_TVEPISODE:
+						case MediaType.VIDEO_TVSEASON:
+						case MediaType.VIDEO_TVSHOW:
 						case MediaType.VIDEO:
 							showVideoNotification(curr.getAlbum(), curr.getArtist(),status);
 							break;

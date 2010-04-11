@@ -103,6 +103,14 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 	public String getName() {
 		return this.name;
 	}
+	
+	/**
+	 * Actors/artists don't have no paths
+	 */
+	public String getPath() {
+		return "";
+	}
+
 
 	/**
 	 * Something descriptive
@@ -123,4 +131,5 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 	public long thumbID = 0;
 	
 	private static final long serialVersionUID = 9073064679039418773L;
+
 }

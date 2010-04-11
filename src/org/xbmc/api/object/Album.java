@@ -141,6 +141,14 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 	}
 	
 	/**
+	 * Returns local path name
+	 * @return
+	 */
+	public String getPath() {
+		return localPath;
+	}
+	
+	/**
 	 * Returns true if the album is a compilation, false otherwise. 
 	 * @return True if compilation ("Various Artists"), false otherwise.
 	 */

@@ -6,6 +6,12 @@ import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
 public class TvShow implements ICoverArt, INamedResource {
+
+	public final static String TAG = "TvShow";
+	/**
+	 * Points to where the movie thumbs are stored
+	 */
+	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Video/";
 	
 	/**
 	 * Save this once it's calculated
@@ -34,6 +40,24 @@ public class TvShow implements ICoverArt, INamedResource {
 	public String getShortName() {
 		return title;
 	}
+	
+	/**
+	 * Composes the complete path to the album's thumbnail
+	 * @return Path to thumbnail
+	 */
+	public String getThumbUri() {
+		return getThumbUri(this);
+	}
+	
+	public static String getThumbUri(ICoverArt cover) {
+//		return getFallbackThumbUri(cover);
+		return cover.getPath().replace("\\", "/") + "banner.jpg";
+	}
+	
+	public static String getFallbackThumbUri(ICoverArt cover) {
+		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
+		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+	}
 
 	public long getCrc() {
 		if (thumbID == 0L) {
@@ -51,11 +75,15 @@ public class TvShow implements ICoverArt, INamedResource {
 	}
 
 	public int getMediaType() {
-		return MediaType.VIDEO;
+		return MediaType.VIDEO_TVSHOW;
 	}
 
 	public String getName() {
 		return title;
+	}
+	
+	public String getPath() {
+		return path;
 	}
 	
 	/**

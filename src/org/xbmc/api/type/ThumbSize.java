@@ -100,6 +100,10 @@ public abstract class ThumbSize {
 		case MediaType.MUSIC: // always square
 			return new Dimension(getPixel(size), getPixel(size));
 		case MediaType.VIDEO:
+		case MediaType.VIDEO_MOVIE:
+		case MediaType.VIDEO_TVEPISODE:
+		case MediaType.VIDEO_TVSEASON:
+		case MediaType.VIDEO_TVSHOW:
 			final double ar = ((double)x) / ((double)y);
 			if (ar > 0.98 && ar < 1.02) { // square
 				return new Dimension(getPixel(size), getPixel(size), Dimension.SQUARE);
@@ -157,6 +161,10 @@ public abstract class ThumbSize {
 				format = Dimension.SQUARE;
 				break;
 			case MediaType.VIDEO:
+			case MediaType.VIDEO_MOVIE:
+			case MediaType.VIDEO_TVEPISODE:
+			case MediaType.VIDEO_TVSEASON:
+			case MediaType.VIDEO_TVSHOW:
 				if (ar > 0.98 && ar < 1.02) { 	// square
 					if (ar < 1) {
 						width = getPixel(size);

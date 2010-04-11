@@ -95,9 +95,20 @@ class DownloadThread extends AbstractThread {
 									e1.printStackTrace();
 								}
 								break;
+							case MediaType.VIDEO_MOVIE:
 							case MediaType.VIDEO:
 								try {
 									bitmap = video(manager, context).getCover(manager, cover, thumbSize);
+								} catch (WifiStateException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+								break;
+							case MediaType.VIDEO_TVEPISODE:
+							case MediaType.VIDEO_TVSEASON:
+							case MediaType.VIDEO_TVSHOW:
+								try {
+									bitmap = tvshow(manager, context).getCover(manager, cover, thumbSize);
 								} catch (WifiStateException e1) {
 									// TODO Auto-generated catch block
 									e1.printStackTrace();

@@ -69,20 +69,27 @@ public abstract class Client {
 	 * having to save the reponse to a String first.
 	 * The returned size is the next bigger (but smaller than the double) size
 	 * of the original image.
+	 * @param manager Postback manager
+	 * @param cover Cover object
+	 * @param size Minmal size to pre-resize to.
+	 * @param url URL to primary cover
+	 * @param fallbackUrl URL to fallback cover
 	 * @return Bitmap
 	 */
-	protected Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size, String url, String fallbackUrl, int mediaType) {
+	protected Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size, String url, String fallbackUrl) {
+		final int mediaType = cover.getMediaType();
 		// don't fetch small sizes
 		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
 		InputStream is = null;
 		try {
-			Log.i(TAG, "Starting download");
+			Log.i(TAG, "Starting download (" + url + ")");
 			
 			BitmapFactory.Options opts = prefetch(manager, url, size, mediaType);
 			Dimension dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
 			
 			Log.i(TAG, "Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
 			if (opts.outWidth < 0) {
+				Log.i(TAG, "Starting fallback download (" + fallbackUrl + ")");
 				opts = prefetch(manager, fallbackUrl, size, mediaType);
 				dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
 				Log.i(TAG, "FALLBACK-Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
@@ -116,7 +123,9 @@ public abstract class Client {
 			e.printStackTrace();
 		} finally {
 			try {
-				is.close();
+				if (is != null) {
+					is.close();
+				}
 			} catch (IOException e) { }
 		}
 		return null;

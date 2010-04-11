@@ -26,6 +26,10 @@ public abstract class MediaType {
 	public static final int UNKNOWN = -1;
 	public static final int MUSIC = 1;
 	public static final int VIDEO = 2;
+	public static final int VIDEO_MOVIE = 21;
+	public static final int VIDEO_TVSHOW = 22;
+	public static final int VIDEO_TVSEASON = 23;
+	public static final int VIDEO_TVEPISODE = 24;
 	public static final int PICTURES = 3;
 	
 	public static String getName(int type) {
@@ -33,6 +37,10 @@ public abstract class MediaType {
 			case MUSIC:
 				return "music";
 			case VIDEO:
+			case VIDEO_MOVIE:
+			case VIDEO_TVSHOW:
+			case VIDEO_TVSEASON:
+			case VIDEO_TVEPISODE:
 				return "video";
 			case PICTURES:
 				return "pictures";
@@ -58,6 +66,10 @@ public abstract class MediaType {
 			case MUSIC:
 				return "/Music";
 			case VIDEO:
+			case VIDEO_MOVIE:
+			case VIDEO_TVSHOW:
+			case VIDEO_TVSEASON:
+			case VIDEO_TVEPISODE:				
 				return "/Video";
 			case PICTURES:
 				return "/Pictures";

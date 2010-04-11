@@ -9,10 +9,8 @@ import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
-import org.xbmc.api.object.Movie;
 import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
-import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.Connection;
 
 import android.graphics.Bitmap;
@@ -253,7 +251,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @return Thumbnail bitmap
 	 */
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
-		return getCover(manager, cover, size, Movie.getThumbUri(cover), Movie.getFallbackThumbUri(cover), MediaType.VIDEO);
+		return getCover(manager, cover, size, TvShow.getThumbUri(cover), TvShow.getFallbackThumbUri(cover));
 	}
 	
 	/*
