@@ -29,7 +29,6 @@ import org.xbmc.android.remote.presentation.controller.ActorListController;
 import org.xbmc.android.remote.presentation.controller.FileListController;
 import org.xbmc.android.remote.presentation.controller.MovieGenreListController;
 import org.xbmc.android.remote.presentation.controller.MovieListController;
-import org.xbmc.android.remote.presentation.controller.TvShowListController;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
@@ -53,7 +52,6 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	private SlidingTabHost mTabHost;
 	
 	private MovieListController mMovieController;
-	private TvShowListController mTvShowController;
 	private ActorListController mActorController;
 	private MovieGenreListController mGenresController;
 	private FileListController mFileController;
@@ -77,7 +75,6 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		
 		// add the tabs
 		mTabHost.addTab(mTabHost.newTabSpec("tab_movies", "Movies", R.drawable.st_movie_on, R.drawable.st_movie_off).setBigIcon(R.drawable.st_movie_over).setContent(R.id.movielist_outer_layout));
-		mTabHost.addTab(mTabHost.newTabSpec("tab_tv", "TV Shows", R.drawable.st_tv_on, R.drawable.st_tv_off).setBigIcon(R.drawable.st_tv_over).setContent(R.id.tvshowlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_actors", "Actors", R.drawable.st_actor_on, R.drawable.st_actor_off).setBigIcon(R.drawable.st_actor_over).setContent(R.id.actorlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_genres", "Genres", R.drawable.st_genre_on, R.drawable.st_genre_off).setBigIcon(R.drawable.st_genre_over).setContent(R.id.genrelist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
@@ -88,10 +85,6 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		mMovieController.findTitleView(findViewById(R.id.movielist_outer_layout));
 		mMovieController.findMessageView(findViewById(R.id.movielist_outer_layout));
 		mMovieController.onCreate(this, (ListView)findViewById(R.id.movielist_list)); // first tab can be updated now.
-
-		mTvShowController = new TvShowListController();
-		mTvShowController.findTitleView(findViewById(R.id.tvshowlist_outer_layout));
-		mTvShowController.findMessageView(findViewById(R.id.tvshowlist_outer_layout));
 
 		mActorController = new ActorListController(ActorListController.TYPE_MOVIE);
 		mActorController.findTitleView(findViewById(R.id.actorlist_outer_layout));
@@ -110,9 +103,6 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 				
 				if (tabId.equals("tab_movies")) {
 					mMovieController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.movielist_list));
-				}
-				if (tabId.equals("tab_tv")) {
-					mTvShowController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.tvshowlist_list));
 				}
 				if (tabId.equals("tab_actors")) {
 					mActorController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.actorlist_list));
