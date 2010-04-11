@@ -24,9 +24,7 @@ package org.xbmc.android.remote.presentation.controller;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
@@ -36,14 +34,13 @@ import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.ITvShowManager;
-import org.xbmc.api.object.Actor;
-import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Movie;
+import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -61,7 +58,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class TvShowListController extends ListController implements IController {
+public class EpisodeListController extends ListController implements IController {
 	
 	public static final int ITEM_CONTEXT_PLAY = 1;
 	public static final int ITEM_CONTEXT_INFO = 2;
@@ -75,8 +72,7 @@ public class TvShowListController extends ListController implements IController 
 	public static final int MENU_SORT_BY_RATING_ASC = 25;
 	public static final int MENU_SORT_BY_RATING_DESC = 26;
 	
-	private Actor mActor;
-	private Genre mGenre;
+	private Season mSeason;
 	
 	private ITvShowManager mTvManager;
 	private IControlManager mControlManager;
@@ -88,8 +84,6 @@ public class TvShowListController extends ListController implements IController 
 		mTvManager = ManagerFactory.getTvManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
 		
-		ManagerThread.video(this).setSortKey(AbstractManager.PREF_SORT_KEY_ALBUM);
-		ManagerThread.video(this).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		final String sdError = ImportUtilities.assertSdCard();
 		mLoadCovers = sdError == null;
 		
@@ -101,19 +95,19 @@ public class TvShowListController extends ListController implements IController 
 				toast.show();
 			}
 			
-			mActor = (Actor)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_ACTOR);
-			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
+			mSeason = (Season)activity.getIntent().getSerializableExtra(ListController.EXTRA_SEASON);
+			
 			activity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.poster);
-			setupIdleListener();
+//			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					final TvShow show = (TvShow)mList.getAdapter().getItem(((FiveLabelsItemView)view).position);
 					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_TVSHOW, show);
-					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new SeasonListController());
+//					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER,)
 					mActivity.startActivity(nextActivity);
 				}
 			});
@@ -123,49 +117,20 @@ public class TvShowListController extends ListController implements IController 
 	}
 	
 	private void fetch() {
-		final Actor actor = mActor;
-		final Genre genre = mGenre;
+		final Season season = mSeason;
 		showOnLoading();
-		if (actor != null) {						// TV Shows with a certain actor
-			setTitle(actor.name + " - TV Shows...");
-			mTvManager.getTvShows(new DataResponse<ArrayList<TvShow>>() {
+		if (season != null) {
+			setTitle(season.show.title + " Season " + season.number + " - Episodes");
+			mTvManager.getEpisodes(new DataResponse<ArrayList<Episode>>() {
 				public void run() {
-					if (value.size() > 0) {
-						setTitle(actor.name + " - TV Shows (" + value.size() + ")");
-						mList.setAdapter(new TvShowAdapter(mActivity, value));
+					if(value.size() > 0) {
+						setTitle(season.show.title + " Season " + season.number + " - Episodes (" + value.size() + ")");
+						mList.setAdapter(new EpisodeAdapter(mActivity, value));
 					} else {
-						setTitle(actor.name + " - TV Shows");
-						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
+						setNoDataMessage("No seasons found.", R.drawable.icon_movie_dark);
 					}
 				}
-			}, actor, mActivity.getApplicationContext());
-			
-		} else if (genre != null) {					// TV Shows of a genre
-			setTitle(genre.name + " - TV Shows...");
-			mTvManager.getTvShows(new DataResponse<ArrayList<TvShow>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle(genre.name + " - TV Shows (" + value.size() + ")");
-						mList.setAdapter(new TvShowAdapter(mActivity, value));
-					} else {
-						setTitle(genre.name + " - TV Shows");
-						setNoDataMessage("No tv shows found.", R.drawable.icon_movie_dark);
-					}
-				}
-			}, genre, mActivity.getApplicationContext());
-		} else {
-			setTitle("TV Shows...");				// all TV Shows
-			mTvManager.getTvShows(new DataResponse<ArrayList<TvShow>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle("TV Shows (" + value.size() + ")");
-						mList.setAdapter(new TvShowAdapter(mActivity, value));
-					} else {
-						setTitle("TV Shows");
-						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
-					}
-				}
-			}, mActivity.getApplicationContext());
+			}, season, mActivity.getApplicationContext());
 		}
 	}
 	
@@ -233,9 +198,9 @@ public class TvShowListController extends ListController implements IController 
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu) {
-		if (mActor != null || mGenre != null) {
-			menu.add(0, MENU_PLAY_ALL, 0, "Play all").setIcon(R.drawable.menu_album);
-		}
+//		if (mActor != null || mGenre != null) {
+//			menu.add(0, MENU_PLAY_ALL, 0, "Play all").setIcon(R.drawable.menu_album);
+//		}
 		SubMenu sortMenu = menu.addSubMenu(0, MENU_SORT, 0, "Sort").setIcon(R.drawable.menu_sort);
 		sortMenu.add(2, MENU_SORT_BY_TITLE_ASC, 0, "by Title ascending");
 		sortMenu.add(2, MENU_SORT_BY_TITLE_DESC, 0, "by Title descending");
@@ -262,8 +227,8 @@ public class TvShowListController extends ListController implements IController 
 		}
 	}
 	
-	private class TvShowAdapter extends ArrayAdapter<TvShow> {
-		TvShowAdapter(Activity activity, ArrayList<TvShow> items) {
+	private class EpisodeAdapter extends ArrayAdapter<Episode> {
+		EpisodeAdapter(Activity activity, ArrayList<Episode> items) {
 			super(activity, 0, items);
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
@@ -275,17 +240,17 @@ public class TvShowListController extends ListController implements IController 
 				view = (FlexibleItemView)convertView;
 			}
 			
-			final TvShow show = getItem(position);
+			final Episode episode = getItem(position);
 			view.reset();
 			view.position = position;
-			view.title = show.title;
-			view.subtitle = show.genre;
-			view.subtitleRight = show.firstAired!=null?show.firstAired:"";
-			view.bottomtitle = show.numEpisodes + " episodes";
-			view.bottomright = String.valueOf(((float)Math.round(show.rating *10))/ 10);
+			view.title = episode.episode + ". " + episode.title;
+//			view.subtitle = episode.;
+			view.subtitleRight = episode.firstAired!=null?episode.firstAired:"";
+//			view.bottomtitle = show.numEpisodes + " episodes";
+			view.bottomright = String.valueOf(((float)Math.round(episode.rating *10))/ 10);
 			
 			if (mLoadCovers) {
-				view.getResponse().load(show);
+//				view.getResponse().load(season);
 			}
 			return view;
 		}

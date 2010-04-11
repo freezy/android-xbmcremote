@@ -51,6 +51,8 @@ public abstract class ListController extends AbstractController implements Seria
 	public static final String EXTRA_LIST_CONTROLLER = "ListController"; 
 	public static final String EXTRA_MOVIE = "movie";
 	public static final String EXTRA_TVSHOW = "tvshow";
+	public static final String EXTRA_SEASON = "season";
+	public static final String EXTRA_EPISODE = "episode";
 	public static final String EXTRA_ALBUM = "album"; 
 	public static final String EXTRA_ARTIST = "artist";
 	public static final String EXTRA_ACTOR = "actor";
