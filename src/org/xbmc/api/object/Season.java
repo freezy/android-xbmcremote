@@ -1,8 +1,9 @@
 package org.xbmc.api.object;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Season {
+public class Season implements Serializable {
 
 	public int number;
 	public boolean watched = false;
@@ -15,4 +16,5 @@ public class Season {
 		this.watched = watched;
 		this.show = show;
 	}
+	private static final long serialVersionUID = -7652780720536304140L;
 }
