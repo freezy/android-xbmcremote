@@ -352,7 +352,7 @@ public class SongListController extends ListController implements IController {
 			view.subsubtitle = song.getDuration();
 			
 			if (mLoadCovers) {
-				view.getResponse().load(song);
+				view.getResponse().load(song, !mPostScrollLoader.isListIdle());
 			}
 			return view;
 		}

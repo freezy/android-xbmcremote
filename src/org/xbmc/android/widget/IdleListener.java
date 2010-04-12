@@ -30,16 +30,17 @@ public class IdleListener implements OnListIdleListener {
 	}
 	
 	public void onListIdle() {
-		int n = mList.getChildCount();
+		final AbsListView list = mList;
+		int n = list.getChildCount();
 		Log.i(TAG, "IDLEING, downloading covers");
 		// try to garbage collect before and after idling.
 		System.gc();
 		for (int i = 0; i < n; i++) {
-			final AbstractItemView itemView = (AbstractItemView)mList.getChildAt(i);
+			final AbstractItemView itemView = (AbstractItemView)list.getChildAt(i);
 			if (!itemView.hasBitmap()) {
 				ICoverArt cover = (ICoverArt)mList.getAdapter().getItem(itemView.getPosition());
 				Log.i(TAG, "Cover: " + cover);
-				itemView.getResponse().load(cover);
+				itemView.getResponse().load(cover, false);
 			}
 		}
 		System.gc();

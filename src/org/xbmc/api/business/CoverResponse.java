@@ -21,16 +21,16 @@ public class CoverResponse extends DataResponse<Bitmap> {
 		mDefaultCover = defaultCover;
 	}
 	
-	public synchronized void load(ICoverArt cover) {
-		load(cover, ThumbSize.SMALL);
+	public synchronized void load(ICoverArt cover, boolean getFromCacheOnly) {
+		load(cover, ThumbSize.SMALL, getFromCacheOnly);
 	}
-	public synchronized void load(ICoverArt cover, int size) {
+	public synchronized void load(ICoverArt cover, int size, boolean getFromCacheOnly) {
 		if (mIsLoading) {
 			mMostRecentCover = cover;
 		} else {
 			mIsLoading = true;
 			mMostRecentCover = null;
-			mManager.getCover(this, cover, size, mDefaultCover, mView.getContext());
+			mManager.getCover(this, cover, size, mDefaultCover, mView.getContext(), getFromCacheOnly);
 		}
 	}
 	
@@ -39,7 +39,7 @@ public class CoverResponse extends DataResponse<Bitmap> {
 			mView.setCover(value);
 			mIsLoading = false;
 		} else {
-			mManager.getCover(this, mMostRecentCover, ThumbSize.SMALL, mDefaultCover, mView.getContext());
+			mManager.getCover(this, mMostRecentCover, ThumbSize.SMALL, mDefaultCover, mView.getContext(), false);
 			mMostRecentCover = null;
 		}
 	}

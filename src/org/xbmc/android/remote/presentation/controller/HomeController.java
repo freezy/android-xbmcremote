@@ -28,9 +28,9 @@ import java.util.Observer;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.presentation.activity.AbsListActivity;
 import org.xbmc.android.remote.presentation.activity.HomeActivity;
 import org.xbmc.android.remote.presentation.activity.HostSettingsActivity;
-import org.xbmc.android.remote.presentation.activity.AbsListActivity;
 import org.xbmc.android.remote.presentation.activity.MovieLibraryActivity;
 import org.xbmc.android.remote.presentation.activity.MusicLibraryActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
@@ -469,7 +469,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						if (DEBUG) Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
 						progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
 					}
-				}, cover, ThumbSize.BIG, null, mActivity.getApplicationContext());
+				}, cover, ThumbSize.BIG, null, mActivity.getApplicationContext(), false);
 			} else {
 				mActivity.dismissDialog(type);
 				progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);

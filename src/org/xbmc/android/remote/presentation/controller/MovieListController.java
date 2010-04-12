@@ -281,7 +281,7 @@ public class MovieListController extends ListController implements IController {
 			view.bottomright = String.valueOf(movie.rating);
 			
 			if (mLoadCovers) {
-				view.getResponse().load(movie);
+				view.getResponse().load(movie, !mPostScrollLoader.isListIdle());
 			}
 			return view;
 		}

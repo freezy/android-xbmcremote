@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.presentation.activity.DialogFactory;
 import org.xbmc.android.remote.presentation.activity.AbsListActivity;
+import org.xbmc.android.remote.presentation.activity.DialogFactory;
 import org.xbmc.android.remote.presentation.widget.ThreeLabelsItemView;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
@@ -46,6 +46,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,6 +66,8 @@ import android.widget.AdapterView.OnItemClickListener;
  * TODO Once we move to 1.6+, waste the deprecated code. 
  */
 public class AlbumListController extends ListController implements IController {
+	
+	private static final String TAG = "AlbumListController";
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
@@ -400,9 +403,9 @@ public class AlbumListController extends ListController implements IController {
 			view.title = album.name;
 			view.subtitle = album.artist;
 			view.subsubtitle = album.year > 0 ? String.valueOf(album.year) : "";
-			
-			if (mLoadCovers && mPostScrollLoader.isListIdle()) {
-				view.getResponse().load(album);
+			Log.i(TAG, "isListIdle: " + mPostScrollLoader.isListIdle());
+			if (mLoadCovers) {
+				view.getResponse().load(album, !mPostScrollLoader.isListIdle());
 			}
 			return view;
 		}

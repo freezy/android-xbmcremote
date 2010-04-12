@@ -114,7 +114,7 @@ public abstract class DialogFactory {
         			cover.setImageBitmap(value);
         		}
         	}
-        }, album, ThumbSize.BIG, null, context);
+        }, album, ThumbSize.BIG, null, context, false);
         
 		cover.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {

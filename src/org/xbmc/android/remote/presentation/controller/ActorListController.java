@@ -163,7 +163,7 @@ public class ActorListController extends ListController implements IController {
 			view.title = actor.name;
 			
 			if (mLoadCovers) {
-				view.getResponse().load(actor);
+				view.getResponse().load(actor, !mPostScrollLoader.isListIdle());
 			}
 			return view;
 		}

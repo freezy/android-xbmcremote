@@ -251,7 +251,7 @@ public class SeasonListController extends ListController implements IController 
 //			view.bottomright = String.valueOf(((float)Math.round(show.rating *10))/ 10);
 			
 			if (mLoadCovers) {
-				view.getResponse().load(season, ThumbSize.MEDIUM);
+				view.getResponse().load(season, ThumbSize.MEDIUM, !mPostScrollLoader.isListIdle());
 			}
 			return view;
 		}
