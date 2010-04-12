@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.presentation.activity.ListActivity;
+import org.xbmc.android.remote.presentation.activity.AbsListActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
@@ -42,9 +42,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -64,7 +64,7 @@ public class ActorListController extends ListController implements IController {
 		mType = type;
 	}
 	
-	public void onCreate(Activity activity, ListView list) {
+	public void onCreate(Activity activity, AbsListView list) {
 		
 		mVideoManager = ManagerFactory.getVideoManager(this);
 		
@@ -130,7 +130,7 @@ public class ActorListController extends ListController implements IController {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
 					final Actor actor = (Actor)mList.getAdapter().getItem(((OneLabelItemView)view).position);
-					nextActivity = new Intent(view.getContext(), ListActivity.class);
+					nextActivity = new Intent(view.getContext(), AbsListActivity.class);
 					if(mType == TYPE_TVSHOW)
 						nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new TvShowListController());
 					else

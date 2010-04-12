@@ -56,9 +56,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -87,7 +87,7 @@ public class MusicPlaylistController extends ListController implements IControll
 	
 	private static Bitmap sPlayingBitmap;
 	
-	public void onCreate(final PlaylistActivity activity, final ListView list) {
+	public void onCreate(final PlaylistActivity activity, final AbsListView list) {
 		
 		mPlaylistActivity = activity;
 		mMusicManager = ManagerFactory.getMusicManager(this);

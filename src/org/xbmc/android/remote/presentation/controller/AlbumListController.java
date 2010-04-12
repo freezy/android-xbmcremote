@@ -27,7 +27,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.DialogFactory;
-import org.xbmc.android.remote.presentation.activity.ListActivity;
+import org.xbmc.android.remote.presentation.activity.AbsListActivity;
 import org.xbmc.android.remote.presentation.widget.ThreeLabelsItemView;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
@@ -53,10 +53,10 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -111,7 +111,7 @@ public class AlbumListController extends ListController implements IController {
 		mGrid = grid;
 	}
 	
-	public void onCreate(Activity activity, ListView list) {
+	public void onCreate(Activity activity, AbsListView list) {
 		
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
@@ -141,7 +141,7 @@ public class AlbumListController extends ListController implements IController {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
 					final Album album = (Album)mList.getAdapter().getItem(((ThreeLabelsItemView)view).position);
-					nextActivity = new Intent(view.getContext(), ListActivity.class);
+					nextActivity = new Intent(view.getContext(), AbsListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new SongListController());
 					nextActivity.putExtra(ListController.EXTRA_ALBUM, album);
 					mActivity.startActivity(nextActivity);

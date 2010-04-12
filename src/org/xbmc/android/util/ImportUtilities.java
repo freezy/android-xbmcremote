@@ -98,6 +98,9 @@ public abstract class ImportUtilities {
     }
     
 	public static int calculateSampleSize(BitmapFactory.Options options, Dimension targetDimension) {
+		if (targetDimension.x == 0 || targetDimension.y == 0) {
+			return 1;
+		}
 		Boolean scaleByHeight = Math.abs(options.outHeight - targetDimension.y) >= Math.abs(options.outWidth - targetDimension.x);
 		if (options.outHeight * options.outWidth * 2 >= 200 * 200 * 2) {
 			// Load, scaling to smallest power of 2 that'll get it <= desired dimensions

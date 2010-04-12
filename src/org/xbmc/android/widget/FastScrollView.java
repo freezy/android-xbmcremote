@@ -63,7 +63,7 @@ public class FastScrollView extends FrameLayout implements OnScrollListener, OnT
 	private int mOverlaySize = 104;
 
 	private boolean mDragging;
-	private ListView mList;
+	private AbsListView mList;
 	private boolean mScrollCompleted;
 	private boolean mThumbVisible;
 	private int mVisibleItem;
@@ -264,8 +264,8 @@ public class FastScrollView extends FrameLayout implements OnScrollListener, OnT
 	}
 
 	public void onChildViewAdded(View parent, View child) {
-		if (child instanceof ListView) {
-			mList = (ListView) child;
+		if (child instanceof AbsListView) {
+			mList = (AbsListView) child;
 
 			mList.setOnScrollListener(this);
 
@@ -357,11 +357,15 @@ public class FastScrollView extends FrameLayout implements OnScrollListener, OnT
 			// Don't overflow
 			if (index > count - 1)
 				index = count - 1;
-
-			mList.setSelectionFromTop(index + mListOffset, 0);
+			// TODO do that properly
+			if (mList instanceof ListView) {
+				((ListView)mList).setSelectionFromTop(index + mListOffset, 0);
+			}
 		} else {
 			int index = (int) (position * count);
-			mList.setSelectionFromTop(index + mListOffset, 0);
+			if (mList instanceof ListView) {
+				((ListView)mList).setSelectionFromTop(index + mListOffset, 0);
+			}
 			sectionIndex = -1;
 		}
 

@@ -22,12 +22,15 @@ public class CoverResponse extends DataResponse<Bitmap> {
 	}
 	
 	public synchronized void load(ICoverArt cover) {
+		load(cover, ThumbSize.SMALL);
+	}
+	public synchronized void load(ICoverArt cover, int size) {
 		if (mIsLoading) {
 			mMostRecentCover = cover;
 		} else {
 			mIsLoading = true;
 			mMostRecentCover = null;
-			mManager.getCover(this, cover, ThumbSize.SMALL, mDefaultCover, mView.getContext());
+			mManager.getCover(this, cover, size, mDefaultCover, mView.getContext());
 		}
 	}
 	

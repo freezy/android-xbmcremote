@@ -28,6 +28,7 @@ public abstract class AbstractItemView extends View {
 	protected final static int SIZE55 = (int)(55 * ThumbSize.PIXEL_SCALE);
 	protected final static int SIZE59 = (int)(59 * ThumbSize.PIXEL_SCALE);
 	protected final static int SIZE65 = (int)(65 * ThumbSize.PIXEL_SCALE);
+	protected final static int SIZE103 = (int)(103 * ThumbSize.PIXEL_SCALE);
 	
 	protected static Bitmap sSelected;
 	

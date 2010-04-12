@@ -51,9 +51,9 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -80,7 +80,7 @@ public class MovieListController extends ListController implements IController {
 	
 	private boolean mLoadCovers = false;
 	
-	public void onCreate(Activity activity, ListView list) {
+	public void onCreate(Activity activity, AbsListView list) {
 		
 		mVideoManager = ManagerFactory.getVideoManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);

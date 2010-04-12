@@ -197,7 +197,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("SELECT distinct(c12) FROM episode WHERE idEpisode IN ");
 		sb.append(" (SELECT idEpisode FROM tvshowlinkepisode WHERE idShow = ");
 		sb.append(show.id);
-		sb.append(" )");
+		sb.append(" ) ORDER BY cast (c12 as integer)");
 		
 		return parseSeasons(mConnection.query("QueryVideoDatabase", sb.toString(), manager), show);
 	}
@@ -240,7 +240,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 			sb.append(" AND c12 = ");
 			sb.append(season.number);
 		}
-		sb.append(" ORDER BY c12, c13");
+		sb.append(" ORDER BY cast (c12 as integer), cast (c13 as integer)");
 		return parseEpisodes(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	

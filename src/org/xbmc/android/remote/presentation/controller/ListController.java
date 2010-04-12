@@ -41,8 +41,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,7 +61,7 @@ public abstract class ListController extends AbstractController implements Seria
 	public static final String EXTRA_PATH = "path"; 
 	public static final String EXTRA_DISPLAY_PATH = "display_path"; 
 	
-	protected ListView mList;
+	protected AbsListView mList;
 	
 	private TextView mTitleView;
 	private ViewGroup mMessageGroup;
@@ -71,7 +71,7 @@ public abstract class ListController extends AbstractController implements Seria
 	protected static Bitmap mFallbackBitmap;
 	protected IdleListDetector mPostScrollLoader;
 	
-	public void onCreate(Activity activity, ListView list) {
+	public void onCreate(Activity activity, AbsListView list) {
 		super.onCreate(activity);
 		mList = list;
 		mActivity = activity;

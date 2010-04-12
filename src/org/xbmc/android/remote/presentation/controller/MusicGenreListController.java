@@ -39,9 +39,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -52,7 +52,7 @@ public class MusicGenreListController extends ListController implements IControl
 	
 	private IMusicManager mMusicManager;
 	
-	public void onCreate(Activity activity, ListView list) {
+	public void onCreate(Activity activity, AbsListView list) {
 		
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		

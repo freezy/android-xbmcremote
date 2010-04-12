@@ -29,7 +29,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ListView;
+import android.widget.AbsListView;
 
 public class ListControllerOnKeyListener<T extends INamedResource> implements OnKeyListener {
 	
@@ -66,19 +66,20 @@ public class ListControllerOnKeyListener<T extends INamedResource> implements On
 		}
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
 			if ( keyCode >= KeyEvent.KEYCODE_A && keyCode <= KeyEvent.KEYCODE_Z ){
-				int startIndex = ((ListView)v).getSelectedItem() == null ? 0 : ((ListView)v).getSelectedItemPosition() +1;
-				int count = ((ListView)v).getCount();
+				final AbsListView view = (AbsListView)v;
+				int startIndex = (view).getSelectedItem() == null ? 0 : (view).getSelectedItemPosition() +1;
+				int count = (view).getCount();
 				for(int i = startIndex; i < count; i++){
-					if(((T)((ListView)v).getItemAtPosition(i)).getShortName().toLowerCase().charAt(0) == Character.toLowerCase(event.getDisplayLabel())){
-						((ListView)v).setSelection(i);
+					if(((T)(view).getItemAtPosition(i)).getShortName().toLowerCase().charAt(0) == Character.toLowerCase(event.getDisplayLabel())){
+						(view).setSelection(i);
 						return true;
 					}
 				}
 				//Check if we should iterate again from the top
 				if(startIndex > 0){
 					for(int i = 0; i < startIndex -1 ; i++){
-						if(((T)((ListView)v).getItemAtPosition(i)).getShortName().toLowerCase().charAt(0) == Character.toLowerCase(event.getDisplayLabel())){
-							((ListView)v).setSelection(i);
+						if(((T)(view).getItemAtPosition(i)).getShortName().toLowerCase().charAt(0) == Character.toLowerCase(event.getDisplayLabel())){
+							(view).setSelection(i);
 							return true;
 						}
 					}

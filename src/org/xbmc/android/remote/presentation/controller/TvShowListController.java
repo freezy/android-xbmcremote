@@ -27,7 +27,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.ManagerThread;
-import org.xbmc.android.remote.presentation.activity.ListActivity;
+import org.xbmc.android.remote.presentation.activity.GridActivity;
 import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
@@ -111,7 +111,7 @@ public class TvShowListController extends ListController implements IController 
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					final TvShow show = (TvShow)mList.getAdapter().getItem(((FiveLabelsItemView)view).position);
-					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
+					Intent nextActivity = new Intent(view.getContext(), GridActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_TVSHOW, show);
 					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new SeasonListController());
 					mActivity.startActivity(nextActivity);

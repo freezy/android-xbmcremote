@@ -26,7 +26,7 @@ import java.util.HashMap;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.presentation.activity.ListActivity;
+import org.xbmc.android.remote.presentation.activity.AbsListActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.api.business.DataResponse;
@@ -45,10 +45,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -75,7 +75,7 @@ public class FileListController extends ListController implements IController {
 		mMediaType = mediaType;
 	}
 	
-	public void onCreate(Activity activity, ListView list) {
+	public void onCreate(Activity activity, AbsListView list) {
 		
 		mInfoManager = ManagerFactory.getInfoManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
@@ -100,7 +100,7 @@ public class FileListController extends ListController implements IController {
 	
 					FileLocation item = mFileItems.get(((FileLocation)parent.getAdapter().getItem(position)).name);
 					if (item.isDirectory) {
-						Intent nextActivity = new Intent(mActivity, ListActivity.class);
+						Intent nextActivity = new Intent(mActivity, AbsListActivity.class);
 						nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new FileListController());
 						nextActivity.putExtra(ListController.EXTRA_SHARE_TYPE, mMediaType);
 						nextActivity.putExtra(ListController.EXTRA_PATH, item.path);

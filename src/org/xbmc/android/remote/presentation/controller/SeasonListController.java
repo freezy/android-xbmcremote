@@ -29,7 +29,7 @@ import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
-import org.xbmc.android.remote.presentation.widget.FlexibleItemView;
+import org.xbmc.android.remote.presentation.widget.GridPosterItemView;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
@@ -37,6 +37,7 @@ import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -50,9 +51,9 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -78,7 +79,7 @@ public class SeasonListController extends ListController implements IController 
 	
 	private boolean mLoadCovers = false;
 	
-	public void onCreate(Activity activity, ListView list) {
+	public void onCreate(Activity activity, AbsListView list) {
 		
 		mTvManager = ManagerFactory.getTvManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
@@ -103,7 +104,7 @@ public class SeasonListController extends ListController implements IController 
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					final Season season = (Season)mList.getAdapter().getItem(((FiveLabelsItemView)view).position);
+					final Season season = (Season)mList.getAdapter().getItem(((GridPosterItemView)view).position);
 					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_SEASON, season);
 					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new EpisodeListController());
@@ -167,7 +168,7 @@ public class SeasonListController extends ListController implements IController 
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		final FiveLabelsItemView view = (FiveLabelsItemView)((AdapterContextMenuInfo)menuInfo).targetView;
+		final GridPosterItemView view = (GridPosterItemView)((AdapterContextMenuInfo)menuInfo).targetView;
 		menu.setHeaderTitle(view.title);
 		menu.add(0, ITEM_CONTEXT_PLAY, 1, "Play Movie");
 		menu.add(0, ITEM_CONTEXT_INFO, 2, "View Details");
@@ -230,13 +231,14 @@ public class SeasonListController extends ListController implements IController 
 		SeasonAdapter(Activity activity, ArrayList<Season> items) {
 			super(activity, 0, items);
 		}
+		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 
-			final FlexibleItemView view;
+			final GridPosterItemView view;
 			if (convertView == null) {
-				view = new FlexibleItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap, mList.getSelector());
+				view = new GridPosterItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap, mList.getSelector());
 			} else {
-				view = (FlexibleItemView)convertView;
+				view = (GridPosterItemView)convertView;
 			}
 			
 			final Season season = getItem(position);
@@ -249,7 +251,7 @@ public class SeasonListController extends ListController implements IController 
 //			view.bottomright = String.valueOf(((float)Math.round(show.rating *10))/ 10);
 			
 			if (mLoadCovers) {
-				view.getResponse().load(season);
+				view.getResponse().load(season, ThumbSize.MEDIUM);
 			}
 			return view;
 		}
