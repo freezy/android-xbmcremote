@@ -25,6 +25,8 @@ import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
 public class Episode implements ICoverArt {
+	
+	public final static String TAG = "Episode";
 
 	public int id;
 	public String localPath;
@@ -54,11 +56,19 @@ public class Episode implements ICoverArt {
 	}
 
 	public long getCrc() {
-		return Crc32.computeLowerCase(localPath + "episode" + episode);
+		return Crc32.computeLowerCase(localPath);
 	}
 
+	/**
+	 * Returns CRC for episode thumb. From FileItem.cpp(2597):
+	 * <pre>
+	 * 	CStdString strCRC;
+	 *	strCRC.Format("%sepisode%i",GetVideoInfoTag()->m_strFileNameAndPath.c_str(),GetVideoInfoTag()->m_iEpisode);
+	 *	return GetCachedThumb(strCRC,g_settings.GetVideoThumbFolder(),true);
+	 * </pre>
+	 */
 	public int getFallbackCrc() {
-		return 0;
+		return Crc32.computeLowerCase(localPath + "episode" + episode);
 	}
 
 	public int getId() {

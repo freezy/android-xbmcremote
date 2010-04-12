@@ -51,7 +51,7 @@ public class TvShow implements ICoverArt, INamedResource {
 	
 	public static String getThumbUri(ICoverArt cover) {
 		return getFallbackThumbUri(cover);
-//		return cover.getPath().replace("\\", "/") + "banner.jpg";
+//		return cover.getPath() + "banner.jpg";
 	}
 	
 	public static String getFallbackThumbUri(ICoverArt cover) {
