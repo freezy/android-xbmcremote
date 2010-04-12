@@ -105,7 +105,7 @@ public class TvShowListController extends ListController implements IController 
 			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
 			activity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.poster);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.tvposter_small);
 			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {

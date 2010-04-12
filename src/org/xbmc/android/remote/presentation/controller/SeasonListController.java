@@ -99,7 +99,7 @@ public class SeasonListController extends ListController implements IController 
 			
 			activity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.poster);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.tvposter_medium);
 			setupIdleListener(ThumbSize.MEDIUM);
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
