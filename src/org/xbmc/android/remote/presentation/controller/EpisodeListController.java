@@ -127,7 +127,7 @@ public class EpisodeListController extends ListController implements IController
 						setTitle(season.show.title + " Season " + season.number + " - Episodes (" + value.size() + ")");
 						mList.setAdapter(new EpisodeAdapter(mActivity, value));
 					} else {
-						setNoDataMessage("No seasons found.", R.drawable.icon_movie_dark);
+						setNoDataMessage("No episodes found.", R.drawable.icon_movie_dark);
 					}
 				}
 			}, season, mActivity.getApplicationContext());
@@ -250,7 +250,7 @@ public class EpisodeListController extends ListController implements IController
 			view.bottomright = String.valueOf(((float)Math.round(episode.rating *10))/ 10);
 			
 			if (mLoadCovers) {
-//				view.getResponse().load(season);
+				view.getResponse().load(episode, !mPostScrollLoader.isListIdle());
 			}
 			return view;
 		}

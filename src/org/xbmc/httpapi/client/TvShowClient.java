@@ -231,14 +231,16 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 */
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idEpisode, c00, \"\" AS c01, c03, c04, c05, c06, c08, c10, c12, c13, idFile");
-		sb.append(" FROM episode WHERE idEpisode in (select idEpisode FROM tvshowlinkepisode WHERE ");
-		sb.append(" idShow = ");
+		sb.append("SELECT idEpisode, c00, \"\" AS c01, c03, c04, c05, c06, c08, c10, c12, c13, strPath, strFileName");
+		sb.append(" FROM episodeview ");
+		sb.append(" WHERE idShow = ");
 		sb.append(show.id);
-		sb.append(" )");
 		if(season != null) {
-			sb.append(" AND c12 = ");
+			sb.append(" AND (c12 = ");
 			sb.append(season.number);
+			sb.append(" OR (c12 = 0 AND (c15 = 0 OR c15 = ");
+			sb.append(season.number);
+			sb.append(")))");
 		}
 		sb.append(" ORDER BY cast (c12 as integer), cast (c13 as integer)");
 		return parseEpisodes(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
@@ -288,7 +290,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		ArrayList<Episode> episodes = new ArrayList<Episode>();
 		String[] fields = response.split("<field>");
 		try {
-			for(int row = 1; row < fields.length; row += 12) {
+			for(int row = 1; row < fields.length; row += 13) {
 				episodes.add(new Episode(Connection.trimInt(fields[row]),
 						Connection.trim(fields[row + 1]),
 						Connection.trim(fields[row + 2]),
@@ -298,7 +300,9 @@ public class TvShowClient extends Client implements ITvShowClient {
 						Connection.trimBoolean(fields[row + 7]),
 						Connection.trim(fields[row + 8]),
 						Connection.trimInt(fields[row + 9]),
-						Connection.trimInt(fields[row + 10])));
+						Connection.trimInt(fields[row + 10]),
+						Connection.trim(fields[row + 11]) + Connection.trim(fields[row + 12])
+					));
 			}
 		} catch (Exception e) {
 			System.err.println("ERROR: " + e.getMessage());

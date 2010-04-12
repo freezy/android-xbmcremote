@@ -21,9 +21,13 @@
 
 package org.xbmc.api.object;
 
-public class Episode {
+import org.xbmc.android.util.Crc32;
+import org.xbmc.api.type.MediaType;
+
+public class Episode implements ICoverArt {
 
 	public int id;
+	public String localPath;
 	public String title;
 	public String plot;
 	public double rating = 0.0;
@@ -35,7 +39,7 @@ public class Episode {
 	public int episode;
 	
 	public Episode(int id, String title, String plot, double rating, String writer, String firstAired,
-			boolean watched, String director, int season, int episode){
+			boolean watched, String director, int season, int episode, String localPath) {
 		this.id = id;
 		this.title = title;
 		this.plot = plot;
@@ -46,5 +50,31 @@ public class Episode {
 		this.director = director;
 		this.season = season;
 		this.episode = episode;
+		this.localPath = localPath;
 	}
+
+	public long getCrc() {
+		return Crc32.computeLowerCase(localPath + "episode" + episode);
+	}
+
+	public int getFallbackCrc() {
+		return 0;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public int getMediaType() {
+		return MediaType.VIDEO_TVEPISODE;
+	}
+
+	public String getName() {
+		return season + "x" + episode + ": " + title;
+	}
+
+	public String getPath() {
+		return localPath;
+	}
+	private static final long serialVersionUID = 5317212562013683169L;	
 }

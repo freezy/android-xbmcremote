@@ -33,6 +33,7 @@ import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.api.type.ThumbSize.Dimension;
 import org.xbmc.httpapi.Connection;
+import org.xbmc.httpapi.WrongDataFormatException;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -82,6 +83,9 @@ public abstract class Client {
 		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
 		InputStream is = null;
 		try {
+			Log.i(TAG, "Setting response format");
+			
+			mConnection.assertBoolean(manager, "SetResponseFormat", "WebHeader;false;WebFooter;false");
 			Log.i(TAG, "Starting download (" + url + ")");
 			
 			BitmapFactory.Options opts = prefetch(manager, url, size, mediaType);
@@ -125,6 +129,8 @@ public abstract class Client {
 				return bitmap;
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (WrongDataFormatException e) {
 			e.printStackTrace();
 		} finally {
 			try {
