@@ -22,7 +22,7 @@ public class GridPosterItemView extends AbstractItemView {
 	}
 	
 	public GridPosterItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection) {
-		super(context, manager, width, defaultCover, selection);
+		super(context, manager, width, defaultCover, selection, ThumbSize.MEDIUM);
 	}
 
 	@Override

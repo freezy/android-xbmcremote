@@ -23,7 +23,7 @@ public class FiveLabelsItemView extends AbstractItemView {
 	public String bottomright;
 	
 	public FiveLabelsItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection) {
-		super(context, manager, width, defaultCover, selection);
+		super(context, manager, width, defaultCover, selection, ThumbSize.SMALL);
 	}
 
 	@Override

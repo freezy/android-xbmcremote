@@ -11,6 +11,7 @@ package org.xbmc.android.widget;
 import org.xbmc.android.remote.presentation.widget.AbstractItemView;
 import org.xbmc.android.widget.IdleListDetector.OnListIdleListener;
 import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.type.ThumbSize;
 
 import android.util.Log;
 import android.widget.AbsListView;
@@ -24,9 +25,11 @@ public class IdleListener implements OnListIdleListener {
 
 	private final static String TAG = "IdleListener";
 	private final AbsListView mList;
+	private final int mThumbSize;
 
-	public IdleListener(AbsListView list) {
+	public IdleListener(AbsListView list, int thumbSize) {
 		mList = list;
+		mThumbSize = thumbSize;
 	}
 	
 	public void onListIdle() {
@@ -39,8 +42,8 @@ public class IdleListener implements OnListIdleListener {
 			final AbstractItemView itemView = (AbstractItemView)list.getChildAt(i);
 			if (!itemView.hasBitmap()) {
 				ICoverArt cover = (ICoverArt)mList.getAdapter().getItem(itemView.getPosition());
-				Log.i(TAG, "Cover: " + cover);
-				itemView.getResponse().load(cover, false);
+				Log.i(TAG, "Cover: " + cover + " (" + ThumbSize.getDir(mThumbSize) + ")");
+				itemView.getResponse().load(cover, mThumbSize, false);
 			}
 		}
 		System.gc();

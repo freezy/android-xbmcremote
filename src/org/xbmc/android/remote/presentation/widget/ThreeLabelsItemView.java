@@ -21,7 +21,7 @@ public class ThreeLabelsItemView extends AbstractItemView {
 	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
 
 	public ThreeLabelsItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection) {
-		super(context, manager, width, defaultCover, selection);
+		super(context, manager, width, defaultCover, selection, ThumbSize.SMALL);
 	}
 
 	@Override

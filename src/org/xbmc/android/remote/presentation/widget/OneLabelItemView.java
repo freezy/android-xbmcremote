@@ -22,7 +22,7 @@ public class OneLabelItemView extends AbstractItemView {
 	}
 	
 	public OneLabelItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection) {
-		super(context, manager, width, defaultCover, selection);
+		super(context, manager, width, defaultCover, selection, ThumbSize.SMALL);
 	}
 
 	@Override

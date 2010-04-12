@@ -52,7 +52,7 @@ public class Season implements Serializable, ICoverArt {
 	}
 	public int getId() {
 		// TODO Auto-generated method stub
-		return 0;
+		return show.getId() * 10000 + number;
 	}
 	public int getMediaType() {
 		return MediaType.VIDEO_TVSEASON;

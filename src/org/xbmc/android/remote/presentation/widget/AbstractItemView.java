@@ -43,9 +43,9 @@ public abstract class AbstractItemView extends View {
 	
 	protected abstract Rect getPosterRect();
 	
-	public AbstractItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection) {
+	public AbstractItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection, int thumbSize) {
 		super(context);
-		mResponse = new CoverResponse(this, manager, defaultCover);
+		mResponse = new CoverResponse(this, manager, defaultCover, thumbSize);
 		mWidth = width;
 		mDefaultCover = defaultCover;
 		mSelection = selection;

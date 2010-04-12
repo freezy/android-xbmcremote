@@ -100,7 +100,7 @@ public class SeasonListController extends ListController implements IController 
 			activity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.poster);
-			setupIdleListener();
+			setupIdleListener(ThumbSize.MEDIUM);
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -245,10 +245,6 @@ public class SeasonListController extends ListController implements IController 
 			view.reset();
 			view.position = position;
 			view.title = "Season " + season.number;
-//			view.subtitle = show.genre;
-//			view.subtitleRight = show.firstAired!=null?show.firstAired:"";
-//			view.bottomtitle = show.numEpisodes + " episodes";
-//			view.bottomright = String.valueOf(((float)Math.round(show.rating *10))/ 10);
 			
 			if (mLoadCovers) {
 				view.getResponse().load(season, ThumbSize.MEDIUM, !mPostScrollLoader.isListIdle());

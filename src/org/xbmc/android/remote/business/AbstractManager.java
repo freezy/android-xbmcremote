@@ -156,20 +156,20 @@ public abstract class AbstractManager implements INotifiableManager {
 				if (cover.getCrc() != 0L) {
 					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
 					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
-						if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Trying memory (" + Crc32.formatAsHexLowerCase(cover.getCrc()) + ")");
+						if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] Trying memory (" + Crc32.formatAsHexLowerCase(cover.getCrc()) + ")");
 						getCoverFromMem(response, cover, thumbSize, defaultCover, context, getFromCacheOnly);
 					} else {
 						if (getFromCacheOnly) {
-							Log.e(TAG, "[" + cover.getId() + "] ERROR: NOT downloading big covers is a bad idea because they are not cached!");
+							Log.e(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] ERROR: NOT downloading big covers is a bad idea because they are not cached!");
 							response.value = null;
 							onFinish(response);
 						} else {
-							if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Downloading directly");
+							if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] Downloading directly");
 							getCoverFromNetwork(response, cover, thumbSize, context);
 						}
 					}
 				} else {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] no crc, skipping.");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] no crc, skipping.");
 					response.value = null;
 					onFinish(response);
 				}
@@ -187,11 +187,11 @@ public abstract class AbstractManager implements INotifiableManager {
 		MemCacheThread.get().getCover(new DataResponse<Bitmap>() {
 			public void run() {
 				if (value == null) {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] empty");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] empty");
 					// then, try sdcard cache
 					getCoverFromDisk(response, cover, thumbSize, context, getFromCacheOnly);
 				} else {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] FOUND in memory!");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] FOUND in memory!");
 					response.value = value;
 					response.cacheType = CacheType.MEMORY;
 					onFinish(response);
@@ -211,11 +211,11 @@ public abstract class AbstractManager implements INotifiableManager {
 		DiskCacheThread.get().getCover(new DataResponse<Bitmap>() {
 			public void run() {
 				if (value == null) {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Disk cache empty.");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] Disk cache empty.");
 					if (response.postCache()) {
 						// well, let's download
 						if (getFromCacheOnly) {
-							if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] Skipping download.");
+							if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] Skipping download.");
 							response.value = null;
 							onFinish(response);
 						} else {
@@ -223,7 +223,7 @@ public abstract class AbstractManager implements INotifiableManager {
 						}
 					}
 				} else {
-					if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] FOUND on disk!");
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] FOUND on disk!");
 					response.value = value;
 					response.cacheType = CacheType.SDCARD;
 					onFinish(response);

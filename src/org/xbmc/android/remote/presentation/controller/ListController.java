@@ -30,6 +30,7 @@ import org.xbmc.android.widget.IdleListDetector;
 import org.xbmc.android.widget.IdleListener;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.presentation.INotifiableController;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -78,11 +79,15 @@ public abstract class ListController extends AbstractController implements Seria
 		isCreated = true;
 	}
 	
+	protected IdleListener setupIdleListener() {
+		return setupIdleListener(ThumbSize.SMALL);
+	}
+	
 	/**
 	 * Hook up the mechanism to load images only when the list "slows" down.
 	 */
-	protected IdleListener setupIdleListener() {
-		IdleListener idleListener = new IdleListener(mList);
+	protected IdleListener setupIdleListener(int thumbSize) {
+		IdleListener idleListener = new IdleListener(mList, thumbSize);
 		mPostScrollLoader = new IdleListDetector(idleListener);
 		FastScrollView fastScroller = (FastScrollView)mList.getParent();
 		fastScroller.setOnIdleListDetector(mPostScrollLoader);
