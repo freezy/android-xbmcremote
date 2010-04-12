@@ -83,8 +83,9 @@ public abstract class Client {
 		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
 		InputStream is = null;
 		try {
-			Log.i(TAG, "Setting response format");
 			
+			// DO THIS EVERY FUCKING TIME!!
+			Log.i(TAG, "Setting response format");
 			mConnection.assertBoolean(manager, "SetResponseFormat", "WebHeader;false;WebFooter;false");
 			Log.i(TAG, "Starting download (" + url + ")");
 			
