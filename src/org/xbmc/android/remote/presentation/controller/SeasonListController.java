@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2005-2009 Team XBMC
+ *      Copyright (C) 2005-2010 Team XBMC
  *      http://xbmc.org
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -249,7 +249,7 @@ public class SeasonListController extends ListController implements IController 
 //			view.bottomright = String.valueOf(((float)Math.round(show.rating *10))/ 10);
 			
 			if (mLoadCovers) {
-//				view.getResponse().load(season);
+				view.getResponse().load(season);
 			}
 			return view;
 		}

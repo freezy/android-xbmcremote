@@ -194,7 +194,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 */
 	public ArrayList<Season> getSeasons(INotifiableManager manager, TvShow show) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT distinct(c12) FROM episode WHERE idEpisode in ");
+		sb.append("SELECT distinct(c12) FROM episode WHERE idEpisode IN ");
 		sb.append(" (SELECT idEpisode FROM tvshowlinkepisode WHERE idShow = ");
 		sb.append(show.id);
 		sb.append(" )");
