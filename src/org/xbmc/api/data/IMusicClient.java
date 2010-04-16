@@ -39,6 +39,18 @@ import android.graphics.Bitmap;
  * @author Team XBMC
  */
 public interface IMusicClient extends IClient {
+	
+	// those are the musicdb://n/ keys.
+	public static final int MUSICDB_GENRE           = 1;
+	public static final int MUSICDB_ARTIST          = 2;
+	public static final int MUSICDB_ALBUM           = 3;
+	public static final int MUSICDB_SONG            = 4;
+	public static final int MUSICDB_TOP100          = 5;
+	public static final int MUSICDB_RECENTLY_ADDED  = 6;
+	public static final int MUSICDB_RECENTLY_PLAYED = 7;
+	public static final int MUSICDB_COMPILATION     = 8;
+	public static final int MUSICDB_YEARS           = 9;
+	public static final int MUSICDB_SINGLES         = 10;
 
 	/**
 	 * Adds an album to the current playlist.

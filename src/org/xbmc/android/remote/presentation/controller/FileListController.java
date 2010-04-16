@@ -26,7 +26,7 @@ import java.util.HashMap;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.presentation.activity.AbsListActivity;
+import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.api.business.DataResponse;
@@ -100,7 +100,7 @@ public class FileListController extends ListController implements IController {
 	
 					FileLocation item = mFileItems.get(((FileLocation)parent.getAdapter().getItem(position)).name);
 					if (item.isDirectory) {
-						Intent nextActivity = new Intent(mActivity, AbsListActivity.class);
+						Intent nextActivity = new Intent(mActivity, ListActivity.class);
 						nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new FileListController());
 						nextActivity.putExtra(ListController.EXTRA_SHARE_TYPE, mMediaType);
 						nextActivity.putExtra(ListController.EXTRA_PATH, item.path);

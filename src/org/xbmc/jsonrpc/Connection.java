@@ -1,7 +1,29 @@
+/*
+ *      Copyright (C) 2005-2010 Team XBMC
+ *      http://xbmc.org
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with XBMC Remote; see the file license.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 package org.xbmc.jsonrpc;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Authenticator;
@@ -135,6 +157,20 @@ public class Connection {
 		}
 	}
 	
+	public InputStream getInputStream(String url, INotifiableManager manager) {
+		try {
+			final URL u = new URL(url);
+			URLConnection uc;
+			uc = u.openConnection();
+			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
+			uc.setReadTimeout(mSocketReadTimeout);
+			return uc.getInputStream();
+		} catch (IOException e) {
+			manager.onError(e);
+		}
+		return null;
+	}
+	
 	/**
 	 * Executes a query.
 	 * @param command    Name of the command to execute
@@ -164,6 +200,8 @@ public class Connection {
 				.put("id", "1");
 			if (parameters != null) {
 				data.put("params", parameters);
+			} else {
+				data.put("params", new JSONObject());
 			}
 			
 			// POST data

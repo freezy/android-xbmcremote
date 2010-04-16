@@ -19,21 +19,19 @@
  *
  */
 
-package org.xbmc.httpapi.client;
+package org.xbmc.jsonrpc.client;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.api.type.ThumbSize.Dimension;
-import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.WrongDataFormatException;
+import org.xbmc.jsonrpc.Connection;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -47,7 +45,8 @@ import android.util.Log;
  */
 abstract class Client {
 	
-	public static final String TAG = "Client-HTTPAPI";
+	public static final String TAG = "Client-JSON-RPC";
+	public static final String PARAM_FIELDS = "fields";
 	
 	protected final Connection mConnection;
 
@@ -84,9 +83,6 @@ abstract class Client {
 		InputStream is = null;
 		try {
 			
-			// DO THIS EVERY FUCKING TIME!!
-			Log.i(TAG, "Setting response format");
-			mConnection.assertBoolean(manager, "SetResponseFormat", "WebHeader;false;WebFooter;false");
 			Log.i(TAG, "Starting download (" + url + ")");
 			
 			BitmapFactory.Options opts = prefetch(manager, url, size, mediaType);
@@ -112,7 +108,7 @@ abstract class Client {
 			final int ss = ImportUtilities.calculateSampleSize(opts, dim);
 			Log.i(TAG, "Sample size: " + ss);
 			
-			is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", url, manager), 8192));
+			is = new BufferedInputStream(mConnection.getInputStream(url, manager), 8192);
 			opts.inDither = true;
 			opts.inSampleSize = ss;
 			opts.inJustDecodeBounds = false;
@@ -131,8 +127,6 @@ abstract class Client {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (WrongDataFormatException e) {
-			e.printStackTrace();
 		} finally {
 			try {
 				if (is != null) {
@@ -144,7 +138,7 @@ abstract class Client {
 	}
 	
 	private BitmapFactory.Options prefetch(INotifiableManager manager, String url, int size, int mediaType) {
-		InputStream is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", url, manager), 8192));
+		InputStream is = new BufferedInputStream(mConnection.getInputStream(url, manager), 8192);
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inJustDecodeBounds = true;
 		BitmapFactory.decodeStream(is, null, opts);

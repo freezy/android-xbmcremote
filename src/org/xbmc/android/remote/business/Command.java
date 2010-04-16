@@ -16,14 +16,20 @@ import android.util.Log;
 public abstract class Command<T> implements Runnable {
 
 	public int mRetryCount = 0;
+	public long mStarted = 0;
 	public final INotifiableManager mManager;
-	public final DataResponse<T> response;
+	public final DataResponse<T> mResponse;
+	
+	// TODO Disable this when not needed anymore
+	public final StackTraceElement mCaller;
 	
 	public static final int MAX_RETRY = 5;
 	
 	public Command(DataResponse<T> response, INotifiableManager manager) {
-		this.mManager = manager;
-		this.response = response;
+		mManager = manager;
+		mResponse = response;
+		mStarted = System.currentTimeMillis();
+		mCaller = new Throwable().fillInStackTrace().getStackTrace()[2];
 	}
 	
 	public void run() {
@@ -32,7 +38,9 @@ public abstract class Command<T> implements Runnable {
 			Log.d("Command", "Running command counter: " + mRetryCount);
 			if(mRetryCount > MAX_RETRY) return;
 			doRun();
-			mManager.onFinish(response);
+			Log.i(mCaller.getClassName(), "*** " + mCaller.getMethodName() + ": " + (System.currentTimeMillis() - mStarted) + "ms");
+
+			mManager.onFinish(mResponse);
 		}catch (WifiStateException e) {
 			mManager.onWrongConnectionState(e.getState(), this);
 		}catch (Exception e) {

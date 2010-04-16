@@ -4,6 +4,9 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.object.FileLocation;
@@ -47,19 +50,19 @@ public class InfoClient implements IInfoClient {
 	 * @return
 	 */
 	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit) {
-		/*
-		final ArrayList<String> result = mConnection.getArray(manager, "GetDirectory", 
-			path + ";" +
-			(mask != null ? mask.toString() : " ") + ";" + 
-			(offset > 0 ? offset : " ") + ";" +
-			(limit > 0 ? limit : " ")
-		);
-		final ArrayList<FileLocation> files = new ArrayList<FileLocation>();
-		for (String file : result) {
-			files.add(new FileLocation(file));
+		final ArrayList<FileLocation> directories = new ArrayList<FileLocation>();
+		try {
+			final JSONObject result = mConnection.getJson(manager, "Files.GetDirectory", new JSONObject().put("type", "files").put("directory", path));
+			final JSONArray jsonShares = result.getJSONArray("directories");
+			for (int i = 0; i < jsonShares.length(); i++) {
+				JSONObject jsonShare = (JSONObject)jsonShares.get(i);
+				directories.add(new FileLocation(jsonShare.getString("label"), jsonShare.getString("file")));
+			}
+			return directories;
+		} catch (JSONException e) {
+			manager.onError(e);
 		}
-		return files;*/
-		return null;
+		return directories;
 	}
 	
 	/**
@@ -78,15 +81,24 @@ public class InfoClient implements IInfoClient {
 	 * @return
 	 */
 	public ArrayList<FileLocation> getShares(INotifiableManager manager, int mediaType) {
-		/*final ArrayList<String> result = mConnection.getArray(manager, "GetShares", MediaType.getName(mediaType));
 		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
-		for (String share : result) {
-			shares.add(new FileLocation(share));
+		try {
+			final JSONObject result = mConnection.getJson(manager, "Files.GetShares", new JSONObject().put("type", "video"));
+			final JSONArray jsonShares = result.getJSONArray("shares");
+			for (int i = 0; i < jsonShares.length(); i++) {
+				JSONObject jsonShare = (JSONObject)jsonShares.get(i);
+				shares.add(new FileLocation(jsonShare.getString("label"), jsonShare.getString("file")));
+			}
+			return shares;
+		} catch (JSONException e) {
+			manager.onError(e);
 		}
-		return shares;*/
-		return null;
+		return shares;
 	}
 	
+	/**
+	 * @TODO Implement for JSON-RPC
+	 */
 	public String getCurrentlyPlayingThumbURI(INotifiableManager manager) throws MalformedURLException, URISyntaxException {
 		/*
 		ArrayList<String> array = mConnection.getArray(manager, "GetCurrentlyPlaying", "");
@@ -100,6 +112,7 @@ public class InfoClient implements IInfoClient {
 	
 	/**
 	 * Returns any system info variable, see {@link org.xbmc.api.info.SystemInfo}
+	 * @TODO Wait for JSON-RPC implementation
 	 * @param field Field to return
 	 * @return
 	 */
@@ -109,6 +122,7 @@ public class InfoClient implements IInfoClient {
 	
 	/**
 	 * Returns a boolean GUI setting
+	 * @TODO Wait for JSON-RPC implementation
 	 * @param field
 	 * @return
 	 */
@@ -119,6 +133,7 @@ public class InfoClient implements IInfoClient {
 
 	/**
 	 * Returns an integer GUI setting
+	 * @TODO Wait for JSON-RPC implementation
 	 * @param field
 	 * @return
 	 */
@@ -129,6 +144,7 @@ public class InfoClient implements IInfoClient {
 	
 	/**
 	 * Returns any music info variable see {@link org.xbmc.http.info.MusicInfo}
+	 * @TODO Wait for JSON-RPC implementation
 	 * @param field Field to return
 	 * @return
 	 */
@@ -139,6 +155,7 @@ public class InfoClient implements IInfoClient {
 
 	/**
 	 * Returns any video info variable see {@link org.xbmc.http.info.VideoInfo}
+	 * @TODO Wait for JSON-RPC implementation
 	 * @param field Field to return
 	 * @return
 	 */

@@ -246,7 +246,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<Genre>>(response, this) {
 			@Override
 			public void doRun() throws Exception { 
-				response.value = video(context).getTvShowGenres(VideoManager.this);
+				mResponse.value = video(context).getTvShowGenres(VideoManager.this);
 			}
 		});
 	}

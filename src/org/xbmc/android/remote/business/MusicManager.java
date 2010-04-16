@@ -79,13 +79,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	 * @param response Response object
 	 */
 	public void getAlbums(final DataResponse<ArrayList<Album>> response, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				response.value = music(context).getAlbums(MusicManager.this, getSortBy(SortType.ALBUM), getSortOrder());
-//				onFinish(response);
-//			}
-//		});
-		mHandler.post(new Command<ArrayList<Album>>(response, this){
+		mHandler.post(new Command<ArrayList<Album>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
 				response.value = music(context).getAlbums(MusicManager.this, getSortBy(SortType.ALBUM), getSortOrder());

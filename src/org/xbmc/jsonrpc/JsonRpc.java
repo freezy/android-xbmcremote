@@ -23,6 +23,7 @@ package org.xbmc.jsonrpc;
 
 import org.xbmc.api.object.Host;
 import org.xbmc.jsonrpc.client.InfoClient;
+import org.xbmc.jsonrpc.client.MusicClient;
 
 /**
  * Wrapper class for JSON-RPC clients. The idea is to separate the loads of
@@ -33,6 +34,7 @@ import org.xbmc.jsonrpc.client.InfoClient;
  */
 public class JsonRpc {
 	
+	
 	/**
 	 * Use this client for anything system related
 	 */
@@ -40,7 +42,7 @@ public class JsonRpc {
 	
 	/**
 	 * Use this client for anything music related
-	 *
+	 */
 	public final MusicClient music;
 	
 	/**
@@ -73,8 +75,8 @@ public class JsonRpc {
 		}
 		connection.setTimeout(timeout);
 		info = new InfoClient(connection);
-/*		music = new MusicClient(connection);
-		video = new VideoClient(connection);
+		music = new MusicClient(connection);
+/*		video = new VideoClient(connection);
 		control = new ControlClient(connection);
 		shows = new TvShowClient(connection);*/
 	}
@@ -85,8 +87,8 @@ public class JsonRpc {
 	 */
 	public void setHost(Host host) {
 		info.setHost(host);
-/*		music.setHost(host);
-		video.setHost(host);
+		music.setHost(host);
+/*		video.setHost(host);
 		control.setHost(host);
 		shows.setHost(host);*/
 	}

@@ -85,7 +85,15 @@ public abstract class ClientFactory {
 	
 	public static IMusicClient getMusicClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
-		return createHttpClient(manager).music;
+		probeQueryApiType(manager);
+		switch (sApiType) {
+			case API_TYPE_JSONRPC:
+//				return createJsonClient(manager).music;
+			case API_TYPE_UNSET:
+			case API_TYPE_HTTPIAPI:
+			default:
+				return createHttpClient(manager).music;
+		}
 	}
 	
 	public static ITvShowClient getTvShowClient(INotifiableManager manager, Context context) throws WifiStateException {
@@ -204,7 +212,8 @@ public abstract class ClientFactory {
 			sApiType = API_TYPE_UNSET;
 		}
 	}
-	
+
+
 	/**
 	 * Returns an instance of the Event Server Client. Instantiation takes
 	 * place only once, otherwise the first instance is returned.
