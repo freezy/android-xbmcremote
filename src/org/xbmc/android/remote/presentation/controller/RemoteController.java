@@ -30,6 +30,11 @@ public class RemoteController extends AbstractController implements INotifiableC
 	private static final int MENU_XBMC_EXIT = 402;
 	private static final int MENU_XBMC_S = 403;
 	
+	private static final int MOTION_EVENT_MIN_DELTA_TIME = 300;
+	private static final float MOTION_EVENT_MIN_DELTA_POSITION = 0.15f;
+	
+	private static final long VIBRATION_LENGTH = 45;
+	
 	IEventClientManager mEventClientManager;
 	
 	/**
@@ -88,16 +93,16 @@ public class RemoteController extends AbstractController implements INotifiableC
 		else{
 			// check when the last trackball move happened to avoid too speedy selections
 			long newstamp = System.currentTimeMillis(); 
-			if (newstamp - mTimestamp > 300){
+			if (newstamp - mTimestamp > MOTION_EVENT_MIN_DELTA_TIME){
 				mTimestamp = newstamp;
-				if (Math.abs(event.getX()) > 0.15f) {
+				if (Math.abs(event.getX()) > MOTION_EVENT_MIN_DELTA_POSITION) {
 					return keyboardAction(event.getX() < 0 ? ButtonCodes.KEYBOARD_LEFT : ButtonCodes.KEYBOARD_RIGHT);
-				} else if (Math.abs(event.getY()) > 0.15f){
+				} else if (Math.abs(event.getY()) > MOTION_EVENT_MIN_DELTA_POSITION){
 					return keyboardAction(event.getY() < 0 ? ButtonCodes.KEYBOARD_UP : ButtonCodes.KEYBOARD_DOWN);
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -168,7 +173,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 			try {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
 					if (mDoVibrate) {
-						mVibrator.vibrate(45);
+						mVibrator.vibrate(VIBRATION_LENGTH);
 					}
 					mEventClientManager.sendButton("R1", mAction, true, true, true, (short)0, (byte)0);
 				} else if (event.getAction() == MotionEvent.ACTION_UP) {
