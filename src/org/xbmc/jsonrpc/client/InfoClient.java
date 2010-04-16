@@ -4,9 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.object.FileLocation;
@@ -50,7 +47,7 @@ public class InfoClient implements IInfoClient {
 	 * @return
 	 */
 	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit) {
-		final ArrayList<FileLocation> directories = new ArrayList<FileLocation>();
+/*		final ArrayList<FileLocation> directories = new ArrayList<FileLocation>();
 		try {
 			final JSONObject result = mConnection.getJson(manager, "Files.GetDirectory", new JSONObject().put("type", "files").put("directory", path));
 			final JSONArray jsonShares = result.getJSONArray("directories");
@@ -62,7 +59,8 @@ public class InfoClient implements IInfoClient {
 		} catch (JSONException e) {
 			manager.onError(e);
 		}
-		return directories;
+		return directories;*/
+		return null;
 	}
 	
 	/**
@@ -81,7 +79,7 @@ public class InfoClient implements IInfoClient {
 	 * @return
 	 */
 	public ArrayList<FileLocation> getShares(INotifiableManager manager, int mediaType) {
-		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
+/*		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
 		try {
 			final JSONObject result = mConnection.getJson(manager, "Files.GetShares", new JSONObject().put("type", "video"));
 			final JSONArray jsonShares = result.getJSONArray("shares");
@@ -93,7 +91,8 @@ public class InfoClient implements IInfoClient {
 		} catch (JSONException e) {
 			manager.onError(e);
 		}
-		return shares;
+		return shares;*/
+		return null;
 	}
 	
 	/**

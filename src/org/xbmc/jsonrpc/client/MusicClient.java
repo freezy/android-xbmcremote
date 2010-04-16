@@ -23,10 +23,9 @@ package org.xbmc.jsonrpc.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.codehaus.jackson.JsonNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IMusicClient;
@@ -41,10 +40,9 @@ import org.xbmc.api.object.Song;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
 import org.xbmc.jsonrpc.Connection;
-import org.xbmc.jsonrpc.JSONHelper;
+import org.xbmc.jsonrpc.Helper;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 /**
  * Takes care of every music related stuff, notably the music database.
@@ -352,23 +350,21 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	public ArrayList<Album> getAlbums(INotifiableManager manager, int sortBy, String sortOrder) {
 		final ArrayList<Album> albums = new ArrayList<Album>();
-		try {
-			
-			final JSONObject result = mConnection.getJson(manager, "MusicLibrary.GetAlbums", new JSONObject().put(PARAM_FIELDS, new JSONArray().put("artist").put("year")));
-			final JSONArray jsonShares = result.getJSONArray("albums");
-			for (int i = 0; i < jsonShares.length(); i++) {
-				JSONObject jsonAlbum = (JSONObject)jsonShares.get(i);
-				albums.add(new Album(
-					JSONHelper.getInt(jsonAlbum, "albumid"), 
-					JSONHelper.getString(jsonAlbum, "label"), 
-					JSONHelper.getString(jsonAlbum, "artist"), 
-					JSONHelper.getInt(jsonAlbum, "year"), 
-					JSONHelper.getString(jsonAlbum, "thumbnail", "NONE") 
-				));
-			}
-		} catch (JSONException e) {
-			Log.e(TAG, e.getStackTrace().toString());
-			manager.onError(e);
+		final JsonNode result = mConnection.getJson(manager, "MusicLibrary.GetAlbums", 
+				Helper.createObjectNode().put(PARAM_FIELDS, 
+					Helper.createArrayNode().add("artist").add("year")
+				)
+			);
+		final JsonNode jsonShares = result.get("albums");
+		for (Iterator<JsonNode> i = jsonShares.getElements(); i.hasNext();) {
+			JsonNode jsonAlbum = (JsonNode)i.next();
+			albums.add(new Album(
+				Helper.getInt(jsonAlbum, "albumid"), 
+				Helper.getString(jsonAlbum, "label"), 
+				Helper.getString(jsonAlbum, "artist"), 
+				Helper.getInt(jsonAlbum, "year"), 
+				Helper.getString(jsonAlbum, "thumbnail", "NONE") 
+			));
 		}
 		return albums;
 	}

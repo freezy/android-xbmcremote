@@ -21,11 +21,8 @@
 
 package org.xbmc.jsonrpc;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -34,8 +31,13 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.apache.http.HttpException;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.codehaus.jackson.JsonEncoding;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Host;
 import org.xbmc.httpapi.NoSettingsException;
@@ -178,9 +180,11 @@ public class Connection {
 	 * @param manager    Reference back to business layer
 	 * @return Parsed JSON object, empty object on error.
 	 */
-	public JSONObject query(String command, JSONObject parameters, INotifiableManager manager) {
+	public JsonNode query(String command, JsonNode parameters, INotifiableManager manager) {
 		URLConnection uc = null;
 		try {
+			final ObjectMapper mapper = Helper.MAPPER;
+
 			if (mUrl == null) {
 				throw new NoSettingsException();
 			}
@@ -193,32 +197,25 @@ public class Connection {
 			uc.setReadTimeout(mSocketReadTimeout);
 			uc.setDoOutput(true);
 			
-			final OutputStreamWriter wr = new OutputStreamWriter(uc.getOutputStream());
-			final JSONObject data = new JSONObject()
+			final ObjectNode data = Helper.createObjectNode()
 				.put("jsonrpc", "2.0")
 				.put("method", command)
 				.put("id", "1");
 			if (parameters != null) {
 				data.put("params", parameters);
-			} else {
-				data.put("params", new JSONObject());
 			}
 			
+			final JsonFactory jsonFactory = new JsonFactory();
+			final JsonGenerator jg = jsonFactory.createJsonGenerator(uc.getOutputStream(), JsonEncoding.UTF8);
+			jg.setCodec(mapper);
+
 			// POST data
-			wr.write(data.toString());
-			wr.flush();
+			jg.writeTree(data);
+			jg.flush();
 			
-			final BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()), 8192);
-			final StringBuilder response = new StringBuilder();
-			String line;
-			while ((line = in.readLine()) != null) {
-				response.append(line);
-			}
-			wr.close();
-			in.close();
-			
-			final JSONObject jsonResponse = new JSONObject(response.toString());
-			return jsonResponse;
+			final JsonParser jp = jsonFactory.createJsonParser(uc.getInputStream());
+			jp.setCodec(mapper);
+			return jp.readValueAs(JsonNode.class);
 			
 		} catch (MalformedURLException e) {
 			manager.onError(e);
@@ -234,10 +231,8 @@ public class Connection {
 			}
 		} catch (NoSettingsException e) {
 			manager.onError(e);
-		} catch (JSONException e) {
-			manager.onError(e);
 		}
-		return new JSONObject();
+		return new ObjectNode(null);
 	}
 	
 	/**
@@ -247,13 +242,8 @@ public class Connection {
 	 * @param parameters  Parameters of the method
 	 * @return Result
 	 */
-	public JSONObject getJson(INotifiableManager manager, String method, JSONObject parameters) {
-		try {
-			return query(method, parameters, manager).getJSONObject(RESULT_FIELD);
-		} catch (JSONException e) {
-			manager.onError(e);
-			return new JSONObject();
-		}
+	public JsonNode getJson(INotifiableManager manager, String method, JsonNode parameters) {
+		return query(method, parameters, manager).get(RESULT_FIELD);
 	}
 	
 	/**
@@ -263,13 +253,8 @@ public class Connection {
 	 * @param method      Name of the method to run
 	 * @return Result
 	 */
-	public JSONObject getJson(INotifiableManager manager, String method) {
-		try {
-			return query(method, null, manager).getJSONObject(RESULT_FIELD);
-		} catch (JSONException e) {
-			manager.onError(e);
-			return new JSONObject();
-		}
+	public JsonNode getJson(INotifiableManager manager, String method) {
+		return query(method, null, manager).get(RESULT_FIELD);
 	}
 	
 	/**
@@ -280,13 +265,9 @@ public class Connection {
 	 * @param returnField Name of the field to return
 	 * @return Result
 	 */
-	public String getString(INotifiableManager manager, String method, JSONObject parameters, String returnField) {
-		try {
-			return query(method, parameters, manager).getJSONObject(RESULT_FIELD).getString(returnField);
-		} catch (JSONException e) {
-			manager.onError(e);
-			return "";
-		}
+	public String getString(INotifiableManager manager, String method, JsonNode parameters, String returnField) {
+		final JsonNode result = query(method, parameters, manager).get(RESULT_FIELD);
+		return result == null ? "" : result.get(returnField).getValueAsText();
 	}
 	
 	/**
@@ -309,7 +290,7 @@ public class Connection {
 	 * @param returnField Name of the field to return
 	 * @return Result as integer
 	 */
-	public int getInt(INotifiableManager manager, String method, JSONObject parameters, String returnField) {
+	public int getInt(INotifiableManager manager, String method, JsonNode parameters, String returnField) {
 		try {
 			return Integer.parseInt(getString(manager, method, parameters, returnField));
 		} catch (NumberFormatException e) {
@@ -337,7 +318,7 @@ public class Connection {
 	 * @param returnField Name of the field to return
 	 * @return Result as boolean
 	 */
-	public boolean getBoolean(INotifiableManager manager, String method, JSONObject parameters, String returnField) {
+	public boolean getBoolean(INotifiableManager manager, String method, JsonNode parameters, String returnField) {
 		return getString(manager, method, parameters, returnField).equals("true");
 	}
 	

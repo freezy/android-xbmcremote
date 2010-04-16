@@ -21,34 +21,32 @@
 
 package org.xbmc.jsonrpc;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 
 /**
  * Wraps some calls in order to avoid JSON exceptions
  * @author Team XBMC
  */
-public abstract class JSONHelper {
+public abstract class Helper {
+	public final static ObjectMapper MAPPER = new ObjectMapper();
 	
-	public final static String getString(JSONObject obj, String key) {
-		try {
-			return obj.getString(key);
-		} catch (JSONException e) {
-			return null;
-		}
+	public final static ObjectNode createObjectNode() {
+		return MAPPER.createObjectNode();
 	}
-	public final static String getString(JSONObject obj, String key, String ifNullResult) {
-		try {
-			return obj.getString(key);
-		} catch (JSONException e) {
-			return ifNullResult;
-		}
+	public final static ArrayNode createArrayNode() {
+		return MAPPER.createArrayNode();
 	}
-	public final static int getInt(JSONObject obj, String key) {
-		try {
-			return obj.getInt(key);
-		} catch (JSONException e) {
-			return -1;
-		}
+	
+	public final static String getString(JsonNode obj, String key) {
+		return getString(obj, key, "");
+	}
+	public final static String getString(JsonNode obj, String key, String ifNullResult) {
+		return obj.get(key) == null ? ifNullResult : obj.get(key).getTextValue();
+	}
+	public final static int getInt(JsonNode obj, String key) {
+		return obj.get(key) == null ? -1 : obj.get(key).getIntValue();
 	}
 }

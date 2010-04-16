@@ -249,8 +249,9 @@ public abstract class AbstractController {
 				});
 			}
 		} catch (Exception e) {
-			builder.setTitle("Exception");
-			builder.setMessage(e.getStackTrace().toString());
+			final String name = e.getClass().getName(); 
+			builder.setTitle(name.substring(name.lastIndexOf(".") + 1));
+			builder.setMessage(e.getMessage());
 		} finally {
 			
 			exception.printStackTrace();
