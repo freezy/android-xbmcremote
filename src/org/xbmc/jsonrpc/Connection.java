@@ -41,6 +41,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Host;
 import org.xbmc.httpapi.NoSettingsException;
+import org.xbmc.jsonrpc.client.Client;
 
 
 /**
@@ -183,7 +184,7 @@ public class Connection {
 	public JsonNode query(String command, JsonNode parameters, INotifiableManager manager) {
 		URLConnection uc = null;
 		try {
-			final ObjectMapper mapper = Helper.MAPPER;
+			final ObjectMapper mapper = Client.MAPPER;
 
 			if (mUrl == null) {
 				throw new NoSettingsException();
@@ -197,7 +198,7 @@ public class Connection {
 			uc.setReadTimeout(mSocketReadTimeout);
 			uc.setDoOutput(true);
 			
-			final ObjectNode data = Helper.createObjectNode()
+			final ObjectNode data = Client.obj()
 				.put("jsonrpc", "2.0")
 				.put("method", command)
 				.put("id", "1");
@@ -215,7 +216,8 @@ public class Connection {
 			
 			final JsonParser jp = jsonFactory.createJsonParser(uc.getInputStream());
 			jp.setCodec(mapper);
-			return jp.readValueAs(JsonNode.class);
+			final JsonNode ret = jp.readValueAs(JsonNode.class);
+			return ret;
 			
 		} catch (MalformedURLException e) {
 			manager.onError(e);
@@ -243,7 +245,22 @@ public class Connection {
 	 * @return Result
 	 */
 	public JsonNode getJson(INotifiableManager manager, String method, JsonNode parameters) {
-		return query(method, parameters, manager).get(RESULT_FIELD);
+		try {
+			final JsonNode response = query(method, parameters, manager);
+			final JsonNode result = response.get(RESULT_FIELD);
+			if (result == null) {
+				if (response.get(ERROR_FIELD) == null) {
+					throw new Exception("Weird JSON response, could not parse error.");
+				} else {
+					throw new Exception(response.get(ERROR_FIELD).get("message").getTextValue());
+				}
+			} else {
+				return response.get(RESULT_FIELD);
+			}
+		} catch (Exception e) {
+			manager.onError(e);
+		}
+		return Client.obj();
 	}
 	
 	/**
@@ -265,7 +282,7 @@ public class Connection {
 	 * @param returnField Name of the field to return
 	 * @return Result
 	 */
-	public String getString(INotifiableManager manager, String method, JsonNode parameters, String returnField) {
+	public String getString(INotifiableManager manager, String method, ObjectNode parameters, String returnField) {
 		final JsonNode result = query(method, parameters, manager).get(RESULT_FIELD);
 		return result == null ? "" : result.get(returnField).getValueAsText();
 	}
@@ -290,7 +307,7 @@ public class Connection {
 	 * @param returnField Name of the field to return
 	 * @return Result as integer
 	 */
-	public int getInt(INotifiableManager manager, String method, JsonNode parameters, String returnField) {
+	public int getInt(INotifiableManager manager, String method, ObjectNode parameters, String returnField) {
 		try {
 			return Integer.parseInt(getString(manager, method, parameters, returnField));
 		} catch (NumberFormatException e) {
@@ -318,7 +335,7 @@ public class Connection {
 	 * @param returnField Name of the field to return
 	 * @return Result as boolean
 	 */
-	public boolean getBoolean(INotifiableManager manager, String method, JsonNode parameters, String returnField) {
+	public boolean getBoolean(INotifiableManager manager, String method, ObjectNode parameters, String returnField) {
 		return getString(manager, method, parameters, returnField).equals("true");
 	}
 	
@@ -370,4 +387,5 @@ public class Connection {
     }
 	
 	public static final String RESULT_FIELD = "result";
+	public static final String ERROR_FIELD = "error";
 }

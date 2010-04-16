@@ -3,7 +3,9 @@ package org.xbmc.jsonrpc.client;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import org.codehaus.jackson.JsonNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.object.FileLocation;
@@ -18,16 +20,14 @@ import org.xbmc.jsonrpc.Connection;
  * 
  * @author Team XBMC
  */
-public class InfoClient implements IInfoClient {
-	
-	private final Connection mConnection;
+public class InfoClient extends Client implements IInfoClient {
 	
 	/**
 	 * Class constructor needs reference to HTTP client connection
 	 * @param connection
 	 */
 	public InfoClient(Connection connection) {
-		mConnection = connection;
+		super(connection);
 	}
 
 	/**
@@ -47,20 +47,13 @@ public class InfoClient implements IInfoClient {
 	 * @return
 	 */
 	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit) {
-/*		final ArrayList<FileLocation> directories = new ArrayList<FileLocation>();
-		try {
-			final JSONObject result = mConnection.getJson(manager, "Files.GetDirectory", new JSONObject().put("type", "files").put("directory", path));
-			final JSONArray jsonShares = result.getJSONArray("directories");
-			for (int i = 0; i < jsonShares.length(); i++) {
-				JSONObject jsonShare = (JSONObject)jsonShares.get(i);
-				directories.add(new FileLocation(jsonShare.getString("label"), jsonShare.getString("file")));
-			}
-			return directories;
-		} catch (JSONException e) {
-			manager.onError(e);
+		final ArrayList<FileLocation> dirs = new ArrayList<FileLocation>();
+		final JsonNode jsonDirs = mConnection.getJson(manager, "Files.GetDirectory", obj().put("type", "files").put("directory", path)).get("shares");
+		for (Iterator<JsonNode> i = jsonDirs.getElements(); i.hasNext();) {
+			JsonNode jsonDir = (JsonNode)i.next();
+			dirs.add(new FileLocation(getString(jsonDir, "label"), getString(jsonDir, "file")));
 		}
-		return directories;*/
-		return null;
+		return dirs;
 	}
 	
 	/**
@@ -79,20 +72,13 @@ public class InfoClient implements IInfoClient {
 	 * @return
 	 */
 	public ArrayList<FileLocation> getShares(INotifiableManager manager, int mediaType) {
-/*		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
-		try {
-			final JSONObject result = mConnection.getJson(manager, "Files.GetShares", new JSONObject().put("type", "video"));
-			final JSONArray jsonShares = result.getJSONArray("shares");
-			for (int i = 0; i < jsonShares.length(); i++) {
-				JSONObject jsonShare = (JSONObject)jsonShares.get(i);
-				shares.add(new FileLocation(jsonShare.getString("label"), jsonShare.getString("file")));
-			}
-			return shares;
-		} catch (JSONException e) {
-			manager.onError(e);
+		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
+		final JsonNode jsonShares = mConnection.getJson(manager, "Files.GetSources", obj().put("type", "video")).get("shares");
+		for (Iterator<JsonNode> i = jsonShares.getElements(); i.hasNext();) {
+			JsonNode jsonShare = (JsonNode)i.next();
+			shares.add(new FileLocation(getString(jsonShare, "label"), getString(jsonShare, "file")));
 		}
-		return shares;*/
-		return null;
+		return shares;
 	}
 	
 	/**

@@ -26,6 +26,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.JsonNodeFactory;
+import org.codehaus.jackson.node.ObjectNode;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.ICoverArt;
@@ -43,11 +48,14 @@ import android.util.Log;
  * 
  * @author Team XBMC
  */
-abstract class Client {
+public abstract class Client {
 	
 	public static final String TAG = "Client-JSON-RPC";
 	public static final String PARAM_FIELDS = "fields";
-	
+
+	public final static ObjectMapper MAPPER = new ObjectMapper();
+	public final static JsonNodeFactory FACTORY = JsonNodeFactory.instance;
+
 	protected final Connection mConnection;
 
 	/**
@@ -165,4 +173,28 @@ abstract class Client {
 		}
 		return null;
 	}	
+	
+	public final static ObjectNode obj() {
+		return new ObjectNode(FACTORY) {
+			@Override
+			public JsonNode put(String fieldName, JsonNode value) {
+				super.put(fieldName, value);
+				return this;
+			}
+		};
+	}
+
+	public final static ArrayNode arr() {
+		return MAPPER.createArrayNode();
+	}
+	
+	public final static String getString(JsonNode obj, String key) {
+		return getString(obj, key, "");
+	}
+	public final static String getString(JsonNode obj, String key, String ifNullResult) {
+		return obj.get(key) == null ? ifNullResult : obj.get(key).getTextValue();
+	}
+	public final static int getInt(JsonNode obj, String key) {
+		return obj.get(key) == null ? -1 : obj.get(key).getIntValue();
+	}
 }

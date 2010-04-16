@@ -40,7 +40,6 @@ import org.xbmc.api.object.Song;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
 import org.xbmc.jsonrpc.Connection;
-import org.xbmc.jsonrpc.Helper;
 
 import android.graphics.Bitmap;
 
@@ -351,19 +350,17 @@ public class MusicClient extends Client implements IMusicClient {
 	public ArrayList<Album> getAlbums(INotifiableManager manager, int sortBy, String sortOrder) {
 		final ArrayList<Album> albums = new ArrayList<Album>();
 		final JsonNode result = mConnection.getJson(manager, "MusicLibrary.GetAlbums", 
-				Helper.createObjectNode().put(PARAM_FIELDS, 
-					Helper.createArrayNode().add("artist").add("year")
-				)
+				obj().put(PARAM_FIELDS, arr().add("artist").add("year"))
 			);
-		final JsonNode jsonShares = result.get("albums");
-		for (Iterator<JsonNode> i = jsonShares.getElements(); i.hasNext();) {
+		final JsonNode jsonAlbums = result.get("albums");
+		for (Iterator<JsonNode> i = jsonAlbums.getElements(); i.hasNext();) {
 			JsonNode jsonAlbum = (JsonNode)i.next();
 			albums.add(new Album(
-				Helper.getInt(jsonAlbum, "albumid"), 
-				Helper.getString(jsonAlbum, "label"), 
-				Helper.getString(jsonAlbum, "artist"), 
-				Helper.getInt(jsonAlbum, "year"), 
-				Helper.getString(jsonAlbum, "thumbnail", "NONE") 
+				getInt(jsonAlbum, "albumid"), 
+				getString(jsonAlbum, "label"), 
+				getString(jsonAlbum, "artist"), 
+				getInt(jsonAlbum, "year"), 
+				getString(jsonAlbum, "thumbnail", "NONE") 
 			));
 		}
 		return albums;
