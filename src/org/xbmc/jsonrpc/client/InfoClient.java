@@ -48,7 +48,7 @@ public class InfoClient extends Client implements IInfoClient {
 	 */
 	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit) {
 		final ArrayList<FileLocation> dirs = new ArrayList<FileLocation>();
-		final JsonNode jsonDirs = mConnection.getJson(manager, "Files.GetDirectory", obj().put("type", "files").put("directory", path)).get("shares");
+		final JsonNode jsonDirs = mConnection.getJson(manager, "Files.GetDirectory", obj().put("type", "files").put("directory", path), "directories");
 		for (Iterator<JsonNode> i = jsonDirs.getElements(); i.hasNext();) {
 			JsonNode jsonDir = (JsonNode)i.next();
 			dirs.add(new FileLocation(getString(jsonDir, "label"), getString(jsonDir, "file")));

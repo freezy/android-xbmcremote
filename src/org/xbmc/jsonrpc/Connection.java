@@ -263,6 +263,21 @@ public class Connection {
 		return Client.obj();
 	}
 	
+	public JsonNode getJson(INotifiableManager manager, String method, JsonNode parameters, String resultField) {
+		try {
+			final JsonNode response = getJson(manager, method, parameters);
+			final JsonNode result = response.get(resultField);
+			if (result == null) {
+				throw new Exception("Could not find field \"" + resultField + "\" as return value.");
+			} else {
+				return response.get(resultField);
+			}
+		} catch (Exception e) {
+			manager.onError(e);
+		}
+		return Client.obj();
+	}
+	
 	/**
 	 * Executes a JSON-RPC command without parameters and returns the result as
 	 * JSON object.
