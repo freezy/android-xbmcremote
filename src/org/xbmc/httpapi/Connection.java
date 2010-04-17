@@ -22,6 +22,7 @@
 package org.xbmc.httpapi;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -52,6 +53,7 @@ public class Connection {
 
 	private static final String TAG = "Connection";
 	private static final String XBMC_HTTP_BOOTSTRAP =  "/xbmcCmds/xbmcHttp";
+	private static final String XBMC_MICROHTTPD_THUMB_BOOTSTRAP =  "/thumb/";
 	private static final int SOCKET_CONNECTION_TIMEOUT = 5000;
 	
 	/**
@@ -61,7 +63,7 @@ public class Connection {
 	
 	/**
 	 * Complete URL without any attached command parameters, for instance:
-	 * <code>http://192.168.0.10:8080/xbmcCmds/xbmcHttp</code>
+	 * <code>http://192.168.0.10:8080</code>
 	 */
 	private String mUrlSuffix;
 	
@@ -129,7 +131,6 @@ public class Connection {
 			sb.append(host);
 			sb.append(":");
 			sb.append(port);
-			sb.append(XBMC_HTTP_BOOTSTRAP);
 			mUrlSuffix = sb.toString();
 		}
 	}
@@ -168,6 +169,7 @@ public class Connection {
 	public String getUrl(String command, String parameters) {
 		// create url
 		StringBuilder sb = new StringBuilder(mUrlSuffix);
+		sb.append(XBMC_HTTP_BOOTSTRAP);
 		sb.append("?command=");
 		sb.append(command);
 		sb.append("(");
@@ -183,7 +185,7 @@ public class Connection {
 	 * @param manager    Reference back to business layer
 	 * @return
 	 */
-	public InputStream getInputStream(String command, String parameters, INotifiableManager manager) {
+	public InputStream getThumbInputStream(String command, String parameters, INotifiableManager manager) {
 		URLConnection uc = null;
 		try {
 			if (mUrlSuffix == null) {
@@ -198,6 +200,40 @@ public class Connection {
 			uc.setReadTimeout(mSocketReadTimeout);
 			Log.i(TAG, "Preparing input stream from " + url);
 			return uc.getInputStream();
+		} catch (MalformedURLException e) {
+			manager.onError(e);
+		} catch (IOException e) {
+			manager.onError(e);
+		} catch (NoSettingsException e) {
+			manager.onError(e);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns an input stream pointing to a HTTP API command.
+	 * @param command    Name of the command to execute
+	 * @param parameters Parameters, separated by ";".
+	 * @param manager    Reference back to business layer
+	 * @return
+	 */
+	public InputStream getThumbInputStreamForMicroHTTPd(String thumb, INotifiableManager manager) throws FileNotFoundException {
+		URLConnection uc = null;
+		try {
+			if (mUrlSuffix == null) {
+				throw new NoSettingsException();
+			}
+			if (mAuthenticator != null) {
+				mAuthenticator.resetCounter();
+			}
+			URL url = new URL(mUrlSuffix + XBMC_MICROHTTPD_THUMB_BOOTSTRAP + thumb + ".jpg");
+			Log.i(TAG, "Preparing input stream from " + url + " for microhttpd..");
+			uc = url.openConnection();
+			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
+			uc.setReadTimeout(mSocketReadTimeout);
+			return uc.getInputStream();
+		} catch (FileNotFoundException e) {
+			throw e;
 		} catch (MalformedURLException e) {
 			manager.onError(e);
 		} catch (IOException e) {

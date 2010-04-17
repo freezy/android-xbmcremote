@@ -46,6 +46,8 @@ import android.util.Log;
 
 public abstract class ClientFactory {
 	
+	public static int XBMC_REV = -1;
+
 	public static final int MIN_JSONRPC_REV = 27770;
 	
 	public static final int API_TYPE_UNSET = 0;
@@ -65,7 +67,7 @@ public abstract class ClientFactory {
 		probeQueryApiType(manager);
 		switch (sApiType) {
 			case API_TYPE_JSONRPC:
-				return createJsonClient(manager).info;
+//				return createJsonClient(manager).info;
 			case API_TYPE_UNSET:
 			case API_TYPE_HTTPIAPI:
 			default:
@@ -88,7 +90,7 @@ public abstract class ClientFactory {
 		probeQueryApiType(manager);
 		switch (sApiType) {
 			case API_TYPE_JSONRPC:
-				return createJsonClient(manager).music;
+//				return createJsonClient(manager).music;
 			case API_TYPE_UNSET:
 			case API_TYPE_HTTPIAPI:
 			default:
@@ -207,6 +209,7 @@ public abstract class ClientFactory {
 		if (matcher.find()) {
 			final int rev = Integer.parseInt(matcher.group().substring(1));
 			Log.i(TAG, "Found XBMC at revision " + rev + "!");
+			XBMC_REV = rev;
 			sApiType = rev >= MIN_JSONRPC_REV ? API_TYPE_JSONRPC : API_TYPE_HTTPIAPI;
 		} else {
 			// 2. try to match boxee's version

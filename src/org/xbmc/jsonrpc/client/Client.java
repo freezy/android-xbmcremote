@@ -89,7 +89,6 @@ public abstract class Client {
 		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
 		InputStream is = null;
 		try {
-			
 			Log.i(TAG, "Starting download (" + url + ")");
 			
 			BitmapFactory.Options opts = prefetch(manager, url, size, mediaType);

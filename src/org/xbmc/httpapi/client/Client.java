@@ -23,10 +23,12 @@ package org.xbmc.httpapi.client;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.xbmc.android.util.Base64;
+import org.xbmc.android.util.ClientFactory;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.ICoverArt;
@@ -49,6 +51,11 @@ abstract class Client {
 	
 	public static final String TAG = "Client-HTTPAPI";
 	
+	/**
+	 * TODO verify this revision works
+	 */
+	private static final int MICROHTTPD_REV = 27770;
+	
 	protected final Connection mConnection;
 
 	/**
@@ -62,14 +69,9 @@ abstract class Client {
 	/**
 	 * Downloads a cover. 
 	 * 
-	 * First, only boundaries are downloaded in order to determine the sample
-	 * size. Setting sample size > 1 will do two things:
-	 * <ol><li>Only a fragment of the total size will be downloaded</li>
-	 *     <li>Resizing will be smooth and not pixelated as before</li></ol>
-	 * The base64-decoding is done using an inputstream directly, without 
-	 * having to save the reponse to a String first.
-	 * The returned size is the next bigger (but smaller than the double) size
-	 * of the original image.
+	 * Since base64-download is a REAL pita, we'll check for XBMC revision and
+	 * dispatch to direct download via the /thumbs accessor if possible.
+	 * 
 	 * @param manager Postback manager
 	 * @param cover Cover object
 	 * @param size Minmal size to pre-resize to.
@@ -78,49 +80,46 @@ abstract class Client {
 	 * @return Bitmap
 	 */
 	protected Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size, String url, String fallbackUrl) {
-		final int mediaType = cover.getMediaType();
+		if (ClientFactory.XBMC_REV >= MICROHTTPD_REV) {
+			return getCoverFromMicroHTTPd(manager, cover, size, url, fallbackUrl);
+		} else {
+			return getCoverFromLibGoAhead(manager, cover, size, url, fallbackUrl);
+		}
+	}
+	
+	/**
+	 * Downloads a cover "the old way". Streams are used for lesser memory 
+	 * imprint, to the cost of speed. Bitmaps aren't smoothely resized 
+	 * because libgoahead seems to crash if client closes connections 
+	 * prematurely.
+	 * 
+	 * @param manager Postback manager
+	 * @param cover Cover object
+	 * @param size Minmal size to pre-resize to.
+	 * @param url URL to primary cover
+	 * @param fallbackUrl URL to fallback cover
+	 * @return Bitmap
+	 */
+	private Bitmap getCoverFromLibGoAhead(INotifiableManager manager, ICoverArt cover, int size, String url, String fallbackUrl) {
 		// don't fetch small sizes
 		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
 		InputStream is = null;
 		try {
 			
 			// DO THIS EVERY FUCKING TIME!!
-			Log.i(TAG, "Setting response format");
+			Log.i(TAG, "Setting response format (r" + ClientFactory.XBMC_REV + ")");
 			mConnection.assertBoolean(manager, "SetResponseFormat", "WebHeader;false;WebFooter;false");
-			
-			Log.i(TAG, "Starting download (" + url + ")");
-			BitmapFactory.Options opts = prefetch(manager, url, size, mediaType);
-			Dimension dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
-			
-			Log.i(TAG, "Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
-			if (opts.outWidth < 0) {
-				if (fallbackUrl != null) {
-					Log.i(TAG, "Starting fallback download (" + fallbackUrl + ")");
-					opts = prefetch(manager, fallbackUrl, size, mediaType);
-					dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
-					Log.i(TAG, "FALLBACK-Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
-					if (opts.outWidth < 0) {
-						return null;
-					} else {
-						url = fallbackUrl;
-					}
-				} else {
-					Log.i(TAG, "Fallback url is null, returning null-bitmap");
-					return null;
-				}
-			}
-			final int ss = ImportUtilities.calculateSampleSize(opts, dim);
-			Log.i(TAG, "Sample size: " + ss);
-			
-			is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", url, manager), 8192));
+			// TODO fallback url support
+			Log.i(TAG, "Starting download (" + url + ") - libgoahead");
+			is = new Base64.InputStream(new BufferedInputStream(mConnection.getThumbInputStream("FileDownload", url, manager), 8192));
+			BitmapFactory.Options opts = new BitmapFactory.Options();
 			opts.inDither = true;
-			opts.inSampleSize = ss;
 			opts.inJustDecodeBounds = false;
 			
 			Bitmap bitmap = BitmapFactory.decodeStream(is, null, opts);
-			if (ss == 1) {
-				bitmap = blowup(bitmap);
-			}
+			
+			// enable this for smooth resizing (it's SLOW!!)
+//			bitmap = blowup(bitmap);
 			is.close();
 			if (bitmap == null) {
 				Log.i(TAG, "Fetch: Bitmap is null!!");
@@ -143,11 +142,105 @@ abstract class Client {
 		return null;
 	}
 	
-	private BitmapFactory.Options prefetch(INotifiableManager manager, String url, int size, int mediaType) {
-		InputStream is = new Base64.InputStream(new BufferedInputStream(mConnection.getInputStream("FileDownload", url, manager), 8192));
+	/**
+	 * Downloads a cover using microhttpd.
+	 * 
+	 * First, only boundaries are downloaded in order to determine the sample
+	 * size. Setting sample size > 1 will do two things:
+	 * <ol><li>Only a fragment of the total size will be downloaded</li>
+	 *     <li>Resizing will be smooth and not pixelated as before</li></ol>
+	 * There is no base64-decoding since we're accessing the /thumb accessor
+	 * directly. The returned size is the next bigger (but smaller than the 
+	 * double) size of the original image.
+	 * 
+	 * @param manager Postback manager
+	 * @param cover Cover object
+	 * @param size Minmal size to pre-resize to.
+	 * @param url URL to primary cover
+	 * @param fallbackUrl URL to fallback cover
+	 * @return Bitmap
+	 */
+	private Bitmap getCoverFromMicroHTTPd(INotifiableManager manager, ICoverArt cover, int size, String url, String fallbackUrl) {
+		final int mediaType = cover.getMediaType();
+		// don't fetch small sizes
+		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
+		InputStream is = null;
+		try {
+			
+			Log.i(TAG, "Starting download (" + url + ") - microhttpd");
+			BitmapFactory.Options opts = prefetch(manager, url, size);
+			Dimension dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
+			
+			Log.i(TAG, "Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
+			if (opts.outWidth < 0) {
+				if (fallbackUrl != null) {
+					Log.i(TAG, "Starting fallback download (" + fallbackUrl + ")");
+					opts = prefetch(manager, fallbackUrl, size);
+					dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
+					Log.i(TAG, "FALLBACK-Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
+					if (opts.outWidth < 0) {
+						return null;
+					} else {
+						url = fallbackUrl;
+					}
+				} else {
+					Log.i(TAG, "Fallback url is null, returning null-bitmap");
+					return null;
+				}
+			}
+			final int ss = ImportUtilities.calculateSampleSize(opts, dim);
+			Log.i(TAG, "Sample size: " + ss);
+			
+			is = new BufferedInputStream(mConnection.getThumbInputStreamForMicroHTTPd(url, manager), 8192);
+			opts.inDither = true;
+			opts.inSampleSize = ss;
+			opts.inJustDecodeBounds = false;
+			
+			Bitmap bitmap = BitmapFactory.decodeStream(is, null, opts);
+			if (ss == 1) {
+				bitmap = blowup(bitmap);
+			}
+			is.close();
+			if (bitmap == null) {
+				Log.i(TAG, "Fetch: Bitmap is null!!");
+				return null;
+			} else {
+				Log.i(TAG, "Fetch: Bitmap: " + bitmap.getWidth() + "x" + bitmap.getHeight());
+				return bitmap;
+			}
+		} catch (FileNotFoundException e) {
+			Log.i(TAG, "Fetch: Bitmap not found");
+			
+		} catch (IOException e) {
+			manager.onError(e);
+			e.printStackTrace();
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+				}
+			} catch (IOException e) { }
+		}
+		return null;
+	}
+	
+	/**
+	 * Only downloads as much as boundaries of the image in order to find out
+	 * its size.
+	 * @param manager Postback manager
+	 * @param url URL to primary cover
+	 * @param size Minmal size to pre-resize to.
+	 * @return
+	 */
+	private BitmapFactory.Options prefetch(INotifiableManager manager, String url, int size) {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
-		opts.inJustDecodeBounds = true;
-		BitmapFactory.decodeStream(is, null, opts);
+		try {
+			InputStream is = new BufferedInputStream(mConnection.getThumbInputStreamForMicroHTTPd(url, manager), 8192);
+			opts.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(is, null, opts);
+		} catch (FileNotFoundException e) {
+			return opts;
+		}			
 		return opts;
 	}
 	
