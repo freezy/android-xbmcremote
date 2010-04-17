@@ -101,7 +101,6 @@ public class NowPlayingActivity extends Activity {
   	  	((TextView)findViewById(R.id.titlebar_text)).setText("Now playing");
 
   	  	mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
   	  	
   	  	mNowPlayingController.setupButtons(mSeekBar,
   	  		findViewById(R.id.MediaPreviousButton),

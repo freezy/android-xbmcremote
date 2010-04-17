@@ -96,7 +96,7 @@ public class RemoteActivity extends Activity {
 		mViewFlipper = (ViewFlipper) findViewById(R.id.remote_flipper);
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard(true);
+		//mConfigurationManager.initKeyguard(true);
 		
         Display d = getWindowManager().getDefaultDisplay();
         final int w = d.getWidth();

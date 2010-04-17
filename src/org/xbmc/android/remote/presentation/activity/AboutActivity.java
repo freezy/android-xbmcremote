@@ -59,7 +59,6 @@ public class AboutActivity extends Activity {
 			((TextView)findViewById(R.id.about_version)).setText("Error reading version");
 		}
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
 	}
 
 	@Override

@@ -57,6 +57,5 @@ public class ListActivity extends AbsListActivity {
 			mListController.onCreate(this, (ListView)findViewById(R.id.blanklist_list));
 		}
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
 	}
 }

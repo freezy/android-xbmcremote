@@ -42,7 +42,6 @@ public class MediaIntentActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
   	  	mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
 		mMediaIntentController = new MediaIntentController(this);
 		mMediaIntentController.setupStatusHandler();
 	}

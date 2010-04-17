@@ -61,7 +61,6 @@ public class SettingsActivity extends PreferenceActivity {
 		mSettingsController = new SettingsController(this);
 		mSettingsController.registerOnSharedPreferenceChangeListener(this);
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
 		final int jumpTo = getIntent().getIntExtra(JUMP_TO, 0);
 		switch (jumpTo) {
 			case JUMP_TO_INSTANCES:

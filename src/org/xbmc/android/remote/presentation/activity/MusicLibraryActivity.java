@@ -127,7 +127,6 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		});
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
 	}
 	
 	@Override

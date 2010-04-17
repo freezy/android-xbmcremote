@@ -51,7 +51,6 @@ public class HostSettingsActivity extends PreferenceActivity {
 		setTitle("XBMC Hosts");
 		mSettingsController = new SettingsController(this);
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
 		setPreferenceScreen(mSettingsController.createHostsPreferences(getPreferenceManager().createPreferenceScreen(this), this));
 	}
 	

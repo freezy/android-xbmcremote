@@ -116,7 +116,6 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 			}
 		});
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
 	}
 	
 	@Override

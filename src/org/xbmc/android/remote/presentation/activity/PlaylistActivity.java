@@ -105,7 +105,6 @@ public class PlaylistActivity extends Activity {
 			findViewById(R.id.MediaNextButton));
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
 	}
 	
 	public void setTime(String time) {

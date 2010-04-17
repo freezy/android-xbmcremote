@@ -99,7 +99,6 @@ public class MovieDetailsActivity extends Activity {
 				(LinearLayout)findViewById(R.id.moviedetails_datalayout));
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
 	}
 	
 	private static class MovieDetailsController extends AbstractController implements INotifiableController, IController {

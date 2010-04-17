@@ -99,7 +99,6 @@ public class EpisodeDetailsActivity extends Activity {
 				(LinearLayout)findViewById(R.id.moviedetails_datalayout));
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
 	}
 	
 	private static class EpisodeDetailsController extends AbstractController implements INotifiableController, IController {

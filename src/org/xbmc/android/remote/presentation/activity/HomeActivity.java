@@ -90,7 +90,6 @@ public class HomeActivity extends Activity {
 		
 		mEventClientManager = ManagerFactory.getEventClientManager(mHomeController);
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
 		
 		versionButton.setText("Connecting...");
 		versionButton.setOnClickListener(mHomeController.getOnHostChangeListener());

@@ -57,6 +57,5 @@ public class GridActivity extends AbsListActivity {
 			mListController.onCreate(this, (GridView)findViewById(R.id.blanklist_list));
 		}
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		mConfigurationManager.initKeyguard();
 	}
 }

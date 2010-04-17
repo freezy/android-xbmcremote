@@ -37,19 +37,25 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 	public final static String KEYGUARD_STATUS_REMOTE_ONLY = "1";
 	public final static String KEYGUARD_STATUS_ALL = "2";
 
+	public final static int INT_KEYGUARD_STATUS_ENABLED = 0;
+	public final static int INT_KEYGUARD_STATUS_REMOTE_ONLY = 1;
+	public final static int INT_KEYGUARD_STATUS_ALL = 2;
+	
 	public final static String KEYGUARD_TAG = "xbmc_remote_keyguard_lock";
 
 	private static ConfigurationManager sInstance;
 
 	private Activity mActivity;
 
-	private boolean mKeyguardDisabled = false;
-	private boolean mKeyguardFromRemote = false;
+	private int mKeyguardState = 0;
 	
 	private KeyguardManager.KeyguardLock mKeyguardLock = null;
 
 	private ConfigurationManager(Activity activity) {
 		mActivity = activity;
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+		prefs.registerOnSharedPreferenceChangeListener(this);
+		mKeyguardState = Integer.parseInt(prefs.getString(PREF_KEYGUARD_DISABLED, KEYGUARD_STATUS_ENABLED));
 	}
 
 	public static ConfigurationManager getInstance(Activity activity) {
@@ -71,14 +77,14 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 		return sInstance.mActivity;
 	}
 	
-	public void initKeyguard() {
-		initKeyguard(false);
-	}
-	
 	public void disableKeyguard(Activity activity) {
-		KeyguardManager keyguardManager = (KeyguardManager) activity.getSystemService(Activity.KEYGUARD_SERVICE);
-		mKeyguardLock = keyguardManager.newKeyguardLock(KEYGUARD_TAG);
-		mKeyguardLock.disableKeyguard();
+		if (mKeyguardLock != null) {
+			mKeyguardLock.disableKeyguard();
+		} else {
+			KeyguardManager keyguardManager = (KeyguardManager) activity.getSystemService(Activity.KEYGUARD_SERVICE);
+			mKeyguardLock = keyguardManager.newKeyguardLock(KEYGUARD_TAG);
+			mKeyguardLock.disableKeyguard();
+		}
 	}
 	
 	public void enableKeyguard() {
@@ -88,31 +94,33 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 		mKeyguardLock = null;
 	}
 
-	public void initKeyguard(boolean fromRemoteControl) {
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
-		mKeyguardFromRemote = fromRemoteControl;
-		mKeyguardDisabled = isKeyguardDisabled(prefs);
-		prefs.registerOnSharedPreferenceChangeListener(this);
-	}
 
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		if (key.equals(PREF_KEYGUARD_DISABLED)) {
-			boolean disableKeyguardState = isKeyguardDisabled(prefs);
-			if (disableKeyguardState != mKeyguardDisabled && mActivity.hasWindowFocus()) {
-				if (disableKeyguardState) {
-					disableKeyguard(mActivity);
-				} else {
-					enableKeyguard();
-				}
-				mKeyguardDisabled = disableKeyguardState;
-			}
+			mKeyguardState = Integer.parseInt(prefs.getString(PREF_KEYGUARD_DISABLED, KEYGUARD_STATUS_ENABLED));
+			if (mKeyguardState == INT_KEYGUARD_STATUS_ALL)
+				disableKeyguard(mActivity);
+			else
+				enableKeyguard();
 		}
 	}
 	
 	public void onActivityResume(Activity activity) {
-		if (mKeyguardDisabled) {
-			disableKeyguard(activity);
+		switch (mKeyguardState) {
+			case INT_KEYGUARD_STATUS_REMOTE_ONLY:
+				if(activity.getClass().equals(RemoteActivity.class))
+					disableKeyguard(activity);
+				else
+					enableKeyguard();
+				break;
+			case INT_KEYGUARD_STATUS_ALL:
+				disableKeyguard(activity);
+				break;
+			default:
+				enableKeyguard();
+				break;
 		}
+		
 		activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		mActivity = activity;
 	}
@@ -124,13 +132,4 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 		}
 	}
 	
-	private boolean isKeyguardDisabled(SharedPreferences prefs) {
-		String disableKeyguardString = prefs.getString(PREF_KEYGUARD_DISABLED, KEYGUARD_STATUS_ENABLED);
-		if (!mKeyguardFromRemote) {
-			return disableKeyguardString.equals(KEYGUARD_STATUS_ALL);
-		} else {
-			return disableKeyguardString.equals(KEYGUARD_STATUS_REMOTE_ONLY) || disableKeyguardString.equals(KEYGUARD_STATUS_ALL);
-		}
-	}
-
 }
