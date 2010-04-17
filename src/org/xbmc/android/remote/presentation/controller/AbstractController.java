@@ -45,6 +45,7 @@ import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -55,6 +56,7 @@ import android.widget.Toast;
 public abstract class AbstractController {
 	
 	public static final int MAX_WAIT_FOR_WIFI = 20;
+	public static final String TAG = "AbstractController";
 
 	protected Activity mActivity;
 	
@@ -236,6 +238,7 @@ public abstract class AbstractController {
 			} else {
 				builder.setTitle("I/O Exception (" + e.getClass().getCanonicalName() + ")");
 				builder.setMessage(e.getMessage().toString());
+				Log.e(TAG, e.getStackTrace().toString());
 			}
 		} catch (HttpException e) {
 			if (e.getMessage().startsWith("401")) {

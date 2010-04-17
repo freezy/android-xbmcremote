@@ -319,6 +319,34 @@ public class MusicClient extends Client implements IMusicClient {
 		return false; //mConnection.getBoolean(manager, "SetCurrentPlaylist", PLAYLIST_ID);
 	}
 	
+	
+	/**
+	 * Gets all albums from database
+	 * @param sortBy Sort field, see SortType.* 
+	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @return All albums
+	 */
+	public ArrayList<Album> getAlbums(INotifiableManager manager, int sortBy, String sortOrder) {
+		return getAlbums(manager, sort(obj().p(PARAM_FIELDS, arr().add("artist").add("year")), sortBy, sortOrder));
+	}
+	
+	private ArrayList<Album> getAlbums(INotifiableManager manager, ObjNode obj) {
+		final ArrayList<Album> albums = new ArrayList<Album>();
+		final JsonNode result = mConnection.getJson(manager, "MusicLibrary.GetAlbums", obj);
+		final JsonNode jsonAlbums = result.get("albums");
+		for (Iterator<JsonNode> i = jsonAlbums.getElements(); i.hasNext();) {
+			JsonNode jsonAlbum = (JsonNode)i.next();
+			albums.add(new Album(
+				getInt(jsonAlbum, "albumid"), 
+				getString(jsonAlbum, "label"), 
+				getString(jsonAlbum, "artist"), 
+				getInt(jsonAlbum, "year"), 
+				getString(jsonAlbum, "thumbnail", "NONE") 
+			));
+		}
+		return albums;
+	}
+	
 	/**
 	 * Gets all albums with given artist IDs
 	 * @param artistIDs Array of artist IDs
@@ -340,31 +368,7 @@ public class MusicClient extends Client implements IMusicClient {
 		sb.append(")");
 		return null; //parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
-	
-	/**
-	 * Gets all albums from database
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
-	 * @return All albums
-	 */
-	public ArrayList<Album> getAlbums(INotifiableManager manager, int sortBy, String sortOrder) {
-		final ArrayList<Album> albums = new ArrayList<Album>();
-		final JsonNode result = mConnection.getJson(manager, "MusicLibrary.GetAlbums", 
-				obj().put(PARAM_FIELDS, arr().add("artist").add("year"))
-			);
-		final JsonNode jsonAlbums = result.get("albums");
-		for (Iterator<JsonNode> i = jsonAlbums.getElements(); i.hasNext();) {
-			JsonNode jsonAlbum = (JsonNode)i.next();
-			albums.add(new Album(
-				getInt(jsonAlbum, "albumid"), 
-				getString(jsonAlbum, "label"), 
-				getString(jsonAlbum, "artist"), 
-				getInt(jsonAlbum, "year"), 
-				getString(jsonAlbum, "thumbnail", "NONE") 
-			));
-		}
-		return albums;
-	}
+
 
 	/**
 	 * Gets all albums of an artist from database
@@ -379,7 +383,7 @@ public class MusicClient extends Client implements IMusicClient {
 		sb.append(" FROM albumview");
 		sb.append(" WHERE albumview.strAlbum <> ''");
 		sb.append(" AND idArtist = " + artist.id);
-		sb.append(albumsOrderBy(sortBy, sortOrder));
+//		sb.append(albumsOrderBy(sortBy, sortOrder));
 		return null; //parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
 
@@ -404,7 +408,7 @@ public class MusicClient extends Client implements IMusicClient {
 		sb.append("        FROM song");
 		sb.append("        WHERE idGenre = " + genre.id);
 		sb.append("  ))");
-		sb.append(albumsOrderBy(sortBy, sortOrder));
+//		sb.append(albumsOrderBy(sortBy, sortOrder));
 		return null; //parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
 	
@@ -696,7 +700,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Thumbnail bitmap
 	 */
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
-		return null; //getCover(manager, cover, size, Album.getThumbUri(cover), Album.getFallbackThumbUri(cover));
+		return getCover(manager, cover, size, Album.getThumbUri(cover), Album.getFallbackThumbUri(cover));
 	}
 	
 	/**
@@ -722,16 +726,21 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param sortOrder Sort order
 	 * @return SQL "ORDER BY" string
 	 */
-	private String albumsOrderBy(int sortBy, String sortOrder) {
+	private static ObjNode sort(ObjNode params, int sortBy, String sortOrder) {
+		final String order = sortOrder.equals(SortType.ORDER_DESC) ? "descending" : "ascending";
 		switch (sortBy) {
 			default:
 			case SortType.ALBUM:
-				return " ORDER BY lower(strAlbum) " + sortOrder;
+				params.p("sortmethod", "label").p("sortorder", order);
+				break;
 			case SortType.ARTIST:
-				return " ORDER BY lower(strArtist) " + sortOrder + ", lower(strAlbum) " + sortOrder;
+				params.p("sortmethod", "artist").p("sortorder", order);
+				break;
 			case SortType.TRACK:
-				return "  ORDER BY iTrack " + sortOrder + ", lower(strFileName) " + sortOrder;
+				params.p("sortmethod", "track").p("sortorder", order);
+				break;
 		}
+		return params;
 	}
 
 	/**

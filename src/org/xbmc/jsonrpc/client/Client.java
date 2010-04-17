@@ -23,6 +23,7 @@ package org.xbmc.jsonrpc.client;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -73,8 +74,6 @@ public abstract class Client {
 	 * size. Setting sample size > 1 will do two things:
 	 * <ol><li>Only a fragment of the total size will be downloaded</li>
 	 *     <li>Resizing will be smooth and not pixelated as before</li></ol>
-	 * The base64-decoding is done using an inputstream directly, without 
-	 * having to save the reponse to a String first.
 	 * The returned size is the next bigger (but smaller than the double) size
 	 * of the original image.
 	 * @param manager Postback manager
@@ -116,7 +115,7 @@ public abstract class Client {
 			final int ss = ImportUtilities.calculateSampleSize(opts, dim);
 			Log.i(TAG, "Sample size: " + ss);
 			
-			is = new BufferedInputStream(mConnection.getInputStream(url, manager), 8192);
+			is = new BufferedInputStream(mConnection.getThumbInputStream(url, manager), 8192);
 			opts.inDither = true;
 			opts.inSampleSize = ss;
 			opts.inJustDecodeBounds = false;
@@ -133,6 +132,8 @@ public abstract class Client {
 				Log.i(TAG, "Fetch: Bitmap: " + bitmap.getWidth() + "x" + bitmap.getHeight());
 				return bitmap;
 			}
+		} catch (FileNotFoundException e) {
+			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -146,10 +147,14 @@ public abstract class Client {
 	}
 	
 	private BitmapFactory.Options prefetch(INotifiableManager manager, String url, int size, int mediaType) {
-		InputStream is = new BufferedInputStream(mConnection.getInputStream(url, manager), 8192);
 		BitmapFactory.Options opts = new BitmapFactory.Options();
-		opts.inJustDecodeBounds = true;
-		BitmapFactory.decodeStream(is, null, opts);
+		try {
+			InputStream is = new BufferedInputStream(mConnection.getThumbInputStream(url, manager), 8192);
+			opts.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(is, null, opts);
+		} catch (FileNotFoundException e) {
+			return opts;
+		}
 		return opts;
 	}
 	
@@ -174,15 +179,23 @@ public abstract class Client {
 		return null;
 	}	
 	
-	public final static ObjectNode obj() {
-		return new ObjectNode(FACTORY) {
-			@Override
-			public JsonNode put(String fieldName, JsonNode value) {
-				super.put(fieldName, value);
-				return this;
-			}
-		};
+	public final static ObjNode obj() {
+		return new ObjNode(FACTORY);
 	}
+
+	public static class ObjNode extends ObjectNode {
+		public ObjNode(JsonNodeFactory nc) {
+			super(nc);
+		}
+		public ObjNode p(String fieldName, JsonNode value) {
+			super.put(fieldName, value);
+			return this;
+		}
+		public ObjNode p(String fieldName, String v) {
+			super.put(fieldName, v);
+			return this;
+		}
+	};
 
 	public final static ArrayNode arr() {
 		return MAPPER.createArrayNode();

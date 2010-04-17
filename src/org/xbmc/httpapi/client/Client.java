@@ -87,8 +87,8 @@ abstract class Client {
 			// DO THIS EVERY FUCKING TIME!!
 			Log.i(TAG, "Setting response format");
 			mConnection.assertBoolean(manager, "SetResponseFormat", "WebHeader;false;WebFooter;false");
-			Log.i(TAG, "Starting download (" + url + ")");
 			
+			Log.i(TAG, "Starting download (" + url + ")");
 			BitmapFactory.Options opts = prefetch(manager, url, size, mediaType);
 			Dimension dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
 			

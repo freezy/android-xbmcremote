@@ -85,10 +85,10 @@ public abstract class ClientFactory {
 	
 	public static IMusicClient getMusicClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
-		probeQueryApiType(manager);
+//		probeQueryApiType(manager);
 		switch (sApiType) {
 			case API_TYPE_JSONRPC:
-//				return createJsonClient(manager).music;
+				return createJsonClient(manager).music;
 			case API_TYPE_UNSET:
 			case API_TYPE_HTTPIAPI:
 			default:

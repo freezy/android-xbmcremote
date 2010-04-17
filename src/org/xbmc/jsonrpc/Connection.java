@@ -21,6 +21,7 @@
 
 package org.xbmc.jsonrpc;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
@@ -43,6 +44,8 @@ import org.xbmc.api.object.Host;
 import org.xbmc.httpapi.NoSettingsException;
 import org.xbmc.jsonrpc.client.Client;
 
+import android.util.Log;
+
 
 /**
  * Singleton class. Will be instantiated only once and contains mostly help
@@ -51,8 +54,10 @@ import org.xbmc.jsonrpc.client.Client;
  */
 public class Connection {
 
-//	private static final String TAG = "Connection-JsonRpc";
+	private static final String TAG = "Connection-JsonRpc";
+	
 	private static final String XBMC_JSONRPC_BOOTSTRAP = "/jsonrpc";
+	private static final String XBMC_THUMB_BOOTSTRAP = "/thumb";
 	private static final int SOCKET_CONNECTION_TIMEOUT = 5000;
 	
 	/**
@@ -62,7 +67,7 @@ public class Connection {
 	
 	/**
 	 * Complete URL without any attached command parameters, for instance:
-	 * <code>http://192.168.0.10:8080/jsonrpc</code>
+	 * <code>http://192.168.0.10:8080</code>
 	 */
 	private String mUrl;
 	
@@ -130,7 +135,6 @@ public class Connection {
 			sb.append(host);
 			sb.append(":");
 			sb.append(port);
-			sb.append(XBMC_JSONRPC_BOOTSTRAP);
 			mUrl = sb.toString();
 		}
 	}
@@ -160,14 +164,17 @@ public class Connection {
 		}
 	}
 	
-	public InputStream getInputStream(String url, INotifiableManager manager) {
+	public InputStream getThumbInputStream(String url, INotifiableManager manager) throws FileNotFoundException {
 		try {
-			final URL u = new URL(url);
+			final URL u = new URL(mUrl + XBMC_THUMB_BOOTSTRAP + "/" + url + ".jpg");
+			Log.i(TAG, "Returning input stream for " + u.toString());
 			URLConnection uc;
 			uc = u.openConnection();
 			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
 			uc.setReadTimeout(mSocketReadTimeout);
 			return uc.getInputStream();
+		} catch (FileNotFoundException e) {
+			throw e;
 		} catch (IOException e) {
 			manager.onError(e);
 		}
@@ -192,7 +199,7 @@ public class Connection {
 			if (mAuthenticator != null) {
 				mAuthenticator.resetCounter();
 			}
-			final URL url = new URL(mUrl);
+			final URL url = new URL(mUrl + XBMC_JSONRPC_BOOTSTRAP);
 			uc = url.openConnection();
 			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
 			uc.setReadTimeout(mSocketReadTimeout);
