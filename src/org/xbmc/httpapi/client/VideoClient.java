@@ -344,7 +344,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 * @param response
 	 * @return List of Actors
 	 */
-	private ArrayList<Actor> parseActorRoles(String response) {
+	public static ArrayList<Actor> parseActorRoles(String response) {
 		ArrayList<Actor> actors = new ArrayList<Actor>();
 		String[] fields = response.split("<field>");
 		try { 

@@ -246,6 +246,35 @@ public class TvShowClient extends Client implements ITvShowClient {
 		return parseEpisodes(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
+	public Episode updateEpisodeDetails(INotifiableManager manager, Episode episode) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT c01 ");
+		sb.append(" FROM episodeview ");
+		sb.append(" WHERE idEpisode=");
+		sb.append(episode.id);
+		episode = parseEpisodeDetails(mConnection.query("QueryVideoDatabase", sb.toString(), manager), episode);
+		sb = new StringBuilder();
+		sb.append("SELECT actors.idActor, strActor, strRole");
+		sb.append(" FROM actors, actorlinkepisode");
+		sb.append(" WHERE actors.idActor = actorlinkepisode.idActor");
+		sb.append(" AND actorlinkepisode.idEpisode =");
+		sb.append(episode.id);
+		episode.actors = VideoClient.parseActorRoles(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
+		return episode;
+	}
+	
+	private Episode parseEpisodeDetails(String response, Episode episode) {
+		String[] fields = response.split("<field>");
+		try {
+			episode.plot = Connection.trim(fields[1]);
+		} catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
+		}
+		return episode;
+	}
+	
 	/**
 	 * Returns a pre-resized movie cover. Pre-resizing is done in a way that
 	 * the bitmap at least as large as the specified size but not larger than

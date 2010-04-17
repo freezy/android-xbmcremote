@@ -52,4 +52,12 @@ public interface ITvShowManager extends IManager{
 	 * @param show
 	 */
 	public void getSeasons(DataResponse<ArrayList<Season>> response, TvShow show, Context context);
+	
+	/**
+	 * Updates the given Episode with 
+	 * @param response
+	 * @param episode
+	 * @param context
+	 */
+	public void updateEpisodeDetails(DataResponse<Episode> response, Episode episode, Context context);
 }

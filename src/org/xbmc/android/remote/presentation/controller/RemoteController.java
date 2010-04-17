@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
+import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.eventclient.ButtonCodes;
@@ -37,6 +38,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 	private static final long VIBRATION_LENGTH = 45;
 	
 	IEventClientManager mEventClientManager;
+	IControlManager mControl;
 	
 	/**
 	 * timestamp since last trackball use.
@@ -48,9 +50,13 @@ public class RemoteController extends AbstractController implements INotifiableC
 	public RemoteController(Context context) {
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
+		mControl = ManagerFactory.getControlManager(this);
 		mEventClientManager = ManagerFactory.getEventClientManager(this);
 		mVibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
 		mDoVibrate = prefs.getBoolean("setting_vibrate_on_touch", true);
+	}
+	
+	public void showVolume() {
 	}
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

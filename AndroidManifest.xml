@@ -24,6 +24,7 @@
 		<activity android:name=".presentation.activity.AboutActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait"/>
 		<activity android:name=".presentation.activity.SettingsActivity" />
 		<activity android:name=".presentation.activity.HostSettingsActivity" />
+		<activity android:name=".presentation.activity.EpisodeDetailsActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait"></activity>
 		<activity android:name=".presentation.activity.MediaIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" android:label="@string/play_on_xbmc">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
@@ -41,7 +42,7 @@
 			</intent-filter>
 		</receiver>
 		<provider android:name=".business.provider.HostProvider" android:authorities="org.xbmc.android.provider.remote" />
-	</application>
+</application>
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
 	<supports-screens
 		android:largeScreens="true"

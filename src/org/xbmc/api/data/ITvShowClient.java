@@ -67,5 +67,13 @@ public interface ITvShowClient extends IClient {
 	 * @return Cover
 	 */
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size);
+	
+	/**
+	 * Updates the episode with plot and actors
+	 * @param manager
+	 * @param episode
+	 * @return
+	 */
+	public Episode updateEpisodeDetails(INotifiableManager manager, Episode episode);
 
 }

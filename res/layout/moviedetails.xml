@@ -14,6 +14,7 @@
 			android:layout_height="wrap_content"
 			android:orientation="vertical">
 			<FrameLayout 
+				android:id="@+id/moviedetails_layout_poster"
 				android:layout_marginTop="10dip"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -26,6 +27,12 @@
 					android:scaleType="centerCrop"
 					android:padding="0dip" />
 			</FrameLayout>
+			<ImageView 
+				android:id="@+id/moviedetails_thumb" 
+				android:layout_height="wrap_content"
+				android:layout_width="fill_parent"
+				android:scaleType="centerInside"
+				android:padding="0dip" />
 			<LinearLayout
 				android:layout_width="fill_parent" 
 				android:layout_height="wrap_content"

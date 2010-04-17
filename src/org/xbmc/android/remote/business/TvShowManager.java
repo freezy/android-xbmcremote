@@ -115,4 +115,14 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 		});
 	}
 
+	public void updateEpisodeDetails(DataResponse<Episode> response,
+			final Episode episode, final Context context) {
+		mHandler.post(new Command<Episode>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				mResponse.value = shows(context).updateEpisodeDetails(TvShowManager.this, episode);
+			}
+		});
+	}
+
 }

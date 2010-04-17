@@ -21,24 +21,47 @@
 
 package org.xbmc.api.object;
 
+import java.util.ArrayList;
+
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
 public class Episode implements ICoverArt {
 	
 	public final static String TAG = "Episode";
-
+	
+	/**
+	 * Database primary key
+	 */
 	public int id;
+	
 	public String localPath;
+	/**
+	 * Title of this episode
+	 */
 	public String title;
+	/**
+	 * Plotsummary
+	 */
 	public String plot;
+	/**
+	 * Rating of this episode
+	 */
 	public double rating = 0.0;
+	/**
+	 * Writer of this episode
+	 */
 	public String writer;
 	public String firstAired;
 	public boolean watched;
 	public String director;
 	public int season;
+	/**
+	 * Number of this episode within the season
+	 */
 	public int episode;
+	
+	public ArrayList<Actor> actors = null;
 	
 	public Episode(int id, String title, String plot, double rating, String writer, String firstAired,
 			boolean watched, String director, int season, int episode, String localPath) {
