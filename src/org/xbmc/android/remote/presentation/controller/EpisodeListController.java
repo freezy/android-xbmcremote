@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.presentation.activity.AbsListActivity;
+import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
@@ -105,7 +105,7 @@ public class EpisodeListController extends ListController implements IController
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					final TvShow show = (TvShow)mList.getAdapter().getItem(((FiveLabelsItemView)view).position);
-					Intent nextActivity = new Intent(view.getContext(), AbsListActivity.class);
+					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_TVSHOW, show);
 //					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER,)
 					mActivity.startActivity(nextActivity);

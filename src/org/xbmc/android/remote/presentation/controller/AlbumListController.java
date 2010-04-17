@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.presentation.activity.AbsListActivity;
 import org.xbmc.android.remote.presentation.activity.DialogFactory;
+import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.widget.ThreeLabelsItemView;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
@@ -144,7 +144,7 @@ public class AlbumListController extends ListController implements IController {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent nextActivity;
 					final Album album = (Album)mList.getAdapter().getItem(((ThreeLabelsItemView)view).position);
-					nextActivity = new Intent(view.getContext(), AbsListActivity.class);
+					nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new SongListController());
 					nextActivity.putExtra(ListController.EXTRA_ALBUM, album);
 					mActivity.startActivity(nextActivity);

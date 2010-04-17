@@ -28,9 +28,9 @@ import java.util.Observer;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.presentation.activity.AbsListActivity;
 import org.xbmc.android.remote.presentation.activity.HomeActivity;
 import org.xbmc.android.remote.presentation.activity.HostSettingsActivity;
+import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.MovieLibraryActivity;
 import org.xbmc.android.remote.presentation.activity.MusicLibraryActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
@@ -254,7 +254,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						mActivity.startActivity(new Intent(v.getContext(), TvShowLibraryActivity.class));
 						break;
 					case HOME_ACTION_PICTURES:
-						Intent intent = new Intent(v.getContext(), AbsListActivity.class);
+						Intent intent = new Intent(v.getContext(), ListActivity.class);
 						intent.putExtra(ListController.EXTRA_LIST_CONTROLLER, new FileListController());
 						intent.putExtra(ListController.EXTRA_SHARE_TYPE, MediaType.PICTURES);
 						intent.putExtra(ListController.EXTRA_PATH, "");

@@ -188,7 +188,7 @@ public class MovieDetailsActivity extends Activity {
 								public void onClick(View v) {
 									Intent nextActivity;
 									Actor actor = (Actor)v.getTag();
-									nextActivity = new Intent(view.getContext(), AbsListActivity.class);
+									nextActivity = new Intent(view.getContext(), ListActivity.class);
 									nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new MovieListController());
 									nextActivity.putExtra(ListController.EXTRA_ACTOR, actor);
 									mActivity.startActivity(nextActivity);
