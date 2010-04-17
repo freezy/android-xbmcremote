@@ -90,7 +90,7 @@ public abstract class AbstractController {
 							int wait = 0;
 							while(wait <= MAX_WAIT_FOR_WIFI * 1000 && helper.getWifiState() != WifiHelper.WIFI_STATE_ENABLED) {
 								try {
-									wait(500);
+									sleep(500);
 									wait += 500;
 								} catch (InterruptedException e) {}
 							}
