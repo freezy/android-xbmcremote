@@ -31,7 +31,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 	private static final int MENU_XBMC_S = 403;
 	
 	private static final int DPAD_DOWN_MIN_DELTA_TIME = 100;
-	private static final int MOTION_EVENT_MIN_DELTA_TIME = 300;
+	private static final int MOTION_EVENT_MIN_DELTA_TIME = 250;
 	private static final float MOTION_EVENT_MIN_DELTA_POSITION = 0.15f;
 	
 	private static final long VIBRATION_LENGTH = 45;
@@ -85,9 +85,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 	
 	private boolean onDirectionalPadDown(int keyCode){
 			long newstamp = System.currentTimeMillis();
-			System.out.println("DEBUG RemoteController - Delta since last motion event: " + (newstamp - mTimestamp) + " ms");
 			if (newstamp - mTimestamp > DPAD_DOWN_MIN_DELTA_TIME){
-				System.out.println("DEBUG RemoteController - DELTA gt minimum, proceeding.");
 				mTimestamp = newstamp;
 				try{
 					switch (keyCode) {
@@ -113,10 +111,8 @@ public class RemoteController extends AbstractController implements INotifiableC
 					return false;
 				}
 			}
-			else
-				System.out.println("DEBUG RemoteController - DELTA lt minimum, sinking.");
 			return true;
-	}
+	} 
 	
 	public boolean onTrackballEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN)
@@ -124,9 +120,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 		else{
 			// check when the last trackball move happened to avoid too speedy selections
 			long newstamp = System.currentTimeMillis();
-			System.out.println("DEBUG RemoteController - Delta since last motion event: " + (newstamp - mTimestamp) + " ms");
 			if (newstamp - mTimestamp > MOTION_EVENT_MIN_DELTA_TIME){
-				System.out.println("DEBUG RemoteController - DELTA gt minimum, proceeding.");
 				mTimestamp = newstamp;
 				if (Math.abs(event.getX()) > MOTION_EVENT_MIN_DELTA_POSITION) {
 					return keyboardAction(event.getX() < 0 ? ButtonCodes.KEYBOARD_LEFT : ButtonCodes.KEYBOARD_RIGHT);
@@ -134,8 +128,6 @@ public class RemoteController extends AbstractController implements INotifiableC
 					return keyboardAction(event.getY() < 0 ? ButtonCodes.KEYBOARD_UP : ButtonCodes.KEYBOARD_DOWN);
 				}
 			}
-			else
-				System.out.println("DEBUG RemoteController - DELTA lt minimum, sinking.");
 		}
 		return true;
 	}
@@ -218,7 +210,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 			} catch (IOException e) {
 				return false;
 			}
-			return false;
+			return true;
 		}
 	}
 	
