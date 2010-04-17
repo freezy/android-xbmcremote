@@ -65,7 +65,7 @@ public abstract class ClientFactory {
 		probeQueryApiType(manager);
 		switch (sApiType) {
 			case API_TYPE_JSONRPC:
-//				return createJsonClient(manager).info;
+				return createJsonClient(manager).info;
 			case API_TYPE_UNSET:
 			case API_TYPE_HTTPIAPI:
 			default:
@@ -85,7 +85,7 @@ public abstract class ClientFactory {
 	
 	public static IMusicClient getMusicClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
-//		probeQueryApiType(manager);
+		probeQueryApiType(manager);
 		switch (sApiType) {
 			case API_TYPE_JSONRPC:
 				return createJsonClient(manager).music;
@@ -121,6 +121,7 @@ public abstract class ClientFactory {
 	 * @param host New host settings
 	 */
 	public static void resetClient(Host host) {
+		sApiType = API_TYPE_UNSET;
 		if (sHttpClient != null) {
 			sHttpClient.setHost(host);
 		}
@@ -187,6 +188,8 @@ public abstract class ClientFactory {
 	 */
 	private static void probeQueryApiType(final INotifiableManager manager) {
 		final Host host = HostFactory.host;
+		
+		if(sApiType != API_TYPE_UNSET) return;
 		
 		// try to get version string via http api
 		final HttpApi httpClient;
