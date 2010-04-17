@@ -30,6 +30,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 	private static final int MENU_XBMC_EXIT = 402;
 	private static final int MENU_XBMC_S = 403;
 	
+	private static final int DPAD_DOWN_MIN_DELTA_TIME = 100;
 	private static final int MOTION_EVENT_MIN_DELTA_TIME = 300;
 	private static final float MOTION_EVENT_MIN_DELTA_POSITION = 0.15f;
 	
@@ -65,26 +66,56 @@ public class RemoteController extends AbstractController implements INotifiableC
 					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
 					return true;
 				case KeyEvent.KEYCODE_DPAD_DOWN:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_DOWN, false, true, true, (short)0, (byte)0);
-					return true;
+					return onDirectionalPadDown(keyCode);
 				case KeyEvent.KEYCODE_DPAD_UP:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_UP, false, true, true, (short)0, (byte)0);
-					return true;
+					return onDirectionalPadDown(keyCode);
 				case KeyEvent.KEYCODE_DPAD_LEFT:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_LEFT, false, true, true, (short)0, (byte)0);
-					return true;
+					return onDirectionalPadDown(keyCode);
 				case KeyEvent.KEYCODE_DPAD_RIGHT:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_RIGHT, false, true, true, (short)0, (byte)0);
-					return true;
+					return onDirectionalPadDown(keyCode);
 				case KeyEvent.KEYCODE_DPAD_CENTER:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_ENTER, false, true, true, (short)0, (byte)0);
-					return true;
+					return onDirectionalPadDown(keyCode);
 				default: 
 					return false;
 			}
 		} catch (IOException e) {
 			return false;
 		}
+	}
+	
+	private boolean onDirectionalPadDown(int keyCode){
+			long newstamp = System.currentTimeMillis();
+			System.out.println("DEBUG RemoteController - Delta since last motion event: " + (newstamp - mTimestamp) + " ms");
+			if (newstamp - mTimestamp > DPAD_DOWN_MIN_DELTA_TIME){
+				System.out.println("DEBUG RemoteController - DELTA gt minimum, proceeding.");
+				mTimestamp = newstamp;
+				try{
+					switch (keyCode) {
+						case KeyEvent.KEYCODE_DPAD_DOWN:
+							mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_DOWN, false, true, true, (short)0, (byte)0);
+							return true;
+						case KeyEvent.KEYCODE_DPAD_UP:
+							mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_UP, false, true, true, (short)0, (byte)0);
+							return true;
+						case KeyEvent.KEYCODE_DPAD_LEFT:
+							mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_LEFT, false, true, true, (short)0, (byte)0);
+							return true;
+						case KeyEvent.KEYCODE_DPAD_RIGHT:
+							mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_RIGHT, false, true, true, (short)0, (byte)0);
+							return true;
+						case KeyEvent.KEYCODE_DPAD_CENTER:
+							mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_ENTER, false, true, true, (short)0, (byte)0);
+							return true;							
+						default:
+							return false;
+					}
+				} catch (IOException e) {
+					return false;
+				}
+			}
+			else
+				System.out.println("DEBUG RemoteController - DELTA lt minimum, sinking.");
+			return true;
 	}
 	
 	public boolean onTrackballEvent(MotionEvent event) {
@@ -104,7 +135,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 				}
 			}
 			else
-				System.out.println("DEBUG RemoteController - DELTA lt minimum, skipping event.");
+				System.out.println("DEBUG RemoteController - DELTA lt minimum, sinking.");
 		}
 		return true;
 	}
