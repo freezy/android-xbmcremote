@@ -51,68 +51,78 @@ import android.widget.ViewFlipper;
  * @author Team XBMC
  */
 public class RemoteActivity extends Activity {
-	
+
 	private final static String TAG = "RemoteActivity";
-	
+
 	private ConfigurationManager mConfigurationManager;
 	private RemoteController mRemoteController;
 
 	private KeyTracker mKeyTracker;
-	
+
 	private ViewFlipper mViewFlipper;
+
+	private View mRemoteView, mGestureView, mMousePadView;
+
 	private float mOldTouchValue;
-	
+
 	public RemoteActivity() {
 		mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
 
 			@Override
-			public void onLongPressBack(int keyCode, KeyEvent event,
-					Stage stage, int duration) {
+			public void onLongPressBack(int keyCode, KeyEvent event, Stage stage, int duration) {
 				Intent intent = new Intent(RemoteActivity.this, HomeActivity.class);
 				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				startActivity(intent);
 			}
 
 			@Override
-			public void onShortPressBack(int keyCode, KeyEvent event,
-					Stage stage, int duration) {
-				callSuperOnKeyDown(keyCode, event);
+			public void onShortPressBack(int keyCode, KeyEvent event, Stage stage, int duration) {
+				RemoteActivity.super.onKeyDown(keyCode, event);
 			}
-			
 		});
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.remote_xbox);
-		
+
+		mViewFlipper = (ViewFlipper) findViewById(R.id.remote_flipper);
+
+		mRemoteView = mViewFlipper.getChildAt(0);
+		mMousePadView = mViewFlipper.getChildAt(1);
+		mGestureView = mViewFlipper.getChildAt(2);
+
+		// mRemoteView.setVisibility(View.VISIBLE);
+		// mMousePadView.setVisibility(View.VISIBLE);
+		// mGestureView.setVisibility(View.VISIBLE);
+		mViewFlipper.setDisplayedChild(0); // mRemoteView
+
 		// remove nasty top fading edge
-		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
+		FrameLayout topFrame = (FrameLayout) findViewById(android.R.id.content);
 		topFrame.setForeground(null);
 		mRemoteController = new RemoteController(getApplicationContext());
-		
-		mViewFlipper = (ViewFlipper) findViewById(R.id.remote_flipper);
-		
+
 		mConfigurationManager = ConfigurationManager.getInstance(this);
-		//mConfigurationManager.initKeyguard(true);
-		
-        Display d = getWindowManager().getDefaultDisplay();
-        final int w = d.getWidth();
-        final int h = d.getHeight();
-        final double ar = w > h ? (double)w / (double)h : (double)h / (double)w;
-        if (ar > 1.7) {
-        	final View sectionRows = findViewById(R.id.RemoteXboxRowSections);
-        	if (sectionRows != null) {
-        		findViewById(R.id.RemoteXboxRowSections).setVisibility(View.VISIBLE);
-        		Log.i(TAG, "AR = " + ar + ", setting section bar to visible.");
-        	} else {
-        		Log.i(TAG, "AR = " + ar + " but row sections not found.");
-        	}
-        } else {
-        	Log.i(TAG, "AR = " + ar + ", leaving section bar hidden.");
-        }
+		// mConfigurationManager.initKeyguard(true);
+
+		Display d = getWindowManager().getDefaultDisplay();
+		final int w = d.getWidth();
+		final int h = d.getHeight();
+		final double ar = w > h ? (double) w / (double) h : (double) h / (double) w;
+		if (ar > 1.7) {
+			final View sectionRows = findViewById(R.id.RemoteXboxRowSections);
+			if (sectionRows != null) {
+				findViewById(R.id.RemoteXboxRowSections).setVisibility(
+						View.VISIBLE);
+				Log.i(TAG, "AR = " + ar + ", setting section bar to visible.");
+			} else {
+				Log.i(TAG, "AR = " + ar + " but row sections not found.");
+			}
+		} else {
+			Log.i(TAG, "AR = " + ar + ", leaving section bar hidden.");
+		}
 		setupButtons();
 	}
 
@@ -120,20 +130,21 @@ public class RemoteActivity extends Activity {
 	public boolean onTrackballEvent(MotionEvent event) {
 		return mRemoteController.onTrackballEvent(event);
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		boolean handled =  mKeyTracker.doKeyDown(keyCode, event);
-		return handled || mRemoteController.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
+		boolean handled = mKeyTracker.doKeyDown(keyCode, event);
+		return handled || mRemoteController.onKeyDown(keyCode, event)
+				|| super.onKeyDown(keyCode, event);
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		mRemoteController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -145,15 +156,15 @@ public class RemoteActivity extends Activity {
 	 * Assigns the button events to the views.
 	 */
 	private void setupButtons() {
-		
+
 		// display
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnDisplay), ButtonCodes.REMOTE_DISPLAY);
-		
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnDisplay),ButtonCodes.REMOTE_DISPLAY);
+
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnVideo), ButtonCodes.REMOTE_MY_VIDEOS);
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnMusic), ButtonCodes.REMOTE_MY_MUSIC);
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnImages), ButtonCodes.REMOTE_MY_PICTURES);
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnTv), ButtonCodes.REMOTE_MY_TV);
-		
+
 		// seek back
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnSeekBack), ButtonCodes.REMOTE_REVERSE);
 		// play
@@ -169,29 +180,28 @@ public class RemoteActivity extends Activity {
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnPause), ButtonCodes.REMOTE_PAUSE);
 		// next
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnNext), ButtonCodes.REMOTE_SKIP_PLUS);
-		
+
 		// title
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnTitle), ButtonCodes.REMOTE_TITLE);
 		// up
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnUp), ButtonCodes.REMOTE_UP);
 		// info
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnInfo), ButtonCodes.REMOTE_INFO);
-		
+
 		// left
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnLeft), ButtonCodes.REMOTE_LEFT);
 		// select
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnSelect), ButtonCodes.REMOTE_SELECT);
 		// right
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnRight), ButtonCodes.REMOTE_RIGHT);
-		
+
 		// menu
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnMenu), ButtonCodes.REMOTE_MENU);
 		// down
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnDown), ButtonCodes.REMOTE_DOWN);
-		// back 
+		// back
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnBack), ButtonCodes.REMOTE_BACK);
-		
-		
+
 		// videos
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnVideo), ButtonCodes.REMOTE_MY_VIDEOS);
 		// music
@@ -203,7 +213,7 @@ public class RemoteActivity extends Activity {
 		// settings
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnPower), ButtonCodes.REMOTE_POWER);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		return mRemoteController.onCreateOptionsMenu(menu);
@@ -213,11 +223,7 @@ public class RemoteActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		return mRemoteController.onOptionsItemSelected(item);
 	}
-	
-	protected void callSuperOnKeyDown(int keyCode, KeyEvent event) {
-		super.onKeyDown(keyCode, event);
-	}
-	
+
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		boolean handled = mKeyTracker.doKeyUp(keyCode, event);
@@ -230,27 +236,91 @@ public class RemoteActivity extends Activity {
 		if (mViewFlipper == null) {
 			return false;
 		}
+		
+		// determine the current view and
+		// who is to the right and to the left.
+		final View currentView = mViewFlipper.getCurrentView();
+		final View leftView, rightView;
+
+		if (currentView == mRemoteView) {
+			Log.d("current layout: ", "remote");
+			leftView = mGestureView;
+			rightView = mMousePadView;
+		} else if (currentView == mMousePadView) {
+			Log.d("current layout: ", "mousepad");
+			leftView = mRemoteView;
+			rightView = mGestureView;
+		} else if (currentView == mGestureView) {
+			Log.d("current layout: ", "gesture");
+			leftView = mMousePadView;
+			rightView = mRemoteView;
+		}
+		// This shouldn't happen unless someone adds another view
+		// inside the ViewFlipper
+		else {
+			leftView = null;
+			rightView = null;
+		}
+
 		switch (touchEvent.getAction()) {
-			case MotionEvent.ACTION_DOWN:
+			case MotionEvent.ACTION_DOWN: 
+				// freezy: the mousepad seems to always flicker
+				// at the start of the move action (i.e. action_down)
+				// so i tried this but it doesn't seem to work.
+				// thats the only thing i can think of that keeps this
+				// feature from being 100%
+				/*
+				 * if(currentView != mMousePadView) {
+				 * mMousePadView.setVisibility(View.INVISIBLE); }
+				 */
 				mOldTouchValue = touchEvent.getX();
-				break;
+			break;
+		
 			case MotionEvent.ACTION_UP: 
 				float currentX = touchEvent.getX();
+	
 				if (mOldTouchValue < currentX) {
 					mViewFlipper.setInAnimation(AnimationHelper.inFromLeftAnimation());
 					mViewFlipper.setOutAnimation(AnimationHelper.outToRightAnimation());
-					mViewFlipper.showNext();
+					mViewFlipper.showPrevious();
 				}
 				if (mOldTouchValue > currentX) {
 					mViewFlipper.setInAnimation(AnimationHelper.inFromRightAnimation());
 					mViewFlipper.setOutAnimation(AnimationHelper.outToLeftAnimation());
-					mViewFlipper.showPrevious();
+					mViewFlipper.showNext();
 				}
-				break;
-			case MotionEvent.ACTION_MOVE:
-				final View currentView = mViewFlipper.getCurrentView();
-				currentView.layout((int)(touchEvent.getX() - mOldTouchValue), currentView.getTop(), currentView.getRight(), currentView.getBottom());
+	
 			break;
+		
+			case MotionEvent.ACTION_MOVE: 
+				leftView.setVisibility(View.VISIBLE);
+				rightView.setVisibility(View.VISIBLE);
+	
+				Log.d("current layout:", "left: "
+						+ Integer.toString(currentView.getLeft()) + " right: "
+						+ Integer.toString(currentView.getRight()));
+				Log.d("previous layout:", "left: "
+						+ Integer.toString(leftView.getLeft()) + " right: "
+						+ Integer.toString(leftView.getRight()));
+				Log.d("next layout:", "left: "
+						+ Integer.toString(rightView.getLeft()) + " right: "
+						+ Integer.toString(rightView.getRight()));
+	
+				// move the current view to the left or right.
+				currentView.layout((int) (touchEvent.getX() - mOldTouchValue),
+						currentView.getTop(),
+						(int) (touchEvent.getX() - mOldTouchValue) + 320,
+						currentView.getBottom());
+	
+				// place this view just left of the currentView
+				leftView.layout(currentView.getLeft() - 320, leftView.getTop(),
+						currentView.getLeft(), leftView.getBottom());
+	
+				// place this view just right of the currentView
+				rightView.layout(currentView.getRight(), rightView.getTop(),
+						currentView.getRight() + 320, rightView.getBottom());
+			break;
+		
 		}
 		return false;
 	}
