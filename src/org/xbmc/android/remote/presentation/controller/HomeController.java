@@ -37,6 +37,7 @@ import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingNotificationManager;
 import org.xbmc.android.remote.presentation.activity.RemoteActivity;
 import org.xbmc.android.remote.presentation.activity.TvShowLibraryActivity;
+import org.xbmc.android.util.ClientFactory;
 import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.WakeOnLan;
@@ -158,6 +159,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						final Button versionButton = (Button)mActivity.findViewById(R.id.home_version_button);
 						versionButton.setText("Connecting...");
 						Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
+						ClientFactory.resetClient(host);
 						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
 					}
 				}
@@ -240,6 +242,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 
 			public void onItemClick(AdapterView<?> listView, View v, int position, long ID) {
 				HomeItem item = (HomeItem)listView.getAdapter().getItem(position);
+				final Host host = HostFactory.host;
 				switch (item.ID) {
 					case HOME_ACTION_REMOTE:
 						mActivity.startActivity(new Intent(v.getContext(), RemoteActivity.class));
@@ -265,10 +268,10 @@ public class HomeController extends AbstractController implements INotifiableCon
 						break;
 					case HOME_ACTION_RECONNECT:
 						((Button)mActivity.findViewById(R.id.home_version_button)).setText("Reconnecting...");
+						ClientFactory.resetClient(host);
 						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
 						break;
 					case HOME_ACTION_WOL:
-						final Host host = HostFactory.host;
 						WakeOnLan wol = new WakeOnLan();
 						if (wol.sendMagicPacket(host.mac_addr, host.wol_port)) { // If succeeded in sending the magic packet, begin the countdown
 							if(mWolCounter != null) mWolCounter.cancel();
