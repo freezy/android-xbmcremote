@@ -60,4 +60,11 @@ public interface ITvShowManager extends IManager{
 	 * @param context
 	 */
 	public void updateEpisodeDetails(DataResponse<Episode> response, Episode episode, Context context);
+	
+	/**
+	 * Updates the give TvShow
+	 * @param response
+	 * @param show
+	 */
+	public void updateTvShowDetails(DataResponse<TvShow> response, TvShow show, Context context);
 }

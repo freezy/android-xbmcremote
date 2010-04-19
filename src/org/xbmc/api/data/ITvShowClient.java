@@ -75,5 +75,13 @@ public interface ITvShowClient extends IClient {
 	 * @return
 	 */
 	public Episode updateEpisodeDetails(INotifiableManager manager, Episode episode);
+	
+	/**
+	 * Updates the show with summary
+	 * @param manager
+	 * @param show
+	 * @return
+	 */
+	public TvShow updateTvShowDetails(INotifiableManager manager, TvShow show);
 
 }

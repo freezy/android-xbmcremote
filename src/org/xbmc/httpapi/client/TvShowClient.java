@@ -250,6 +250,29 @@ public class TvShowClient extends Client implements ITvShowClient {
 		return parseEpisodes(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
+	public TvShow updateTvShowDetails(INotifiableManager manager, TvShow show) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT c01");
+		sb.append("  FROM tvshow");
+		sb.append("  WHERE tvshow.idShow = ");
+		sb.append(show.id);
+		show = parseTvShowDetails(mConnection.query("QueryVideoDatabase", sb.toString(), manager), show);
+		//parse actors of the show
+		return show;
+	}
+	
+	private TvShow parseTvShowDetails(String response, TvShow show) {
+		String[] fields = response.split("<field>");
+		try {
+			show.summary = Connection.trim(fields[1]);
+		} catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
+		}
+		return show;
+	}
+	
 	public Episode updateEpisodeDetails(INotifiableManager manager, Episode episode) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT c01 ");

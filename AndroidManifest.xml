@@ -16,6 +16,7 @@
 		<activity android:name=".presentation.activity.MusicGenreActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".presentation.activity.MovieLibraryActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".presentation.activity.MovieDetailsActivity" android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name=".presentation.activity.TvShowDetailsActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".presentation.activity.ListActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".presentation.activity.GridActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
 		<activity android:name=".presentation.activity.TvShowLibraryActivity" android:theme="@android:style/Theme.NoTitleBar" />
