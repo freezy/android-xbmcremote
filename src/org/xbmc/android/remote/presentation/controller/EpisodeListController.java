@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.EpisodeDetailsActivity;
-import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.remote.presentation.widget.FlexibleItemView;
@@ -106,7 +105,6 @@ public class EpisodeListController extends ListController implements IController
 					final Episode episode = (Episode)mList.getAdapter().getItem(((FiveLabelsItemView)view).position);
 					Intent nextActivity = new Intent(view.getContext(), EpisodeDetailsActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_EPISODE, episode);
-//					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER,)
 					mActivity.startActivity(nextActivity);
 				}
 			});
@@ -169,12 +167,12 @@ public class EpisodeListController extends ListController implements IController
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		final FiveLabelsItemView view = (FiveLabelsItemView)((AdapterContextMenuInfo)menuInfo).targetView;
 		menu.setHeaderTitle(view.title);
-		menu.add(0, ITEM_CONTEXT_PLAY, 1, "Play Movie");
+		menu.add(0, ITEM_CONTEXT_PLAY, 1, "Play Episode");
 		menu.add(0, ITEM_CONTEXT_INFO, 2, "View Details");
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
-		final Movie movie = (Movie)mList.getAdapter().getItem(((FiveLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
+		final Episode episode = (Episode)mList.getAdapter().getItem(((FiveLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_PLAY:
 				mControlManager.playFile(new DataResponse<Boolean>() {
@@ -183,11 +181,11 @@ public class EpisodeListController extends ListController implements IController
 							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 						}
 					}
-				}, movie.getPath(), mActivity.getApplicationContext());
+				}, episode.getPath(), mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_INFO:
-				Intent nextActivity = new Intent(mActivity, MovieDetailsActivity.class);
-				nextActivity.putExtra(ListController.EXTRA_MOVIE, movie);
+				Intent nextActivity = new Intent(mActivity, EpisodeDetailsActivity.class);
+				nextActivity.putExtra(ListController.EXTRA_EPISODE, episode);
 				mActivity.startActivity(nextActivity);
 				break;
 			default:

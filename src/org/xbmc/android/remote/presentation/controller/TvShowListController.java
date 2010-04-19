@@ -28,8 +28,7 @@ import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.ManagerThread;
 import org.xbmc.android.remote.presentation.activity.GridActivity;
-import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
-import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
+import org.xbmc.android.remote.presentation.activity.TvShowDetailsActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.remote.presentation.widget.FlexibleItemView;
 import org.xbmc.android.util.ImportUtilities;
@@ -63,7 +62,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class TvShowListController extends ListController implements IController {
 	
-	public static final int ITEM_CONTEXT_PLAY = 1;
+	public static final int ITEM_CONTEXT_BROWSE = 1;
 	public static final int ITEM_CONTEXT_INFO = 2;
 	
 	public static final int MENU_PLAY_ALL = 1;
@@ -205,25 +204,22 @@ public class TvShowListController extends ListController implements IController 
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		final FiveLabelsItemView view = (FiveLabelsItemView)((AdapterContextMenuInfo)menuInfo).targetView;
 		menu.setHeaderTitle(view.title);
-		menu.add(0, ITEM_CONTEXT_PLAY, 1, "Play Movie");
+		menu.add(0, ITEM_CONTEXT_BROWSE, 1, "Browse TvShow");
 		menu.add(0, ITEM_CONTEXT_INFO, 2, "View Details");
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
-		final Movie movie = (Movie)mList.getAdapter().getItem(((FiveLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
+		final TvShow show = (TvShow)mList.getAdapter().getItem(((FiveLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
-			case ITEM_CONTEXT_PLAY:
-				mControlManager.playFile(new DataResponse<Boolean>() {
-					public void run() {
-						if (value) {
-							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
-						}
-					}
-				}, movie.getPath(), mActivity.getApplicationContext());
+			case ITEM_CONTEXT_BROWSE:
+				Intent browseActivity = new Intent(mActivity, GridActivity.class);
+				browseActivity.putExtra(ListController.EXTRA_TVSHOW, show);
+				browseActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new SeasonListController());
+				mActivity.startActivity(browseActivity);;
 				break;
 			case ITEM_CONTEXT_INFO:
-				Intent nextActivity = new Intent(mActivity, MovieDetailsActivity.class);
-				nextActivity.putExtra(ListController.EXTRA_MOVIE, movie);
+				Intent nextActivity = new Intent(mActivity, TvShowDetailsActivity.class);
+				nextActivity.putExtra(ListController.EXTRA_TVSHOW, show);
 				mActivity.startActivity(nextActivity);
 				break;
 			default:

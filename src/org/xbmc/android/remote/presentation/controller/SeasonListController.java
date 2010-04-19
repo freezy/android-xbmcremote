@@ -26,9 +26,6 @@ import java.util.ArrayList;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
-import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
-import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
-import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.remote.presentation.widget.GridPosterItemView;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
@@ -60,8 +57,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class SeasonListController extends ListController implements IController {
 	
-	public static final int ITEM_CONTEXT_PLAY = 1;
-	public static final int ITEM_CONTEXT_INFO = 2;
+	public static final int ITEM_CONTEXT_BROWSE = 1;
 	
 	public static final int MENU_PLAY_ALL = 1;
 	public static final int MENU_SORT = 2;
@@ -170,25 +166,17 @@ public class SeasonListController extends ListController implements IController 
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		final GridPosterItemView view = (GridPosterItemView)((AdapterContextMenuInfo)menuInfo).targetView;
 		menu.setHeaderTitle(view.title);
-		menu.add(0, ITEM_CONTEXT_PLAY, 1, "Play Movie");
-		menu.add(0, ITEM_CONTEXT_INFO, 2, "View Details");
+		menu.add(0, ITEM_CONTEXT_BROWSE, 1, "Browse Season");
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
-		final Movie movie = (Movie)mList.getAdapter().getItem(((FiveLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
+		//final Season season = (Season)mList.getAdapter().getItem(((GridPosterItemView)view).position);
+		final Season season = (Season)mList.getAdapter().getItem(((GridPosterItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
-			case ITEM_CONTEXT_PLAY:
-				mControlManager.playFile(new DataResponse<Boolean>() {
-					public void run() {
-						if (value) {
-							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
-						}
-					}
-				}, movie.getPath(), mActivity.getApplicationContext());
-				break;
-			case ITEM_CONTEXT_INFO:
-				Intent nextActivity = new Intent(mActivity, MovieDetailsActivity.class);
-				nextActivity.putExtra(ListController.EXTRA_MOVIE, movie);
+			case ITEM_CONTEXT_BROWSE:
+				Intent nextActivity = new Intent(mActivity, ListActivity.class);
+				nextActivity.putExtra(ListController.EXTRA_SEASON, season);
+				nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new EpisodeListController());
 				mActivity.startActivity(nextActivity);
 				break;
 			default:
