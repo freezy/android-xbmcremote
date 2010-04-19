@@ -73,7 +73,7 @@ public class VideoClient extends Client implements IVideoClient {
 	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
-		sb.append(" FROM movieview WHERE movieview.idmovie NOT IN (SELECT idmovie FROM setlinkmovie)");
+		sb.append(" FROM movie, files, path WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
@@ -87,7 +87,7 @@ public class VideoClient extends Client implements IVideoClient {
 	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, int offset) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
-		sb.append(" FROM movieview WHERE movieview.idmovie NOT IN (SELECT idmovie FROM setlinkmovie)");
+		sb.append(" FROM movie, files, path WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		sb.append(" LIMIT -1 OFFSET " + offset);
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
@@ -103,8 +103,8 @@ public class VideoClient extends Client implements IVideoClient {
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
-		sb.append(" FROM movieview");
-		sb.append(" WHERE movieview.idmovie IN (");
+		sb.append(" FROM movie, files, path");
+		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie IN (");
 		sb.append("   SELECT DISTINCT idMovie ");
 		sb.append("   FROM actorlinkmovie ");
 		sb.append("   WHERE idActor =");
@@ -124,8 +124,8 @@ public class VideoClient extends Client implements IVideoClient {
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
-		sb.append(" FROM movieview");
-		sb.append(" WHERE movieview.idmovie IN (");
+		sb.append(" FROM movie, files, path");
+		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie IN (");
 		sb.append("   SELECT DISTINCT idMovie ");
 		sb.append("   FROM genrelinkmovie ");
 		sb.append("   WHERE idGenre =");
@@ -144,7 +144,7 @@ public class VideoClient extends Client implements IVideoClient {
 	public Movie updateMovieDetails(INotifiableManager manager, Movie movie) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT c03, c01, c04, c18, c12, c19");
-		sb.append(" FROM movieview WHERE movieview.idmovie = ");
+		sb.append(" FROM movie, files, path WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie = ");
 		sb.append(movie.getId());
 		parseMovieDetails(mConnection.query("QueryVideoDatabase", sb.toString(), manager), movie);
 		sb = new StringBuilder();
