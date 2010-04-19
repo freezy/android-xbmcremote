@@ -50,17 +50,12 @@ public class TvShow implements ICoverArt, INamedResource {
 	}
 	
 	public static String getThumbUri(ICoverArt cover) {
-		if (cover.getMediaType() == MediaType.VIDEO_TVSHOW) {
-			return cover.getPath() != null ? cover.getPath().replace("\\", "/") + "banner.jpg" : getFallbackThumbUri(cover);
-		} else {
-			final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
-			return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
-		}
+		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
+		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
 	
 	public static String getFallbackThumbUri(ICoverArt cover) {
-		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+		return cover.getPath().replace("\\", "/") + "banner.jpg";
 	}
 
 	public long getCrc() {
