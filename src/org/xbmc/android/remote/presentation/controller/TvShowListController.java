@@ -37,7 +37,6 @@ import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
-import org.xbmc.api.object.Movie;
 import org.xbmc.api.object.TvShow;
 
 import android.app.Activity;
@@ -53,9 +52,9 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -82,7 +81,7 @@ public class TvShowListController extends ListController implements IController 
 	
 	private boolean mLoadCovers = false;
 	
-	public void onCreate(Activity activity, ListView list) {
+	public void onCreate(Activity activity, AbsListView list) {
 		
 		mTvManager = ManagerFactory.getTvManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
@@ -116,7 +115,7 @@ public class TvShowListController extends ListController implements IController 
 					mActivity.startActivity(nextActivity);
 				}
 			});
-			mList.setOnKeyListener(new ListControllerOnKeyListener<Movie>());
+			mList.setOnKeyListener(new ListControllerOnKeyListener<TvShow>());
 			fetch();
 		}
 	}
