@@ -415,7 +415,11 @@ public class VideoClient extends Client implements IVideoClient {
 		return new ICurrentlyPlaying() {
 			private static final long serialVersionUID = 5036994329211476714L;
 			public String getTitle() {
-				return map.get("Tagline");
+				String title = map.get("Title");
+				if (title != null)
+					return title;
+				String[] path = map.get("Filename").replaceAll("\\\\", "/").split("/");
+				return path[path.length - 1];
 			}
 			public int getTime() {
 				return parseTime(map.get("Time"));
@@ -443,7 +447,11 @@ public class VideoClient extends Client implements IVideoClient {
 				return map.get("Genre");
 			}
 			public String getAlbum() {
-				return map.get("Title");
+				String title = map.get("Tagline");
+				if (title != null)
+					return title;
+				String path = map.get("Filename").replaceAll("\\\\", "/");
+				return path.substring(0, path.lastIndexOf("/"));
 			}
 			public int getMediaType() {
 				return MediaType.VIDEO;

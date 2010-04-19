@@ -381,8 +381,12 @@ public class ControlClient implements IControlClient {
 			if (map.containsKey("Type")) {
 				if(map.containsKey("Type") && map.get("Type").contains("Audio"))
 					type = MediaType.MUSIC;
-				else if(map.get("Type").contains("Video"))
-					type = MediaType.VIDEO;
+				else if(map.get("Type").contains("Video")) {
+					if(map.get("Show Title")!= null && map.get("Episode") != null)
+						type = MediaType.VIDEO_TVEPISODE;
+					else	
+						type = MediaType.VIDEO;
+				}
 				else
 					type = MediaType.PICTURES;
 			} else {
@@ -393,6 +397,8 @@ public class ControlClient implements IControlClient {
 					return MusicClient.getCurrentlyPlaying(map);
 				case MediaType.VIDEO:
 					return VideoClient.getCurrentlyPlaying(map);
+				case MediaType.VIDEO_TVEPISODE:
+					return TvShowClient.getCurrentlyPlaying(map);
 				case MediaType.PICTURES:
 					return PictureClient.getCurrentlyPlaying(map);
 				default:

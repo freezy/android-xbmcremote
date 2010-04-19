@@ -3,9 +3,12 @@ package org.xbmc.httpapi.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.ITvShowClient;
+import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Genre;
@@ -13,6 +16,7 @@ import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
+import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.Connection;
 
 import android.graphics.Bitmap;
@@ -273,6 +277,65 @@ public class TvShowClient extends Client implements ITvShowClient {
 			e.printStackTrace();
 		}
 		return episode;
+	}
+	
+	static ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
+		return new ICurrentlyPlaying() {
+			private static final long serialVersionUID = 5036994329211476714L;
+			public String getTitle() {
+				return map.get("Show Title");
+			}
+			public int getTime() {
+				return parseTime(map.get("Time"));
+			}
+			public int getPlayStatus() {
+				return PlayStatus.parse(map.get("PlayStatus"));
+			}
+			public int getPlaylistPosition() {
+				return Integer.parseInt(map.get("VideoNo"));
+			}
+			//Workarond for bug in Float.valueOf(): http://code.google.com/p/android/issues/detail?id=3156
+			public float getPercentage() {
+				try{
+					return Integer.valueOf(map.get("Percentage"));
+				} catch (NumberFormatException e) { }
+				return Float.valueOf(map.get("Percentage"));
+			}
+			public String getFilename() {
+				return map.get("Filename");
+			}
+			public int getDuration() {
+				return parseTime(map.get("Duration"));
+			}
+			public String getArtist() {
+				return "Season " + map.get("Season") + " / Episode " + map.get("Episode");
+			}
+			public String getAlbum() {
+				return map.get("Title");
+			}
+			public int getMediaType() {
+				return MediaType.VIDEO;
+			}
+			public boolean isPlaying() {
+				return PlayStatus.parse(map.get("PlayStatus")) == PlayStatus.PLAYING;
+			}
+			public int getHeight() {
+				return 0;
+			}
+			public int getWidth() {
+				return 0;
+			}
+			private int parseTime(String time) {
+				String[] s = time.split(":");
+				if (s.length == 2) {
+					return Integer.parseInt(s[0]) * 60 + Integer.parseInt(s[1]);
+				} else if (s.length == 3) {
+					return Integer.parseInt(s[0]) * 3600 + Integer.parseInt(s[1]) * 60 + Integer.parseInt(s[2]);
+				} else {
+					return 0;
+				}
+			}
+		};
 	}
 	
 	/**
