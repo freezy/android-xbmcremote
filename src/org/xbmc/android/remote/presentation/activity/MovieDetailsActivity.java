@@ -29,6 +29,9 @@ import org.xbmc.android.remote.presentation.controller.AbstractController;
 import org.xbmc.android.remote.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.controller.ListController;
 import org.xbmc.android.remote.presentation.controller.MovieListController;
+import org.xbmc.android.util.KeyTracker;
+import org.xbmc.android.util.OnLongPressBackKeyTracker;
+import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
@@ -62,9 +65,31 @@ public class MovieDetailsActivity extends Activity {
 	
     private ConfigurationManager mConfigurationManager;
     private MovieDetailsController mMovieDetailsController;
+
+	private KeyTracker mKeyTracker;
     
     private static final int[] sStarImages = { R.drawable.stars_0, R.drawable.stars_1, R.drawable.stars_2, R.drawable.stars_3, R.drawable.stars_4, R.drawable.stars_5, R.drawable.stars_6, R.drawable.stars_7, R.drawable.stars_8, R.drawable.stars_9, R.drawable.stars_10 };
 	
+    public MovieDetailsActivity() {
+    	mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
+
+			@Override
+			public void onLongPressBack(int keyCode, KeyEvent event,
+					Stage stage, int duration) {
+				Intent intent = new Intent(MovieDetailsActivity.this, HomeActivity.class);
+				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
+			}
+
+			@Override
+			public void onShortPressBack(int keyCode, KeyEvent event,
+					Stage stage, int duration) {
+				MovieDetailsActivity.super.onKeyDown(keyCode, event);
+			}
+			
+		});
+	}
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -228,6 +253,12 @@ public class MovieDetailsActivity extends Activity {
 	}
 	
 	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		boolean handled =  mKeyTracker.doKeyUp(keyCode, event);
+		return handled || super.onKeyUp(keyCode, event);
+	}
+	
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		IEventClientManager client = ManagerFactory.getEventClientManager(mMovieDetailsController);
 		try {
@@ -244,6 +275,7 @@ public class MovieDetailsActivity extends Activity {
 			return false;
 		}
 		client.setController(null);
-		return super.onKeyDown(keyCode, event);
+		boolean handled =  mKeyTracker.doKeyDown(keyCode, event);
+		return handled || super.onKeyDown(keyCode, event);
 	}
 }

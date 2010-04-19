@@ -29,6 +29,9 @@ import org.xbmc.android.remote.presentation.controller.AbstractController;
 import org.xbmc.android.remote.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.controller.ListController;
 import org.xbmc.android.remote.presentation.controller.MovieListController;
+import org.xbmc.android.util.KeyTracker;
+import org.xbmc.android.util.OnLongPressBackKeyTracker;
+import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
@@ -61,9 +64,31 @@ public class EpisodeDetailsActivity extends Activity {
 	
     private ConfigurationManager mConfigurationManager;
     private EpisodeDetailsController mMovieDetailsController;
+
+	private KeyTracker mKeyTracker;
     
     private static final int[] sStarImages = { R.drawable.stars_0, R.drawable.stars_1, R.drawable.stars_2, R.drawable.stars_3, R.drawable.stars_4, R.drawable.stars_5, R.drawable.stars_6, R.drawable.stars_7, R.drawable.stars_8, R.drawable.stars_9, R.drawable.stars_10 };
 	
+    public EpisodeDetailsActivity() {
+    	mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
+
+			@Override
+			public void onLongPressBack(int keyCode, KeyEvent event,
+					Stage stage, int duration) {
+				Intent intent = new Intent(EpisodeDetailsActivity.this, HomeActivity.class);
+				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
+			}
+
+			@Override
+			public void onShortPressBack(int keyCode, KeyEvent event,
+					Stage stage, int duration) {
+				EpisodeDetailsActivity.super.onKeyDown(keyCode, event);
+			}
+			
+		});
+	}
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,7 +110,7 @@ public class EpisodeDetailsActivity extends Activity {
 		((TextView)findViewById(R.id.moviedetails_director)).setText(episode.director);
 		((TextView)findViewById(R.id.moviedetails_genre)).setVisibility(View.GONE);//setText(episode.genres);
 		((TextView)findViewById(R.id.moviedetails_runtime)).setVisibility(View.GONE);//setText(episode.runtime);
-		((FrameLayout)findViewById(R.id.moviedetails_layout_poster)).setVisibility(View.GONE);//setText(episode.runtime);
+		((FrameLayout)findViewById(R.id.moviedetails_layout_poster)).setVisibility(View.GONE);
 		((TextView)findViewById(R.id.moviedetails_rating)).setText(String.valueOf(episode.rating));
 		
 		mMovieDetailsController.setupPlayButton((Button)findViewById(R.id.moviedetails_playbutton));
@@ -215,6 +240,12 @@ public class EpisodeDetailsActivity extends Activity {
 	}
 	
 	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		boolean handled =  mKeyTracker.doKeyUp(keyCode, event);
+		return handled || super.onKeyUp(keyCode, event);
+	}
+	
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		IEventClientManager client = ManagerFactory.getEventClientManager(mMovieDetailsController);
 		try {
@@ -231,6 +262,7 @@ public class EpisodeDetailsActivity extends Activity {
 			return false;
 		}
 		client.setController(null);
-		return super.onKeyDown(keyCode, event);
+		boolean handled =  mKeyTracker.doKeyDown(keyCode, event);
+		return handled || super.onKeyDown(keyCode, event);
 	}
 }
