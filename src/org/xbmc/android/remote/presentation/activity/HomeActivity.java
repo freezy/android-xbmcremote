@@ -28,6 +28,8 @@ import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.HomeController;
 import org.xbmc.android.remote.presentation.controller.HomeController.ProgressThread;
 import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.util.OnLongPressBackKeyTracker;
+import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
@@ -216,11 +218,27 @@ public class HomeActivity extends Activity {
 				case KeyEvent.KEYCODE_VOLUME_DOWN:
 					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
 					return true;
+				case KeyEvent.KEYCODE_BACK:
+					if(OnLongPressBackKeyTracker.lastStage == Stage.LONG_REPEAT) {
+						return true;
+					}
 			}
 		} catch (IOException e) {
 			return false;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_BACK:
+			if(OnLongPressBackKeyTracker.lastStage == Stage.LONG_REPEAT) {
+				OnLongPressBackKeyTracker.lastStage = Stage.SHORT_REPEAT;
+				return true;
+			}
+		}
+		return super.onKeyUp(keyCode, event);
 	}
 
 	final Handler mHandler = new Handler() {
