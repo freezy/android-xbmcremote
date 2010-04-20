@@ -160,7 +160,7 @@ public class TvShowListController extends ListController implements IController 
 						mList.setAdapter(new TvShowAdapter(mActivity, value));
 					} else {
 						setTitle("TV Shows");
-						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
+						setNoDataMessage("No TV Shows found.", R.drawable.icon_movie_dark);
 					}
 				}
 			}, mActivity.getApplicationContext());

@@ -268,7 +268,7 @@ public class Connection {
 			final String debugUrl = URLDecoder.decode(url.toString());
 			Log.i(TAG, debugUrl);
 			
-			final BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()), 8192);
+			final BufferedReader  in = new BufferedReader (new InputStreamReader(uc.getInputStream()), 8192);
 			final StringBuilder response = new StringBuilder();
 			String line;
 

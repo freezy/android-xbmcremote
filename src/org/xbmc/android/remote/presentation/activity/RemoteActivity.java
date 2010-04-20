@@ -88,16 +88,18 @@ public class RemoteActivity extends Activity {
 
 		setContentView(R.layout.remote_xbox);
 
-		mViewFlipper = (ViewFlipper) findViewById(R.id.remote_flipper);
+//		mViewFlipper = (ViewFlipper) findViewById(R.id.remote_flipper);
 
-		mRemoteView = mViewFlipper.getChildAt(0);
-		mMousePadView = mViewFlipper.getChildAt(1);
-		mGestureView = mViewFlipper.getChildAt(2);
+		if (mViewFlipper != null) {
+			mRemoteView = mViewFlipper.getChildAt(0);
+			mMousePadView = mViewFlipper.getChildAt(1);
+			mGestureView = mViewFlipper.getChildAt(2);
+			mViewFlipper.setDisplayedChild(0); // mRemoteView
+		}
 
 		// mRemoteView.setVisibility(View.VISIBLE);
 		// mMousePadView.setVisibility(View.VISIBLE);
 		// mGestureView.setVisibility(View.VISIBLE);
-		mViewFlipper.setDisplayedChild(0); // mRemoteView
 
 		// remove nasty top fading edge
 		FrameLayout topFrame = (FrameLayout) findViewById(android.R.id.content);
