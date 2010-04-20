@@ -216,7 +216,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 			} catch (IOException e) {
 				return false;
 			}
-			return true;
+			return false;
 		}
 	}
 	
