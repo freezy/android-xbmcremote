@@ -133,7 +133,11 @@ public class NowPlayingActivity extends Activity {
 	
 	public void updateCover(Drawable cover) {
 		final ImageView img = (ImageView) findViewById(R.id.CoverImage);
-		img.setImageDrawable(cover);
+		if (cover != null) { 
+			img.setImageDrawable(cover);
+		} else {
+			img.setImageResource(R.drawable.coverbox_back);
+		}
 	}
 	
 	public void clear() {
