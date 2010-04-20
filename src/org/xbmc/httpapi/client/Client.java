@@ -172,13 +172,13 @@ abstract class Client {
 			Dimension dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
 			
 			Log.i(TAG, "Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
-			if (opts.outWidth < 0) {
+			if (opts.outWidth < 1) {
 				if (fallbackUrl != null) {
 					Log.i(TAG, "Starting fallback download (" + fallbackUrl + ")");
 					opts = prefetch(manager, fallbackUrl, size);
 					dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
 					Log.i(TAG, "FALLBACK-Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
-					if (opts.outWidth < 0) {
+					if (opts.outWidth < 1) {
 						return null;
 					} else {
 						url = fallbackUrl;
