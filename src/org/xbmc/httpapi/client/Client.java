@@ -80,10 +80,15 @@ abstract class Client {
 	 * @return Bitmap
 	 */
 	protected Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size, String url, String fallbackUrl) {
-		if (ClientFactory.XBMC_REV >= MICROHTTPD_REV) {
-			return getCoverFromMicroHTTPd(manager, cover, size, url, fallbackUrl);
-		} else {
-			return getCoverFromLibGoAhead(manager, cover, size, url, fallbackUrl);
+		try {
+			if (ClientFactory.XBMC_REV >= MICROHTTPD_REV) {
+				return getCoverFromMicroHTTPd(manager, cover, size, url, fallbackUrl);
+			} else {
+				return getCoverFromLibGoAhead(manager, cover, size, url, fallbackUrl);
+			}
+		} catch (OutOfMemoryError e) {
+			manager.onError(new Exception("Out of memory. We're aware of this problem and we're working on it. Restarting the app should help."));
+			return null;
 		}
 	}
 	
