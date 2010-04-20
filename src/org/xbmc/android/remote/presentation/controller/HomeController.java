@@ -99,7 +99,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private IInfoManager mInfoManager;
 	
 	private static final String TAG = "HomeController";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	
 	private DataResponse<String> mUpdateVersionHandler;
 	
@@ -182,14 +182,11 @@ public class HomeController extends AbstractController implements INotifiableCon
 						versionTextView.setText("No network");
 					}
 					if (!value.equals("")) {
-						if (mWolCounter != null) {
-							mWolCounter.cancel();
-						}
+						if(mWolCounter != null) mWolCounter.cancel();
 						versionTextView.setText("XBMC " + value);
 						homeItemGrid.setAdapter(mHomeMenu);
 						NowPlayingNotificationManager.getInstance(mActivity.getApplicationContext()).startNotificating();
 					} else {
-						Log.e(TAG, "Cannot read version from \"" + value + "\"");
 						versionTextView.setText("Check Settings and retry");
 						homeItemGrid.setAdapter(mOfflineMenu);
 					}

@@ -325,8 +325,8 @@ public class ControlClient implements IControlClient {
 	public boolean setResponseFormat(INotifiableManager manager) {
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append("WebHeader;false;");
-			sb.append("WebFooter;false;");
+			sb.append("WebHeader;true;");
+			sb.append("WebFooter;true;");
 			sb.append("Header; ;");
 			sb.append("Footer; ;");
 			sb.append("OpenTag;");sb.append(Connection.LINE_SEP);sb.append(";");

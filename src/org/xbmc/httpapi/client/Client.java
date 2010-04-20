@@ -114,6 +114,7 @@ abstract class Client {
 			// DO THIS EVERY FUCKING TIME!!
 			Log.i(TAG, "Setting response format (r" + ClientFactory.XBMC_REV + ")");
 			mConnection.assertBoolean(manager, "SetResponseFormat", "WebHeader;false;WebFooter;false");
+			
 			// TODO fallback url support
 			Log.i(TAG, "Starting download (" + url + ") - libgoahead");
 			is = new Base64.InputStream(new BufferedInputStream(mConnection.getThumbInputStream("FileDownload", url, manager), 8192));
@@ -122,6 +123,7 @@ abstract class Client {
 			opts.inJustDecodeBounds = false;
 			
 			Bitmap bitmap = BitmapFactory.decodeStream(is, null, opts);
+			mConnection.assertBoolean(manager, "SetResponseFormat", "WebHeader;true;WebFooter;true");
 			
 			// enable this for smooth resizing (it's SLOW!!)
 //			bitmap = blowup(bitmap);
