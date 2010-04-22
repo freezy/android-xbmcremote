@@ -178,6 +178,18 @@ public abstract class AbstractManager implements INotifiableManager {
 	}
 	
 	/**
+	 * Synchronously downloads a cover and stores on on disk cache.
+	 * @param cover Cover to cache
+	 * @param manager Reference to manager
+	 * @param context Reference to context
+	 */
+	public static void cacheCover(final ICoverArt cover, final INotifiableManager manager, final Context context) {
+		if (!DiskCacheThread.isInCache(cover)) {
+			DownloadThread.download(null, cover, ThumbSize.MEDIUM, null, manager, context, false);
+		}
+	}
+	
+	/**
 	 * Tries to get small cover from memory, then from disk, then download it from XBMC.
 	 * @param response Response object
 	 * @param cover    Get cover for this object

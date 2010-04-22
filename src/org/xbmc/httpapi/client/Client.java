@@ -119,21 +119,23 @@ abstract class Client {
 					b64enc = null;
 				}
 			}
-			byte[] bytes = Base64.decode(b64enc);
-			
-			if (bytes.length > 0) {
-				final BitmapFactory.Options opts = prefetch(manager, bytes, size);
-				final Dimension dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
-				final int ss = ImportUtilities.calculateSampleSize(opts, dim);
-				opts.inDither = true;
-				opts.inSampleSize = ss;
-				opts.inJustDecodeBounds = false;
+			if (b64enc != null) {
+				byte[] bytes = Base64.decode(b64enc);
 				
-				Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
-				if (ss == 1) {
-					bitmap = blowup(bitmap);
+				if (bytes.length > 0) {
+					final BitmapFactory.Options opts = prefetch(manager, bytes, size);
+					final Dimension dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
+					final int ss = ImportUtilities.calculateSampleSize(opts, dim);
+					opts.inDither = true;
+					opts.inSampleSize = ss;
+					opts.inJustDecodeBounds = false;
+					
+					Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
+					if (ss == 1) {
+						bitmap = blowup(bitmap);
+					}
+					return bitmap;
 				}
-				return bitmap;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

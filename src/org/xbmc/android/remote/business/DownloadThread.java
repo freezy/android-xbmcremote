@@ -84,65 +84,85 @@ class DownloadThread extends AbstractThread {
 						response.value = DiskCacheThread.getCover(cover, thumbSize);
 						done(controller, response);
 					} else {
-						if (DEBUG) Log.i(TAG, "Download START..");
-						Bitmap bitmap = null;
-						switch (cover.getMediaType()) {
-							case MediaType.MUSIC:
-								try {
-									bitmap = music(manager, context).getCover(manager, cover, thumbSize);
-								} catch (WifiStateException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-								break;
-							case MediaType.VIDEO_MOVIE:
-							case MediaType.VIDEO:
-								try {
-									bitmap = video(manager, context).getCover(manager, cover, thumbSize);
-								} catch (WifiStateException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-								break;
-							case MediaType.VIDEO_TVEPISODE:
-							case MediaType.VIDEO_TVSEASON:
-							case MediaType.VIDEO_TVSHOW:
-								try {
-									bitmap = tvshow(manager, context).getCover(manager, cover, thumbSize);
-								} catch (WifiStateException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-								break;
-							case MediaType.PICTURES:
-								done(controller, response);
-								break;
-							default:
-								done(controller, response);
-								break;
-						}
-						if (DEBUG) Log.i(TAG, "Download END.");
-						if (bitmap != null) {
-							// add to disk cache
-							final Bitmap v = DiskCacheThread.addCoverToCache(cover, bitmap, thumbSize);
-							Log.i(TAG, "response.value: " + (response.value == null ? "null" : response.value.getWidth() + "x" + response.value.getHeight()));
-							// add to mem cache
-							MemCacheThread.addCoverToCache(cover, v, thumbSize);
-							response.value = v;
-							if (DEBUG) Log.i(TAG, "Done");
-						} else {
-							// still add null value to mem cache so we don't try to fetch it again
-							if (DEBUG) Log.i(TAG, "Adding null-value (" + cover.getCrc() + ") to mem cache in order to block future downloads");
-							MemCacheThread.addCoverToCache(cover, null, 0);
-						}
-						done(controller, response);
+						download(response, cover, thumbSize, controller, manager, context, true);
 					}
 				} else {
 					done(controller, response);
-				}
+				}	
 			}
 		});
 	}
+	
+	/**
+	 * Synchonously downloads a thumb from XBMC and stores it locally.
+	 * 
+	 * @param response Response object, can be null.
+	 * @param cover Cover to download
+	 * @param thumbSize Size to return to response object
+	 * @param controller Controller to be announced, can be null.
+	 * @param manager Manager is needed to obtain different managers for cache access
+	 * @param context Context is needed for obtaining other manager instances
+	 */
+	public static void download(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller, final INotifiableManager manager, final Context context, final boolean addToMemCache) {
+		if (DEBUG) Log.i(TAG, "Download START..");
+		Bitmap bitmap = null;
+		switch (cover.getMediaType()) {
+			case MediaType.MUSIC:
+				try {
+					bitmap = music(manager, context).getCover(manager, cover, thumbSize);
+				} catch (WifiStateException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				break;
+			case MediaType.VIDEO_MOVIE:
+			case MediaType.VIDEO:
+				try {
+					bitmap = video(manager, context).getCover(manager, cover, thumbSize);
+				} catch (WifiStateException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				break;
+			case MediaType.VIDEO_TVEPISODE:
+			case MediaType.VIDEO_TVSEASON:
+			case MediaType.VIDEO_TVSHOW:
+				try {
+					bitmap = tvshow(manager, context).getCover(manager, cover, thumbSize);
+				} catch (WifiStateException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				break;
+			case MediaType.PICTURES:
+				done(controller, response);
+				break;
+			default:
+				done(controller, response);
+				break;
+		}
+		if (DEBUG) Log.i(TAG, "Download END.");
+		if (bitmap != null) {
+			// add to disk cache
+			final Bitmap v = DiskCacheThread.addCoverToCache(cover, bitmap, thumbSize);
+			// add to mem cache
+			if (addToMemCache) {
+				MemCacheThread.addCoverToCache(cover, v, thumbSize);
+			}
+			if (response != null) {
+				response.value = v;
+			}
+			if (DEBUG) Log.i(TAG, "Done");
+		} else {
+			if (addToMemCache) {
+				// still add null value to mem cache so we don't try to fetch it again
+				if (DEBUG) Log.i(TAG, "Adding null-value (" + cover.getCrc() + ") to mem cache in order to block future downloads");
+				MemCacheThread.addCoverToCache(cover, null, 0);
+			}
+		}
+		done(controller, response);		
+	}
+	
 
 	/**
 	 * Returns an instance of this thread. Spawns if necessary.

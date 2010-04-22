@@ -27,6 +27,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.HomeActivity;
 import org.xbmc.android.remote.presentation.activity.HostSettingsActivity;
@@ -45,6 +46,7 @@ import org.xbmc.android.util.WifiHelper;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.IMusicManager;
+import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.Actor;
@@ -54,7 +56,6 @@ import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.MediaType;
-import org.xbmc.api.type.ThumbSize;
 import org.xbmc.httpapi.BroadcastListener;
 
 import android.app.Activity;
@@ -62,7 +63,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -467,12 +467,9 @@ public class HomeController extends AbstractController implements INotifiableCon
 			if (position < total) {
 				final ICoverArt cover = (ICoverArt)msg.getData().getSerializable(ProgressThread.DATA_COVER); 
 				if (DEBUG) Log.i(TAG, "New download message received for position " + position + ": " + cover.getName());
-				ManagerFactory.getMusicManager(HomeController.this).getCover(new DataResponse<Bitmap>() {
-					public void run() {
-						if (DEBUG) Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
-						progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
-					}
-				}, cover, ThumbSize.BIG, null, mActivity.getApplicationContext(), false);
+				AbstractManager.cacheCover(cover, (INotifiableManager)mInfoManager, mActivity.getApplicationContext());
+				if (DEBUG) Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
+				progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
 			} else {
 				mActivity.dismissDialog(type);
 				progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);

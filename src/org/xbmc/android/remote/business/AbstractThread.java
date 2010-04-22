@@ -67,7 +67,7 @@ abstract public class AbstractThread extends Thread {
 	 * @return
 	 * @throws WifiStateException 
 	 */
-	protected IMusicClient music(INotifiableManager manager, final Context context) throws WifiStateException {
+	protected static IMusicClient music(INotifiableManager manager, final Context context) throws WifiStateException {
 		return ClientFactory.getMusicClient(manager, context);
 	}	
 	
@@ -77,7 +77,7 @@ abstract public class AbstractThread extends Thread {
 	 * @return
 	 * @throws WifiStateException 
 	 */
-	protected IVideoClient video(INotifiableManager manager, final Context context) throws WifiStateException {
+	protected static IVideoClient video(INotifiableManager manager, final Context context) throws WifiStateException {
 		return ClientFactory.getVideoClient(manager, context);
 	}	
 	
@@ -87,7 +87,7 @@ abstract public class AbstractThread extends Thread {
 	 * @return
 	 * @throws WifiStateException 
 	 */
-	protected ITvShowClient tvshow(INotifiableManager manager, final Context context) throws WifiStateException {
+	protected static ITvShowClient tvshow(INotifiableManager manager, final Context context) throws WifiStateException {
 		return ClientFactory.getTvShowClient(manager, context);
 	}	
 	
@@ -96,8 +96,8 @@ abstract public class AbstractThread extends Thread {
 	 * @param controller Controller reference
 	 * @param response Response object
 	 */
-	protected void done(INotifiableController controller, DataResponse<?> response) {
-		if(controller != null)
+	protected static void done(INotifiableController controller, DataResponse<?> response) {
+		if (controller != null && response != null)
 			controller.runOnUI(response);
 	}
 	

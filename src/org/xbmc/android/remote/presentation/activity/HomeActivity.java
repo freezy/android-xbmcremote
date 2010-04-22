@@ -169,7 +169,7 @@ public class HomeActivity extends Activity {
 	
 	public Dialog onCreateDialog(int id) {
 		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setCancelable(false);
+//		mProgressDialog.setCancelable(false);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		mProgressDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
 		switch (id) {
