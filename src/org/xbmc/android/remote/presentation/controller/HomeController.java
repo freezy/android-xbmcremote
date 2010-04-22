@@ -106,7 +106,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private HomeAdapter mHomeMenu;
 	private HomeAdapter mOfflineMenu;
 	
-	private int mCoverDownloadOffset = 0;
+	private int mNumCoversDownloaded = 0;
 	
 	private WolCounter mWolCounter;
 	
@@ -382,6 +382,16 @@ public class HomeController extends AbstractController implements INotifiableCon
 			mProgressDialog = progressDialog;
 		}
 		
+		public void cancel() {
+			if (DEBUG) Log.i(TAG, "[ProgressThread] Cancelling.");
+			Message msgStart = mHandlerOut.obtainMessage();
+			Bundle b = new Bundle();
+			b.putInt(DATA_TYPE, mType);
+			msgStart.what = MSG_QUIT;
+			msgStart.setData(b);
+			mHandlerIn.sendMessage(msgStart);
+		}
+		
 		public Handler getHandlerIn() {
 			return mHandlerIn;
 		}
@@ -390,7 +400,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 			switch (mType) {
 				case HomeActivity.MENU_COVER_DOWNLOAD_MOVIES:
 					final IVideoManager vm = ManagerFactory.getVideoManager(HomeController.this);
-					final ArrayList<Movie> movies = vm.getMovies(mActivity.getApplicationContext(), mCoverDownloadOffset);
+					final ArrayList<Movie> movies = vm.getMovies(mActivity.getApplicationContext());
 					return new ArrayList<ICoverArt>(movies);
 				case HomeActivity.MENU_COVER_DOWNLOAD_MUSIC:
 					final IMusicManager mm = ManagerFactory.getMusicManager(HomeController.this);
@@ -444,6 +454,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 				}
 			};
 			if (!started) {
+				mNumCoversDownloaded = 0;
 				started = true;
 				Message msgStart = mHandlerOut.obtainMessage();
 				Bundle b = new Bundle();
@@ -454,7 +465,10 @@ public class HomeController extends AbstractController implements INotifiableCon
 				if (DEBUG) Log.i(TAG, "[ProgressThread] Not started, kicking on....");
 			}
 			Looper.loop();
-			if(lock != null) lock.release();
+			
+			if (lock != null) {
+				lock.release();
+			}
 		}
 	}
 	
@@ -467,13 +481,20 @@ public class HomeController extends AbstractController implements INotifiableCon
 			if (position < total) {
 				final ICoverArt cover = (ICoverArt)msg.getData().getSerializable(ProgressThread.DATA_COVER); 
 				if (DEBUG) Log.i(TAG, "New download message received for position " + position + ": " + cover.getName());
-				AbstractManager.cacheCover(cover, (INotifiableManager)mInfoManager, mActivity.getApplicationContext());
+				if (AbstractManager.cacheCover(cover, (INotifiableManager)mInfoManager, mActivity.getApplicationContext())) {
+					mNumCoversDownloaded++;
+				}
 				if (DEBUG) Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
-				progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
+				try {
+					progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
+				} catch (RuntimeException e) {
+					if (DEBUG) Log.i(TAG, "Thread dead, exiting.");
+					return;
+				}
 			} else {
 				mActivity.dismissDialog(type);
 				progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);
-				Toast toast = Toast.makeText(mActivity, total + " posters downloaded.", Toast.LENGTH_SHORT);
+				Toast toast = Toast.makeText(mActivity, mNumCoversDownloaded + " posters downloaded.", Toast.LENGTH_SHORT);
 				toast.show();
 			}
 		} else {
@@ -481,7 +502,6 @@ public class HomeController extends AbstractController implements INotifiableCon
 			Toast toast = Toast.makeText(mActivity, "No posters downloaded, libary empty?", Toast.LENGTH_LONG);
 			toast.show();
 		}	
-		mCoverDownloadOffset = position;
 	}
 
 	public void onActivityPause() {
@@ -494,13 +514,5 @@ public class HomeController extends AbstractController implements INotifiableCon
 		mInfoManager.setController(this);
 		mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
 	}
-	
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("coverOffset", mCoverDownloadOffset);
-    }
-
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-    	mCoverDownloadOffset = savedInstanceState.getInt("coverOffset");   
-    }
 
 }

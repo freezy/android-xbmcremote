@@ -102,10 +102,12 @@ class DownloadThread extends AbstractThread {
 	 * @param controller Controller to be announced, can be null.
 	 * @param manager Manager is needed to obtain different managers for cache access
 	 * @param context Context is needed for obtaining other manager instances
+	 * @return True if cover was downloaded successfully, false otherwise.
 	 */
-	public static void download(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller, final INotifiableManager manager, final Context context, final boolean addToMemCache) {
+	public static boolean download(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, final INotifiableController controller, final INotifiableManager manager, final Context context, final boolean addToMemCache) {
 		if (DEBUG) Log.i(TAG, "Download START..");
 		Bitmap bitmap = null;
+		final boolean success;
 		switch (cover.getMediaType()) {
 			case MediaType.MUSIC:
 				try {
@@ -153,14 +155,17 @@ class DownloadThread extends AbstractThread {
 				response.value = v;
 			}
 			if (DEBUG) Log.i(TAG, "Done");
+			success = true;
 		} else {
 			if (addToMemCache) {
 				// still add null value to mem cache so we don't try to fetch it again
 				if (DEBUG) Log.i(TAG, "Adding null-value (" + cover.getCrc() + ") to mem cache in order to block future downloads");
 				MemCacheThread.addCoverToCache(cover, null, 0);
 			}
+			success = false;
 		}
 		done(controller, response);		
+		return success;
 	}
 	
 

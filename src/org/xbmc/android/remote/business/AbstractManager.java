@@ -182,11 +182,13 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @param cover Cover to cache
 	 * @param manager Reference to manager
 	 * @param context Reference to context
+	 * @return True if cover has been downloaded, false otherwise.
 	 */
-	public static void cacheCover(final ICoverArt cover, final INotifiableManager manager, final Context context) {
+	public static boolean cacheCover(final ICoverArt cover, final INotifiableManager manager, final Context context) {
 		if (!DiskCacheThread.isInCache(cover)) {
-			DownloadThread.download(null, cover, ThumbSize.MEDIUM, null, manager, context, false);
+			return DownloadThread.download(null, cover, ThumbSize.MEDIUM, null, manager, context, false);
 		}
+		return false;
 	}
 	
 	/**

@@ -276,7 +276,6 @@ public class Connection {
 				response.append(line);
 			}
 			in.close();
-			Log.i(TAG, response.toString());
 			return response.toString().replace("<html>", "").replace("</html>", "");
 			
 		} catch (MalformedURLException e) {

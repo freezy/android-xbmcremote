@@ -110,7 +110,7 @@ class DiskCacheThread extends AbstractThread {
 	 * @return True if thumb is in disk cache, false otherwise.
 	 */
 	public static boolean isInCache(ICoverArt cover) {
-		return ImportUtilities.getCacheFile(MediaType.getArtFolder(cover.getMediaType()), ThumbSize.BIG, Crc32.formatAsHexLowerCase(cover.getCrc()).toLowerCase()).exists();
+		return ImportUtilities.getCacheFile(MediaType.getArtFolder(cover.getMediaType()), ThumbSize.MEDIUM, Crc32.formatAsHexLowerCase(cover.getCrc()).toLowerCase()).exists();
 	}
 	
 	/**

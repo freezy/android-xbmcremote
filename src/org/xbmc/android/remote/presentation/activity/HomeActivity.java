@@ -40,6 +40,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -169,6 +170,11 @@ public class HomeActivity extends Activity {
 	
 	public Dialog onCreateDialog(int id) {
 		mProgressDialog = new ProgressDialog(this);
+		mProgressDialog.setOnCancelListener(new OnCancelListener() {
+			public void onCancel(DialogInterface dialog) {
+				mProgressThread.cancel();
+			}
+		});
 //		mProgressDialog.setCancelable(false);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		mProgressDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
@@ -246,17 +252,4 @@ public class HomeActivity extends Activity {
 			mHomeController.onHandleMessage(msg, mProgressDialog, mProgressThread);
 		}
 	};
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		mHomeController.onSaveInstanceState(outState);
-		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	public void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		mHomeController.onRestoreInstanceState(savedInstanceState);
-	}
-
 }
