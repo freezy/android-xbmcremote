@@ -34,12 +34,15 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AbsListView;
+import android.widget.FrameLayout;
 
 public abstract class AbsListActivity extends Activity {
 
@@ -69,6 +72,21 @@ public abstract class AbsListActivity extends Activity {
 			}
 			
 		});
+	}
+	
+	protected void setupLists(int layoutResId) {
+		setContentView(layoutResId);
+		// remove nasty top fading edge
+		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
+		topFrame.setForeground(null);
+		mListController = (ListController)getLastNonConfigurationInstance();
+		if (mListController == null) {
+			mListController = (ListController) getIntent().getSerializableExtra(ListController.EXTRA_LIST_CONTROLLER);
+			mListController.findTitleView(findViewById(R.id.blanklist_outer_layout));
+			mListController.findMessageView(findViewById(R.id.blanklist_outer_layout));
+			mListController.onCreate(this, (AbsListView)findViewById(R.id.blanklist_list));
+		}
+		mConfigurationManager = ConfigurationManager.getInstance(this);
 	}
 	
 	@Override

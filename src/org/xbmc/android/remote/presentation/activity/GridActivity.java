@@ -22,11 +22,8 @@
 package org.xbmc.android.remote.presentation.activity;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.presentation.controller.ListController;
 
 import android.os.Bundle;
-import android.widget.FrameLayout;
-import android.widget.GridView;
 
 /**
  * TODO do that properly
@@ -41,21 +38,6 @@ public class GridActivity extends AbsListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.blankgrid);
-		
-		// remove nasty top fading edge
-		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
-		topFrame.setForeground(null);
-		
-		mListController = (ListController)getLastNonConfigurationInstance();
-		if (mListController == null) {
-			mListController = (ListController) getIntent().getSerializableExtra(ListController.EXTRA_LIST_CONTROLLER);
-	
-			mListController.findTitleView(findViewById(R.id.blanklist_outer_layout));
-			mListController.findMessageView(findViewById(R.id.blanklist_outer_layout));
-			mListController.onCreate(this, (GridView)findViewById(R.id.blanklist_list));
-		}
-		mConfigurationManager = ConfigurationManager.getInstance(this);
+		setupLists(R.layout.blankgrid);
 	}
 }
