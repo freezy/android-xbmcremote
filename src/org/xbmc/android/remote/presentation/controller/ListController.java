@@ -71,14 +71,19 @@ public abstract class ListController extends AbstractController implements Seria
 	
 	protected static Bitmap mFallbackBitmap;
 	protected IdleListDetector mPostScrollLoader;
-	
+
 	public void onCreate(Activity activity, AbsListView list) {
 		super.onCreate(activity);
 		mList = list;
 		mActivity = activity;
 		isCreated = true;
+//		list.setOnScrollListener(new ScrollManager(ThumbSize.SMALL));
 	}
-	
+
+	/**
+	 * Default listener is small
+	 * @return
+	 */
 	protected IdleListener setupIdleListener() {
 		return setupIdleListener(ThumbSize.SMALL);
 	}

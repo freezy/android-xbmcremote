@@ -4,23 +4,27 @@ import org.xbmc.android.remote.presentation.widget.AbstractItemView;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.type.ThumbSize;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
 
 public class CoverResponse extends DataResponse<Bitmap> {
 	
-	private final AbstractItemView mView;
+	private final Context mContext;
 	private final IManager mManager;
 	private final Bitmap mDefaultCover;
 	private final int mThumbSize;
+	private final Handler mHandler;
 	
 	private boolean mIsLoading = false;
 	private ICoverArt mMostRecentCover = null;
 	
-	public CoverResponse(AbstractItemView view, IManager manager, Bitmap defaultCover, int thumbSize) {
-		mView = view;
+	public CoverResponse(Context context, IManager manager, Bitmap defaultCover, int thumbSize, Handler handler) {
+		mContext = context;
 		mManager = manager;
 		mDefaultCover = defaultCover;
 		mThumbSize = thumbSize;
+		mHandler = handler;
 	}
 	
 	public synchronized void load(ICoverArt cover, boolean getFromCacheOnly) {
@@ -32,16 +36,16 @@ public class CoverResponse extends DataResponse<Bitmap> {
 		} else {
 			mIsLoading = true;
 			mMostRecentCover = null;
-			mManager.getCover(this, cover, size, mDefaultCover, mView.getContext(), getFromCacheOnly);
+			mManager.getCover(this, cover, size, mDefaultCover, mContext, getFromCacheOnly);
 		}
 	}
 	
 	public synchronized void run() {
 		if (mMostRecentCover == null) {
-			mView.setCover(value);
+			mHandler.sendMessage(mHandler.obtainMessage(AbstractItemView.MSG_UPDATE_COVER, value));
 			mIsLoading = false;
 		} else {
-			mManager.getCover(this, mMostRecentCover, mThumbSize, mDefaultCover, mView.getContext(), false);
+			mManager.getCover(this, mMostRecentCover, mThumbSize, mDefaultCover, mContext, false);
 			mMostRecentCover = null;
 		}
 	}

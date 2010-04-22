@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.view.View;
 
 public abstract class AbstractItemView extends View {
@@ -30,6 +31,8 @@ public abstract class AbstractItemView extends View {
 	protected final static int SIZE65 = (int)(65 * ThumbSize.PIXEL_SCALE);
 	protected final static int SIZE103 = (int)(103 * ThumbSize.PIXEL_SCALE);
 	
+	public final static int MSG_UPDATE_COVER = 1;
+	
 	protected static Bitmap sSelected;
 	
 	private final CoverResponse mResponse;
@@ -38,6 +41,16 @@ public abstract class AbstractItemView extends View {
 	protected final int mWidth;
 	protected final Drawable mSelection;
 	
+	private final Handler mHandler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			switch (msg.what) {
+				case MSG_UPDATE_COVER:
+					setCover((Bitmap)msg.obj);
+				break;
+			}
+		};
+	};
+	
 	public int position;
 	public String title;
 	
@@ -45,7 +58,7 @@ public abstract class AbstractItemView extends View {
 	
 	public AbstractItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection, int thumbSize) {
 		super(context);
-		mResponse = new CoverResponse(this, manager, defaultCover, thumbSize);
+		mResponse = new CoverResponse(context, manager, defaultCover, thumbSize, mHandler);
 		mWidth = width;
 		mDefaultCover = defaultCover;
 		mSelection = selection;
