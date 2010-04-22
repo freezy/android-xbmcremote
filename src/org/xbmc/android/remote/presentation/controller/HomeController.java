@@ -99,7 +99,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private IInfoManager mInfoManager;
 	
 	private static final String TAG = "HomeController";
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	
 	private DataResponse<String> mUpdateVersionHandler;
 	
@@ -377,6 +377,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 		
 		public ProgressThread(Handler h, int type, ProgressDialog progressDialog) {
 			super("Cover download progress Thread");
+			if (DEBUG) Log.i(TAG, "[ProgressThread] Creating.");
 			mHandlerOut = h;
 			mType = type;
 			mProgressDialog = progressDialog;
@@ -384,12 +385,12 @@ public class HomeController extends AbstractController implements INotifiableCon
 		
 		public void cancel() {
 			if (DEBUG) Log.i(TAG, "[ProgressThread] Cancelling.");
-			Message msgStart = mHandlerOut.obtainMessage();
+			Message msgStart = mHandlerIn.obtainMessage();
 			Bundle b = new Bundle();
 			b.putInt(DATA_TYPE, mType);
 			msgStart.what = MSG_QUIT;
 			msgStart.setData(b);
-			mHandlerIn.sendMessage(msgStart);
+			mHandlerOut.sendMessage(msgStart);
 		}
 		
 		public Handler getHandlerIn() {
@@ -472,36 +473,50 @@ public class HomeController extends AbstractController implements INotifiableCon
 		}
 	}
 	
+	/**
+	 * Handles messages coming in to mHandlerOut
+	 * @param msg
+	 * @param progressDialog
+	 * @param progressThread
+	 */
 	public void onHandleMessage(Message msg, ProgressDialog progressDialog, final ProgressThread progressThread) {
+		
 		int total = msg.getData().getInt(ProgressThread.DATA_TOTAL);
 		int position = msg.getData().getInt(ProgressThread.DATA_POSITION);
 		int type = msg.getData().getInt(ProgressThread.DATA_TYPE);
-		if (total > 0) {
-			progressDialog.setProgress(position);
-			if (position < total) {
-				final ICoverArt cover = (ICoverArt)msg.getData().getSerializable(ProgressThread.DATA_COVER); 
-				if (DEBUG) Log.i(TAG, "New download message received for position " + position + ": " + cover.getName());
-				if (AbstractManager.cacheCover(cover, (INotifiableManager)mInfoManager, mActivity.getApplicationContext())) {
-					mNumCoversDownloaded++;
-				}
-				if (DEBUG) Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
-				try {
-					progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
-				} catch (RuntimeException e) {
-					if (DEBUG) Log.i(TAG, "Thread dead, exiting.");
-					return;
+		if (msg.what != ProgressThread.MSG_QUIT) {
+			if (total > 0) {
+				progressDialog.setProgress(position);
+				if (position < total) {
+					final ICoverArt cover = (ICoverArt)msg.getData().getSerializable(ProgressThread.DATA_COVER); 
+					if (DEBUG) Log.i(TAG, "New download message received for position " + position + ": " + cover.getName());
+					if (AbstractManager.cacheCover(cover, (INotifiableManager)mInfoManager, mActivity.getApplicationContext())) {
+						mNumCoversDownloaded++;
+					}
+					if (DEBUG) Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
+					if (progressThread.isAlive()) {
+						progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
+					} else {
+						if (DEBUG) Log.i(TAG, "Thread dead, exiting.");
+						return;
+					}
+				} else {
+					mActivity.dismissDialog(type);
+					progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);
+					Toast toast = Toast.makeText(mActivity, mNumCoversDownloaded + " posters downloaded.", Toast.LENGTH_SHORT);
+					toast.show();
 				}
 			} else {
 				mActivity.dismissDialog(type);
-				progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);
-				Toast toast = Toast.makeText(mActivity, mNumCoversDownloaded + " posters downloaded.", Toast.LENGTH_SHORT);
+				Toast toast = Toast.makeText(mActivity, "No posters downloaded, libary empty?", Toast.LENGTH_LONG);
 				toast.show();
 			}
 		} else {
 			mActivity.dismissDialog(type);
-			Toast toast = Toast.makeText(mActivity, "No posters downloaded, libary empty?", Toast.LENGTH_LONG);
+			progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_QUIT);
+			Toast toast = Toast.makeText(mActivity, "Aborted, " + mNumCoversDownloaded + " posters downloaded.", Toast.LENGTH_SHORT);
 			toast.show();
-		}	
+		}
 	}
 
 	public void onActivityPause() {

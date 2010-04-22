@@ -168,34 +168,43 @@ public class HomeActivity extends Activity {
 		return false;
 	}
 	
+	@Override
 	public Dialog onCreateDialog(int id) {
 		mProgressDialog = new ProgressDialog(this);
+		mProgressDialog.setMessage("");
+		mProgressDialog.setProgress(0);
 		mProgressDialog.setOnCancelListener(new OnCancelListener() {
 			public void onCancel(DialogInterface dialog) {
 				mProgressThread.cancel();
 			}
 		});
-//		mProgressDialog.setCancelable(false);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		mProgressDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+		return mProgressDialog;
+	}
+	
+	@Override
+	protected void onPrepareDialog(int id, Dialog dialog) {
+		super.onPrepareDialog(id, dialog);
+		final ProgressDialog d = (ProgressDialog)dialog;
+		d.setProgress(0);
 		switch (id) {
 			case MENU_COVER_DOWNLOAD_MOVIES:
-				mProgressDialog.setMessage("Downloading movie posters...");
-				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MOVIES, mProgressDialog);
+				d.setMessage("Downloading movie posters...");
+				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MOVIES, d);
 	            break;
 			case MENU_COVER_DOWNLOAD_MUSIC:
-				mProgressDialog.setMessage("Downloading album covers...");
-				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MUSIC, mProgressDialog);
+				d.setMessage("Downloading album covers...");
+				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_MUSIC, d);
 				break;
 			case MENU_COVER_DOWNLOAD_ACTORS:
-				mProgressDialog.setMessage("Downloading actor thumbs...");
-				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_ACTORS, mProgressDialog);
+				d.setMessage("Downloading actor thumbs...");
+				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_ACTORS, d);
 				break;
 			default:
-				return null;
+				return;
 		}
 		mProgressThread.start();
-		return mProgressDialog;
 	}
 
 	@Override
