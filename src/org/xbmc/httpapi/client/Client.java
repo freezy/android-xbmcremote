@@ -35,7 +35,6 @@ import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.api.type.ThumbSize.Dimension;
 import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.WrongDataFormatException;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -91,64 +90,57 @@ abstract class Client {
 			return null;
 		}
 	}
+
 	
 	/**
-	 * Downloads a cover "the old way". Streams are used for lesser memory 
-	 * imprint, to the cost of speed. Bitmaps aren't smoothely resized 
-	 * because libgoahead seems to crash if client closes connections 
-	 * prematurely.
+	 * Downloads a cover "the old way", meaning the base64-encoded result is
+	 * stored in a String and decoded from there. I've tried using a 
+	 * Base64.InputStream directly with libgoahead crashing as a result.
 	 * 
 	 * @param manager Postback manager
 	 * @param cover Cover object
-	 * @param size Minmal size to pre-resize to.
+	 * @param size  Minmal size to pre-resize to.
 	 * @param url URL to primary cover
 	 * @param fallbackUrl URL to fallback cover
 	 * @return Bitmap
 	 */
 	private Bitmap getCoverFromLibGoAhead(INotifiableManager manager, ICoverArt cover, int size, String url, String fallbackUrl) {
+		final int mediaType = cover.getMediaType();
+		
 		// don't fetch small sizes
 		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
-		InputStream is = null;
 		try {
+			String b64enc = mConnection.query("FileDownload", url, manager);
+			if (b64enc.length() <= 0) {
+				if (fallbackUrl != null) {
+					Log.i(TAG, "*** Downloaded cover has size null, retrying with fallback:");
+					b64enc = mConnection.query("FileDownload", fallbackUrl, manager);
+				} else {
+					b64enc = null;
+				}
+			}
+			byte[] bytes = Base64.decode(b64enc);
 			
-			// DO THIS EVERY FUCKING TIME!!
-			Log.i(TAG, "Setting response format (r" + ClientFactory.XBMC_REV + ")");
-			mConnection.assertBoolean(manager, "SetResponseFormat", "WebHeader;false;WebFooter;false");
-			
-			// TODO fallback url support
-			Log.i(TAG, "Starting download (" + url + ") - libgoahead");
-			is = new Base64.InputStream(new BufferedInputStream(mConnection.getThumbInputStream("FileDownload", url, manager), 8192));
-			BitmapFactory.Options opts = new BitmapFactory.Options();
-			opts.inDither = true;
-			opts.inJustDecodeBounds = false;
-			
-			Bitmap bitmap = BitmapFactory.decodeStream(is, null, opts);
-			mConnection.assertBoolean(manager, "SetResponseFormat", "WebHeader;true;WebFooter;true");
-			
-			// enable this for smooth resizing (it's SLOW!!)
-//			bitmap = blowup(bitmap);
-			is.close();
-			if (bitmap == null) {
-				Log.i(TAG, "Fetch: Bitmap is null!!");
-				return null;
-			} else {
-				Log.i(TAG, "Fetch: Bitmap: " + bitmap.getWidth() + "x" + bitmap.getHeight());
+			if (bytes.length > 0) {
+				final BitmapFactory.Options opts = prefetch(manager, bytes, size);
+				final Dimension dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
+				final int ss = ImportUtilities.calculateSampleSize(opts, dim);
+				opts.inDither = true;
+				opts.inSampleSize = ss;
+				opts.inJustDecodeBounds = false;
+				
+				Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
+				if (ss == 1) {
+					bitmap = blowup(bitmap);
+				}
 				return bitmap;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (WrongDataFormatException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) { }
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Downloads a cover using microhttpd.
 	 * 
@@ -248,6 +240,21 @@ abstract class Client {
 		} catch (FileNotFoundException e) {
 			return opts;
 		}			
+		return opts;
+	}
+	
+	/**
+	 * Only decodes as much as boundaries of the image in order to find out
+	 * its size.
+	 * @param manager Postback manager
+	 * @param data Image data as byte array
+	 * @param size Minmal size to pre-resize to.
+	 * @return
+	 */
+	private BitmapFactory.Options prefetch(INotifiableManager manager, byte[] data, int size) {
+		BitmapFactory.Options opts = new BitmapFactory.Options();
+		opts.inJustDecodeBounds = true;
+		BitmapFactory.decodeByteArray(data, 0, data.length, opts);
 		return opts;
 	}
 	
