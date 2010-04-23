@@ -23,11 +23,13 @@ package org.xbmc.android.remote.presentation.controller;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.HostFactory;
+import org.xbmc.android.util.MacAddressResolver;
 import org.xbmc.api.object.Host;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Handler;
 import android.preference.DialogPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
@@ -35,9 +37,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * One of those contains name, host, port, user and pass of an XBMC instance.
@@ -118,6 +122,27 @@ public class HostPreference extends DialogPreference {
 		final ViewGroup parent = (ViewGroup)super.onCreateDialogView();
 		mNameView = (EditText)parent.findViewById(R.id.pref_name);
 		mHostView = (EditText)parent.findViewById(R.id.pref_host);
+		mHostView.setOnFocusChangeListener(new OnFocusChangeListener() {
+			Handler handler = new Handler(){
+				public void handleMessage(android.os.Message message){
+					if(message.getData().containsKey(MacAddressResolver.MESSAGE_MAC_ADDRESS)){
+						String mac = message.getData().getString(MacAddressResolver.MESSAGE_MAC_ADDRESS);
+						if(!mac.equals("")){
+							mMacAddrView.setText(mac);
+							Toast toast = Toast.makeText(getContext(), "Updated MAC for host: " + mHostView.getText().toString() + "\nto: " + mac, Toast.LENGTH_SHORT);
+							toast.show();
+						}
+						
+					}
+				}
+			};
+			public void onFocusChange(View v, boolean hasFocus) {
+				if(hasFocus)
+					return;
+				if(mMacAddrView.getText().toString().equals(""))
+					handler.post(new MacAddressResolver(mHostView.getText().toString(), handler));
+			}
+		});
 		mPortView = (EditText)parent.findViewById(R.id.pref_port);
 		mUserView = (EditText)parent.findViewById(R.id.pref_user);
 		mPassView = (EditText)parent.findViewById(R.id.pref_pass);
