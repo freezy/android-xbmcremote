@@ -51,7 +51,7 @@ import android.util.Log;
  */
 public abstract class AbstractManager implements INotifiableManager {
 	
-	public static final Boolean DEBUG = true;
+	public static final Boolean DEBUG = false;
 	
 	protected static final String TAG = "AbstractManager";
 	

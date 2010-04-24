@@ -102,7 +102,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private IInfoManager mInfoManager;
 	
 	private static final String TAG = "HomeController";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	
 	private DataResponse<String> mUpdateVersionHandler;
 	
