@@ -11,6 +11,7 @@ import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -54,6 +55,24 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 				response.value = shows(context).getTvShows(TvShowManager.this);
 			}
 		});
+	}
+	
+	public ArrayList<TvShow> getTvShows(Context context) {
+		try {
+			return shows(context).getTvShows(TvShowManager.this);
+		} catch (WifiStateException e) {
+			TvShowManager.this.onError(e);
+		}
+		return new ArrayList<TvShow>();
+	}
+	
+	public ArrayList<Season> getAllSeasons(Context context) {
+		try {
+			return shows(context).getSeasons(TvShowManager.this);
+		} catch (WifiStateException e) {
+			TvShowManager.this.onError(e);
+		}
+		return new ArrayList<Season>();
 	}
 
 	public void getTvShows(final DataResponse<ArrayList<TvShow>> response, final Genre genre, final Context context) {

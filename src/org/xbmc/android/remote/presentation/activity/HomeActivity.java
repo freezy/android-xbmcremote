@@ -68,6 +68,8 @@ public class HomeActivity extends Activity {
 	public static final int MENU_COVER_DOWNLOAD_MOVIES = 42;
 	public static final int MENU_COVER_DOWNLOAD_ACTORS = 43;
 	public static final int MENU_COVER_PURGE_CACHE = 44;
+	public static final int MENU_COVER_DOWNLOAD_TVSHOWS = 45;
+	public static final int MENU_COVER_DOWNLOAD_TVSEASONS = 46;
 	
 	private ConfigurationManager mConfigurationManager;
 	private HomeController mHomeController;
@@ -117,6 +119,8 @@ public class HomeActivity extends Activity {
 		
 		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MOVIES, 0, "Movie Posters");
 		downloadMenu.add(2, MENU_COVER_DOWNLOAD_MUSIC, 0, "Album Covers");
+		downloadMenu.add(2, MENU_COVER_DOWNLOAD_TVSHOWS, 0, "TV Show Banners");
+		downloadMenu.add(2, MENU_COVER_DOWNLOAD_TVSEASONS, 0, "TV Season Posters");
 		downloadMenu.add(2, MENU_COVER_DOWNLOAD_ACTORS, 0, "Actor Shots");
 		downloadMenu.add(2, MENU_COVER_PURGE_CACHE, 0, "Clear Cache");
 		
@@ -145,6 +149,8 @@ public class HomeActivity extends Activity {
 		case MENU_COVER_DOWNLOAD_MOVIES:
 		case MENU_COVER_DOWNLOAD_MUSIC:
 		case MENU_COVER_DOWNLOAD_ACTORS:
+		case MENU_COVER_DOWNLOAD_TVSHOWS:
+		case MENU_COVER_DOWNLOAD_TVSEASONS:
 			showDialog(item.getItemId());
 			return true;
 		case MENU_COVER_PURGE_CACHE:
@@ -200,6 +206,14 @@ public class HomeActivity extends Activity {
 			case MENU_COVER_DOWNLOAD_ACTORS:
 				d.setMessage("Downloading actor thumbs...");
 				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_ACTORS, d);
+				break;
+			case MENU_COVER_DOWNLOAD_TVSHOWS:
+				d.setMessage("Downloading TV show banners.");
+				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_TVSHOWS, d);
+				break;
+			case MENU_COVER_DOWNLOAD_TVSEASONS:
+				d.setMessage("Downloading TV season posters.");
+				mProgressThread = mHomeController.new ProgressThread(mHandler, MENU_COVER_DOWNLOAD_TVSEASONS, d);
 				break;
 			default:
 				return;

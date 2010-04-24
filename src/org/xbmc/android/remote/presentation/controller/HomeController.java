@@ -47,6 +47,7 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.business.INotifiableManager;
+import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.Actor;
@@ -54,6 +55,8 @@ import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
+import org.xbmc.api.object.Season;
+import org.xbmc.api.object.TvShow;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.BroadcastListener;
@@ -411,6 +414,14 @@ public class HomeController extends AbstractController implements INotifiableCon
 					final IVideoManager vm2 = ManagerFactory.getVideoManager(HomeController.this);
 					final ArrayList<Actor> actors = vm2.getActors(mActivity.getApplicationContext());
 					return new ArrayList<ICoverArt>(actors);
+				case HomeActivity.MENU_COVER_DOWNLOAD_TVSHOWS:
+					final ITvShowManager tsm = ManagerFactory.getTvManager(HomeController.this);
+					final ArrayList<TvShow> shows = tsm.getTvShows(mActivity.getApplicationContext());
+					return new ArrayList<ICoverArt>(shows);
+				case HomeActivity.MENU_COVER_DOWNLOAD_TVSEASONS:
+					final ITvShowManager tsm2 = ManagerFactory.getTvManager(HomeController.this);
+					final ArrayList<Season> seasons = tsm2.getAllSeasons(mActivity.getApplicationContext());
+					return new ArrayList<ICoverArt>(seasons);
 				default:
 					return null;
 			}

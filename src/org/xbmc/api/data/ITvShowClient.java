@@ -60,6 +60,12 @@ public interface ITvShowClient extends IClient {
 	 */
 	public ArrayList<Season> getSeasons(INotifiableManager manager, TvShow show);
 	
+	/**
+	 * Gets all seasons from all shows
+	 * @param manager
+	 * @return
+	 */
+	public ArrayList<Season> getSeasons(INotifiableManager manager);
 	
 	/**
 	 * Returns a cover as bitmap

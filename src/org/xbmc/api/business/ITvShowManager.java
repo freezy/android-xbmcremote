@@ -11,11 +11,13 @@ import org.xbmc.api.object.TvShow;
 import android.content.Context;
 
 public interface ITvShowManager extends IManager{
-
+	
 	public void getTvShows(DataResponse<ArrayList<TvShow>> response, Context context);
 	public void getTvShowActors(DataResponse<ArrayList<Actor>> response, Context context) ;
 	public void getTvShowGenres(DataResponse<ArrayList<Genre>> response, Context context);
 	public void getTvShows(DataResponse<ArrayList<TvShow>> response, Genre genre, Context context);
+	public ArrayList<TvShow> getTvShows(Context context);
+	public ArrayList<Season> getAllSeasons(Context context);
 	
 	/**
 	 * Gets all tv shows with the specified actor

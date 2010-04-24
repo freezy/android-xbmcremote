@@ -207,6 +207,29 @@ public class TvShowClient extends Client implements ITvShowClient {
 	}
 	
 	/**
+	 * Gets all seasons for all shows
+	 * @param manager
+	 * @param show
+	 * @return
+	 */
+	public ArrayList<Season> getSeasons(INotifiableManager manager) {
+		ArrayList<TvShow> shows = getTvShows(manager);
+		HashMap<Integer, TvShow> showMap = new HashMap<Integer, TvShow>();
+		for (TvShow tvShow : shows) {
+			showMap.put(tvShow.id, tvShow);
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT tvshowlinkepisode.idShow, episode.c12");
+		sb.append(" FROM episode, tvshowlinkepisode");
+		sb.append(" WHERE episode.idepisode = tvshowlinkepisode.idEpisode");
+		sb.append(" AND episode.idEpisode IN");
+		sb.append("  ( SELECT idEpisode FROM tvshowlinkepisode )");
+		sb.append(" GROUP BY tvshowlinkepisode.idShow, episode.c12");
+		sb.append(" ORDER BY tvshowlinkepisode.idShow, CAST( c12 AS integer )");
+		return parseSeasons(mConnection.query("QueryVideoDatabase", sb.toString(), manager), showMap);
+	}
+	
+	/**
 	 * Gets all Episodes for the specified show
 	 * @param manager
 	 * @param show
@@ -437,9 +460,25 @@ public class TvShowClient extends Client implements ITvShowClient {
 		String[] fields = response.split("<field>");
 		try {
 			for( int row = 1; row < fields.length; row ++) {
-				seasons.add(new Season(Connection.trimInt(fields[row]),
-						false,
-						show));
+				seasons.add(new Season(Connection.trimInt(fields[row]), false, show));
+			}
+		}catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
+		}
+		return seasons;
+	}
+	
+	protected ArrayList<Season> parseSeasons(String response, HashMap<Integer, TvShow> showMap) {
+		ArrayList<Season> seasons = new ArrayList<Season>();
+		String[] fields = response.split("<field>");
+		try {
+			for (int row = 1; row < fields.length; row += 2) {
+				final int showId = Connection.trimInt(fields[row]);
+				if (showMap.containsKey(showId)) {
+					seasons.add(new Season(Connection.trimInt(fields[row + 1]), false, showMap.get(showId)));
+				}
 			}
 		}catch (Exception e) {
 			System.err.println("ERROR: " + e.getMessage());
