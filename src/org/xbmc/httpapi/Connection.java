@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.http.HttpException;
+import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Host;
 
@@ -54,6 +55,7 @@ public class Connection {
 	private static final String TAG = "Connection";
 	private static final String XBMC_HTTP_BOOTSTRAP =  "/xbmcCmds/xbmcHttp";
 	private static final String XBMC_MICROHTTPD_THUMB_BOOTSTRAP =  "/thumb/";
+	private static final String XBMC_MICROHTTPD_VFS_BOOTSTRAP =  "/vfs/";
 	private static final int SOCKET_CONNECTION_TIMEOUT = 5000;
 	
 	/**
@@ -226,7 +228,12 @@ public class Connection {
 			if (mAuthenticator != null) {
 				mAuthenticator.resetCounter();
 			}
-			URL url = new URL(mUrlSuffix + XBMC_MICROHTTPD_THUMB_BOOTSTRAP + thumb + ".jpg");
+			final URL url;
+			if (ClientFactory.XBMC_REV > 0 && ClientFactory.XBMC_REV >= ClientFactory.THUMB_TO_VFS_REV) {
+				url = new URL(mUrlSuffix + XBMC_MICROHTTPD_VFS_BOOTSTRAP + URLEncoder.encode(thumb));
+			} else {
+				url = new URL(mUrlSuffix + XBMC_MICROHTTPD_THUMB_BOOTSTRAP + thumb + ".jpg");
+			}
 			Log.i(TAG, "Preparing input stream from " + url + " for microhttpd..");
 			uc = url.openConnection();
 			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);

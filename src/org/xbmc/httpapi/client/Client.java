@@ -50,11 +50,6 @@ abstract class Client {
 	
 	public static final String TAG = "Client-HTTPAPI";
 	
-	/**
-	 * TODO verify this revision works
-	 */
-	private static final int MICROHTTPD_REV = 27770;
-	
 	protected final Connection mConnection;
 
 	/**
@@ -80,7 +75,7 @@ abstract class Client {
 	 */
 	protected Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size, String url, String fallbackUrl) {
 		try {
-			if (ClientFactory.XBMC_REV >= MICROHTTPD_REV) {
+			if (ClientFactory.XBMC_REV >= ClientFactory.MICROHTTPD_REV) {
 				return getCoverFromMicroHTTPd(manager, cover, size, url, fallbackUrl);
 			} else {
 				return getCoverFromLibGoAhead(manager, cover, size, url, fallbackUrl);

@@ -36,7 +36,7 @@ public abstract class ImportUtilities {
 	
 	private static final String TAG = "ImportUtilities";
     private static final String CACHE_DIRECTORY = "xbmc";
-    private static final double MIN_FREE_SPACE = 15;
+    private static final double MIN_FREE_SPACE = 3;
 
     public static File getCacheDirectory(String type, int size) {
     	StringBuilder sb = new StringBuilder(CACHE_DIRECTORY);

@@ -49,6 +49,8 @@ public abstract class ClientFactory {
 	public static int XBMC_REV = -1;
 
 	public static final int MIN_JSONRPC_REV = 27770;
+	public static final int MICROHTTPD_REV = 27770;
+	public static final int THUMB_TO_VFS_REV = 29743;
 	
 	public static final int API_TYPE_UNSET = 0;
 	public static final int API_TYPE_HTTPIAPI = 1;
