@@ -37,7 +37,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	/**
 	 * Points to where the movie thumbs are stored
 	 */
-	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Video/";
+	public final static String THUMB_PREFIX = "special://profile/Thumbnails/Video/";
 
 	/**
 	 * Constructor

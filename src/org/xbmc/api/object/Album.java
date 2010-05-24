@@ -37,7 +37,7 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 	/**
 	 * Points to where the album thumbs are stored
 	 */
-	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Music/";
+	public final static String THUMB_PREFIX = "special://profile/Thumbnails/Music/";
 
 	/**
 	 * Constructor

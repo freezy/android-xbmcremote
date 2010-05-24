@@ -47,7 +47,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Activities (and other stuff) can subscribe to this thread in order to obtain
@@ -95,8 +94,11 @@ public class NowPlayingPollerThread extends Thread {
 			public void onMessage(int code, String message) { }
 			public void onMessage(String message) { }
 			public void onError(Exception e) {
-				Toast toast = Toast.makeText(context, "Poller Error: " + e.getMessage(), Toast.LENGTH_LONG);
-				toast.show();
+				// XXX link to context will eventually change if activity which created the thread changes (java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare())
+				//Toast toast = Toast.makeText(context, "Poller Error: " + e.getMessage(), Toast.LENGTH_LONG);
+				//toast.show();
+				Log.e(TAG, e.getMessage());
+				e.printStackTrace();
 			}
 			public void onFinish(DataResponse<?> response) {
 			}
@@ -176,6 +178,7 @@ public class NowPlayingPollerThread extends Thread {
 					try{
 						 currPlaying = control.getCurrentlyPlaying(mManagerStub);
 					} catch(Exception e) {
+						e.printStackTrace();
 						sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
 						return;
 					}

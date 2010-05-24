@@ -31,7 +31,7 @@ import org.xbmc.api.type.MediaType;
  */
 public class Actor extends Artist {
 	
-	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Video/";
+	public final static String THUMB_PREFIX = "special://profile/Thumbnails/Video/";
 
 	public Actor(int id, String name) {
 		super(id, name);

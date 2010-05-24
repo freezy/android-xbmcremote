@@ -37,7 +37,7 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 	 * TODO verify that's correct and test!
 	 * Points to where the artist thumbs are stored
 	 */
-	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Music/Artists/";
+	public final static String THUMB_PREFIX = "special://profile/Thumbnails/Music/Artists/";
 
 	/**
 	 * Constructor

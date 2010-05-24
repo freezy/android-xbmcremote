@@ -11,7 +11,7 @@ public class TvShow implements ICoverArt, INamedResource {
 	/**
 	 * Points to where the movie thumbs are stored
 	 */
-	public final static String THUMB_PREFIX = "special://masterprofile/Thumbnails/Video/";
+	public final static String THUMB_PREFIX = "special://profile/Thumbnails/Video/";
 	
 	/**
 	 * Save this once it's calculated
