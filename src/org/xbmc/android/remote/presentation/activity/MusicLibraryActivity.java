@@ -44,7 +44,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.ListView;
 
 public class MusicLibraryActivity extends SlidingTabActivity  {
@@ -85,7 +84,7 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mAlbumController = new AlbumListController();
 		mAlbumController.findTitleView(findViewById(R.id.albumlist_outer_layout));
 		mAlbumController.findMessageView(findViewById(R.id.albumlist_outer_layout));
-		mAlbumController.setGrid((GridView)findViewById(R.id.albumlist_grid));
+//		mAlbumController.setGrid((GridView)findViewById(R.id.albumlist_grid));
 		mAlbumController.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
 
 		mFileController = new FileListController();

@@ -19,7 +19,8 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_above="@id/slidingtabs">
-            
+
+            <!-- Albums -->
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 				android:layout_width="fill_parent" android:layout_height="fill_parent"
 				android:id="@+id/albumlist_outer_layout" android:orientation="vertical"
@@ -34,17 +35,18 @@
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent"
 						style="@style/standard_list" />
-					<GridView 
+					<!-- >GridView 
 						android:id="@+id/albumlist_grid"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent"
 						android:numColumns="3" 
 						android:fadingEdge="none"
 						android:scrollbars="none"
-						android:visibility="gone" />
+						android:visibility="gone" /-->
 				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 
+            <!-- Files -->
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 				android:layout_width="fill_parent" android:layout_height="fill_parent"
 				android:id="@+id/filelist_outer_layout" android:orientation="vertical"
@@ -62,6 +64,7 @@
 				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 			
+			<!-- Artists -->
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 				android:layout_width="fill_parent" android:layout_height="fill_parent"
 				android:id="@+id/artists_outer_layout" android:orientation="vertical"
@@ -79,6 +82,7 @@
 				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 
+			<!-- Genres -->
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 				android:layout_width="fill_parent" android:layout_height="fill_parent"
 				android:id="@+id/genres_outer_layout" android:orientation="vertical"
@@ -96,6 +100,7 @@
 				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 
+			<!-- Compilations -->
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 				android:layout_width="fill_parent" android:layout_height="fill_parent"
 				android:id="@+id/compilations_outer_layout" android:orientation="vertical"
