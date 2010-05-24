@@ -37,6 +37,7 @@ import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Song;
 import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.WifiStateException;
+import org.xbmc.jsonrpc.client.MusicClient;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -56,14 +57,6 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	 * @param response Response object
 	 */
 	public void getCompilations(final DataResponse<ArrayList<Album>> response, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() {
-//				final IMusicClient mc = music(context);
-//				ArrayList<Integer> compilationArtistIDs = mc.getCompilationArtistIDs(MusicManager.this);
-//				response.value = mc.getAlbums(MusicManager.this, compilationArtistIDs);
-//				onFinish(response);
-//			}
-//		});
 		mHandler.post(new Command<ArrayList<Album>>(response, this){
 			@Override
 			public void doRun() throws Exception {
@@ -342,8 +335,9 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 		mHandler.post(new Command<Boolean>(response, this) {
 			public void doRun() throws Exception{ 
 				final IMusicClient mc = music(context);
-				final int playStatus = control(context).getPlayState(MusicManager.this);
-				mc.setCurrentPlaylist(MusicManager.this);
+				final IControlClient cc = control(context);
+				final int playStatus = cc.getPlayState(MusicManager.this);
+				cc.setCurrentPlaylist(MusicManager.this, MusicClient.PLAYLIST_ID);
 				final int playlistSize = mc.getPlaylistSize(MusicManager.this); 
 				int playPos = -1;
 				if (playlistSize == 0) {  // if playlist is empty, add the whole album
@@ -520,7 +514,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				}
 				cc.stop(MusicManager.this);
 				mc.addToPlaylist(MusicManager.this, album);
-				mc.setCurrentPlaylist(MusicManager.this);
+				cc.setCurrentPlaylist(MusicManager.this, MusicClient.PLAYLIST_ID);
 				if (playPos > 0) {
 					mc.playlistSetSong(MusicManager.this, playPos - 1);
 				}				
@@ -640,7 +634,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	private void checkForPlayAfterQueue(final IMusicClient mc, final IControlClient cc, int numAlreadyQueued) {
 		final int ps = cc.getPlayState(MusicManager.this);
 		if (ps == PlayStatus.STOPPED) { // if nothing is playing, play the song
-			mc.setCurrentPlaylist(MusicManager.this);
+			cc.setCurrentPlaylist(MusicManager.this, MusicClient.PLAYLIST_ID);
 			if (numAlreadyQueued == 0) {
 				mc.playNext(MusicManager.this);
 			} else {

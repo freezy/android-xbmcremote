@@ -57,7 +57,7 @@ public class FileListController extends ListController implements IController {
 	public static final int MESSAGE_HANDLE_DATA = 1;
 	public static final int MESSAGE_CONNECTION_ERROR = 2;
 	private static final int ITEM_CONTEXT_QUEUE = 0;
-	private static final int ITEM_CONTEXT_PLAY = 0;
+	private static final int ITEM_CONTEXT_PLAY = 1;
 	
 	private HashMap<String, FileLocation> mFileItems;
 	private volatile String mGettingUrl;
@@ -228,15 +228,8 @@ public class FileListController extends ListController implements IController {
 		final FileLocation loc = (FileLocation) mList.getAdapter().getItem(((OneLabelItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch(item.getItemId()) {
 		case ITEM_CONTEXT_QUEUE:
-			mControlManager.getPlaylistId(new DataResponse<Integer>() {
-				@Override
-				public void run() {
-					
-				}
-			}, mActivity);
-//			mControlManager.setPlaylistId(response, id, context)
-			mControlManager.addToPlaylist(new DataResponse<Boolean>(), loc.path,
-					mActivity);
+		case ITEM_CONTEXT_PLAY:
+			mControlManager.playFolder(new QueryResponse(mActivity, "Playing folder " + loc.path, "Error adding folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
 			break;
 		}
 	}

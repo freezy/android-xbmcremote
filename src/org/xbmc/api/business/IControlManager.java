@@ -40,11 +40,21 @@ public interface IControlManager extends IManager {
 	 * @param filename File to play
 	 */
 	public void playFile(final DataResponse<Boolean> response, final String filename, final Context context);
+
+	/**
+	 * Starts playing a whole folder
+	 * @param response Response object
+	 * @param foldername Path to the folder to play
+	 * @param playlistType Playlist type ("0" = music, "1" = video)
+	 * @param context Context reference
+	 */
+	public void playFolder(final DataResponse<Boolean> response, final String foldername, String playlistType, final Context context);
 	
 	/**
 	 * Start playing the media file at the given URL
 	 * @param response Response object
 	 * @param url An URL pointing to a supported media file
+	 * @param context Context reference
 	 * @return true on success, false otherwise.
 	 */
 	public void playUrl(final DataResponse<Boolean> response, String url, final Context context);
@@ -52,6 +62,7 @@ public interface IControlManager extends IManager {
 	/**
 	 * Plays the next item in the playlist.
 	 * @param response Response object
+	 * @param context Context reference
 	 * @return true on success, false otherwise.
 	 */
 	public void playNext(final DataResponse<Boolean> response, final Context context);
@@ -60,6 +71,7 @@ public interface IControlManager extends IManager {
 	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.
 	 * @param response Response object
 	 * @param fileOrFolder File to play
+	 * @param context Context reference
 	 */
 	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder, final Context context);
 	
@@ -74,6 +86,7 @@ public interface IControlManager extends IManager {
 	 * @param response Response object
 	 * @param type     Seek type, relative or absolute
 	 * @param progress Progress
+	 * @param context Context reference
 	 * @return true on success, false otherwise.
 	 */
 	public void seek(final DataResponse<Boolean> response, SeekType type, int progress, final Context context);
@@ -83,6 +96,7 @@ public interface IControlManager extends IManager {
 	 * corresponding database.
 	 * 
 	 * @param response Response object
+	 * @param context Context reference
 	 * @param mediaType
 	 */
 	public void updateLibrary(final DataResponse<Boolean> response, final String mediaType, final Context context);
@@ -91,18 +105,21 @@ public interface IControlManager extends IManager {
 	 * Displays the image <code>filename</code> .
 	 * @param response Response object
 	 * @param filename File to show
+	 * @param context Context reference
 	 */
 	public void showPicture(final DataResponse<Boolean> response, final String filename, final Context context);
 	
 	/**
 	 * Returns what's currently playing.
 	 * @param response Response object
+	 * @param context Context reference
 	 */
 	public void getCurrentlyPlaying(final DataResponse<ICurrentlyPlaying> response, final Context context);
 	
 	/**
 	 * Returns the current playlist identifier
 	 * @param response Response object
+	 * @param context Context reference
 	 */
 	public void getPlaylistId(final DataResponse<Integer> response, final Context context);
 	
@@ -110,6 +127,7 @@ public interface IControlManager extends IManager {
 	 * Sets the current playlist identifier
 	 * @param response Response object
 	 * @param id Playlist identifier
+	 * @param context Context reference
 	 */
 	public void setPlaylistId(final DataResponse<Boolean> response, final int id, final Context context);
 	
@@ -117,7 +135,16 @@ public interface IControlManager extends IManager {
 	 * Sets the current playlist position
 	 * @param response Response object
 	 * @param position New playlist position
+	 * @param context Context reference
 	 */
 	public void setPlaylistPos(final DataResponse<Boolean> response, final int position, final Context context);
+
+	/**
+	 * Clears playlist
+	 * @param response Response object
+	 * @param playlistId Playlist ID (0 = music, 1 = video)
+	 * @param context Context reference
+	 */
+	public void clearPlaylist(final DataResponse<Boolean> response, final String playlistId, final Context context);
 	
 }

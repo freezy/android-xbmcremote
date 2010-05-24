@@ -276,7 +276,7 @@ public class MusicClient extends Client implements IMusicClient {
 	private boolean play(INotifiableManager manager, StringBuilder sqlCondition) {
 		clearPlaylist(manager);
 		mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + sqlCondition.toString());
-		setCurrentPlaylist(manager);
+		mConnection.getBoolean(manager, "SetCurrentPlaylist", PLAYLIST_ID);
 		return playNext(manager);
 	}
 	
@@ -307,14 +307,6 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	public boolean playlistSetSong(INotifiableManager manager, int pos) {
 		return mConnection.getBoolean(manager, "SetPlaylistSong", String.valueOf(pos));
-	}
-	
-	/**
-	 * Sets current playlist to "0"
-	 * @return True on success, false otherwise.
-	 */
-	public boolean setCurrentPlaylist(INotifiableManager manager) {
-		return mConnection.getBoolean(manager, "SetCurrentPlaylist", PLAYLIST_ID);
 	}
 	
 	/**

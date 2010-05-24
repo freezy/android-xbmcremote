@@ -63,6 +63,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.
+	 * @param manager Manager reference
 	 * @param fileOrFolder
 	 * @return true on success, false otherwise.
 	 */
@@ -72,6 +73,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Starts playing the media file <code>filename</code> .
+	 * @param manager Manager reference
 	 * @param filename File to play
 	 * @return true on success, false otherwise.
 	 */
@@ -82,6 +84,7 @@ public class ControlClient implements IControlClient {
 	/**
 	 * Starts playing/showing the next media/image in the current playlist or,
 	 * if currently showing a slideshow, the slideshow playlist. 
+	 * @param manager Manager reference
 	 * @return true on success, false otherwise.
 	 */
 	public boolean playNext(INotifiableManager manager) {
@@ -91,6 +94,7 @@ public class ControlClient implements IControlClient {
 	/**
 	 * Starts playing/showing the previous media/image in the current playlist
 	 * or, if currently showing a slidshow, the slideshow playlist.
+	 * @param manager Manager reference
 	 * @return true on success, false otherwise.
 	 */
 	public boolean playPrevious(INotifiableManager manager) {
@@ -99,6 +103,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Pauses the currently playing media. 
+	 * @param manager Manager reference
 	 * @return true on success, false otherwise.
 	 */
 	public boolean pause(INotifiableManager manager) {
@@ -107,6 +112,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Stops the currently playing media. 
+	 * @param manager Manager reference
 	 * @return true on success, false otherwise.
 	 */
 	public boolean stop(INotifiableManager manager) {
@@ -115,6 +121,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Start playing the media file at the given URL
+	 * @param manager Manager reference
 	 * @param url An URL pointing to a supported media file
 	 * @return true on success, false otherwise.
 	 */
@@ -124,6 +131,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Show the picture file <code>filename</code> .
+	 * @param manager Manager reference
 	 * @param filename File to show
 	 * @return true on success, false otherwise.
 	 */
@@ -137,6 +145,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Sets the volume as a percentage of the maximum possible.
+	 * @param manager Manager reference
 	 * @param volume New volume (0-100)
 	 * @return true on success, false otherwise.
 	 */
@@ -152,6 +161,8 @@ public class ControlClient implements IControlClient {
 	 *  <li><code>relative</code> - Adds/Subtracts the current percentage on to
 	 *		the current position in the song</li>
 	 * </ul> 
+	 * 
+	 * @param manager Manager reference
 	 * @param type     Seek type, relative or absolute
 	 * @param progress Progress
 	 * @return true on success, false otherwise.
@@ -165,6 +176,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Toggles the sound on/off.
+	 * @param manager Manager reference
 	 * @return true on success, false otherwise.
 	 */
 	public boolean mute(INotifiableManager manager) {
@@ -174,6 +186,7 @@ public class ControlClient implements IControlClient {
 	/**
 	 * Retrieves the current playing position of the currently playing media as
 	 * a percentage of the media's length. 
+	 * @param manager Manager reference
 	 * @return Percentage (0-100)
 	 */
 	public int getPercentage(INotifiableManager manager) {
@@ -183,6 +196,7 @@ public class ControlClient implements IControlClient {
 	/**
 	 * Retrieves the current volume setting as a percentage of the maximum 
 	 * possible value.
+	 * @param manager Manager reference
 	 * @return Volume (0-100)
 	 */
 	public int getVolume(INotifiableManager manager) {
@@ -191,6 +205,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Navigates... UP!
+	 * @param manager Manager reference
 	 * @return true on success, false otherwise.
 	 */
 	public boolean navUp(INotifiableManager manager) {
@@ -199,6 +214,7 @@ public class ControlClient implements IControlClient {
 
 	/**
 	 * Navigates... DOWN!
+	 * @param manager Manager reference
 	 * @return true on success, false otherwise.
 	 */
 	public boolean navDown(INotifiableManager manager) {
@@ -207,6 +223,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Navigates... LEFT!
+	 * @param manager Manager reference
 	 * @return true on success, false otherwise.
 	 */
 	public boolean navLeft(INotifiableManager manager) {
@@ -215,6 +232,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Navigates... RIGHT!
+	 * @param manager Manager reference
 	 * @return true on success, false otherwise.
 	 */
 	public boolean navRight(INotifiableManager manager) {
@@ -223,6 +241,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Selects current item.
+	 * @param manager Manager reference
 	 * @return true on success, false otherwise.
 	 */
 	public boolean navSelect(INotifiableManager manager) {
@@ -235,6 +254,7 @@ public class ControlClient implements IControlClient {
 	 * 
 	 * TODO For "video" you can additionally specify a specific path to be scanned.
 	 * 
+	 * @param manager Manager reference
 	 * @param mediaType Either <code>video</code> or <code>music</code>.
 	 * @return True on success, false otherwise.
 	 */
@@ -244,6 +264,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Broadcast a message. Used to test broadcasting feature. 
+	 * @param manager Manager reference
 	 * @param message
 	 * @return True on success, false otherwise.
 	 */
@@ -253,6 +274,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Returns the current broadcast port number, or 0 if deactivated.
+	 * @param manager Manager reference
 	 * @return Current broadcast port number.
 	 */
 	public int getBroadcast(INotifiableManager manager) {
@@ -273,6 +295,7 @@ public class ControlClient implements IControlClient {
 	 *  	<li><code>2</code> - "OnAction" events (e.g. buttons) as well as level 1 events. 
 	 *  </ul>
 	 *  
+	 * @param manager Manager reference 
 	 * @param port  Broadcast port
 	 * @param level Broadcast level
 	 * @return True on success, false otherwise.
@@ -283,6 +306,7 @@ public class ControlClient implements IControlClient {
 
 	/**
 	 * Returns current play state
+	 * @param manager Manager reference
 	 * @return
 	 */
 	public int getPlayState(INotifiableManager manager) {
@@ -291,7 +315,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Returns the current playlist identifier
-	 * @param response Response object
+	 * @param manager Manager reference
 	 */
 	public int getPlaylistId(INotifiableManager manager) {
 		return mConnection.getInt(manager, "GetCurrentPlaylist");
@@ -299,7 +323,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Sets the current playlist identifier
-	 * @param response Response object
+	 * @param manager Manager reference
 	 * @param id Playlist identifier
 	 * @return True on success, false otherwise.
 	 */
@@ -309,7 +333,7 @@ public class ControlClient implements IControlClient {
 	
 	/**
 	 * Sets the current playlist position
-	 * @param response Response object
+	 * @param manager Manager reference
 	 * @param position New playlist position
 	 * @return True on success, false otherwise.
 	 */
@@ -318,8 +342,28 @@ public class ControlClient implements IControlClient {
 	}
 	
 	/**
+	 * Clears a playlist.
+	 * @param manager Manager reference
+	 * @param int Playlist to clear (0 = music, 1 = video)
+	 * @return True on success, false otherwise.
+	 */
+	public boolean clearPlaylist(INotifiableManager manager, String playlistId) {
+		return mConnection.getBoolean(manager, "ClearPlayList", playlistId);
+	}
+	
+	/**
+	 * Sets current playlist
+	 * @param manager Manager reference
+	 * @param playlistId Playlist ID ("0" = music, "1" = video)
+	 * @return True on success, false otherwise.
+	 */
+	public boolean setCurrentPlaylist(INotifiableManager manager, String playlistId) {
+		return mConnection.getBoolean(manager, "SetCurrentPlaylist", playlistId);
+	}
+	
+	/**
 	 * Sets the correct response format to default values
-	 * @param response Response object	 
+	 * @param manager Manager reference	 
 	 * @return True on success, false otherwise.
 	 */
 	public boolean setResponseFormat(INotifiableManager manager) {

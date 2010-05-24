@@ -199,12 +199,6 @@ public interface IMusicClient extends IClient {
 	public boolean playlistSetSong(INotifiableManager manager, int pos);
 	
 	/**
-	 * Sets current playlist to "0"
-	 * @return True on success, false otherwise.
-	 */
-	public boolean setCurrentPlaylist(INotifiableManager manager);
-	
-	/**
 	 * Gets all albums with given artist IDs
 	 * @param artistIDs Array of artist IDs
 	 * @return All compilation albums
