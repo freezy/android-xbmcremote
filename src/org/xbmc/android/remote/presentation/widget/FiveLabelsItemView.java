@@ -69,19 +69,19 @@ public class FiveLabelsItemView extends AbstractItemView {
 		PAINT.setColor(isSelected ? Color.WHITE : Color.rgb(80, 80, 80));
 		PAINT.setTextSize(SIZE12);
 		PAINT.setTextAlign(Align.RIGHT);
-		float subtitleRightWidth = 0;
+		int subtitleRightWidth = 0;
 		if (subtitleRight != null) {
-			subtitleRightWidth = PAINT.measureText(subtitleRight);
+			subtitleRightWidth = (int)PAINT.measureText(subtitleRight);
 			canvas.drawText(subtitleRight, width - PADDING, SIZE42, PAINT);
 		}
 		
 		// bottom right
-		float bottomrightWidth = 0;
+		int bottomrightWidth = 0;
 		if (bottomright != null) {
 			PAINT.setTextSize(SIZE20);
 			PAINT.setFakeBoldText(true);
 			PAINT.setColor(isSelected ? Color.WHITE : Color.argb(68, 0, 0, 0));
-			bottomrightWidth = PAINT.measureText(subtitleRight);
+			bottomrightWidth = (int)PAINT.measureText(subtitleRight);
 			canvas.drawText(bottomright, width - PADDING, SIZE65, PAINT);
 		}
 		
@@ -91,10 +91,10 @@ public class FiveLabelsItemView extends AbstractItemView {
 		PAINT.setTextAlign(Align.LEFT);
 		PAINT.setFakeBoldText(false);
 		if (subtitle != null) {
-			canvas.drawText(ellipse(subtitle, width - (int)subtitleRightWidth - SIZE50), SIZE55, SIZE42, PAINT);
+			canvas.drawText(ellipse(subtitle, width - subtitleRightWidth - SIZE50 - (3 * PADDING)), SIZE55, SIZE42, PAINT);
 		}
 		if (bottomtitle != null) {
-			canvas.drawText(ellipse(bottomtitle, width - (int)bottomrightWidth - SIZE50), SIZE55, SIZE59, PAINT);
+			canvas.drawText(ellipse(bottomtitle, width - bottomrightWidth - SIZE50 - (3 * PADDING)), SIZE55, SIZE59, PAINT);
 		}
 	}
 	
