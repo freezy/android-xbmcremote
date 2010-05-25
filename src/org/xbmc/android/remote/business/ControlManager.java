@@ -72,6 +72,28 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	}
 	
 	/**
+	 * Queues a whole folder
+	 * @param response Response object
+	 * @param foldername Path to the folder to play
+	 * @param context Context reference
+	 */
+	public void queueFolder(final DataResponse<Boolean> response, final String foldername, final String playlistType, final Context context) {
+		mHandler.post(new Command<Boolean>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				IControlClient cc = control(context);
+				final boolean ret = cc.addToPlaylist(ControlManager.this, foldername + ";" + playlistType + ";" + (playlistType.equals("0") ? "[music]" : "[video]"));
+				if (!cc.getCurrentlyPlaying(ControlManager.this).isPlaying()) {
+					cc.setCurrentPlaylist(ControlManager.this, playlistType);
+					response.value = cc.playNext(ControlManager.this);
+				} else {
+					response.value = ret;
+				}
+			}
+		});
+	}
+	
+	/**
 	 * Start playing the media file at the given URL
 	 * @param response Response object
 	 * @param url An URL pointing to a supported media file

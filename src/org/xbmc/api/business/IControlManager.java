@@ -49,6 +49,15 @@ public interface IControlManager extends IManager {
 	 * @param context Context reference
 	 */
 	public void playFolder(final DataResponse<Boolean> response, final String foldername, String playlistType, final Context context);
+
+	/**
+	 * Queues a whole folder
+	 * @param response Response object
+	 * @param foldername Path to the folder to play
+	 * @param playlistType Playlist type ("0" = music, "1" = video)
+	 * @param context Context reference
+	 */
+	public void queueFolder(final DataResponse<Boolean> response, final String foldername, String playlistType, final Context context);
 	
 	/**
 	 * Start playing the media file at the given URL

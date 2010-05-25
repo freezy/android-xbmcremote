@@ -228,8 +228,10 @@ public class FileListController extends ListController implements IController {
 		final FileLocation loc = (FileLocation) mList.getAdapter().getItem(((OneLabelItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch(item.getItemId()) {
 		case ITEM_CONTEXT_QUEUE:
+			mControlManager.queueFolder(new QueryResponse(mActivity, "Queueing folder " + loc.path, "Error queueing folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
+			break;
 		case ITEM_CONTEXT_PLAY:
-			mControlManager.playFolder(new QueryResponse(mActivity, "Playing folder " + loc.path, "Error adding folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
+			mControlManager.playFolder(new QueryResponse(mActivity, "Playing folder " + loc.path, "Error playint folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
 			break;
 		}
 	}
