@@ -89,7 +89,7 @@ public class SongListController extends ListController implements IController {
 		
 		final String sdError = ImportUtilities.assertSdCard();
 		mLoadCovers = sdError == null;
-		
+		list.setFastScrollEnabled(true);
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
