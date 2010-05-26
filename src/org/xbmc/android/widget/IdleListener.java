@@ -15,17 +15,19 @@ import org.xbmc.api.type.ThumbSize;
 
 import android.util.Log;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 
 /**
  * Useful common implementation of OnListIdleListener which handles loading
  * images that temporarily defaulted during a fling. Utilizes a mem cache to
  * further enhance performance.
  */
-public class IdleListener implements OnListIdleListener {
+public class IdleListener implements OnListIdleListener, OnScrollListener{
 
 	private final static String TAG = "IdleListener";
 	private final AbsListView mList;
 	private final int mThumbSize;
+	
 
 	public IdleListener(AbsListView list, int thumbSize) {
 		mList = list;
@@ -47,5 +49,17 @@ public class IdleListener implements OnListIdleListener {
 			}
 		}
 		System.gc();
+	}
+
+	public void onScroll(AbsListView view, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount) {
+		// TODO Auto-generated method stub
+	}
+
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		if(scrollState != OnScrollListener.SCROLL_STATE_FLING) {
+			onListIdle();
+		}
+		
 	}
 }
