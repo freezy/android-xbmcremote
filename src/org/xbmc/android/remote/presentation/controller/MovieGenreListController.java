@@ -59,7 +59,7 @@ public class MovieGenreListController extends ListController implements IControl
 	public void onCreate(Activity activity, AbsListView list) {
 		
 		mVideoManager = ManagerFactory.getVideoManager(this);
-		
+		list.setFastScrollEnabled(true);
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
@@ -112,8 +112,17 @@ public class MovieGenreListController extends ListController implements IControl
 	}
 	
 	private class GenreAdapter extends ArrayAdapter<Genre> {
+		ArrayList<String> sections = new ArrayList<String>();
+		ArrayList<Integer> positions = new ArrayList<Integer>();
 		GenreAdapter(Activity activity, ArrayList<Genre> items) {
 			super(activity, 0, items);
+			for(Genre genre : items) {
+				final String section = genre.name.substring(0, 1).toUpperCase();
+				if(!sections.contains(section)) {
+					sections.add(section);
+					positions.add(items.indexOf(genre));
+				}
+			}
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final OneLabelItemView view;
@@ -127,6 +136,23 @@ public class MovieGenreListController extends ListController implements IControl
 			view.position = position;
 			view.title = genre.name;
 			return view;
+		}
+		public int getPositionForSection(int section) {
+			return positions.get(section);
+		}
+		public int getSectionForPosition(int position) {
+			int start = 0;
+			int end = 0;
+			for(int pos : positions) {
+				start = end;
+				end = pos;
+				if(start <= position && end >= position)
+					return start;
+			}
+			return 0;
+		}
+		public Object[] getSections() {
+			return sections.toArray(new String[0]);
 		}
 	}
 	private static final long serialVersionUID = 4360738733222799619L;

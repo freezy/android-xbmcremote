@@ -45,6 +45,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.SectionIndexer;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -67,7 +68,7 @@ public class ActorListController extends ListController implements IController {
 	public void onCreate(Activity activity, AbsListView list) {
 		
 		mVideoManager = ManagerFactory.getVideoManager(this);
-		
+		list.setFastScrollEnabled(true);
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			final String sdError = ImportUtilities.assertSdCard();
@@ -146,9 +147,18 @@ public class ActorListController extends ListController implements IController {
 	public void onCreateOptionsMenu(Menu menu) {
 	}
 	
-	private class ActorAdapter extends ArrayAdapter<Actor> {
+	private class ActorAdapter extends ArrayAdapter<Actor> implements SectionIndexer{
+		ArrayList<String> sections = new ArrayList<String>();
+		ArrayList<Integer> positions = new ArrayList<Integer>();
 		ActorAdapter(Activity activity, ArrayList<Actor> items) {
 			super(activity, 0, items);
+			for(Actor actor : items) {
+				final String section = actor.name.substring(0, 1).toUpperCase();
+				if(!sections.contains(section)) {
+					sections.add(section);
+					positions.add(items.indexOf(actor));
+				}
+			}
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final OneLabelItemView view;
@@ -166,6 +176,23 @@ public class ActorListController extends ListController implements IController {
 				view.getResponse().load(actor, !mPostScrollLoader.isListIdle());
 			}
 			return view;
+		}
+		public int getPositionForSection(int section) {
+			return positions.get(section);
+		}
+		public int getSectionForPosition(int position) {
+			int start = 0;
+			int end = 0;
+			for(int pos : positions) {
+				start = end;
+				end = pos;
+				if(start <= position && end >= position)
+					return start;
+			}
+			return 0;
+		}
+		public Object[] getSections() {
+			return sections.toArray(new String[0]);
 		}
 	}
 	private static final long serialVersionUID = 4360738733222799619L;

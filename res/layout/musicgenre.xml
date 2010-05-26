@@ -26,15 +26,15 @@
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
 				<include layout="@layout/listmessage" />
-				<org.xbmc.android.widget.FastScrollView
+				<!--  <org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
-					android:layout_height="fill_parent">
+					android:layout_height="fill_parent">-->
 					<ListView 
 						android:id="@+id/artistlist_list" 
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent" 
 						style="@style/standard_list" />
-				</org.xbmc.android.widget.FastScrollView>
+				<!-- </org.xbmc.android.widget.FastScrollView> -->
 			</LinearLayout>
 
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -43,15 +43,15 @@
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
 				<include layout="@layout/listmessage" />
-				<org.xbmc.android.widget.FastScrollView
+				<!-- <org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
-					android:layout_height="fill_parent">
+					android:layout_height="fill_parent"> -->
 					<ListView 
 						android:id="@+id/albumlist_list"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent" 
 						style="@style/standard_list"  />
-				</org.xbmc.android.widget.FastScrollView>
+				<!-- </org.xbmc.android.widget.FastScrollView> -->
 			</LinearLayout>
 
 			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -60,15 +60,15 @@
 				android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
 				<include layout="@layout/listmessage" />
-				<org.xbmc.android.widget.FastScrollView
+				<!--  <org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
-					android:layout_height="fill_parent">
+					android:layout_height="fill_parent">-->
 					<ListView
 						android:id="@+id/songlist_list"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent" 
 						style="@style/standard_list" />
-				</org.xbmc.android.widget.FastScrollView>
+				<!-- </org.xbmc.android.widget.FastScrollView> -->
 			</LinearLayout>
 
     	</FrameLayout>
