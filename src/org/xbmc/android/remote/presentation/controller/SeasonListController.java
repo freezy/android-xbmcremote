@@ -51,6 +51,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.SectionIndexer;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -82,7 +83,7 @@ public class SeasonListController extends ListController implements IController 
 		
 		final String sdError = ImportUtilities.assertSdCard();
 		mLoadCovers = sdError == null;
-		
+		list.setFastScrollEnabled(true);
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 
@@ -215,9 +216,18 @@ public class SeasonListController extends ListController implements IController 
 		}
 	}
 	
-	private class SeasonAdapter extends ArrayAdapter<Season> {
+	private class SeasonAdapter extends ArrayAdapter<Season> implements SectionIndexer{
+		ArrayList<String> sections = new ArrayList<String>();
+		ArrayList<Integer> positions = new ArrayList<Integer>();
 		SeasonAdapter(Activity activity, ArrayList<Season> items) {
 			super(activity, 0, items);
+			for(Season season : items) {
+				final String section = Integer.toString(season.number);
+				if(!sections.contains(section)) {
+					sections.add(section);
+					positions.add(items.indexOf(season));
+				}
+			}
 		}
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
@@ -238,6 +248,23 @@ public class SeasonListController extends ListController implements IController 
 				view.getResponse().load(season, ThumbSize.MEDIUM, !mPostScrollLoader.isListIdle());
 			}
 			return view;
+		}
+		public int getPositionForSection(int section) {
+			return positions.get(section);
+		}
+		public int getSectionForPosition(int position) {
+			int start = 0;
+			int end = 0;
+			for(int pos : positions) {
+				start = end;
+				end = pos;
+				if(start <= position && end >= position)
+					return start;
+			}
+			return 0;
+		}
+		public Object[] getSections() {
+			return sections.toArray(new String[0]);
 		}
 	}
 	
