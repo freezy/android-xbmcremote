@@ -27,7 +27,6 @@ public class IdleListener implements OnListIdleListener, OnScrollListener{
 	private final static String TAG = "IdleListener";
 	private final AbsListView mList;
 	private final int mThumbSize;
-	
 
 	public IdleListener(AbsListView list, int thumbSize) {
 		mList = list;
@@ -38,9 +37,14 @@ public class IdleListener implements OnListIdleListener, OnScrollListener{
 		final AbsListView list = mList;
 		int n = list.getChildCount();
 		Log.i(TAG, "IDLEING, downloading covers");
+		loadCovers(0, n);
+	}
+	
+	private void loadCovers(final int start, final int visibleCount){
+		final AbsListView list = mList;
 		// try to garbage collect before and after idling.
 		System.gc();
-		for (int i = 0; i < n; i++) {
+		for (int i = start; i < start+visibleCount; i++) {
 			final AbstractItemView itemView = (AbstractItemView)list.getChildAt(i);
 			if (!itemView.hasBitmap()) {
 				ICoverArt cover = (ICoverArt)mList.getAdapter().getItem(itemView.getPosition());
@@ -53,7 +57,6 @@ public class IdleListener implements OnListIdleListener, OnScrollListener{
 
 	public void onScroll(AbsListView view, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
-		// TODO Auto-generated method stub
 	}
 
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
