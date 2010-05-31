@@ -171,7 +171,13 @@ public class FileListController extends ListController implements IController {
 				view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_zip));
 				view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_zip));
 			} else if (fileItem.isDirectory) {
-				view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_folder));
+				if (fileItem.path.startsWith("shout://")) {
+					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_shoutcast));
+				} else if (fileItem.path.startsWith("lastfm://")) {
+					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_lastfm));
+				} else {
+					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_folder));
+				}
 			} else {
 				final String ext = fileItem.name.substring(fileItem.name.lastIndexOf(".") + 1).toLowerCase();
 				if (ext.equals("mp3") || ext.equals("ogg") || ext.equals("flac") || ext.equals("m4a")) {
