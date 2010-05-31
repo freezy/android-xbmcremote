@@ -95,6 +95,12 @@ public class EventClient implements IEventClient {
 				mPingThread.setHost(addr, port);
 			}
 		} else {
+			try {
+				Log.e(TAG, "Setting null host!");
+				throw new Exception("Setting null host.");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			mHostAddress = null;
 		}
 	}
@@ -203,7 +209,7 @@ public class EventClient implements IEventClient {
 				p = new PacketNOTIFICATION(title, message, mIconType, mIconData);
 			else
 				p = new PacketNOTIFICATION(title, message);
-			p.send(mHostAddress, mHostPort);
+			p.send(addr, mHostPort);
 		}
 	}
 	
@@ -211,7 +217,7 @@ public class EventClient implements IEventClient {
 		final InetAddress addr = mHostAddress;
 		if (addr != null) {
 			PacketNOTIFICATION p = new PacketNOTIFICATION(title, message, icontype, icondata);
-			p.send(mHostAddress, mHostPort);
+			p.send(addr, mHostPort);
 		}
 	}
 
@@ -235,7 +241,7 @@ public class EventClient implements IEventClient {
 		final InetAddress addr = mHostAddress;
 		if (addr != null) {
 			PacketBUTTON p = new PacketBUTTON(code, repeat, down, queue, amount, axis);
-			p.send(mHostAddress, mHostPort);
+			p.send(addr, mHostPort);
 		}
 	}
 
@@ -282,7 +288,7 @@ public class EventClient implements IEventClient {
 		if (addr != null) {
 			Log.i(TAG, "sendButton(" + map_name + ", \"" + button_name + "\", " + (repeat ? "rep, " : "nonrep, ") + (down ? "down)" : "up)"));
 			PacketBUTTON p = new PacketBUTTON(map_name, button_name, repeat, down, queue, amount, axis);
-			p.send(mHostAddress, mHostPort);
+			p.send(addr, mHostPort);
 		} else {
 			Log.e(TAG, "sendButton failed due to unset host address!");
 		}
@@ -298,7 +304,7 @@ public class EventClient implements IEventClient {
 		final InetAddress addr = mHostAddress;
 		if (addr != null) {
 			PacketMOUSE p = new PacketMOUSE(x, y);
-			p.send(mHostAddress, mHostPort);
+			p.send(addr, mHostPort);
 		}
 	}
 
@@ -335,7 +341,7 @@ public class EventClient implements IEventClient {
 		final InetAddress addr = mHostAddress;
 		if (addr != null) {
 			PacketLOG p = new PacketLOG(loglevel, logmessage);
-			p.send(mHostAddress, mHostPort);
+			p.send(addr, mHostPort);
 		}
 	}
 
@@ -349,7 +355,7 @@ public class EventClient implements IEventClient {
 		final InetAddress addr = mHostAddress;
 		if (addr != null) {
 			PacketACTION p = new PacketACTION(actionmessage);
-			p.send(mHostAddress, mHostPort);
+			p.send(addr, mHostPort);
 		}
 	}
 
