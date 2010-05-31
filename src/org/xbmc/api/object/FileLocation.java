@@ -77,16 +77,19 @@ public class FileLocation implements INamedResource {
 			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
 
 		} else if (path.startsWith("shout://")) {
+			displayPath = "Shoutcast";
 			Pattern pattern = Pattern.compile(".*shoutcast\\.com[^\\?]+\\?genre=([^\\\\]+).*", Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(path);
 			if (matcher.matches()) {
 				name = matcher.group(1);
+				displayPath = "Shoutcast - " + name;
 				path = path.substring(0, path.length() - 1);
 			} else {
 				pattern = Pattern.compile(".*shoutcast\\.com.*tunein-station\\.pls\\?id=([0-9]+)", Pattern.CASE_INSENSITIVE);
 				matcher = pattern.matcher(path);
 				if (matcher.matches()) {
 					name = "Station #" + matcher.group(1);
+					displayPath = "Shoutcast - " + name;
 					isDirectory = false;
 					mediaType = MediaType.MUSIC;
 				}
