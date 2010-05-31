@@ -1,6 +1,8 @@
 package org.xbmc.api.object;
 
 import java.net.URLDecoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.Connection;
@@ -61,6 +63,7 @@ public class FileLocation implements INamedResource {
 			}
 			name = trimmed.substring(trimmed.lastIndexOf("/") + 1);
 		}
+		// treat archives specially
 		if (path.startsWith("rar://") || path.startsWith("zip://")) {
 			final String decoded;
 			if (isDirectory) {
@@ -73,6 +76,22 @@ public class FileLocation implements INamedResource {
 			name = decoded.substring(decoded.lastIndexOf("/") + 1);
 			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
 
+		} else if (path.startsWith("shout://")) {
+			Pattern pattern = Pattern.compile(".*shoutcast\\.com[^\\?]+\\?genre=([^\\\\]+).*", Pattern.CASE_INSENSITIVE);
+			Matcher matcher = pattern.matcher(path);
+			if (matcher.matches()) {
+				name = matcher.group(1);
+				path = path.substring(0, path.length() - 1);
+			} else {
+				pattern = Pattern.compile(".*shoutcast\\.com.*tunein-station\\.pls\\?id=([0-9]+)", Pattern.CASE_INSENSITIVE);
+				matcher = pattern.matcher(path);
+				if (matcher.matches()) {
+					name = "Station #" + matcher.group(1);
+					isDirectory = false;
+					mediaType = MediaType.MUSIC;
+				}
+			}
+			
 		} else if (path.contains("://")) {
 			displayPath = name + "/";
 //			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
