@@ -75,7 +75,8 @@ public class FileLocation implements INamedResource {
 			}
 			name = decoded.substring(decoded.lastIndexOf("/") + 1);
 			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
-
+		
+		// parse and beautify shoutcast urls
 		} else if (path.startsWith("shout://")) {
 			displayPath = "Shoutcast";
 			Pattern pattern = Pattern.compile(".*shoutcast\\.com[^\\?]+\\?genre=([^\\\\]+).*", Pattern.CASE_INSENSITIVE);
@@ -95,6 +96,29 @@ public class FileLocation implements INamedResource {
 				}
 			}
 			
+		// parse and beautify last.fm urls
+		} else if (path.startsWith("lastfm://")) {
+			if (path.equals("lastfm://")) {
+				displayPath = name;
+			}
+			if (path.equals("lastfm://xbmc/tag/xbmc/toptags/")) {
+				name = "Overall Top Tags";
+				displayPath = name;
+			}
+			Pattern pattern = Pattern.compile(".*/tag/([^/]+)/", Pattern.CASE_INSENSITIVE);
+			Matcher matcher = pattern.matcher(path);
+			if (matcher.matches()) {
+				displayPath = "Last.fm - Tag - " + matcher.group(1);
+			} else {
+				pattern = Pattern.compile(".*globaltags/([^/]+)", Pattern.CASE_INSENSITIVE);
+				matcher = pattern.matcher(path);
+				if (matcher.matches()) {
+					name = "Listen to " + matcher.group(1);
+					isDirectory = false;
+					mediaType = MediaType.MUSIC;
+				}
+			}
+
 		} else if (path.contains("://")) {
 			displayPath = name + "/";
 //			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
