@@ -276,14 +276,15 @@ public class EventClient implements IEventClient {
 	 *            specifying magnitude of analog key press events
 	 * @param axis
 	 */
-	public void sendButton(String map_name, String button_name, boolean repeat,
-			boolean down, boolean queue, short amount, byte axis)
-			throws IOException {
-		Log.i(TAG, "sendButton(" + map_name + ", " + button_name + ", " + (repeat ? "rep, " : "nonrep, ") + (down ? "down)" : "up)"));
+	public void sendButton(String map_name, String button_name, boolean repeat, boolean down, boolean queue, short amount, byte axis) throws IOException {
+
 		final InetAddress addr = mHostAddress;
 		if (addr != null) {
+			Log.i(TAG, "sendButton(" + map_name + ", \"" + button_name + "\", " + (repeat ? "rep, " : "nonrep, ") + (down ? "down)" : "up)"));
 			PacketBUTTON p = new PacketBUTTON(map_name, button_name, repeat, down, queue, amount, axis);
 			p.send(mHostAddress, mHostPort);
+		} else {
+			Log.e(TAG, "sendButton failed due to unset host address!");
 		}
 	}
 
