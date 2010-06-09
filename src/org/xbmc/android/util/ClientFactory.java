@@ -79,11 +79,13 @@ public abstract class ClientFactory {
 	
 	public static IControlClient getControlClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
+		probeQueryApiType(manager);
 		return createHttpClient(manager).control;
 	}
 	
 	public static IVideoClient getVideoClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
+		probeQueryApiType(manager);
 		return createHttpClient(manager).video;
 	}
 	
@@ -102,6 +104,7 @@ public abstract class ClientFactory {
 	
 	public static ITvShowClient getTvShowClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
+		probeQueryApiType(manager);
 		return createHttpClient(manager).shows;
 	}
 	
@@ -193,7 +196,9 @@ public abstract class ClientFactory {
 	private static void probeQueryApiType(final INotifiableManager manager) {
 		final Host host = HostFactory.host;
 		
-		if(sApiType != API_TYPE_UNSET) return;
+		if (sApiType != API_TYPE_UNSET) {
+			return;
+		}
 		
 		// try to get version string via http api
 		final HttpApi httpClient;
@@ -236,12 +241,15 @@ public abstract class ClientFactory {
 				try {
 					final InetAddress addr = Inet4Address.getByName(host.addr);
 					sEventClient = new EventClient(addr, host.esPort > 0 ? host.esPort : Host.DEFAULT_EVENTSERVER_PORT, NAME);
+					Log.i(TAG, "EventClient created on " + addr);
 				} catch (UnknownHostException e) {
 					manager.onMessage("EventClient: Cannot parse address \"" + host.addr + "\".");
+					Log.e(TAG, "EventClient: Cannot parse address \"" + host.addr + "\".");
 					sEventClient = new EventClient(NAME);
 				}
 			} else {
 				manager.onMessage("EventClient: Failed to read host settings.");
+				Log.e(TAG, "EventClient: Failed to read host settings.");
 				sEventClient = new EventClient(NAME);
 			}
 		}

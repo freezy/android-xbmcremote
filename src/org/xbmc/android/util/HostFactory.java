@@ -34,6 +34,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * Helper class that keeps 
@@ -53,6 +54,7 @@ public abstract class HostFactory {
 	 * The setting that remembers which host has been used last
 	 */
 	public static final String SETTING_HOST_ID = "setting_host_id";
+	public static final String TAG = "HostFactory";
 	
 	/**
 	 * Returns all hosts
@@ -191,6 +193,7 @@ public abstract class HostFactory {
 		} else {
 			host = getHost(context, hostId);
 		}
+		Log.i(TAG, "XBMC Host = " + (host == null ? "[host=null]" : host.addr));
 	}
 	
 	/**
