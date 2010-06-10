@@ -125,13 +125,16 @@ public abstract class ClientFactory {
 	
 	/**
 	 * Resets the client so it has to re-read the settings and recreate the instance.
-	 * @param host New host settings
+	 * @param host New host settings, can be null.
 	 */
 	public static void resetClient(Host host) {
 		sApiType = API_TYPE_UNSET;
 		if (sHttpClient != null) {
 			sHttpClient.setHost(host);
+		} else {
+			Log.w(TAG, "Not updating http client's host because no instance is set yet.");
 		}
+		Log.i(TAG, "Resetting client to " + (host == null ? "<nullhost>" : host.addr));
 		if (sEventClient != null) {
 			try {
 				if (host != null) {
@@ -140,7 +143,11 @@ public abstract class ClientFactory {
 				} else {
 					sEventClient.setHost(null, 0);
 				}
-			} catch (UnknownHostException e) { }
+			} catch (UnknownHostException e) {
+				Log.e(TAG, "Unknown host: " + (host == null ? "<nullhost>" : host.addr));
+			}
+		} else {
+			Log.w(TAG, "Not updating event client's host because no instance is set yet.");
 		}
 	}
 

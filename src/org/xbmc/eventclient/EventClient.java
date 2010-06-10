@@ -36,6 +36,7 @@ public class EventClient implements IEventClient {
 	 * Creates an empty instance but doesn't start it.
 	 */
 	public EventClient(String deviceName) {
+		Log.i(TAG, "EventClient(" + deviceName + ")");
 		mDeviceName = deviceName;
 	}
 
@@ -48,6 +49,7 @@ public class EventClient implements IEventClient {
 	 * @throws IOException
 	 */
 	public EventClient(InetAddress hostAddress, int hostPort, String deviceName) {
+		Log.i(TAG, "EventClient(" + hostAddress + ", " + hostPort + ", " + deviceName + ")");
 		mDeviceName = deviceName;
 		startClient(hostAddress, hostPort);
 	}
@@ -62,6 +64,7 @@ public class EventClient implements IEventClient {
 	 * @throws IOException
 	 */
 	public EventClient(InetAddress hostAddress, int hostPort, String deviceName, String iconFile) {
+		Log.i(TAG, "EventClient(" + hostAddress + ", " + hostPort + ", " + deviceName + ", " + iconFile + ")");
 		mDeviceName = deviceName;
 		setIcon(iconFile);
 		startClient(hostAddress, hostPort);
@@ -80,6 +83,7 @@ public class EventClient implements IEventClient {
 	 * @throws IOException
 	 */
 	public EventClient(InetAddress hostAddress, int hostPort, String deviceName, byte iconType, byte[] iconData) {
+		Log.i(TAG, "EventClient(" + hostAddress + ", " + hostPort + ", " + deviceName + ", " + iconType + ", " + iconData + ")");
 		mDeviceName = deviceName;
 		setIcon(iconType, iconData);
 		startClient(hostAddress, hostPort);
@@ -87,6 +91,7 @@ public class EventClient implements IEventClient {
 	
 	public void setHost(InetAddress addr, int port) {
 		if (addr != null) {
+			Log.e(TAG, "Setting mHostAddress = " + addr.getHostAddress());
 			if (mHostAddress == null) {
 				startClient(addr, port);
 			} else {
@@ -95,8 +100,8 @@ public class EventClient implements IEventClient {
 				mPingThread.setHost(addr, port);
 			}
 		} else {
+			Log.e(TAG, "Setting null host!");
 			try {
-				Log.e(TAG, "Setting null host!");
 				throw new Exception("Setting null host.");
 			} catch (Exception e) {
 				e.printStackTrace();
