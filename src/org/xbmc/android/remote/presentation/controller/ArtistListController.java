@@ -44,7 +44,6 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.SectionIndexer;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -61,7 +60,7 @@ public class ArtistListController extends ListController implements IController 
 	public void onCreate(Activity activity, AbsListView list) {
 		
 		mMusicManager = ManagerFactory.getMusicManager(this);
-		list.setFastScrollEnabled(true);
+		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
@@ -169,18 +168,9 @@ public class ArtistListController extends ListController implements IController 
 	public void onCreateOptionsMenu(Menu menu) {
 	}
 	
-	private class ArtistAdapter extends ArrayAdapter<Artist> implements SectionIndexer{
-		ArrayList<String> sections = new ArrayList<String>();
-		ArrayList<Integer> positions = new ArrayList<Integer>();
+	private class ArtistAdapter extends ArrayAdapter<Artist> {
 		ArtistAdapter(Activity activity, ArrayList<Artist> items) {
 			super(activity, 0, items);
-			for(Artist artist : items) {
-				final String section = artist.name.substring(0, 1).toUpperCase();
-				if(!sections.contains(section)) {
-					sections.add(section);
-					positions.add(items.indexOf(artist));
-				}
-			}
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final OneLabelItemView view;
@@ -194,23 +184,6 @@ public class ArtistListController extends ListController implements IController 
 			view.position = position;
 			view.title = artist.name;
 			return view;
-		}
-		public int getPositionForSection(int section) {
-			return positions.get(section);
-		}
-		public int getSectionForPosition(int position) {
-			int start = 0;
-			int end = 0;
-			for(int pos : positions) {
-				start = end;
-				end = pos;
-				if(start <= position && end >= position)
-					return start;
-			}
-			return 0;
-		}
-		public Object[] getSections() {
-			return sections.toArray(new String[0]);
 		}
 	}
 	private static final long serialVersionUID = 4360738733222799619L;

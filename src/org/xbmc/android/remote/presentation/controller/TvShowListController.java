@@ -55,7 +55,6 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.SectionIndexer;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -91,7 +90,7 @@ public class TvShowListController extends ListController implements IController 
 		ManagerThread.video(this).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		final String sdError = ImportUtilities.assertSdCard();
 		mLoadCovers = sdError == null;
-		list.setFastScrollEnabled(true);
+		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 
@@ -258,18 +257,9 @@ public class TvShowListController extends ListController implements IController 
 		}
 	}
 	
-	private class TvShowAdapter extends ArrayAdapter<TvShow> implements SectionIndexer{
-		ArrayList<String> sections = new ArrayList<String>();
-		ArrayList<Integer> positions = new ArrayList<Integer>();
+	private class TvShowAdapter extends ArrayAdapter<TvShow> {
 		TvShowAdapter(Activity activity, ArrayList<TvShow> items) {
 			super(activity, 0, items);
-			for(TvShow show : items) {
-				final String section = show.title.substring(0, 1).toUpperCase();
-				if(!sections.contains(section)) {
-					sections.add(section);
-					positions.add(items.indexOf(show));
-				}
-			}
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -293,23 +283,6 @@ public class TvShowListController extends ListController implements IController 
 				view.getResponse().load(show, !mPostScrollLoader.isListIdle());
 			}
 			return view;
-		}
-		public int getPositionForSection(int section) {
-			return positions.get(section);
-		}
-		public int getSectionForPosition(int position) {
-			int start = 0;
-			int end = 0;
-			for(int pos : positions) {
-				start = end;
-				end = pos;
-				if(start <= position && end >= position)
-					return start;
-			}
-			return 0;
-		}
-		public Object[] getSections() {
-			return sections.toArray(new String[0]);
 		}
 	}
 	

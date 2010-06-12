@@ -25,6 +25,7 @@ import java.io.Serializable;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
+import org.xbmc.android.widget.FastScrollView;
 import org.xbmc.android.widget.IdleListDetector;
 import org.xbmc.android.widget.IdleListener;
 import org.xbmc.api.business.DataResponse;
@@ -93,9 +94,8 @@ public abstract class ListController extends AbstractController implements Seria
 	protected IdleListener setupIdleListener(int thumbSize) {
 		IdleListener idleListener = new IdleListener(mList, thumbSize);
 		mPostScrollLoader = new IdleListDetector(idleListener);
-		mList.setOnScrollListener(idleListener);
-//		FastScrollView fastScroller = (FastScrollView)mList.getParent();
-//		fastScroller.setOnIdleListDetector(mPostScrollLoader);
+		FastScrollView fastScroller = (FastScrollView)mList.getParent();
+		fastScroller.setOnIdleListDetector(mPostScrollLoader);
 		return idleListener;
 	}
 	

@@ -49,7 +49,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
-import android.widget.SectionIndexer;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -80,7 +79,7 @@ public class FileListController extends ListController implements IController {
 		
 		mInfoManager = ManagerFactory.getInfoManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
-		list.setFastScrollEnabled(true);
+		
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 			
@@ -141,18 +140,9 @@ public class FileListController extends ListController implements IController {
 		}
 	}
 	
-	private class FileItemAdapter extends ArrayAdapter<FileLocation> implements SectionIndexer{
-		ArrayList<String> sections = new ArrayList<String>();
-		ArrayList<Integer> positions = new ArrayList<Integer>();
+	private class FileItemAdapter extends ArrayAdapter<FileLocation> {
 		FileItemAdapter(Activity activity, ArrayList<FileLocation> items) {
 			super(activity, 0, items);
-			for(FileLocation file : items) {
-				final String section = file.name.substring(0, 1).toUpperCase();
-				if(!sections.contains(section)) {
-					sections.add(section);
-					positions.add(items.indexOf(file));
-				}
-			}
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
@@ -193,23 +183,6 @@ public class FileListController extends ListController implements IController {
 				}
 			}
 			return view;
-		}
-		public int getPositionForSection(int section) {
-			return positions.get(section);
-		}
-		public int getSectionForPosition(int position) {
-			int start = 0;
-			int end = 0;
-			for(int pos : positions) {
-				start = end;
-				end = pos;
-				if(start <= position && end >= position)
-					return start;
-			}
-			return 0;
-		}
-		public Object[] getSections() {
-			return sections.toArray(new String[0]);
 		}
 	}
 	

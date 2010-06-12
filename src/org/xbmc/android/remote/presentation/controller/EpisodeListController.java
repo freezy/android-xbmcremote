@@ -52,7 +52,6 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.SectionIndexer;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -225,18 +224,9 @@ public class EpisodeListController extends ListController implements IController
 		}
 	}
 	
-	private class EpisodeAdapter extends ArrayAdapter<Episode> implements SectionIndexer{
-		ArrayList<String> sections = new ArrayList<String>();
-		ArrayList<Integer> positions = new ArrayList<Integer>();
+	private class EpisodeAdapter extends ArrayAdapter<Episode> {
 		EpisodeAdapter(Activity activity, ArrayList<Episode> items) {
 			super(activity, 0, items);
-			for(Episode episode : items) {
-				final String section = Integer.toString(episode.episode);
-				if(!sections.contains(section)) {
-					sections.add(section);
-					positions.add(items.indexOf(episode));
-				}
-			}
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -260,23 +250,6 @@ public class EpisodeListController extends ListController implements IController
 				view.getResponse().load(episode, !mPostScrollLoader.isListIdle());
 			}
 			return view;
-		}
-		public int getPositionForSection(int section) {
-			return positions.get(section);
-		}
-		public int getSectionForPosition(int position) {
-			int start = 0;
-			int end = 0;
-			for(int pos : positions) {
-				start = end;
-				end = pos;
-				if(start <= position && end >= position)
-					return start;
-			}
-			return 0;
-		}
-		public Object[] getSections() {
-			return sections.toArray(new String[0]);
 		}
 	}
 	

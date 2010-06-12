@@ -46,6 +46,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,7 +58,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.SectionIndexer;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -124,7 +124,7 @@ public class AlbumListController extends ListController implements IController {
 		
 		final String sdError = ImportUtilities.assertSdCard();
 		mLoadCovers = sdError == null;
-		list.setFastScrollEnabled(true);
+
 		if (!isCreated()) {
 			super.onCreate(activity, list);
 
@@ -385,20 +385,9 @@ public class AlbumListController extends ListController implements IController {
 		}
 	}
 	
-	private class AlbumAdapter extends ArrayAdapter<Album> implements SectionIndexer{
-//		TreeMap<String, Integer> index;
-//		String[] sections;
-		ArrayList<String> sections = new ArrayList<String>();
-		ArrayList<Integer> positions = new ArrayList<Integer>();
+	private class AlbumAdapter extends ArrayAdapter<Album> {
 		AlbumAdapter(Activity activity, ArrayList<Album> items) {
 			super(activity, 0, items);
-			for(Album album : items) {
-				final String section = album.name.substring(0, 1).toUpperCase();
-				if(!sections.contains(section)) {
-					sections.add(section);
-					positions.add(items.indexOf(album));
-				}
-			}
 		}
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final ThreeLabelsItemView view;
@@ -414,28 +403,11 @@ public class AlbumListController extends ListController implements IController {
 			view.title = album.name;
 			view.subtitle = album.artist;
 			view.subsubtitle = album.year > 0 ? String.valueOf(album.year) : "";
-//			Log.i(TAG, "isListIdle: " + mPostScrollLoader.isListIdle());
-//			if (mLoadCovers) {
-//				view.getResponse().load(album, !mPostScrollLoader.isListIdle());
-//			}
-			return view;
-		}
-		public int getPositionForSection(int section) {
-			return positions.get(section);
-		}
-		public int getSectionForPosition(int position) {
-			int start = 0;
-			int end = 0;
-			for(int pos : positions) {
-				start = end;
-				end = pos;
-				if(start <= position && end >= position)
-					return start;
+			Log.i(TAG, "isListIdle: " + mPostScrollLoader.isListIdle());
+			if (mLoadCovers) {
+				view.getResponse().load(album, !mPostScrollLoader.isListIdle());
 			}
-			return 0;
-		}
-		public Object[] getSections() {
-			return sections.toArray(new String[0]);
+			return view;
 		}
 	}
 	

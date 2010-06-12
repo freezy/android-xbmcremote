@@ -26,15 +26,15 @@
 				android:orientation="vertical" android:fadingEdge="none" >
 				<include layout="@layout/titlebar" />
 				<include layout="@layout/listmessage" />
-				<!-- <org.xbmc.android.widget.FastScrollView
+				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
-					android:layout_height="fill_parent"> -->
+					android:layout_height="fill_parent">
 					<ListView 
 						android:id="@+id/movielist_list"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent" 
 						style="@style/standard_list" />
-				<!-- </org.xbmc.android.widget.FastScrollView> -->
+				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 				
             <!-- Actors -->
@@ -44,15 +44,15 @@
 				android:orientation="vertical" android:fadingEdge="none" >
 				<include layout="@layout/titlebar" />
 				<include layout="@layout/listmessage" />
-				<!-- <org.xbmc.android.widget.FastScrollView
+				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
-					android:layout_height="fill_parent"> -->
+					android:layout_height="fill_parent">
 					<ListView 
 						android:id="@+id/actorlist_list"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent" 
 						style="@style/standard_list" />
-				<!-- </org.xbmc.android.widget.FastScrollView> -->
+				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 			
             <!-- Genres -->
@@ -62,15 +62,15 @@
 				android:orientation="vertical" android:fadingEdge="none" >
 				<include layout="@layout/titlebar" />
 				<include layout="@layout/listmessage" />
-				<!-- <org.xbmc.android.widget.FastScrollView
+				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
-					android:layout_height="fill_parent"> -->
+					android:layout_height="fill_parent">
 					<ListView 
 						android:id="@+id/genrelist_list"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent" 
 						style="@style/standard_list" />
-				<!-- </org.xbmc.android.widget.FastScrollView> -->
+				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 			
 			<!-- Files -->
@@ -80,15 +80,15 @@
 				android:orientation="vertical" android:fadingEdge="none">
 				<include layout="@layout/titlebar" />
 				<include layout="@layout/listmessage" />
-				<!-- <org.xbmc.android.widget.FastScrollView
+				<org.xbmc.android.widget.FastScrollView
 					android:layout_width="fill_parent"
-					android:layout_height="fill_parent"> -->
+					android:layout_height="fill_parent">
 					<ListView 
 						android:id="@+id/filelist_list"
 						android:layout_height="fill_parent"
 						android:layout_width="fill_parent" 
 						style="@style/standard_list" />
-				<!-- </org.xbmc.android.widget.FastScrollView> -->
+				</org.xbmc.android.widget.FastScrollView>
 			</LinearLayout>
 			
     	</FrameLayout>
