@@ -76,7 +76,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		StringBuilder sb = new StringBuilder();
 		
 		// don't fetch summary for list view
-		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, tvshow.c04, tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14, ");
+		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14, ");
 		sb.append("    path.strPath AS strPath,");
 		sb.append("    counts.totalcount AS totalCount,");
 		sb.append("    counts.watchedcount AS watchedCount,");
@@ -136,7 +136,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 */
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Actor actor) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, tvshow.c04, tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14, ");
+		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14, ");
 		sb.append("    path.strPath AS strPath,");
 		sb.append("    counts.totalcount AS totalCount,");
 		sb.append("    counts.watchedcount AS watchedCount,");
@@ -166,7 +166,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 */
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, tvshow.c04, tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14, ");
+		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14, ");
 		sb.append("    path.strPath AS strPath,");
 		sb.append("    counts.totalcount AS totalCount,");
 		sb.append("    counts.watchedcount AS watchedCount,");
@@ -258,7 +258,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 */
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idEpisode, c00, \"\" AS c01, c03, c04, c05, c06, c08, c10, c12, c13, strPath, strFileName");
+		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(tvshow.c03, 2), c04, c05, c06, c08, c10, c12, c13, strPath, strFileName");
 		sb.append(" FROM episodeview ");
 		sb.append(" WHERE idShow = ");
 		sb.append(show.id);

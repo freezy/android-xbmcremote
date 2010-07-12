@@ -72,7 +72,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
+		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2)");
 		sb.append(" FROM movie, files, path WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
@@ -86,7 +86,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, int offset) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
+		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2)");
 		sb.append(" FROM movie, files, path WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		sb.append(" LIMIT -1 OFFSET " + offset);
@@ -102,7 +102,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
+		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2)");
 		sb.append(" FROM movie, files, path");
 		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie IN (");
 		sb.append("   SELECT DISTINCT idMovie ");
@@ -123,7 +123,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, c05");
+		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2)");
 		sb.append(" FROM movie, files, path");
 		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie IN (");
 		sb.append("   SELECT DISTINCT idMovie ");
