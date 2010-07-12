@@ -154,13 +154,17 @@ public class SettingsController extends AbstractController implements INotifiabl
 	public void onActivityPause() {
 		super.onActivityPause();
 	}
+	
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
 		final ArrayList<Host> hosts = HostFactory.getHosts(activity.getApplicationContext()); 
 		if (hosts.size() == 1) {
-			HostFactory.saveHost(activity.getApplicationContext(), hosts.get(0));
+			final Host host = hosts.get(0);
+			Log.i(TAG, "Setting host to " + (host == null ? "<null>" : host.addr) + ".");
+			HostFactory.saveHost(activity.getApplicationContext(), host);
 		}
 		if (hosts.size() == 0) {
+			Log.i(TAG, "Resetting host to <null>.");
 			HostFactory.saveHost(activity.getApplicationContext(), null);
 		}
 	}	

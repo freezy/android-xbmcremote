@@ -161,6 +161,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 					if (HostFactory.host != null && HostFactory.host.id == host.id) {
 						Toast.makeText(mActivity.getApplicationContext(), "You've picked the same host as the current.", Toast.LENGTH_SHORT).show();
 					} else {
+						Log.i(TAG, "Switching host to " + (host == null ? "<null>" : host.addr) + ".");
 						HostFactory.saveHost(mActivity.getApplicationContext(), host);
 						final GridView menuGrid = (GridView)mActivity.findViewById(R.id.HomeItemGridView);
 						resetupOfflineMenuItems();

@@ -29,6 +29,7 @@ import org.apache.http.HttpException;
 import org.xbmc.android.remote.business.Command;
 import org.xbmc.android.remote.presentation.activity.HostSettingsActivity;
 import org.xbmc.android.remote.presentation.activity.SettingsActivity;
+import org.xbmc.android.util.ClientFactory;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.WifiHelper;
 import org.xbmc.api.business.INotifiableManager;
@@ -68,6 +69,7 @@ public abstract class AbstractController {
 	public void onCreate(Activity activity) {
 		mActivity = activity;
 		HostFactory.readHost(activity.getApplicationContext());
+		ClientFactory.resetClient(HostFactory.host);
 	}
 	
 	public void onWrongConnectionState(int state, final INotifiableManager manager, final Command<?> source) {
