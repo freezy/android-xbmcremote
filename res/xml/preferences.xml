@@ -41,6 +41,28 @@
 			android:selectable="true"
 			android:enabled="true" android:defaultValue="false"/>
 	</PreferenceCategory>
+	<PreferenceCategory android:title="Home Screen Items">
+		<CheckBoxPreference
+			android:key="setting_show_home_music"
+			android:title="Show Music"
+			android:summary="Show the &quot;Listen to Music&quot; item"
+			android:enabled="true" android:defaultValue="true" />
+		<CheckBoxPreference
+			android:key="setting_show_home_movies"
+			android:title="Show Movies"
+			android:summary="Show the &quot;Watch your Movies&quot; item"
+			android:enabled="true" android:defaultValue="true" />
+		<CheckBoxPreference
+			android:key="setting_show_home_tv"
+			android:title="Show TV Shows"
+			android:summary="Show the &quot;Watch your TV Shows&quot; item"
+			android:enabled="true" android:defaultValue="true" />
+		<CheckBoxPreference
+			android:key="setting_show_home_pictures"
+			android:title="Show Pictures"
+			android:summary="Show the &quot;Browse your Pictures&quot; item"
+			android:enabled="true" android:defaultValue="true" />
+	</PreferenceCategory>
 	<PreferenceCategory android:title="Screen Behaviour">
 		<ListPreference
 			android:key="setting_disable_keyguard"

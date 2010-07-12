@@ -66,12 +66,15 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -87,7 +90,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class HomeController extends AbstractController implements INotifiableController, IController, Observer {
+public class HomeController extends AbstractController implements INotifiableController, IController, Observer, OnSharedPreferenceChangeListener {
 	
 	private static final int HOME_ACTION_REMOTE = 0;
 	private static final int HOME_ACTION_MUSIC = 1;
@@ -114,10 +117,13 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private WolCounter mWolCounter;
 	
 	private final HomeItem mHomeWol = new HomeItem(HOME_ACTION_WOL, R.drawable.icon_home_power, "Power On", "Turn your XBMC's");
+	
+	private final GridView mMenuGrid;
     
 	public HomeController(Activity activity, GridView menuGrid) {
 		super.onCreate(activity);
 		mInfoManager = ManagerFactory.getInfoManager(this);
+		mMenuGrid = menuGrid;
 		setupMenuItems(menuGrid);
 //		BroadcastListener bcl = BroadcastListener.getInstance(ConnectionManager.getHttpClient(this));
 //		bcl.addObserver(this);
@@ -201,10 +207,16 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private void setupMenuItems(GridView menuGrid) {
 		final HomeItem remote = new HomeItem(HOME_ACTION_REMOTE, R.drawable.icon_home_remote, "Remote Control", "Use as");
 		final ArrayList<HomeItem> homeItems = new ArrayList<HomeItem>();
-		homeItems.add(new HomeItem(HOME_ACTION_MUSIC, R.drawable.icon_home_music, "Music", "Listen to"));
-		homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.icon_home_movie, "Movies", "Watch your"));
-		homeItems.add(new HomeItem(HOME_ACTION_TVSHOWS, R.drawable.icon_home_tv, "TV Shows", "Watch your"));
-		homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.icon_home_picture, "Pictures", "Browse your"));
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
+		if (prefs.getBoolean("setting_show_home_music", true))
+			homeItems.add(new HomeItem(HOME_ACTION_MUSIC, R.drawable.icon_home_music, "Music", "Listen to"));
+		if (prefs.getBoolean("setting_show_home_movies", true))
+			homeItems.add(new HomeItem(HOME_ACTION_VIDEOS, R.drawable.icon_home_movie, "Movies", "Watch your"));
+		if (prefs.getBoolean("setting_show_home_tv", true))
+			homeItems.add(new HomeItem(HOME_ACTION_TVSHOWS, R.drawable.icon_home_tv, "TV Shows", "Watch your"));
+		if (prefs.getBoolean("setting_show_home_pictures", true))
+			homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.icon_home_picture, "Pictures", "Browse your"));
+		prefs.registerOnSharedPreferenceChangeListener(this);
 		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.icon_home_playing, "Now Playing", "See what's"));
 		homeItems.add(remote);
 			
@@ -541,4 +553,9 @@ public class HomeController extends AbstractController implements INotifiableCon
 		mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
 	}
 
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if (key.equals("setting_show_home_music") || key.equals("setting_show_home_movies") || key.equals("setting_show_home_tv") || key.equals("setting_show_home_pictures")) {
+			setupMenuItems(mMenuGrid);
+		}
+	}
 }
