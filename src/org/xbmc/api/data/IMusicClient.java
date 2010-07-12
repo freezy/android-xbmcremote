@@ -57,21 +57,21 @@ public interface IMusicClient extends IClient {
 	 * @param album Album
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Album album);
+	public boolean addToPlaylist(INotifiableManager manager, Album album, int sortBy, String sortOrder);
 
 	/**
 	 * Adds all songs from an artist to the current playlist.
 	 * @param artist Artist
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Artist artist);
+	public boolean addToPlaylist(INotifiableManager manager, Artist artist, int sortBy, String sortOrder);
 
 	/**
 	 * Adds all songs from a genre to the current playlist.
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Genre genre);
+	public boolean addToPlaylist(INotifiableManager manager, Genre genre, int sortBy, String sortOrder);
 
 	/**
 	 * Adds songs of a genre from an artist to the current playlist.
@@ -79,7 +79,7 @@ public interface IMusicClient extends IClient {
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre);
+	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre, int sortBy, String sortOrder);
 	
 	/**
 	 * Adds a song to the current playlist.

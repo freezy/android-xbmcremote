@@ -282,7 +282,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-				response.value = mc.addToPlaylist(MusicManager.this, album);
+				response.value = mc.addToPlaylist(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 			}
 		});
@@ -300,7 +300,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-				response.value = mc.addToPlaylist(MusicManager.this, genre);
+				response.value = mc.addToPlaylist(MusicManager.this, genre, getSortBy(SortType.ARTIST), getSortOrder());
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 			}
 		});
@@ -342,14 +342,14 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				int playPos = -1;
 				if (playlistSize == 0) {  // if playlist is empty, add the whole album
 					int n = 0;
-					for (Song albumSong : mc.getSongs(MusicManager.this, album, SortType.DONT_SORT, null)) {
+					for (Song albumSong : mc.getSongs(MusicManager.this, album, getSortBy(PREF_SORT_KEY_ALBUM), getSortOrder())) {
 						if (albumSong.id == song.id) {
 							playPos = n;
 							break;
 						}
 						n++;
 					}
-					mc.addToPlaylist(MusicManager.this, album);
+					mc.addToPlaylist(MusicManager.this, album, getSortBy(PREF_SORT_KEY_ALBUM), getSortOrder());
 					response.value = true;
 				} else {                          // otherwise, only add the song
 					mc.addToPlaylist(MusicManager.this, song);
@@ -385,7 +385,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-				response.value = mc.addToPlaylist(MusicManager.this, artist);
+				response.value = mc.addToPlaylist(MusicManager.this, artist, getSortBy(SortType.ALBUM), getSortOrder());
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 			}
 		});
@@ -404,7 +404,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-				response.value = mc.addToPlaylist(MusicManager.this, artist, genre);
+				response.value = mc.addToPlaylist(MusicManager.this, artist, genre, getSortBy(SortType.ARTIST), getSortOrder());
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 			}
 		});
@@ -505,7 +505,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				int n = 0;
 				int playPos = 0;
 				mc.clearPlaylist(MusicManager.this);
-				for (Song albumSong : mc.getSongs(MusicManager.this, album, SortType.DONT_SORT, null)) {
+				for (Song albumSong : mc.getSongs(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder())) {
 					if (albumSong.id == song.id) {
 						playPos = n;
 						break;
@@ -513,7 +513,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 					n++;
 				}
 				cc.stop(MusicManager.this);
-				mc.addToPlaylist(MusicManager.this, album);
+				mc.addToPlaylist(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
 				cc.setCurrentPlaylist(MusicManager.this, MusicClient.PLAYLIST_ID);
 				if (playPos > 0) {
 					mc.playlistSetSong(MusicManager.this, playPos - 1);

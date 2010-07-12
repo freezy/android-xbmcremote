@@ -29,6 +29,7 @@ import org.xbmc.android.remote.presentation.activity.MusicGenreActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
+import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 
 import android.app.Activity;
@@ -92,7 +93,7 @@ public class MusicGenreListController extends ListController implements IControl
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
-		final Genre genre = (Genre)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
+		final Genre genre = (Genre)mList.getAdapter().getItem(((OneLabelItemView)(((AdapterContextMenuInfo)menuInfo).targetView)).position);
 		menu.setHeaderTitle(genre.name);
 		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue " + genre.name + " songs");
 		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play " + genre.name + " songs");
@@ -100,7 +101,7 @@ public class MusicGenreListController extends ListController implements IControl
 	
 	public void onContextItemSelected(MenuItem item) {
 		// be aware that this must be explicitly called by your activity!
-		final Genre genre = (Genre)((AdapterContextMenuInfo)item.getMenuInfo()).targetView.getTag();
+		final Genre genre = (Genre)mList.getAdapter().getItem(((OneLabelItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
 				mMusicManager.addToPlaylist(new QueryResponse(

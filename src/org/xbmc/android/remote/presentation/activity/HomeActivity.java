@@ -44,6 +44,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -57,6 +58,8 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 public class HomeActivity extends Activity {
+	
+	private static final String TAG = "HomeActivity";
 
 	private static final int MENU_ABOUT = 1;
 	private static final int MENU_SETTINGS = 2;
@@ -140,8 +143,10 @@ public class HomeActivity extends Activity {
 			startActivity(new Intent(this, SettingsActivity.class));
 			return true;
 		case MENU_EXIT:
+			Log.i(TAG, "Exiting XBMC Remote.");
 			NowPlayingNotificationManager.getInstance(getBaseContext()).removeNotification();
-			System.exit(0);
+			android.os.Process.killProcess(android.os.Process.myPid());
+//			System.exit(0);
 			return true;
 //		case MENU_INPUT_TEXT:
 //			startActivity(new Intent(this, KeyboardAndMouseActivity.class));

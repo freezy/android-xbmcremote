@@ -80,8 +80,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param album Album
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Album album) {
-		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(album) + songsOrderBy(SortType.TRACK, SortType.ORDER_ASC));
+	public boolean addToPlaylist(INotifiableManager manager, Album album, int sortBy, String sortOrder) {
+		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(album) + songsOrderBy(sortBy, sortOrder));
 	}
 
 	/**
@@ -89,8 +89,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param artist Artist
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Artist artist) {
-		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist) + songsOrderBy(SortType.ALBUM, SortType.ORDER_ASC));
+	public boolean addToPlaylist(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
+		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist) + songsOrderBy(sortBy, sortOrder));
 	}
 
 	/**
@@ -98,8 +98,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Genre genre) {
-		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(genre) + songsOrderBy(SortType.ARTIST, SortType.ORDER_ASC));
+	public boolean addToPlaylist(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
+		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(genre) + songsOrderBy(sortBy, sortOrder));
 	}
 
 	/**
@@ -108,8 +108,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre) {
-		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist, genre) + songsOrderBy(SortType.ARTIST, SortType.ORDER_ASC));
+	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre, int sortBy, String sortOrder) {
+		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist, genre) + songsOrderBy(sortBy, sortOrder));
 	}
 	
 	/**
