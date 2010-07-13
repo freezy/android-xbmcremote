@@ -258,7 +258,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 */
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(tvshow.c03, 2), c04, c05, c06, c08, c10, c12, c13, strPath, strFileName");
+		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(c03, 2), c04, c05, c06, c08, c10, c12, c13, strPath, strFileName");
 		sb.append(" FROM episodeview ");
 		sb.append(" WHERE idShow = ");
 		sb.append(show.id);
