@@ -46,6 +46,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -114,7 +115,7 @@ public class EpisodeDetailsActivity extends Activity {
 		((TextView)findViewById(R.id.moviedetails_rating)).setText(String.valueOf(episode.rating));
 		
 		mMovieDetailsController.setupPlayButton((Button)findViewById(R.id.moviedetails_playbutton));
-		mMovieDetailsController.loadCover((ImageView)findViewById(R.id.moviedetails_thumb));
+		mMovieDetailsController.loadCover(new Handler(), (ImageView)findViewById(R.id.moviedetails_thumb));
 		mMovieDetailsController.updateEpisodeDetails(
 				(TextView)findViewById(R.id.moviedetails_rating_numvotes),
 				(TextView)findViewById(R.id.moviedetails_studio),
@@ -155,14 +156,18 @@ public class EpisodeDetailsActivity extends Activity {
 			});
 		}
 		
-		public void loadCover(final ImageView imageView) {
+		public void loadCover(final Handler handler, final ImageView imageView) {
 			mShowManager.getCover(new DataResponse<Bitmap>() {
 				public void run() {
-					if (value == null) {
-						imageView.setImageResource(R.drawable.nocover);
-					} else {
-						imageView.setImageBitmap(value);
-					}
+					handler.post(new Runnable() {
+						public void run() {
+							if (value == null) {
+								imageView.setImageResource(R.drawable.nocover);
+							} else {
+								imageView.setImageBitmap(value);
+							}
+						}
+					});
 				}
 			}, mEpisode, ThumbSize.BIG, null, mActivity.getApplicationContext(), false);
 		}

@@ -184,22 +184,28 @@ public class HomeController extends AbstractController implements INotifiableCon
 		}
 	}
 	
-	public void setupVersionHandler(final Button versionTextView, final GridView homeItemGrid) {
+	public void setupVersionHandler(final Handler handler, final Button versionTextView, final GridView homeItemGrid) {
 		mUpdateVersionHandler = new DataResponse<String>() {
 			public void run() {
 				if (!mPaused) {
-					if (!ConnectionFactory.isNetworkAvailable(mActivity.getApplicationContext())) {
-						versionTextView.setText("No network");
-					}
-					if (!value.equals("")) {
-						if(mWolCounter != null) mWolCounter.cancel();
-						versionTextView.setText("XBMC " + value);
-						homeItemGrid.setAdapter(mHomeMenu);
-						NowPlayingNotificationManager.getInstance(mActivity.getApplicationContext()).startNotificating();
-					} else {
-						versionTextView.setText("Check Settings and retry");
-						homeItemGrid.setAdapter(mOfflineMenu);
-					}
+					handler.post(new Runnable() {
+						public void run() {
+							if (!ConnectionFactory.isNetworkAvailable(mActivity.getApplicationContext())) {
+								versionTextView.setText("No network");
+							}
+							if (!value.equals("")) {
+								if (mWolCounter != null) {
+									mWolCounter.cancel();
+								}
+								versionTextView.setText("XBMC " + value);
+								homeItemGrid.setAdapter(mHomeMenu);
+								NowPlayingNotificationManager.getInstance(mActivity.getApplicationContext()).startNotificating();
+							} else {
+								versionTextView.setText("Check Settings and retry");
+								homeItemGrid.setAdapter(mOfflineMenu);
+							}
+						}
+					});
 				}
 			}
 		};		

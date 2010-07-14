@@ -46,6 +46,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -115,7 +116,7 @@ public class MovieDetailsActivity extends Activity {
 		
 		mMovieDetailsController.setupPlayButton((Button)findViewById(R.id.moviedetails_playbutton));
 		mMovieDetailsController.loadCover((ImageView)findViewById(R.id.moviedetails_poster));
-		mMovieDetailsController.updateMovieDetails(
+		mMovieDetailsController.updateMovieDetails(new Handler(),
 				(TextView)findViewById(R.id.moviedetails_rating_numvotes),
 				(TextView)findViewById(R.id.moviedetails_studio),
 				(TextView)findViewById(R.id.moviedetails_plot),
@@ -166,7 +167,7 @@ public class MovieDetailsActivity extends Activity {
 			}, mMovie, ThumbSize.BIG, null, mActivity.getApplicationContext(), false);
 		}
 		
-		public void updateMovieDetails(final TextView numVotesView, final TextView studioView, final TextView plotView, final TextView parentalView, final Button trailerButton, final LinearLayout dataLayout) {
+		public void updateMovieDetails(final Handler handler, final TextView numVotesView, final TextView studioView, final TextView plotView, final TextView parentalView, final Button trailerButton, final LinearLayout dataLayout) {
 			mVideoManager.updateMovieDetails(new DataResponse<Movie>() {
 				public void run() {
 					final Movie movie = value;
@@ -202,7 +203,11 @@ public class MovieDetailsActivity extends Activity {
 							mVideoManager.getCover(new DataResponse<Bitmap>() {
 								public void run() {
 									if (value != null) {
-										((ImageButton)view.findViewById(R.id.actor_image)).setImageBitmap(value);
+										handler.post(new Runnable() {
+											public void run() {
+												((ImageButton)view.findViewById(R.id.actor_image)).setImageBitmap(value);
+											}
+										});
 									}
 								}
 							}, actor, ThumbSize.SMALL, null, mActivity.getApplicationContext(), false);
