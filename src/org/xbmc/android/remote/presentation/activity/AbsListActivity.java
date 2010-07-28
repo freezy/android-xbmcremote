@@ -34,6 +34,7 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -83,7 +84,7 @@ public abstract class AbsListActivity extends Activity {
 			mListController = (ListController) getIntent().getSerializableExtra(ListController.EXTRA_LIST_CONTROLLER);
 			mListController.findTitleView(findViewById(R.id.blanklist_outer_layout));
 			mListController.findMessageView(findViewById(R.id.blanklist_outer_layout));
-			mListController.onCreate(this, (AbsListView)findViewById(R.id.blanklist_list));
+			mListController.onCreate(this, new Handler(), (AbsListView)findViewById(R.id.blanklist_list));
 		}
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 	}

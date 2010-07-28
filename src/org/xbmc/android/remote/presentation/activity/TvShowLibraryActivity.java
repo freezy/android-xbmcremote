@@ -38,6 +38,7 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -81,10 +82,11 @@ public class TvShowLibraryActivity extends SlidingTabActivity  {
 		mTabHost.setCurrentTab(0);
 
 		// assign the gui logic to each tab
+		final Handler handler = new Handler();
 		mTvShowController = new TvShowListController();
 		mTvShowController.findTitleView(findViewById(R.id.tvshowlist_outer_layout));
 		mTvShowController.findMessageView(findViewById(R.id.tvshowlist_outer_layout));
-		mTvShowController.onCreate(this, (ListView)findViewById(R.id.tvshowlist_list)); // first tab can be updated now.
+		mTvShowController.onCreate(this, handler, (ListView)findViewById(R.id.tvshowlist_list)); // first tab can be updated now.
 
 		mActorController = new ActorListController(ActorListController.TYPE_TVSHOW);
 		mActorController.findTitleView(findViewById(R.id.actorlist_outer_layout));
@@ -102,16 +104,16 @@ public class TvShowLibraryActivity extends SlidingTabActivity  {
 			public void onTabChanged(String tabId) {
 				
 				if (tabId.equals("tab_tv")) {
-					mTvShowController.onCreate(TvShowLibraryActivity.this, (ListView)findViewById(R.id.movielist_list));
+					mTvShowController.onCreate(TvShowLibraryActivity.this, handler, (ListView)findViewById(R.id.movielist_list));
 				}
 				if (tabId.equals("tab_actors")) {
-					mActorController.onCreate(TvShowLibraryActivity.this, (ListView)findViewById(R.id.actorlist_list));
+					mActorController.onCreate(TvShowLibraryActivity.this, handler, (ListView)findViewById(R.id.actorlist_list));
 				}
 				if (tabId.equals("tab_genres")) {
-					mGenresController.onCreate(TvShowLibraryActivity.this, (ListView)findViewById(R.id.genrelist_list));
+					mGenresController.onCreate(TvShowLibraryActivity.this, handler, (ListView)findViewById(R.id.genrelist_list));
 				}
 				if (tabId.equals("tab_files")) {
-					mFileController.onCreate(TvShowLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
+					mFileController.onCreate(TvShowLibraryActivity.this, handler, (ListView)findViewById(R.id.filelist_list));
 				}
 			}
 		});

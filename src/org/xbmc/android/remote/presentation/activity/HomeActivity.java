@@ -93,7 +93,7 @@ public class HomeActivity extends Activity {
 		
 		final Button versionButton = (Button)findViewById(R.id.home_version_button);
 		final GridView menuGrid = (GridView)findViewById(R.id.HomeItemGridView);
-		mHomeController = new HomeController(this, menuGrid);
+		mHomeController = new HomeController(this, new Handler(), menuGrid);
 		mHomeController.setupVersionHandler(new Handler(), versionButton, menuGrid);
 		
 		mEventClientManager = ManagerFactory.getEventClientManager(mHomeController);

@@ -46,6 +46,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -114,7 +115,7 @@ public class AlbumListController extends ListController implements IController {
 		mGrid = grid;
 	}
 	
-	public void onCreate(Activity activity, AbsListView list) {
+	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
@@ -126,7 +127,7 @@ public class AlbumListController extends ListController implements IController {
 		mLoadCovers = sdError == null;
 
 		if (!isCreated()) {
-			super.onCreate(activity, list);
+			super.onCreate(activity, handler, list);
 
 			if (!mLoadCovers) {
 				Toast toast = Toast.makeText(activity, sdError + " Displaying place holders only.", Toast.LENGTH_LONG);

@@ -37,6 +37,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -86,7 +87,7 @@ public class NowPlayingActivity extends Activity {
         super.onCreate(savedInstanceState);
        	setContentView(R.layout.nowplaying);
        	
-       	mNowPlayingController = new NowPlayingController(this);
+       	mNowPlayingController = new NowPlayingController(this, new Handler());
         	
 		mSeekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
 		mArtistView = (TextView) findViewById(R.id.ArtistTextView);

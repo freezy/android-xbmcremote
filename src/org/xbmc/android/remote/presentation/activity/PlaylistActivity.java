@@ -35,6 +35,7 @@ import org.xbmc.eventclient.ButtonCodes;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -95,7 +96,7 @@ public class PlaylistActivity extends Activity {
 		mMusicPlaylistController = new MusicPlaylistController();
 		mMusicPlaylistController.findTitleView(findViewById(R.id.playlist_outer_layout));
 		mMusicPlaylistController.findMessageView(findViewById(R.id.playlist_outer_layout));
-		mMusicPlaylistController.onCreate(this, (ListView) findViewById(R.id.playlist_list));
+		mMusicPlaylistController.onCreate(this, new Handler(), (ListView) findViewById(R.id.playlist_list));
 
 		// setup buttons
 		mMusicPlaylistController.setupButtons(

@@ -37,6 +37,7 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -81,11 +82,12 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mTabHost.setCurrentTab(0);
 
 		// assign the gui logic to each tab
+		final Handler handler = new Handler();
 		mAlbumController = new AlbumListController();
 		mAlbumController.findTitleView(findViewById(R.id.albumlist_outer_layout));
 		mAlbumController.findMessageView(findViewById(R.id.albumlist_outer_layout));
 //		mAlbumController.setGrid((GridView)findViewById(R.id.albumlist_grid));
-		mAlbumController.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
+		mAlbumController.onCreate(this, handler, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
 
 		mFileController = new FileListController();
 		mFileController.findTitleView(findViewById(R.id.filelist_outer_layout));
@@ -103,24 +105,24 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mCompilationsController.findTitleView(findViewById(R.id.compilations_outer_layout));
 		mCompilationsController.findMessageView(findViewById(R.id.compilations_outer_layout));
 		mCompilationsController.setCompilationsOnly(true);
-
+		
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				
 				if (tabId.equals("tab_albums")) {
-					mAlbumController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.albumlist_list));
+					mAlbumController.onCreate(MusicLibraryActivity.this, handler, (ListView)findViewById(R.id.albumlist_list));
 				}
 				if (tabId.equals("tab_files")) {
-					mFileController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
+					mFileController.onCreate(MusicLibraryActivity.this, handler, (ListView)findViewById(R.id.filelist_list));
 				}
 				if (tabId.equals("tab_artists")) {
-					mArtistController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.artists_list));
+					mArtistController.onCreate(MusicLibraryActivity.this, handler, (ListView)findViewById(R.id.artists_list));
 				}
 				if (tabId.equals("tab_genres")) {
-					mGenreController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.genres_list));
+					mGenreController.onCreate(MusicLibraryActivity.this, handler, (ListView)findViewById(R.id.genres_list));
 				}
 				if (tabId.equals("tab_compilations")) {
-					mCompilationsController.onCreate(MusicLibraryActivity.this, (ListView)findViewById(R.id.compilations_list));
+					mCompilationsController.onCreate(MusicLibraryActivity.this, handler, (ListView)findViewById(R.id.compilations_list));
 				}
 			}
 		});

@@ -84,7 +84,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * Sets the handler used in the looping thread
 	 * @param handler
 	 */
-	void setHandler(Handler handler) {
+	public void setHandler(Handler handler) {
 		mHandler = handler;
 	}
 	
@@ -146,9 +146,11 @@ public abstract class AbstractManager implements INotifiableManager {
 	 */
 	public void onFinish(DataResponse<?> response) {
 		if (mController != null) {
+			//Log.i(TAG, "*** posting onFinish through controller");
 			mController.runOnUI(response);
 		}else{
-			mHandler.post(response);
+			Log.w(TAG, "*** ignoring onFinish, controller is null.");
+			//mHandler.post(response);
 		}
 	}
 	

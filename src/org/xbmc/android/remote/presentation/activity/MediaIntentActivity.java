@@ -26,6 +26,7 @@ import org.xbmc.android.remote.presentation.controller.MediaIntentController;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 
 /**
  * @author Team XBMC
@@ -42,7 +43,7 @@ public class MediaIntentActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
   	  	mConfigurationManager = ConfigurationManager.getInstance(this);
-		mMediaIntentController = new MediaIntentController(this);
+		mMediaIntentController = new MediaIntentController(this, new Handler());
 		mMediaIntentController.setupStatusHandler();
 	}
 	

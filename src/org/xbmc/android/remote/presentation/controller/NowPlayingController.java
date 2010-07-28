@@ -61,8 +61,8 @@ public class NowPlayingController extends AbstractController implements INotifia
 	private int mPlayListId = -1;
 	private int mLastPosition = -1;
 	
-	public NowPlayingController(NowPlayingActivity activity) {
-		super.onCreate(activity);
+	public NowPlayingController(NowPlayingActivity activity, Handler handler) {
+		super.onCreate(activity, handler);
 		mNowPlayingActivity = activity;
 		mControlManager = ManagerFactory.getControlManager(this);
 		mEventClientManager = ManagerFactory.getEventClientManager(this);

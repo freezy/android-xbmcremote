@@ -36,6 +36,7 @@ import org.xbmc.api.object.Artist;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -64,12 +65,12 @@ public class ActorListController extends ListController implements IController {
 		mType = type;
 	}
 	
-	public void onCreate(Activity activity, AbsListView list) {
+	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
 		mVideoManager = ManagerFactory.getVideoManager(this);
 		
 		if (!isCreated()) {
-			super.onCreate(activity, list);
+			super.onCreate(activity, handler, list);
 			final String sdError = ImportUtilities.assertSdCard();
 			mLoadCovers = sdError == null;
 			if (!mLoadCovers) {

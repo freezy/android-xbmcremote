@@ -47,6 +47,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -83,7 +84,7 @@ public class TvShowListController extends ListController implements IController 
 	
 	private boolean mLoadCovers = false;
 	
-	public void onCreate(Activity activity, AbsListView list) {
+	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
 		mTvManager = ManagerFactory.getTvManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
@@ -95,7 +96,7 @@ public class TvShowListController extends ListController implements IController 
 		mLoadCovers = sdError == null;
 		
 		if (!isCreated()) {
-			super.onCreate(activity, list);
+			super.onCreate(activity, handler, list);
 
 			if (!mLoadCovers) {
 				Toast toast = Toast.makeText(activity, sdError + " Displaying place holders only.", Toast.LENGTH_LONG);
@@ -217,7 +218,7 @@ public class TvShowListController extends ListController implements IController 
 				Intent browseActivity = new Intent(mActivity, GridActivity.class);
 				browseActivity.putExtra(ListController.EXTRA_TVSHOW, show);
 				browseActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new SeasonListController());
-				mActivity.startActivity(browseActivity);;
+				mActivity.startActivity(browseActivity);
 				break;
 			case ITEM_CONTEXT_INFO:
 				Intent nextActivity = new Intent(mActivity, TvShowDetailsActivity.class);

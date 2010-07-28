@@ -134,7 +134,7 @@ public class MovieDetailsActivity extends Activity {
 		private final Movie mMovie;
 		
 		MovieDetailsController(Activity activity, Movie movie) {
-			super.onCreate(activity);
+			super.onCreate(activity, new Handler());
 			mActivity = activity;
 			mMovie = movie;
 			mVideoManager = ManagerFactory.getVideoManager(this);

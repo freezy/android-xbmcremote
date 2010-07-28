@@ -87,7 +87,7 @@ public class MusicPlaylistController extends ListController implements IControll
 	
 	private static Bitmap sPlayingBitmap;
 	
-	public void onCreate(final PlaylistActivity activity, final AbsListView list) {
+	public void onCreate(final PlaylistActivity activity, Handler handler, final AbsListView list) {
 		
 		mPlaylistActivity = activity;
 		mMusicManager = ManagerFactory.getMusicManager(this);
@@ -96,7 +96,7 @@ public class MusicPlaylistController extends ListController implements IControll
 		mNowPlayingHandler = new Handler(this);
 		
 		if (!isCreated()) {
-			super.onCreate(activity, list);
+			super.onCreate(activity, handler, list);
 			
 			activity.registerForContextMenu(mList);
 			

@@ -34,6 +34,7 @@ import org.xbmc.api.object.Genre;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,12 +57,12 @@ public class MovieGenreListController extends ListController implements IControl
 		mType = type;
 	}
 	
-	public void onCreate(Activity activity, AbsListView list) {
+	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
 		mVideoManager = ManagerFactory.getVideoManager(this);
 		
 		if (!isCreated()) {
-			super.onCreate(activity, list);
+			super.onCreate(activity, handler, list);
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

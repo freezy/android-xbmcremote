@@ -134,7 +134,7 @@ public class EpisodeDetailsActivity extends Activity {
 		private final Episode mEpisode;
 		
 		EpisodeDetailsController(Activity activity, Episode episode) {
-			super.onCreate(activity);
+			super.onCreate(activity, new Handler());
 			mActivity = activity;
 			mEpisode = episode;
 			mShowManager = ManagerFactory.getTvManager(this);

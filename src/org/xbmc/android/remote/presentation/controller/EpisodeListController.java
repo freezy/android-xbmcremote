@@ -42,6 +42,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -77,7 +78,7 @@ public class EpisodeListController extends ListController implements IController
 	
 	private boolean mLoadCovers = false;
 	
-	public void onCreate(Activity activity, AbsListView list) {
+	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
 		mTvManager = ManagerFactory.getTvManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
@@ -86,7 +87,7 @@ public class EpisodeListController extends ListController implements IController
 		mLoadCovers = sdError == null;
 		
 		if (!isCreated()) {
-			super.onCreate(activity, list);
+			super.onCreate(activity, handler, list);
 
 			if (!mLoadCovers) {
 				Toast toast = Toast.makeText(activity, sdError + " Displaying place holders only.", Toast.LENGTH_LONG);

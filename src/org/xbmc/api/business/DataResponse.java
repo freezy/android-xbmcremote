@@ -22,6 +22,7 @@
 package org.xbmc.api.business;
 
 
+
 /**
  * Basically contains two things:
  * <ul>
@@ -35,7 +36,6 @@ package org.xbmc.api.business;
 public class DataResponse<T> implements Runnable, Cloneable {
 	public T value;
 	public int cacheType;
-	
 	public void run () {
 		// do nothing if not overloaded
 	}

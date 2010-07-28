@@ -120,8 +120,8 @@ public class HomeController extends AbstractController implements INotifiableCon
 	
 	private final GridView mMenuGrid;
     
-	public HomeController(Activity activity, GridView menuGrid) {
-		super.onCreate(activity);
+	public HomeController(Activity activity, Handler handler, GridView menuGrid) {
+		super.onCreate(activity, handler);
 		mInfoManager = ManagerFactory.getInfoManager(this);
 		mMenuGrid = menuGrid;
 		setupMenuItems(menuGrid);
@@ -454,7 +454,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 			mProgressDialog.setMax(covers.size());
 			boolean started = false;
 			final WifiLock lock;
-			if(HostFactory.host.wifi_only) {
+			if(HostFactory.host != null && HostFactory.host.wifi_only) {
 				lock = WifiHelper.getInstance(mActivity).getNewWifiLock("BatchDownloader");
 				lock.acquire();
 			} else
@@ -524,8 +524,9 @@ public class HomeController extends AbstractController implements INotifiableCon
 						mNumCoversDownloaded++;
 					}
 					if (DEBUG) Log.i(TAG, "Cover Downloaded, sending new (empty) message to progress thread.");
-					if (progressThread.isAlive()) {
-						progressThread.getHandlerIn().sendEmptyMessage(ProgressThread.MSG_NEXT);
+					final Handler handlerIn = progressThread.getHandlerIn();
+					if (progressThread.isAlive() && handlerIn != null) {
+						handlerIn.sendEmptyMessage(ProgressThread.MSG_NEXT);
 					} else {
 						if (DEBUG) Log.i(TAG, "Thread dead, exiting.");
 						return;

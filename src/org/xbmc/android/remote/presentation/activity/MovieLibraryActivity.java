@@ -38,6 +38,7 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -72,6 +73,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		topFrame.setForeground(null);
 		
 		mTabHost = getTabHost();
+		final Handler handler = new Handler();
 		
 		// add the tabs
 		mTabHost.addTab(mTabHost.newTabSpec("tab_movies", "Movies", R.drawable.st_movie_on, R.drawable.st_movie_off).setBigIcon(R.drawable.st_movie_over).setContent(R.id.movielist_outer_layout));
@@ -84,7 +86,7 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		mMovieController = new MovieListController();
 		mMovieController.findTitleView(findViewById(R.id.movielist_outer_layout));
 		mMovieController.findMessageView(findViewById(R.id.movielist_outer_layout));
-		mMovieController.onCreate(this, (ListView)findViewById(R.id.movielist_list)); // first tab can be updated now.
+		mMovieController.onCreate(this, handler, (ListView)findViewById(R.id.movielist_list)); // first tab can be updated now.
 
 		mActorController = new ActorListController(ActorListController.TYPE_MOVIE);
 		mActorController.findTitleView(findViewById(R.id.actorlist_outer_layout));
@@ -102,16 +104,16 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 			public void onTabChanged(String tabId) {
 				
 				if (tabId.equals("tab_movies")) {
-					mMovieController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.movielist_list));
+					mMovieController.onCreate(MovieLibraryActivity.this, handler, (ListView)findViewById(R.id.movielist_list));
 				}
 				if (tabId.equals("tab_actors")) {
-					mActorController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.actorlist_list));
+					mActorController.onCreate(MovieLibraryActivity.this, handler, (ListView)findViewById(R.id.actorlist_list));
 				}
 				if (tabId.equals("tab_genres")) {
-					mGenresController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.genrelist_list));
+					mGenresController.onCreate(MovieLibraryActivity.this, handler, (ListView)findViewById(R.id.genrelist_list));
 				}
 				if (tabId.equals("tab_files")) {
-					mFileController.onCreate(MovieLibraryActivity.this, (ListView)findViewById(R.id.filelist_list));
+					mFileController.onCreate(MovieLibraryActivity.this, handler, (ListView)findViewById(R.id.filelist_list));
 				}
 			}
 		});

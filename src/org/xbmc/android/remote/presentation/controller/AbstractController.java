@@ -46,6 +46,7 @@ import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.net.wifi.WifiManager;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -60,14 +61,16 @@ public abstract class AbstractController {
 	public static final String TAG = "AbstractController";
 
 	protected Activity mActivity;
+	protected Handler mHandler;
 	
 	private boolean mDialogShowing = false;
 	protected boolean mPaused = true;
 	
 	private Thread mWaitForWifi;
 	
-	public void onCreate(Activity activity) {
+	public void onCreate(Activity activity, Handler handler) {
 		mActivity = activity;
+		mHandler = handler;
 		HostFactory.readHost(activity.getApplicationContext());
 		ClientFactory.resetClient(HostFactory.host);
 	}
@@ -300,7 +303,9 @@ public abstract class AbstractController {
 
 	public void runOnUI(Runnable action) {
 		if (mActivity != null) {
-			mActivity.runOnUiThread(action);
+			//Log.i(TAG, "### running on UI at " + mActivity.getClass().getSimpleName());
+			mHandler.post(action);
+			//mActivity.runOnUiThread(action);
 		}
 	}
 	

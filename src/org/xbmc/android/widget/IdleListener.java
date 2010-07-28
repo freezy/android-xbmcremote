@@ -39,11 +39,15 @@ public class IdleListener implements OnListIdleListener {
 		// try to garbage collect before and after idling.
 		System.gc();
 		for (int i = 0; i < n; i++) {
-			final AbstractItemView itemView = (AbstractItemView)list.getChildAt(i);
-			if (!itemView.hasBitmap()) {
-				ICoverArt cover = (ICoverArt)mList.getAdapter().getItem(itemView.getPosition());
-				Log.i(TAG, "Cover: " + cover + " (" + ThumbSize.getDir(mThumbSize) + ")");
-				itemView.getResponse().load(cover, mThumbSize, false);
+			try {
+				final AbstractItemView itemView = (AbstractItemView)list.getChildAt(i);
+				if (!itemView.hasBitmap()) {
+					ICoverArt cover = (ICoverArt)mList.getAdapter().getItem(itemView.getPosition());
+					Log.i(TAG, "Cover: " + cover + " (" + ThumbSize.getDir(mThumbSize) + ")");
+					itemView.getResponse().load(cover, mThumbSize, false);
+				}
+			} catch (ClassCastException e) {
+				Log.e(TAG, "Cannot cast view at index " + i + " to AbstractItemView, class is " + list.getChildAt(i).getClass().getSimpleName() + ".");
 			}
 		}
 		System.gc();

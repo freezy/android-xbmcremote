@@ -36,6 +36,7 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -73,10 +74,11 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 		mTabHost.addTab(mTabHost.newTabSpec("genretab_songs", "Songs", R.drawable.st_song_on, R.drawable.st_song_off).setBigIcon(R.drawable.st_song_over).setContent(R.id.songlist_outer_layout));
 		mTabHost.setCurrentTab(0);
 		
+		final Handler handler = new Handler();
 		mArtistController = new ArtistListController();
 		mArtistController.findTitleView(findViewById(R.id.artistlist_outer_layout));
 		mArtistController.findMessageView(findViewById(R.id.artistlist_outer_layout));
-		mArtistController.onCreate(this, (ListView)findViewById(R.id.artistlist_list)); // first tab can be updated now.
+		mArtistController.onCreate(this, handler, (ListView)findViewById(R.id.artistlist_list)); // first tab can be updated now.
 
 		mAlbumController = new AlbumListController();
 		mAlbumController.findTitleView(findViewById(R.id.albumlist_outer_layout));
@@ -89,13 +91,13 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				if (tabId.equals("genretab_artists")) {
-					mArtistController.onCreate(MusicGenreActivity.this, (ListView)findViewById(R.id.artistlist_list));
+					mArtistController.onCreate(MusicGenreActivity.this, handler, (ListView)findViewById(R.id.artistlist_list));
 				}
 				if (tabId.equals("genretab_albums")) {
-					mAlbumController.onCreate(MusicGenreActivity.this, (ListView)findViewById(R.id.albumlist_list));
+					mAlbumController.onCreate(MusicGenreActivity.this, handler, (ListView)findViewById(R.id.albumlist_list));
 				}
 				if (tabId.equals("genretab_songs")) {
-					mSongController.onCreate(MusicGenreActivity.this, (ListView)findViewById(R.id.songlist_list));
+					mSongController.onCreate(MusicGenreActivity.this, handler, (ListView)findViewById(R.id.songlist_list));
 				}
 			}
 		});

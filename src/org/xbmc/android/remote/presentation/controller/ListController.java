@@ -35,6 +35,7 @@ import org.xbmc.api.type.ThumbSize;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -72,8 +73,8 @@ public abstract class ListController extends AbstractController implements Seria
 	protected static Bitmap mFallbackBitmap;
 	protected IdleListDetector mPostScrollLoader;
 
-	public void onCreate(Activity activity, AbsListView list) {
-		super.onCreate(activity);
+	public void onCreate(Activity activity, Handler handler, AbsListView list) {
+		super.onCreate(activity, handler);
 		mList = list;
 		mActivity = activity;
 		isCreated = true;
@@ -115,9 +116,13 @@ public abstract class ListController extends AbstractController implements Seria
 		mMessageGroup.setVisibility(View.GONE);
 	}
 	
-	protected void setTitle(String title) {
+	protected void setTitle(final String title) {
 		if (mTitleView != null) {
-			mTitleView.setText(title);
+			mHandler.post(new Runnable() {
+				public void run() {
+					mTitleView.setText(title);
+				}
+			});
 		}
 	}
 	
@@ -125,18 +130,26 @@ public abstract class ListController extends AbstractController implements Seria
 		return isCreated;
 	}
 	
-	protected void setNoDataMessage(String message, int imageResource) {
+	protected void setNoDataMessage(final String message, final int imageResource) {
 		if (mMessageGroup != null) {
-			mMessageText.setText(message);
-			mMessageText.setCompoundDrawablesWithIntrinsicBounds(imageResource, 0, 0, 0);
-			mList.setAdapter(null);
-			mMessageGroup.setVisibility(View.VISIBLE);
+			mHandler.post(new Runnable() {
+				public void run() {
+					mMessageText.setText(message);
+					mMessageText.setCompoundDrawablesWithIntrinsicBounds(imageResource, 0, 0, 0);
+					mList.setAdapter(null);
+					mMessageGroup.setVisibility(View.VISIBLE);
+				}
+			});
 		}
 	}
 	
 	protected void showOnLoading() {
-		mList.setAdapter(new LoadingAdapter(mActivity));
-		mList.setVisibility(View.VISIBLE);
+		mHandler.post(new Runnable() {
+			public void run() {
+				mList.setAdapter(new LoadingAdapter(mActivity));
+				mList.setVisibility(View.VISIBLE);
+			}
+		});
 	}
 	
 	protected class QueryResponse extends DataResponse<Boolean> {

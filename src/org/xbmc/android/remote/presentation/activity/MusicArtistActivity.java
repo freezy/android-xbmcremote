@@ -35,6 +35,7 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -70,10 +71,11 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 		mTabHost.addTab(mTabHost.newTabSpec("musictab2", "Songs", R.drawable.st_song_on, R.drawable.st_song_off).setBigIcon(R.drawable.st_song_over).setContent(R.id.songlist_outer_layout));
 		mTabHost.setCurrentTab(0);
 		
+		final Handler handler = new Handler();
 		mAlbumController = new AlbumListController();
 		mAlbumController.findTitleView(findViewById(R.id.albumlist_outer_layout));
 		mAlbumController.findMessageView(findViewById(R.id.albumlist_outer_layout));
-		mAlbumController.onCreate(this, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
+		mAlbumController.onCreate(this, handler, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
 
 		mSongController = new SongListController();
 		mSongController.findTitleView(findViewById(R.id.songlist_outer_layout));
@@ -82,10 +84,10 @@ public class MusicArtistActivity extends SlidingTabActivity  {
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				if (tabId.equals("musictab1")) {
-					mAlbumController.onCreate(MusicArtistActivity.this, (ListView)findViewById(R.id.albumlist_list));
+					mAlbumController.onCreate(MusicArtistActivity.this, handler, (ListView)findViewById(R.id.albumlist_list));
 				}
 				if (tabId.equals("musictab2")) {
-					mSongController.onCreate(MusicArtistActivity.this, (ListView)findViewById(R.id.songlist_list));
+					mSongController.onCreate(MusicArtistActivity.this, handler, (ListView)findViewById(R.id.songlist_list));
 				}
 			}
 		});

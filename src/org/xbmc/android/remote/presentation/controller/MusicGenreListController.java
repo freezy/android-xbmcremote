@@ -35,6 +35,7 @@ import org.xbmc.api.object.Genre;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,12 +54,12 @@ public class MusicGenreListController extends ListController implements IControl
 	
 	private IMusicManager mMusicManager;
 	
-	public void onCreate(Activity activity, AbsListView list) {
+	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		
 		if (!isCreated()) {
-			super.onCreate(activity, list);
+			super.onCreate(activity, handler, list);
 			
 			mActivity.registerForContextMenu(mList);
 			mList.setOnItemClickListener(new OnItemClickListener() {

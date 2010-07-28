@@ -35,6 +35,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Handler;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
@@ -50,9 +51,9 @@ public class SettingsController extends AbstractController implements INotifiabl
 	private PreferenceActivity mPreferenceActivity;		
 	private final Hashtable<String, String> mSummaries = new Hashtable<String, String>();
 	
-	public SettingsController(PreferenceActivity activity) {
+	public SettingsController(PreferenceActivity activity, Handler handler) {
 		mPreferenceActivity = activity;
-		super.onCreate(activity);
+		super.onCreate(activity, handler);
 	}
 	
 	/**

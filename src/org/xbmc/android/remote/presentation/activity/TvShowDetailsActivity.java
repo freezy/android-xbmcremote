@@ -46,6 +46,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -131,7 +132,7 @@ public class TvShowDetailsActivity extends Activity {
 		private final TvShow mShow;
 		
 		TvShowDetailsController(Activity activity, TvShow show) {
-			super.onCreate(activity);
+			super.onCreate(activity, new Handler());
 			mActivity = activity;
 			mShow = show;
 			mShowManager = ManagerFactory.getTvManager(this);

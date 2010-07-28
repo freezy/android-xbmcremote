@@ -29,6 +29,7 @@ import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -49,7 +50,7 @@ public class HostSettingsActivity extends PreferenceActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setTitle("XBMC Hosts");
-		mSettingsController = new SettingsController(this);
+		mSettingsController = new SettingsController(this, new Handler());
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		setPreferenceScreen(mSettingsController.createHostsPreferences(getPreferenceManager().createPreferenceScreen(this), this));
 	}

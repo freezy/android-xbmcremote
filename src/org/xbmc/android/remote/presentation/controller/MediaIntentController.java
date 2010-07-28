@@ -39,6 +39,7 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
@@ -54,8 +55,8 @@ public class MediaIntentController extends AbstractController implements IContro
 	private IInfoManager mInfoManager;
 	private DataResponse<String> mXbmcStatusHandler;
 	
-	public MediaIntentController(Activity activity) {
-		super.onCreate(activity);
+	public MediaIntentController(Activity activity, Handler handler) {
+		super.onCreate(activity, handler);
 		mInfoManager = ManagerFactory.getInfoManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
 	}

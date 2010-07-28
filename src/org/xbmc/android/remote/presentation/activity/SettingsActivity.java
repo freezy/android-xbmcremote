@@ -30,6 +30,7 @@ import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.view.KeyEvent;
@@ -58,7 +59,7 @@ public class SettingsActivity extends PreferenceActivity {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
 		
-		mSettingsController = new SettingsController(this);
+		mSettingsController = new SettingsController(this, new Handler());
 		mSettingsController.registerOnSharedPreferenceChangeListener(this);
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		final int jumpTo = getIntent().getIntExtra(JUMP_TO, 0);
