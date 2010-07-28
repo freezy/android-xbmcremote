@@ -72,4 +72,26 @@
 			android:entryValues="@array/KeyguardPreferenceValues"
 			android:defaultValue="0" />
 	</PreferenceCategory>
+	<PreferenceCategory android:title="Remote Keypress">
+		<CheckBoxPreference
+			android:key="setting_send_repeats"
+			android:title="Explicitly Send Repeats"
+			android:summary="Explicitly send repeating key presses to host."
+			android:enabled="true" 
+			android:defaultValue="false" />		
+		<CheckBoxPreference
+			android:key="setting_send_single_click"
+			android:title="Send Single Keypress"
+			android:summary="Send only a single keypress to host."
+			android:dependency="setting_send_repeats"						
+			android:defaultValue="false" />			
+        <EditTextPreference
+            android:key="setting_repeat_rate"
+            android:title="Keypress Repeat Rate"
+            android:summary="In milliseconds, specify often repeats should be sent."
+            android:dialogTitle="Repeat Rate (MS)"
+            android:numeric="integer"
+            android:dependency="setting_send_repeats"			 
+			android:defaultValue="250" />
+	</PreferenceCategory>
 </PreferenceScreen>

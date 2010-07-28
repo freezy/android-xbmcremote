@@ -1,6 +1,8 @@
 package org.xbmc.android.remote.presentation.controller;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
@@ -47,8 +49,12 @@ public class RemoteController extends AbstractController implements INotifiableC
 	private final Vibrator mVibrator;
 	private final boolean mDoVibrate;
 	
+	private Timer tmrKeyPress;
+	
+	final SharedPreferences prefs;
+	
 	public RemoteController(Context context) {
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
 		mControl = ManagerFactory.getControlManager(this);
 		mEventClientManager = ManagerFactory.getEventClientManager(this);
@@ -208,15 +214,52 @@ public class RemoteController extends AbstractController implements INotifiableC
 					if (mDoVibrate) {
 						mVibrator.vibrate(VIBRATION_LENGTH);
 					}
-					mEventClientManager.sendButton("R1", mAction, true, true, true, (short)0, (byte)0);
+					mEventClientManager.sendButton("R1", mAction, !prefs.getBoolean("setting_send_repeats", false), true, true, (short)0, (byte)0);									
+					
+					if (prefs.getBoolean("setting_send_repeats", false) && !prefs.getBoolean("setting_send_single_click", false)) {
+															
+						if (tmrKeyPress != null) {
+							tmrKeyPress.cancel();						
+						}
+						
+						int RepeatDelay = Integer.parseInt(prefs.getString("setting_repeat_rate", "250"));
+						
+						tmrKeyPress = new Timer();
+						tmrKeyPress.schedule(new KeyPressTask(mAction), RepeatDelay, RepeatDelay);					
+					}
+					
+					
 				} else if (event.getAction() == MotionEvent.ACTION_UP) {
 					v.playSoundEffect(AudioManager.FX_KEY_CLICK);
 					mEventClientManager.sendButton("R1", mAction, false, false, true, (short)0, (byte)0);
+					
+					if (tmrKeyPress != null) {
+						tmrKeyPress.cancel();						
+					}					
 				}
 			} catch (IOException e) {
 				return false;
 			}
 			return false;
+		}			
+	}
+	
+	private class KeyPressTask extends TimerTask {
+		
+		private String mKeyPressAction = "";
+		
+		public KeyPressTask(String mAction) {
+			mKeyPressAction = mAction;
+		}
+
+		public void run() {
+			try {
+				if (mKeyPressAction.length() > 0){
+					mEventClientManager.sendButton("R1", mKeyPressAction, false, true, true, (short)0, (byte)0);
+				}				
+			} catch (IOException e) {
+				return;
+			}
 		}
 	}
 	
