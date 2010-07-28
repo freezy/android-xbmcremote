@@ -17,6 +17,7 @@ import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
 import org.xbmc.api.type.MediaType;
+import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.Connection;
 
 import android.graphics.Bitmap;
@@ -72,7 +73,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		super(connection);
 	}
 	
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager) {
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		
 		// don't fetch summary for list view
@@ -93,8 +94,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("     GROUP BY tvshow.idShow");
 		sb.append("  )");
 		sb.append("  counts ON tvshow.idShow = counts.idShow");
-		sb.append(" ORDER BY upper(tvshow.c00), tvshow.c00");
-		//sb.append(showsOrderBy(sortBy, sortOrder));
+		sb.append(showsOrderBy(sortBy, sortOrder));
 		Log.i(TAG, sb.toString());
 				
 				
@@ -134,7 +134,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @param actor
 	 * @return
 	 */
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Actor actor) {
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Actor actor, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14, ");
 		sb.append("    path.strPath AS strPath,");
@@ -156,6 +156,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("  WHERE tvshow.idShow IN (Select idShow from actorlinktvshow where idActor = ");
 		sb.append(actor.id);
 		sb.append(" )");
+		sb.append(showsOrderBy(sortBy, sortOrder));
 		Log.i(TAG, sb.toString());
 		return parseShows(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
@@ -164,7 +165,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * Gets all tv shows for the specified genre
 	 * 
 	 */
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre) {
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14, ");
 		sb.append("    path.strPath AS strPath,");
@@ -186,6 +187,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("  WHERE tvshow.idShow in (Select idShow from genrelinktvshow where idgenre = ");
 		sb.append(genre.id);
 		sb.append(") ");
+		sb.append(showsOrderBy(sortBy, sortOrder));
 		Log.i(TAG, sb.toString());
 		return parseShows(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
@@ -212,8 +214,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @param show
 	 * @return
 	 */
-	public ArrayList<Season> getSeasons(INotifiableManager manager) {
-		ArrayList<TvShow> shows = getTvShows(manager);
+	public ArrayList<Season> getSeasons(INotifiableManager manager, int sortBy, String sortOrder) {
+		ArrayList<TvShow> shows = getTvShows(manager, sortBy, sortOrder);
 		HashMap<Integer, TvShow> showMap = new HashMap<Integer, TvShow>();
 		for (TvShow tvShow : shows) {
 			showMap.put(tvShow.id, tvShow);
@@ -281,6 +283,13 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append(show.id);
 		show = parseTvShowDetails(mConnection.query("QueryVideoDatabase", sb.toString(), manager), show);
 		//parse actors of the show
+		sb = new StringBuilder();
+		sb.append("SELECT actors.idActor, strActor, strRole");
+		sb.append(" FROM actors, actorlinktvshow");
+		sb.append(" WHERE actors.idActor = actorlinktvshow.idActor");
+		sb.append(" AND actorlinktvshow.idShow =");
+		sb.append(show.getId());
+		show.actors = VideoClient.parseActorRoles(mConnection.query("QueryVideoDatabase", sb.toString(), manager));		
 		return show;
 	}
 	
@@ -516,17 +525,17 @@ public class TvShowClient extends Client implements ITvShowClient {
 		return shows;
 	}
 	
-/*	private String showsOrderBy(int sortBy, String sortOrder) {
+	private String showsOrderBy(int sortBy, String sortOrder) {
 		switch (sortBy) {
 			default:
 			case SortType.TITLE:
 				return " ORDER BY lower(c00) " + sortOrder;
-//			case SortType.YEAR:
-//				return " ORDER BY c07 " + sortOrder + ", lower(c00) " + sortOrder;
+			case SortType.YEAR:
+				return " ORDER BY strftime('%Y', c05) " + sortOrder + ", lower(c00) " + sortOrder;
 			case SortType.RATING:
-				return " ORDER BY c04" + sortOrder;
+				return " ORDER BY c04 " + sortOrder;
 		}
-	}*/
+	}
 
 	/**
 	 * Updates host info on the connection.

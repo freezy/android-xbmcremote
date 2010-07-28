@@ -406,7 +406,7 @@ public class VideoClient extends Client implements IVideoClient {
 			case SortType.YEAR:
 				return " ORDER BY c07 " + sortOrder + ", lower(c00) " + sortOrder;
 			case SortType.RATING:
-				return " ORDER BY c05" + sortOrder;
+				return " ORDER BY c05 " + sortOrder;
 		}
 	}
 	

@@ -38,6 +38,8 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -58,6 +60,8 @@ public class NowPlayingActivity extends Activity {
 	private NowPlayingController mNowPlayingController;
 	private KeyTracker mKeyTracker;
 	
+	private static final int MENU_REMOTE = 303;
+	
 	public NowPlayingActivity() {
 		mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
 
@@ -76,8 +80,7 @@ public class NowPlayingActivity extends Activity {
 		}
 		
 	});
-	}
-	
+	}	
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,6 +148,26 @@ public class NowPlayingActivity extends Activity {
 		mCounterLeftView.setText("");
 		mCounterRightView.setText("");
 		mPlayPauseView.setBackgroundResource(R.drawable.now_playing_play);
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();		
+		menu.add(0, MENU_REMOTE, 0, "Remote control").setIcon(R.drawable.menu_remote);
+		return super.onPrepareOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		switch (item.getItemId()) {
+			case MENU_REMOTE:
+				final Intent intent = new Intent(this, RemoteActivity.class);
+				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override

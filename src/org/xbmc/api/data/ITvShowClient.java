@@ -14,10 +14,17 @@ import android.graphics.Bitmap;
 
 public interface ITvShowClient extends IClient {
 
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager);
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, int sortBy, String sortOrder);
 	public ArrayList<Actor> getTvShowActors(INotifiableManager manager) ;
 	public ArrayList<Genre> getTvShowGenres(INotifiableManager manager);
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre);
+	
+	/**
+	 * Gets all tv shows with the specified genre
+	 * @param manager
+	 * @param genre
+	 * @return
+	 */
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre, int sortBy, String sortOrder);
 	
 	/**
 	 * Gets all tv shows with the specified actor
@@ -25,7 +32,7 @@ public interface ITvShowClient extends IClient {
 	 * @param actor
 	 * @return
 	 */
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Actor actor);
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Actor actor, int sortBy, String sortOrder);
 	
 	/**
 	 * Gets all Episodes for the specified show
@@ -65,7 +72,7 @@ public interface ITvShowClient extends IClient {
 	 * @param manager
 	 * @return
 	 */
-	public ArrayList<Season> getSeasons(INotifiableManager manager);
+	public ArrayList<Season> getSeasons(INotifiableManager manager, int sortBy, String sortOrder);
 	
 	/**
 	 * Returns a cover as bitmap

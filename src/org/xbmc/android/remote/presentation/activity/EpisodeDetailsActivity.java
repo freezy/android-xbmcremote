@@ -28,7 +28,7 @@ import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.AbstractController;
 import org.xbmc.android.remote.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.controller.ListController;
-import org.xbmc.android.remote.presentation.controller.MovieListController;
+import org.xbmc.android.remote.presentation.controller.TvShowListController;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
@@ -64,7 +64,7 @@ public class EpisodeDetailsActivity extends Activity {
 	private static final String NO_DATA = "-";
 	
     private ConfigurationManager mConfigurationManager;
-    private EpisodeDetailsController mMovieDetailsController;
+    private EpisodeDetailsController mEpisodeDetailsController;
 
 	private KeyTracker mKeyTracker;
     
@@ -100,7 +100,7 @@ public class EpisodeDetailsActivity extends Activity {
 		topFrame.setForeground(null);
 		
 		final Episode episode = (Episode)getIntent().getSerializableExtra(ListController.EXTRA_EPISODE);
-		mMovieDetailsController = new EpisodeDetailsController(this, episode);
+		mEpisodeDetailsController = new EpisodeDetailsController(this, episode);
 		
 		((TextView)findViewById(R.id.titlebar_text)).setText(episode.getName());
 		
@@ -114,9 +114,9 @@ public class EpisodeDetailsActivity extends Activity {
 		((FrameLayout)findViewById(R.id.moviedetails_layout_poster)).setVisibility(View.GONE);
 		((TextView)findViewById(R.id.moviedetails_rating)).setText(String.valueOf(episode.rating));
 		
-		mMovieDetailsController.setupPlayButton((Button)findViewById(R.id.moviedetails_playbutton));
-		mMovieDetailsController.loadCover(new Handler(), (ImageView)findViewById(R.id.moviedetails_thumb));
-		mMovieDetailsController.updateEpisodeDetails(
+		mEpisodeDetailsController.setupPlayButton((Button)findViewById(R.id.moviedetails_playbutton));
+		mEpisodeDetailsController.loadCover(new Handler(), (ImageView)findViewById(R.id.moviedetails_thumb));
+		mEpisodeDetailsController.updateEpisodeDetails(
 				(TextView)findViewById(R.id.moviedetails_rating_numvotes),
 				(TextView)findViewById(R.id.moviedetails_studio),
 				(TextView)findViewById(R.id.moviedetails_plot),
@@ -205,7 +205,7 @@ public class EpisodeDetailsActivity extends Activity {
 									Intent nextActivity;
 									Actor actor = (Actor)v.getTag();
 									nextActivity = new Intent(view.getContext(), AbsListActivity.class);
-									nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new MovieListController());
+									nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new TvShowListController());
 									nextActivity.putExtra(ListController.EXTRA_ACTOR, actor);
 									mActivity.startActivity(nextActivity);
 								}
@@ -233,14 +233,14 @@ public class EpisodeDetailsActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mMovieDetailsController.onActivityResume(this);
+		mEpisodeDetailsController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mMovieDetailsController.onActivityPause();
+		mEpisodeDetailsController.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}
 	
@@ -252,7 +252,7 @@ public class EpisodeDetailsActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(mMovieDetailsController);
+		IEventClientManager client = ManagerFactory.getEventClientManager(mEpisodeDetailsController);
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

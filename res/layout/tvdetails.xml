@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent"
+	android:orientation="vertical" >
+	<include layout="@layout/titlebar" />
+	<ScrollView 
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:scrollbars="none">
+		<LinearLayout 
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+			<ImageView 
+				android:id="@+id/tvdetails_thumb" 
+				android:layout_height="wrap_content"
+				android:layout_width="fill_parent"
+				android:scaleType="centerInside"
+				android:padding="0dip" />
+			<LinearLayout
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				android:layout_marginTop="-5dip"
+				android:orientation="horizontal" 
+				android:gravity="center_horizontal">
+				<ImageView 
+					android:id="@+id/tvdetails_rating_stars" 
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:src="@drawable/stars_0"
+					android:padding="0dip" />
+				<TextView 
+					android:id="@+id/tvdetails_rating" 
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content"
+					android:textSize="18dip"
+					android:textStyle="bold" 
+					android:paddingTop="6dip"
+					android:paddingLeft="4dip" />			
+			</LinearLayout>
+			<LinearLayout
+				android:id="@+id/tvdetails_datalayout" 
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:padding="20dip">
+				<!-- EPISODES -->
+				<TextView android:text="EPISODES" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/tvdetails_episodes" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- FIRST AIRED -->
+				<TextView android:text="FIRST AIRED" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/tvdetails_first_aired" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- GENRE -->
+				<TextView android:text="GENRE" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/tvdetails_genre" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- STUDIO -->
+				<TextView android:text="STUDIO" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/tvdetails_studio" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- PARENTAL RATING -->
+				<TextView android:text="PARENTAL RATING" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/tvdetails_parental" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- PLOT -->
+				<TextView android:text="SUMMARY" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/tvdetails_plot" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- CAST -->
+				<TextView android:text="CAST" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+			</LinearLayout>
+			<LinearLayout
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:padding="20dip"
+				android:gravity="center_horizontal">
+				<Button 
+					android:text="Play TV Show" 
+					android:id="@+id/tvdetails_playbutton" 
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content"
+					android:padding="7dip" />
+				<Button 
+					android:text="Play Trailer" 
+					android:id="@+id/tvdetails_trailerbutton" 
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content"
+					android:enabled="false" 
+					android:padding="7dip"/>
+			</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

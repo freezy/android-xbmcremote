@@ -69,4 +69,9 @@ public interface ITvShowManager extends IManager{
 	 * @param show
 	 */
 	public void updateTvShowDetails(DataResponse<TvShow> response, TvShow show, Context context);
+	
+	/**
+	 * Put in here everything that has to be cleaned up after leaving an activity.
+	 */
+	public void postActivity();
 }

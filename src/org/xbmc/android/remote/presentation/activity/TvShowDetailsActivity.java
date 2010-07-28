@@ -28,7 +28,7 @@ import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.AbstractController;
 import org.xbmc.android.remote.presentation.controller.IController;
 import org.xbmc.android.remote.presentation.controller.ListController;
-import org.xbmc.android.remote.presentation.controller.MovieListController;
+import org.xbmc.android.remote.presentation.controller.TvShowListController;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
@@ -63,7 +63,7 @@ public class TvShowDetailsActivity extends Activity {
 	private static final String NO_DATA = "-";
 	
     private ConfigurationManager mConfigurationManager;
-    private TvShowDetailsController mMovieDetailsController;
+    private TvShowDetailsController mTvShowDetailsController;
 
 	private KeyTracker mKeyTracker;
     
@@ -92,35 +92,34 @@ public class TvShowDetailsActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.moviedetails);
+		setContentView(R.layout.tvdetails);
 		
 		// remove nasty top fading edge
 		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
 		topFrame.setForeground(null);
 		
 		final TvShow show = (TvShow)getIntent().getSerializableExtra(ListController.EXTRA_TVSHOW);
-		mMovieDetailsController = new TvShowDetailsController(this, show);
+		mTvShowDetailsController = new TvShowDetailsController(this, show);
 		
 		((TextView)findViewById(R.id.titlebar_text)).setText(show.getName());
 		
 		Log.i("EpisodeDetailsActivity", "rating = " + show.rating + ", index = " + ((int)Math.round(show.rating % 10)) + ".");
 		if (show.rating > -1) {
-			((ImageView)findViewById(R.id.moviedetails_rating_stars)).setImageResource(sStarImages[(int)Math.round(show.rating % 10)]);
+			((ImageView)findViewById(R.id.tvdetails_rating_stars)).setImageResource(sStarImages[(int)Math.round(show.rating % 10)]);
 		}
-		((TextView)findViewById(R.id.moviedetails_genre)).setText(show.genre);
-		((TextView)findViewById(R.id.moviedetails_runtime)).setVisibility(View.GONE);//setText(episode.runtime);
-		((FrameLayout)findViewById(R.id.moviedetails_layout_poster)).setVisibility(View.GONE);
-		((TextView)findViewById(R.id.moviedetails_rating)).setText(String.valueOf(show.rating));
+		((TextView)findViewById(R.id.tvdetails_first_aired)).setText(show.firstAired);
+		((TextView)findViewById(R.id.tvdetails_genre)).setText(show.genre);
+		((TextView)findViewById(R.id.tvdetails_rating)).setText(String.valueOf(show.rating));
 		
-		mMovieDetailsController.setupPlayButton((Button)findViewById(R.id.moviedetails_playbutton));
-		mMovieDetailsController.loadCover((ImageView)findViewById(R.id.moviedetails_thumb));
-		mMovieDetailsController.updateEpisodeDetails(
-				(TextView)findViewById(R.id.moviedetails_rating_numvotes),
-				(TextView)findViewById(R.id.moviedetails_studio),
-				(TextView)findViewById(R.id.moviedetails_plot),
-				(TextView)findViewById(R.id.moviedetails_parental),
-				(Button)findViewById(R.id.moviedetails_trailerbutton),
-				(LinearLayout)findViewById(R.id.moviedetails_datalayout));
+		mTvShowDetailsController.setupPlayButton((Button)findViewById(R.id.tvdetails_playbutton));
+		mTvShowDetailsController.loadCover((ImageView)findViewById(R.id.tvdetails_thumb));
+		mTvShowDetailsController.updateTvShowDetails(
+				(TextView)findViewById(R.id.tvdetails_episodes),
+				(TextView)findViewById(R.id.tvdetails_studio),
+				(TextView)findViewById(R.id.tvdetails_parental),
+				(TextView)findViewById(R.id.tvdetails_plot),
+				(Button)findViewById(R.id.tvdetails_trailerbutton),
+				(LinearLayout)findViewById(R.id.tvdetails_datalayout));
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 	}
@@ -156,11 +155,11 @@ public class TvShowDetailsActivity extends Activity {
 			}, mShow, ThumbSize.BIG, null, mActivity.getApplicationContext(), false);
 		}
 		
-		public void updateEpisodeDetails(final TextView numVotesView, final TextView studioView, final TextView plotView, final TextView parentalView, final Button trailerButton, final LinearLayout dataLayout) {
+		public void updateTvShowDetails(final TextView episodesVew, final TextView studioView, final TextView parentalView, final TextView plotView, final Button trailerButton, final LinearLayout dataLayout) {
 			mShowManager.updateTvShowDetails(new DataResponse<TvShow>() {
 				public void run() {
 					final TvShow show = value;
-					numVotesView.setVisibility(View.GONE);
+					episodesVew.setText(show.numEpisodes + " (" + show.watchedEpisodes + " Watched - " + (show.numEpisodes - show.watchedEpisodes) + " Unwatched)");
 					studioView.setText(show.network);
 					parentalView.setText(show.contentRating.equals("") ? NO_DATA : show.contentRating);
 					plotView.setText(show.summary.equals("") ? NO_DATA : show.summary);
@@ -188,8 +187,8 @@ public class TvShowDetailsActivity extends Activity {
 								public void onClick(View v) {
 									Intent nextActivity;
 									Actor actor = (Actor)v.getTag();
-									nextActivity = new Intent(view.getContext(), AbsListActivity.class);
-									nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new MovieListController());
+									nextActivity = new Intent(view.getContext(), ListActivity.class);
+									nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new TvShowListController());
 									nextActivity.putExtra(ListController.EXTRA_ACTOR, actor);
 									mActivity.startActivity(nextActivity);
 								}
@@ -217,14 +216,14 @@ public class TvShowDetailsActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mMovieDetailsController.onActivityResume(this);
+		mTvShowDetailsController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mMovieDetailsController.onActivityPause();
+		mTvShowDetailsController.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}
 	
@@ -236,7 +235,7 @@ public class TvShowDetailsActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(mMovieDetailsController);
+		IEventClientManager client = ManagerFactory.getEventClientManager(mTvShowDetailsController);
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

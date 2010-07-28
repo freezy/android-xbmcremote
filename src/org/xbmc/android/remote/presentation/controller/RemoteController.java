@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
+import org.xbmc.android.remote.presentation.activity.RemoteActivity;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.presentation.INotifiableController;
@@ -155,7 +156,9 @@ public class RemoteController extends AbstractController implements INotifiableC
 		try {
 			switch (item.getItemId()) {
 				case MENU_NOW_PLAYING:
-					mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+					final Intent intent = new Intent(mActivity, NowPlayingActivity.class);
+					intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					mActivity.startActivity(intent);
 					break;
 				case MENU_XBMC_EXIT:
 					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_POWER, false, true, true, (short)0, (byte)0);

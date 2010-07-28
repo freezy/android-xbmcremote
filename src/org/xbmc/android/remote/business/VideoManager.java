@@ -34,7 +34,6 @@ import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.VideoClient} class.
@@ -42,9 +41,6 @@ import android.content.SharedPreferences;
  * @author Team XBMC
  */
 public class VideoManager extends AbstractManager implements IVideoManager, ISortableManager, INotifiableManager {
-
-	private SharedPreferences mPref;
-	private int mCurrentSortKey;
 	
 	/**
 	 * Updates the movie object with additional data (plot, cast, etc)
@@ -192,48 +188,6 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 				response.value = video(context).getMovieGenres(VideoManager.this);
 			}
 		});
-	}
-	
-	/**
-	 * Sets the static reference to the preferences object. Used to obtain
-	 * current sort values.
-	 * @param pref
-	 */
-	public void setPreferences(SharedPreferences pref) {
-		mPref = pref;
-	}
-	
-	/**
-	 * Sets which kind of view is currently active.
-	 * @param sortKey
-	 */
-	public void setSortKey(int sortKey) {
-		mCurrentSortKey = sortKey;
-	}
-	
-	/**
-	 * Returns currently saved "sort by" value. If the preference was not set yet, or
-	 * if the current sort key is not set, return default value.
-	 * @param type Default value
-	 * @return Sort by field
-	 */
-	private int getSortBy(int type) {
-		if (mPref != null) {
-			return mPref.getInt(AbstractManager.PREF_SORT_BY_PREFIX + mCurrentSortKey, type);
-		}
-		return type;
-	}
-	
-	/**
-	 * Returns currently saved "sort by" value. If the preference was not set yet, or
-	 * if the current sort key is not set, return "ASC".
-	 * @return Sort order
-	 */
-	private String getSortOrder() {
-		if (mPref != null) {
-			return mPref.getString(AbstractManager.PREF_SORT_ORDER_PREFIX + mCurrentSortKey, SortType.ORDER_ASC);
-		}
-		return SortType.ORDER_ASC;
 	}
 
 	public void onWrongConnectionState(int state) {
