@@ -1,3 +1,24 @@
+/*
+ *      Copyright (C) 2005-2010 Team XBMC
+ *      http://xbmc.org
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with XBMC Remote; see the file license.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 package org.xbmc.httpapi.client;
 
 import java.util.ArrayList;
@@ -77,26 +98,34 @@ public class TvShowClient extends Client implements ITvShowClient {
 		StringBuilder sb = new StringBuilder();
 		
 		// don't fetch summary for list view
-		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14, ");
-		sb.append("    path.strPath AS strPath,");
-		sb.append("    counts.totalcount AS totalCount,");
-		sb.append("    counts.watchedcount AS watchedCount,");
-		sb.append("    counts.totalcount = counts.watchedcount AS watched");
-		sb.append("  FROM tvshow");
-		sb.append("  JOIN tvshowlinkpath ON tvshow.idShow = tvshowlinkpath.idShow");
-		sb.append("  JOIN path ON path.idpath = tvshowlinkpath.idPath ");
-		sb.append("  LEFT OUTER join (");
-		sb.append("     SELECT tvshow.idShow AS idShow, count(1) AS totalcount, count(files.playCount) AS watchedcount");
-		sb.append("     FROM tvshow");
-		sb.append("     JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
-		sb.append("     JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
-		sb.append("     JOIN files ON files.idFile = episode.idFile");
-		sb.append("     GROUP BY tvshow.idShow");
-		sb.append("  )");
-		sb.append("  counts ON tvshow.idShow = counts.idShow");
+		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14,"); 
+		sb.append("		paths.strPath,");
+		sb.append("		counts.totalcount AS totalCount,");
+		sb.append("		counts.watchedcount AS watchedCount,");
+		sb.append("		counts.totalcount = counts.watchedcount AS watched");
+		sb.append("	FROM (");
+		sb.append("		select min(tvshow.idShow) as idShow, tvshow.c00 from tvshow");
+		sb.append("		group by tvshow.c00");
+		sb.append("	) showNames");
+		sb.append("	LEFT OUTER join tvshow on showNames.idShow = tvshow.idShow");
+		sb.append("	LEFT OUTER join (");
+		sb.append("		SELECT min(tvshow.idShow) as idShow, tvshow.c00, count(1) AS totalcount, count(files.playCount) AS watchedcount");
+		sb.append(" 	FROM tvshow");
+		sb.append("		JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
+		sb.append("		JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
+		sb.append("		JOIN files ON files.idFile = episode.idFile");
+		sb.append("		GROUP BY tvshow.c00");
+		sb.append("	) counts ON tvshow.idShow = counts.idShow");
+		sb.append("	LEFT OUTER join (");
+		sb.append("		SELECT tvShow.idShow, strPath ");
+		sb.append("		FROM tvshow");
+		sb.append("		JOIN tvshowlinkpath ON tvshow.idShow = tvshowlinkpath.idShow");
+		sb.append("		JOIN path ON path.idpath = tvshowlinkpath.idPath");
+		sb.append("		WHERE path.idPath in (SELECT max(idPath) FROM tvshowlinkpath GROUP BY idShow)");
+		sb.append("	)  paths on tvshow.idShow = paths.idShow ");
 		sb.append(showsOrderBy(sortBy, sortOrder));
 		Log.i(TAG, sb.toString());
-				
+		
 				
 /*		sb.append("SELECT tvshow.idShow, c00, c01, c04, c05, c08, c13, c14, strPath FROM tvshow, path, tvshowlinkpath");
 		sb.append(" WHERE tvshow.idShow = tvshowlinkpath.idShow");
@@ -117,8 +146,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 	}
 	
 	/**
-	 * Gets all movie genres from database
-	 * @return All movie genres
+	 * Gets all tv show genres from database
+	 * @return All tv show genres
 	 */
 	public ArrayList<Genre> getTvShowGenres(INotifiableManager manager) {
 		StringBuilder sb = new StringBuilder();
@@ -136,27 +165,40 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 */
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Actor actor, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14, ");
-		sb.append("    path.strPath AS strPath,");
-		sb.append("    counts.totalcount AS totalCount,");
-		sb.append("    counts.watchedcount AS watchedCount,");
-		sb.append("    counts.totalcount = counts.watchedcount AS watched");
-		sb.append("  FROM tvshow");
-		sb.append("  JOIN tvshowlinkpath ON tvshow.idShow = tvshowlinkpath.idShow");
-		sb.append("  JOIN path ON path.idpath = tvshowlinkpath.idPath ");
-		sb.append("  LEFT OUTER join (");
-		sb.append("     SELECT tvshow.idShow AS idShow, count(1) AS totalcount, count(files.playCount) AS watchedcount");
-		sb.append("     FROM tvshow");
-		sb.append("     JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
-		sb.append("     JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
-		sb.append("     JOIN files ON files.idFile = episode.idFile");
-		sb.append("     GROUP BY tvshow.idShow");
-		sb.append("  )");
-		sb.append("  counts ON tvshow.idShow = counts.idShow");
-		sb.append("  WHERE tvshow.idShow IN (Select idShow from actorlinktvshow where idActor = ");
+		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14,"); 
+		sb.append("		paths.strPath,");
+		sb.append("		counts.totalcount AS totalCount,");
+		sb.append("		counts.watchedcount AS watchedCount,");
+		sb.append("		counts.totalcount = counts.watchedcount AS watched");
+		sb.append("	FROM (");
+		sb.append("		select min(tvshow.idShow) as idShow, tvshow.c00 from tvshow");
+		sb.append("		group by tvshow.c00");
+		sb.append("	) showNames");
+		sb.append("	LEFT OUTER join tvshow on showNames.idShow = tvshow.idShow");
+		sb.append("	LEFT OUTER join (");
+		sb.append("		SELECT min(tvshow.idShow) as idShow, tvshow.c00, count(1) AS totalcount, count(files.playCount) AS watchedcount");
+		sb.append(" 	FROM tvshow");
+		sb.append("		JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
+		sb.append("		JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
+		sb.append("		JOIN files ON files.idFile = episode.idFile");
+		sb.append("		GROUP BY tvshow.c00");
+		sb.append("	) counts ON tvshow.idShow = counts.idShow");
+		sb.append("	LEFT OUTER join (");
+		sb.append("		SELECT tvShow.idShow, strPath ");
+		sb.append("		FROM tvshow");
+		sb.append("		JOIN tvshowlinkpath ON tvshow.idShow = tvshowlinkpath.idShow");
+		sb.append("		JOIN path ON path.idpath = tvshowlinkpath.idPath");
+		sb.append("		WHERE path.idPath in (SELECT max(idPath) FROM tvshowlinkpath GROUP BY idShow)");
+		sb.append("	)  paths on tvshow.idShow = paths.idShow ");
+		sb.append("	LEFT OUTER join (");
+		sb.append("		SELECT min(tvshow.idShow) as idShow, actorlinktvshow.idActor FROM tvshow");
+		sb.append("		LEFT OUTER JOIN actorlinktvshow ON tvshow.idShow = actorlinktvshow.idShow");
+		sb.append("		GROUP BY tvshow.c00, actorlinktvshow.idActor");
+		sb.append("	) actors on tvshow.idShow = actors.idShow");
+		sb.append("	WHERE actors.idActor = ");
 		sb.append(actor.id);
-		sb.append(" )");
 		sb.append(showsOrderBy(sortBy, sortOrder));
+		
 		Log.i(TAG, sb.toString());
 		return parseShows(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
@@ -167,27 +209,40 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 */
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14, ");
-		sb.append("    path.strPath AS strPath,");
-		sb.append("    counts.totalcount AS totalCount,");
-		sb.append("    counts.watchedcount AS watchedCount,");
-		sb.append("    counts.totalcount = counts.watchedcount AS watched");
-		sb.append("  FROM tvshow");
-		sb.append("  JOIN tvshowlinkpath ON tvshow.idShow = tvshowlinkpath.idShow");
-		sb.append("  JOIN path ON path.idpath = tvshowlinkpath.idPath ");
-		sb.append("  LEFT OUTER join (");
-		sb.append("     SELECT tvshow.idShow AS idShow, count(1) AS totalcount, count(files.playCount) AS watchedcount");
-		sb.append("     FROM tvshow");
-		sb.append("     JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
-		sb.append("     JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
-		sb.append("     JOIN files ON files.idFile = episode.idFile");
-		sb.append("     GROUP BY tvshow.idShow");
-		sb.append("  )");
-		sb.append("  counts ON tvshow.idShow = counts.idShow");
-		sb.append("  WHERE tvshow.idShow in (Select idShow from genrelinktvshow where idgenre = ");
+		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14,"); 
+		sb.append("		paths.strPath,");
+		sb.append("		counts.totalcount AS totalCount,");
+		sb.append("		counts.watchedcount AS watchedCount,");
+		sb.append("		counts.totalcount = counts.watchedcount AS watched");
+		sb.append("	FROM (");
+		sb.append("		select min(tvshow.idShow) as idShow, tvshow.c00 from tvshow");
+		sb.append("		group by tvshow.c00");
+		sb.append("	) showNames");
+		sb.append("	LEFT OUTER join tvshow on showNames.idShow = tvshow.idShow");
+		sb.append("	LEFT OUTER join (");
+		sb.append("		SELECT min(tvshow.idShow) as idShow, tvshow.c00, count(1) AS totalcount, count(files.playCount) AS watchedcount");
+		sb.append(" 	FROM tvshow");
+		sb.append("		JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
+		sb.append("		JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
+		sb.append("		JOIN files ON files.idFile = episode.idFile");
+		sb.append("		GROUP BY tvshow.c00");
+		sb.append("	) counts ON tvshow.idShow = counts.idShow");
+		sb.append("	LEFT OUTER join (");
+		sb.append("		SELECT tvShow.idShow, strPath ");
+		sb.append("		FROM tvshow");
+		sb.append("		JOIN tvshowlinkpath ON tvshow.idShow = tvshowlinkpath.idShow");
+		sb.append("		JOIN path ON path.idpath = tvshowlinkpath.idPath");
+		sb.append("		WHERE path.idPath in (SELECT max(idPath) FROM tvshowlinkpath GROUP BY idShow)");
+		sb.append("	)  paths on tvshow.idShow = paths.idShow ");
+		sb.append("	LEFT OUTER join (");
+		sb.append("		SELECT min(tvshow.idShow) as idShow, genrelinktvshow.idGenre FROM tvshow");
+		sb.append("		LEFT OUTER JOIN genrelinktvshow ON tvshow.idShow = genrelinktvshow.idShow");
+		sb.append("		GROUP BY tvshow.c00, genrelinktvshow.idGenre");
+		sb.append("	) genres on tvshow.idShow = genres.idShow");
+		sb.append("	WHERE genres.idGenre = ");
 		sb.append(genre.id);
-		sb.append(") ");
 		sb.append(showsOrderBy(sortBy, sortOrder));
+		
 		Log.i(TAG, sb.toString());
 		return parseShows(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
@@ -200,10 +255,17 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 */
 	public ArrayList<Season> getSeasons(INotifiableManager manager, TvShow show) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT distinct(c12) FROM episode WHERE idEpisode IN ");
-		sb.append(" (SELECT idEpisode FROM tvshowlinkepisode WHERE idShow = ");
+		sb.append("SELECT c12 from (");
+		sb.append("	SELECT episode.c12 ");
+		sb.append("	FROM tvshow ");
+		sb.append("		LEFT OUTER JOIN tvshowlinkepisode ON tvshowlinkepisode.idShow = tvshow.idShow ");
+		sb.append("		LEFT OUTER JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode ");
+		sb.append("	WHERE tvshow.c00 = (SELECT c00 FROM tvshow WHERE tvshow.idShow = ");
 		sb.append(show.id);
-		sb.append(" ) ORDER BY cast (c12 as integer)");
+		sb.append("	) ");
+		sb.append("GROUP BY episode.c12, tvshow.c00 ");
+		sb.append(") q where not q.c12 is null ");
+		sb.append("ORDER BY cast (q.c12 as integer)");
 		
 		return parseSeasons(mConnection.query("QueryVideoDatabase", sb.toString(), manager), show);
 	}
@@ -221,13 +283,14 @@ public class TvShowClient extends Client implements ITvShowClient {
 			showMap.put(tvShow.id, tvShow);
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT tvshowlinkepisode.idShow, episode.c12");
-		sb.append(" FROM episode, tvshowlinkepisode");
-		sb.append(" WHERE episode.idepisode = tvshowlinkepisode.idEpisode");
-		sb.append(" AND episode.idEpisode IN");
-		sb.append("  ( SELECT idEpisode FROM tvshowlinkepisode )");
-		sb.append(" GROUP BY tvshowlinkepisode.idShow, episode.c12");
-		sb.append(" ORDER BY tvshowlinkepisode.idShow, CAST( c12 AS integer )");
+		sb.append("SELECT min(tvshow.idShow) as idShow, episode.c12 ");
+		sb.append("FROM tvshow ");
+		sb.append("	LEFT OUTER JOIN tvshowlinkepisode ON tvshowlinkepisode.idShow = tvshow.idShow ");
+		sb.append("	LEFT OUTER JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode ");
+		sb.append("WHERE NOT episode.c12 is null ");
+		sb.append("GROUP BY episode.c12, tvshow.c00 ");
+		sb.append("ORDER BY tvshow.idShow, cast (episode.c12 as integer)");
+		
 		return parseSeasons(mConnection.query("QueryVideoDatabase", sb.toString(), manager), showMap);
 	}
 	
@@ -262,8 +325,9 @@ public class TvShowClient extends Client implements ITvShowClient {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(c03, 2), c04, c05, c06, c08, c10, c12, c13, strPath, strFileName");
 		sb.append(" FROM episodeview ");
-		sb.append(" WHERE idShow = ");
+		sb.append(" WHERE idShow in ( select idShow from tvshow where c00 in (select c00 from tvshow where idShow = ");
 		sb.append(show.id);
+		sb.append("))");
 		if(season != null) {
 			sb.append(" AND (c12 = ");
 			sb.append(season.number);
@@ -528,12 +592,13 @@ public class TvShowClient extends Client implements ITvShowClient {
 	private String showsOrderBy(int sortBy, String sortOrder) {
 		switch (sortBy) {
 			default:
+				return " ORDER BY lower(tvshow.c00) asc";
 			case SortType.TITLE:
-				return " ORDER BY lower(c00) " + sortOrder;
+				return " ORDER BY lower(tvshow.c00) " + sortOrder;
 			case SortType.YEAR:
-				return " ORDER BY strftime('%Y', c05) " + sortOrder + ", lower(c00) " + sortOrder;
+				return " ORDER BY strftime('%Y', tvshow.c05) " + sortOrder + ", lower(tvshow.c00) " + sortOrder;
 			case SortType.RATING:
-				return " ORDER BY c04 " + sortOrder;
+				return " ORDER BY tvshow.c04 " + sortOrder;
 		}
 	}
 
