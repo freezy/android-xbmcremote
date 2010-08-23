@@ -119,6 +119,11 @@ public class SetupWizardPage3 extends WizardPage<Host> {
 				if(initialVolume != value) {
 					//it worked, we muted xbmc through the eventserver
 					msg.setText("Everything worked. You can now finish the wizard and start using the remove.\n\nHave fun.");
+					try {
+						event.sendButton("R1", ButtonCodes.REMOTE_MUTE, false, true, true, (short) 0, (byte) 0);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 					setCanFinish(true);
 				}else{
 					//we couldn't mute xbmc through the eventserver, so display some help.

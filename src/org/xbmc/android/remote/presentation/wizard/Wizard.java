@@ -71,7 +71,7 @@ public abstract class Wizard<T> extends Activity {
 				shownPagesStack.add(currentPage);
 				next.setOnClickListener(currentPage.getNextClickListener());
 		}else{
-			if(currentPos < pages.size()) {
+			if(currentPos < pages.size() - 1) {
 				WizardPage<T> page = pages.get(++currentPos);
 				page.setInput(currentPage.getInput());
 				checkButtons();
@@ -83,6 +83,7 @@ public abstract class Wizard<T> extends Activity {
 			}else{
 				//finish wizard
 				doFinish();
+				finish();
 			}
 		}
 	}

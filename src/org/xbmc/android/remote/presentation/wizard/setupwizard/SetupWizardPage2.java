@@ -117,7 +117,7 @@ public class SetupWizardPage2 extends WizardPage<Host> {
 						enableES.setChecked(esAllEnabled);
 						enableES.setEnabled(!esAllEnabled);
 						port.setEnabled(!esAllEnabled);
-						getInput().esPort = value;
+						getInput().esPort = Integer.valueOf(port.getText().toString());
 						setCanFinish(esEnabled && esAllEnabled);
 						enableES.setOnClickListener(new OnClickListener() {
 							public void onClick(View v) {

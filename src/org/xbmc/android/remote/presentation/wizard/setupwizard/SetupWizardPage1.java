@@ -104,10 +104,10 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 			public void run() {
 				if(value != null && !value.equals("")) {
 					removeBusyMessage();
+					ClientFactory.resetClient(currHost);
 					errorMsg.setText("");
 	//				setCanFinish(true);
 					showNextPage();
-					ClientFactory.resetClient(currHost);
 				}
 			}
 		}, SystemInfo.SYSTEM_BUILD_VERSION, getContext());
