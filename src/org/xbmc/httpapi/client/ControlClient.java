@@ -26,6 +26,7 @@ import java.util.HashMap;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.info.GuiActions;
+import org.xbmc.api.info.GuiSettings;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.type.MediaType;
@@ -391,6 +392,18 @@ public class ControlClient implements IControlClient {
 		} catch (WrongDataFormatException e) {
 			return false;
 		}
+	}
+	
+	/**
+	 * Sets the gui setting of XBMC to value
+	 * @param manager 
+	 * @param setting see {@link org.xbmc.api.info.GuiSettings} for the available settings
+	 * @param value the value to set
+	 * @return {@code true} if the value was set successfully 
+	 */
+	public boolean setGuiSetting(INotifiableManager manager, final int setting, final String value) {
+		return mConnection.getBoolean(manager, "SetGUISetting", GuiSettings.getType(setting) + 
+				";" + GuiSettings.getName(setting) + ";" + value);
 	}
 	
 	/**

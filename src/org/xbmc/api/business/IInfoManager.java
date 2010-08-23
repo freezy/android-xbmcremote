@@ -69,4 +69,20 @@ public interface IInfoManager extends IManager {
 	 */
 	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final Context context);
 	
+	/**
+	 * Returns the gui setting of XBMC
+	 * @param response Response object
+	 * @param setting  see {@link org.xbmc.api.info.GuiSettings} for all settings you can query.
+	 * @param context 
+	 */
+	public void getGuiSettingInt(final DataResponse<Integer> response, final int setting, final Context context);
+	
+	/**
+	 * Returns the gui setting of XBMC
+	 * @param response Response object
+	 * @param setting  see {@link org.xbmc.api.info.GuiSettings} for all settings you can query.
+	 * @param context 
+	 */
+	public void getGuiSettingBool(final DataResponse<Boolean> response, final int setting, final Context context);
+	
 }

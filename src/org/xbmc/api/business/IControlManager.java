@@ -156,4 +156,13 @@ public interface IControlManager extends IManager {
 	 */
 	public void clearPlaylist(final DataResponse<Boolean> response, final String playlistId, final Context context);
 	
+	/**
+	 * Sets the gui setting of XBMC to value
+	 * @param response Response object 
+	 * @param setting see {@link org.xbmc.api.info.GuiSettings} for the available settings
+	 * @param value the value to set
+	 */
+	public void setGuiSetting(final DataResponse<Boolean> response, final int setting, 
+			final String value, final Context context);
+	
 }

@@ -26,6 +26,7 @@ import java.util.Hashtable;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.activity.SettingsActivity;
+import org.xbmc.android.remote.presentation.wizard.setupwizard.SetupWizard;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.presentation.INotifiableController;
@@ -33,6 +34,7 @@ import org.xbmc.api.presentation.INotifiableController;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
@@ -47,6 +49,7 @@ public class SettingsController extends AbstractController implements INotifiabl
 	
 	public static final int MENU_ADD_HOST = 1;
 	public static final int MENU_EXIT = 2;
+	public static final int MENU_ADD_HOST_WIZARD = 3;
 	
 	private PreferenceActivity mPreferenceActivity;		
 	private final Hashtable<String, String> mSummaries = new Hashtable<String, String>();
@@ -135,6 +138,7 @@ public class SettingsController extends AbstractController implements INotifiabl
 
 	public void onCreateOptionsMenu(Menu menu) {
 		menu.addSubMenu(0, MENU_ADD_HOST, 0, "Add Host").setIcon(R.drawable.menu_add_host);
+		menu.addSubMenu(0, MENU_ADD_HOST_WIZARD, 0, "Host Wizard").setIcon(R.drawable.menu_add_host);
 		menu.addSubMenu(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
 	}
 	
@@ -145,6 +149,10 @@ public class SettingsController extends AbstractController implements INotifiabl
 				pref.setTitle("New XBMC Host");
 				pref.create(mPreferenceActivity.getPreferenceManager());
 				mPreferenceActivity.getPreferenceScreen().addPreference(pref);
+				break;
+			case MENU_ADD_HOST_WIZARD:
+				Intent i = new Intent(mPreferenceActivity, SetupWizard.class);
+				mPreferenceActivity.startActivity(i);
 				break;
 			case MENU_EXIT:
 				System.exit(0);

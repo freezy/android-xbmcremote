@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:id="@+id/FrameLayout01"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent">
+	<LinearLayout android:orientation="vertical"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:padding="16dip">
+
+		<TextView android:id="@+id/TextView01" android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:text="The EventServer of XBMC is used to remotely control XBMC. The Android remote control screen won't work without the EventServer."></TextView>
+		<CheckBox android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:text="Enable EventServer"
+			android:id="@+id/setup_wizard_enable_es"></CheckBox>
+		<TextView android:id="@+id/TextView02" android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:layout_marginTop="25dip"
+			android:text="You can enter another port to contact XBMC EventServer. Leave this as is if you haven't changed the port within XBMC."></TextView>
+		<TextView android:id="@+id/TextView03" android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:layout_marginTop="10dip"
+			android:text="Port:"></TextView>
+		<EditText android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:text="9777"
+			android:id="@+id/setup_wizard_es_port"></EditText>
+
+
+
+	</LinearLayout>
+	<!--<LinearLayout android:id="@+id/setup_wizard_es_overlay"
+		android:layout_width="fill_parent" 
+		android:layout_height="fill_parent"
+		android:background="#AA000000" 
+		android:textColor="#ffffffff"
+		android:padding="25dip">
+		<ProgressBar android:id="@+id/ProgressBar01"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical" 
+			android:indeterminate="true"></ProgressBar>
+		<TextView android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical" 
+			android:layout_width="fill_parent"
+			android:text="Trying to contact the EventServer.Please wait." android:id="@+id/setup_wizard_es_msg"></TextView>
+	</LinearLayout>
+--></FrameLayout>

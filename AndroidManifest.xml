@@ -46,7 +46,8 @@
 			</intent-filter>
 		</receiver>
 		<provider android:name=".business.provider.HostProvider" android:authorities="org.xbmc.android.provider.remote" />
-	</application>
+	<activity android:name=".presentation.wizard.setupwizard.SetupWizard"></activity>
+</application>
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="8" />
 	<supports-screens
 		android:largeScreens="true"

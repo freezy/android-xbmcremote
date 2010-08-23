@@ -111,7 +111,7 @@ public class InfoClient implements IInfoClient {
 	 * @return
 	 */
 	public boolean getGuiSettingBool(INotifiableManager manager, int field) {
-		return mConnection.getBoolean(manager, "GetGuiSetting", GuiSettings.MusicLibrary.getType(field) + ";" + GuiSettings.MusicLibrary.getName(field));
+		return mConnection.getBoolean(manager, "GetGuiSetting", GuiSettings.getType(field) + ";" + GuiSettings.getName(field));
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class InfoClient implements IInfoClient {
 	 * @return
 	 */
 	public int getGuiSettingInt(INotifiableManager manager, int field) {
-		return mConnection.getInt(manager, "GetGuiSetting", GuiSettings.MusicLibrary.getType(field) + ";" + GuiSettings.MusicLibrary.getName(field));
+		return mConnection.getInt(manager, "GetGuiSetting", GuiSettings.getType(field) + ";" + GuiSettings.getName(field));
 	}
 	
 	/**

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.INotifiableManager;
+import org.xbmc.api.info.GuiSettings;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.type.DirectoryMask;
 
@@ -45,17 +46,6 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	 * @param field Field to return
 	 */
 	public void getSystemInfo(final DataResponse<String> response, final int field, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				try {
-//					response.value = info(context).getSystemInfo(InfoManager.this, field);
-//					done(response);
-//				} catch (WifiStateException e) {
-//					failedRequests.add(this);
-//					onWrongConnectionState(e.getState());
-//				}
-//			}
-//		});
 		mHandler.post(new Command<String>(response, this){
 			@Override
 			public void doRun() throws Exception {
@@ -77,16 +67,6 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 				response.value = info(context).getShares(InfoManager.this, mediaType);
 			}
 		});
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				try {
-//					response.value = info(context).getShares(InfoManager.this, mediaType);
-//					onFinish(response);
-//				} catch (WifiStateException e) {
-//					onWrongConnectionState(e.getState(),null);
-//				}
-//			}
-//		});
 	}
 	
 	/**
@@ -106,16 +86,6 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 			}
 			
 		});
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				try {
-//					response.value = info(context).getDirectory(InfoManager.this, path, mask, offset, limit);
-//					onFinish(response);
-//				} catch (WifiStateException e) {
-//					onWrongConnectionState(e.getState(),null);
-//				}
-//			}
-//		});
 	}
 	
 	/**
@@ -132,15 +102,58 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 			}
 			
 		});
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				try {
-//					response.value = info(context).getDirectory(InfoManager.this, path);
-//					onFinish(response);
-//				} catch (WifiStateException e) {
-//					onWrongConnectionState(e.getState(),null);
+	}
+	
+	/**
+	 * Returns the gui setting of XBMC
+	 * @param response Response object
+	 * @param setting  see {@link org.xbmc.api.info.GuiSettings} for all settings you can query.
+	 * @param context 
+	 */
+	public void getGuiSettingBool(final DataResponse<Boolean> response, final int setting, final Context context) {
+		mHandler.post(new Command<Boolean>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = info(context).getGuiSettingBool(InfoManager.this, setting);
+			}
+		});
+	}
+	
+	/**
+	 * Returns the gui setting of XBMC
+	 * @param response Response object
+	 * @param setting  see {@link org.xbmc.api.info.GuiSettings} for all settings you can query.
+	 * @param context 
+	 */
+	public void getGuiSettingInt(final DataResponse<Integer> response, final int setting, final Context context) {
+		mHandler.post(new Command<Integer>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = info(context).getGuiSettingInt(InfoManager.this, setting);
+			}
+		});
+	}
+	
+	/**
+	 * NOT YET IMPLEMENTED! Returns the gui setting of XBMC 
+	 * @param response Response object
+	 * @param setting  see {@link org.xbmc.api.info.GuiSettings} for all settings you can query.
+	 * @param context 
+	 */
+	public void getGuiSettingString(final DataResponse<String> response, final int setting) {
+		
+	}
+	
+//	public <T> void getGuiSetting(final Class<T> t, final DataResponse<T> response, final int setting) {
+//		mHandler.post(new Command<T>(response, this) {
+//			@Override
+//			public void doRun() throws Exception {
+//				switch(GuiSettings.getTypeInt(setting)) {
+//				case 1:
+//					
+//				case 3:
 //				}
 //			}
 //		});
-	}
+//	}
 }

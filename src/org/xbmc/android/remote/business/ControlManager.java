@@ -261,4 +261,21 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 			}
 		});
 	}
+	
+	/**
+	 * Sets the gui setting of XBMC to value
+	 * @param response Response object 
+	 * @param setting see {@link org.xbmc.api.info.GuiSettings} for the available settings
+	 * @param value the value to set
+	 */
+	public void setGuiSetting(final DataResponse<Boolean> response, final int setting, 
+			final String value, final Context context) {
+		mHandler.post(new Command<Boolean>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).setGuiSetting(ControlManager.this, setting, value);
+			}
+		});
+		
+	}
 }

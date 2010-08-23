@@ -272,6 +272,15 @@ public interface IControlClient extends IClient {
 	public ICurrentlyPlaying getCurrentlyPlaying(INotifiableManager manager);
 	
 	/**
+	 * Sets the gui setting of XBMC to value
+	 * @param manager 
+	 * @param setting see {@link org.xbmc.api.info.GuiSettings} for the available settings
+	 * @param value the value to set
+	 * @return {@code true} if the value was set successfully 
+	 */
+	public boolean setGuiSetting(INotifiableManager manager, final int setting, final String value);
+	
+	/**
 	 * Data object for "Currently playing" info.
 	 * @TODO rename fields so it doesn't feel wierd using for videos..
 	 * @TODO move class to objects, this is public, not data..

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/setup_wizard_page1"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent" 
+  android:orientation="vertical" 
+  android:padding="15dip">
+<TextView 
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" 
+	android:text="The IP or hostname of XBMC"></TextView>
+<EditText android:id="@+id/setup_wizard_ip" 
+	android:layout_height="wrap_content" 
+	android:layout_width="fill_parent" 
+	android:inputType="text"></EditText>
+<TextView 
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" 
+	android:text="The port of XBMC"></TextView>
+<EditText android:id="@+id/setup_wizard_port" 
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content" 
+	android:text="8080" android:inputType="number|numberSigned"></EditText>
+<TextView android:id="@+id/setup_wizard_host_msg" 
+	android:layout_height="wrap_content" 
+	android:layout_width="fill_parent" 
+	android:text='' android:layout_marginTop="25dip"></TextView>
+
+</LinearLayout>
