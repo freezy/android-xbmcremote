@@ -82,9 +82,12 @@ public abstract class Wizard<T> extends Activity {
 				next.setOnClickListener(currentPage.getNextClickListener());
 			}else{
 				//finish wizard
+				doFinish();
 			}
 		}
 	}
+	
+	protected abstract void doFinish();
 	
 	void showPrevPage() {
 		

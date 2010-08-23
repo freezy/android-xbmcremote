@@ -278,4 +278,13 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 		});
 		
 	}
+
+	public void getVolume(final DataResponse<Integer> response, final Context context) {
+		mHandler.post(new Command<Integer>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).getVolume(ControlManager.this);
+			}
+		});
+	}
 }

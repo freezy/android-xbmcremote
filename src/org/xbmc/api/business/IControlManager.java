@@ -165,4 +165,10 @@ public interface IControlManager extends IManager {
 	public void setGuiSetting(final DataResponse<Boolean> response, final int setting, 
 			final String value, final Context context);
 	
+	/**
+	 * Reads the current volume of XBMC
+	 * @param response Response object
+	 * @param context
+	 */
+	public void getVolume(final DataResponse<Integer> response, final Context context);
 }

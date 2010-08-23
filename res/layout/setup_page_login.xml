@@ -19,6 +19,9 @@
 		<EditText android:layout_height="wrap_content" 
 			android:layout_width="fill_parent" 
 			android:id="@+id/setup_wizard_password" android:inputType="textPassword|textVisiblePassword" android:text="xbmc"></EditText>
-<TextView android:id="@+id/TextView03" android:layout_height="wrap_content" android:layout_width="fill_parent" android:text='Once you entered your username and password click on "Test login" to proceed.' android:layout_marginTop="25dip"></TextView><Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Test login" android:id="@+id/setup_wizard_test_login"></Button>
+<TextView android:id="@+id/setup_page_login_msg" 
+android:layout_height="wrap_content" 
+android:layout_width="fill_parent" 
+android:text='' android:layout_marginTop="25dip"></TextView>
 
 </LinearLayout>

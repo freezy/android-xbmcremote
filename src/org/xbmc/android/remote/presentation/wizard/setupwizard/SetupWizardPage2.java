@@ -101,7 +101,6 @@ public class SetupWizardPage2 extends WizardPage<Host> {
 			public void run() {
 				esAllEnabled = value.booleanValue();
 				getPort();
-				removeBusyMessage();
 			}
 		}, GuiSettings.Services.EVENTSERVER_ENABLED_ALL, getContext());
 	}
