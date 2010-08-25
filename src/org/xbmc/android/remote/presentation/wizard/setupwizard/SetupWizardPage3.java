@@ -65,7 +65,7 @@ public class SetupWizardPage3 extends WizardPage<Host> {
 	}
 	
 	private void testEventServer() {
-		showBusyMessage("Trying to mute XBMC through the EventServer in order to see if the EventServer is reachable.\nPlease wait.");
+		showBusyMessage(getContext().getString(R.string.setup_wizard_trying_mute));
 		control.getVolume(new DataResponse<Integer>() {
 			@Override
 			public void run() {
@@ -118,7 +118,7 @@ public class SetupWizardPage3 extends WizardPage<Host> {
 				removeBusyMessage();
 				if(initialVolume != value) {
 					//it worked, we muted xbmc through the eventserver
-					msg.setText("Everything worked. You can now finish the wizard and start using the remove.\n\nHave fun.");
+					msg.setText(R.string.setup_wizard_final_message);
 					try {
 						event.sendButton("R1", ButtonCodes.REMOTE_MUTE, false, true, true, (short) 0, (byte) 0);
 					} catch (IOException e) {
@@ -128,9 +128,7 @@ public class SetupWizardPage3 extends WizardPage<Host> {
 				}else{
 					//we couldn't mute xbmc through the eventserver, so display some help.
 					retry.setVisibility(View.VISIBLE);
-					msg.setText("Couldn't mute XBMC through the EventServer.\n" +
-							"Please check if UDP port 9777 is blocked in your firewall.\n" +
-							"If you are connecting through 3G please make sure that UDP port 9777 is forwarded in your router.");
+					msg.setText(R.string.setup_wizard_muting_failed);
 				}
 			}
 		}, getContext());

@@ -36,12 +36,12 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Previous" />
+            android:text="@string/wizard_previous" />
         <Button
             android:id="@+id/setup_button_next"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Next" />
+            android:text="@string/wizard_next" />
     </LinearLayout>
 </RelativeLayout>

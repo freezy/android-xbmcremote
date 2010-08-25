@@ -32,12 +32,14 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 	private final Handler mHandler;
 	private boolean needsLogin = false;
 
-	public SetupWizardPage1(Context context, AttributeSet attrs, int defStyle, Wizard<Host> wizard) {
+	public SetupWizardPage1(Context context, AttributeSet attrs, int defStyle,
+			Wizard<Host> wizard) {
 		super(context, attrs, defStyle, wizard);
 		mHandler = new Handler();
 	}
 
-	public SetupWizardPage1(Context context, AttributeSet attrs, Wizard<Host> wizard) {
+	public SetupWizardPage1(Context context, AttributeSet attrs,
+			Wizard<Host> wizard) {
 		super(context, attrs, wizard);
 		mHandler = new Handler();
 	}
@@ -52,17 +54,18 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 
 		port = (EditText) findViewById(R.id.setup_wizard_port);
 		errorMsg = (TextView) findViewById(R.id.setup_wizard_host_msg);
-//		test = (Button) findViewById(R.id.setup_wizard_test_connection);
-//		test.setOnClickListener(new OnClickListener() {
-//			public void onClick(View v) {
-//				testConnection();
-//			}
-//		});
+		// test = (Button) findViewById(R.id.setup_wizard_test_connection);
+		// test.setOnClickListener(new OnClickListener() {
+		// public void onClick(View v) {
+		// testConnection();
+		// }
+		// });
 		setCanFinish(true);
 	}
 
 	private void testConnection() {
-		showBusyMessage("Trying to contact XBMC. \nPlease wait.");
+		showBusyMessage(getContext().getString(
+				R.string.setup_wizard_connecting_wait));
 		final Host currHost = HostFactory.host;
 		getInput().addr = ip.getText().toString();
 		getInput().port = Integer.parseInt(port.getText().toString());
@@ -83,18 +86,20 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 					public void onError(final Exception e) {
 						runOnUI(new Runnable() {
 							public void run() {
-//								setCanFinish(false);
+								// setCanFinish(false);
 								e.printStackTrace();
 								if (e instanceof HttpException
 										&& e.getMessage()
-										.equals(HttpURLConnection.HTTP_UNAUTHORIZED)) {
+												.equals(HttpURLConnection.HTTP_UNAUTHORIZED)) {
 									needsLogin = true;
 									errorMsg.setText("");
 									showNextPage();
 								}
 								ClientFactory.resetClient(currHost);
 								removeBusyMessage();
-								errorMsg.setText("Couldn't connect to XBMC. Please recheck the IP and port.\n\nSystem reported:\n"+e.getMessage());
+								errorMsg.setText(getContext().getString(
+										R.string.setup_wizard_cant_connect)
+										+ e.getMessage());
 							}
 						});
 					}
@@ -102,17 +107,17 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 		info.getSystemInfo(new DataResponse<String>() {
 			@Override
 			public void run() {
-				if(value != null && !value.equals("")) {
+				if (value != null && !value.equals("")) {
 					removeBusyMessage();
 					ClientFactory.resetClient(currHost);
 					errorMsg.setText("");
-	//				setCanFinish(true);
+					// setCanFinish(true);
 					showNextPage();
 				}
 			}
 		}, SystemInfo.SYSTEM_BUILD_VERSION, getContext());
 	}
-	
+
 	@Override
 	public OnClickListener getNextClickListener() {
 		return new OnClickListener() {
@@ -121,11 +126,12 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 			}
 		};
 	}
-	
+
 	@Override
 	public WizardPage<Host> getNextPage() {
-		if(needsLogin) {
-			WizardPage<Host> page = new SetupWizardPageLogin(getContext(), wizard);
+		if (needsLogin) {
+			WizardPage<Host> page = new SetupWizardPageLogin(getContext(),
+					wizard);
 			page.init();
 			return page;
 		}

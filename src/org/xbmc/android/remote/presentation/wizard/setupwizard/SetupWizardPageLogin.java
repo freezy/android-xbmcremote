@@ -93,7 +93,7 @@ public class SetupWizardPageLogin extends WizardPage<Host> {
 				if (e instanceof HttpException
 						&& e.getMessage()
 						.equals(HttpURLConnection.HTTP_UNAUTHORIZED)) {
-					errorMsg.setText("Username or password is wrong.\nPlease check both and try again.");
+					errorMsg.setText(R.string.setup_wizard_login_wrong);
 				}
 			}
 		});

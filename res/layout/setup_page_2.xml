@@ -8,13 +8,13 @@
 
 		<TextView android:id="@+id/TextView01" android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:text="The EventServer of XBMC is used to remotely control XBMC. The Android remote control screen won't work without the EventServer."></TextView>
+			android:text="@string/setup_wizard_es_explanation"></TextView>
 		<CheckBox android:layout_height="wrap_content"
 			android:layout_width="fill_parent" android:text="Enable EventServer"
 			android:id="@+id/setup_wizard_enable_es"></CheckBox>
 		<TextView android:id="@+id/TextView02" android:layout_height="wrap_content"
 			android:layout_width="fill_parent" android:layout_marginTop="25dip"
-			android:text="You can enter another port to contact XBMC EventServer. Leave this as is if you haven't changed the port within XBMC."></TextView>
+			android:text="@string/setup_wizard_es_change_port"></TextView>
 		<TextView android:id="@+id/TextView03" android:layout_height="wrap_content"
 			android:layout_width="fill_parent" android:layout_marginTop="10dip"
 			android:text="Port:"></TextView>

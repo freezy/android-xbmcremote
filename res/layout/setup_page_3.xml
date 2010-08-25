@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent" android:layout_height="fill_parent" android:padding="15dip" android:orientation="vertical">
-<TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/setup_page3_msg"></TextView><Button android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/setup_page3_retry" android:text="Retry" android:visibility="invisible"></Button>
+  android:layout_width="fill_parent" 
+  android:layout_height="fill_parent" 
+  android:padding="15dip" 
+  android:orientation="vertical">
+<TextView android:layout_height="wrap_content" 
+android:layout_width="fill_parent" 
+android:id="@+id/setup_page3_msg"></TextView>
+<Button 
+android:layout_height="wrap_content" 
+android:layout_width="fill_parent" 
+android:id="@+id/setup_page3_retry" 
+android:text="@string/setup_wizard_retry" 
+android:visibility="invisible"></Button>
 
 </LinearLayout>

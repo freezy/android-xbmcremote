@@ -7,7 +7,7 @@
 			android:layout_height="wrap_content" 
 			android:layout_width="fill_parent" 
 			android:layout_marginTop="25dip" 
-			android:text="Username"></TextView>
+			android:text="@string/setup_wizard_username"></TextView>
 		<EditText android:layout_height="wrap_content" 
 			android:layout_width="fill_parent" 
 			android:id="@+id/setup_wizard_username" 
@@ -15,7 +15,7 @@
 		<TextView android:id="@+id/TextView02" 
 			android:layout_height="wrap_content" 
 			android:layout_width="fill_parent" 
-			android:text="Password"></TextView>
+			android:text="@string/setup_wizard_password"></TextView>
 		<EditText android:layout_height="wrap_content" 
 			android:layout_width="fill_parent" 
 			android:id="@+id/setup_wizard_password" android:inputType="textPassword|textVisiblePassword" android:text="xbmc"></EditText>

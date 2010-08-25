@@ -1,5 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="setup_wizard_password">Password</string>
+    <string name="setup_wizard_username">Username</string>
+    <string name="setup_wizard_retry">Retry</string>
+    <string name="setup_wizard_es_change_port">You can enter another port to contact XBMC EventServer. Leave this as is if you haven\'t changed the port within XBMC.</string>
+    <string name="setup_wizard_es_explanation">The EventServer of XBMC is used to remotely control XBMC. The Android remote control screen won\'t work without the EventServer.</string>
+    <string name="setup_wizard_port">The port of XBMC</string>
+    <string name="setup_wizard_ip_host">The IP or hostname of XBMC</string>
+    <string name="wizard_next">Next</string>
+    <string name="wizard_previous">Previous</string>
+    <string name="setup_wizard_connecting_wait">Trying to contact XBMC. 
+Please wait.</string>
+    <string name="setup_wizard_cant_connect">Couldn\'t connect to XBMC. Please recheck the IP and port.
+
+System reported:
+</string>
+    <string name="setup_wizard_checking_es_wait">Trying to read your EventServer state.
+Please wait.</string>
+    <string name="setup_wizard_enable_es_wait">Enabling EventServer.
+Please wait.</string>
+    <string name="setup_wizard_login_wrong">Username or password is wrong.
+Please check both and try again.</string>
+    <string name="setup_wizard_trying_mute">Trying to mute XBMC through the EventServer in order to see if the EventServer is reachable.
+Please wait.</string>
+    <string name="setup_wizard_muting_failed">Couldn\'t mute XBMC through the EventServer.
+Please check if UDP port 9777 is blocked in your firewall.
+If you are connecting through 3G please make sure that UDP port 9777 is forwarded in your router.</string>
+    <string name="setup_wizard_final_message">Everything worked. You can now finish the wizard and start using the remove.
+
+Have fun.</string>
     <string name="app_name">XBMC Remote</string>
 	<string name="app_receiver">XbmcBroadcastReceiver</string>
 	<string name="sms_received">SMS received</string>

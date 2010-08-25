@@ -9,7 +9,7 @@
 <TextView 
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content" 
-	android:text="The IP or hostname of XBMC"></TextView>
+	android:text="@string/setup_wizard_ip_host"></TextView>
 <EditText android:id="@+id/setup_wizard_ip" 
 	android:layout_height="wrap_content" 
 	android:layout_width="fill_parent" 
@@ -17,7 +17,7 @@
 <TextView 
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content" 
-	android:text="The port of XBMC"></TextView>
+	android:text="@string/setup_wizard_port"></TextView>
 <EditText android:id="@+id/setup_wizard_port" 
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content" 

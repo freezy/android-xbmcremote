@@ -53,7 +53,7 @@ public class SetupWizardPage2 extends WizardPage<Host> {
 	@Override
 	public void show() {
 		super.show();
-		showBusyMessage("Trying to read your EventServer state.\nPlease wait.");
+		showBusyMessage(getContext().getString(R.string.setup_wizard_checking_es_wait));
 		ClientFactory.resetClient(getInput());
 		info = ManagerFactory.getInfoManager(new INotifiableController() {
 
@@ -122,7 +122,8 @@ public class SetupWizardPage2 extends WizardPage<Host> {
 						enableES.setOnClickListener(new OnClickListener() {
 							public void onClick(View v) {
 								enableES.setEnabled(false);
-								showBusyMessage("Enabling EventServer.\nPlease wait.");
+								showBusyMessage(getContext().getString(
+										R.string.setup_wizard_enable_es_wait));
 								enableES();
 							}
 						});
