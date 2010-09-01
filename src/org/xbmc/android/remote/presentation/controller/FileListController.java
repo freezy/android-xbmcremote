@@ -96,6 +96,7 @@ public class FileListController extends ListController implements IController {
 			activity.registerForContextMenu(mList);
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					if(isLoading()) return;
 					if (mFileItems == null)
 						return;
 	

@@ -129,6 +129,7 @@ public class ActorListController extends ListController implements IController {
 			}
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					if(isLoading()) return;
 					Intent nextActivity;
 					final Actor actor = (Actor)mList.getAdapter().getItem(((OneLabelItemView)view).position);
 					nextActivity = new Intent(view.getContext(), ListActivity.class);

@@ -70,6 +70,7 @@ public class ArtistListController extends ListController implements IController 
 			activity.registerForContextMenu(mList);
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					if(isLoading()) return;
 					Intent nextActivity;
 					Artist artist = (Artist)mList.getAdapter().getItem(((OneLabelItemView)view).position);
 					nextActivity = new Intent(view.getContext(), MusicArtistActivity.class);

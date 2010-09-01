@@ -109,6 +109,7 @@ public class SongListController extends ListController implements IController {
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					if(isLoading()) return;
 					final Song song = (Song)mList.getAdapter().getItem(((ThreeLabelsItemView)view).position);
 					if (mAlbum == null) {
 						mMusicManager.play(new QueryResponse(

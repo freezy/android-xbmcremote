@@ -101,6 +101,7 @@ public class SeasonListController extends ListController implements IController 
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					if(isLoading()) return;
 					final Season season = (Season)mList.getAdapter().getItem(((GridPosterItemView)view).position);
 					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_SEASON, season);

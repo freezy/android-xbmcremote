@@ -29,7 +29,6 @@ import org.xbmc.android.remote.presentation.activity.MusicGenreActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
-import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 
 import android.app.Activity;
@@ -64,6 +63,7 @@ public class MusicGenreListController extends ListController implements IControl
 			mActivity.registerForContextMenu(mList);
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					if(isLoading()) return;
 					Intent nextActivity;
 					Genre genre = (Genre)mList.getAdapter().getItem(((OneLabelItemView)view).position);
 					nextActivity = new Intent(view.getContext(), MusicGenreActivity.class);

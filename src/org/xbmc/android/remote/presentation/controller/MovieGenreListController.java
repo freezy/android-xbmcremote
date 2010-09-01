@@ -66,6 +66,7 @@ public class MovieGenreListController extends ListController implements IControl
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					if(isLoading()) return;
 					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
 					Genre genre = (Genre)mList.getAdapter().getItem(((OneLabelItemView)view).position);
 					if(mType == TYPE_MOVIE)

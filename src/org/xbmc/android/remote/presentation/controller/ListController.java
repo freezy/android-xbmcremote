@@ -152,6 +152,10 @@ public abstract class ListController extends AbstractController implements Seria
 		});
 	}
 	
+	protected boolean isLoading() {
+		return mList.getAdapter() instanceof LoadingAdapter;
+	}
+	
 	protected class QueryResponse extends DataResponse<Boolean> {
 		private final String mSuccessMessage;
 		private final String mErrorMessage;
