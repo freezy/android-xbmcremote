@@ -87,10 +87,17 @@ public class InfoClient implements IInfoClient {
 	}
 	
 	public String getCurrentlyPlayingThumbURI(INotifiableManager manager) throws MalformedURLException, URISyntaxException {
-		ArrayList<String> array = mConnection.getArray(manager, "GetCurrentlyPlaying", "");
+		final ArrayList<String> array = mConnection.getArray(manager, "GetCurrentlyPlaying", " ; ; ;true");
+		Boolean isSlideShow = false;
+		int thumbNum = 0;
 		for (String s : array) {
-			if (s.startsWith("Thumb")) {
-				return mConnection.getUrl("FileDownload", s.substring(6));
+			if (s.startsWith("SlideFilename")) {
+				isSlideShow = true;
+			} else if (s.startsWith("Thumb")) {
+				// from XBMC r27606 the http api gives the slideshow thumb and the media thumb
+				if (!isSlideShow || ++thumbNum == 2) {
+					return mConnection.getUrl("FileDownload", s.substring(6));
+				}
 			}
 		}
 		return null;

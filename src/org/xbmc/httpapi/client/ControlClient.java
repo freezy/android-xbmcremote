@@ -411,7 +411,7 @@ public class ControlClient implements IControlClient {
 	 * @return
 	 */
 	public ICurrentlyPlaying getCurrentlyPlaying(INotifiableManager manager) {
-		final HashMap<String, String> map = mConnection.getPairs(manager, "GetCurrentlyPlaying");
+		final HashMap<String, String> map = mConnection.getPairs(manager, "GetCurrentlyPlaying", " ; ; ;true");
 		final IControlClient.ICurrentlyPlaying nothingPlaying = new IControlClient.ICurrentlyPlaying() {
 			private static final long serialVersionUID = -1554068775915058884L;
 			public boolean isPlaying() { return false; }
@@ -436,10 +436,10 @@ public class ControlClient implements IControlClient {
 			//final int type = map.get("Type").contains("Audio") ? MediaType.MUSIC : (map.get("Type").contains("Video") ? MediaType.VIDEO : MediaType.PICTURES );
 			final int type;
 			if (map.containsKey("Type")) {
-				if(map.containsKey("Type") && map.get("Type").contains("Audio"))
+				if (map.get("Type").contains("Audio"))
 					type = MediaType.MUSIC;
-				else if(map.get("Type").contains("Video")) {
-					if(map.get("Show Title")!= null && map.get("Episode") != null)
+				else if (map.get("Type").contains("Video")) {
+					if (map.get("Show Title")!= null && map.get("Episode") != null)
 						type = MediaType.VIDEO_TVEPISODE;
 					else	
 						type = MediaType.VIDEO;
