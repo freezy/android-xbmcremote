@@ -72,7 +72,7 @@ public class EpisodeDetailsActivity extends Activity {
     private static final int[] sStarImages = { R.drawable.stars_0, R.drawable.stars_1, R.drawable.stars_2, R.drawable.stars_3, R.drawable.stars_4, R.drawable.stars_5, R.drawable.stars_6, R.drawable.stars_7, R.drawable.stars_8, R.drawable.stars_9, R.drawable.stars_10 };
 	
     public EpisodeDetailsActivity() {
-    	if(VERSION.SDK_INT < 5) {
+    	if(Integer.parseInt(VERSION.SDK) < 5) {
 	    	mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
 	
 				@Override
@@ -264,7 +264,6 @@ public class EpisodeDetailsActivity extends Activity {
 		return handled || super.onKeyDown(keyCode, event);
 	}
 	
-	@Override
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
 		Intent intent = new Intent(EpisodeDetailsActivity.this, HomeActivity.class);
 		intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);

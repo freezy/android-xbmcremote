@@ -68,7 +68,7 @@ public class NowPlayingActivity extends Activity {
 	private static final int MENU_REMOTE = 303;
 	
 	public NowPlayingActivity() {
-		if(VERSION.SDK_INT < 5) {
+		if(Integer.parseInt(VERSION.SDK) < 5) {
 			mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
 	
 				@Override
@@ -268,7 +268,6 @@ public class NowPlayingActivity extends Activity {
 		super.onKeyDown(keyCode, event);
 	}
 	
-	@Override
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
 		Intent intent = new Intent(NowPlayingActivity.this, HomeActivity.class);
 		intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);

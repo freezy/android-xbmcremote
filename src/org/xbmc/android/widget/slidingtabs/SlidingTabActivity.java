@@ -46,7 +46,7 @@ public class SlidingTabActivity extends ActivityGroup {
 	private KeyTracker mKeyTracker = null;
 
 	public SlidingTabActivity() { 
-		if(VERSION.SDK_INT < 5) {
+		if (Integer.parseInt(VERSION.SDK) < 5) {
 			mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
 	
 				@Override
@@ -183,7 +183,6 @@ public class SlidingTabActivity extends ActivityGroup {
 		return mTabHost.getTabWidget();
 	}
 	
-	@Override
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
 		Intent intent = new Intent(SlidingTabActivity.this, HomeActivity.class);
 		intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
