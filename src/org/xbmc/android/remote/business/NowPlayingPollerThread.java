@@ -69,7 +69,7 @@ public class NowPlayingPollerThread extends Thread {
 	public static final int MESSAGE_CONNECTION_ERROR = 1;
 	public static final int MESSAGE_RECONFIGURE = 2;
 	public static final int MESSAGE_PROGRESS_CHANGED = 666;
-	public static final int MESSAGE_TRACK_CHANGED = 667;
+	public static final int MESSAGE_PLAYLIST_ITEM_CHANGED = 667;
 	public static final int MESSAGE_COVER_CHANGED = 668;
 	public static final int MESSAGE_PLAYSTATE_CHANGED = 669;
 
@@ -124,8 +124,8 @@ public class NowPlayingPollerThread extends Thread {
 		// update handler on the state of affairs
 		final ICurrentlyPlaying currPlaying = mControl.getCurrentlyPlaying(mManagerStub);
 		sendSingleMessage(handler, MESSAGE_PROGRESS_CHANGED, currPlaying);
-		sendSingleMessage(handler, MESSAGE_TRACK_CHANGED, currPlaying);
-		handler.sendEmptyMessage(MESSAGE_COVER_CHANGED);
+		sendSingleMessage(handler, MESSAGE_PLAYLIST_ITEM_CHANGED, currPlaying);
+		sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
 		
 		mSubscribers.add(handler);
 	}
@@ -208,7 +208,7 @@ public class NowPlayingPollerThread extends Thread {
 						if (currPlaying.getPlaylistPosition() >= 0) {
 							mPosition = currPlaying.getPlaylistPosition();
 						}
-						sendMessage(MESSAGE_TRACK_CHANGED, currPlaying);
+						sendMessage(MESSAGE_PLAYLIST_ITEM_CHANGED, currPlaying);
 			  	  		
 			  	  		try {				
 			  	  			String downloadURI = mInfo.getCurrentlyPlayingThumbURI(mManagerStub);
@@ -224,14 +224,14 @@ public class NowPlayingPollerThread extends Thread {
 			  	  						mCover = new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
 
 			  	  					for (Handler handler : subscribers) {
-		  				  	  			handler.sendEmptyMessage(MESSAGE_COVER_CHANGED);
+			  	  						sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
 		  				  	  		}	
 			  	  				}
 			  	  			} else {
 			  	  				mCover = null;
 			  	  				if (mCoverPath != null){
 			  	  					for (Handler handler : subscribers) {
-		  				  	  			handler.sendEmptyMessage(MESSAGE_COVER_CHANGED);
+			  	  						sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
 		  				  	  		}			  	  					
 			  	  				}
 			  	  				mCoverPath = null;

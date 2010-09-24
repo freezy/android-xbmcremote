@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent" android:background="@drawable/shiny_black_back">
@@ -38,24 +38,53 @@
 						android:textSize="18dip"
 						android:textColor="#ffffffff"
 						android:paddingTop="4dip" />
-				<RelativeLayout 
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_gravity="center_horizontal"
-					android:paddingTop="4dip">
-					<ImageView
-						android:layout_marginTop="12dip"
-						android:layout_marginLeft="41dip"
-						android:layout_width="235dip" 
-						android:layout_height="236dip" 
-						android:scaleType="centerCrop" 
-						android:id="@+id/CoverImage" />
+				<FrameLayout
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content">
+					<RelativeLayout android:id="@+id/CDView"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_horizontal"
+						android:paddingTop="4dip">
+						<ImageView
+							android:layout_marginTop="12dip"
+							android:layout_marginLeft="41dip"
+							android:layout_width="235dip" 
+							android:layout_height="236dip" 
+							android:scaleType="centerCrop" 
+							android:id="@+id/CDCoverImage" />
+						<ImageView 
+							android:layout_width="294dip"
+							android:layout_height="266dip" 
+							android:scaleType="centerCrop"
+							android:id="@+id/CDCaseImage" />
+					</RelativeLayout>
+					<RelativeLayout android:id="@+id/DVDView"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_horizontal"
+						android:paddingTop="4dip">
+						<ImageView
+							android:layout_marginTop="6dip"
+							android:layout_marginLeft="30dip"
+							android:layout_width="167dip" 
+							android:layout_height="250dip" 
+							android:scaleType="centerCrop" 
+							android:id="@+id/DVDCoverImage" />
+						<ImageView 
+							android:layout_width="209dip"
+							android:layout_height="266dip" 
+							android:scaleType="centerCrop"
+							android:id="@+id/DVDCaseImage" />
+					</RelativeLayout>
 					<ImageView 
-						android:layout_width="294dip"
-						android:layout_height="266dip" 
-						android:scaleType="centerCrop" 
-						android:background="@drawable/coverbox_front" />
-				</RelativeLayout>
+						android:id="@+id/EpisodeImage"
+						android:layout_width="fill_parent"
+						android:layout_height="266dip"						
+						android:scaleType="centerInside"
+						android:paddingTop="4dip"
+						android:paddingBottom="10dip" />
+				</FrameLayout>
 				<SeekBar 
 					android:id="@+id/NowPlayingProgress"
 					android:layout_width="fill_parent" android:layout_height="wrap_content"

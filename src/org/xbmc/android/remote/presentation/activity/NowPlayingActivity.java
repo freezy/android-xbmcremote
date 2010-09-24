@@ -31,6 +31,7 @@ import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.object.Song;
+import org.xbmc.api.type.MediaType;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
@@ -41,9 +42,11 @@ import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -135,12 +138,62 @@ public class NowPlayingActivity extends Activity {
 		mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);		
 	}
 	
-	public void updateCover(Drawable cover) {
-		final ImageView img = (ImageView) findViewById(R.id.CoverImage);
-		if (cover != null) { 
-			img.setImageDrawable(cover);
-		} else {
-			img.setImageResource(R.drawable.coverbox_back);
+	public void updateCover(Drawable cover, int mediaType) {
+		
+		ImageView cdCaseImage = (ImageView) findViewById(R.id.CDCaseImage);
+		ImageView dvdCaseImage = (ImageView) findViewById(R.id.DVDCaseImage);
+		ImageView cdImage = (ImageView) findViewById(R.id.CDCoverImage);
+		ImageView dvdImage = (ImageView) findViewById(R.id.DVDCoverImage);
+		ImageView episodeImage = (ImageView) findViewById(R.id.EpisodeImage);
+		RelativeLayout cdView = (RelativeLayout) findViewById(R.id.CDView);
+		RelativeLayout dvdView = (RelativeLayout) findViewById(R.id.DVDView);		
+		
+		switch (mediaType) {
+			case MediaType.MUSIC:
+				cdCaseImage.setImageResource(R.drawable.coverbox_front);
+				cdView.setVisibility(View.VISIBLE);
+				dvdView.setVisibility(View.GONE);
+				episodeImage.setVisibility(View.GONE);
+				
+				if (cover != null) {
+					cdImage.setImageDrawable(cover);
+				} else {
+					cdImage.setImageResource(R.drawable.coverbox_back);
+				}
+				break;
+			case MediaType.VIDEO_MOVIE:
+			case MediaType.VIDEO:
+				dvdCaseImage.setImageResource(R.drawable.jewel_dvd);
+				dvdView.setVisibility(View.VISIBLE);
+				cdView.setVisibility(View.GONE);
+				episodeImage.setVisibility(View.GONE);
+				
+				if (cover != null) {
+					dvdImage.setImageDrawable(cover);
+				} else {
+					dvdImage.setImageResource(R.drawable.jewel_dvd_back);
+				}
+				break;
+			case MediaType.VIDEO_TVEPISODE:
+			case MediaType.VIDEO_TVSEASON:
+			case MediaType.VIDEO_TVSHOW:
+				episodeImage.setVisibility(View.VISIBLE);
+				dvdView.setVisibility(View.GONE);
+				cdView.setVisibility(View.GONE);
+				
+				if (cover != null) {
+					episodeImage.setImageDrawable(cover);
+				} else {
+					episodeImage.setImageBitmap(null);
+				}
+				break;
+			default:				
+				cdCaseImage.setImageResource(R.drawable.coverbox_front);
+				cdImage.setImageResource(R.drawable.coverbox_back);
+				cdView.setVisibility(View.VISIBLE);
+				dvdView.setVisibility(View.GONE);
+				episodeImage.setVisibility(View.GONE);
+				break;
 		}
 	}
 	

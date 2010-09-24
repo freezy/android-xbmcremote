@@ -163,7 +163,7 @@ public class MusicPlaylistController extends ListController implements IControll
 			}
 			return true;
 
-		case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
+		case NowPlayingPollerThread.MESSAGE_PLAYLIST_ITEM_CHANGED:
 			mLastPosition = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYPOSITION);
 			onTrackChanged(currentlyPlaying);
 			return true;

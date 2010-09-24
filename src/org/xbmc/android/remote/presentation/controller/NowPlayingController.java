@@ -34,6 +34,7 @@ import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.presentation.INotifiableController;
+import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SeekType;
 import org.xbmc.eventclient.ButtonCodes;
 
@@ -90,7 +91,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 				}
 				return true;
 			
-			case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
+			case NowPlayingPollerThread.MESSAGE_PLAYLIST_ITEM_CHANGED:
 				mNowPlayingActivity.updateInfo(currentlyPlaying.getArtist(), currentlyPlaying.getAlbum(), currentlyPlaying.getTitle());
 				mLastPosition = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYPOSITION);
 		  	  	return true;
@@ -101,7 +102,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 		  	  	
 			case NowPlayingPollerThread.MESSAGE_COVER_CHANGED:
 				// TODO: FIX!!
-				mNowPlayingActivity.updateCover(ConnectionFactory.getNowPlayingPoller(mActivity).getNowPlayingCover());
+				mNowPlayingActivity.updateCover(ConnectionFactory.getNowPlayingPoller(mActivity).getNowPlayingCover(), (currentlyPlaying != null) ? currentlyPlaying.getMediaType() : MediaType.UNKNOWN);
 				return true;
 				
 			case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:

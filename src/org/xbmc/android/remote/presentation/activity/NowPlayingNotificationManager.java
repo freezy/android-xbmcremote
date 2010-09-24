@@ -106,7 +106,7 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 	private final Handler mPollingHandler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch(msg.what) {
-			case NowPlayingPollerThread.MESSAGE_TRACK_CHANGED:
+			case NowPlayingPollerThread.MESSAGE_PLAYLIST_ITEM_CHANGED:
 			case NowPlayingPollerThread.MESSAGE_PLAYSTATE_CHANGED:
 				ICurrentlyPlaying curr = (ICurrentlyPlaying)msg.getData().get(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
 				final int status = curr.getPlayStatus();
