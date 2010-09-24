@@ -47,6 +47,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Build.VERSION;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -72,23 +73,23 @@ public class MovieDetailsActivity extends Activity {
     private static final int[] sStarImages = { R.drawable.stars_0, R.drawable.stars_1, R.drawable.stars_2, R.drawable.stars_3, R.drawable.stars_4, R.drawable.stars_5, R.drawable.stars_6, R.drawable.stars_7, R.drawable.stars_8, R.drawable.stars_9, R.drawable.stars_10 };
 	
     public MovieDetailsActivity() {
-    	mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
-
-			@Override
-			public void onLongPressBack(int keyCode, KeyEvent event,
-					Stage stage, int duration) {
-				Intent intent = new Intent(MovieDetailsActivity.this, HomeActivity.class);
-				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
-			}
-
-			@Override
-			public void onShortPressBack(int keyCode, KeyEvent event,
-					Stage stage, int duration) {
-				MovieDetailsActivity.super.onKeyDown(keyCode, event);
-			}
-			
-		});
+    	if(VERSION.SDK_INT < 5) {
+	    	mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
+	
+				@Override
+				public void onLongPressBack(int keyCode, KeyEvent event,
+						Stage stage, int duration) {
+					onKeyLongPress(keyCode, event);
+				}
+	
+				@Override
+				public void onShortPressBack(int keyCode, KeyEvent event,
+						Stage stage, int duration) {
+					MovieDetailsActivity.super.onKeyDown(keyCode, event);
+				}
+				
+			});
+    	}
 	}
     
 	@Override
@@ -259,8 +260,16 @@ public class MovieDetailsActivity extends Activity {
 	
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		boolean handled =  mKeyTracker.doKeyUp(keyCode, event);
+		boolean handled = (mKeyTracker != null)?mKeyTracker.doKeyUp(keyCode, event):false;
 		return handled || super.onKeyUp(keyCode, event);
+	}
+	
+	@Override
+	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+		Intent intent = new Intent(MovieDetailsActivity.this, HomeActivity.class);
+		intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+		return true;
 	}
 	
 	@Override
@@ -280,7 +289,7 @@ public class MovieDetailsActivity extends Activity {
 			return false;
 		}
 		client.setController(null);
-		boolean handled =  mKeyTracker.doKeyDown(keyCode, event);
+		boolean handled =  (mKeyTracker != null)?mKeyTracker.doKeyDown(keyCode, event):false;
 		return handled || super.onKeyDown(keyCode, event);
 	}
 }

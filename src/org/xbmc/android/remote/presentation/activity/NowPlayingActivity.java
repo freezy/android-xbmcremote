@@ -39,6 +39,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Build.VERSION;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,23 +68,23 @@ public class NowPlayingActivity extends Activity {
 	private static final int MENU_REMOTE = 303;
 	
 	public NowPlayingActivity() {
-		mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
-
-		@Override
-		public void onLongPressBack(int keyCode, KeyEvent event,
-				Stage stage, int duration) {
-			Intent intent = new Intent(NowPlayingActivity.this, HomeActivity.class);
-			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-		}
-
-		@Override
-		public void onShortPressBack(int keyCode, KeyEvent event,
-				Stage stage, int duration) {
-			callSuperOnKeyDown(keyCode, event);
-		}
+		if(VERSION.SDK_INT < 5) {
+			mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
+	
+				@Override
+				public void onLongPressBack(int keyCode, KeyEvent event,
+						Stage stage, int duration) {
+					onKeyLongPress(keyCode, event);
+				}
 		
-	});
+				@Override
+				public void onShortPressBack(int keyCode, KeyEvent event,
+						Stage stage, int duration) {
+					callSuperOnKeyDown(keyCode, event);
+				}
+				
+			});
+		};
 	}	
 	
 	public void onCreate(Bundle savedInstanceState) {
@@ -241,7 +242,7 @@ public class NowPlayingActivity extends Activity {
 			return false;
 		}
 		client.setController(null);
-		boolean handled =  mKeyTracker.doKeyDown(keyCode, event);
+		boolean handled =  (mKeyTracker != null)?mKeyTracker.doKeyDown(keyCode, event):false;
 		return handled || super.onKeyDown(keyCode, event);
 	}
 
@@ -268,8 +269,16 @@ public class NowPlayingActivity extends Activity {
 	}
 	
 	@Override
+	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+		Intent intent = new Intent(NowPlayingActivity.this, HomeActivity.class);
+		intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+		return true;
+	}
+	
+	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		boolean handled = mKeyTracker.doKeyUp(keyCode, event);
+		boolean handled = (mKeyTracker != null)?mKeyTracker.doKeyUp(keyCode, event):false;
 		return handled || super.onKeyUp(keyCode, event);
 	}
 }

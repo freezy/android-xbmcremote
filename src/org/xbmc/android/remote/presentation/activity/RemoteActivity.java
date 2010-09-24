@@ -31,6 +31,7 @@ import org.xbmc.eventclient.ButtonCodes;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Build.VERSION;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -66,20 +67,20 @@ public class RemoteActivity extends Activity {
 	private float mOldTouchValue;
 
 	public RemoteActivity() {
-		mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
-
-			@Override
-			public void onLongPressBack(int keyCode, KeyEvent event, Stage stage, int duration) {
-				Intent intent = new Intent(RemoteActivity.this, HomeActivity.class);
-				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
-			}
-
-			@Override
-			public void onShortPressBack(int keyCode, KeyEvent event, Stage stage, int duration) {
-				RemoteActivity.super.onKeyDown(keyCode, event);
-			}
-		});
+		if(VERSION.SDK_INT < 5) {
+			mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
+	
+				@Override
+				public void onLongPressBack(int keyCode, KeyEvent event, Stage stage, int duration) {
+					onKeyLongPress(keyCode, event);
+				}
+	
+				@Override
+				public void onShortPressBack(int keyCode, KeyEvent event, Stage stage, int duration) {
+					RemoteActivity.super.onKeyDown(keyCode, event);
+				}
+			});
+		}
 	}
 
 	@Override
@@ -135,7 +136,7 @@ public class RemoteActivity extends Activity {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		boolean handled = mKeyTracker.doKeyDown(keyCode, event);
+		boolean handled = (mKeyTracker != null)?mKeyTracker.doKeyDown(keyCode, event):false;
 		return handled || mRemoteController.onKeyDown(keyCode, event)
 				|| super.onKeyDown(keyCode, event);
 	}
@@ -228,10 +229,18 @@ public class RemoteActivity extends Activity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		boolean handled = mKeyTracker.doKeyUp(keyCode, event);
+		boolean handled = (mKeyTracker != null)?mKeyTracker.doKeyUp(keyCode, event):false;
 		return handled || super.onKeyUp(keyCode, event);
 	}
 
+	@Override
+	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+		Intent intent = new Intent(RemoteActivity.this, HomeActivity.class);
+		intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+		return true;
+	}
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent touchEvent) {
 		// ignore all that on hdpi displays

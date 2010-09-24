@@ -35,6 +35,7 @@ import org.xbmc.eventclient.ButtonCodes;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Build.VERSION;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -55,23 +56,23 @@ public abstract class AbsListActivity extends Activity {
 	private KeyTracker mKeyTracker;
 	
 	public AbsListActivity() {
-		mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
-
-			@Override
-			public void onLongPressBack(int keyCode, KeyEvent event,
-					Stage stage, int duration) {
-				Intent intent = new Intent(AbsListActivity.this, HomeActivity.class);
-				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
-			}
-
-			@Override
-			public void onShortPressBack(int keyCode, KeyEvent event,
-					Stage stage, int duration) {
-				callSuperOnKeyDown(keyCode, event);
-			}
-			
-		});
+		if(VERSION.SDK_INT < 5) {
+			mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
+	
+				@Override
+				public void onLongPressBack(int keyCode, KeyEvent event,
+						Stage stage, int duration) {
+					onKeyLongPress(keyCode, event);
+				}
+	
+				@Override
+				public void onShortPressBack(int keyCode, KeyEvent event,
+						Stage stage, int duration) {
+					callSuperOnKeyDown(keyCode, event);
+				}
+				
+			});
+		}
 	}
 	
 	protected void setupLists(int layoutResId) {
@@ -146,7 +147,7 @@ public abstract class AbsListActivity extends Activity {
 			return false;
 		}
 		client.setController(null);
-		boolean handled =  mKeyTracker.doKeyDown(keyCode, event);
+		boolean handled =  (mKeyTracker != null)?mKeyTracker.doKeyDown(keyCode, event):false;
 		return handled || super.onKeyDown(keyCode, event);
 	}
 
@@ -169,8 +170,16 @@ public abstract class AbsListActivity extends Activity {
 	}
 	
 	@Override
+	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+		Intent intent = new Intent(AbsListActivity.this, HomeActivity.class);
+		intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+		return true;
+	}
+	
+	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		boolean handled = mKeyTracker.doKeyUp(keyCode, event);
+		boolean handled = (mKeyTracker != null)?mKeyTracker.doKeyUp(keyCode, event):false;
 		return handled || super.onKeyUp(keyCode, event);
 	}
 }
