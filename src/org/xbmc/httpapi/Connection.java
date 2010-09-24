@@ -499,12 +499,15 @@ public class Connection {
 	 * @return Parsed boolean from field value
 	 */
 	public static boolean trimBoolean(String value) {
-		if (value.startsWith("0") || value.toLowerCase().startsWith("false")) {
-			return false;
-		}
-		if (value.startsWith("1") || value.toLowerCase().startsWith("true")) {
-			return true;
-		}
+		String trimmed = trim(value);
+		if (trimmed.length() > 0) {
+			if (trimmed.startsWith("0") || trimmed.toLowerCase().startsWith("false")) {
+				return false;
+			}
+			if (trimmed.startsWith("1") || trimmed.toLowerCase().startsWith("true")) {
+				return true;
+			}
+ 		}
 		return false;
 	}
 	
