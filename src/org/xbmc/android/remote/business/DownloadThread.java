@@ -79,7 +79,7 @@ class DownloadThread extends AbstractThread {
 						if (DEBUG) Log.i(TAG, "Cover is now already in mem cache, directly returning...");
 						response.value = MemCacheThread.getCover(cover, thumbSize);
 						done(controller, response);
-					} else if (thumbSize < ThumbSize.BIG && DiskCacheThread.isInCache(cover)) {
+					} else if (thumbSize < ThumbSize.BIG && DiskCacheThread.isInCache(cover, thumbSize)) {
 						if (DEBUG) Log.i(TAG, "Cover is not in mem cache anymore but still on disk, directly returning...");
 						response.value = DiskCacheThread.getCover(cover, thumbSize);
 						done(controller, response);

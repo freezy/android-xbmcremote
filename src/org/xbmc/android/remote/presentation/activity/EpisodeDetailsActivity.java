@@ -93,7 +93,7 @@ public class EpisodeDetailsActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.moviedetails);
+		setContentView(R.layout.tvepisodedetails);
 		
 		// remove nasty top fading edge
 		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
@@ -106,23 +106,19 @@ public class EpisodeDetailsActivity extends Activity {
 		
 		Log.i("EpisodeDetailsActivity", "rating = " + episode.rating + ", index = " + ((int)Math.round(episode.rating % 10)) + ".");
 		if (episode.rating > -1) {
-			((ImageView)findViewById(R.id.moviedetails_rating_stars)).setImageResource(sStarImages[(int)Math.round(episode.rating % 10)]);
+			((ImageView)findViewById(R.id.tvepisodedetails_rating_stars)).setImageResource(sStarImages[(int)Math.round(episode.rating % 10)]);
 		}
-		((TextView)findViewById(R.id.moviedetails_director)).setText(episode.director);
-		((TextView)findViewById(R.id.moviedetails_genre)).setVisibility(View.GONE);//setText(episode.genres);
-		((TextView)findViewById(R.id.moviedetails_runtime)).setVisibility(View.GONE);//setText(episode.runtime);
-		((FrameLayout)findViewById(R.id.moviedetails_layout_poster)).setVisibility(View.GONE);
-		((TextView)findViewById(R.id.moviedetails_rating)).setText(String.valueOf(episode.rating));
+		((TextView)findViewById(R.id.tvepisodedetails_show)).setText(episode.showTitle);
+		((TextView)findViewById(R.id.tvepisodedetails_first_aired)).setText(episode.firstAired);
+		((TextView)findViewById(R.id.tvepisodedetails_director)).setText(episode.director);
+		((TextView)findViewById(R.id.tvepisodedetails_writer)).setText(episode.writer);
+		((TextView)findViewById(R.id.tvepisodedetails_rating)).setText(String.valueOf(episode.rating));
 		
-		mEpisodeDetailsController.setupPlayButton((Button)findViewById(R.id.moviedetails_playbutton));
-		mEpisodeDetailsController.loadCover(new Handler(), (ImageView)findViewById(R.id.moviedetails_thumb));
+		mEpisodeDetailsController.setupPlayButton((Button)findViewById(R.id.tvepisodedetails_playbutton));
+		mEpisodeDetailsController.loadCover(new Handler(), (ImageView)findViewById(R.id.tvepisodedetails_thumb));
 		mEpisodeDetailsController.updateEpisodeDetails(
-				(TextView)findViewById(R.id.moviedetails_rating_numvotes),
-				(TextView)findViewById(R.id.moviedetails_studio),
-				(TextView)findViewById(R.id.moviedetails_plot),
-				(TextView)findViewById(R.id.moviedetails_parental),
-				(Button)findViewById(R.id.moviedetails_trailerbutton),
-				(LinearLayout)findViewById(R.id.moviedetails_datalayout));
+				(TextView)findViewById(R.id.tvepisodedetails_plot),
+				(LinearLayout)findViewById(R.id.tvepisodedetails_datalayout));
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 	}
@@ -172,15 +168,11 @@ public class EpisodeDetailsActivity extends Activity {
 			}, mEpisode, ThumbSize.BIG, null, mActivity.getApplicationContext(), false);
 		}
 		
-		public void updateEpisodeDetails(final TextView numVotesView, final TextView studioView, final TextView plotView, final TextView parentalView, final Button trailerButton, final LinearLayout dataLayout) {
+		public void updateEpisodeDetails(final TextView plotView, final LinearLayout dataLayout) {
 			mShowManager.updateEpisodeDetails(new DataResponse<Episode>() {
 				public void run() {
 					final Episode episode = value;
-					numVotesView.setVisibility(View.GONE);
-					studioView.setVisibility(View.GONE);
 					plotView.setText(episode.plot.equals("") ? NO_DATA : episode.plot);
-					parentalView.setVisibility(View.GONE);
-					trailerButton.setVisibility(View.GONE);
 					
 					if (episode.actors != null) {
 						final LayoutInflater inflater = mActivity.getLayoutInflater();

@@ -17,6 +17,7 @@ public class FiveLabelsItemView extends AbstractItemView {
 	private final static int POSTER_HEIGHT = (int)(POSTER_WIDTH * ThumbSize.POSTER_AR);
 	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
 	
+	public Bitmap posterOverlay;
 	public String subtitle;
 	public String subtitleRight;
 	public String bottomtitle;
@@ -33,9 +34,20 @@ public class FiveLabelsItemView extends AbstractItemView {
 	
 	protected void onDraw(Canvas canvas) {
 		drawPoster(canvas, POSTER_WIDTH, POSTER_HEIGHT, mWidth);
+		drawPosterOverlay(canvas, POSTER_WIDTH, POSTER_HEIGHT);
 		drawPortraitText(canvas);
 	}
 	
+	protected void drawPosterOverlay(Canvas canvas, int posterWidth, int posterHeight) {
+		if (posterOverlay != null) {
+			final int w = posterOverlay.getWidth();
+			final int h = posterOverlay.getHeight();
+			int dx = posterWidth - w;
+			int dy = posterHeight - h;
+			canvas.drawBitmap(posterOverlay, dx, dy, null);
+		}		
+	}
+
 	/**
 	 * Draws text labels for portrait text view
 	 * <pre>

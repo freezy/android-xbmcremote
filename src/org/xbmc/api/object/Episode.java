@@ -53,29 +53,40 @@ public class Episode implements ICoverArt {
 	 */
 	public String writer;
 	public String firstAired;
-	public boolean watched;
+	
+	/**
+	 * Number of watched, -1 if not set.
+	 */
+	public int numWatched = -1;
 	public String director;
 	public int season;
+	
 	/**
 	 * Number of this episode within the season
 	 */
 	public int episode;
 	
+	/**
+	 * Title of the TV Show
+	 */
+	public String showTitle;
+	
 	public ArrayList<Actor> actors = null;
 	
 	public Episode(int id, String title, String plot, double rating, String writer, String firstAired,
-			boolean watched, String director, int season, int episode, String localPath) {
+			int numWatched, String director, int season, int episode, String localPath, String showTitle) {
 		this.id = id;
 		this.title = title;
 		this.plot = plot;
 		this.rating = rating;
 		this.writer = writer;
 		this.firstAired = firstAired;
-		this.watched = watched;
+		this.numWatched = numWatched;
 		this.director = director;
 		this.season = season;
 		this.episode = episode;
 		this.localPath = localPath;
+		this.showTitle = showTitle;
 	}
 
 	public long getCrc() {

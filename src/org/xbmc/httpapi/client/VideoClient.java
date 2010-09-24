@@ -72,7 +72,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2)");
+		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount");
 		sb.append(" FROM movie, files, path WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
@@ -86,7 +86,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, int offset) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2)");
+		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount");
 		sb.append(" FROM movie, files, path WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		sb.append(" LIMIT -1 OFFSET " + offset);
@@ -102,7 +102,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2)");
+		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount");
 		sb.append(" FROM movie, files, path");
 		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie IN (");
 		sb.append("   SELECT DISTINCT idMovie ");
@@ -123,7 +123,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2)");
+		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount");
 		sb.append(" FROM movie, files, path");
 		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie IN (");
 		sb.append("   SELECT DISTINCT idMovie ");
@@ -251,8 +251,8 @@ public class VideoClient extends Client implements IVideoClient {
 		ArrayList<Movie> movies = new ArrayList<Movie>();
 		String[] fields = response.split("<field>");
 		try {
-			for (int row = 1; row < fields.length; row += 9) {
-				movies.add(new Movie( // int id, String title, int year, String path, String filename, String director, String runtime, String genres
+			for (int row = 1; row < fields.length; row += 10) {
+				movies.add(new Movie( // int id, String title, int year, String path, String filename, String director, String runtime, String genres, Double rating, int numWatched
 						Connection.trimInt(fields[row]), 
 						Connection.trim(fields[row + 1]), 
 						Connection.trimInt(fields[row + 2]),
@@ -261,7 +261,8 @@ public class VideoClient extends Client implements IVideoClient {
 						Connection.trim(fields[row + 5]),
 						Connection.trim(fields[row + 6]),
 						Connection.trim(fields[row + 7]),
-						Connection.trimDouble(fields[row + 8])
+						Connection.trimDouble(fields[row + 8]),
+						Connection.trimInt(fields[row + 9])
 				));
 			}
 		} catch (Exception e) {
@@ -402,9 +403,9 @@ public class VideoClient extends Client implements IVideoClient {
 		switch (sortBy) {
 			default:
 			case SortType.TITLE:
-				return " ORDER BY lower(c00) " + sortOrder;
+				return " ORDER BY CASE WHEN c10 IS NULL OR c10 == '' THEN lower(c00) ELSE lower(c10) END " + sortOrder;
 			case SortType.YEAR:
-				return " ORDER BY c07 " + sortOrder + ", lower(c00) " + sortOrder;
+				return " ORDER BY c07 " + sortOrder + ", CASE WHEN c10 IS NULL OR c10 == '' THEN lower(c00) ELSE lower(c10) END " + sortOrder;
 			case SortType.RATING:
 				return " ORDER BY c05 " + sortOrder;
 		}

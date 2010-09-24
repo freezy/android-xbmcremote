@@ -29,8 +29,6 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.MediaType;
-import org.xbmc.api.type.ThumbSize;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -109,8 +107,10 @@ class DiskCacheThread extends AbstractThread {
 	 * @param cover
 	 * @return True if thumb is in disk cache, false otherwise.
 	 */
-	public static boolean isInCache(ICoverArt cover) {
-		return ImportUtilities.getCacheFile(MediaType.getArtFolder(cover.getMediaType()), ThumbSize.MEDIUM, Crc32.formatAsHexLowerCase(cover.getCrc()).toLowerCase()).exists();
+	public static boolean isInCache(ICoverArt cover, int thumbSize) {
+		final File file = ImportUtilities.getCacheFile(MediaType.getArtFolder(cover.getMediaType()), thumbSize, Crc32.formatAsHexLowerCase(cover.getCrc()).toLowerCase());
+		// TODO sometimes the filesize is zero
+		return file.exists() && file.length() > 0;
 	}
 	
 	/**

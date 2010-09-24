@@ -40,7 +40,7 @@ public interface ITvShowClient extends IClient {
 	 * @param show
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show) ;
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, int sortBy, String sortOrder) ;
 	
 	/**
 	 * Gets all Episodes for the specified season
@@ -48,7 +48,7 @@ public interface ITvShowClient extends IClient {
 	 * @param season
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, Season season) ;
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, Season season, int sortBy, String sortOrder) ;
 	
 	/**
 	 * Gets all Episodes for the specified show and season
@@ -57,7 +57,7 @@ public interface ITvShowClient extends IClient {
 	 * @param season
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season) ;
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season, int sortBy, String sortOrder) ;
 	
 	/**
 	 * Gets all seasons for the specified show

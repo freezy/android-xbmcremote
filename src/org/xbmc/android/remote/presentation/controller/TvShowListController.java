@@ -46,6 +46,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.view.ContextMenu;
@@ -84,13 +85,12 @@ public class TvShowListController extends ListController implements IController 
 	
 	private boolean mLoadCovers = false;
 	
+	private static Bitmap mWatchedBitmap;
+	
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
 		mTvManager = ManagerFactory.getTvManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
-		
-		((ISortableManager)mTvManager).setSortKey(AbstractManager.PREF_SORT_KEY_SHOW);
-		((ISortableManager)mTvManager).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		
 		final String sdError = ImportUtilities.assertSdCard();
 		mLoadCovers = sdError == null;
@@ -108,6 +108,7 @@ public class TvShowListController extends ListController implements IController 
 			activity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.tvposter_small);
+			mWatchedBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.check_mark);
 			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
@@ -128,6 +129,11 @@ public class TvShowListController extends ListController implements IController 
 	private void fetch() {
 		final Actor actor = mActor;
 		final Genre genre = mGenre;
+		
+		// tv show and episode both are using the same manager so set the sort key here
+		((ISortableManager)mTvManager).setSortKey(AbstractManager.PREF_SORT_KEY_SHOW);
+		((ISortableManager)mTvManager).setPreferences(mActivity.getPreferences(Context.MODE_PRIVATE));
+		
 		showOnLoading();
 		if (actor != null) {						// TV Shows with a certain actor
 			setTitle(actor.name + " - TV Shows...");
@@ -313,6 +319,7 @@ public class TvShowListController extends ListController implements IController 
 			final TvShow show = getItem(position);
 			view.reset();
 			view.position = position;
+			view.posterOverlay = show.watched ? mWatchedBitmap : null;
 			view.title = show.title;
 			view.subtitle = show.genre;
 			view.subtitleRight = show.firstAired!=null?show.firstAired:"";

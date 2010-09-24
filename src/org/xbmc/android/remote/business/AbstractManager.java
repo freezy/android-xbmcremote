@@ -71,6 +71,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	public static final int PREF_SORT_KEY_FILEMODE = 5;
 	public static final int PREF_SORT_KEY_SHOW = 6;
 	public static final int PREF_SORT_KEY_MOVIE = 7;
+	public static final int PREF_SORT_KEY_EPISODE = 8;
 	
 	protected INotifiableController mController = null;
 	
@@ -194,7 +195,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 * @return True if cover has been downloaded, false otherwise.
 	 */
 	public static boolean cacheCover(final ICoverArt cover, final INotifiableManager manager, final Context context) {
-		if (!DiskCacheThread.isInCache(cover)) {
+		if (!DiskCacheThread.isInCache(cover, ThumbSize.MEDIUM)) {
 			return DownloadThread.download(null, cover, ThumbSize.MEDIUM, null, manager, context, false);
 		}
 		return false;

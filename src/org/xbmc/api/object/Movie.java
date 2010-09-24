@@ -45,7 +45,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	 * @param name		Album name
 	 * @param artist	Artist
 	 */
-	public Movie(int id, String title, int year, String path, String filename, String director, String runtime, String genres, double rating) {
+	public Movie(int id, String title, int year, String path, String filename, String director, String runtime, String genres, double rating, int numWatched) {
 		this.id = id;
 		this.title = title;
 		this.year = year;
@@ -55,6 +55,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 		this.rating = rating;
 		this.localPath = path;
 		this.filename = filename;
+		this.numWatched = numWatched;
 	}
 	
 	public int getMediaType() {
@@ -215,6 +216,11 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	 * Studio
 	 */
 	public String studio = null;
+	
+	/**
+	 * Number of watched, -1 if not set.
+	 */
+	public int numWatched = -1;
 	
 	/**
 	 * List of actors; 

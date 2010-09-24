@@ -38,6 +38,7 @@ public class FlexibleItemView extends FiveLabelsItemView {
 		if (mCover != null && !mCover.isRecycled()) {
 			Dimension renderDim = ThumbSize.getDimension(ThumbSize.SMALL, MediaType.VIDEO, mCover.getWidth(), mCover.getHeight());
 			drawPoster(canvas, renderDim.x, renderDim.y, mWidth);
+			drawPosterOverlay(canvas, renderDim.x, renderDim.y);
 			switch (renderDim.format) {
 				case Dimension.SQUARE:
 				case Dimension.PORTRAIT:

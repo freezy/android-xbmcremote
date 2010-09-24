@@ -45,6 +45,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.view.ContextMenu;
@@ -82,6 +83,8 @@ public class MovieListController extends ListController implements IController {
 	private IControlManager mControlManager;
 	
 	private boolean mLoadCovers = false;
+
+	private static Bitmap mWatchedBitmap;
 	
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
@@ -107,6 +110,7 @@ public class MovieListController extends ListController implements IController {
 			activity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.poster);
+			mWatchedBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.check_mark);
 			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
@@ -314,6 +318,7 @@ public class MovieListController extends ListController implements IController {
 			final Movie movie = getItem(position);
 			view.reset();
 			view.position = position;
+			view.posterOverlay = movie.numWatched > 0 ? mWatchedBitmap : null;
 			view.title = movie.title;
 			view.subtitle = movie.genres;
 			view.subtitleRight = movie.year > 0 ? String.valueOf(movie.year) : "";

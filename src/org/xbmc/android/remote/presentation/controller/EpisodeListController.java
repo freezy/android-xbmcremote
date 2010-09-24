@@ -24,6 +24,7 @@ package org.xbmc.android.remote.presentation.controller;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.EpisodeDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
@@ -32,15 +33,20 @@ import org.xbmc.android.remote.presentation.widget.FlexibleItemView;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
+import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.object.Season;
+import org.xbmc.api.type.SortType;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.view.ContextMenu;
@@ -70,6 +76,8 @@ public class EpisodeListController extends ListController implements IController
 	public static final int MENU_SORT_BY_YEAR_DESC = 24;
 	public static final int MENU_SORT_BY_RATING_ASC = 25;
 	public static final int MENU_SORT_BY_RATING_DESC = 26;
+	public static final int MENU_SORT_BY_EPISODE_ASC = 27;
+	public static final int MENU_SORT_BY_EPISODE_DESC = 28;
 	
 	private Season mSeason;
 	
@@ -77,6 +85,8 @@ public class EpisodeListController extends ListController implements IController
 	private IControlManager mControlManager;
 	
 	private boolean mLoadCovers = false;
+	
+	private static Bitmap mWatchedBitmap;
 	
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
@@ -99,6 +109,7 @@ public class EpisodeListController extends ListController implements IController
 			activity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.poster);
+			mWatchedBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.check_mark);
 			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
@@ -117,6 +128,11 @@ public class EpisodeListController extends ListController implements IController
 	
 	private void fetch() {
 		final Season season = mSeason;
+		
+		// tv show and episode both are using the same manager so set the sort key here
+		((ISortableManager)mTvManager).setSortKey(AbstractManager.PREF_SORT_KEY_EPISODE);
+		((ISortableManager)mTvManager).setPreferences(mActivity.getPreferences(Context.MODE_PRIVATE));
+		
 		showOnLoading();
 		if (season != null) {
 			setTitle(season.show.title + " Season " + season.number + " - Episodes");
@@ -201,10 +217,10 @@ public class EpisodeListController extends ListController implements IController
 //			menu.add(0, MENU_PLAY_ALL, 0, "Play all").setIcon(R.drawable.menu_album);
 //		}
 		SubMenu sortMenu = menu.addSubMenu(0, MENU_SORT, 0, "Sort").setIcon(R.drawable.menu_sort);
+		sortMenu.add(2, MENU_SORT_BY_EPISODE_ASC, 0, "by Episode ascending");
+		sortMenu.add(2, MENU_SORT_BY_EPISODE_DESC, 0, "by Episode descending");
 		sortMenu.add(2, MENU_SORT_BY_TITLE_ASC, 0, "by Title ascending");
 		sortMenu.add(2, MENU_SORT_BY_TITLE_DESC, 0, "by Title descending");
-		sortMenu.add(2, MENU_SORT_BY_YEAR_ASC, 0, "by Year ascending");
-		sortMenu.add(2, MENU_SORT_BY_YEAR_DESC, 0, "by Year descending");
 		sortMenu.add(2, MENU_SORT_BY_RATING_ASC, 0, "by Rating ascending");
 		sortMenu.add(2, MENU_SORT_BY_RATING_DESC, 0, "by Rating descending");
 //		menu.add(0, MENU_SWITCH_VIEW, 0, "Switch view").setIcon(R.drawable.menu_view);
@@ -212,16 +228,51 @@ public class EpisodeListController extends ListController implements IController
 	
 	@Override
 	public void onOptionsItemSelected(MenuItem item) {
-//		final SharedPreferences.Editor ed;
+		final SharedPreferences.Editor ed;
 		switch (item.getItemId()) {
 		case MENU_PLAY_ALL:
 			break;
+		case MENU_SORT_BY_EPISODE_ASC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_EPISODE, SortType.EPISODE_NUM);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_EPISODE, SortType.ORDER_ASC);
+			ed.commit();
+			fetch();
+			break;
+		case MENU_SORT_BY_EPISODE_DESC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_EPISODE, SortType.EPISODE_NUM);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_EPISODE, SortType.ORDER_DESC);
+			ed.commit();
+			fetch();
+			break;
 		case MENU_SORT_BY_TITLE_ASC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_EPISODE, SortType.EPISODE_TITLE);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_EPISODE, SortType.ORDER_ASC);
+			ed.commit();
+			fetch();
+			break;
 		case MENU_SORT_BY_TITLE_DESC:
-		case MENU_SORT_BY_YEAR_ASC:
-		case MENU_SORT_BY_YEAR_DESC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_EPISODE, SortType.EPISODE_TITLE);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_EPISODE, SortType.ORDER_DESC);
+			ed.commit();
+			fetch();
+			break;
 		case MENU_SORT_BY_RATING_ASC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_EPISODE, SortType.EPISODE_RATING);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_EPISODE, SortType.ORDER_ASC);
+			ed.commit();
+			fetch();
+			break;
 		case MENU_SORT_BY_RATING_DESC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_EPISODE, SortType.EPISODE_RATING);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.ORDER_DESC);
+			ed.commit();
+			fetch();
 			break;
 		}
 	}
@@ -242,6 +293,7 @@ public class EpisodeListController extends ListController implements IController
 			final Episode episode = getItem(position);
 			view.reset();
 			view.position = position;
+			view.posterOverlay = episode.numWatched > 0 ? mWatchedBitmap : null;
 			view.title = episode.episode + ". " + episode.title;
 //			view.subtitle = episode.;
 			view.subtitleRight = episode.firstAired!=null?episode.firstAired:"";
@@ -260,7 +312,7 @@ public class EpisodeListController extends ListController implements IController
 	public void onActivityPause() {
 		if (mTvManager != null) {
 			mTvManager.setController(null);
-//			mVideoManager.postActivity();
+			mTvManager.postActivity();
 		}
 		if (mControlManager != null) {
 			mControlManager.setController(null);

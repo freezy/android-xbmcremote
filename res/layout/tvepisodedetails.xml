@@ -14,7 +14,7 @@
 			android:layout_height="wrap_content"
 			android:orientation="vertical">
 			<ImageView 
-				android:id="@+id/tvdetails_thumb" 
+				android:id="@+id/tvepisodedetails_thumb" 
 				android:layout_height="wrap_content"
 				android:layout_width="fill_parent"
 				android:scaleType="centerInside"
@@ -27,44 +27,49 @@
 				android:orientation="horizontal" 
 				android:gravity="center_horizontal">
 				<ImageView 
-					android:id="@+id/tvdetails_rating_stars" 
+					android:id="@+id/tvepisodedetails_rating_stars" 
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
 					android:src="@drawable/stars_0"
 					android:padding="0dip" />
 				<TextView 
-					android:id="@+id/tvdetails_rating" 
+					android:id="@+id/tvepisodedetails_rating" 
 					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content"
 					android:textSize="18dip"
 					android:textStyle="bold" 
 					android:paddingTop="6dip"
-					android:paddingLeft="4dip" />			
+					android:paddingLeft="4dip" />
+				<TextView 
+					android:id="@+id/tvepisodedetails_rating_numvotes" 
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content"
+					android:textSize="14dip"
+					android:paddingTop="8dip"
+					android:paddingLeft="4dip" />
+			
 			</LinearLayout>
 			<LinearLayout
-				android:id="@+id/tvdetails_datalayout" 
+				android:id="@+id/tvepisodedetails_datalayout" 
 				android:layout_width="fill_parent" 
 				android:layout_height="wrap_content"
 				android:orientation="vertical"
 				android:padding="20dip">
-				<!-- EPISODES -->
-				<TextView android:text="EPISODES" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/tvdetails_episodes" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- TV SHOW -->
+				<TextView android:text="TV SHOW" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/tvepisodedetails_show" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
 				<!-- FIRST AIRED -->
 				<TextView android:text="FIRST AIRED" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/tvdetails_first_aired" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<!-- GENRE -->
-				<TextView android:text="GENRE" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/tvdetails_genre" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<!-- STUDIO -->
-				<TextView android:text="STUDIO" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/tvdetails_studio" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<!-- PARENTAL RATING -->
-				<TextView android:text="PARENTAL RATING" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/tvdetails_parental" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/tvepisodedetails_first_aired" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- DIRECTOR -->
+				<TextView android:text="DIRECTOR" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/tvepisodedetails_director" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<!-- WRITER -->
+				<TextView android:text="WRITER" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/tvepisodedetails_writer" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
 				<!-- PLOT -->
 				<TextView android:text="SUMMARY" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/tvdetails_plot" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView android:id="@+id/tvepisodedetails_plot" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
 				<!-- CAST -->
 				<TextView android:text="CAST" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
 			</LinearLayout>
@@ -75,8 +80,8 @@
 				android:padding="20dip"
 				android:gravity="center_horizontal">
 				<Button 
-					android:text="Play TV Show" 
-					android:id="@+id/tvdetails_playbutton" 
+					android:text="Play Episode" 
+					android:id="@+id/tvepisodedetails_playbutton" 
 					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content"
 					android:padding="7dip" />

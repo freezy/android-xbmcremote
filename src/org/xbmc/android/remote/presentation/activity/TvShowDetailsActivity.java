@@ -119,7 +119,6 @@ public class TvShowDetailsActivity extends Activity {
 				(TextView)findViewById(R.id.tvdetails_studio),
 				(TextView)findViewById(R.id.tvdetails_parental),
 				(TextView)findViewById(R.id.tvdetails_plot),
-				(Button)findViewById(R.id.tvdetails_trailerbutton),
 				(LinearLayout)findViewById(R.id.tvdetails_datalayout));
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
@@ -156,7 +155,7 @@ public class TvShowDetailsActivity extends Activity {
 			}, mShow, ThumbSize.BIG, null, mActivity.getApplicationContext(), false);
 		}
 		
-		public void updateTvShowDetails(final TextView episodesVew, final TextView studioView, final TextView parentalView, final TextView plotView, final Button trailerButton, final LinearLayout dataLayout) {
+		public void updateTvShowDetails(final TextView episodesVew, final TextView studioView, final TextView parentalView, final TextView plotView, final LinearLayout dataLayout) {
 			mShowManager.updateTvShowDetails(new DataResponse<TvShow>() {
 				public void run() {
 					final TvShow show = value;
@@ -164,7 +163,6 @@ public class TvShowDetailsActivity extends Activity {
 					studioView.setText(show.network);
 					parentalView.setText(show.contentRating.equals("") ? NO_DATA : show.contentRating);
 					plotView.setText(show.summary.equals("") ? NO_DATA : show.summary);
-					trailerButton.setVisibility(View.GONE);
 					
 					if (show.actors != null) {
 						final LayoutInflater inflater = mActivity.getLayoutInflater();

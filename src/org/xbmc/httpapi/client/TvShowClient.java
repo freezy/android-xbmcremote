@@ -22,8 +22,6 @@
 package org.xbmc.httpapi.client;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import org.xbmc.api.business.INotifiableManager;
@@ -117,7 +115,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("		GROUP BY tvshow.c00");
 		sb.append("	) counts ON tvshow.idShow = counts.idShow");
 		sb.append("	LEFT OUTER join (");
-		sb.append("		SELECT tvShow.idShow, strPath ");
+		sb.append("		SELECT tvshow.idShow, strPath ");
 		sb.append("		FROM tvshow");
 		sb.append("		JOIN tvshowlinkpath ON tvshow.idShow = tvshowlinkpath.idShow");
 		sb.append("		JOIN path ON path.idpath = tvshowlinkpath.idPath");
@@ -184,7 +182,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("		GROUP BY tvshow.c00");
 		sb.append("	) counts ON tvshow.idShow = counts.idShow");
 		sb.append("	LEFT OUTER join (");
-		sb.append("		SELECT tvShow.idShow, strPath ");
+		sb.append("		SELECT tvshow.idShow, strPath ");
 		sb.append("		FROM tvshow");
 		sb.append("		JOIN tvshowlinkpath ON tvshow.idShow = tvshowlinkpath.idShow");
 		sb.append("		JOIN path ON path.idpath = tvshowlinkpath.idPath");
@@ -228,7 +226,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("		GROUP BY tvshow.c00");
 		sb.append("	) counts ON tvshow.idShow = counts.idShow");
 		sb.append("	LEFT OUTER join (");
-		sb.append("		SELECT tvShow.idShow, strPath ");
+		sb.append("		SELECT tvshow.idShow, strPath ");
 		sb.append("		FROM tvshow");
 		sb.append("		JOIN tvshowlinkpath ON tvshow.idShow = tvshowlinkpath.idShow");
 		sb.append("		JOIN path ON path.idpath = tvshowlinkpath.idPath");
@@ -265,7 +263,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("	) ");
 		sb.append("GROUP BY episode.c12, tvshow.c00 ");
 		sb.append(") q where not q.c12 is null ");
-		sb.append("ORDER BY cast (q.c12 as integer)");
+		sb.append("ORDER BY q.c12+0");
 		
 		return parseSeasons(mConnection.query("QueryVideoDatabase", sb.toString(), manager), show);
 	}
@@ -289,7 +287,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("	LEFT OUTER JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode ");
 		sb.append("WHERE NOT episode.c12 is null ");
 		sb.append("GROUP BY episode.c12, tvshow.c00 ");
-		sb.append("ORDER BY tvshow.idShow, cast (episode.c12 as integer)");
+		sb.append("ORDER BY tvshow.idShow, episode.c12+0");
 		
 		return parseSeasons(mConnection.query("QueryVideoDatabase", sb.toString(), manager), showMap);
 	}
@@ -300,8 +298,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @param show
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show) {
-		return getEpisodes(manager, show, null);
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, int sortBy, String sortOrder) {
+		return getEpisodes(manager, show, null, sortBy, sortOrder);
 	}
 	
 	/**
@@ -310,8 +308,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @param season
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, Season season) {
-		return getEpisodes(manager, season.show, season);
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, Season season, int sortBy, String sortOrder) {
+		return getEpisodes(manager, season.show, season, sortBy, sortOrder);
 	}
 	
 	/**
@@ -321,9 +319,9 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @param season
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season) {
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(c03, 2), c04, c05, c06, c08, c10, c12, c13, strPath, strFileName");
+		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(c03, 2), c04, c05, c06, playCount, c10, c12, c13, strPath, strFileName, strTitle");
 		sb.append(" FROM episodeview ");
 		sb.append(" WHERE idShow in ( select idShow from tvshow where c00 in (select c00 from tvshow where idShow = ");
 		sb.append(show.id);
@@ -335,7 +333,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 			sb.append(season.number);
 			sb.append(")))");
 		}
-		sb.append(" ORDER BY cast (c12 as integer), cast (c13 as integer)");
+		sb.append(showsOrderBy(sortBy, sortOrder));
 		return parseEpisodes(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
 	
@@ -433,7 +431,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 				return map.get("Title");
 			}
 			public int getMediaType() {
-				return MediaType.VIDEO;
+				return MediaType.VIDEO_TVSHOW;
 			}
 			public boolean isPlaying() {
 				return PlayStatus.parse(map.get("PlayStatus")) == PlayStatus.PLAYING;
@@ -501,18 +499,19 @@ public class TvShowClient extends Client implements ITvShowClient {
 		ArrayList<Episode> episodes = new ArrayList<Episode>();
 		String[] fields = response.split("<field>");
 		try {
-			for(int row = 1; row < fields.length; row += 13) {
+			for(int row = 1; row < fields.length; row += 14) {
 				episodes.add(new Episode(Connection.trimInt(fields[row]),
 						Connection.trim(fields[row + 1]),
 						Connection.trim(fields[row + 2]),
 						Connection.trimDouble(fields[row + 3]),
 						Connection.trim(fields[row + 4]),
 						Connection.trim(fields[row + 5]),
-						Connection.trimBoolean(fields[row + 7]),
+						Connection.trimInt(fields[row + 7]),
 						Connection.trim(fields[row + 8]),
 						Connection.trimInt(fields[row + 9]),
 						Connection.trimInt(fields[row + 10]),
-						Connection.trim(fields[row + 11]) + Connection.trim(fields[row + 12])
+						Connection.trim(fields[row + 11]) + Connection.trim(fields[row + 12]),
+						Connection.trim(fields[row + 13])
 					));
 			}
 		} catch (Exception e) {
@@ -520,11 +519,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 			System.err.println("response = " + response);
 			e.printStackTrace();
 		}
-		Collections.sort(episodes, new Comparator<Episode>() {
-			public int compare(Episode object1, Episode object2) {
-				return object1.episode - object2.episode;
-			}
-		});
+
 		return episodes;
 	}
 
@@ -596,9 +591,15 @@ public class TvShowClient extends Client implements ITvShowClient {
 			case SortType.TITLE:
 				return " ORDER BY lower(tvshow.c00) " + sortOrder;
 			case SortType.YEAR:
-				return " ORDER BY strftime('%Y', tvshow.c05) " + sortOrder + ", lower(tvshow.c00) " + sortOrder;
+				return " ORDER BY tvshow.c05 " + sortOrder + ", lower(tvshow.c00) " + sortOrder;
 			case SortType.RATING:
 				return " ORDER BY tvshow.c04 " + sortOrder;
+			case SortType.EPISODE_NUM:
+				return " ORDER BY episodeview.c12+0 " + sortOrder + ", episodeview.c13+0 " + sortOrder;
+			case SortType.EPISODE_TITLE:
+				return " ORDER BY episodeview.c00 " + sortOrder;
+			case SortType.EPISODE_RATING:
+				return " ORDER BY episodeview.c03 " + sortOrder;
 		}
 	}
 
