@@ -150,10 +150,10 @@ public class SettingsController extends AbstractController implements INotifiabl
 				pref.create(mPreferenceActivity.getPreferenceManager());
 				mPreferenceActivity.getPreferenceScreen().addPreference(pref);
 				break;
-			case MENU_ADD_HOST_WIZARD:
+/*			case MENU_ADD_HOST_WIZARD:
 				Intent i = new Intent(mPreferenceActivity, SetupWizard.class);
 				mPreferenceActivity.startActivity(i);
-				break;
+				break;*/
 			case MENU_EXIT:
 				System.exit(0);
 				break;

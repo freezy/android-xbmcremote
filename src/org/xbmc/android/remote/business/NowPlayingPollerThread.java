@@ -97,7 +97,9 @@ public class NowPlayingPollerThread extends Thread {
 				// XXX link to context will eventually change if activity which created the thread changes (java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare())
 				//Toast toast = Toast.makeText(context, "Poller Error: " + e.getMessage(), Toast.LENGTH_LONG);
 				//toast.show();
-				Log.e(TAG, e.getMessage());
+				if (e.getMessage() != null) {
+					Log.e(TAG, e.getMessage());
+				}
 				e.printStackTrace();
 			}
 			public void onFinish(DataResponse<?> response) {

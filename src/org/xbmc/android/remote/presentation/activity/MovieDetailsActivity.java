@@ -172,6 +172,10 @@ public class MovieDetailsActivity extends Activity {
 			mVideoManager.updateMovieDetails(new DataResponse<Movie>() {
 				public void run() {
 					final Movie movie = value;
+					if (movie == null) {
+						Log.w(TAG, "updateMovieDetails: value is null.");
+						return;
+					}
 					numVotesView.setText(movie.numVotes > 0 ? " (" + movie.numVotes + " votes)" : "");
 					studioView.setText(movie.studio.equals("") ? NO_DATA : movie.studio);
 					plotView.setText(movie.plot.equals("") ? NO_DATA : movie.plot);

@@ -182,7 +182,11 @@ public class EpisodeDetailsActivity extends Activity {
 							final View view = inflater.inflate(R.layout.actor_item, null);
 							
 							((TextView)view.findViewById(R.id.actor_name)).setText(actor.name);
-							((TextView)view.findViewById(R.id.actor_role)).setText("as " + actor.role);
+							if (actor.role != null && !actor.role.equals("")) {
+								((TextView)view.findViewById(R.id.actor_role)).setText("as " + actor.role);
+							} else {
+								((TextView)view.findViewById(R.id.actor_role)).setVisibility(View.GONE);
+							}
 							ImageButton img = ((ImageButton)view.findViewById(R.id.actor_image));
 							mShowManager.getCover(new DataResponse<Bitmap>() {
 								public void run() {
@@ -193,16 +197,18 @@ public class EpisodeDetailsActivity extends Activity {
 							}, actor, ThumbSize.SMALL, null, mActivity.getApplicationContext(), false);
 							
 							img.setTag(actor);
-							img.setOnClickListener(new OnClickListener() {
-								public void onClick(View v) {
-									Intent nextActivity;
-									Actor actor = (Actor)v.getTag();
-									nextActivity = new Intent(view.getContext(), AbsListActivity.class);
-									nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new TvShowListController());
-									nextActivity.putExtra(ListController.EXTRA_ACTOR, actor);
-									mActivity.startActivity(nextActivity);
-								}
-							});
+							
+							// this isn't working
+//							img.setOnClickListener(new OnClickListener() {
+//								public void onClick(View v) {
+//									Intent nextActivity;
+//									Actor actor = (Actor)v.getTag();
+//									nextActivity = new Intent(view.getContext(), ListActivity.class);
+//									nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new TvShowListController());
+//									nextActivity.putExtra(ListController.EXTRA_ACTOR, actor);
+//									mActivity.startActivity(nextActivity);
+//								}
+//							});
 							dataLayout.addView(view);
 							n++;
 						}
