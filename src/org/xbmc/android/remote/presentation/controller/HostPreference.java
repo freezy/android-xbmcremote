@@ -56,6 +56,7 @@ public class HostPreference extends DialogPreference {
 	private CheckBox mWifiOnlyView;
 	
 	private Host mHost;
+	private Context mContext;
 	
 	public static final String ID_PREFIX = "settings_host_";
 
@@ -65,6 +66,9 @@ public class HostPreference extends DialogPreference {
 	
 	public HostPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		
+		mContext = context;
+		
 		setDialogLayoutResource(R.layout.preference_host);
 		setDialogTitle("Add new host");
 		setDialogIcon(R.drawable.bubble_add);
@@ -233,6 +237,10 @@ public class HostPreference extends DialogPreference {
 				notifyChanged();
 			}
 			setHost(host);
+			
+			if (HostFactory.host == null) {
+				HostFactory.saveHost(mContext, host);
+			}
 		}
 	}
 }
