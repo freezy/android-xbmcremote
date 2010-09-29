@@ -403,9 +403,9 @@ public class VideoClient extends Client implements IVideoClient {
 		switch (sortBy) {
 			default:
 			case SortType.TITLE:
-				return " ORDER BY CASE WHEN c10 IS NULL OR c10 == '' THEN lower(c00) ELSE lower(c10) END " + sortOrder;
+				return " ORDER BY CASE WHEN c10 IS NULL OR c10 = '' THEN lower(c00) ELSE lower(c10) END " + sortOrder;
 			case SortType.YEAR:
-				return " ORDER BY c07 " + sortOrder + ", CASE WHEN c10 IS NULL OR c10 == '' THEN lower(c00) ELSE lower(c10) END " + sortOrder;
+				return " ORDER BY c07 " + sortOrder + ", CASE WHEN c10 IS NULL OR c10 = '' THEN lower(c00) ELSE lower(c10) END " + sortOrder;
 			case SortType.RATING:
 				return " ORDER BY c05 " + sortOrder;
 		}
