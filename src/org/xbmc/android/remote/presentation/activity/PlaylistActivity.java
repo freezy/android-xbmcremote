@@ -25,7 +25,7 @@ import java.io.IOException;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.presentation.controller.MusicPlaylistController;
+import org.xbmc.android.remote.presentation.controller.PlaylistController;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
@@ -50,7 +50,7 @@ import android.widget.TextView;
 
 public class PlaylistActivity extends Activity {
 
-	private MusicPlaylistController mMusicPlaylistController;
+	private PlaylistController mPlaylistController;
 
 	private ImageButton mPlayPauseView;
 	private TextView mLabel1;
@@ -94,13 +94,13 @@ public class PlaylistActivity extends Activity {
 		mLabel2 = (TextView) findViewById(R.id.playlist_textfield_lower);
 
 		// create and associate logic
-		mMusicPlaylistController = new MusicPlaylistController();
-		mMusicPlaylistController.findTitleView(findViewById(R.id.playlist_outer_layout));
-		mMusicPlaylistController.findMessageView(findViewById(R.id.playlist_outer_layout));
-		mMusicPlaylistController.onCreate(this, new Handler(), (ListView) findViewById(R.id.playlist_list));
+		mPlaylistController = new PlaylistController();
+		mPlaylistController.findTitleView(findViewById(R.id.playlist_outer_layout));
+		mPlaylistController.findMessageView(findViewById(R.id.playlist_outer_layout));
+		mPlaylistController.onCreate(this, new Handler(), (ListView) findViewById(R.id.playlist_list));
 
 		// setup buttons
-		mMusicPlaylistController.setupButtons(
+		mPlaylistController.setupButtons(
 			findViewById(R.id.MediaPreviousButton), 
 			findViewById(R.id.MediaStopButton), 
 			findViewById(R.id.MediaPlayPauseButton), 
@@ -114,8 +114,8 @@ public class PlaylistActivity extends Activity {
 		mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
 	}
 	
-	public void setNumTracks(String numTracks) {
-		mLabel2.setText(numTracks);
+	public void setNumItems(String numItems) {
+		mLabel2.setText(numItems);
 	}
 	
 	public void clear() {
@@ -126,44 +126,44 @@ public class PlaylistActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mMusicPlaylistController.onActivityResume(this);
+		mPlaylistController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mMusicPlaylistController.onActivityPause();
+		mPlaylistController.onActivityPause();
 		mConfigurationManager.onActivityPause();
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		mMusicPlaylistController.onCreateOptionsMenu(menu);
+		mPlaylistController.onCreateOptionsMenu(menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		mMusicPlaylistController.onOptionsItemSelected(item);
+		mPlaylistController.onOptionsItemSelected(item);
 		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		mMusicPlaylistController.onCreateContextMenu(menu, v, menuInfo);
+		mPlaylistController.onCreateContextMenu(menu, v, menuInfo);
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		mMusicPlaylistController.onContextItemSelected(item);
+		mPlaylistController.onContextItemSelected(item);
 		return super.onContextItemSelected(item);
 	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory.getEventClientManager(mMusicPlaylistController);
+		IEventClientManager client = ManagerFactory.getEventClientManager(mPlaylistController);
 		try {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_VOLUME_UP:

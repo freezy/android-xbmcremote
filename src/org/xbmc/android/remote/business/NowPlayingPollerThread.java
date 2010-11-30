@@ -169,6 +169,7 @@ public class NowPlayingPollerThread extends Thread {
 		String lastPos = "-1";
 		int lastPlayStatus = PlayStatus.UNKNOWN;
 		int currentPlayStatus = PlayStatus.UNKNOWN;
+		int currentMediaType = 0;
 		IControlClient control = mControl; // use local reference for faster access
 		HashSet<Handler> subscribers = mSubscribers;
 		while (!isInterrupted() ) {
@@ -193,7 +194,9 @@ public class NowPlayingPollerThread extends Thread {
 					}
 					
 					// play state changed?
-					if (currentPlayStatus != lastPlayStatus) {
+					if ((currentPlayStatus != lastPlayStatus) || (currentMediaType != currPlaying.getMediaType())) {
+						currentMediaType = currPlaying.getMediaType();
+						
 						if (currentPlayStatus == PlayStatus.PLAYING) {
 							mPlayList = control.getPlaylistId(mManagerStub);
 							sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);

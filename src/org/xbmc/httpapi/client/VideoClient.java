@@ -47,6 +47,10 @@ import android.graphics.Bitmap;
 public class VideoClient extends Client implements IVideoClient {
 	
 	public static final String TAG = "VideoClient";
+
+	public static final String PLAYLIST_ID = "1";
+	
+	public static final int PLAYLIST_LIMIT = 100;
 	
 	/**
 	 * Class constructor needs reference to HTTP client connection
@@ -407,7 +411,7 @@ public class VideoClient extends Client implements IVideoClient {
 			case SortType.YEAR:
 				return " ORDER BY c07 " + sortOrder + ", CASE WHEN c10 IS NULL OR c10 = '' THEN lower(c00) ELSE lower(c10) END " + sortOrder;
 			case SortType.RATING:
-				return " ORDER BY c05 " + sortOrder;
+				return " ORDER BY ROUND(c05, 2) " + sortOrder;
 		}
 	}
 	
@@ -477,5 +481,39 @@ public class VideoClient extends Client implements IVideoClient {
 				}
 			}
 		};
+	}
+
+	/**
+	 * Retrieves the currently playing video number in the playlist.
+	 * @return Number of items in the playlist
+	 */
+	public int getPlaylistPosition(INotifiableManager manager) {
+		return mConnection.getInt(manager, "GetPlaylistSong");
+	}
+	
+	/**
+	 * Sets the media at playlist position to be the next item to be played.
+	 * @param position New position, starting with 0.
+	 * @return True on success, false otherwise.
+	 */
+	public boolean setPlaylistPosition(INotifiableManager manager, int position) {
+		return mConnection.getBoolean(manager, "SetPlaylistSong", String.valueOf(position));
+	}
+	
+	/**
+	 * Returns the first {@link PLAYLIST_LIMIT} videos of the playlist. 
+	 * @return Videos in the playlist.
+	 */
+	public ArrayList<String> getPlaylist(INotifiableManager manager) {
+		return mConnection.getArray(manager, "GetPlaylistContents", PLAYLIST_ID);
+	}
+	
+	/**
+	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
+	 * @param position Complete path (including filename) of the media to be removed.
+	 * @return True on success, false otherwise.
+	 */
+	public boolean removeFromPlaylist(INotifiableManager manager, String path) {
+		return mConnection.getBoolean(manager, "RemoveFromPlaylist", PLAYLIST_ID + ";" + path);
 	}
 }

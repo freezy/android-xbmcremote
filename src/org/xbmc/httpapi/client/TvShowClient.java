@@ -593,7 +593,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 			case SortType.YEAR:
 				return " ORDER BY tvshow.c05 " + sortOrder + ", lower(tvshow.c00) " + sortOrder;
 			case SortType.RATING:
-				return " ORDER BY tvshow.c04 " + sortOrder;
+				return " ORDER BY ROUND(tvshow.c04, 2) " + sortOrder;
 			case SortType.EPISODE_NUM:
 				return " ORDER BY episodeview.c12+0 " + sortOrder + ", episodeview.c13+0 " + sortOrder;
 			case SortType.EPISODE_TITLE:

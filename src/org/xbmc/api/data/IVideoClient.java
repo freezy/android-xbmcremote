@@ -120,5 +120,31 @@ public interface IVideoClient extends IClient {
 	 * @return Cover
 	 */
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size);
+
+	/**
+	 * Retrieves the currently playing video number in the playlist.
+	 * @return Number of items in the playlist
+	 */
+	public int getPlaylistPosition(INotifiableManager manager);
+	
+	/**
+	 * Sets the media at position position to be the next item to be played.
+	 * @param position New position, starting with 0.
+	 * @return True on success, false otherwise.
+	 */
+	public boolean setPlaylistPosition(INotifiableManager manager, int position);
+	
+	/**
+	 * Returns the first {@link PLAYLIST_LIMIT} videos of the playlist. 
+	 * @return Videos in the playlist.
+	 */
+	public ArrayList<String> getPlaylist(INotifiableManager manager);
+	
+	/**
+	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
+	 * @param position Complete path (including filename) of the media to be removed.
+	 * @return True on success, false otherwise.
+	 */
+	public boolean removeFromPlaylist(INotifiableManager manager, String path);
 	 
 }

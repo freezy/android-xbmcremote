@@ -35,12 +35,14 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.business.IMusicManager;
+import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.INamedResource;
 import org.xbmc.api.object.Song;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.httpapi.client.MusicClient;
+import org.xbmc.httpapi.client.VideoClient;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -62,9 +64,11 @@ import android.widget.ArrayAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class MusicPlaylistController extends ListController implements IController, Callback {
+public class PlaylistController extends ListController implements IController, Callback {
 	
-	public static final String TAG = "MusicPlaylistLogic";
+	public static final String TAG = "PlaylistLogic";
+	public static final int MUSIC_PLAYLIST_ID = 0;
+	public static final int VIDEO_PLAYLIST_ID = 1;
 	
 	public static final int ITEM_CONTEXT_PLAY = 1;
 	public static final int ITEM_CONTEXT_REMOVE = 2;
@@ -74,10 +78,11 @@ public class MusicPlaylistController extends ListController implements IControll
 	
 	private PlaylistActivity mPlaylistActivity;
 	private Handler mNowPlayingHandler;
-	private SongAdapter mSongAdapter;
+	private ItemAdapter mItemAdapter;
 	
 	private IControlManager mControlManager;
 	private IMusicManager mMusicManager;
+	private IVideoManager mVideoManager;
 	private IEventClientManager mEventClient;
 	
 	private int mPlayStatus = PlayStatus.UNKNOWN;
@@ -86,11 +91,13 @@ public class MusicPlaylistController extends ListController implements IControll
 	private int mLastPosition = -1;
 	
 	private static Bitmap sPlayingBitmap;
+	private static Bitmap mFallbackBitmapVideo;
 	
 	public void onCreate(final PlaylistActivity activity, Handler handler, final AbsListView list) {
 		
 		mPlaylistActivity = activity;
 		mMusicManager = ManagerFactory.getMusicManager(this);
+		mVideoManager = ManagerFactory.getVideoManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
 		mEventClient = ManagerFactory.getEventClientManager(this);
 		mNowPlayingHandler = new Handler(this);
@@ -101,8 +108,40 @@ public class MusicPlaylistController extends ListController implements IControll
 			activity.registerForContextMenu(mList);
 			
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_song_light);
+			mFallbackBitmapVideo = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_video_light);
 			sPlayingBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_play);
 			
+			mControlManager.getPlaylistId(new DataResponse<Integer>() {
+				public void run() {
+					mPlayListId = value;
+					
+					updatePlaylist();
+				}
+			}, mActivity.getApplicationContext());			
+			
+			mList.setOnItemClickListener(new OnItemClickListener() {
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					final PlaylistItem item = (PlaylistItem)mList.getAdapter().getItem(((OneLabelItemView)view).position);
+					final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
+					mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
+					switch (mPlayListId) {
+					case MUSIC_PLAYLIST_ID:
+						mMusicManager.setPlaylistSong(doNothing, item.position, mActivity.getApplicationContext());
+						break;
+					case VIDEO_PLAYLIST_ID:
+						mVideoManager.setPlaylistVideo(doNothing, item.position, mActivity.getApplicationContext());
+						break;
+					}
+				}
+			});
+			mList.setOnKeyListener(new ListControllerOnKeyListener<Song>());
+			setTitle("Playlist...");
+		}
+	}
+	
+	private void updatePlaylist() {
+		switch (mPlayListId) {
+		case MUSIC_PLAYLIST_ID:
 			mMusicManager.getPlaylistPosition(new DataResponse<Integer>() {
 				public void run() {
 					mCurrentPosition = value;
@@ -118,8 +157,8 @@ public class MusicPlaylistController extends ListController implements IControll
 		  	  				items.add(new PlaylistItem(path, i++));
 						}
 						setTitle("Music playlist (" + (value.size() > MusicClient.PLAYLIST_LIMIT ? MusicClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
-						mSongAdapter = new SongAdapter(activity, items);
-						mList.setAdapter(mSongAdapter);
+						mItemAdapter = new ItemAdapter(mPlaylistActivity, items);
+						mList.setAdapter(mItemAdapter);
 						if (mCurrentPosition >= 0) {
 							mList.setSelection(mCurrentPosition);
 						}
@@ -130,16 +169,40 @@ public class MusicPlaylistController extends ListController implements IControll
 
 	  	  		}
 	  	  	}, mActivity.getApplicationContext());
-			mList.setOnItemClickListener(new OnItemClickListener() {
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					final PlaylistItem item = (PlaylistItem)mList.getAdapter().getItem(((OneLabelItemView)view).position);
-					final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
-					mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
-					mMusicManager.setPlaylistSong(doNothing, item.position, mActivity.getApplicationContext());
+			break;
+		case VIDEO_PLAYLIST_ID:
+			mVideoManager.getPlaylistPosition(new DataResponse<Integer>() {
+				public void run() {
+					mCurrentPosition = value;
 				}
-			});
-			mList.setOnKeyListener(new ListControllerOnKeyListener<Song>());
-			setTitle("Music playlist...");
+			}, mActivity.getApplicationContext());
+			
+			mVideoManager.getPlaylist(new DataResponse<ArrayList<String>>() {
+	  	  		public void run() {
+	  	  			if (value.size() > 0) {
+		  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
+		  	  			int i = 0;
+		  	  			for (String path : value) {
+		  	  				items.add(new PlaylistItem(path, i++));
+						}
+						setTitle("Video playlist (" + (value.size() > VideoClient.PLAYLIST_LIMIT ? VideoClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
+						mItemAdapter = new ItemAdapter(mPlaylistActivity, items);
+						mList.setAdapter(mItemAdapter);
+						if (mCurrentPosition >= 0) {
+							mList.setSelection(mCurrentPosition);
+						}
+					} else {
+						setTitle("Video playlist");
+						setNoDataMessage("No videos in playlist.", R.drawable.icon_playlist_dark);
+					}
+
+	  	  		}
+	  	  	}, mActivity.getApplicationContext());
+			break;
+		default:
+			setTitle("Music playlist");
+			setNoDataMessage("No tracks in playlist.", R.drawable.icon_playlist_dark);
+			break;
 		}
 	}
 
@@ -165,16 +228,22 @@ public class MusicPlaylistController extends ListController implements IControll
 
 		case NowPlayingPollerThread.MESSAGE_PLAYLIST_ITEM_CHANGED:
 			mLastPosition = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYPOSITION);
-			onTrackChanged(currentlyPlaying);
+			onItemChanged(currentlyPlaying);
 			return true;
 			
 		case NowPlayingPollerThread.MESSAGE_PLAYSTATE_CHANGED:
-			mPlayListId = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYLIST);
+			final int playListId = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYLIST);
+			if (playListId != mPlayListId) {
+				// music <-> video playlist changed
+				mPlayListId = playListId;
+				
+				updatePlaylist();
+			}
 			return true;
 			
 		case MESSAGE_PLAYLIST_SIZE:
 			final int size = msg.getData().getInt(BUNDLE_PLAYLIST_SIZE);
-			mPlaylistActivity.setNumItems(size == 0 ? "empty" : size + " tracks");
+			mPlaylistActivity.setNumItems(size == 0 ? "empty" : size + (mPlayListId == VIDEO_PLAYLIST_ID ? " videos" :  " tracks"));
 			return true;
 			
 		case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
@@ -234,22 +303,25 @@ public class MusicPlaylistController extends ListController implements IControll
 		}
 	}
 	
-	public void onTrackChanged(ICurrentlyPlaying newSong) {
-		final SongAdapter adapter = mSongAdapter;
+	public void onItemChanged(ICurrentlyPlaying newItem) {
+		final ItemAdapter adapter = mItemAdapter;
 		if (adapter != null) {
 			final int currentPos = mCurrentPosition;
-			final int newPos = newSong.getPlaylistPosition();
+			final int newPos = newItem.getPlaylistPosition();
 			
-			// clear previous song's icon
+			// clear previous item's icon
 			OneLabelItemView view = adapter.getViewAtPosition(currentPos);
 			if (currentPos >= 0 && view != null) {
-				view.setCover(BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_song_light));
+				switch (mPlayListId) {
+					case MUSIC_PLAYLIST_ID: view.setCover(BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_song_light)); break;
+					case VIDEO_PLAYLIST_ID: view.setCover(BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_video)); break;
+				}				
 				Log.i(TAG, "Resetting previous icon at position " + currentPos + " (" + view.title + ")");
 			} else {
 				Log.i(TAG, "NOT resetting previous icon at position " + currentPos);
 			}
 			
-			// set new song's play icon
+			// set new item's play icon
 			view = adapter.getViewAtPosition(newPos);
 			mCurrentPosition = newPos;
 			if (view != null) {
@@ -274,19 +346,33 @@ public class MusicPlaylistController extends ListController implements IControll
 		final PlaylistItem playlistItem = (PlaylistItem)mList.getAdapter().getItem(((OneLabelItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_PLAY:
-				mMusicManager.setPlaylistSong(new DataResponse<Boolean>(), playlistItem.position, mActivity.getApplicationContext());
+				switch (mPlayListId) {
+				case MUSIC_PLAYLIST_ID:
+					mMusicManager.setPlaylistSong(new DataResponse<Boolean>(), playlistItem.position, mActivity.getApplicationContext());
+					break;
+				case VIDEO_PLAYLIST_ID:
+					mVideoManager.setPlaylistVideo(new DataResponse<Boolean>(), playlistItem.position, mActivity.getApplicationContext());
+					break;
+				}
 				break;
 			case ITEM_CONTEXT_REMOVE:
-				mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path, mActivity.getApplicationContext());
+				switch (mPlayListId) {
+				case MUSIC_PLAYLIST_ID:
+					mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path, mActivity.getApplicationContext());
+					break;
+				case VIDEO_PLAYLIST_ID:
+					mVideoManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path, mActivity.getApplicationContext());
+					break;
+				}	
 				break;
 			default:
 				return;
 		}
 	}
 	
-	private class SongAdapter extends ArrayAdapter<PlaylistItem> {
+	private class ItemAdapter extends ArrayAdapter<PlaylistItem> {
 		private final HashMap<Integer, OneLabelItemView> mItemPositions = new HashMap<Integer, OneLabelItemView>();
-		SongAdapter(Activity activity, ArrayList<PlaylistItem> items) {
+		ItemAdapter(Activity activity, ArrayList<PlaylistItem> items) {
 			super(activity, 0, items);
 			Handler handler = mNowPlayingHandler;
 			if (handler != null) {
@@ -300,7 +386,7 @@ public class MusicPlaylistController extends ListController implements IControll
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final OneLabelItemView view;
 			if (convertView == null) {
-				view = new OneLabelItemView(mActivity, parent.getWidth(), mFallbackBitmap, mList.getSelector());
+				view = new OneLabelItemView(mActivity, parent.getWidth(), getFallbackBitmap(), mList.getSelector());
 			} else {
 				view = (OneLabelItemView)convertView;
 				mItemPositions.remove(view.position);
@@ -312,16 +398,21 @@ public class MusicPlaylistController extends ListController implements IControll
 			if (position == mCurrentPosition) {
 				view.setCover(sPlayingBitmap);
 			} else {
-				view.setCover(mFallbackBitmap);
+				view.setCover(getFallbackBitmap());
 			}
 			mItemPositions.put(view.position, view);
 			return view;
 		}
+		
 		public OneLabelItemView getViewAtPosition(int position) {
 			if (mItemPositions.containsKey(position)) {
 				return mItemPositions.get(position);
 			}
 			return null;
+		}
+		
+		private Bitmap getFallbackBitmap() {
+			return (mPlayListId == VIDEO_PLAYLIST_ID) ? mFallbackBitmapVideo : mFallbackBitmap; 
 		}
 	}
 	
@@ -345,6 +436,10 @@ public class MusicPlaylistController extends ListController implements IControll
 			mMusicManager.setController(null);
 			mMusicManager.postActivity();
 		}
+		if (mVideoManager != null) {
+			mVideoManager.setController(null);
+			mVideoManager.postActivity();
+		}
 		if (mControlManager != null) {
 			mControlManager.setController(null);
 		}
@@ -362,6 +457,9 @@ public class MusicPlaylistController extends ListController implements IControll
 		}
 		if (mMusicManager != null) {
 			mMusicManager.setController(this);
+		}
+		if (mVideoManager != null) {
+			mVideoManager.setController(this);
 		}
 		if (mControlManager != null) {
 			mControlManager.setController(this);

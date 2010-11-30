@@ -111,6 +111,33 @@ public interface IVideoManager extends IManager {
 	 * @param context
 	 */
 	public void getTvShowGenres(final DataResponse< ArrayList<Genre>> response, final Context context);
+	
+	/**
+	 * Sets the media at playlist position to be the next item to be played.
+	 * @param response Response object
+	 * @param position Position, starting with 0.
+	 */
+	public void setPlaylistVideo(final DataResponse<Boolean> response, final int position, final Context context);
+	
+	/**
+	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
+	 * @param position Complete path (including filename) of the media to be removed.
+	 * @return True on success, false otherwise.
+	 */
+	public void removeFromPlaylist(final DataResponse<Boolean> response, final String path, final Context context);
+	
+	/**
+	 * Returns an array of videos on the playlist. Empty array if nothing is playing.
+	 * @param response Response object
+	 */
+	public void getPlaylist(final DataResponse<ArrayList<String>> response, final Context context);
+	
+	/**
+	 * Returns the position of the currently playing video in the playlist. First position is 0.
+	 * @param response Response object
+	 */
+	public void getPlaylistPosition(final DataResponse<Integer> response, final Context context);
+	
 	/**
 	 * Put in here everything that has to be cleaned up after leaving an activity.
 	 */
