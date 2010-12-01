@@ -24,6 +24,7 @@ package org.xbmc.android.widget.gestureremote;
 import org.xbmc.android.remote.R;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -38,16 +39,18 @@ import android.view.View;
 
 public class GestureRemoteView extends View {
 	
+	public static final float PIXEL_SCALE = Resources.getSystem().getDisplayMetrics().density;
+	
 	private final static int ANIMATION_DURATION = 100;
 	
-	private final static int CURSOR_NEG_PADDING = 17;
-	private final static int CURSOR_POS_PADDING = 30;
+	private final static int CURSOR_NEG_PADDING = (int)(17 * PIXEL_SCALE);
+	private final static int CURSOR_POS_PADDING = (int)(30 * PIXEL_SCALE);
 	
-	private final static int SCROLL_ZONE_WIDTH = 62;
-	private final static int LEFT_BORDER_WIDTH = 22;
-	private final static int RIGHT_BORDER_WIDTH = 21;
-	private final static int TOP_BORDER_HEIGHT = 11;
-	private final static int BOTTOM_BORDER_HEIGHT = 19;
+	private final static int SCROLL_ZONE_WIDTH = (int)(62 * PIXEL_SCALE);
+	private final static int LEFT_BORDER_WIDTH = (int)(22 * PIXEL_SCALE);
+	private final static int RIGHT_BORDER_WIDTH = (int)(21 * PIXEL_SCALE);
+	private final static int TOP_BORDER_HEIGHT = (int)(11 * PIXEL_SCALE);
+	private final static int BOTTOM_BORDER_HEIGHT = (int)(19 * PIXEL_SCALE);
 	
 	private final static Paint PAINT = new Paint();
 	
@@ -102,10 +105,10 @@ public class GestureRemoteView extends View {
 		mBorderLeftRect = new Rect();
 		mScrollerRect = new Rect();
 		mGestureRect = new Rect();
-		mTitleRect = new Rect(0, 0, 101, 89);
-		mInfoRect = new Rect(176, 0, 257, 89);
-		mMenuRect = new Rect(0, 174, 101, 270);
-		mBackRect = new Rect(176, 174, 257, 270);
+		mTitleRect = new Rect(0, 0, (int)(101 * PIXEL_SCALE), (int)(89 * PIXEL_SCALE));
+		mInfoRect = new Rect((int)(176 * PIXEL_SCALE), 0, (int)(257 * PIXEL_SCALE), (int)(89 * PIXEL_SCALE));
+		mMenuRect = new Rect(0, (int)(174 * PIXEL_SCALE), (int)(101 * PIXEL_SCALE), (int)(270 * PIXEL_SCALE));
+		mBackRect = new Rect((int)(176 * PIXEL_SCALE), (int)(174 * PIXEL_SCALE), (int)(257 * PIXEL_SCALE), (int)(270 * PIXEL_SCALE));
 	}
 	
 	public void setGestureListener(IGestureListener listener) {
