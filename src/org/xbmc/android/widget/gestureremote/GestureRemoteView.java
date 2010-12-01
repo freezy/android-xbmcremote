@@ -117,6 +117,11 @@ public class GestureRemoteView extends View {
 	}
 	
 	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(mBackRect.bottom, mBackRect.top);
+	}
+	
+	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		mOrigin = new Point(
