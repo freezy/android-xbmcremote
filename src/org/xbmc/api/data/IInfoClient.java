@@ -93,6 +93,22 @@ public interface IInfoClient extends IClient {
 	public int getGuiSettingInt(INotifiableManager manager, int field);
 	
 	/**
+	 * Returns a boolean GUI setting
+	 * @param field
+	 * @param value Value
+	 * @return
+	 */
+	public boolean setGuiSettingBool(INotifiableManager manager, int field, boolean value);
+	
+	/**
+	 * Returns an integer GUI setting
+	 * @param field
+	 * @param value Value
+	 * @return
+	 */
+	public boolean setGuiSettingInt(INotifiableManager manager, int field, int value);
+	
+	/**
 	 * Returns any music info variable see {@link org.xbmc.http.info.MusicInfo}
 	 * @param field Field to return
 	 * @return

@@ -173,4 +173,8 @@ public final class ButtonCodes {
 	public static final String KEYBOARD_VOLUME_DOWN = "volume_down";
 	public static final String KEYBOARD_PREV_TRACK = "prev_track";
 	public static final String KEYBOARD_NEXT_TRACK = "next_track";
+	
+	public static final String GAMEPAD_LEFT_ANALOG_TRIGGER = "leftanalogtrigger";
+	public static final String GAMEPAD_RIGHT_ANALOG_TRIGGER = "rightanalogtrigger";
+
 }

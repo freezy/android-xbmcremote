@@ -28,8 +28,10 @@ public class GuiSettings {
 		public static final int EVENTSERVER_ENABLED_ALL = 2;
 		public static final int EVENTSERVER_PORT = 3;
 		
-		private static final String NAME_PREFIX = "services.";
+		public static final int EVENT_SERVER_INITIAL_DELAY = 795;
+		public static final int EVENT_SERVER_CONTINUOUS_DELAY = 796;
 		
+		private static final String NAME_PREFIX = "services.";
 		
 	}
 	
@@ -54,9 +56,14 @@ public class GuiSettings {
 				return Services.NAME_PREFIX + "esallinterfaces";
 			case Services.EVENTSERVER_PORT:
 				return Services.NAME_PREFIX + "esport";
+			case Services.EVENT_SERVER_INITIAL_DELAY: 
+				return Services.NAME_PREFIX + "esinitialdelay";
+			case Services.EVENT_SERVER_CONTINUOUS_DELAY: 
+				return Services.NAME_PREFIX + "escontinuousdelay";
 		}
 		return null;
 	}
+	
 	public static String getType(int name) {
 		switch (name) {
 			// boolean
@@ -69,9 +76,15 @@ public class GuiSettings {
 			// String
 			case Services.EVENTSERVER_PORT:
 				return "3";
+				
+			// int
+			case Services.EVENT_SERVER_INITIAL_DELAY: 
+			case Services.EVENT_SERVER_CONTINUOUS_DELAY:
+				return "0";
 		}
 		return null;
 	}
+	
 	public static int getTypeInt(int name) {
 		switch (name) {
 		// boolean
@@ -84,6 +97,11 @@ public class GuiSettings {
 		// String
 		case Services.EVENTSERVER_PORT:
 			return 3;
+			
+		// int
+		case Services.EVENT_SERVER_INITIAL_DELAY: 
+		case Services.EVENT_SERVER_CONTINUOUS_DELAY:
+			return 0;			
 	}
 	return -1;
 	}

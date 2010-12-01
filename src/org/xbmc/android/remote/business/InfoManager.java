@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.INotifiableManager;
-import org.xbmc.api.info.GuiSettings;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.type.DirectoryMask;
 
@@ -142,6 +141,36 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	 */
 	public void getGuiSettingString(final DataResponse<String> response, final int setting) {
 		
+	}
+	
+	/**
+	 * Sets an integer GUI setting
+	 * @param response Response object
+	 * @param field Field to return (see GuiSettings.java)
+	 * @param val Integer value to set
+	 */
+	public void setGuiSettingInt(final DataResponse<Boolean> response, final int field, final int val, final Context context) {
+		mHandler.post(new Command<Boolean>(response, this) {
+			@Override
+			public void doRun() throws Exception { 
+				response.value = info(context).setGuiSettingInt(InfoManager.this, field, val);
+			}
+		});
+	}
+	
+	/**
+	 * Sets an integer GUI setting
+	 * @param response Response object
+	 * @param field Field to return (see GuiSettings.java)
+	 * @param val Boolean value to set
+	 */
+	public void setGuiSettingBool(final DataResponse<Boolean> response, final int field, final boolean val, final Context context) {
+		mHandler.post(new Command<Boolean>(response, this) {
+			@Override
+			public void doRun() throws Exception { 
+				response.value = info(context).setGuiSettingBool(InfoManager.this, field, val);
+			}
+		});
 	}
 	
 //	public <T> void getGuiSetting(final Class<T> t, final DataResponse<T> response, final int setting) {

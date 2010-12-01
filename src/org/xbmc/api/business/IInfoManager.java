@@ -85,4 +85,21 @@ public interface IInfoManager extends IManager {
 	 */
 	public void getGuiSettingBool(final DataResponse<Boolean> response, final int setting, final Context context);
 	
+	/**
+	 * Sets an integer GUI setting
+	 * @param response Response object
+	 * @param field Field to return (see GuiSettings.java)
+	 * @param val Integer value to set
+	 */
+	public void setGuiSettingInt(final DataResponse<Boolean> response, final int field, final int val, final Context context);
+	
+	/**
+	 * Sets an integer GUI setting
+	 * @param response Response object
+	 * @param field Field to return (see GuiSettings.java)
+	 * @param val Boolean value to set
+	 */
+	public void setGuiSettingBool(final DataResponse<Boolean> response, final int field, final boolean val, final Context context);
+
+	
 }

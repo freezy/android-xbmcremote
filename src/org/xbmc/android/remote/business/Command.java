@@ -41,9 +41,9 @@ public abstract class Command<T> implements Runnable {
 			Log.i(mCaller.getClassName(), "*** " + mCaller.getMethodName() + ": " + (System.currentTimeMillis() - mStarted) + "ms");
 
 			mManager.onFinish(mResponse);
-		}catch (WifiStateException e) {
+		} catch (WifiStateException e) {
 			mManager.onWrongConnectionState(e.getState(), this);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			mManager.onError(e);
 		}
 	}

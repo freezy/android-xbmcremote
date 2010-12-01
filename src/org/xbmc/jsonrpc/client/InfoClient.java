@@ -128,6 +128,28 @@ public class InfoClient extends Client implements IInfoClient {
 	}
 	
 	/**
+	 * Returns a boolean GUI setting
+	 * @param field
+	 * @param value Value
+	 * @return
+	 */
+	public boolean setGuiSettingBool(INotifiableManager manager, int field, boolean value) {
+		// return mConnection.getBoolean(manager, "SetGuiSetting", GuiSettings.getType(field) + ";" + GuiSettings.getName(field) + ";" + value);
+		return false;
+	}
+	
+	/**
+	 * Returns an integer GUI setting
+	 * @param field
+	 * @param value Value
+	 * @return
+	 */
+	public boolean setGuiSettingInt(INotifiableManager manager, int field, int value) {
+		// return mConnection.getBoolean(manager, "SetGuiSetting", GuiSettings.getType(field) + ";" + GuiSettings.getName(field) + ";" + value);
+		return false;
+	}
+	
+	/**
 	 * Returns any music info variable see {@link org.xbmc.http.info.MusicInfo}
 	 * @TODO Wait for JSON-RPC implementation
 	 * @param field Field to return

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical" android:background="#000000">
+
+	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+		<ImageView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:background="@drawable/remote_xbox__top_left" />
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnDisplay"
+			android:background="@drawable/remote_xbox_display" android:focusable="false" android:focusableInTouchMode="false" />
+		<ImageView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:background="@drawable/remote_xbox__top_right" />
+	</LinearLayout>
+
+	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:background="@drawable/remote_xbox_seek_back"
+			android:id="@+id/RemoteXboxImgBtnSeekBack" android:focusable="false" android:focusableInTouchMode="false" />
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnPlay"
+			android:background="@drawable/remote_xbox_play" android:focusable="false" android:focusableInTouchMode="false" />
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnSeekForward"
+			android:background="@drawable/remote_xbox_seek_forward" android:focusable="false" android:focusableInTouchMode="false" />
+	</LinearLayout>
+	
+	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnPrevious"
+			android:background="@drawable/remote_xbox_previous" android:focusable="false" android:focusableInTouchMode="false" />
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnStop"
+			android:background="@drawable/remote_xbox_stop" android:focusable="false" android:focusableInTouchMode="false" />
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnPause"
+			android:background="@drawable/remote_xbox_pause" android:focusable="false" android:focusableInTouchMode="false" />
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnNext"
+			android:background="@drawable/remote_xbox_next" android:focusable="false" android:focusableInTouchMode="false"/>
+	</LinearLayout>
+	
+	<org.xbmc.android.widget.gestureremote.GestureRemoteView 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:id="@+id/RemoteXboxGestureZone" />
+</LinearLayout>
