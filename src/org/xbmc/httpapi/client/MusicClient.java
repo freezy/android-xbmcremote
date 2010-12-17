@@ -710,6 +710,8 @@ public class MusicClient extends Client implements IMusicClient {
 				return " ORDER BY lower(strArtist) " + sortOrder + ", lower(strAlbum) " + sortOrder;
 			case SortType.TRACK:
 				return "  ORDER BY iTrack " + sortOrder + ", lower(strFileName) " + sortOrder;
+			case SortType.YEAR:
+				return "  ORDER BY iYear " + sortOrder + ", lower(strAlbum) " + sortOrder;
 		}
 	}
 

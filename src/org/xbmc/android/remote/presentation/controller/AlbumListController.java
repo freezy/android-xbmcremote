@@ -80,6 +80,8 @@ public class AlbumListController extends ListController implements IController {
 	public static final int MENU_SORT_BY_ARTIST_DESC = 22;
 	public static final int MENU_SORT_BY_ALBUM_ASC = 23;
 	public static final int MENU_SORT_BY_ALBUM_DESC = 24;
+	public static final int MENU_SORT_BY_YEAR_ASC = 25;
+	public static final int MENU_SORT_BY_YEAR_DESC = 26;
 	public static final int MENU_SWITCH_VIEW = 3;
 	
 	private static final int VIEW_LIST = 1;
@@ -317,8 +319,14 @@ public class AlbumListController extends ListController implements IController {
 		SubMenu sortMenu = menu.addSubMenu(0, MENU_SORT, 0, "Sort").setIcon(R.drawable.menu_sort);
 		sortMenu.add(2, MENU_SORT_BY_ALBUM_ASC, 0, "by Album ascending");
 		sortMenu.add(2, MENU_SORT_BY_ALBUM_DESC, 0, "by Album descending");
-		sortMenu.add(2, MENU_SORT_BY_ARTIST_ASC, 0, "by Artist ascending");
-		sortMenu.add(2, MENU_SORT_BY_ARTIST_DESC, 0, "by Artist descending");
+		
+		if (mArtist != null) {
+			sortMenu.add(2, MENU_SORT_BY_YEAR_ASC, 0, "by Year ascending");
+			sortMenu.add(2, MENU_SORT_BY_YEAR_DESC, 0, "by Year descending");
+		} else {
+			sortMenu.add(2, MENU_SORT_BY_ARTIST_ASC, 0, "by Artist ascending");
+			sortMenu.add(2, MENU_SORT_BY_ARTIST_DESC, 0, "by Artist descending");
+		}
 //		menu.add(0, MENU_SWITCH_VIEW, 0, "Switch view").setIcon(R.drawable.menu_view);
 	}
 	
@@ -376,6 +384,20 @@ public class AlbumListController extends ListController implements IController {
 		case MENU_SORT_BY_ARTIST_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
 			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.ARTIST);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.ORDER_DESC);
+			ed.commit();
+			fetch();
+			break;
+		case MENU_SORT_BY_YEAR_ASC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.YEAR);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.ORDER_ASC);
+			ed.commit();
+			fetch();
+			break;
+		case MENU_SORT_BY_YEAR_DESC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.YEAR);
 			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
