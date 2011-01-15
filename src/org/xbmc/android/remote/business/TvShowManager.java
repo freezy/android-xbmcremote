@@ -73,7 +73,7 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 	
 	/**
 	 * SYNCHRONOUSLY gets all tv show seasons from database
-	 * @return All tv show episodes in database
+	 * @return All tv show seasons in database
 	 */
 	public ArrayList<Season> getAllSeasons(Context context) {
 		try {
@@ -82,6 +82,19 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 			TvShowManager.this.onError(e);
 		}
 		return new ArrayList<Season>();
+	}
+	
+	/**
+	 * SYNCHRONOUSLY gets all tv show episodes from database
+	 * @return All tv show episodes in database
+	 */
+	public ArrayList<Episode> getAllEpisodes(Context context) {
+		try {
+			return shows(context).getEpisodes(TvShowManager.this, getSortBy(SortType.EPISODE_NUM), getSortOrder());
+		} catch (WifiStateException e) {
+			TvShowManager.this.onError(e);
+		}
+		return new ArrayList<Episode>();
 	}
 
 	/**

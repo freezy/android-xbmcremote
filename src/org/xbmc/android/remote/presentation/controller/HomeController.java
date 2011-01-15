@@ -52,6 +52,7 @@ import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Album;
+import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
@@ -441,6 +442,10 @@ public class HomeController extends AbstractController implements INotifiableCon
 					final ITvShowManager tsm2 = ManagerFactory.getTvManager(HomeController.this);
 					final ArrayList<Season> seasons = tsm2.getAllSeasons(mActivity.getApplicationContext());
 					return new ArrayList<ICoverArt>(seasons);
+				case HomeActivity.MENU_COVER_DOWNLOAD_EPISODES:
+					final ITvShowManager tsm3 = ManagerFactory.getTvManager(HomeController.this);
+					final ArrayList<Episode> episodes = tsm3.getAllEpisodes(mActivity.getApplicationContext());
+					return new ArrayList<ICoverArt>(episodes);
 				default:
 					return null;
 			}

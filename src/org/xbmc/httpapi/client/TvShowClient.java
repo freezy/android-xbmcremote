@@ -313,6 +313,19 @@ public class TvShowClient extends Client implements ITvShowClient {
 	}
 	
 	/**
+	 * Gets all Episodes for for all shows
+	 * @param manager
+	 * @return
+	 */
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, int sortBy, String sortOrder) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(c03, 2), c04, c05, c06, playCount, c10, c12, c13, strPath, strFileName, strTitle");
+		sb.append(" FROM episodeview ");
+		sb.append(showsOrderBy(sortBy, sortOrder));
+		return parseEpisodes(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
+	}
+	
+	/**
 	 * Gets all Episodes for the specified show and season
 	 * @param manager
 	 * @param show
