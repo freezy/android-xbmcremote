@@ -510,7 +510,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 						Connection.trim(fields[row + 8]),
 						Connection.trimInt(fields[row + 9]),
 						Connection.trimInt(fields[row + 10]),
-						Connection.trim(fields[row + 11]) + Connection.trim(fields[row + 12]),
+						Connection.trim(fields[row + 11]),
+						Connection.trim(fields[row + 12]),
 						Connection.trim(fields[row + 13])
 					));
 			}

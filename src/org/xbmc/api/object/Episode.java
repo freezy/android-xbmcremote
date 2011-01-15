@@ -34,8 +34,17 @@ public class Episode implements ICoverArt {
 	 * Database primary key
 	 */
 	public int id;
-	
+
+	/**
+	 * Local path of this episode (without file name)
+	 */
 	public String localPath;
+	
+	/**
+	 * File name of this episode
+	 */
+	public String fileName;
+	
 	/**
 	 * Title of this episode
 	 */
@@ -70,11 +79,11 @@ public class Episode implements ICoverArt {
 	 * Title of the TV Show
 	 */
 	public String showTitle;
-	
+		
 	public ArrayList<Actor> actors = null;
 	
 	public Episode(int id, String title, String plot, double rating, String writer, String firstAired,
-			int numWatched, String director, int season, int episode, String localPath, String showTitle) {
+			int numWatched, String director, int season, int episode, String localPath, String fileName, String showTitle) {
 		this.id = id;
 		this.title = title;
 		this.plot = plot;
@@ -87,10 +96,14 @@ public class Episode implements ICoverArt {
 		this.episode = episode;
 		this.localPath = localPath;
 		this.showTitle = showTitle;
+		this.fileName = fileName;
 	}
 
 	public long getCrc() {
-		return Crc32.computeLowerCase(localPath);
+		if (fileName.contains("://"))
+		   return  Crc32.computeLowerCase(fileName);
+		else 
+			return  Crc32.computeLowerCase(localPath + fileName);			
 	}
 
 	/**
@@ -102,7 +115,10 @@ public class Episode implements ICoverArt {
 	 * </pre>
 	 */
 	public int getFallbackCrc() {
-		return Crc32.computeLowerCase(localPath + "episode" + episode);
+		if (fileName.contains("://"))
+			return Crc32.computeLowerCase(fileName + "episode" + episode);
+		else
+			return Crc32.computeLowerCase(localPath +fileName + "episode" + episode);
 	}
 
 	public int getId() {
@@ -117,8 +133,18 @@ public class Episode implements ICoverArt {
 		return season + "x" + episode + ": " + title;
 	}
 
+	/**
+	 * Returns the path XBMC needs to play the episode. This can either
+	 * localPath + filename or filename only (in case of stacks) 
+	 * @return
+	 */
 	public String getPath() {
-		return localPath;
+		   if (fileName.contains("://")) {
+			   return fileName;
+		   } 
+		   else {
+				return localPath + fileName;
+			}
 	}
 	private static final long serialVersionUID = 5317212562013683169L;	
 }

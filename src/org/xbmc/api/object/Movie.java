@@ -80,7 +80,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	}
 	
 	/**
-	 * Composes the complete path to the album's thumbnail
+	 * Composes the complete path to the movie's thumbnail
 	 * @return Path to thumbnail
 	 */
 	public String getThumbUri() {
