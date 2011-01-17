@@ -59,7 +59,7 @@ public interface IInfoManager extends IManager {
 	 * @param limit    Limit (0 for none)
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit, final Context context);
+	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit, final Context context, final int mediaType);
 	
 	/**
 	 * Returns the contents of a directory
@@ -67,7 +67,7 @@ public interface IInfoManager extends IManager {
 	 * @param path     Path to the directory
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final Context context);
+	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final Context context, final int mediaType);
 	
 	/**
 	 * Returns the gui setting of XBMC

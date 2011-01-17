@@ -11,6 +11,7 @@ import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.type.DirectoryMask;
+import org.xbmc.api.type.MediaType;
 import org.xbmc.jsonrpc.Connection;
 
 /**
@@ -46,7 +47,7 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @param limit   Limit (0 for none)
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit) {
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit,  final int mMediaType) {
 		final ArrayList<FileLocation> dirs = new ArrayList<FileLocation>();
 		final JsonNode jsonDirs = mConnection.getJson(manager, "Files.GetDirectory", obj().put("type", "files").put("directory", path), "directories");
 		for (Iterator<JsonNode> i = jsonDirs.getElements(); i.hasNext();) {
@@ -61,8 +62,8 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @param path    Path to the directory
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path) {
-		return getDirectory(manager, path, null, 0, 0);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, int mMediaType) {
+		return getDirectory(manager, path, null, 0, 0, mMediaType);
 	}
 
 	

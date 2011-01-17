@@ -60,13 +60,6 @@ public interface ITvShowClient extends IClient {
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season, int sortBy, String sortOrder) ;
 	
 	/**
-	 * Gets all episodes from all shows
-	 * @param manager
-	 * @return
-	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, int sortBy, String sortOrder);
-	
-	/**
 	 * Gets all seasons for the specified show
 	 * @param manager
 	 * @param show

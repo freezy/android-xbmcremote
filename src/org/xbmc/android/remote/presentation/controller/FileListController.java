@@ -77,7 +77,7 @@ public class FileListController extends ListController implements IController {
 	}
 	
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
-		
+
 		mInfoManager = ManagerFactory.getInfoManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
 		
@@ -216,7 +216,7 @@ public class FileListController extends ListController implements IController {
 		if (mGettingUrl.length() == 0) {
 			mInfoManager.getShares(mediaListHandler, mMediaType, mActivity.getApplicationContext());
 		} else {
-			mInfoManager.getDirectory(mediaListHandler, mGettingUrl, mActivity.getApplicationContext());
+			mInfoManager.getDirectory(mediaListHandler, mGettingUrl, mActivity.getApplicationContext(), mMediaType);
 		}
 	}
 	

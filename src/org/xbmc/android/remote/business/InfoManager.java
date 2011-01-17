@@ -77,11 +77,11 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	 * @param limit    Limit (0 for none)
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit, final Context context) {
+	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit, final Context context, final int mediaType) {
 		mHandler.post(new Command<ArrayList<FileLocation>>(response, this){
 			@Override
 			public void doRun() throws Exception {
-				response.value = info(context).getDirectory(InfoManager.this, path, mask, offset, limit);
+				response.value = info(context).getDirectory(InfoManager.this, path, mask, offset, limit, mediaType);
 			}
 			
 		});
@@ -93,11 +93,11 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	 * @param path     Path to the directory
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final Context context) {
+	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final Context context, final int mediaType) {
 		mHandler.post(new Command<ArrayList<FileLocation>>(response, this){
 			@Override
 			public void doRun() throws Exception {
-				response.value = info(context).getDirectory(InfoManager.this, path);
+				response.value = info(context).getDirectory(InfoManager.this, path, mediaType);
 			}
 			
 		});

@@ -39,27 +39,41 @@ public class InfoClient implements IInfoClient {
 	public void setHost(Host host) {
 		mConnection.setHost(host);
 	}
-	
+
 	/**
 	 * Returns the contents of a directory
-	 * @param path    Path to the directory
-	 * @param mask    Mask to filter
-	 * @param offset  Offset (0 for none)
-	 * @param limit   Limit (0 for none)
+	 * 
+	 * @param path Path to the directory
+	 * @param mask Mask to filter
+	 * @param offset Offset (0 for none)
+	 * @param limit Limit (0 for none)
+	 * @param mediaType MediaType
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit) {
-		final ArrayList<String> result = mConnection.getArray(manager, "GetDirectory", 
-			path + ";" +
-			(mask != null ? mask.toString() : " ") + ";" + 
-			(offset > 0 ? offset : " ") + ";" +
-			(limit > 0 ? limit : " ")
-		);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit, int mediaType) {
+		ArrayList<String> result = new ArrayList<String>();
+
+		if (mediaType == MediaType.UNKNOWN) {
+			result = this.getNonAddonDirectory(manager, path, mask, offset, limit);
+		} else {
+			result = this.getAddonDirectory(manager, path, mediaType);
+		}
+
 		final ArrayList<FileLocation> files = new ArrayList<FileLocation>();
 		for (String file : result) {
 			files.add(new FileLocation(file));
 		}
 		return files;
+	}
+
+	private ArrayList<String> getNonAddonDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit) {
+		return mConnection.getArray(manager, "GetDirectory", path + ";" + (mask != null ? mask.toString() : " ") + ";" + (offset > 0 ? offset : " ") + ";"
+				+ (limit > 0 ? limit : " "));
+	}
+
+	private ArrayList<String> getAddonDirectory(INotifiableManager manager, String path, int mediaType) {
+		String mediaFileTypeName = MediaType.getName(mediaType);
+		return mConnection.getArray(manager, "GetMediaLocation", mediaFileTypeName + ";" + path);
 	}
 	
 	/**
@@ -67,8 +81,8 @@ public class InfoClient implements IInfoClient {
 	 * @param path    Path to the directory
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path) {
-		return getDirectory(manager, path, null, 0, 0);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, int mediaType) {
+		return this.getDirectory(manager, path, null, 0, 0, mediaType);
 	}
 
 	

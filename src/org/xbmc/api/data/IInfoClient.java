@@ -46,14 +46,14 @@ public interface IInfoClient extends IClient {
 	 * @param limit   Limit (0 for none)
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit, int mediaType);
 	
 	/**
 	 * Returns all the contents of a directory
 	 * @param path    Path to the directory
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, int mediaType);
 
 	
 	/**
