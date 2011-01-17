@@ -86,8 +86,19 @@ public class RemoteActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.remote_xbox);
+		
+		Display d = getWindowManager().getDefaultDisplay();
+		final int w = d.getWidth();
+		final int h = d.getHeight();
+		final double ar = w > h ? (double) w / (double) h : (double) h / (double) w;
+		if (ar > 1.6) {
+			Log.i(TAG, "AR = " + ar + ", using extended layout.");
+			setContentView(R.layout.remote_xbox_extended);
+		} else {
+			Log.i(TAG, "AR = " + ar + ", normal layout.");
+			setContentView(R.layout.remote_xbox);
+		}
+		
 
 //		mViewFlipper = (ViewFlipper) findViewById(R.id.remote_flipper);
 
@@ -110,22 +121,7 @@ public class RemoteActivity extends Activity {
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		// mConfigurationManager.initKeyguard(true);
 
-		Display d = getWindowManager().getDefaultDisplay();
-		final int w = d.getWidth();
-		final int h = d.getHeight();
-		final double ar = w > h ? (double) w / (double) h : (double) h / (double) w;
-		if (ar > 1.7) {
-			final View sectionRows = findViewById(R.id.RemoteXboxRowSections);
-			if (sectionRows != null) {
-				findViewById(R.id.RemoteXboxRowSections).setVisibility(
-						View.VISIBLE);
-				Log.i(TAG, "AR = " + ar + ", setting section bar to visible.");
-			} else {
-				Log.i(TAG, "AR = " + ar + " but row sections not found.");
-			}
-		} else {
-			Log.i(TAG, "AR = " + ar + ", leaving section bar hidden.");
-		}
+
 		setupButtons();
 	}
 
