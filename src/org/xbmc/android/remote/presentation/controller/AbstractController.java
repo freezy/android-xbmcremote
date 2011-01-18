@@ -185,6 +185,9 @@ public abstract class AbstractController {
 	}
 	
 	public void onError(Exception exception) {
+		if (mActivity == null) {
+			return;
+		}
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 		try {
 			throw exception;
