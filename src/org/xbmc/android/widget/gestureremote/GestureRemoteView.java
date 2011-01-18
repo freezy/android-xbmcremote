@@ -39,6 +39,8 @@ import android.view.View;
 
 public class GestureRemoteView extends View {
 	
+	private final static String TAG = "GestureRemoteView";
+	
 	public static final float PIXEL_SCALE = Resources.getSystem().getDisplayMetrics().density;
 	
 	private final static int ANIMATION_DURATION = 100;
@@ -46,11 +48,19 @@ public class GestureRemoteView extends View {
 	private final static int CURSOR_NEG_PADDING = (int)(17 * PIXEL_SCALE);
 	private final static int CURSOR_POS_PADDING = (int)(30 * PIXEL_SCALE);
 	
-	private final static int SCROLL_ZONE_WIDTH = (int)(62 * PIXEL_SCALE);
-	private final static int LEFT_BORDER_WIDTH = (int)(22 * PIXEL_SCALE);
-	private final static int RIGHT_BORDER_WIDTH = (int)(21 * PIXEL_SCALE);
-	private final static int TOP_BORDER_HEIGHT = (int)(11 * PIXEL_SCALE);
-	private final static int BOTTOM_BORDER_HEIGHT = (int)(19 * PIXEL_SCALE);
+	private final static int SCROLL_ZONE_WIDTH = 62;
+	private final static int LEFT_BORDER_WIDTH = 22;
+	private final static int RIGHT_BORDER_WIDTH = 21;
+	private final static int TOP_BORDER_HEIGHT = 11;
+	private final static int BOTTOM_BORDER_HEIGHT = 19;
+	
+	private final static int BOX_LEFT_WIDTH = 101;
+	private final static int BOX_RIGHT_WIDTH = 81;
+	private final static int BOX_TOP_HEIGHT = 89;
+	private final static int BOX_BOTTOM_HEIGHT = 96;
+	
+	private final static int REFERENCE_WIDTH = 320;
+	private final static int REFERENCE_HEIGHT = 270;
 	
 	private final static Paint PAINT = new Paint();
 	
@@ -89,6 +99,12 @@ public class GestureRemoteView extends View {
 	
 	private final Point mCursorDim;
 	private double[] mZones;
+	
+	private double mScaleWidth = 1;
+	private double mScaleHeight = 1;
+	
+	private int mWidth = REFERENCE_WIDTH;
+	private int mHeight = REFERENCE_HEIGHT;
 
 	private int mCurrentButtonPressed = 0;
 
@@ -105,10 +121,15 @@ public class GestureRemoteView extends View {
 		mBorderLeftRect = new Rect();
 		mScrollerRect = new Rect();
 		mGestureRect = new Rect();
-		mTitleRect = new Rect(0, 0, (int)(101 * PIXEL_SCALE), (int)(89 * PIXEL_SCALE));
-		mInfoRect = new Rect((int)(176 * PIXEL_SCALE), 0, (int)(257 * PIXEL_SCALE), (int)(89 * PIXEL_SCALE));
-		mMenuRect = new Rect(0, (int)(174 * PIXEL_SCALE), (int)(101 * PIXEL_SCALE), (int)(270 * PIXEL_SCALE));
-		mBackRect = new Rect((int)(176 * PIXEL_SCALE), (int)(174 * PIXEL_SCALE), (int)(257 * PIXEL_SCALE), (int)(270 * PIXEL_SCALE));
+		
+		final int leftPosOfRightBox = REFERENCE_WIDTH - SCROLL_ZONE_WIDTH - BOX_RIGHT_WIDTH;
+		final int rightPosOfRightBox = REFERENCE_WIDTH - SCROLL_ZONE_WIDTH;
+		final int topPosOfBottomBox = REFERENCE_HEIGHT - BOX_BOTTOM_HEIGHT;
+		
+		mTitleRect = new Rect(0, 0, (int)(BOX_LEFT_WIDTH), (int)(BOX_TOP_HEIGHT));
+		mInfoRect = new Rect((int)(leftPosOfRightBox), 0, (int)(rightPosOfRightBox), (int)(BOX_TOP_HEIGHT));
+		mMenuRect = new Rect(0, (int)(topPosOfBottomBox), (int)(BOX_LEFT_WIDTH), (int)(REFERENCE_HEIGHT));
+		mBackRect = new Rect((int)(leftPosOfRightBox), (int)(topPosOfBottomBox), (int)(rightPosOfRightBox), (int)(REFERENCE_HEIGHT));
 	}
 	
 	public void setGestureListener(IGestureListener listener) {
@@ -118,9 +139,40 @@ public class GestureRemoteView extends View {
 	
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(mBackRect.bottom, mBackRect.top);
+		
+		mWidth = MeasureSpec.getSize(widthMeasureSpec);
+		mHeight = MeasureSpec.getSize(heightMeasureSpec);
+		
+		final double scaleHeight = (double)mHeight / (double)REFERENCE_HEIGHT;
+		final double scaleWidth = (double)mWidth / (double)REFERENCE_WIDTH;
+
+		setMeasuredDimension(mWidth, mHeight);
+		
+		if (scaleHeight != 1 || scaleWidth != 1) {
+			
+			Log.d(TAG, "Non-reference screen size detected. Scale width = " + scaleWidth + ", scale height = " + scaleHeight);
+			
+			final int leftPosOfRightBox = REFERENCE_WIDTH - SCROLL_ZONE_WIDTH - BOX_RIGHT_WIDTH;
+			final int rightPosOfRightBox = REFERENCE_WIDTH - SCROLL_ZONE_WIDTH;
+			final int topPosOfBottomBox = REFERENCE_HEIGHT - BOX_BOTTOM_HEIGHT;
+			
+			mTitleRect.right = (int)(BOX_LEFT_WIDTH * scaleWidth);
+			mTitleRect.bottom = (int)(BOX_TOP_HEIGHT * scaleHeight);
+			mInfoRect.left = (int)(leftPosOfRightBox * scaleWidth);
+			mInfoRect.right = (int)(rightPosOfRightBox * scaleWidth);
+			mInfoRect.bottom = (int)(BOX_TOP_HEIGHT * scaleHeight);
+			mMenuRect.top = (int)(topPosOfBottomBox * scaleHeight);
+			mMenuRect.right = (int)(BOX_LEFT_WIDTH * scaleWidth);
+			mMenuRect.bottom = (int)(REFERENCE_HEIGHT * scaleHeight);
+			mBackRect.left = (int)(leftPosOfRightBox * scaleWidth);
+			mBackRect.top = (int)(topPosOfBottomBox * scaleHeight);
+			mBackRect.right = (int)(rightPosOfRightBox * scaleWidth);
+			mBackRect.bottom = (int)(REFERENCE_HEIGHT * scaleHeight);
+		}
+		mScaleWidth = scaleWidth;
+		mScaleHeight = scaleHeight;
 	}
-	
+	     
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
@@ -129,21 +181,24 @@ public class GestureRemoteView extends View {
 				TOP_BORDER_HEIGHT + (h - mCursorDim.y - TOP_BORDER_HEIGHT - BOTTOM_BORDER_HEIGHT) / 2);
 		mCursor.setPosition(mOrigin);
 		
+		final double scaleWidth = mScaleWidth;
+		final double scaleHeight = mScaleHeight;
+		
 		// define gesture rectangle
-		mGestureRect.left = LEFT_BORDER_WIDTH;
-		mGestureRect.top = TOP_BORDER_HEIGHT;
-		mGestureRect.right = w - SCROLL_ZONE_WIDTH;
-		mGestureRect.bottom = h - BOTTOM_BORDER_HEIGHT;
+		mGestureRect.left = (int)(LEFT_BORDER_WIDTH * scaleWidth);
+		mGestureRect.top = (int)(TOP_BORDER_HEIGHT * scaleHeight);
+		mGestureRect.right = (int)(w - SCROLL_ZONE_WIDTH * scaleWidth);
+		mGestureRect.bottom = (int)(h - BOTTOM_BORDER_HEIGHT * scaleHeight);
 		
 		// define fast scroller rectangle
-		mScrollerRect.left = w - SCROLL_ZONE_WIDTH;
-		mScrollerRect.top = TOP_BORDER_HEIGHT;
+		mScrollerRect.left = (int)(w - SCROLL_ZONE_WIDTH * scaleWidth);
+		mScrollerRect.top = (int)(TOP_BORDER_HEIGHT * scaleHeight);
 		mScrollerRect.right = w;
-		mScrollerRect.bottom = h - BOTTOM_BORDER_HEIGHT;
+		mScrollerRect.bottom = (int)(h - BOTTOM_BORDER_HEIGHT * scaleHeight);
 
-		final int lPad = 22;
-		final int tPad = -3;
-		final int rPad = 21;
+		final int lPad = (int)(22 * scaleWidth);
+		final int tPad = (int)(-3 * scaleHeight);
+		final int rPad = (int)(21 * scaleWidth);
 		mBorderLeftRect.left = lPad;
 		mBorderLeftRect.top = (h - mBorderLeft.getHeight()) / 2 + tPad;
 		mBorderLeftRect.right = mBorderLeft.getWidth() + lPad;
@@ -162,28 +217,28 @@ public class GestureRemoteView extends View {
 	protected void onDraw(Canvas canvas) {
 		switch (mCurrentButtonPressed) {
 			case R.drawable.remote_xbox_gesture_title_down:
-				canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), mCurrentButtonPressed), mTitleRect.left, mTitleRect.top, null);
+				canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), mCurrentButtonPressed), null, mTitleRect, null);
 				break;
 			case R.drawable.remote_xbox_gesture_menu_down:
-				canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), mCurrentButtonPressed), mMenuRect.left, mMenuRect.top, null);
+				canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), mCurrentButtonPressed), null, mMenuRect, null);
 				break;
 			case R.drawable.remote_xbox_gesture_info_down:
-				canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), mCurrentButtonPressed), mInfoRect.left, mInfoRect.top, null);
+				canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), mCurrentButtonPressed), null, mInfoRect, null);
 				break;
 			case R.drawable.remote_xbox_gesture_back_down:
-				canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), mCurrentButtonPressed), mBackRect.left, mBackRect.top, null);
+				canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), mCurrentButtonPressed), null, mBackRect, null);
 				break;
 		}
 		if (mCursor.backgroundFadePos > 0) {
 			PAINT.setAlpha(mCursor.backgroundFadePos);
-			canvas.drawBitmap(mGestureOverlay, 0, 0, PAINT);
+			canvas.drawBitmap(mGestureOverlay, null, new Rect(0, 0, mWidth, mHeight), PAINT);
 		}
 		canvas.drawBitmap(mCursor.getBitmap(), mCursor.getX(), mCursor.getY(), null);
 		drawZones(canvas);
 	}
 	
 	/**
-	 * Paints the gesture zone, scrolling zone, accelleration zones
+	 * Paints the gesture zone, scrolling zone, acceleration zones
 	 * with different colors. For debug purposes only.
 	 * @param canvas
 	 */

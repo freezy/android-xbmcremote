@@ -29,6 +29,8 @@ import org.xbmc.eventclient.ButtonCodes;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +44,8 @@ import android.widget.FrameLayout;
  */
 public class GestureRemoteActivity extends Activity {
 	
+	private final static String TAG = "GestureRemoteActivity";
+	
 	private ConfigurationManager mConfigurationManager;
 	private RemoteController mRemoteController;
 	
@@ -52,7 +56,18 @@ public class GestureRemoteActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.remote_gesture);
+		
+		Display d = getWindowManager().getDefaultDisplay();
+		final int w = d.getWidth();
+		final int h = d.getHeight();
+		final double ar = w > h ? (double) w / (double) h : (double) h / (double) w;
+		if (ar > 1.6) {
+			Log.i(TAG, "AR = " + ar + ", using extended layout.");
+			setContentView(R.layout.remote_gesture_extended);
+		} else {
+			Log.i(TAG, "AR = " + ar + ", normal layout.");
+			setContentView(R.layout.remote_gesture);
+		}
 		
 		// remove nasty top fading edge
 		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);

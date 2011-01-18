@@ -1,50 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
  <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/remoteLayout"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:orientation="vertical"
-	android:background="#000000">
-	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
-		<ImageView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:background="@drawable/remote_xbox__top_left" />
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnDisplay"
-			android:background="@drawable/remote_xbox_display" android:focusable="false" android:focusableInTouchMode="false" />
-		<ImageView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:background="@drawable/remote_xbox__top_right" />
+	android:id="@+id/remoteLayout" 
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical" android:background="#000000">
+	
+	<LinearLayout android:id="@+id/RemoteXboxRow1" android:layout_weight="60" android:layout_height="0px" android:layout_width="match_parent" android:layout_alignParentTop="true">
+		<ImageView android:layout_weight="93" android:layout_width="0px" android:layout_height="fill_parent"
+			android:layout_alignParentLeft="true"
+			android:background="@drawable/remote_xbox__top_left" />
+		<Button android:layout_weight="136" android:layout_width="0px" android:layout_height="fill_parent" android:id="@+id/RemoteXboxImgBtnDisplay"
+			android:background="@drawable/remote_xbox_display" android:focusable="false" android:focusableInTouchMode="false" android:layout_centerInParent="true" android:layout_centerHorizontal="false"/>
+		<ImageView android:layout_weight="91" android:layout_width="0px" android:layout_height="fill_parent"
+			android:layout_alignParentRight="true"
+			android:background="@drawable/remote_xbox__top_right" />
 	</LinearLayout>
 
-	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:background="@drawable/remote_xbox_seek_back"
-			android:id="@+id/RemoteXboxImgBtnSeekBack" android:focusable="false" android:focusableInTouchMode="false" />
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnPlay"
-			android:background="@drawable/remote_xbox_play" android:focusable="false" android:focusableInTouchMode="false" />
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnSeekForward"
-			android:background="@drawable/remote_xbox_seek_forward" android:focusable="false" android:focusableInTouchMode="false" />
+	<LinearLayout android:id="@+id/RemoteXboxRow3" android:layout_weight="70" android:layout_height="0px" android:layout_width="match_parent">
+		<Button android:layout_weight="114" android:layout_width="0px" android:layout_height="fill_parent" android:background="@drawable/remote_xbox_seek_back"
+			android:id="@+id/RemoteXboxImgBtnSeekBack" android:focusable="false" android:focusableInTouchMode="false" android:layout_alignParentLeft="true"/>
+		<Button android:layout_weight="91" android:layout_width="0px" android:layout_height="fill_parent" android:id="@+id/RemoteXboxImgBtnPlay"
+			android:background="@drawable/remote_xbox_play" android:focusable="false" android:focusableInTouchMode="false" android:layout_centerInParent="true"/>
+		<Button android:layout_weight="115" android:layout_width="0px" android:layout_height="fill_parent" android:id="@+id/RemoteXboxImgBtnSeekForward"
+			android:background="@drawable/remote_xbox_seek_forward" android:focusable="false" android:focusableInTouchMode="false" android:layout_alignParentRight="true"/>
 	</LinearLayout>
 	
-	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnPrevious"
+	<LinearLayout android:id="@+id/RemoteXboxRow4" android:layout_weight="80" android:layout_height="0px" android:layout_width="match_parent">
+		<Button android:layout_weight="96" android:layout_width="0px"
+			android:layout_height="fill_parent" android:id="@+id/RemoteXboxImgBtnPrevious"
 			android:background="@drawable/remote_xbox_previous" android:focusable="false" android:focusableInTouchMode="false" />
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnStop"
+		<Button android:layout_weight="64" android:layout_width="0px"
+			android:layout_height="fill_parent" android:id="@+id/RemoteXboxImgBtnStop"
 			android:background="@drawable/remote_xbox_stop" android:focusable="false" android:focusableInTouchMode="false" />
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnPause"
+		<Button android:layout_weight="65" android:layout_width="0px"
+			android:layout_height="fill_parent" android:id="@+id/RemoteXboxImgBtnPause"
 			android:background="@drawable/remote_xbox_pause" android:focusable="false" android:focusableInTouchMode="false" />
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/RemoteXboxImgBtnNext"
+		<Button android:layout_weight="95" android:layout_width="0px"
+			android:layout_height="fill_parent" android:id="@+id/RemoteXboxImgBtnNext"
 			android:background="@drawable/remote_xbox_next" android:focusable="false" android:focusableInTouchMode="false"/>
 	</LinearLayout>
 	
-	<org.xbmc.android.widget.gestureremote.GestureRemoteView 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
+	<org.xbmc.android.widget.gestureremote.GestureRemoteView android:layout_weight="270" android:layout_height="0px"
+		android:layout_width="match_parent" 
 		android:id="@+id/RemoteXboxGestureZone" />
 </LinearLayout>
