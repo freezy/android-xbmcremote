@@ -27,6 +27,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.AlbumListController;
 import org.xbmc.android.remote.presentation.controller.ArtistListController;
+import org.xbmc.android.remote.presentation.controller.RemoteController;
 import org.xbmc.android.remote.presentation.controller.SongListController;
 import org.xbmc.android.widget.slidingtabs.SlidingTabActivity;
 import org.xbmc.android.widget.slidingtabs.SlidingTabHost;
@@ -34,6 +35,7 @@ import org.xbmc.android.widget.slidingtabs.SlidingTabHost.OnTabChangeListener;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.eventclient.ButtonCodes;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -143,7 +145,14 @@ public class MusicGenreActivity extends SlidingTabActivity  {
 		// then the generic ones.
 		switch (item.getItemId()) {
 		case MENU_REMOTE:
-			startActivity(new Intent(this, RemoteActivity.class));
+			final Intent intent;
+			if (getSharedPreferences("global", Context.MODE_PRIVATE).getInt(RemoteController.LAST_REMOTE_PREFNAME, -1) == RemoteController.LAST_REMOTE_GESTURE) {
+				intent = new Intent(this, GestureRemoteActivity.class);
+			} else {
+				intent = new Intent(this, RemoteActivity.class);
+			}
+			intent.addFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+			startActivity(intent);
 			return true;
 		case MENU_NOW_PLAYING:
 			startActivity(new Intent(this,  NowPlayingActivity.class));

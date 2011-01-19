@@ -51,7 +51,6 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 	}
 	
 	
-	
 	public void showPausedNotification(String artist, String title) {
 		if((artist == null || artist.equals("") ) && (title == null || title.equals("")))
 			removeNotification();

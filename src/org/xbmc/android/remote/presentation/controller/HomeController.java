@@ -29,6 +29,7 @@ import java.util.Observer;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.presentation.activity.GestureRemoteActivity;
 import org.xbmc.android.remote.presentation.activity.HomeActivity;
 import org.xbmc.android.remote.presentation.activity.HostSettingsActivity;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
@@ -64,6 +65,7 @@ import org.xbmc.httpapi.BroadcastListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -265,28 +267,34 @@ public class HomeController extends AbstractController implements INotifiableCon
 			public void onItemClick(AdapterView<?> listView, View v, int position, long ID) {
 				HomeItem item = (HomeItem)listView.getAdapter().getItem(position);
 				final Host host = HostFactory.host;
+				Intent intent = null;
 				switch (item.ID) {
 					case HOME_ACTION_REMOTE:
-						mActivity.startActivity(new Intent(v.getContext(), RemoteActivity.class));
+						final int mode = mActivity.getSharedPreferences("global", Context.MODE_PRIVATE).getInt(RemoteController.LAST_REMOTE_PREFNAME, -1);
+						if (mode == RemoteController.LAST_REMOTE_GESTURE) {
+							intent = new Intent(v.getContext(), GestureRemoteActivity.class);
+						} else {
+							intent = new Intent(v.getContext(), RemoteActivity.class);
+						}
+						intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 						break;
 					case HOME_ACTION_MUSIC:
-						mActivity.startActivity(new Intent(v.getContext(), MusicLibraryActivity.class));
+						intent = new Intent(v.getContext(), MusicLibraryActivity.class);
 						break;
 					case HOME_ACTION_VIDEOS:
-						mActivity.startActivity(new Intent(v.getContext(), MovieLibraryActivity.class));
+						intent = new Intent(v.getContext(), MovieLibraryActivity.class);
 						break;
 					case HOME_ACTION_TVSHOWS:
-						mActivity.startActivity(new Intent(v.getContext(), TvShowLibraryActivity.class));
+						intent = new Intent(v.getContext(), TvShowLibraryActivity.class);
 						break;
 					case HOME_ACTION_PICTURES:
-						Intent intent = new Intent(v.getContext(), ListActivity.class);
+						intent = new Intent(v.getContext(), ListActivity.class);
 						intent.putExtra(ListController.EXTRA_LIST_CONTROLLER, new FileListController());
 						intent.putExtra(ListController.EXTRA_SHARE_TYPE, MediaType.PICTURES);
 						intent.putExtra(ListController.EXTRA_PATH, "");
-						mActivity.startActivity(intent);
 						break;
 					case HOME_ACTION_NOWPLAYING:
-						mActivity.startActivity(new Intent(v.getContext(), NowPlayingActivity.class));
+						intent = new Intent(v.getContext(), NowPlayingActivity.class); 
 						break;
 					case HOME_ACTION_RECONNECT:
 						((Button)mActivity.findViewById(R.id.home_version_button)).setText("Reconnecting...");
@@ -301,6 +309,9 @@ public class HomeController extends AbstractController implements INotifiableCon
 							mWolCounter.start();
 						}
 						break;
+				}
+				if (intent != null) {
+					mActivity.startActivity(intent);
 				}
 			}
 		};

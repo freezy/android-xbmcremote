@@ -29,6 +29,7 @@ import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Build.VERSION;
@@ -140,6 +141,7 @@ public class RemoteActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		getSharedPreferences("global", Context.MODE_PRIVATE).edit().putInt(RemoteController.LAST_REMOTE_PREFNAME, RemoteController.LAST_REMOTE_BUTTON).commit();
 		mRemoteController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}

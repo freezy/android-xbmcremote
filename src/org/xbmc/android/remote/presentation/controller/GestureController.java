@@ -9,6 +9,7 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -19,7 +20,6 @@ public class GestureController extends AbstractController implements INotifiable
 	
 	public GestureController(Context context) {
 		mEventClientManager = ManagerFactory.getEventClientManager(this);
-		
 	}
 	
 	/**

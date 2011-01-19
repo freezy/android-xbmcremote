@@ -26,6 +26,7 @@ import java.io.IOException;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.ListController;
+import org.xbmc.android.remote.presentation.controller.RemoteController;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
@@ -33,6 +34,7 @@ import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Build.VERSION;
@@ -121,7 +123,14 @@ public abstract class AbsListActivity extends Activity {
 		mListController.onOptionsItemSelected(item);
 		switch (item.getItemId()) {
 			case MENU_REMOTE:
-				startActivity(new Intent(this, RemoteActivity.class));
+				final Intent intent;
+				if (getSharedPreferences("global", Context.MODE_PRIVATE).getInt(RemoteController.LAST_REMOTE_PREFNAME, -1) == RemoteController.LAST_REMOTE_GESTURE) {
+					intent = new Intent(this, GestureRemoteActivity.class);
+				} else {
+					intent = new Intent(this, RemoteActivity.class);
+				}
+				intent.addFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+				startActivity(intent);
 				return true;
 			case MENU_NOW_PLAYING:
 				startActivity(new Intent(this, NowPlayingActivity.class));

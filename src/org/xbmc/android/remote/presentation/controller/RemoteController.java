@@ -26,9 +26,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.GestureRemoteActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
+import org.xbmc.android.remote.presentation.activity.RemoteActivity;
 import org.xbmc.android.widget.gestureremote.IGestureListener;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
@@ -36,6 +38,7 @@ import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.info.GuiSettings;
 import org.xbmc.api.presentation.INotifiableController;
+import org.xbmc.api.type.SortType;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
@@ -45,6 +48,7 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -57,6 +61,10 @@ import android.widget.Button;
 
 public class RemoteController extends AbstractController implements INotifiableController, IController {
 
+	public static final int LAST_REMOTE_BUTTON = 0;
+	public static final int LAST_REMOTE_GESTURE = 1;
+	public static final String LAST_REMOTE_PREFNAME = "last_remote_type";
+	
 	private static final int MENU_NOW_PLAYING = 401;
 	private static final int MENU_XBMC_EXIT = 402;
 	private static final int MENU_XBMC_S = 403;
@@ -368,6 +376,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 					break;
 				case MENU_SWITCH_GESTURE:
 					intent = new Intent(mActivity, GestureRemoteActivity.class);
+					intent.addFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 					break;
 				case MENU_XBMC_EXIT:
 					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_POWER, false, true, true, (short)0, (byte)0);

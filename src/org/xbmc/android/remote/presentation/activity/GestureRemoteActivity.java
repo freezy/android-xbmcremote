@@ -27,6 +27,7 @@ import org.xbmc.android.widget.gestureremote.GestureRemoteView;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -95,6 +96,7 @@ public class GestureRemoteActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		getSharedPreferences("global", Context.MODE_PRIVATE).edit().putInt(RemoteController.LAST_REMOTE_PREFNAME, RemoteController.LAST_REMOTE_GESTURE).commit();
 		mRemoteController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
@@ -138,17 +140,18 @@ public class GestureRemoteActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Intent myIntent = null;
+		Intent intent = null;
 		switch (item.getItemId()) {
 			case MENU_NOW_PLAYING:
-				myIntent = new Intent(this, NowPlayingActivity.class);
+				intent = new Intent(this, NowPlayingActivity.class);
 				break;
 			case MENU_SWITCH_BUTTONS:
-				myIntent = new Intent(this, RemoteActivity.class);
+				intent = new Intent(this, RemoteActivity.class);
+				intent.addFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 				break;
 		}
-		if (myIntent != null) {
-			startActivity(myIntent);
+		if (intent != null) {
+			startActivity(intent);
 			return true;
 		}
 		return false;

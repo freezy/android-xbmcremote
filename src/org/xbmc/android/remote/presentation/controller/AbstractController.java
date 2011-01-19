@@ -305,7 +305,7 @@ public abstract class AbstractController {
 	}
 
 	public void runOnUI(Runnable action) {
-		if (mActivity != null) {
+		if (mHandler != null) {
 			//Log.i(TAG, "### running on UI at " + mActivity.getClass().getSimpleName());
 			mHandler.post(action);
 			//mActivity.runOnUiThread(action);

@@ -26,6 +26,7 @@ import java.io.IOException;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.NowPlayingController;
+import org.xbmc.android.remote.presentation.controller.RemoteController;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
@@ -35,6 +36,7 @@ import org.xbmc.api.type.MediaType;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -217,8 +219,13 @@ public class NowPlayingActivity extends Activity {
 		
 		switch (item.getItemId()) {
 			case MENU_REMOTE:
-				final Intent intent = new Intent(this, RemoteActivity.class);
-				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				final Intent intent;
+				if (getSharedPreferences("global", Context.MODE_PRIVATE).getInt(RemoteController.LAST_REMOTE_PREFNAME, -1) == RemoteController.LAST_REMOTE_GESTURE) {
+					intent = new Intent(this, GestureRemoteActivity.class);
+				} else {
+					intent = new Intent(this, RemoteActivity.class);
+				}
+				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
 				startActivity(intent);
 				return true;
 		}
