@@ -5,23 +5,30 @@
 	<RelativeLayout android:orientation="vertical"
 		android:layout_width="fill_parent" android:layout_height="fill_parent">
 		<LinearLayout android:id="@+id/now_playing_bottombar"
-			android:layout_width="wrap_content" android:layout_height="60dip"
+			android:background="@drawable/bottombar_bg"
+			android:layout_width="fill_parent" android:layout_height="60dip" android:gravity="center_horizontal"
 			android:layout_alignParentBottom="true">
-			<ImageButton android:id="@+id/MediaPreviousButton"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:background="@drawable/now_playing_previous" />
-			<ImageButton android:id="@+id/MediaPlayPauseButton"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:background="@drawable/now_playing_play" />
-			<ImageButton android:id="@+id/MediaStopButton"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:background="@drawable/now_playing_stop" />
-			<ImageButton android:id="@+id/MediaNextButton"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:background="@drawable/now_playing_next" />
-			<ImageButton android:id="@+id/MediaPlaylistButton"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:background="@drawable/now_playing_playlist" />
+			<RelativeLayout android:layout_centerInParent="true" android:layout_width="wrap_content" android:layout_height="wrap_content" >
+					<ImageButton android:id="@+id/MediaPreviousButton"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:background="@drawable/now_playing_previous" />
+					<ImageButton android:id="@+id/MediaPlayPauseButton"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:background="@drawable/now_playing_play"
+						android:layout_toRightOf="@id/MediaPreviousButton" />
+					<ImageButton android:id="@+id/MediaStopButton"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:background="@drawable/now_playing_stop"
+						android:layout_toRightOf="@id/MediaPlayPauseButton" />
+					<ImageButton android:id="@+id/MediaNextButton"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:background="@drawable/now_playing_next"
+						android:layout_toRightOf="@id/MediaStopButton" />
+					<ImageButton android:id="@+id/MediaPlaylistButton"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:background="@drawable/now_playing_playlist"
+						android:layout_toRightOf="@id/MediaNextButton" />
+			</RelativeLayout>
 		</LinearLayout>
 		<FrameLayout android:id="@+id/home_upper"
 			android:layout_width="fill_parent" android:layout_height="fill_parent"
