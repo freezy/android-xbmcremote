@@ -109,11 +109,10 @@ public class FileListController extends ListController implements IController {
 						nextActivity.putExtra(ListController.EXTRA_DISPLAY_PATH, item.displayPath);
 						mActivity.startActivity(nextActivity);
 					} else {
-						
 						switch(item.mediaType) {
 							case 0:
 								break;
-								
+							
 							case MediaType.PICTURES:
 								mControlManager.showPicture(new DataResponse<Boolean>() {
 									public void run() {
@@ -123,7 +122,6 @@ public class FileListController extends ListController implements IController {
 									}
 								}, item.path, mActivity.getApplicationContext());
 								break;
-								
 							default:
 								mControlManager.playFile(new DataResponse<Boolean>() {
 									public void run() {
@@ -131,10 +129,8 @@ public class FileListController extends ListController implements IController {
 											mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 										}
 									}
-								}, item.path, mActivity.getApplicationContext());									
+								}, item.path, mActivity.getApplicationContext());
 						}
-						
-
 					}
 				}
 			});
@@ -171,14 +167,14 @@ public class FileListController extends ListController implements IController {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_folder));
 				}
 			} else {
-				final String ext = fileItem.name.substring(fileItem.name.lastIndexOf(".") + 1).toLowerCase();
+				final String ext = fileItem.path.substring(fileItem.path.lastIndexOf(".") + 1).toLowerCase();
 				if (ext.equals("mp3") || ext.equals("ogg") || ext.equals("flac") || ext.equals("m4a")) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_song));
-				} else if (ext.equals("avi") || ext.equals("mov") || ext.equals("flv") || ext.equals("mkv") || ext.equals("wmv") || ext.equals("mp4")) {
+				} else if (ext.equals("avi") || ext.equals("mov") || ext.equals("flv") || ext.equals("mkv") || ext.equals("wmv") || ext.equals("mp4") || ext.equals("ts") || ext.equals("vob")) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_video));
 				} else if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("bmp") || ext.equals("gif") || ext.equals("png") || ext.equals("tbn")) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_picture));
-				} else if (ext.equals("m3u")) {
+				} else if (ext.equals("m3u") || ext.equals("pls")) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_playing));
 				} else {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_file));

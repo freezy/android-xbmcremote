@@ -46,14 +46,15 @@ public class FileLocation implements INamedResource {
 	 * @param line raw line, either path only or name and path, separated by Connection.VALUE_SEP.
 	 */
 	public FileLocation(String line) {
-		if (line.endsWith(".m3u\\") || line.endsWith(".m3u/")) {
-			line = line.substring(0, line.length() - 1);
-		}
 		if (line.contains(Connection.VALUE_SEP)) {
 			final String[] s = line.split(Connection.VALUE_SEP);
 			name = s[0];
 			path = s[1];
-			isDirectory = path.endsWith("/") || path.endsWith("\\");
+			if (s.length > 2)
+				// GetMediaLocation gives back 0 or 1=directory
+				isDirectory = s[2].equals("1");
+			else
+				isDirectory = path.endsWith("/") || path.endsWith("\\");
 		} else {
 			String trimmed = line.replaceAll("\\\\", "/"); // path without trailing "/"
 			isDirectory = trimmed.endsWith("/");
@@ -63,6 +64,11 @@ public class FileLocation implements INamedResource {
 			}
 			name = trimmed.substring(trimmed.lastIndexOf("/") + 1);
 		}
+		
+		if (path.endsWith(".m3u") || path.endsWith(".pls")) {
+			isDirectory = false;
+		}
+		
 		// treat archives specially
 		if (path.startsWith("rar://") || path.startsWith("zip://")) {
 			final String decoded;
@@ -118,7 +124,6 @@ public class FileLocation implements INamedResource {
 					mediaType = MediaType.MUSIC;
 				}
 			}
-
 		} else if (path.contains("://")) {
 			displayPath = name + "/";
 //			displayPath = URLDecoder.decode(path).replaceAll("\\\\", "/");
@@ -131,12 +136,15 @@ public class FileLocation implements INamedResource {
 	}
 	
 	private void setMediaType() {
-		final String ext = name.substring(name.lastIndexOf(".") + 1).toLowerCase();
-		if (ext.equals("mp3") || ext.equals("ogg") || ext.equals("flac") || ext.equals("m4a")) {
+		final String ext = path.substring(path.lastIndexOf(".") + 1).toLowerCase();
+		if (ext.equals("mp3") || ext.equals("ogg") || ext.equals("flac") || ext.equals("m4a") || ext.equals("m3u") || 
+				ext.equals("pls")) {
 			this.mediaType = MediaType.MUSIC;
-		} else if (ext.equals("avi") || ext.equals("mov") || ext.equals("flv") || ext.equals("mkv") || ext.equals("wmv") || ext.equals("mp4")) {
+		} else if (ext.equals("avi") || ext.equals("mov") || ext.equals("flv") || ext.equals("mkv") || ext.equals("wmv") || 
+				ext.equals("mp4") || ext.equals("ts") || ext.equals("vob")) {
 			this.mediaType = MediaType.VIDEO;
-		} else if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("bmp") || ext.equals("gif") || ext.equals("png") || ext.equals("tbn")) {
+		} else if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("bmp") || ext.equals("gif") || ext.equals("png") || 
+				ext.equals("tbn")) {
 			this.mediaType = MediaType.PICTURES;
 		} 
 	}
