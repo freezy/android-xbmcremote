@@ -39,18 +39,21 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
-public class TvShowLibraryActivity extends SlidingTabActivity  {
+public class TvShowLibraryActivity extends SlidingTabActivity implements ViewTreeObserver.OnGlobalLayoutListener {
 
 	private SlidingTabHost mTabHost;
 	
@@ -62,8 +65,12 @@ public class TvShowLibraryActivity extends SlidingTabActivity  {
 	private static final int MENU_NOW_PLAYING = 301;
 	private static final int MENU_UPDATE_LIBRARY = 302;
 	private static final int MENU_REMOTE = 303;
+
+	private static final String PREF_REMEMBER_TAB = "setting_remember_last_tab";
+	private static final String LAST_TVSHOW_TAB_ID = "last_tvshow_tab_id";
 	
     private ConfigurationManager mConfigurationManager;
+    private Handler mHandler;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -81,14 +88,14 @@ public class TvShowLibraryActivity extends SlidingTabActivity  {
 		mTabHost.addTab(mTabHost.newTabSpec("tab_actors", "Actors", R.drawable.st_actor_on, R.drawable.st_actor_off).setBigIcon(R.drawable.st_actor_over).setContent(R.id.actorlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_genres", "Genres", R.drawable.st_genre_on, R.drawable.st_genre_off).setBigIcon(R.drawable.st_genre_over).setContent(R.id.genrelist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
-		mTabHost.setCurrentTab(0);
+		
+		mTabHost.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
 		// assign the gui logic to each tab
-		final Handler handler = new Handler();
+		mHandler = new Handler();
 		mTvShowController = new TvShowListController();
 		mTvShowController.findTitleView(findViewById(R.id.tvshowlist_outer_layout));
 		mTvShowController.findMessageView(findViewById(R.id.tvshowlist_outer_layout));
-		mTvShowController.onCreate(this, handler, (ListView)findViewById(R.id.tvshowlist_list)); // first tab can be updated now.
 
 		mActorController = new ActorListController(ActorListController.TYPE_TVSHOW);
 		mActorController.findTitleView(findViewById(R.id.actorlist_outer_layout));
@@ -105,21 +112,43 @@ public class TvShowLibraryActivity extends SlidingTabActivity  {
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				
-				if (tabId.equals("tab_tv")) {
-					mTvShowController.onCreate(TvShowLibraryActivity.this, handler, (ListView)findViewById(R.id.movielist_list));
-				}
-				if (tabId.equals("tab_actors")) {
-					mActorController.onCreate(TvShowLibraryActivity.this, handler, (ListView)findViewById(R.id.actorlist_list));
-				}
-				if (tabId.equals("tab_genres")) {
-					mGenresController.onCreate(TvShowLibraryActivity.this, handler, (ListView)findViewById(R.id.genrelist_list));
-				}
-				if (tabId.equals("tab_files")) {
-					mFileController.onCreate(TvShowLibraryActivity.this, handler, (ListView)findViewById(R.id.filelist_list));
+				initTab(tabId);
+				
+				final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+				if (prefs.getBoolean(PREF_REMEMBER_TAB, false)) {
+					getSharedPreferences("global", Context.MODE_PRIVATE).edit().putString(LAST_TVSHOW_TAB_ID, tabId).commit();
 				}
 			}
 		});
 		mConfigurationManager = ConfigurationManager.getInstance(this);
+	}
+	
+	public void onGlobalLayout() {
+        mTabHost.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+		
+		String lastTab = "tab_tv";
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+		if (prefs.getBoolean(PREF_REMEMBER_TAB, false)) {
+			lastTab = (getSharedPreferences("global", Context.MODE_PRIVATE).getString(LAST_TVSHOW_TAB_ID, "tab_tv"));
+			mTabHost.selectTabByTag(lastTab);
+		}
+		
+		initTab(lastTab);
+	}
+	
+	private void initTab(String tabId) {
+		if (tabId.equals("tab_tv")) {
+			mTvShowController.onCreate(TvShowLibraryActivity.this, mHandler, (ListView)findViewById(R.id.tvshowlist_list));
+		}
+		if (tabId.equals("tab_actors")) {
+			mActorController.onCreate(TvShowLibraryActivity.this, mHandler, (ListView)findViewById(R.id.actorlist_list));
+		}
+		if (tabId.equals("tab_genres")) {
+			mGenresController.onCreate(TvShowLibraryActivity.this, mHandler, (ListView)findViewById(R.id.genrelist_list));
+		}
+		if (tabId.equals("tab_files")) {
+			mFileController.onCreate(TvShowLibraryActivity.this, mHandler, (ListView)findViewById(R.id.filelist_list));
+		}
 	}
 	
 	@Override

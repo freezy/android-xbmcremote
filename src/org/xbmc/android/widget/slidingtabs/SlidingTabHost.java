@@ -195,6 +195,20 @@ public class SlidingTabHost extends FrameLayout implements ViewTreeObserver.OnTo
 			setCurrentTab(0);
 		}
 	}
+	
+	/*
+	 * Moves the slider to the given tab and switches the content 
+	 */
+	public void selectTabByTag(String tag) {
+		int i;
+		for (i = 0; i < mTabSpecs.size(); i++) {
+			if (mTabSpecs.get(i).getTag().equals(tag)) {
+				setCurrentTab(i);
+				mTabWidget.moveTo(i);
+				break;
+			}
+		}
+	}
 
 	/**
 	 * Removes all tabs from the tab widget associated with this tab host.

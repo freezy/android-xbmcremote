@@ -38,18 +38,21 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
-public class MusicLibraryActivity extends SlidingTabActivity  {
+public class MusicLibraryActivity extends SlidingTabActivity implements ViewTreeObserver.OnGlobalLayoutListener {
 
 	private SlidingTabHost mTabHost;
 	private AlbumListController mAlbumController;
@@ -62,8 +65,12 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 	private static final int MENU_UPDATE_LIBRARY = 302;
 	private static final int MENU_REMOTE = 303;
 	
+	private static final String PREF_REMEMBER_TAB = "setting_remember_last_tab";
+	private static final String LAST_MUSIC_TAB_ID = "last_music_tab_id";
+	
     private ConfigurationManager mConfigurationManager;
-
+    private Handler mHandler;
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -81,15 +88,15 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mTabHost.addTab(mTabHost.newTabSpec("tab_genres", "Genres", R.drawable.st_genre_on, R.drawable.st_genre_off).setBigIcon(R.drawable.st_genre_over).setContent(R.id.genres_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_compilations", "Compilations", R.drawable.st_va_on, R.drawable.st_va_off).setBigIcon(R.drawable.st_va_over).setContent(R.id.compilations_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
-		mTabHost.setCurrentTab(0);
+		
+		mTabHost.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
 		// assign the gui logic to each tab
-		final Handler handler = new Handler();
+		mHandler = new Handler();
 		mAlbumController = new AlbumListController();
 		mAlbumController.findTitleView(findViewById(R.id.albumlist_outer_layout));
 		mAlbumController.findMessageView(findViewById(R.id.albumlist_outer_layout));
 //		mAlbumController.setGrid((GridView)findViewById(R.id.albumlist_grid));
-		mAlbumController.onCreate(this, handler, (ListView)findViewById(R.id.albumlist_list)); // first tab can be updated now.
 
 		mFileController = new FileListController();
 		mFileController.findTitleView(findViewById(R.id.filelist_outer_layout));
@@ -111,25 +118,47 @@ public class MusicLibraryActivity extends SlidingTabActivity  {
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				
-				if (tabId.equals("tab_albums")) {
-					mAlbumController.onCreate(MusicLibraryActivity.this, handler, (ListView)findViewById(R.id.albumlist_list));
-				}
-				if (tabId.equals("tab_files")) {
-					mFileController.onCreate(MusicLibraryActivity.this, handler, (ListView)findViewById(R.id.filelist_list));
-				}
-				if (tabId.equals("tab_artists")) {
-					mArtistController.onCreate(MusicLibraryActivity.this, handler, (ListView)findViewById(R.id.artists_list));
-				}
-				if (tabId.equals("tab_genres")) {
-					mGenreController.onCreate(MusicLibraryActivity.this, handler, (ListView)findViewById(R.id.genres_list));
-				}
-				if (tabId.equals("tab_compilations")) {
-					mCompilationsController.onCreate(MusicLibraryActivity.this, handler, (ListView)findViewById(R.id.compilations_list));
+				initTab(tabId);
+				
+				final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+				if (prefs.getBoolean(PREF_REMEMBER_TAB, false)) {
+					getSharedPreferences("global", Context.MODE_PRIVATE).edit().putString(LAST_MUSIC_TAB_ID, tabId).commit();
 				}
 			}
 		});
 		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
+	}
+	
+	public void onGlobalLayout() {
+        mTabHost.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+		
+		String lastTab = "tab_albums";
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+		if (prefs.getBoolean(PREF_REMEMBER_TAB, false)) {
+			lastTab = (getSharedPreferences("global", Context.MODE_PRIVATE).getString(LAST_MUSIC_TAB_ID, "tab_albums"));
+			mTabHost.selectTabByTag(lastTab);
+		}
+		
+		initTab(lastTab);
+	}
+	
+	private void initTab(String tabId) {
+		if (tabId.equals("tab_albums")) {
+			mAlbumController.onCreate(MusicLibraryActivity.this, mHandler, (ListView)findViewById(R.id.albumlist_list));
+		}
+		if (tabId.equals("tab_files")) {
+			mFileController.onCreate(MusicLibraryActivity.this, mHandler, (ListView)findViewById(R.id.filelist_list));
+		}
+		if (tabId.equals("tab_artists")) {
+			mArtistController.onCreate(MusicLibraryActivity.this, mHandler, (ListView)findViewById(R.id.artists_list));
+		}
+		if (tabId.equals("tab_genres")) {
+			mGenreController.onCreate(MusicLibraryActivity.this, mHandler, (ListView)findViewById(R.id.genres_list));
+		}
+		if (tabId.equals("tab_compilations")) {
+			mCompilationsController.onCreate(MusicLibraryActivity.this, mHandler, (ListView)findViewById(R.id.compilations_list));
+		}
 	}
 	
 	@Override

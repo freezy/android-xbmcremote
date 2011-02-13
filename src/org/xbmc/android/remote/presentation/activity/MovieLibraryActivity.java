@@ -39,18 +39,21 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
-public class MovieLibraryActivity extends SlidingTabActivity  {
+public class MovieLibraryActivity extends SlidingTabActivity implements ViewTreeObserver.OnGlobalLayoutListener {
 
 	private SlidingTabHost mTabHost;
 	
@@ -62,8 +65,12 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 	private static final int MENU_NOW_PLAYING = 301;
 	private static final int MENU_UPDATE_LIBRARY = 302;
 	private static final int MENU_REMOTE = 303;
+
+	private static final String PREF_REMEMBER_TAB = "setting_remember_last_tab";
+	private static final String LAST_MOVIE_TAB_ID = "last_movie_tab_id";
 	
     private ConfigurationManager mConfigurationManager;
+    private Handler mHandler;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -75,20 +82,20 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		topFrame.setForeground(null);
 		
 		mTabHost = getTabHost();
-		final Handler handler = new Handler();
 		
 		// add the tabs
 		mTabHost.addTab(mTabHost.newTabSpec("tab_movies", "Movies", R.drawable.st_movie_on, R.drawable.st_movie_off).setBigIcon(R.drawable.st_movie_over).setContent(R.id.movielist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_actors", "Actors", R.drawable.st_actor_on, R.drawable.st_actor_off).setBigIcon(R.drawable.st_actor_over).setContent(R.id.actorlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_genres", "Genres", R.drawable.st_genre_on, R.drawable.st_genre_off).setBigIcon(R.drawable.st_genre_over).setContent(R.id.genrelist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
-		mTabHost.setCurrentTab(0);
+		
+		mTabHost.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
 		// assign the gui logic to each tab
+		mHandler = new Handler();
 		mMovieController = new MovieListController();
 		mMovieController.findTitleView(findViewById(R.id.movielist_outer_layout));
 		mMovieController.findMessageView(findViewById(R.id.movielist_outer_layout));
-		mMovieController.onCreate(this, handler, (ListView)findViewById(R.id.movielist_list)); // first tab can be updated now.
 
 		mActorController = new ActorListController(ActorListController.TYPE_MOVIE);
 		mActorController.findTitleView(findViewById(R.id.actorlist_outer_layout));
@@ -105,21 +112,43 @@ public class MovieLibraryActivity extends SlidingTabActivity  {
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
 				
-				if (tabId.equals("tab_movies")) {
-					mMovieController.onCreate(MovieLibraryActivity.this, handler, (ListView)findViewById(R.id.movielist_list));
-				}
-				if (tabId.equals("tab_actors")) {
-					mActorController.onCreate(MovieLibraryActivity.this, handler, (ListView)findViewById(R.id.actorlist_list));
-				}
-				if (tabId.equals("tab_genres")) {
-					mGenresController.onCreate(MovieLibraryActivity.this, handler, (ListView)findViewById(R.id.genrelist_list));
-				}
-				if (tabId.equals("tab_files")) {
-					mFileController.onCreate(MovieLibraryActivity.this, handler, (ListView)findViewById(R.id.filelist_list));
+				initTab(tabId);
+				
+				final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+				if (prefs.getBoolean(PREF_REMEMBER_TAB, false)) {
+					getSharedPreferences("global", Context.MODE_PRIVATE).edit().putString(LAST_MOVIE_TAB_ID, tabId).commit();
 				}
 			}
 		});
 		mConfigurationManager = ConfigurationManager.getInstance(this);
+	}
+	
+	public void onGlobalLayout() {
+        mTabHost.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+		
+		String lastTab = "tab_movies";
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+		if (prefs.getBoolean(PREF_REMEMBER_TAB, false)) {
+			lastTab = (getSharedPreferences("global", Context.MODE_PRIVATE).getString(LAST_MOVIE_TAB_ID, "tab_movies"));
+			mTabHost.selectTabByTag(lastTab);
+		}
+		
+		initTab(lastTab);
+	}
+	
+	private void initTab(String tabId) {
+		if (tabId.equals("tab_movies")) {
+			mMovieController.onCreate(MovieLibraryActivity.this, mHandler, (ListView)findViewById(R.id.movielist_list));
+		}
+		if (tabId.equals("tab_actors")) {
+			mActorController.onCreate(MovieLibraryActivity.this, mHandler, (ListView)findViewById(R.id.actorlist_list));
+		}
+		if (tabId.equals("tab_genres")) {
+			mGenresController.onCreate(MovieLibraryActivity.this, mHandler, (ListView)findViewById(R.id.genrelist_list));
+		}
+		if (tabId.equals("tab_files")) {
+			mFileController.onCreate(MovieLibraryActivity.this, mHandler, (ListView)findViewById(R.id.filelist_list));
+		}
 	}
 	
 	@Override
