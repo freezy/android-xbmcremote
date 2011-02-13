@@ -72,6 +72,21 @@
 			android:entryValues="@array/KeyguardPreferenceValues"
 			android:defaultValue="0" />
 	</PreferenceCategory>
+	<PreferenceCategory android:title="Miscellaneous options">
+		<CheckBoxPreference
+			android:key="setting_remember_last_tab"
+			android:title="Remember selected tab"
+			android:summary="Remember the last selected tab when navigate away from the screen."
+			android:selectable="true"
+			android:enabled="true" android:defaultValue="false" />
+		<ListPreference
+			android:key="setting_default_selection_action"
+			android:title="Action on selection"
+			android:summary="Click to set default selection action for the songs."
+			android:entries="@array/SelectionPreferenceEntries"
+			android:entryValues="@array/SelectionPreferenceValues"
+			android:defaultValue="0" />
+	</PreferenceCategory>
 	<PreferenceCategory android:title="Remote Keypress">
 		<CheckBoxPreference
 			android:key="setting_send_repeats"

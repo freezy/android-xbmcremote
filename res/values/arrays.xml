@@ -29,4 +29,12 @@
 		<item>On Remote</item>
 		<item>Always</item>
 	</string-array>
+	<string-array name="SelectionPreferenceValues">
+		<item>0</item>
+		<item>1</item>
+	</string-array>
+	<string-array name="SelectionPreferenceEntries">
+		<item>Play Song</item>
+		<item>Queue Song</item>
+	</string-array>
 </resources>

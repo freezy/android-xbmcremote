@@ -42,6 +42,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -72,6 +73,12 @@ public class SongListController extends ListController implements IController {
 	public static final int MENU_SORT_BY_TITLE_DESC = 36;
 	public static final int MENU_SORT_BY_FILENAME_ASC = 37;
 	public static final int MENU_SORT_BY_FILENAME_DESC = 38;
+
+	private static final String PREF_DEFAULT_SELECTION_ACTION = "setting_default_selection_action";
+	private static final String DEFAULT_ACTION_PLAY = "0";	
+	
+	private static final int INT_DEFAULT_ACTION_PLAY = 0;
+	private static final int INT_DEFAULT_ACTION_QUEUE = 1;	
 	
 	private Album mAlbum;
 	private Artist mArtist;
@@ -111,20 +118,38 @@ public class SongListController extends ListController implements IController {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					if(isLoading()) return;
 					final Song song = (Song)mList.getAdapter().getItem(((ThreeLabelsItemView)view).position);
-					if (mAlbum == null) {
-						mMusicManager.play(new QueryResponse(
-							mActivity, 
-							"Playing \"" + song.title + "\" by " + song.artist + "...", 
-							"Error playing song!",
-							true
-						), song, mActivity.getApplicationContext());
-					} else {
-						mMusicManager.play(new QueryResponse(
-							mActivity, 
-							"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
-							"Error playing song!",
-							true
-						), mAlbum, song, mActivity.getApplicationContext());
+					final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
+					final int SelectionType = Integer.parseInt(prefs.getString(PREF_DEFAULT_SELECTION_ACTION, DEFAULT_ACTION_PLAY));
+					switch (SelectionType) {
+						case INT_DEFAULT_ACTION_PLAY:
+							if (mAlbum == null) {
+								mMusicManager.play(new QueryResponse(
+									mActivity, 
+									"Playing \"" + song.title + "\" by " + song.artist + "...", 
+									"Error playing song!",
+									true
+								), song, mActivity.getApplicationContext());
+							} else {
+								mMusicManager.play(new QueryResponse(
+									mActivity, 
+									"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
+									"Error playing song!",
+									true
+								), mAlbum, song, mActivity.getApplicationContext());
+							}
+							break;
+						case INT_DEFAULT_ACTION_QUEUE:					
+							if (mAlbum == null) 
+							{
+								mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Song added to playlist.", "Error adding song!"), song, mActivity.getApplicationContext());
+							} 
+							else 
+							{
+								mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, song, mActivity.getApplicationContext());
+							}
+							break;
+						default:
+							return;
 					}
 				}
 			});
