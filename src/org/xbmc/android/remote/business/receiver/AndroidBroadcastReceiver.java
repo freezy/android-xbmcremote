@@ -51,6 +51,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Contacts;
 
+@SuppressWarnings("deprecation")
 public class AndroidBroadcastReceiver extends BroadcastReceiver {
 
 	/**

@@ -9,7 +9,6 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 

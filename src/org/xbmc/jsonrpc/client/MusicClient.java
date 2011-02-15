@@ -274,13 +274,13 @@ public class MusicClient extends Client implements IMusicClient {
 	 * Plays all songs fetched by a SQL condition.
 	 * @param sqlCondition SQL Condition
 	 * @return True on success, false otherwise.
-	 */
+	 *
 	private boolean play(INotifiableManager manager, StringBuilder sqlCondition) {
 		clearPlaylist(manager);
 		mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + sqlCondition.toString());
 		setCurrentPlaylist(manager);
 		return false; //playNext(manager);
-	}
+	}*/
 	
 	/**
 	 * Starts playing/showing the next media/image in the current playlist
@@ -504,7 +504,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * Returns a list containing tracks of a certain condition.
 	 * @param sqlCondition SQL condition which tracks to return
 	 * @return Found tracks
-	 */
+	 *
 	private ArrayList<Song> getSongs(INotifiableManager manager, StringBuilder sqlCondition, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
@@ -513,7 +513,7 @@ public class MusicClient extends Client implements IMusicClient {
 		sb.append(songsOrderBy(sortBy, sortOrder));
 		
 		return null; //parseSongs(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
-	}
+	}*/
 	
 	/**
 	 * Returns a hash map containing tracks of a certain condition.
@@ -533,13 +533,13 @@ public class MusicClient extends Client implements IMusicClient {
 	 * Returns the SQL condition that returns all songs of a song.
 	 * @param song Song
 	 * @return SQL string
-	 */
+	 *
 	private StringBuilder getSongsCondition(Song song) {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("idSong = ");
 		sb.append(song.id);
 		return sb;
-	}
+	}*/
 
 	/**
 	 * Returns the SQL condition that returns all songs of an album.
@@ -779,9 +779,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 * </ol> 
 	 * @param response
 	 * @return List of albums
-	 */
+	 *
 	private ArrayList<Album> parseAlbums(String response) {
-/*		ArrayList<Album> albums = new ArrayList<Album>();
+		ArrayList<Album> albums = new ArrayList<Album>();
 		String[] fields = response.split("<field>");
 		try {
 			for (int row = 1; row < fields.length; row += 5) {
@@ -798,9 +798,9 @@ public class MusicClient extends Client implements IMusicClient {
 			System.err.println("response = " + response);
 			e.printStackTrace();
 		}
-		return albums;*/
+		return albums;
 		return null;
-	}
+	}*/
 	
 	/**
 	 * Updates an album with info from HTTP API query response. One row is 
@@ -815,9 +815,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param album
 	 * @param response
 	 * @return Updated album
-	 */
+	 *
 	private Album parseAlbumInfo(Album album, String response) {
-/*		String[] fields = response.split("<field>");
+		String[] fields = response.split("<field>");
 		try {
 			if (Connection.trim(fields[2]).length() > 0) {
 				album.genres = Connection.trim(fields[1]) + Connection.trim(fields[2]);
@@ -832,9 +832,9 @@ public class MusicClient extends Client implements IMusicClient {
 			System.err.println("ERROR: " + e.getMessage());
 			System.err.println("response = " + response);
 			e.printStackTrace();
-		}*/
+		}
 		return null; //album;
-	}
+	}*/
 	
 	/**
 	 * Converts query response from HTTP API to a list of Song objects. Each
@@ -852,9 +852,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 * </ol> 
 	 * @param response
 	 * @return List of Songs
-	 */
+	 *
 	private ArrayList<Song> parseSongs(String response) {
-/*		ArrayList<Song> songs = new ArrayList<Song>();
+		ArrayList<Song> songs = new ArrayList<Song>();
 		String[] fields = response.split("<field>");
 		try { 
 			for (int row = 1; row < fields.length; row += 9) { 
@@ -874,9 +874,9 @@ public class MusicClient extends Client implements IMusicClient {
 			System.err.println("ERROR: " + e.getMessage());
 			System.err.println("response = " + response);
 			e.printStackTrace();
-		}*/
+		}
 		return null; //songs;		
-	}
+	}*/
 	
 	/**
 	 * Converts query response from HTTP API to a list of Song objects. Each
@@ -926,9 +926,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 * Converts query response from HTTP API to a list of integer values.
 	 * @param response
 	 * @return
-	 */
+	 *
 	private ArrayList<Integer> parseIntArray(String response) {
-/*		ArrayList<Integer> array = new ArrayList<Integer>();
+		ArrayList<Integer> array = new ArrayList<Integer>();
 		String[] fields = response.split("<field>");
 		try { 
 			for (int row = 1; row < fields.length; row += 9) {
@@ -938,9 +938,9 @@ public class MusicClient extends Client implements IMusicClient {
 			System.err.println("ERROR: " + e.getMessage());
 			System.err.println("response = " + response);
 			e.printStackTrace();
-		}*/
+		}
 		return null; //array;
-	}
+	}*/
 	
 	/**
 	 * Converts query response from HTTP API to a list of Artist objects. Each
@@ -951,9 +951,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 * </ol>
 	 * @param response
 	 * @return List of Artists
-	 */
+	 *
 	private ArrayList<Artist> parseArtists(String response) {
-/*		ArrayList<Artist> artists = new ArrayList<Artist>();
+		ArrayList<Artist> artists = new ArrayList<Artist>();
 		String[] fields = response.split("<field>");
 		try { 
 			for (int row = 1; row < fields.length; row += 2) { 
@@ -966,9 +966,9 @@ public class MusicClient extends Client implements IMusicClient {
 			System.err.println("ERROR: " + e.getMessage());
 			System.err.println("response = " + response);
 			e.printStackTrace();
-		}*/
+		}
 		return null; //artists;		
-	}
+	}*/
 	
 	/**
 	 * Converts query response from HTTP API to a list of Genre objects. Each
@@ -979,9 +979,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 * </ol>
 	 * @param response
 	 * @return List of Genres
-	 */
+	 *
 	private ArrayList<Genre> parseGenres(String response) {
-/*		ArrayList<Genre> genres = new ArrayList<Genre>();
+		ArrayList<Genre> genres = new ArrayList<Genre>();
 		String[] fields = response.split("<field>");
 		try { 
 			for (int row = 1; row < fields.length; row += 2) { 
@@ -994,9 +994,9 @@ public class MusicClient extends Client implements IMusicClient {
 			System.err.println("ERROR: " + e.getMessage());
 			System.err.println("response = " + response);
 			e.printStackTrace();
-		}*/
+		}
 		return null; //genres;		
-	}
+	}*/
 	
 	static ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
 		return new IControlClient.ICurrentlyPlaying() {

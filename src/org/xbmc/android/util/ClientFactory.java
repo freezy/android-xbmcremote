@@ -182,7 +182,7 @@ public abstract class ClientFactory {
 	 * 
 	 * @param manager Upper layer reference
 	 * @return JSON-RPC client
-	 */
+	 *
 	private static JsonRpc createJsonClient(final INotifiableManager manager) {
 		final Host host = HostFactory.host;
 		if (sJsonClient == null) {
@@ -193,7 +193,7 @@ public abstract class ClientFactory {
 			}
 		}
 		return sJsonClient;
-	}
+	}*/
 	
 	
 	/**

@@ -159,7 +159,7 @@ public class SetupWizardPage2 extends WizardPage<Host> {
 	}
 
 	@Override
-	public WizardPage getNextPage() {
+	public WizardPage<Host> getNextPage() {
 		return null;
 	}
 
@@ -167,4 +167,6 @@ public class SetupWizardPage2 extends WizardPage<Host> {
 	public int getLayoutId() {
 		return R.layout.setup_page_2;
 	}
+
+
 }

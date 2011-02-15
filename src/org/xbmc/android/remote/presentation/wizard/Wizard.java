@@ -8,11 +8,9 @@ import org.xbmc.android.remote.presentation.wizard.listener.PageCanFinishListene
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 

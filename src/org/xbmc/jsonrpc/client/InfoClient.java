@@ -11,7 +11,6 @@ import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.type.DirectoryMask;
-import org.xbmc.api.type.MediaType;
 import org.xbmc.jsonrpc.Connection;
 
 /**

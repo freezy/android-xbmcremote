@@ -26,11 +26,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.GestureRemoteActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
-import org.xbmc.android.remote.presentation.activity.RemoteActivity;
 import org.xbmc.android.widget.gestureremote.IGestureListener;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
@@ -38,7 +36,6 @@ import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.info.GuiSettings;
 import org.xbmc.api.presentation.INotifiableController;
-import org.xbmc.api.type.SortType;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
@@ -48,7 +45,6 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -68,7 +64,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 	private static final int MENU_NOW_PLAYING = 401;
 	private static final int MENU_XBMC_EXIT = 402;
 	private static final int MENU_XBMC_S = 403;
-	private static final int MENU_SWITCH_MOUSE = 404;
+//	private static final int MENU_SWITCH_MOUSE = 404;
 	private static final int MENU_SWITCH_GESTURE = 405;
 
 	

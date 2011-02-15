@@ -2,19 +2,14 @@ package org.xbmc.android.remote.presentation.wizard;
 
 import java.util.ArrayList;
 
-import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.wizard.listener.PageCanFinishListener;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 public abstract class WizardPage<T> extends ScrollView {
 
