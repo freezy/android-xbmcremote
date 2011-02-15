@@ -39,7 +39,6 @@ import org.xbmc.api.object.Host;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.HttpApi;
 import org.xbmc.httpapi.WifiStateException;
-import org.xbmc.jsonrpc.JsonRpc;
 
 import android.content.Context;
 import android.util.Log;
@@ -57,7 +56,7 @@ public abstract class ClientFactory {
 	public static final int API_TYPE_JSONRPC = 2;
 
 	private static HttpApi sHttpClient;
-	private static JsonRpc sJsonClient;
+//	private static JsonRpc sJsonClient;
 	private static EventClient sEventClient;
 	private static int sApiType = API_TYPE_UNSET;
 	
