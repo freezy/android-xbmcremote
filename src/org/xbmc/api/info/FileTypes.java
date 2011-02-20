@@ -27,10 +27,11 @@ package org.xbmc.api.info;
  * @author freezy <freezy@xbmc.org>
  */
 public class FileTypes {
+	
 	/**
 	 * Audio file extensions
 	 */
-	public final static String[] AUDIO = { "mp3", "ogg", "flac", "m4a" };
+	public final static String[] AUDIO = { "ac3", "flac", "m4a", "mp3", "mid", "ogg", "wav" };
 	
 	/**
 	 * Playlist file extensions
@@ -40,12 +41,12 @@ public class FileTypes {
 	/**
 	 * Video extensions
 	 */
-	public final static String[] VIDEO = { "avi", "mov", "flv", "mkv", "wmv", "mp4", "ts", "vob" };
+	public final static String[] VIDEO = { "avi", "flv", "mkv", "mov", "mp4", "mpg", "mpeg", "ts", "wmv", "vob" };
 	
 	/**
 	 * Image extensions
 	 */
-	public final static String[] PICTURE = { "jpg", "jpeg", "bmp", "gif", "png", "tbn" };
+	public final static String[] PICTURE = { "bmp", "gif", "jpeg", "jpg", "png", "tbn" };
 	
 	/**
 	 * Returns true if extensions is of type audio.
