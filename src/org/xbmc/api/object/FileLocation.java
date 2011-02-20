@@ -4,6 +4,7 @@ import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.xbmc.api.info.FileTypes;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.Connection;
 
@@ -137,14 +138,11 @@ public class FileLocation implements INamedResource {
 	
 	private void setMediaType() {
 		final String ext = path.substring(path.lastIndexOf(".") + 1).toLowerCase();
-		if (ext.equals("mp3") || ext.equals("ogg") || ext.equals("flac") || ext.equals("m4a") || ext.equals("m3u") || 
-				ext.equals("pls")) {
+		if (FileTypes.isAudioOrPlaylist(ext)) {
 			this.mediaType = MediaType.MUSIC;
-		} else if (ext.equals("avi") || ext.equals("mov") || ext.equals("flv") || ext.equals("mkv") || ext.equals("wmv") || 
-				ext.equals("mp4") || ext.equals("ts") || ext.equals("vob")) {
+		} else if (FileTypes.isVideo(ext)) {
 			this.mediaType = MediaType.VIDEO;
-		} else if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("bmp") || ext.equals("gif") || ext.equals("png") || 
-				ext.equals("tbn")) {
+		} else if (FileTypes.isPicture(ext)) {
 			this.mediaType = MediaType.PICTURES;
 		} 
 	}

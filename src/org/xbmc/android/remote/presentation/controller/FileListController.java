@@ -32,6 +32,7 @@ import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IInfoManager;
+import org.xbmc.api.info.FileTypes;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.type.MediaType;
 
@@ -167,14 +168,14 @@ public class FileListController extends ListController implements IController {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_folder));
 				}
 			} else {
-				final String ext = fileItem.path.substring(fileItem.path.lastIndexOf(".") + 1).toLowerCase();
-				if (ext.equals("mp3") || ext.equals("ogg") || ext.equals("flac") || ext.equals("m4a")) {
+				final String ext = FileTypes.getExtension(fileItem.path);
+				if (FileTypes.isAudio(ext)) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_song));
-				} else if (ext.equals("avi") || ext.equals("mov") || ext.equals("flv") || ext.equals("mkv") || ext.equals("wmv") || ext.equals("mp4") || ext.equals("ts") || ext.equals("vob")) {
+				} else if (FileTypes.isVideo(ext)) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_video));
-				} else if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("bmp") || ext.equals("gif") || ext.equals("png") || ext.equals("tbn")) {
+				} else if (FileTypes.isPicture(ext)) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_picture));
-				} else if (ext.equals("m3u") || ext.equals("pls")) {
+				} else if (FileTypes.isPlaylist(ext)) {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_playing));
 				} else {
 					view.setCover(BitmapFactory.decodeResource(res, R.drawable.icon_file));
