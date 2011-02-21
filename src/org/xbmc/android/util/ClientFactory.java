@@ -217,14 +217,26 @@ public abstract class ClientFactory {
 		Log.i(TAG, "VERSION = " + version);
 		
 		// 1. try to match xbmc's version
-		final Pattern pattern = Pattern.compile("r\\d+");
-		final Matcher matcher = pattern.matcher(version);
+		Pattern pattern = Pattern.compile("r\\d+");
+		Matcher matcher = pattern.matcher(version);
 		if (matcher.find()) {
 			final int rev = Integer.parseInt(matcher.group().substring(1));
 			Log.i(TAG, "Found XBMC at revision " + rev + "!");
 			XBMC_REV = rev;
 			sApiType = rev >= MIN_JSONRPC_REV ? API_TYPE_JSONRPC : API_TYPE_HTTPIAPI;
 		} else {
+			// parse git version
+			pattern = Pattern.compile("Git.([a-f\\d]+)");
+			matcher = pattern.matcher(version);
+			if (matcher.find()) {
+				final String commit = matcher.group().substring(1);
+				Log.i(TAG, "Found XBMC at Git commit " + commit + "!");
+				
+				// set to last revision where we used SVN
+				XBMC_REV = 35744;
+				sApiType = API_TYPE_JSONRPC;
+			}
+				
 			// 2. try to match boxee's version
 			// 3. plex? duh.
 			
