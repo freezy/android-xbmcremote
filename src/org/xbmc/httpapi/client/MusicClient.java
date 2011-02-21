@@ -688,8 +688,8 @@ public class MusicClient extends Client implements IMusicClient {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idArtist");
 		sb.append("  FROM artist");
-		sb.append("  WHERE lower(strArtist) LIKE 'various artists%'");
-		sb.append("  OR lower(strArtist) LIKE 'v.a.%'");
+		sb.append("  WHERE lower(strArtist) LIKE 'various artists%%'");
+		sb.append("  OR lower(strArtist) LIKE 'v.a.%%'");
 		sb.append("  OR lower(strArtist) = 'va'");
 		return parseIntArray(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 		
