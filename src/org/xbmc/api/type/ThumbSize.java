@@ -22,6 +22,7 @@
 package org.xbmc.api.type;
 
 import android.content.res.Resources;
+import android.util.Log;
 
 /**
  * Defines a thumb size. Sizes are:
@@ -46,6 +47,8 @@ public abstract class ThumbSize {
 	public static final int SCREENHEIGHT = 5;
 	
 	public static final float PIXEL_SCALE = Resources.getSystem().getDisplayMetrics().density;
+	public static float SCREEN_SCALE = 1;
+	
 	public static int PIXELS_WIDTH = 0;
 	public static int PIXELS_HEIGHT = 0;
 	
@@ -65,16 +68,18 @@ public abstract class ThumbSize {
 	public static void setScreenSize(int width, int height) {
 		PIXELS_WIDTH = width;
 		PIXELS_HEIGHT = height;
+		SCREEN_SCALE = (((float)(width < height ? width : height)) / PIXEL_SCALE) / (float)320;
 	}
 
 	public static int getPixel(int size) {
+		
 		switch (size) {
 			case SMALL:
-				return (int)(50 * PIXEL_SCALE);
+				return (int)(50 * PIXEL_SCALE * SCREEN_SCALE);
 			case MEDIUM:
-				return (int)(105 * PIXEL_SCALE);
+				return (int)(105 * PIXEL_SCALE * SCREEN_SCALE);
 			case BIG:
-				return (int)(400 * PIXEL_SCALE);
+				return (int)(400 * PIXEL_SCALE * SCREEN_SCALE);
 			case SCREENWIDTH:
 				return PIXELS_WIDTH;
 			case SCREENHEIGHT:

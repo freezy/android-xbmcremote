@@ -229,7 +229,7 @@ public abstract class ClientFactory {
 			pattern = Pattern.compile("Git.([a-f\\d]+)");
 			matcher = pattern.matcher(version);
 			if (matcher.find()) {
-				final String commit = matcher.group().substring(1);
+				final String commit = matcher.group(1);
 				Log.i(TAG, "Found XBMC at Git commit " + commit + "!");
 				
 				// set to last revision where we used SVN

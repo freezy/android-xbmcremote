@@ -18,18 +18,18 @@ public abstract class AbstractItemView extends View {
 
 	protected final static Paint PAINT = new Paint();
 	
-	protected final static int PADDING = (int)(5 * ThumbSize.PIXEL_SCALE);
-	protected final static int SIZE12 = (int)(12 * ThumbSize.PIXEL_SCALE);
-	protected final static int SIZE18 = (int)(18 * ThumbSize.PIXEL_SCALE);
-	protected final static int SIZE20 = (int)(20 * ThumbSize.PIXEL_SCALE);
-	protected final static int SIZE25 = (int)(25 * ThumbSize.PIXEL_SCALE);	
-	protected final static int SIZE35 = (int)(35 * ThumbSize.PIXEL_SCALE);	
-	protected final static int SIZE42 = (int)(42 * ThumbSize.PIXEL_SCALE);
-	protected final static int SIZE50 = (int)(50 * ThumbSize.PIXEL_SCALE);
-	protected final static int SIZE55 = (int)(55 * ThumbSize.PIXEL_SCALE);
-	protected final static int SIZE59 = (int)(59 * ThumbSize.PIXEL_SCALE);
-	protected final static int SIZE65 = (int)(65 * ThumbSize.PIXEL_SCALE);
-	protected final static int SIZE103 = (int)(103 * ThumbSize.PIXEL_SCALE);
+	protected final static int PADDING = (int)(5 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
+	protected final static int SIZE12 = (int)(12 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
+	protected final static int SIZE18 = (int)(18 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
+	protected final static int SIZE20 = (int)(20 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
+	protected final static int SIZE25 = (int)(25 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);	
+	protected final static int SIZE35 = (int)(35 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);	
+	protected final static int SIZE42 = (int)(42 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
+	protected final static int SIZE50 = (int)(50 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
+	protected final static int SIZE55 = (int)(55 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
+	protected final static int SIZE59 = (int)(59 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
+	protected final static int SIZE65 = (int)(65 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
+	protected final static int SIZE103 = (int)(103 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
 	
 	public final static int MSG_UPDATE_COVER = 1;
 	
