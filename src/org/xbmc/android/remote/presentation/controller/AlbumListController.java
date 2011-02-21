@@ -140,7 +140,7 @@ public class AlbumListController extends ListController implements IController {
 			mGenre = (Genre)activity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
 			activity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon_album_dark);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.default_album);
 			setupIdleListener();
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
@@ -223,7 +223,7 @@ public class AlbumListController extends ListController implements IController {
 						setAdapter(value);
 					} else {
 						setTitle(artist.name + " - Albums");
-						setNoDataMessage("No albums found.", R.drawable.icon_album_dark);
+						setNoDataMessage("No albums found.", R.drawable.default_album);
 					}
 				}
 			}, artist, mActivity.getApplicationContext());
@@ -238,7 +238,7 @@ public class AlbumListController extends ListController implements IController {
 						setAdapter(value);
 					} else {
 						setTitle(genre.name + " - Albums");
-						setNoDataMessage("No albums found.", R.drawable.icon_album_dark);
+						setNoDataMessage("No albums found.", R.drawable.default_album);
 					}
 				}
 			}, genre, mActivity.getApplicationContext());
@@ -254,7 +254,7 @@ public class AlbumListController extends ListController implements IController {
 							setAdapter(value);
 						} else {
 							setTitle("Compilations");
-							setNoDataMessage("No compilations found.", R.drawable.icon_album_dark);
+							setNoDataMessage("No compilations found.", R.drawable.default_album);
 						}
 					}
 				}, mActivity.getApplicationContext());
@@ -268,7 +268,7 @@ public class AlbumListController extends ListController implements IController {
 							setAdapter(value);
 						} else {
 							setTitle("Albums");
-							setNoDataMessage("No Albums found.", R.drawable.icon_album_dark);
+							setNoDataMessage("No Albums found.", R.drawable.default_album);
 						}
 					}
 				}, mActivity.getApplicationContext());
@@ -416,7 +416,7 @@ public class AlbumListController extends ListController implements IController {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final ThreeLabelsItemView view;
 			if (convertView == null) {
-				view = new ThreeLabelsItemView(mActivity, mMusicManager, parent.getWidth(), mFallbackBitmap, mList.getSelector());
+				view = new ThreeLabelsItemView(mActivity, mMusicManager, parent.getWidth(), mFallbackBitmap, mList.getSelector(), false);
 			} else {
 				view = (ThreeLabelsItemView)convertView;
 			}

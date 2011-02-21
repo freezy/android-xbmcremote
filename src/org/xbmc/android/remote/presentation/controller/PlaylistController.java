@@ -386,7 +386,7 @@ public class PlaylistController extends ListController implements IController, C
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final OneLabelItemView view;
 			if (convertView == null) {
-				view = new OneLabelItemView(mActivity, parent.getWidth(), getFallbackBitmap(), mList.getSelector());
+				view = new OneLabelItemView(mActivity, parent.getWidth(), getFallbackBitmap(), mList.getSelector(), true);
 			} else {
 				view = (OneLabelItemView)convertView;
 				mItemPositions.remove(view.position);

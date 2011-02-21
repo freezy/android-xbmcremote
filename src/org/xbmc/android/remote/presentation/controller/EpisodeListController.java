@@ -108,7 +108,7 @@ public class EpisodeListController extends ListController implements IController
 			
 			activity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.poster);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.default_poster);
 			mWatchedBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.check_mark);
 			setupIdleListener();
 			
@@ -285,7 +285,7 @@ public class EpisodeListController extends ListController implements IController
 
 			final FlexibleItemView view;
 			if (convertView == null) {
-				view = new FlexibleItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap, mList.getSelector());
+				view = new FlexibleItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap, mList.getSelector(), false);
 			} else {
 				view = (FlexibleItemView)convertView;
 			}

@@ -17,17 +17,17 @@ public class GridPosterItemView extends AbstractItemView {
 	private final static int POSTER_HEIGHT = (int)((float)POSTER_WIDTH * ThumbSize.POSTER_AR);
 	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
 	
-	public GridPosterItemView(Context context, int width, Bitmap defaultCover, Drawable selection) {
-		super(context, width, defaultCover, selection);
+	public GridPosterItemView(Context context, int width, Bitmap defaultCover, Drawable selection, boolean fixedSize) {
+		super(context, width, defaultCover, selection, fixedSize);
 	}
 	
-	public GridPosterItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection) {
-		super(context, manager, width, defaultCover, selection, ThumbSize.MEDIUM);
+	public GridPosterItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection, boolean fixedSize) {
+		super(context, manager, width, defaultCover, selection, ThumbSize.MEDIUM, fixedSize);
 	}
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		setMeasuredDimension(POSTER_WIDTH, POSTER_HEIGHT + SIZE25);
+		setMeasuredDimension(POSTER_WIDTH, POSTER_HEIGHT + size25);
 	}
 	
 	protected void onDraw(Canvas canvas) {
@@ -37,7 +37,7 @@ public class GridPosterItemView extends AbstractItemView {
 		
 		// background
 		PAINT.setColor(Color.BLACK);
-		canvas.drawRect(0, POSTER_HEIGHT, POSTER_WIDTH, POSTER_HEIGHT + SIZE25, PAINT);
+		canvas.drawRect(0, POSTER_HEIGHT, POSTER_WIDTH, POSTER_HEIGHT + size25, PAINT);
 		
 		// label
 		PAINT.setColor(Color.WHITE);
@@ -45,8 +45,8 @@ public class GridPosterItemView extends AbstractItemView {
 		if (title != null) {
 			PAINT.setTextAlign(Align.CENTER);
 //			PAINT.setColor(isSelected() || isPressed() ? Color.BLACK : Color.WHITE);
-			PAINT.setTextSize(SIZE18);
-			canvas.drawText(title, POSTER_WIDTH / 2, POSTER_HEIGHT + SIZE18, PAINT);
+			PAINT.setTextSize(size18);
+			canvas.drawText(title, POSTER_WIDTH / 2, POSTER_HEIGHT + size18, PAINT);
 		}
 	}
 

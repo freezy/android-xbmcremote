@@ -360,7 +360,7 @@ public class SongListController extends ListController implements IController {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final ThreeLabelsItemView view;
 			if (convertView == null) {
-				view = new ThreeLabelsItemView(mActivity, mMusicManager, parent.getWidth(), mFallbackBitmap, mList.getSelector());
+				view = new ThreeLabelsItemView(mActivity, mMusicManager, parent.getWidth(), mFallbackBitmap, mList.getSelector(), false);
 			} else {
 				view = (ThreeLabelsItemView)convertView;
 			}

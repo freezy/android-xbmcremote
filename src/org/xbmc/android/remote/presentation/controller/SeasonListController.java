@@ -96,7 +96,7 @@ public class SeasonListController extends ListController implements IController 
 			
 			activity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.tvposter_medium);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.default_season);
 			setupIdleListener(ThumbSize.MEDIUM);
 			
 			mList.setOnItemClickListener(new OnItemClickListener() {
@@ -226,7 +226,7 @@ public class SeasonListController extends ListController implements IController 
 
 			final GridPosterItemView view;
 			if (convertView == null) {
-				view = new GridPosterItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap, mList.getSelector());
+				view = new GridPosterItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap, mList.getSelector(), false);
 			} else {
 				view = (GridPosterItemView)convertView;
 			}

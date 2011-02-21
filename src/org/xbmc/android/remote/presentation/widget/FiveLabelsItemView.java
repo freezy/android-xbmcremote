@@ -13,9 +13,8 @@ import android.graphics.drawable.Drawable;
 
 public class FiveLabelsItemView extends AbstractItemView {
 	
-	private final static int POSTER_WIDTH = ThumbSize.getPixel(ThumbSize.SMALL);;
-	private final static int POSTER_HEIGHT = (int)(POSTER_WIDTH * ThumbSize.POSTER_AR);
-	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
+	private final int posterWidth, posterHeight;
+	private final Rect posterRect;
 	
 	public Bitmap posterOverlay;
 	public String subtitle;
@@ -23,18 +22,22 @@ public class FiveLabelsItemView extends AbstractItemView {
 	public String bottomtitle;
 	public String bottomright;
 	
-	public FiveLabelsItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection) {
-		super(context, manager, width, defaultCover, selection, ThumbSize.SMALL);
+	public FiveLabelsItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection, boolean fixedSize) {
+		super(context, manager, width, defaultCover, selection, ThumbSize.SMALL, fixedSize);
+		
+		posterWidth = ThumbSize.getPixel(ThumbSize.SMALL, fixedSize);
+		posterHeight = (int)(posterWidth * ThumbSize.POSTER_AR);;
+		posterRect = new Rect(0, 0, posterWidth, posterHeight);
 	}
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		setMeasuredDimension(mWidth, POSTER_HEIGHT);
+		setMeasuredDimension(mWidth, posterHeight);
 	}
 	
 	protected void onDraw(Canvas canvas) {
-		drawPoster(canvas, POSTER_WIDTH, POSTER_HEIGHT, mWidth);
-		drawPosterOverlay(canvas, POSTER_WIDTH, POSTER_HEIGHT);
+		drawPoster(canvas, posterWidth, posterHeight, mWidth);
+		drawPosterOverlay(canvas, posterWidth, posterHeight);
 		drawPortraitText(canvas);
 	}
 	
@@ -73,45 +76,45 @@ public class FiveLabelsItemView extends AbstractItemView {
 		// title
 		if (title != null) {
 			PAINT.setColor(isSelected ? Color.WHITE : Color.BLACK);
-			PAINT.setTextSize(SIZE18);
-			canvas.drawText(title, POSTER_WIDTH + PADDING, SIZE25, PAINT);
+			PAINT.setTextSize(size18);
+			canvas.drawText(title, posterWidth + padding, size25, PAINT);
 		}
 		
 		// subtitle right
 		PAINT.setColor(isSelected ? Color.WHITE : Color.rgb(80, 80, 80));
-		PAINT.setTextSize(SIZE12);
+		PAINT.setTextSize(size12);
 		PAINT.setTextAlign(Align.RIGHT);
 		int subtitleRightWidth = 0;
 		if (subtitleRight != null) {
 			subtitleRightWidth = (int)PAINT.measureText(subtitleRight);
-			canvas.drawText(subtitleRight, width - PADDING, SIZE42, PAINT);
+			canvas.drawText(subtitleRight, width - padding, size42, PAINT);
 		}
 		
 		// bottom right
 		int bottomrightWidth = 0;
 		if (bottomright != null) {
-			PAINT.setTextSize(SIZE20);
+			PAINT.setTextSize(size20);
 			PAINT.setFakeBoldText(true);
 			PAINT.setColor(isSelected ? Color.WHITE : Color.argb(68, 0, 0, 0));
 			bottomrightWidth = (int)PAINT.measureText(subtitleRight);
-			canvas.drawText(bottomright, width - PADDING, SIZE65, PAINT);
+			canvas.drawText(bottomright, width - padding, size65, PAINT);
 		}
 		
 		// subtitle
 		PAINT.setColor(isSelected ? Color.WHITE : Color.rgb(80, 80, 80));
-		PAINT.setTextSize(SIZE12);
+		PAINT.setTextSize(size12);
 		PAINT.setTextAlign(Align.LEFT);
 		PAINT.setFakeBoldText(false);
 		if (subtitle != null) {
-			canvas.drawText(ellipse(subtitle, width - subtitleRightWidth - SIZE50 - (3 * PADDING)), SIZE55, SIZE42, PAINT);
+			canvas.drawText(ellipse(subtitle, width - subtitleRightWidth - size50 - (3 * padding)), size55, size42, PAINT);
 		}
 		if (bottomtitle != null) {
-			canvas.drawText(ellipse(bottomtitle, width - bottomrightWidth - SIZE50 - (3 * PADDING)), SIZE55, SIZE59, PAINT);
+			canvas.drawText(ellipse(bottomtitle, width - bottomrightWidth - size50 - (3 * padding)), size55, size59, PAINT);
 		}
 	}
 	
 	@Override
 	protected Rect getPosterRect() {
-		return POSTER_RECT;
+		return posterRect;
 	}
 }

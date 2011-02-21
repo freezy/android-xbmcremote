@@ -109,7 +109,7 @@ public class MovieListController extends ListController implements IController {
 			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
 			activity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.poster);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.default_poster);
 			mWatchedBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.check_mark);
 			setupIdleListener();
 			
@@ -310,7 +310,7 @@ public class MovieListController extends ListController implements IController {
 
 			final FiveLabelsItemView view;
 			if (convertView == null) {
-				view = new FiveLabelsItemView(mActivity, mVideoManager, parent.getWidth(), mFallbackBitmap, mList.getSelector());
+				view = new FiveLabelsItemView(mActivity, mVideoManager, parent.getWidth(), mFallbackBitmap, mList.getSelector(), false);
 			} else {
 				view = (FiveLabelsItemView)convertView;
 			}

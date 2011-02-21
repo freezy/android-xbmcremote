@@ -18,18 +18,8 @@ public abstract class AbstractItemView extends View {
 
 	protected final static Paint PAINT = new Paint();
 	
-	protected final static int PADDING = (int)(5 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
-	protected final static int SIZE12 = (int)(12 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
-	protected final static int SIZE18 = (int)(18 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
-	protected final static int SIZE20 = (int)(20 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
-	protected final static int SIZE25 = (int)(25 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);	
-	protected final static int SIZE35 = (int)(35 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);	
-	protected final static int SIZE42 = (int)(42 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
-	protected final static int SIZE50 = (int)(50 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
-	protected final static int SIZE55 = (int)(55 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
-	protected final static int SIZE59 = (int)(59 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
-	protected final static int SIZE65 = (int)(65 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
-	protected final static int SIZE103 = (int)(103 * ThumbSize.PIXEL_SCALE * ThumbSize.SCREEN_SCALE);
+	protected final int padding;
+	protected final int size12, size18, size20, size25, size35, size42, size50, size55, size59, size65, size103;
 	
 	public final static int MSG_UPDATE_COVER = 1;
 	
@@ -56,22 +46,38 @@ public abstract class AbstractItemView extends View {
 	
 	protected abstract Rect getPosterRect();
 	
-	public AbstractItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection, int thumbSize) {
+	public AbstractItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection, int thumbSize, boolean fixedSize) {
 		super(context);
-		mResponse = new CoverResponse(context, manager, defaultCover, thumbSize, mHandler);
+
+		if (manager != null) {
+			mResponse = new CoverResponse(context, manager, defaultCover, thumbSize, mHandler);
+		} else {
+			mResponse = null;
+		}
+		
 		mWidth = width;
 		mDefaultCover = defaultCover;
 		mSelection = selection;
-//		sSelected = BitmapFactory.decodeResource(getResources(), R.drawable.selected);
+		
+		final float screenScale = fixedSize ? 1 : ThumbSize.SCREEN_SCALE;
+		padding = (int)(5 * ThumbSize.PIXEL_SCALE * screenScale);
+		size12 = (int)(12 * ThumbSize.PIXEL_SCALE * screenScale);
+		size18 = (int)(18 * ThumbSize.PIXEL_SCALE * screenScale);
+		size20 = (int)(20 * ThumbSize.PIXEL_SCALE * screenScale);
+		size25 = (int)(25 * ThumbSize.PIXEL_SCALE * screenScale);	
+		size35 = (int)(35 * ThumbSize.PIXEL_SCALE * screenScale);	
+		size42 = (int)(42 * ThumbSize.PIXEL_SCALE * screenScale);
+		size50 = (int)(50 * ThumbSize.PIXEL_SCALE * screenScale);
+		size55 = (int)(55 * ThumbSize.PIXEL_SCALE * screenScale);
+		size59 = (int)(59 * ThumbSize.PIXEL_SCALE * screenScale);
+		size65 = (int)(65 * ThumbSize.PIXEL_SCALE * screenScale);
+		size103 = (int)(103 * ThumbSize.PIXEL_SCALE * screenScale);		
 	}
 	
-	public AbstractItemView(Context context, int width, Bitmap defaultCover, Drawable selection) {
-		super(context);
-		mResponse = null;
-		mWidth = width;
-		mDefaultCover = defaultCover;
-		mSelection = selection;
+	public AbstractItemView(Context context, int width, Bitmap defaultCover, Drawable selection, boolean fixedSize) {
+		this(context, null, width, defaultCover, selection, 0, fixedSize);
 	}
+	
 	
 	protected void drawPoster(Canvas canvas, int posterWidth, int posterHeight, int canvasWidth) {
 
@@ -103,10 +109,12 @@ public abstract class AbstractItemView extends View {
 				canvas.drawBitmap(mCover, 0.0f, 0.0f, null);
 			}
 		} else {
-			if (mDefaultCover != null && !mDefaultCover.isRecycled()) {
+			final Bitmap defaultCover = mDefaultCover;
+			if (defaultCover != null && !defaultCover.isRecycled()) {
 				PAINT.setColor(Color.WHITE);
 				canvas.drawRect(0, 0, posterWidth, posterHeight, PAINT);
-				canvas.drawBitmap(mDefaultCover, 0.0f, 0.0f, null);
+//				canvas.drawBitmap(defaultCover, 0f, 0f, PAINT);
+				canvas.drawBitmap(defaultCover, new Rect(0, 0, defaultCover.getWidth(), defaultCover.getHeight()), new Rect(0, 0, posterWidth, posterHeight), PAINT);
 			}
 		}
 	}

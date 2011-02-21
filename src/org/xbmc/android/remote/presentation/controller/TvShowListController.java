@@ -107,7 +107,7 @@ public class TvShowListController extends ListController implements IController 
 			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
 			activity.registerForContextMenu(mList);
 			
-			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.tvposter_small);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.default_tvshow);
 			mWatchedBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.check_mark);
 			setupIdleListener();
 			
@@ -311,7 +311,7 @@ public class TvShowListController extends ListController implements IController 
 
 			final FlexibleItemView view;
 			if (convertView == null) {
-				view = new FlexibleItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap, mList.getSelector());
+				view = new FlexibleItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap, mList.getSelector(), false);
 			} else {
 				view = (FlexibleItemView)convertView;
 			}

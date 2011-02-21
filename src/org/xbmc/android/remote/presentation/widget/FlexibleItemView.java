@@ -21,8 +21,8 @@ public class FlexibleItemView extends FiveLabelsItemView {
 	private final static int POSTER_HEIGHT = (int)(POSTER_WIDTH * ThumbSize.POSTER_AR);
 	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
 	
-	public FlexibleItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection) {
-		super(context, manager, width, defaultCover, selection);
+	public FlexibleItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection, boolean fixedSize) {
+		super(context, manager, width, defaultCover, selection, fixedSize);
 	}
 
 	@Override
@@ -85,27 +85,27 @@ public class FlexibleItemView extends FiveLabelsItemView {
 		// title
 		if (title != null) {
 			PAINT.setColor(isSelected ? Color.WHITE : Color.BLACK);
-			PAINT.setTextSize(SIZE18);
-			canvas.drawText(ellipse(title, width - coverDim.x + PADDING), coverDim.x + PADDING, SIZE25, PAINT);
+			PAINT.setTextSize(size18);
+			canvas.drawText(ellipse(title, width - coverDim.x + padding), coverDim.x + padding, size25, PAINT);
 		}
 		
 		// subtitle right
 		PAINT.setColor(isSelected ? Color.WHITE : Color.rgb(80, 80, 80));
-		PAINT.setTextSize(SIZE12);
+		PAINT.setTextSize(size12);
 		PAINT.setTextAlign(Align.RIGHT);
 		float subtitleRightWidth = 0;
 		if (subtitleRight != null) {
 			subtitleRightWidth = PAINT.measureText(subtitleRight);
-			canvas.drawText(subtitleRight, width - PADDING, SIZE42, PAINT);
+			canvas.drawText(subtitleRight, width - padding, size42, PAINT);
 		}
 
 		// subtitle
 		PAINT.setColor(isSelected ? Color.WHITE : Color.rgb(80, 80, 80));
-		PAINT.setTextSize(SIZE12);
+		PAINT.setTextSize(size12);
 		PAINT.setTextAlign(Align.LEFT);
 		PAINT.setFakeBoldText(false);
 		if (subtitle != null) {
-			canvas.drawText(ellipse(subtitle, width - (int)subtitleRightWidth - SIZE50), coverDim.x + PADDING, SIZE42, PAINT);
+			canvas.drawText(ellipse(subtitle, width - (int)subtitleRightWidth - size50), coverDim.x + padding, size42, PAINT);
 		}
 		
 	}

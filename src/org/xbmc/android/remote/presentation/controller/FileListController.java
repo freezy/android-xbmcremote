@@ -147,7 +147,7 @@ public class FileListController extends ListController implements IController {
 			
 			final OneLabelItemView view;
 			if (convertView == null) {
-				view = new OneLabelItemView(mActivity, parent.getWidth(), mFallbackBitmap, mList.getSelector());
+				view = new OneLabelItemView(mActivity, parent.getWidth(), mFallbackBitmap, mList.getSelector(), true);
 			} else {
 				view = (OneLabelItemView)convertView;
 			}

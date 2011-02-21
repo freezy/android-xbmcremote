@@ -155,7 +155,7 @@ public class ActorListController extends ListController implements IController {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final OneLabelItemView view;
 			if (convertView == null) {
-				view = new OneLabelItemView(mActivity, mVideoManager, parent.getWidth(), mFallbackBitmap, mList.getSelector());
+				view = new OneLabelItemView(mActivity, mVideoManager, parent.getWidth(), mFallbackBitmap, mList.getSelector(), true);
 			} else {
 				view = (OneLabelItemView)convertView;
 			}
