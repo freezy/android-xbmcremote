@@ -96,6 +96,10 @@ public abstract class ThumbSize {
 		}
 	}
 	
+	public static int scale(int pixel) {
+		return Math.round((float)pixel * PIXEL_SCALE);
+	}
+	
 	/**
 	 * Returns target dimensions of a bitmap. These are the dimensions the 
 	 * picture will finally be cropped to.

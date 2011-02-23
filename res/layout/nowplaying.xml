@@ -4,6 +4,8 @@
 	android:layout_height="fill_parent" android:background="@drawable/shiny_black_back">
 	<RelativeLayout android:orientation="vertical"
 		android:layout_width="fill_parent" android:layout_height="fill_parent">
+		
+		<!-- ##### BOTTOM BAR ##### -->
 		<LinearLayout android:id="@+id/now_playing_bottombar"
 			android:background="@drawable/bottombar_bg"
 			android:layout_width="fill_parent" android:layout_height="60dip" android:gravity="center_horizontal"
@@ -30,127 +32,100 @@
 						android:layout_toRightOf="@id/MediaNextButton" />
 			</RelativeLayout>
 		</LinearLayout>
+		
+		<!-- ##### UPPER BODY ##### -->
 		<FrameLayout android:id="@+id/home_upper"
 			android:layout_width="fill_parent" android:layout_height="fill_parent"
 			android:layout_above="@id/now_playing_bottombar">
-			<LinearLayout android:layout_width="fill_parent"
-				android:layout_height="fill_parent" 
-				android:orientation="vertical">
+			<LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
 				<include layout="@layout/titlebar" />
-				<TextView android:id="@+id/AlbumTextView"
-						android:layout_width="fill_parent" 
-						android:layout_height="wrap_content"
-						android:gravity="center_horizontal"
-						android:singleLine="true"
-						android:textSize="18dip"
-						android:textColor="#ffffffff"
-						android:paddingTop="4dip" />
-				<FrameLayout
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content">
-					<RelativeLayout android:id="@+id/CDView"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_gravity="center_horizontal"
-						android:paddingTop="4dip">
-						<ImageView
-							android:layout_marginTop="12dip"
-							android:layout_marginLeft="41dip"
-							android:layout_width="235dip" 
-							android:layout_height="236dip" 
-							android:scaleType="centerCrop" 
-							android:id="@+id/CDCoverImage" />
-						<ImageView 
-							android:layout_width="294dip"
-							android:layout_height="266dip" 
-							android:scaleType="centerCrop"
-							android:id="@+id/CDCaseImage" />
-					</RelativeLayout>
-					<RelativeLayout android:id="@+id/DVDView"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_gravity="center_horizontal"
-						android:paddingTop="4dip">
-						<ImageView
-							android:layout_marginTop="6dip"
-							android:layout_marginLeft="30dip"
-							android:layout_width="167dip" 
-							android:layout_height="250dip" 
-							android:scaleType="centerCrop" 
-							android:id="@+id/DVDCoverImage" />
-						<ImageView 
-							android:layout_width="209dip"
-							android:layout_height="266dip" 
-							android:scaleType="centerCrop"
-							android:id="@+id/DVDCaseImage" />
-					</RelativeLayout>
-					<ImageView 
-						android:id="@+id/EpisodeImage"
-						android:layout_width="fill_parent"
-						android:layout_height="266dip"						
-						android:scaleType="centerInside"
-						android:paddingTop="4dip"
-						android:paddingBottom="10dip" />
-				</FrameLayout>
-				<SeekBar 
-					android:id="@+id/NowPlayingProgress"
-					android:layout_width="fill_parent" android:layout_height="wrap_content"
-					android:max="100"
-					android:progressDrawable="@drawable/progressbar"
-					android:thumb="@drawable/pgbar_thumb" 
-					android:paddingLeft="20dip"
-					android:paddingRight="10dip"
-					android:paddingTop="10dip" 
-					android:thumbOffset="20dip"
-					android:layout_marginTop="-10dip"
-					/>
-				<LinearLayout 
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					android:layout_marginTop="-9dip">
-					<RelativeLayout 
-						android:layout_width="fill_parent" 
-						android:layout_height="wrap_content"
-						android:layout_marginTop="0dip">
-						<TextView 
-							android:id="@+id/now_playing_counter_left"
+				<LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
+				
+					<!-- ##### TOP TITLE ##### -->
+					<LinearLayout android:background="#660000ff" android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
+						<TextView android:id="@+id/AlbumTextView"
+								android:layout_width="fill_parent" 
+								android:layout_height="wrap_content"
+								android:gravity="center_horizontal"
+								android:singleLine="true"
+								android:textSize="18dip"
+								android:textColor="#ffffffff"
+								android:paddingTop="4dip" />
+					</LinearLayout>
+					
+					<!-- ##### JEWEL CASE ##### -->
+					<LinearLayout android:background="#66ff0000" android:layout_weight="70" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" android:gravity="center_horizontal" >
+						<org.xbmc.android.remote.presentation.widget.JewelView
 							android:layout_width="wrap_content" 
+							android:layout_height="fill_parent"
+							android:id="@+id/now_playing_jewelcase" />
+					</LinearLayout>
+					
+					<!-- ##### SEEK BAR ##### -->
+					<LinearLayout android:background="#660000ff" android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
+						<SeekBar 
+							android:id="@+id/NowPlayingProgress"
+							android:layout_width="fill_parent" android:layout_height="wrap_content"
+							android:max="100"
+							android:progressDrawable="@drawable/progressbar"
+							android:thumb="@drawable/pgbar_thumb" 
+							android:paddingLeft="20dip"
+							android:paddingRight="10dip"
+							android:paddingTop="10dip" 
+							android:thumbOffset="20dip"
+							android:layout_marginTop="-10dip"
+							/>
+						<RelativeLayout 
+							android:layout_width="fill_parent" 
 							android:layout_height="wrap_content"
-							android:textSize="12dip"
-							android:textColor="#ffffffff"
-							android:gravity="left"
-							android:singleLine="true" />
+							android:layout_marginTop="0dip">
+							<TextView 
+								android:id="@+id/now_playing_counter_left"
+								android:layout_width="wrap_content" 
+								android:layout_height="wrap_content"
+								android:textSize="12dip"
+								android:textColor="#ffffffff"
+								android:gravity="left"
+								android:singleLine="true" />
+							<TextView 
+								android:id="@+id/now_playing_counter_right"
+								android:layout_width="wrap_content" 
+								android:layout_height="wrap_content"
+								android:layout_alignParentRight="true"
+								android:textSize="12dip"
+								android:textColor="#ffffffff"
+								android:gravity="right"
+								android:singleLine="true" />
+						</RelativeLayout>
+					</LinearLayout>
+					
+					<!-- ##### BOTTOM TITLE ##### -->
+					<LinearLayout android:background="#66ff0000" android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
 						<TextView 
-							android:id="@+id/now_playing_counter_right"
-							android:layout_width="wrap_content" 
+							android:id="@+id/SongTextView"
+							android:layout_width="fill_parent" 
 							android:layout_height="wrap_content"
-							android:layout_alignParentRight="true"
-							android:textSize="12dip"
+							android:textSize="16dip"
 							android:textColor="#ffffffff"
-							android:gravity="right"
-							android:singleLine="true" />
-					</RelativeLayout>
-					<TextView 
-						android:id="@+id/SongTextView"
-						android:layout_width="fill_parent" 
-						android:layout_height="wrap_content"
-						android:textSize="16dip"
-						android:textColor="#ffffffff"
-						android:gravity="center_horizontal"
-						android:layout_marginTop="-15dip"
-						android:singleLine="true"
-						android:ellipsize="end"
-						android:paddingLeft="25dip"
-						android:paddingRight="22dip" />
-					<TextView 
-						android:id="@+id/ArtistTextView"
-						android:layout_marginTop="-5dip"
-						android:layout_width="fill_parent" 
-						android:layout_height="wrap_content"
-						android:singleLine="true"
-						android:gravity="center_horizontal"
-						android:textSize="14dip" />
+							android:gravity="center_horizontal"
+							android:layout_marginTop="0dip"
+							android:singleLine="true"
+							android:ellipsize="end"
+							android:paddingLeft="25dip"
+							android:paddingRight="22dip" />
+					</LinearLayout>
+					
+					<!-- ##### BOTTOM SUB TITLE ##### -->
+					<LinearLayout android:background="#660000ff" android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
+						<TextView 
+							android:id="@+id/ArtistTextView"
+							android:layout_marginTop="0dip"
+							android:layout_width="fill_parent" 
+							android:layout_height="wrap_content"
+							android:singleLine="true"
+							android:gravity="center_horizontal"
+							android:textSize="14dip" />
+					</LinearLayout>
 				</LinearLayout>
 			</LinearLayout>
 		</FrameLayout>
