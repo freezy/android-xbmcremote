@@ -92,7 +92,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 				return true;
 			
 			case NowPlayingPollerThread.MESSAGE_PLAYLIST_ITEM_CHANGED:
-				mNowPlayingActivity.updateInfo(currentlyPlaying.getArtist(), currentlyPlaying.getAlbum(), currentlyPlaying.getTitle());
+				mNowPlayingActivity.updateInfo(currentlyPlaying.getTitle(), currentlyPlaying.getArtist(), currentlyPlaying.getAlbum());
 				mLastPosition = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYPOSITION);
 		  	  	return true;
 

@@ -34,15 +34,14 @@ import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
-import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -78,7 +77,7 @@ public class NowPlayingPollerThread extends Thread {
 	private final HashSet<Handler> mSubscribers;
 	
 	private String mCoverPath;
-	private Drawable mCover;
+	private Bitmap mCover;
 	
 	private int mPlayList = -1;
 	private int mPosition = -1;
@@ -136,7 +135,7 @@ public class NowPlayingPollerThread extends Thread {
 		mSubscribers.remove(handler);
 	}
 	
-	public synchronized Drawable getNowPlayingCover(){
+	public synchronized Bitmap getNowPlayingCover(){
 		return mCover;
 	}
 	
@@ -226,7 +225,7 @@ public class NowPlayingPollerThread extends Thread {
 			  	  					if (buffer == null || buffer.length == 0)
 			  	  						mCover = null;
 			  	  					else 
-			  	  						mCover = new BitmapDrawable(BitmapFactory.decodeByteArray(buffer, 0, buffer.length));
+			  	  						mCover = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
 
 			  	  					for (Handler handler : subscribers) {
 			  	  						sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);

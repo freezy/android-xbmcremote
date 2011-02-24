@@ -42,8 +42,8 @@
 				<LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
 				
 					<!-- ##### TOP TITLE ##### -->
-					<LinearLayout android:background="#660000ff" android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
-						<TextView android:id="@+id/AlbumTextView"
+					<LinearLayout android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
+						<TextView android:id="@+id/now_playing_top_title"
 								android:layout_width="fill_parent" 
 								android:layout_height="wrap_content"
 								android:gravity="center_horizontal"
@@ -54,7 +54,8 @@
 					</LinearLayout>
 					
 					<!-- ##### JEWEL CASE ##### -->
-					<LinearLayout android:background="#66ff0000" android:layout_weight="70" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" android:gravity="center_horizontal" >
+					<LinearLayout android:layout_weight="70" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" 
+						android:gravity="center_horizontal">
 						<org.xbmc.android.remote.presentation.widget.JewelView
 							android:layout_width="wrap_content" 
 							android:layout_height="fill_parent"
@@ -62,20 +63,15 @@
 					</LinearLayout>
 					
 					<!-- ##### SEEK BAR ##### -->
-					<LinearLayout android:background="#660000ff" android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
+					<LinearLayout android:layout_weight="10 " android:layout_width="fill_parent" android:layout_height="0px" android:orientation="vertical" 
+						android:paddingLeft="10dip" android:paddingRight="10dip">
 						<SeekBar 
-							android:id="@+id/NowPlayingProgress"
+							android:id="@+id/now_playing_progessbar"
 							android:layout_width="fill_parent" android:layout_height="wrap_content"
 							android:max="100"
 							android:progressDrawable="@drawable/progressbar"
-							android:thumb="@drawable/pgbar_thumb" 
-							android:paddingLeft="20dip"
-							android:paddingRight="10dip"
-							android:paddingTop="10dip" 
-							android:thumbOffset="20dip"
-							android:layout_marginTop="-10dip"
-							/>
-						<RelativeLayout 
+							android:thumb="@drawable/pgbar_thumb" />
+						<RelativeLayout
 							android:layout_width="fill_parent" 
 							android:layout_height="wrap_content"
 							android:layout_marginTop="0dip">
@@ -100,9 +96,9 @@
 					</LinearLayout>
 					
 					<!-- ##### BOTTOM TITLE ##### -->
-					<LinearLayout android:background="#66ff0000" android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
+					<LinearLayout android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
 						<TextView 
-							android:id="@+id/SongTextView"
+							android:id="@+id/now_playing_bottom_title"
 							android:layout_width="fill_parent" 
 							android:layout_height="wrap_content"
 							android:textSize="16dip"
@@ -116,9 +112,9 @@
 					</LinearLayout>
 					
 					<!-- ##### BOTTOM SUB TITLE ##### -->
-					<LinearLayout android:background="#660000ff" android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
+					<LinearLayout android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
 						<TextView 
-							android:id="@+id/ArtistTextView"
+							android:id="@+id/now_playing_bottom_subtitle"
 							android:layout_marginTop="0dip"
 							android:layout_width="fill_parent" 
 							android:layout_height="wrap_content"

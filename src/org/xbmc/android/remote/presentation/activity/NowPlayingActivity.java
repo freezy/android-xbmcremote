@@ -27,9 +27,10 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.NowPlayingController;
 import org.xbmc.android.remote.presentation.controller.RemoteController;
+import org.xbmc.android.remote.presentation.widget.JewelView;
 import org.xbmc.android.util.KeyTracker;
-import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
+import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.object.Song;
 import org.xbmc.api.type.MediaType;
@@ -38,26 +39,23 @@ import org.xbmc.eventclient.ButtonCodes;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Build.VERSION;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class NowPlayingActivity extends Activity {
 	
-	private TextView mAlbumView;
-	private TextView mArtistView;
-	private TextView mSongTitleView;
+	private TextView mTopTitleView;
+	private TextView mBottomTitleView;
+	private TextView mBottomSubtitleView;
 	private TextView mCounterLeftView;
 	private TextView mCounterRightView;
 	private ImageButton mPlayPauseView;
@@ -98,10 +96,10 @@ public class NowPlayingActivity extends Activity {
        	
 		mNowPlayingController = new NowPlayingController(this, new Handler());
        	
-		mSeekBar = (SeekBar) findViewById(R.id.NowPlayingProgress);
-		mArtistView = (TextView) findViewById(R.id.ArtistTextView);
-		mAlbumView = (TextView) findViewById(R.id.AlbumTextView);
-		mSongTitleView = (TextView) findViewById(R.id.SongTextView);
+		mSeekBar = (SeekBar) findViewById(R.id.now_playing_progessbar);
+		mTopTitleView = (TextView) findViewById(R.id.now_playing_top_title);
+		mBottomTitleView = (TextView) findViewById(R.id.now_playing_bottom_title);
+		mBottomSubtitleView = (TextView) findViewById(R.id.now_playing_bottom_subtitle);
 		mCounterLeftView = (TextView)findViewById(R.id.now_playing_counter_left);
 		mCounterRightView = (TextView)findViewById(R.id.now_playing_counter_right);
 		mPlayPauseView = (ImageButton)findViewById(R.id.MediaPlayPauseButton);
@@ -131,10 +129,10 @@ public class NowPlayingActivity extends Activity {
 		}		
 	}
 	
-	public void updateInfo(String artist, String album, String title) {
-		mArtistView.setText(artist);
-  	  	mAlbumView.setText(album);
-  	  	mSongTitleView.setText(title);		
+	public void updateInfo(String topTitle, String bottomTitme, String bottomSubtitle) {
+		mTopTitleView.setText(topTitle);
+		mBottomTitleView.setText(bottomTitme);
+  	  	mBottomSubtitleView.setText(bottomSubtitle);		
 	}
 	
 	public void updateProgress(int duration, int time) {
@@ -144,7 +142,9 @@ public class NowPlayingActivity extends Activity {
 		mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);		
 	}
 	
-	public void updateCover(Drawable cover, int mediaType) {
+	public void updateCover(Bitmap cover, int mediaType) {
+		
+		final JewelView jewelCase = (JewelView) findViewById(R.id.now_playing_jewelcase);
 		
 //		ImageView cdCaseImage = (ImageView) findViewById(R.id.CDCaseImage);
 //		ImageView dvdCaseImage = (ImageView) findViewById(R.id.DVDCaseImage);
@@ -162,20 +162,15 @@ public class NowPlayingActivity extends Activity {
 //				episodeImage.setVisibility(View.GONE);
 				
 				if (cover != null) {
-//					cdImage.setImageDrawable(cover);
+					jewelCase.setCover(cover);
 				} else {
 //					cdImage.setImageResource(R.drawable.coverbox_back);
 				}
 				break;
 			case MediaType.VIDEO_MOVIE:
 			case MediaType.VIDEO:
-//				dvdCaseImage.setImageResource(R.drawable.jewel_dvd);
-//				dvdView.setVisibility(View.VISIBLE);
-//				cdView.setVisibility(View.GONE);
-//				episodeImage.setVisibility(View.GONE);
-				
 				if (cover != null) {
-//					dvdImage.setImageDrawable(cover);
+					jewelCase.setCover(cover);
 				} else {
 //					dvdImage.setImageResource(R.drawable.jewel_dvd_back);
 				}
