@@ -58,7 +58,9 @@ public class JewelView extends View {
 
 	private final void init(Context context) {
 		mPaint = new Paint();
-		setPadding(3, 3, 3, 3);
+		final int padding = ThumbSize.getPixel(3);
+		Log.d(TAG, "padding = " + padding);
+		setPadding(padding, padding, padding, padding);
 		setCover(R.drawable.default_jewel);
 	}
 

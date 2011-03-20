@@ -146,25 +146,12 @@ public class NowPlayingActivity extends Activity {
 		
 		final JewelView jewelCase = (JewelView) findViewById(R.id.now_playing_jewelcase);
 		
-//		ImageView cdCaseImage = (ImageView) findViewById(R.id.CDCaseImage);
-//		ImageView dvdCaseImage = (ImageView) findViewById(R.id.DVDCaseImage);
-//		ImageView cdImage = (ImageView) findViewById(R.id.CDCoverImage);
-//		ImageView dvdImage = (ImageView) findViewById(R.id.DVDCoverImage);
-//		ImageView episodeImage = (ImageView) findViewById(R.id.EpisodeImage);
-//		RelativeLayout cdView = (RelativeLayout) findViewById(R.id.CDView);
-//		RelativeLayout dvdView = (RelativeLayout) findViewById(R.id.DVDView);		
-		
 		switch (mediaType) {
 			case MediaType.MUSIC:
-//				cdCaseImage.setImageResource(R.drawable.coverbox_front);
-//				cdView.setVisibility(View.VISIBLE);
-//				dvdView.setVisibility(View.GONE);
-//				episodeImage.setVisibility(View.GONE);
-				
 				if (cover != null) {
 					jewelCase.setCover(cover);
 				} else {
-//					cdImage.setImageResource(R.drawable.coverbox_back);
+					jewelCase.setCover(R.drawable.coverbox_back);
 				}
 				break;
 			case MediaType.VIDEO_MOVIE:
@@ -172,28 +159,21 @@ public class NowPlayingActivity extends Activity {
 				if (cover != null) {
 					jewelCase.setCover(cover);
 				} else {
-//					dvdImage.setImageResource(R.drawable.jewel_dvd_back);
+					jewelCase.setCover(R.drawable.poster_big);
 				}
 				break;
 			case MediaType.VIDEO_TVEPISODE:
 			case MediaType.VIDEO_TVSEASON:
 			case MediaType.VIDEO_TVSHOW:
-//				episodeImage.setVisibility(View.VISIBLE);
-//				dvdView.setVisibility(View.GONE);
-//				cdView.setVisibility(View.GONE);
 				
 				if (cover != null) {
-//					episodeImage.setImageDrawable(cover);
+					jewelCase.setCover(cover);
 				} else {
 //					episodeImage.setImageBitmap(null);
 				}
 				break;
 			default:				
-//				cdCaseImage.setImageResource(R.drawable.coverbox_front);
-//				cdImage.setImageResource(R.drawable.coverbox_back);
-//				cdView.setVisibility(View.VISIBLE);
-//				dvdView.setVisibility(View.GONE);
-//				episodeImage.setVisibility(View.GONE);
+				jewelCase.setCover(R.drawable.coverbox_back);
 				break;
 		}
 	}
