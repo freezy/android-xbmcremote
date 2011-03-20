@@ -82,7 +82,6 @@ public class JewelView extends View {
 		// reference is height, make width dependent on height.
 		if (modeHeight == MeasureSpec.EXACTLY && modeWidth != MeasureSpec.EXACTLY) {
 			totalHeight = MeasureSpec.getSize(heightMeasureSpec);
-			Log.d(TAG, "Measure by height: " + totalHeight);
 			originalCoverHeight = originalHeight - ThumbSize.scale(posterPosition.top + posterPosition.bottom);
 			originalCoverWidth = Math.round((float) originalCoverHeight / mPosterAR);
 			scaled = (float) totalHeight / (float) originalHeight;
@@ -95,7 +94,6 @@ public class JewelView extends View {
 		// reference is width, make height dependent on width.
 		else {
 			totalWidth = MeasureSpec.getSize(widthMeasureSpec);
-			Log.d(TAG, "Measure by width: " + totalHeight);
 			originalCoverWidth = originalWidth - ThumbSize.scale(posterPosition.left + posterPosition.right);
 			originalCoverHeight = Math.round((float) originalCoverWidth * mPosterAR);
 			scaled = (float) totalWidth / (float) originalWidth;
