@@ -82,7 +82,7 @@ public class JewelView extends View {
 		originalHeight = mPosterOverlay.getHeight();
 
 		// reference is height, make width dependent on height.
-		if (modeHeight == MeasureSpec.EXACTLY && modeWidth != MeasureSpec.EXACTLY) {
+		if (modeHeight == MeasureSpec.EXACTLY && modeWidth != MeasureSpec.EXACTLY && mPosterAR > 0.75f) {
 			totalHeight = MeasureSpec.getSize(heightMeasureSpec);
 			originalCoverHeight = originalHeight - ThumbSize.scale(posterPosition.top + posterPosition.bottom);
 			originalCoverWidth = Math.round((float) originalCoverHeight / mPosterAR);
@@ -138,6 +138,7 @@ public class JewelView extends View {
 //			Log.d(TAG, "cover resized 2 = " + coverWidth + "x" + coverHeight);
 
 			mPaint.setDither(true);
+			mPaint.setFilterBitmap(true);
 
 //			mPoster.setBounds(pdnLeft, pdnTop, pdnLeft + coverWidth, pdnTop + coverHeight);
 //			mPoster.setFilterBitmap(true);
@@ -157,8 +158,10 @@ public class JewelView extends View {
 	private static class JewelType {
 
 		private final static JewelType[] TYPES = { 
-			new JewelType(new Rect(48, 11, 17, 19), 1.25f, 2000f, R.drawable.jewel_dvd, "Portrait (1:1.48)"), // 1:1.48 portrait
-			new JewelType(new Rect(41, 12, 17, 18), 0.75f, 1.25f, R.drawable.jewel_cd, "Cover (square)")   // 1:1.0 square
+			//                     l   t   r   b
+			new JewelType(new Rect(48, 11, 17, 19), 1.25f, 2000f, R.drawable.jewel_dvd, "Portrait (1:1.48)"), 
+			new JewelType(new Rect(41, 12, 17, 18), 0.75f, 1.25f, R.drawable.jewel_cd, "Cover (square)"), 
+			new JewelType(new Rect(16, 11, 10, 33), 0.35f, 0.75f, R.drawable.jewel_tv, "Landscape (16:9)")
 		};
 
 		public static final JewelType get(float ar) {
