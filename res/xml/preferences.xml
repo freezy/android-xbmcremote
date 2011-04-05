@@ -22,6 +22,12 @@
 			android:title="Vibrate on Touch"
 			android:summary="Makes the remote control vibrate on touch." android:defaultValue="true"/>
 	</PreferenceCategory>
+	<PreferenceCategory  android:title="Startup">
+		<CheckBoxPreference 
+			android:key="setting_startup_onboot" 
+			android:title="Start on boot" 
+			android:summary="Start xbmcremote on boot"/>
+	</PreferenceCategory>
 	
 	<PreferenceCategory  android:title="On-Screen Notifications">
 		<CheckBoxPreference 

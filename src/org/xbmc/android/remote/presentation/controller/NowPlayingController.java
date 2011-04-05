@@ -127,18 +127,31 @@ public class NowPlayingController extends AbstractController implements INotifia
 				return false;
 		}
 	}
-	
-	public void setupButtons(SeekBar seekbar, View prev, View stop, View playpause, View next, View playlist) {
+
+	public void enableSeekbar(SeekBar seekbar) {
 		seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				if (fromUser && !seekBar.isInTouchMode())
 					seek(progress);
 			}
-			public void onStartTrackingTouch(SeekBar seekBar) { }
+
+			public void onStartTrackingTouch(SeekBar seekBar) {
+
+			}
+
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				seek(seekBar.getProgress());
 			}
 		});
+	}
+
+	public void disableSeekbar(SeekBar seekbar) {
+		seekbar.setOnSeekBarChangeListener(null);
+	}
+
+	public void setupButtons(SeekBar seekbar, View prev, View stop, View playpause, View next, View playlist) {
+		
+		enableSeekbar(seekbar);
 		
 		// setup buttons
 		prev.setOnClickListener(new OnRemoteAction(ButtonCodes.REMOTE_SKIP_MINUS));

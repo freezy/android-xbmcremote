@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" 
 	package="org.xbmc.android.remote"
 	android:versionName="0.8.5-beta1+" 
-	android:versionCode="758" 
-	android:installLocation="preferExternal">
+	android:versionCode="760" 
+	android:installLocation="auto">
 	<application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true" >
 		<activity android:name=".presentation.activity.HomeActivity"
 			android:label="@string/app_name"
@@ -54,6 +54,12 @@
 				<action android:name="android.intent.action.PHONE_STATE" />
 			</intent-filter>
 		</receiver>
+		<receiver android:name=".business.receiver.AutoStartReceiver"
+			android:process="android.process.im">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED"/>
+			</intent-filter>
+		</receiver>
 		<provider android:name=".business.provider.HostProvider" android:authorities="org.xbmc.android.provider.remote" />
 		
 	</application>
@@ -76,4 +82,5 @@
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 </manifest>
