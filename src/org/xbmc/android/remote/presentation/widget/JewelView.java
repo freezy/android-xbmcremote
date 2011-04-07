@@ -91,7 +91,7 @@ public class JewelView extends View {
 
 	private final void init(Context context) {
 		mPaint = new Paint();
-		final int padding = ThumbSize.getPixel(3);
+		final int padding = ThumbSize.scale(3);
 		Log.d(TAG, "padding = " + padding);
 		setPadding(padding, padding, padding, padding);
 		setCover(R.drawable.default_jewel);
@@ -108,45 +108,62 @@ public class JewelView extends View {
 			setMeasuredDimension(0, 0);
 			return;
 		}
-
-		final Rect posterPosition = mType.posterPosition;
+		
 		final int modeWidth = specifiedWidth > 0 ? MeasureSpec.EXACTLY : MeasureSpec.getMode(widthMeasureSpec);
 		final int modeHeight = specifiedHeight > 0 ? MeasureSpec.EXACTLY : MeasureSpec.getMode(heightMeasureSpec);
 		originalWidth = mPosterOverlay.getWidth();
 		originalHeight = mPosterOverlay.getHeight();
-
-		// reference is height, make width dependent on height.
-		if (modeHeight == MeasureSpec.EXACTLY && modeWidth != MeasureSpec.EXACTLY && mPosterAR > AR_LANDSCAPE_SQUARE) {
-			
-			
-			totalHeight = specifiedHeight > 0 ? ThumbSize.scale(specifiedHeight) : MeasureSpec.getSize(heightMeasureSpec);
-			Log.d(TAG, "Drawing by height (" + totalHeight + ")");
-			originalCoverHeight = originalHeight - ThumbSize.scale(posterPosition.top + posterPosition.bottom);
-			originalCoverWidth = Math.round((float) originalCoverHeight / mPosterAR);
-			scaled = (float) totalHeight / (float) originalHeight;
-			coverHeight = Math.round((float) originalCoverHeight * scaled);
-			coverWidth = Math.round((float) originalCoverWidth * scaled);
-			totalWidth = coverWidth + Math.round((float) ThumbSize.scale(posterPosition.left + posterPosition.right) * scaled);
-
-			setMeasuredDimension(totalWidth, totalHeight);
-		}
-		// reference is width, make height dependent on width.
-		else {
-			
-			totalWidth = specifiedWidth > 0 ? ThumbSize.scale(specifiedWidth) : MeasureSpec.getSize(widthMeasureSpec);
-			Log.d(TAG, "Drawing by width (" + totalWidth + ")");
-			originalCoverWidth = originalWidth - ThumbSize.scale(posterPosition.left + posterPosition.right);
-			originalCoverHeight = Math.round((float) originalCoverWidth * mPosterAR);
-			scaled = (float) totalWidth / (float) originalWidth;
-			coverHeight = Math.round((float) originalCoverHeight * scaled);
-			coverWidth = Math.round((float) originalCoverWidth * scaled);
-			totalHeight = coverHeight + Math.round((float) ThumbSize.scale(posterPosition.top + posterPosition.bottom) * scaled);
-
-			setMeasuredDimension(totalWidth, totalHeight);
+		
+		if (modeHeight == modeWidth) {
+			final float canvasAR = (float)MeasureSpec.getSize(heightMeasureSpec) / (float)MeasureSpec.getSize(widthMeasureSpec);
+			Log.d(TAG, "Patt, calculating from canvas AR (" + canvasAR + ")");
+			if (mPosterAR > canvasAR) {
+				setMeasuredDimensionByHeight(MeasureSpec.getSize(heightMeasureSpec));
+			} else {
+				setMeasuredDimensionByWidth(MeasureSpec.getSize(widthMeasureSpec));
+			}
+		} else if (modeHeight == MeasureSpec.EXACTLY && modeWidth != MeasureSpec.EXACTLY && mPosterAR > AR_LANDSCAPE_SQUARE) {
+			// reference is height, make width dependent on height.
+			setMeasuredDimensionByHeight(specifiedHeight > 0 ? ThumbSize.scale(specifiedHeight) : MeasureSpec.getSize(heightMeasureSpec));
+		} else {
+			// reference is width, make height dependent on width.
+			setMeasuredDimensionByWidth(specifiedWidth > 0 ? ThumbSize.scale(specifiedWidth) : MeasureSpec.getSize(widthMeasureSpec));
 		}
 
 		// fill_parent -> MeasureSpec.EXACTLY
 		// wrap_content -> MeasureSpec.AT_MOST
+	}
+	
+	private void setMeasuredDimensionByHeight(int height) {
+		
+		Log.d(TAG, "Measuring by height (" + height + ")");
+		final Rect posterPosition = mType.posterPosition;
+		
+		totalHeight = height;
+		originalCoverHeight = originalHeight - ThumbSize.scale(posterPosition.top + posterPosition.bottom);
+		originalCoverWidth = Math.round((float) originalCoverHeight / mPosterAR);
+		scaled = (float) totalHeight / (float) originalHeight;
+		coverHeight = Math.round((float) originalCoverHeight * scaled);
+		coverWidth = Math.round((float) originalCoverWidth * scaled);
+		totalWidth = coverWidth + Math.round((float) ThumbSize.scale(posterPosition.left + posterPosition.right) * scaled);
+
+		setMeasuredDimension(totalWidth, totalHeight);
+	}
+	
+	private void setMeasuredDimensionByWidth(int width) {
+		
+		Log.d(TAG, "Measuring by width (" + width + ")");
+		final Rect posterPosition = mType.posterPosition;
+		
+		totalWidth = width;
+		originalCoverWidth = originalWidth - ThumbSize.scale(posterPosition.left + posterPosition.right);
+		originalCoverHeight = Math.round((float) originalCoverWidth * mPosterAR);
+		scaled = (float) totalWidth / (float) originalWidth;
+		coverHeight = Math.round((float) originalCoverHeight * scaled);
+		coverWidth = Math.round((float) originalCoverWidth * scaled);
+		totalHeight = coverHeight + Math.round((float) ThumbSize.scale(posterPosition.top + posterPosition.bottom) * scaled);
+		
+		setMeasuredDimension(totalWidth, totalHeight);
 	}
 
 	/**

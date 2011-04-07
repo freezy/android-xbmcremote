@@ -54,7 +54,7 @@
 				<!-- ##### TOP TITLE ##### -->
 				<TextView android:id="@+id/now_playing_top_title"
 					android:text="TITLE"
-					android:layout_weight="1.5" 
+					android:layout_weight="1.8" 
 					android:layout_height="0px"
 					android:layout_width="fill_parent" 
 					android:gravity="center_horizontal"
@@ -63,8 +63,8 @@
 					android:textColor="#ffffffff"
 					android:paddingTop="7dip" />
 					
-				<LinearLayout 
-					android:layout_weight="15" 
+				<LinearLayout android:id="@+id/now_playing_jewelcontainer"
+					android:layout_weight="14" 
 					android:layout_height="0px" 
 					android:layout_width="fill_parent" 
 					android:orientation="horizontal" >
@@ -76,13 +76,6 @@
 						android:layout_gravity="center_horizontal"
 						>
 						
-						<!-- ##### JEWEL CASE #####  -->
-						<org.xbmc.android.remote.presentation.widget.JewelView
-							android:id="@+id/now_playing_jewelcase" 
-							android:layout_width="wrap_content" 
-							android:layout_height="280dip"
-							android:layout_centerHorizontal="true"
-							/>
 						<!-- ImageView android:id="@+id/now_playing_jewelcase" 
 							android:layout_height="100dip"
 							android:layout_width="wrap_content" 
@@ -96,23 +89,45 @@
 						<SeekBar android:id="@+id/now_playing_progessbar"
 							android:layout_width="fill_parent"
 							android:layout_height="wrap_content"
-							android:layout_below="@+id/now_playing_jewelcase"
-							android:paddingLeft="10dip"
-							android:paddingRight="10dip"
+							android:layout_alignParentBottom="true"
+							android:paddingLeft="5dip"
+							android:paddingRight="5dip"
+							android:paddingBottom="5dip"
 							android:max="100"
 							android:progressDrawable="@drawable/progressbar" 
 							android:thumb="@drawable/pgbar_thumb" />
 							<!-- comment android:progressDrawable to make graphical layout not crash -->
-						
+
+						<!-- ##### JEWEL CASE #####  -->
+						<org.xbmc.android.remote.presentation.widget.JewelView
+							android:id="@+id/now_playing_jewelcase" 
+							android:layout_width="wrap_content" 
+							android:layout_height="fill_parent"
+							android:layout_centerHorizontal="true"
+							android:layout_above="@+id/now_playing_progessbar" 
+							/>
+							
 						<TextView android:id="@+id/now_playing_counter_left" 
 							android:layout_width="wrap_content" 
 							android:text="left"
+							android:textColor="#000000"
+							android:shadowDy="-1" 
+							android:shadowDx="0"
+							android:shadowRadius="0.1" 
+							android:shadowColor="#dddddd"
+							android:background="@drawable/timeborder"
 							android:layout_height="wrap_content"
-							android:layout_below="@+id/now_playing_progessbar" 
+							android:layout_above="@+id/now_playing_progessbar" 
 							android:layout_alignLeft="@+id/now_playing_progessbar" />
 							
 						<TextView android:id="@+id/now_playing_counter_right" 
 							android:text="right" 
+							android:textColor="#000000"
+							android:shadowDy="-1" 
+							android:shadowDx="0"
+							android:shadowRadius="0.1" 
+							android:shadowColor="#dddddd"
+							android:background="@drawable/timeborder"
 							android:layout_width="wrap_content" 
 							android:layout_height="wrap_content" 
 							android:layout_above="@+id/now_playing_progessbar" 
@@ -146,7 +161,8 @@
 					android:text="bottom sub title"
 					android:textSize="14dip"
 					android:singleLine="true"
-					android:layout_weight="2" 
+					android:paddingTop="3dip"
+					android:layout_weight="1.5" 
 					android:layout_height="0px"
 					android:layout_width="wrap_content" 
 					android:layout_below="@+id/now_playing_bottom_title"
