@@ -48,6 +48,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -106,6 +107,15 @@ public class NowPlayingActivity extends Activity {
 		mCounterLeftView = (TextView) findViewById(R.id.now_playing_counter_left);
 		mCounterRightView = (TextView) findViewById(R.id.now_playing_counter_right);
 		mPlayPauseView = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
+		
+//		JewelView jewelCase = (JewelView)findViewById(R.id.now_playing_jewelcase);
+		
+//		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(arg0, arg1)
+//		layoutParams.height = 140;
+//		layoutParams.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
+		
+///		layoutParams.addRule(RelativeLayout.ABOVE, R.id.now_playing_bottombar);
+//		jewelCase.setLayoutParams(layoutParams);
 
 		// remove nasty top fading edge
 		FrameLayout topFrame = (FrameLayout) findViewById(android.R.id.content);

@@ -1,5 +1,8 @@
 package org.xbmc.android.remote.presentation.widget;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.xbmc.android.remote.R;
 import org.xbmc.api.type.ThumbSize;
 
@@ -14,6 +17,8 @@ import android.util.Log;
 import android.view.View;
 
 public class JewelView extends View {
+	
+	private static final String ANDROID_NAMESPACE = "http://schemas.android.com/apk/res/android";
 
 	private Bitmap mPosterOverlay;
 	private Bitmap mPoster;
@@ -23,6 +28,8 @@ public class JewelView extends View {
 	private int coverWidth, coverHeight;
 	private int originalWidth, originalHeight;
 	private int totalWidth, totalHeight;
+	private int specifiedWidth = 0;
+	private int specifiedHeight = 0;
 	private float scaled;
 	private int originalCoverHeight, originalCoverWidth;
 	private JewelType mType;
@@ -40,6 +47,29 @@ public class JewelView extends View {
 	public JewelView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init(context);
+		
+		
+		// read layout width and height from xml element
+		final Pattern p = Pattern.compile("([\\-\\d]+)");
+		final String h = attrs.getAttributeValue(ANDROID_NAMESPACE, "layout_height");
+		final String w = attrs.getAttributeValue(ANDROID_NAMESPACE, "layout_width");
+		if (w != null) {
+			try {
+				Matcher matcher = p.matcher(w);
+				if (matcher.find()) {
+					specifiedWidth = Integer.parseInt(matcher.group(1));
+				}
+			} catch (Exception e) { }
+			
+		}
+		if (h != null) {
+			try {
+				Matcher matcher = p.matcher(h);
+				if (matcher.find()) {
+					specifiedHeight = Integer.parseInt(matcher.group(1));
+				}
+			} catch (Exception e) { }
+		}
 	}
 
 	public void setCover(int coverResource) {
@@ -72,6 +102,7 @@ public class JewelView extends View {
 	 */
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		Log.d(TAG, "onMeasure(" + MeasureSpec.toString(widthMeasureSpec) + ", " + MeasureSpec.toString(heightMeasureSpec));
 
 		if (mType == null) {
 			setMeasuredDimension(0, 0);
@@ -79,14 +110,17 @@ public class JewelView extends View {
 		}
 
 		final Rect posterPosition = mType.posterPosition;
-		final int modeWidth = MeasureSpec.getMode(widthMeasureSpec);
-		final int modeHeight = MeasureSpec.getMode(heightMeasureSpec);
+		final int modeWidth = specifiedWidth > 0 ? MeasureSpec.EXACTLY : MeasureSpec.getMode(widthMeasureSpec);
+		final int modeHeight = specifiedHeight > 0 ? MeasureSpec.EXACTLY : MeasureSpec.getMode(heightMeasureSpec);
 		originalWidth = mPosterOverlay.getWidth();
 		originalHeight = mPosterOverlay.getHeight();
 
 		// reference is height, make width dependent on height.
 		if (modeHeight == MeasureSpec.EXACTLY && modeWidth != MeasureSpec.EXACTLY && mPosterAR > AR_LANDSCAPE_SQUARE) {
-			totalHeight = MeasureSpec.getSize(heightMeasureSpec);
+			
+			
+			totalHeight = specifiedHeight > 0 ? ThumbSize.scale(specifiedHeight) : MeasureSpec.getSize(heightMeasureSpec);
+			Log.d(TAG, "Drawing by height (" + totalHeight + ")");
 			originalCoverHeight = originalHeight - ThumbSize.scale(posterPosition.top + posterPosition.bottom);
 			originalCoverWidth = Math.round((float) originalCoverHeight / mPosterAR);
 			scaled = (float) totalHeight / (float) originalHeight;
@@ -98,7 +132,9 @@ public class JewelView extends View {
 		}
 		// reference is width, make height dependent on width.
 		else {
-			totalWidth = MeasureSpec.getSize(widthMeasureSpec);
+			
+			totalWidth = specifiedWidth > 0 ? ThumbSize.scale(specifiedWidth) : MeasureSpec.getSize(widthMeasureSpec);
+			Log.d(TAG, "Drawing by width (" + totalWidth + ")");
 			originalCoverWidth = originalWidth - ThumbSize.scale(posterPosition.left + posterPosition.right);
 			originalCoverHeight = Math.round((float) originalCoverWidth * mPosterAR);
 			scaled = (float) totalWidth / (float) originalWidth;

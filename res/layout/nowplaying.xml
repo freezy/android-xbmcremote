@@ -8,7 +8,9 @@
 		<!-- ##### BOTTOM BAR ##### -->
 		<LinearLayout android:id="@+id/now_playing_bottombar"
 			android:background="@drawable/bottombar_bg"
-			android:layout_width="fill_parent" android:layout_height="60dip" android:gravity="center_horizontal"
+			android:layout_width="fill_parent" 
+			android:layout_height="60dip" 
+			android:gravity="center_horizontal"
 			android:layout_alignParentBottom="true">
 			<RelativeLayout android:layout_centerInParent="true" android:layout_width="wrap_content" android:layout_height="wrap_content" >
 					<ImageButton android:id="@+id/MediaPreviousButton"
@@ -32,98 +34,128 @@
 						android:layout_toRightOf="@id/MediaNextButton" />
 			</RelativeLayout>
 		</LinearLayout>
-		
-		<!-- ##### UPPER BODY ##### -->
-		<FrameLayout android:id="@+id/home_upper"
-			android:layout_width="fill_parent" android:layout_height="fill_parent"
-			android:layout_above="@id/now_playing_bottombar">
-			<LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
-				<include layout="@layout/titlebar" />
-				<LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
+
+		<include layout="@layout/titlebar" />
 				
-					<!-- ##### TOP TITLE ##### -->
-					<LinearLayout android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
-						<TextView android:id="@+id/now_playing_top_title"
-								android:layout_width="fill_parent" 
-								android:layout_height="wrap_content"
-								android:gravity="center_horizontal"
-								android:singleLine="true"
-								android:textSize="18dip"
-								android:textColor="#ffffffff"
-								android:paddingTop="4dip" />
-					</LinearLayout>
+		<!-- ##### UPPER BODY ##### -->
+		<LinearLayout android:id="@+id/home_upper"
+			android:orientation="vertical" 
+			android:layout_width="fill_parent" 
+			android:layout_height="fill_parent"
+			android:layout_above="@id/now_playing_bottombar">
+			
+			<include layout="@layout/titlebar" /> <!-- comment to make graphical layout not crash -->
+			
+			<LinearLayout 
+				android:orientation="vertical" 
+				android:layout_width="fill_parent" 
+				android:layout_height="fill_parent">
+				
+				<!-- ##### TOP TITLE ##### -->
+				<TextView android:id="@+id/now_playing_top_title"
+					android:text="TITLE"
+					android:layout_weight="1.5" 
+					android:layout_height="0px"
+					android:layout_width="fill_parent" 
+					android:gravity="center_horizontal"
+					android:singleLine="true"
+					android:textSize="18dip"
+					android:textColor="#ffffffff"
+					android:paddingTop="7dip" />
 					
-					<!-- ##### JEWEL CASE ##### -->
-					<LinearLayout android:layout_weight="70" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" 
-						android:gravity="center_horizontal">
+				<LinearLayout 
+					android:layout_weight="15" 
+					android:layout_height="0px" 
+					android:layout_width="fill_parent" 
+					android:orientation="horizontal" >
+			
+					<RelativeLayout
+						android:orientation="vertical"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_horizontal"
+						>
+						
+						<!-- ##### JEWEL CASE #####  -->
 						<org.xbmc.android.remote.presentation.widget.JewelView
+							android:id="@+id/now_playing_jewelcase" 
 							android:layout_width="wrap_content" 
-							android:layout_height="fill_parent"
-							android:id="@+id/now_playing_jewelcase" />
-					</LinearLayout>
-					
-					<!-- ##### SEEK BAR ##### -->
-					<LinearLayout android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="vertical" 
-						android:paddingLeft="10dip" android:paddingRight="10dip">
-						<SeekBar 
-							android:id="@+id/now_playing_progessbar"
-							android:layout_width="fill_parent" android:layout_height="wrap_content"
+							android:layout_height="280dip"
+							android:layout_centerHorizontal="true"
+							/>
+						<!-- ImageView android:id="@+id/now_playing_jewelcase" 
+							android:layout_height="100dip"
+							android:layout_width="wrap_content" 
+							android:layout_centerHorizontal="true"
+							android:src="@drawable/folder"
+							android:scaleType="fitXY"
+							android:adjustViewBounds="true"
+							android:layout_gravity="center_horizontal"
+							/-->
+						
+						<SeekBar android:id="@+id/now_playing_progessbar"
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:layout_below="@+id/now_playing_jewelcase"
+							android:paddingLeft="10dip"
+							android:paddingRight="10dip"
 							android:max="100"
-							android:progressDrawable="@drawable/progressbar"
+							android:progressDrawable="@drawable/progressbar" 
 							android:thumb="@drawable/pgbar_thumb" />
-						<RelativeLayout
-							android:layout_width="fill_parent" 
+							<!-- comment android:progressDrawable to make graphical layout not crash -->
+						
+						<TextView android:id="@+id/now_playing_counter_left" 
+							android:layout_width="wrap_content" 
+							android:text="left"
 							android:layout_height="wrap_content"
-							android:layout_marginTop="0dip">
-							<TextView 
-								android:id="@+id/now_playing_counter_left"
-								android:layout_width="wrap_content" 
-								android:layout_height="wrap_content"
-								android:textSize="12dip"
-								android:textColor="#ffffffff"
-								android:gravity="left"
-								android:singleLine="true" />
-							<TextView 
-								android:id="@+id/now_playing_counter_right"
-								android:layout_width="wrap_content" 
-								android:layout_height="wrap_content"
-								android:layout_alignParentRight="true"
-								android:textSize="12dip"
-								android:textColor="#ffffffff"
-								android:gravity="right"
-								android:singleLine="true" />
-						</RelativeLayout>
-					</LinearLayout>
+							android:layout_below="@+id/now_playing_progessbar" 
+							android:layout_alignLeft="@+id/now_playing_progessbar" />
+							
+						<TextView android:id="@+id/now_playing_counter_right" 
+							android:text="right" 
+							android:layout_width="wrap_content" 
+							android:layout_height="wrap_content" 
+							android:layout_above="@+id/now_playing_progessbar" 
+							android:layout_alignRight="@+id/now_playing_progessbar" />
+					</RelativeLayout>
 					
-					<!-- ##### BOTTOM TITLE ##### -->
-					<LinearLayout android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
-						<TextView 
-							android:id="@+id/now_playing_bottom_title"
-							android:layout_width="fill_parent" 
-							android:layout_height="wrap_content"
-							android:textSize="16dip"
-							android:textColor="#ffffffff"
-							android:gravity="center_horizontal"
-							android:layout_marginTop="0dip"
-							android:singleLine="true"
-							android:ellipsize="end"
-							android:paddingLeft="25dip"
-							android:paddingRight="22dip" />
-					</LinearLayout>
-					
-					<!-- ##### BOTTOM SUB TITLE ##### -->
-					<LinearLayout android:layout_weight="8" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
-						<TextView 
-							android:id="@+id/now_playing_bottom_subtitle"
-							android:layout_marginTop="0dip"
-							android:layout_width="fill_parent" 
-							android:layout_height="wrap_content"
-							android:singleLine="true"
-							android:gravity="center_horizontal"
-							android:textSize="14dip" />
-					</LinearLayout>
-				</LinearLayout>
+				</LinearLayout>	
+				
+				<!-- ##### BOTTOM TITLE ##### -->
+				<TextView 
+					android:id="@+id/now_playing_bottom_title" 
+					android:text="bottom title"
+					android:textSize="16dip"
+					android:textColor="#ffffffff"
+					android:gravity="center_horizontal"
+					android:singleLine="true"
+					android:ellipsize="end"
+					android:layout_weight="1" 
+					android:layout_height="0px"
+					android:layout_width="wrap_content" 
+					android:layout_below="@+id/now_playing_progessbar"
+					android:layout_gravity="center_horizontal"
+					android:layout_marginTop="0dip"
+					android:paddingLeft="25dip"
+					android:paddingRight="22dip"
+					/>
+				
+				<!-- ##### BOTTOM SUB TITLE ##### -->
+				<TextView 
+					android:id="@+id/now_playing_bottom_subtitle" 
+					android:text="bottom sub title"
+					android:textSize="14dip"
+					android:singleLine="true"
+					android:layout_weight="2" 
+					android:layout_height="0px"
+					android:layout_width="wrap_content" 
+					android:layout_below="@+id/now_playing_bottom_title"
+					android:layout_gravity="center_horizontal"
+					android:layout_marginTop="0dip"
+					/>
+			
 			</LinearLayout>
-		</FrameLayout>
+		
+		</LinearLayout>
 	</RelativeLayout>
 </LinearLayout>
