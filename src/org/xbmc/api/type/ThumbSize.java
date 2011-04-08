@@ -121,7 +121,7 @@ public abstract class ThumbSize {
 		case MediaType.VIDEO_TVSEASON:
 		case MediaType.VIDEO_TVSHOW:
 			final double ar = ((double)x) / ((double)y);
-			if (ar > 0.98 && ar < 1.02) { // square
+			if (ar > 0.95 && ar < 1.05) { // square
 				return new Dimension(getPixel(size), getPixel(size), Dimension.SQUARE);
 			} else if (ar < 1) {			// portrait
 				return new Dimension(getPixel(size), (int)(POSTER_AR * getPixel(size)), Dimension.PORTRAIT);
