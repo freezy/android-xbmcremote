@@ -110,7 +110,11 @@ public class MediaIntentController extends AbstractController implements IContro
 			});
 			final AlertDialog alert = builder.create();
 			try {
-				alert.show();
+				mHandler.post(new Runnable() {
+					public void run() {
+						alert.show();
+					}
+				});
 			} catch (Exception ee) {
 				e.printStackTrace();
 			}
