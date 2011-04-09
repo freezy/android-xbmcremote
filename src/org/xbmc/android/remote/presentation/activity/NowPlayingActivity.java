@@ -46,6 +46,7 @@ import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -149,51 +150,27 @@ public class NowPlayingActivity extends Activity {
 
 	public void updateProgress(int duration, int time) {
 		mSeekBar.setEnabled(duration != 0);
+
+		mCounterLeftView.setVisibility(View.VISIBLE);
 		mCounterLeftView.setText(Song.getDuration(time + 1));
+		mCounterRightView.setVisibility(View.VISIBLE);
 		mCounterRightView.setText(duration == 0 ? "unknown" : "-" + Song.getDuration(duration - time - 1));
 		mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
 	}
 
 	public void updateCover(Bitmap cover, int mediaType) {
-
 		final JewelView jewelCase = (JewelView) findViewById(R.id.now_playing_jewelcase);
-
-		switch (mediaType) {
-		case MediaType.MUSIC:
-			if (cover != null) {
-				jewelCase.setCover(cover);
-			} else {
-				jewelCase.setCover(R.drawable.coverbox_back);
-			}
-			break;
-		case MediaType.VIDEO_MOVIE:
-		case MediaType.VIDEO:
-			if (cover != null) {
-				jewelCase.setCover(cover);
-			} else {
-				jewelCase.setCover(R.drawable.poster_big);
-			}
-			break;
-		case MediaType.VIDEO_TVEPISODE:
-		case MediaType.VIDEO_TVSEASON:
-		case MediaType.VIDEO_TVSHOW:
-
-			if (cover != null) {
-				jewelCase.setCover(cover);
-			} else {
-				// episodeImage.setImageBitmap(null);
-			}
-			break;
-		default:
+		if (cover == null) {
 			jewelCase.setCover(R.drawable.coverbox_back);
-			break;
+		} else {
+			jewelCase.setCover(cover);
 		}
 	}
 
 	public void clear() {
 		mSeekBar.setEnabled(false);
-		mCounterLeftView.setText("");
-		mCounterRightView.setText("");
+		mCounterLeftView.setVisibility(View.GONE);
+		mCounterRightView.setVisibility(View.GONE);
 		mPlayPauseView.setBackgroundResource(R.drawable.now_playing_play);
 	}
 

@@ -39,19 +39,20 @@
 			android:layout_above="@id/now_playing_bottombar">
 			<LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
 				<include layout="@layout/titlebar" />
-				<LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="horizontal">
+				<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="horizontal">
 				
 				
 					<!-- ##### JEWEL CASE ##### -->
-					<LinearLayout android:layout_width="wrap_content" android:layout_height="fill_parent" android:orientation="vertical" 
+					<LinearLayout android:id="@+id/now_playing_jewelcontainer" android:layout_alignParentLeft="true" android:layout_width="wrap_content" android:layout_height="fill_parent" android:orientation="vertical" 
 						android:gravity="center_horizontal">
 						<org.xbmc.android.remote.presentation.widget.JewelView
 							android:layout_width="wrap_content" 
-							android:layout_height="fill_parent"
+							android:layout_height="wrap_content"
 							android:id="@+id/now_playing_jewelcase" />
 					</LinearLayout>
-
-					<LinearLayout android:layout_width="wrap_content" android:layout_height="fill_parent" android:orientation="vertical">
+					
+					<!-- ##### RIGHT BODY ##### -->
+					<LinearLayout android:layout_toRightOf="@+id/now_playing_jewelcontainer" android:layout_alignParentRight="true" android:layout_width="wrap_content" android:layout_height="fill_parent" android:orientation="vertical">
 	
 						<!-- ##### TOP TITLE ##### -->
 						<LinearLayout android:layout_weight="20" android:layout_width="fill_parent" android:layout_height="0px" android:orientation="horizontal" >
@@ -75,7 +76,9 @@
 								android:layout_width="fill_parent" android:layout_height="wrap_content"
 								android:max="100"
 								android:progressDrawable="@drawable/progressbar"
-								android:thumb="@drawable/pgbar_thumb" />
+								android:thumb="@drawable/pgbar_thumb"
+								android:paddingLeft="7dip"
+								android:paddingRight="7dip" />
 							<RelativeLayout
 								android:layout_width="fill_parent" 
 								android:layout_height="wrap_content"
@@ -128,7 +131,7 @@
 								android:textSize="14dip" />
 						</LinearLayout>
 					</LinearLayout>
-				</LinearLayout>
+				</RelativeLayout>
 			</LinearLayout>
 		</FrameLayout>
 	</RelativeLayout>

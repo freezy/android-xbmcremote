@@ -60,8 +60,7 @@
 					android:gravity="center_vertical|center_horizontal"
 					android:singleLine="true"
 					android:textSize="18dip"
-					android:textColor="#ffffffff"
-					android:paddingTop="7dip" />
+					android:textColor="#ffffffff" />
 					
 				
 				<LinearLayout android:id="@+id/now_playing_jewelcontainer"
@@ -91,8 +90,8 @@
 							android:layout_width="fill_parent"
 							android:layout_height="wrap_content"
 							android:layout_alignParentBottom="true"
-							android:paddingLeft="5dip"
-							android:paddingRight="5dip"
+							android:paddingLeft="7dip"
+							android:paddingRight="7dip"
 							android:paddingBottom="5dip"
 							android:max="100"
 							android:progressDrawable="@drawable/progressbar" 
