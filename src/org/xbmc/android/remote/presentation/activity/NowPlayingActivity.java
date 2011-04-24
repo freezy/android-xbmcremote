@@ -33,7 +33,6 @@ import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.object.Song;
-import org.xbmc.api.type.MediaType;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;

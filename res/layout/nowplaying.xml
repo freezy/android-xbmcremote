@@ -165,7 +165,7 @@
 					android:layout_height="0px"
 					android:layout_width="fill_parent" 
 					android:layout_below="@+id/now_playing_bottom_title"
-					android:gravity="center_vertical|center_horizontal"
+					android:gravity="top|center_vertical|center_horizontal"
 					android:layout_marginTop="0dip"
 					/>
 			

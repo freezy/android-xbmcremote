@@ -34,11 +34,12 @@ public class JewelView extends View {
 	private int originalCoverHeight, originalCoverWidth;
 	private JewelType mType;
 	
-	private final static float AR_LANDSCAPE_SQUARE = 0.8f;
-	private final static float AR_SQUARE_POSTER = 1.25f;
+	public final static float AR_LANDSCAPE_SQUARE = 0.8f;
+	public final static float AR_SQUARE_POSTER = 1.25f;
+	public final static float AR_OVERLAY = 1.25f;
 
 	private final static String TAG = "JewelView";
-
+	
 	public JewelView(Context context) {
 		super(context);
 		init(context);
@@ -47,7 +48,6 @@ public class JewelView extends View {
 	public JewelView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init(context);
-		
 		
 		// read layout width and height from xml element
 		final Pattern p = Pattern.compile("([\\-\\d]+)");
@@ -73,12 +73,14 @@ public class JewelView extends View {
 	}
 
 	public void setCover(int coverResource) {
+//		Log.d(TAG, "setCover(" + coverResource + ")");
 		setCover(BitmapFactory.decodeResource(getContext().getResources(), coverResource));
 	}
 
 	public void setCover(Bitmap cover) {
 		mPoster = cover;
 		mPosterAR = (float) cover.getHeight() / (float) cover.getWidth();
+//		Log.d(TAG, "setCover(), AR = " + mPosterAR);
 		mType = JewelType.get(mPosterAR);
 		if (mType != null) {
 			Log.i(TAG, "Set aspect ratio type for " + mPosterAR + " to " + mType);
@@ -87,13 +89,13 @@ public class JewelView extends View {
 			Log.w(TAG, "Unable to get aspect ratio type for " + mPosterAR);
 		}
 		requestLayout();
+		invalidate();
 	}
 
 	private final void init(Context context) {
 		mPaint = new Paint();
-		final int padding = ThumbSize.scale(3);
-		Log.d(TAG, "padding = " + padding);
-		setPadding(padding, padding, padding, padding);
+//		final int padding = ThumbSize.scale(3);
+//		setPadding(padding, padding, padding, padding);
 		setCover(R.drawable.default_jewel);
 	}
 
@@ -102,7 +104,7 @@ public class JewelView extends View {
 	 */
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		Log.d(TAG, "onMeasure(" + MeasureSpec.toString(widthMeasureSpec) + ", " + MeasureSpec.toString(heightMeasureSpec));
+//		Log.d(TAG, "onMeasure(" + MeasureSpec.toString(widthMeasureSpec) + ", " + MeasureSpec.toString(heightMeasureSpec));
 
 		if (mType == null) {
 			setMeasuredDimension(0, 0);
@@ -116,8 +118,8 @@ public class JewelView extends View {
 		
 		if (modeHeight == modeWidth) {
 			final float canvasAR = (float)MeasureSpec.getSize(heightMeasureSpec) / (float)MeasureSpec.getSize(widthMeasureSpec);
-			Log.d(TAG, "Patt, calculating from canvas AR (" + canvasAR + ")");
-			if (mPosterAR > canvasAR) {
+//			Log.d(TAG, "Patt, calculating from canvas AR (" + canvasAR + ")");
+			if (mPosterAR > canvasAR * mType.overlayAR) {
 				setMeasuredDimensionByHeight(MeasureSpec.getSize(heightMeasureSpec));
 			} else {
 				setMeasuredDimensionByWidth(MeasureSpec.getSize(widthMeasureSpec));
@@ -136,7 +138,6 @@ public class JewelView extends View {
 	
 	private void setMeasuredDimensionByHeight(int height) {
 		
-		Log.d(TAG, "Measuring by height (" + height + ")");
 		final Rect posterPosition = mType.posterPosition;
 		
 		totalHeight = height;
@@ -147,12 +148,12 @@ public class JewelView extends View {
 		coverWidth = Math.round((float) originalCoverWidth * scaled);
 		totalWidth = coverWidth + Math.round((float) ThumbSize.scale(posterPosition.left + posterPosition.right) * scaled);
 
-		setMeasuredDimension(totalWidth, totalHeight);
+//		Log.d(TAG, "Measuring by height (" + height + ") -> " + totalWidth + "x" + totalHeight);
+		setMeasuredDimension(totalWidth, totalHeight + mType.bottomPadding);
 	}
 	
 	private void setMeasuredDimensionByWidth(int width) {
 		
-		Log.d(TAG, "Measuring by width (" + width + ")");
 		final Rect posterPosition = mType.posterPosition;
 		
 		totalWidth = width;
@@ -163,7 +164,8 @@ public class JewelView extends View {
 		coverWidth = Math.round((float) originalCoverWidth * scaled);
 		totalHeight = coverHeight + Math.round((float) ThumbSize.scale(posterPosition.top + posterPosition.bottom) * scaled);
 		
-		setMeasuredDimension(totalWidth, totalHeight);
+//		Log.d(TAG, "Measuring by width (" + width + ") -> " + totalWidth + "x" + totalHeight);
+		setMeasuredDimension(totalWidth, totalHeight + mType.bottomPadding);
 	}
 
 	/**
@@ -174,40 +176,27 @@ public class JewelView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 
-		if (mType != null) {
+		synchronized (this) {
 			
-			Log.i(TAG, "Drawing " + mType);
-
-			// Rect(left: 48, top: 11, right: 17, bottom: 19)
-			final Rect posterPosition = mType.posterPosition;
-			final int pdnLeft = Math.round((float) ThumbSize.scale(posterPosition.left) * scaled);
-			final int pdnTop = Math.round((float) ThumbSize.scale(posterPosition.top) * scaled);
-
-//			Log.d(TAG, "original size old ar = " + originalWidth + "x" + originalHeight);
-//			Log.d(TAG, "new size old ar = " + totalWidth + "x" + getHeight());
-//			Log.d(TAG, "new size new ar = " + totalWidth + "x" + totalHeight);
-//			Log.d(TAG, "scaled = " + scaled);
-//			Log.d(TAG, "ar = " + mPosterAR);
-//			Log.d(TAG, "vertical padding = " + pdnTop + " " + Math.round((float) ThumbSize.scale(posterPosition.bottom) * scaled));
-//			Log.d(TAG, "cover original = " + mPoster.getWidth() + "x" + mPoster.getHeight());
-//			Log.d(TAG, "cover resized 1 = " + originalCoverWidth + "x" + originalCoverHeight);
-//			Log.d(TAG, "cover resized 2 = " + coverWidth + "x" + coverHeight);
-
-			mPaint.setDither(true);
-			mPaint.setFilterBitmap(true);
-
-//			mPoster.setBounds(pdnLeft, pdnTop, pdnLeft + coverWidth, pdnTop + coverHeight);
-//			mPoster.setFilterBitmap(true);
-//			mPoster.draw(canvas);
-//			mPosterOverlay.setBounds(0, 0, totalWidth, totalHeight);
-//			mPosterOverlay.draw(canvas);
-			
-			// draw actual poster
-			canvas.drawBitmap(mPoster, new Rect(0, 0, mPoster.getWidth(), mPoster.getHeight()), 
-				new Rect(pdnLeft, pdnTop, pdnLeft + coverWidth, pdnTop + coverHeight), mPaint); 
-			// draw case overlay
-			canvas.drawBitmap(mPosterOverlay, new Rect(0, 0, originalWidth, originalHeight), 
-				new Rect(0, 0, totalWidth, totalHeight), mPaint);
+			if (mType != null) {
+				
+//				Log.i(TAG, "Drawing " + mType);
+	
+				// Rect(left: 48, top: 11, right: 17, bottom: 19)
+				final Rect posterPosition = mType.posterPosition;
+				final int pdnLeft = Math.round((float) ThumbSize.scale(posterPosition.left) * scaled);
+				final int pdnTop = Math.round((float) ThumbSize.scale(posterPosition.top) * scaled);
+	
+				mPaint.setDither(true);
+				mPaint.setFilterBitmap(true);
+				
+				// draw actual poster
+				canvas.drawBitmap(mPoster, new Rect(0, 0, mPoster.getWidth(), mPoster.getHeight()), 
+					new Rect(pdnLeft, pdnTop, pdnLeft + coverWidth, pdnTop + coverHeight), mPaint); 
+				// draw case overlay
+				canvas.drawBitmap(mPosterOverlay, new Rect(0, 0, originalWidth, originalHeight), 
+					new Rect(0, 0, totalWidth, totalHeight), mPaint);
+			}
 		}
 	}
 
@@ -215,9 +204,9 @@ public class JewelView extends View {
 
 		private final static JewelType[] TYPES = { 
 			//                     l   t   r   b
-			new JewelType(new Rect(48, 11, 17, 19), AR_SQUARE_POSTER, 2000f, R.drawable.jewel_dvd, "Portrait (1:1.48)"), 
-			new JewelType(new Rect(41, 12, 17, 18), AR_LANDSCAPE_SQUARE, AR_SQUARE_POSTER, R.drawable.jewel_cd, "Cover (square)"), 
-			new JewelType(new Rect(16, 11, 10, 34), 0.35f, AR_LANDSCAPE_SQUARE, R.drawable.jewel_tv, "Landscape (16:9)")
+			new JewelType(new Rect(48, 11, 17, 19), AR_SQUARE_POSTER, 2000f, R.drawable.jewel_dvd, "Portrait (1:1.48)", 0, 1), 
+			new JewelType(new Rect(41, 12, 17, 18), AR_LANDSCAPE_SQUARE, AR_SQUARE_POSTER, R.drawable.jewel_cd, "Cover (square)", 0, 1.105263157894737f), 
+			new JewelType(new Rect(16, 11, 10, 34), 0.35f, AR_LANDSCAPE_SQUARE, R.drawable.jewel_tv, "Landscape (16:9)", ThumbSize.scale(30), 1)
 		};
 
 		public static final JewelType get(float ar) {
@@ -233,13 +222,17 @@ public class JewelView extends View {
 		public final float minAR, maxAR;
 		public final int overlayResource;
 		public final String name;
+		public final int bottomPadding;
+		public final float overlayAR;
 
-		public JewelType(Rect posterPosition, float minAR, float maxAR, int overlayResource, String name) {
+		public JewelType(Rect posterPosition, float minAR, float maxAR, int overlayResource, String name, int bottomPadding, float overlayAR) {
 			this.posterPosition = posterPosition;
 			this.minAR = minAR;
 			this.maxAR = maxAR;
 			this.overlayResource = overlayResource;
 			this.name = name;
+			this.bottomPadding = bottomPadding;
+			this.overlayAR = overlayAR;
 		}
 		
 		@Override
