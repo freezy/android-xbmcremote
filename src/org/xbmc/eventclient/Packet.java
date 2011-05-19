@@ -231,15 +231,19 @@ public abstract class Packet {
 		int maxseq = getNumPackets();
 		DatagramSocket s = new DatagramSocket();
 		
-		// For each Packet in Sequence...
-		for(int seq=1;seq<=maxseq;seq++)
-		{
-			// Get Message and send them...
-			byte[] pack = getUDPMessage(seq);
-			DatagramPacket p = new DatagramPacket(pack, pack.length);
-			p.setAddress(adr);
-			p.setPort(port);
-			s.send(p);
+		try {
+			// For each Packet in Sequence...
+			for(int seq=1;seq<=maxseq;seq++)
+			{
+				// Get Message and send them...
+				byte[] pack = getUDPMessage(seq);
+				DatagramPacket p = new DatagramPacket(pack, pack.length);
+				p.setAddress(adr);
+				p.setPort(port);
+				s.send(p);
+			}
+		} finally {
+			s.close();
 		}
 	}
 	
