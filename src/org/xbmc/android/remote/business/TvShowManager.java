@@ -53,7 +53,7 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 		mHandler.post(new Command<ArrayList<TvShow>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
-				response.value = shows(context).getTvShows(TvShowManager.this, getSortBy(SortType.TITLE), getSortOrder());
+				response.value = shows(context).getTvShows(TvShowManager.this, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
 			}
 		});
 	}
@@ -64,7 +64,7 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 	 */
 	public ArrayList<TvShow> getTvShows(Context context) {
 		try {
-			return shows(context).getTvShows(TvShowManager.this, getSortBy(SortType.TITLE), getSortOrder());
+			return shows(context).getTvShows(TvShowManager.this, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
 		} catch (WifiStateException e) {
 			TvShowManager.this.onError(e);
 		}
@@ -77,7 +77,7 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 	 */
 	public ArrayList<Season> getAllSeasons(Context context) {
 		try {
-			return shows(context).getSeasons(TvShowManager.this, getSortBy(SortType.TITLE), getSortOrder());
+			return shows(context).getSeasons(TvShowManager.this, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
 		} catch (WifiStateException e) {
 			TvShowManager.this.onError(e);
 		}
@@ -90,7 +90,7 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 	 */
 	public ArrayList<Episode> getAllEpisodes(Context context) {
 		try {
-			return shows(context).getEpisodes(TvShowManager.this, getSortBy(SortType.EPISODE_NUM), getSortOrder());
+			return shows(context).getEpisodes(TvShowManager.this, getSortBy(SortType.EPISODE_NUM), getSortOrder(), getHideWatched(context));
 		} catch (WifiStateException e) {
 			TvShowManager.this.onError(e);
 		}
@@ -106,7 +106,7 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 		mHandler.post(new Command<ArrayList<TvShow>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
-				response.value = shows(context).getTvShows(TvShowManager.this, genre, getSortBy(SortType.TITLE), getSortOrder());
+				response.value = shows(context).getTvShows(TvShowManager.this, genre, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
 			}
 		});
 	}
@@ -120,7 +120,7 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 		mHandler.post(new Command<ArrayList<TvShow>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
-				mResponse.value = shows(context).getTvShows(TvShowManager.this, actor, getSortBy(SortType.TITLE), getSortOrder());
+				mResponse.value = shows(context).getTvShows(TvShowManager.this, actor, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
 			}
 		});
 	}
@@ -135,7 +135,7 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 		mHandler.post(new Command<ArrayList<Episode>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
-				mResponse.value = shows(context).getEpisodes(TvShowManager.this, show, getSortBy(SortType.EPISODE_NUM), getSortOrder());
+				mResponse.value = shows(context).getEpisodes(TvShowManager.this, show, getSortBy(SortType.EPISODE_NUM), getSortOrder(), getHideWatched(context));
 			}
 		});
 	}
@@ -150,7 +150,7 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 		mHandler.post(new Command<ArrayList<Season>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
-				mResponse.value = shows(context).getSeasons(TvShowManager.this, show);
+				mResponse.value = shows(context).getSeasons(TvShowManager.this, show, getHideWatched(context));
 			}
 		});
 	}
@@ -166,7 +166,7 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 		mHandler.post(new Command<ArrayList<Episode>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
-				mResponse.value = shows(context).getEpisodes(TvShowManager.this, show, season, getSortBy(SortType.EPISODE_NUM), getSortOrder());
+				mResponse.value = shows(context).getEpisodes(TvShowManager.this, show, season, getSortBy(SortType.EPISODE_NUM), getSortOrder(), getHideWatched(context));
 			}
 		});
 		
@@ -182,7 +182,7 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 		mHandler.post(new Command<ArrayList<Episode>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
-				mResponse.value = shows(context).getEpisodes(TvShowManager.this, season, getSortBy(SortType.EPISODE_NUM), getSortOrder());
+				mResponse.value = shows(context).getEpisodes(TvShowManager.this, season, getSortBy(SortType.EPISODE_NUM), getSortOrder(), getHideWatched(context));
 			}
 		});
 	}

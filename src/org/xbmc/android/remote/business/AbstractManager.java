@@ -361,4 +361,8 @@ public abstract class AbstractManager implements INotifiableManager {
 		}
 		return SortType.ORDER_ASC;
 	}
+	
+	protected boolean getHideWatched(Context context) {
+		return context.getSharedPreferences("global", Context.MODE_PRIVATE).getBoolean("HideWatched", false);
+	}
 }

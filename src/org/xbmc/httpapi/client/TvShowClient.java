@@ -92,7 +92,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		super(connection);
 	}
 	
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager, int sortBy, String sortOrder) {
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
 		
 		// don't fetch summary for list view
@@ -121,6 +121,9 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("		JOIN path ON path.idpath = tvshowlinkpath.idPath");
 		sb.append("		WHERE path.idPath in (SELECT max(idPath) FROM tvshowlinkpath GROUP BY idShow)");
 		sb.append("	)  paths on tvshow.idShow = paths.idShow ");
+		if (hideWatched) {
+			sb.append(" WHERE counts.totalcount > counts.watchedcount ");
+		}
 		sb.append(showsOrderBy(sortBy, sortOrder));
 		Log.i(TAG, sb.toString());
 		
@@ -161,7 +164,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @param actor
 	 * @return
 	 */
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Actor actor, int sortBy, String sortOrder) {
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Actor actor, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14,"); 
 		sb.append("		paths.strPath,");
@@ -195,6 +198,9 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("	) actors on tvshow.idShow = actors.idShow");
 		sb.append("	WHERE actors.idActor = ");
 		sb.append(actor.id);
+		if (hideWatched) {
+			sb.append(" AND counts.totalcount > counts.watchedcount ");
+		}
 		sb.append(showsOrderBy(sortBy, sortOrder));
 		
 		Log.i(TAG, sb.toString());
@@ -205,7 +211,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * Gets all tv shows for the specified genre
 	 * 
 	 */
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT tvshow.idShow, tvshow.c00, \"\" AS c01, ROUND(tvshow.c04, 2), tvshow.c05, tvshow.c08, tvshow.c13, tvshow.c14,"); 
 		sb.append("		paths.strPath,");
@@ -239,6 +245,9 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("	) genres on tvshow.idShow = genres.idShow");
 		sb.append("	WHERE genres.idGenre = ");
 		sb.append(genre.id);
+		if (hideWatched) {
+			sb.append(" AND counts.totalcount > counts.watchedcount ");
+		}
 		sb.append(showsOrderBy(sortBy, sortOrder));
 		
 		Log.i(TAG, sb.toString());
@@ -251,16 +260,22 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @param show
 	 * @return
 	 */
-	public ArrayList<Season> getSeasons(INotifiableManager manager, TvShow show) {
+	public ArrayList<Season> getSeasons(INotifiableManager manager, TvShow show, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT c12 from (");
 		sb.append("	SELECT episode.c12 ");
 		sb.append("	FROM tvshow ");
 		sb.append("		LEFT OUTER JOIN tvshowlinkepisode ON tvshowlinkepisode.idShow = tvshow.idShow ");
 		sb.append("		LEFT OUTER JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode ");
+		if (hideWatched) {
+			sb.append(" LEFT OUTER JOIN files ON files.idFile = episode.idFile ");
+		}
 		sb.append("	WHERE tvshow.c00 = (SELECT c00 FROM tvshow WHERE tvshow.idShow = ");
 		sb.append(show.id);
 		sb.append("	) ");
+		if (hideWatched) {
+			sb.append(" AND (files.playCount IS NULL OR files.playCount = 0) ");
+		}
 		sb.append("GROUP BY episode.c12, tvshow.c00 ");
 		sb.append(") q where not q.c12 is null ");
 		sb.append("ORDER BY q.c12+0");
@@ -274,8 +289,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @param show
 	 * @return
 	 */
-	public ArrayList<Season> getSeasons(INotifiableManager manager, int sortBy, String sortOrder) {
-		ArrayList<TvShow> shows = getTvShows(manager, sortBy, sortOrder);
+	public ArrayList<Season> getSeasons(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched) {
+		ArrayList<TvShow> shows = getTvShows(manager, sortBy, sortOrder, hideWatched);
 		HashMap<Integer, TvShow> showMap = new HashMap<Integer, TvShow>();
 		for (TvShow tvShow : shows) {
 			showMap.put(tvShow.id, tvShow);
@@ -285,7 +300,13 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("FROM tvshow ");
 		sb.append("	LEFT OUTER JOIN tvshowlinkepisode ON tvshowlinkepisode.idShow = tvshow.idShow ");
 		sb.append("	LEFT OUTER JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode ");
+		if (hideWatched) {
+			sb.append(" LEFT OUTER JOIN files ON files.idFile = episode.idFile ");
+		}
 		sb.append("WHERE NOT episode.c12 is null ");
+		if (hideWatched) {
+			sb.append(" AND (files.playCount IS NULL OR files.playCount = 0) ");
+		}
 		sb.append("GROUP BY episode.c12, tvshow.c00 ");
 		sb.append("ORDER BY tvshow.idShow, episode.c12+0");
 		
@@ -298,8 +319,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @param show
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, int sortBy, String sortOrder) {
-		return getEpisodes(manager, show, null, sortBy, sortOrder);
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, int sortBy, String sortOrder, boolean hideWatched) {
+		return getEpisodes(manager, show, null, sortBy, sortOrder, hideWatched);
 	}
 	
 	/**
@@ -308,8 +329,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @param season
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, Season season, int sortBy, String sortOrder) {
-		return getEpisodes(manager, season.show, season, sortBy, sortOrder);
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, Season season, int sortBy, String sortOrder, boolean hideWatched) {
+		return getEpisodes(manager, season.show, season, sortBy, sortOrder, hideWatched);
 	}
 	
 	/**
@@ -317,10 +338,13 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @param manager
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, int sortBy, String sortOrder) {
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(c03, 2), c04, c05, c06, playCount, c10, c12, c13, strPath, strFileName, strTitle");
 		sb.append(" FROM episodeview ");
+		if (hideWatched) {
+			sb.append(" WHERE (playCount IS NULL OR playCount = 0) ");
+		}
 		sb.append(showsOrderBy(sortBy, sortOrder));
 		return parseEpisodes(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
@@ -332,13 +356,16 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @param season
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season, int sortBy, String sortOrder) {
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(c03, 2), c04, c05, c06, playCount, c10, c12, c13, strPath, strFileName, strTitle");
 		sb.append(" FROM episodeview ");
 		sb.append(" WHERE idShow in ( select idShow from tvshow where c00 in (select c00 from tvshow where idShow = ");
 		sb.append(show.id);
 		sb.append("))");
+		if (hideWatched) {
+			sb.append(" AND (playCount IS NULL OR playCount = 0) ");
+		}
 		if(season != null) {
 			sb.append(" AND (c12 = ");
 			sb.append(season.number);

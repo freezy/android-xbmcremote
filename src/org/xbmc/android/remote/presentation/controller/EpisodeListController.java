@@ -224,6 +224,7 @@ public class EpisodeListController extends ListController implements IController
 		sortMenu.add(2, MENU_SORT_BY_RATING_ASC, 0, "by Rating ascending");
 		sortMenu.add(2, MENU_SORT_BY_RATING_DESC, 0, "by Rating descending");
 //		menu.add(0, MENU_SWITCH_VIEW, 0, "Switch view").setIcon(R.drawable.menu_view);
+		createShowHideWatchedToggle(menu);
 	}
 	
 	@Override
@@ -274,7 +275,15 @@ public class EpisodeListController extends ListController implements IController
 			ed.commit();
 			fetch();
 			break;
+		default:
+			super.onOptionsItemSelected(item);
 		}
+	}
+	
+	@Override
+	protected void refreshList() {
+		hideMessage();
+		fetch();
 	}
 	
 	private class EpisodeAdapter extends ArrayAdapter<Episode> {

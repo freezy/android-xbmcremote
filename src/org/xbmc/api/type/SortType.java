@@ -36,6 +36,7 @@ public abstract class SortType {
 	public static final int EPISODE_NUM = 8;
 	public static final int EPISODE_TITLE = 9;
 	public static final int EPISODE_RATING = 10;
+	public static final int DATE_ADDED = 11;
 	
 	public static final int DONT_SORT = -1;
 }

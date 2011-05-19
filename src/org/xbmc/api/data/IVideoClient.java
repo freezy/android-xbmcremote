@@ -46,7 +46,7 @@ public interface IVideoClient extends IClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies
 	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder);
+	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched);
 	
 	/**
 	 * Gets all movies from database
@@ -55,7 +55,7 @@ public interface IVideoClient extends IClient {
 	 * @param offset Offset
 	 * @return All movies
 	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, int offset);
+	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, int offset, boolean hideWatched);
 	
 	/**
 	 * Gets all movies with an actor from database
@@ -64,7 +64,7 @@ public interface IVideoClient extends IClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies with an actor
 	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, int sortBy, String sortOrder);
+	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, int sortBy, String sortOrder, boolean hideWatched);
 	
 	/**
 	 * Gets all movies of a genre from database
@@ -73,7 +73,7 @@ public interface IVideoClient extends IClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies of a genre
 	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, int sortBy, String sortOrder);
+	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, int sortBy, String sortOrder, boolean hideWatched);
 	
 	/**
 	 * Gets all movies from database

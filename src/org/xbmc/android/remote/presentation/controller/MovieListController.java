@@ -75,6 +75,9 @@ public class MovieListController extends ListController implements IController {
 	public static final int MENU_SORT_BY_YEAR_DESC = 24;
 	public static final int MENU_SORT_BY_RATING_ASC = 25;
 	public static final int MENU_SORT_BY_RATING_DESC = 26;
+	public static final int MENU_SORT_BY_DATE_ADDED_ASC = 27;
+	public static final int MENU_SORT_BY_DATE_ADDED_DESC = 28;
+	
 	
 	private Actor mActor;
 	private Genre mGenre;
@@ -248,7 +251,10 @@ public class MovieListController extends ListController implements IController {
 		sortMenu.add(2, MENU_SORT_BY_YEAR_DESC, 0, "by Year descending");
 		sortMenu.add(2, MENU_SORT_BY_RATING_ASC, 0, "by Rating ascending");
 		sortMenu.add(2, MENU_SORT_BY_RATING_DESC, 0, "by Rating descending");
+		sortMenu.add(2, MENU_SORT_BY_DATE_ADDED_ASC, 0, "by Date Added ascending");
+		sortMenu.add(2, MENU_SORT_BY_DATE_ADDED_DESC, 0, "by Date Added descending");
 //		menu.add(0, MENU_SWITCH_VIEW, 0, "Switch view").setIcon(R.drawable.menu_view);
+		createShowHideWatchedToggle(menu);
 	}
 	
 	@Override
@@ -299,7 +305,29 @@ public class MovieListController extends ListController implements IController {
 			ed.commit();
 			fetch();
 			break;
+		case MENU_SORT_BY_DATE_ADDED_ASC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.DATE_ADDED);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.ORDER_ASC);
+			ed.commit();
+			fetch();
+			break;
+		case MENU_SORT_BY_DATE_ADDED_DESC:
+			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.DATE_ADDED);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.ORDER_DESC);
+			ed.commit();
+			fetch();
+			break;
+		default:
+			super.onOptionsItemSelected(item);
 		}
+	}
+	
+	@Override
+	protected void refreshList() {
+		hideMessage();
+		fetch();
 	}
 	
 	private class MovieAdapter extends ArrayAdapter<Movie> {

@@ -33,7 +33,9 @@ import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.view.ContextMenu;
@@ -62,12 +64,16 @@ public abstract class ListController extends AbstractController implements Seria
 	public static final String EXTRA_SHARE_TYPE = "shareType"; 
 	public static final String EXTRA_PATH = "path"; 
 	public static final String EXTRA_DISPLAY_PATH = "display_path"; 
+
+	private static final int MENU_SHOWHIDE_WATCHED = 51;
+	private static final String PREF_HIDE_WATCHED = "HideWatched";
 	
 	protected AbsListView mList;
 	
 	private TextView mTitleView;
 	private ViewGroup mMessageGroup;
 	private TextView mMessageText;
+	private boolean hideWatched;
 	private boolean isCreated = false;
 	
 	protected static Bitmap mFallbackBitmap;
@@ -77,6 +83,8 @@ public abstract class ListController extends AbstractController implements Seria
 		super.onCreate(activity, handler);
 		mList = list;
 		mActivity = activity;
+		SharedPreferences sp = mActivity.getSharedPreferences("global", Context.MODE_PRIVATE);
+		hideWatched = sp.getBoolean(PREF_HIDE_WATCHED, false);
 		isCreated = true;
 //		list.setOnScrollListener(new ScrollManager(ThumbSize.SMALL));
 	}
@@ -104,7 +112,30 @@ public abstract class ListController extends AbstractController implements Seria
 	public abstract void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo);
 	
 	public void onCreateOptionsMenu(Menu menu) { }
-	public void onOptionsItemSelected(MenuItem item) { }
+	
+	protected void createShowHideWatchedToggle(Menu menu) {
+		configureShowHideWatchedToggleOption(menu.add(0, MENU_SHOWHIDE_WATCHED, 0, ""), hideWatched);
+	}
+	
+	public void onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == MENU_SHOWHIDE_WATCHED) {
+			SharedPreferences sp = mActivity.getSharedPreferences("global", Context.MODE_PRIVATE);
+			hideWatched = !(sp.getBoolean(PREF_HIDE_WATCHED, false));
+			sp.edit().putBoolean(PREF_HIDE_WATCHED, hideWatched).commit();
+			configureShowHideWatchedToggleOption(item, hideWatched);
+			refreshList();
+		}
+	}
+	
+	private MenuItem configureShowHideWatchedToggleOption(MenuItem item, boolean hideWatched) {
+		if (hideWatched) {
+			return item.setTitle("Show Watched").setIcon(R.drawable.menu_show_watched);
+		} else {
+			return item.setTitle("Hide Watched").setIcon(R.drawable.menu_hide_watched);
+		}
+	}
+	
+	protected void refreshList() { }
 	
 	public void findTitleView(View parent) {
 		mTitleView = (TextView)parent.findViewById(R.id.titlebar_text);	
@@ -143,6 +174,12 @@ public abstract class ListController extends AbstractController implements Seria
 		}
 	}
 	
+	protected void hideMessage() {
+		if (mMessageGroup != null) {
+			mMessageGroup.setVisibility(View.GONE);
+		}
+	}
+	
 	protected void showOnLoading() {
 		mHandler.post(new Runnable() {
 			public void run() {
@@ -154,6 +191,19 @@ public abstract class ListController extends AbstractController implements Seria
 	
 	protected boolean isLoading() {
 		return mList.getAdapter() instanceof LoadingAdapter;
+	}
+	
+	@Override
+	public void onActivityResume(Activity activity) {
+		super.onActivityResume(activity);
+		if (isCreated()) {
+			SharedPreferences sp = mActivity.getSharedPreferences("global", Context.MODE_PRIVATE);
+			boolean hideWatched = sp.getBoolean(PREF_HIDE_WATCHED, false);
+			if (hideWatched != this.hideWatched) {
+				this.hideWatched = hideWatched;
+				refreshList();
+			}
+		}
 	}
 	
 	protected class QueryResponse extends DataResponse<Boolean> {

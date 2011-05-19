@@ -14,7 +14,7 @@ import android.graphics.Bitmap;
 
 public interface ITvShowClient extends IClient {
 
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager, int sortBy, String sortOrder);
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched);
 	public ArrayList<Actor> getTvShowActors(INotifiableManager manager) ;
 	public ArrayList<Genre> getTvShowGenres(INotifiableManager manager);
 	
@@ -24,7 +24,7 @@ public interface ITvShowClient extends IClient {
 	 * @param genre
 	 * @return
 	 */
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre, int sortBy, String sortOrder);
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre, int sortBy, String sortOrder, boolean hideWatched);
 	
 	/**
 	 * Gets all tv shows with the specified actor
@@ -32,7 +32,7 @@ public interface ITvShowClient extends IClient {
 	 * @param actor
 	 * @return
 	 */
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Actor actor, int sortBy, String sortOrder);
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Actor actor, int sortBy, String sortOrder, boolean hideWatched);
 	
 	/**
 	 * Gets all Episodes for the specified show
@@ -40,7 +40,7 @@ public interface ITvShowClient extends IClient {
 	 * @param show
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, int sortBy, String sortOrder) ;
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, int sortBy, String sortOrder, boolean hideWatched) ;
 	
 	/**
 	 * Gets all Episodes for the specified season
@@ -48,7 +48,7 @@ public interface ITvShowClient extends IClient {
 	 * @param season
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, Season season, int sortBy, String sortOrder) ;
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, Season season, int sortBy, String sortOrder, boolean hideWatched) ;
 	
 	/**
 	 * Gets all Episodes for the specified show and season
@@ -57,14 +57,14 @@ public interface ITvShowClient extends IClient {
 	 * @param season
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season, int sortBy, String sortOrder) ;
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season, int sortBy, String sortOrder, boolean hideWatched) ;
 	
 	/**
 	 * Gets all episodes from all shows
 	 * @param manager
 	 * @return
 	 */
-	public ArrayList<Episode> getEpisodes(INotifiableManager manager, int sortBy, String sortOrder);
+	public ArrayList<Episode> getEpisodes(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched);
 	
 	/**
 	 * Gets all seasons for the specified show
@@ -72,14 +72,14 @@ public interface ITvShowClient extends IClient {
 	 * @param show
 	 * @return
 	 */
-	public ArrayList<Season> getSeasons(INotifiableManager manager, TvShow show);
+	public ArrayList<Season> getSeasons(INotifiableManager manager, TvShow show, boolean hideWatched);
 	
 	/**
 	 * Gets all seasons from all shows
 	 * @param manager
 	 * @return
 	 */
-	public ArrayList<Season> getSeasons(INotifiableManager manager, int sortBy, String sortOrder);
+	public ArrayList<Season> getSeasons(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched);
 	
 	/**
 	 * Returns a cover as bitmap

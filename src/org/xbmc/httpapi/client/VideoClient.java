@@ -74,10 +74,11 @@ public class VideoClient extends Client implements IVideoClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies
 	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder) {
+	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount");
 		sb.append(" FROM movie, files, path WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
+		sb.append(watchedFilter(hideWatched));
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
@@ -88,10 +89,11 @@ public class VideoClient extends Client implements IVideoClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return Movies with offset
 	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, int offset) {
+	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, int offset, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount");
 		sb.append(" FROM movie, files, path WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
+		sb.append(watchedFilter(hideWatched));
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		sb.append(" LIMIT -1 OFFSET " + offset);
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
@@ -104,7 +106,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies with an actor
 	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, int sortBy, String sortOrder) {
+	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount");
 		sb.append(" FROM movie, files, path");
@@ -114,6 +116,7 @@ public class VideoClient extends Client implements IVideoClient {
 		sb.append("   WHERE idActor =");
 		sb.append(actor.id);
 		sb.append(" )");
+		sb.append(watchedFilter(hideWatched));
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
@@ -125,7 +128,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies of a genre
 	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
+	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount");
 		sb.append(" FROM movie, files, path");
@@ -135,6 +138,7 @@ public class VideoClient extends Client implements IVideoClient {
 		sb.append("   WHERE idGenre =");
 		sb.append(genre.id);
 		sb.append(" )");
+		sb.append(watchedFilter(hideWatched));
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
@@ -396,6 +400,13 @@ public class VideoClient extends Client implements IVideoClient {
 		return genres;		
 	}
 
+	private String watchedFilter(boolean hideWatched) {
+		if (hideWatched) {
+			return " AND (playCount IS NULL OR playCount = 0) ";
+		} else {
+			return "";
+		}
+	}
 	
 	/**
 	 * Returns an SQL String of given sort options of movies query
@@ -412,6 +423,8 @@ public class VideoClient extends Client implements IVideoClient {
 				return " ORDER BY c07 " + sortOrder + ", CASE WHEN c10 IS NULL OR c10 = '' THEN lower(c00) ELSE lower(c10) END " + sortOrder;
 			case SortType.RATING:
 				return " ORDER BY ROUND(c05, 2) " + sortOrder;
+			case SortType.DATE_ADDED:
+				return " ORDER BY files.idFile " + sortOrder;
 		}
 	}
 	
