@@ -52,14 +52,21 @@ public class TvShow implements ICoverArt, INamedResource {
 	public static String getThumbUri(ICoverArt cover) {
 		if (cover.getMediaType() == MediaType.VIDEO_TVSHOW) {
 			return cover.getPath() != null ? cover.getPath().replace("\\", "/") + "banner.jpg" : getFallbackThumbUri(cover);
-		} else {
+		} else if (cover.getMediaType() == MediaType.VIDEO_TVEPISODE) {
 			final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
 			return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+		} else {
+			return getFallbackThumbUri(cover);
 		}
 	}
 	
 	public static String getFallbackThumbUri(ICoverArt cover) {
-		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
+		final String hex;
+		if (cover.getMediaType() == MediaType.VIDEO_TVEPISODE) {
+			hex = Crc32.formatAsHexLowerCase(cover.getFallbackCrc());
+		} else {
+			hex = Crc32.formatAsHexLowerCase(cover.getCrc());
+		}
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
 
