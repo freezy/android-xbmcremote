@@ -90,8 +90,6 @@ public class NowPlayingActivity extends Activity {
 		};
 	}	
 	
-	
-	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -247,10 +245,6 @@ public class NowPlayingActivity extends Activity {
 		super.onPause();
 		mNowPlayingController.onActivityPause();
 		mConfigurationManager.onActivityPause();
-		if (isTaskRoot()) {
-			Intent intent = new Intent(NowPlayingActivity.this, HomeActivity.class);
-			NowPlayingActivity.this.startActivity(intent);
-		}
 	}
 
 	private void handleLayout() {
@@ -262,6 +256,7 @@ public class NowPlayingActivity extends Activity {
 	}
 
 	protected void callSuperOnKeyDown(int keyCode, KeyEvent event) {
+		onBackPressed();
 		super.onKeyDown(keyCode, event);
 	}
 
@@ -276,5 +271,17 @@ public class NowPlayingActivity extends Activity {
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		boolean handled = (mKeyTracker != null) ? mKeyTracker.doKeyUp(keyCode, event) : false;
 		return handled || super.onKeyUp(keyCode, event);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if (isTaskRoot()) {
+			Intent intent = new Intent(NowPlayingActivity.this, HomeActivity.class );
+			NowPlayingActivity.this.startActivity(intent);
+		}
+		
+		finish();
+		
+	    return;
 	}
 }
