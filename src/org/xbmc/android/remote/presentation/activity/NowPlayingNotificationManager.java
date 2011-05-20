@@ -120,7 +120,7 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 						case MediaType.VIDEO_TVSEASON:
 						case MediaType.VIDEO_TVSHOW:
 						case MediaType.VIDEO:
-							showVideoNotification(curr.getAlbum(), curr.getArtist(),status);
+							showVideoNotification(curr.getTitle(), curr.getArtist(),status);
 							break;
 						default:
 							if(status == PlayStatus.PLAYING) {
