@@ -42,6 +42,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -66,6 +67,12 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		//Fix for hardware without telephony. Check if telephony is supported and exit if not.
+		//(Don't know why this method should be called but we're safe this way ;))
+		PackageManager pm = context.getPackageManager();
+		boolean hasTelephony = pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY);
+		if(!hasTelephony) return;
+		
 		String action = intent.getAction();
 		final IEventClientManager eventClient = ManagerFactory.getEventClientManager(null);
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
