@@ -121,10 +121,10 @@ public abstract class Wizard<T> extends Activity {
 		} else {
 			next.setText("Next");
 		}
-		if(currentPos == 0) {
+		/*if(currentPos == 0) {
 			prev.setEnabled(false);
 		}else {
 			prev.setEnabled(true);
-		}
+		}*/
 	}
 }
