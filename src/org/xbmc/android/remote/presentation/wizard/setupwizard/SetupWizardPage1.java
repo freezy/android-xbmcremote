@@ -1,6 +1,8 @@
 package org.xbmc.android.remote.presentation.wizard.setupwizard;
 
 import java.net.HttpURLConnection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpException;
 import org.xbmc.android.remote.R;
@@ -28,10 +30,17 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 
 	private EditText port;
 	private EditText ip;
+	private EditText name;
 	private TextView errorMsg;
 	private final Handler mHandler;
 	private boolean needsLogin = false;
 
+	private static final String validIpAddressRegex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
+
+	private static final String validHostnameRegex = "^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\\-]*[A-Za-z0-9])$";
+	
+	private Pattern validHostPattern = Pattern.compile(validIpAddressRegex + "|" + validHostnameRegex);
+	
 	public SetupWizardPage1(Context context, AttributeSet attrs, int defStyle,
 			Wizard<Host> wizard) {
 		super(context, attrs, defStyle, wizard);
@@ -50,8 +59,8 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 	}
 
 	protected void onInit() {
+		name = (EditText) findViewById(R.id.setup_wizard_name);
 		ip = (EditText) findViewById(R.id.setup_wizard_ip);
-
 		port = (EditText) findViewById(R.id.setup_wizard_port);
 		errorMsg = (TextView) findViewById(R.id.setup_wizard_host_msg);
 		// test = (Button) findViewById(R.id.setup_wizard_test_connection);
@@ -67,7 +76,8 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 		showBusyMessage(getContext().getString(
 				R.string.setup_wizard_connecting_wait));
 		final Host currHost = HostFactory.host;
-		getInput().addr = ip.getText().toString();
+		getInput().name = name.getText().toString().trim();
+		getInput().addr = ip.getText().toString().trim();
 		getInput().port = Integer.parseInt(port.getText().toString());
 		ClientFactory.resetClient(getInput());
 		final IInfoManager info = ManagerFactory
@@ -122,7 +132,13 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 	public OnClickListener getNextClickListener() {
 		return new OnClickListener() {
 			public void onClick(View v) {
-				testConnection();
+				Matcher matcher = validHostPattern.matcher(ip.getText().toString().trim());
+				if(!matcher.matches()) {
+					errorMsg.setText("Please enter a valid hostname or IP");
+				}else {
+					errorMsg.setText("");
+					testConnection();
+				}
 			}
 		};
 	}

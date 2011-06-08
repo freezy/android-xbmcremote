@@ -26,6 +26,7 @@ import java.util.Hashtable;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.activity.SettingsActivity;
+import org.xbmc.android.remote.presentation.wizard.setupwizard.SetupWizard;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.presentation.INotifiableController;
@@ -33,6 +34,7 @@ import org.xbmc.api.presentation.INotifiableController;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
@@ -148,10 +150,10 @@ public class SettingsController extends AbstractController implements INotifiabl
 				pref.create(mPreferenceActivity.getPreferenceManager());
 				mPreferenceActivity.getPreferenceScreen().addPreference(pref);
 				break;
-/*			case MENU_ADD_HOST_WIZARD:
+			case MENU_ADD_HOST_WIZARD:
 				Intent i = new Intent(mPreferenceActivity, SetupWizard.class);
 				mPreferenceActivity.startActivity(i);
-				break;*/
+				break;
 			case MENU_EXIT:
 				System.exit(0);
 				break;

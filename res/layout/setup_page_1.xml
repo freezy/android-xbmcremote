@@ -6,6 +6,10 @@
   android:layout_height="fill_parent" 
   android:orientation="vertical" 
   android:padding="15dip">
+    <TextView android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/setup_wizard_hostname"></TextView>
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/setup_wizard_name">
+        <requestFocus></requestFocus>
+    </EditText>
 <TextView 
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content" 

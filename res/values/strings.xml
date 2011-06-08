@@ -34,4 +34,5 @@ Have fun.</string>
 	<string name="sms_received">SMS received</string>
 	<string name="alphabet">\u0020ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 	<string name="play_on_xbmc">Play on XBMC</string>
+	<string name="setup_wizard_hostname">The name for this host</string>
 </resources>
