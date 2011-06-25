@@ -77,6 +77,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -475,6 +476,10 @@ public class HomeController extends AbstractController implements INotifiableCon
 				lock.acquire();
 			} else
 				lock = null;
+			final PowerManager pm = (PowerManager) mActivity.getSystemService(Context.POWER_SERVICE);
+			final PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
+			wl.acquire();
+			
 			Looper.prepare();
 			mHandlerIn = new Handler() {
 				public void handleMessage(Message msgIn) {
@@ -516,6 +521,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 			if (lock != null) {
 				lock.release();
 			}
+			wl.release();
 		}
 	}
 	
