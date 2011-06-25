@@ -501,6 +501,20 @@ public class MusicClient extends Client implements IMusicClient {
 	}
 	
 	/**
+	 * Updates the artist object with additional data from the artistinfo table
+	 * @param artist
+	 * @return Updated artist
+	 */
+	public Artist updateArtistInfo(INotifiableManager manager, Artist artist) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT strBorn, strFormed, strGenre, strMoods, strStyles, strBiography");
+		sb.append("  FROM artist");
+		sb.append("  LEFT JOIN genre ON artist.idGenre = genre.idGenre");
+		sb.append("  WHERE idArtist = " + artist.id);
+		return null; //parseArtistInfo(artist, mConnection.query("QueryMusicDatabase", sb.toString(), manager));
+	}
+	
+	/**
 	 * Returns a list containing tracks of a certain condition.
 	 * @param sqlCondition SQL condition which tracks to return
 	 * @return Found tracks

@@ -25,8 +25,10 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.presentation.activity.DialogFactory;
 import org.xbmc.android.remote.presentation.activity.MusicArtistActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
+import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.object.Artist;
@@ -45,6 +47,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -54,7 +57,9 @@ public class ArtistListController extends ListController implements IController 
 	public static final int ITEM_CONTEXT_PLAY = 2;
 	public static final int ITEM_CONTEXT_QUEUE_GENRE = 3;
 	public static final int ITEM_CONTEXT_PLAY_GENRE = 4;
+	public static final int ITEM_CONTEXT_INFO = 5;
 	
+	private boolean mLoadCovers = false;
 	private Genre mGenre;
 	private IMusicManager mMusicManager;
 	
@@ -62,10 +67,21 @@ public class ArtistListController extends ListController implements IController 
 		
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		
+		final String sdError = ImportUtilities.assertSdCard();
+		mLoadCovers = sdError == null;
+		
 		if (!isCreated()) {
 			super.onCreate(activity, handler, list);
 			
+			if (!mLoadCovers) {
+				Toast toast = Toast.makeText(activity, sdError + " Displaying place holders only.", Toast.LENGTH_LONG);
+				toast.show();
+			}
+			
 			mGenre = (Genre)mActivity.getIntent().getSerializableExtra(ListController.EXTRA_GENRE);
+			
+			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getResources(), R.drawable.icon_artist);
+			setupIdleListener();
 			
 			activity.registerForContextMenu(mList);
 			mList.setOnItemClickListener(new OnItemClickListener() {
@@ -80,9 +96,7 @@ public class ArtistListController extends ListController implements IController 
 				}
 			});
 			
-			mList.setOnKeyListener(new ListControllerOnKeyListener<Artist>());
-			
-			mFallbackBitmap = BitmapFactory.decodeResource(mActivity.getApplicationContext().getResources(), R.drawable.icon_artist);
+			mList.setOnKeyListener(new ListControllerOnKeyListener<Artist>());			
 			
 			if (mGenre != null) {
 				setTitle(mGenre.name + " - Artists...");
@@ -127,6 +141,7 @@ public class ArtistListController extends ListController implements IController 
 			menu.add(0, ITEM_CONTEXT_QUEUE_GENRE, 3, "Queue only " + mGenre.name + " from Artist");
 			menu.add(0, ITEM_CONTEXT_PLAY_GENRE, 4, "Play only " + mGenre.name + " from Artist");
 		}
+		menu.add(0, ITEM_CONTEXT_INFO, 5, "View Details");
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
@@ -163,6 +178,11 @@ public class ArtistListController extends ListController implements IController 
 						true
 					), artist, mGenre, mActivity.getApplicationContext());
 				break;
+			case ITEM_CONTEXT_INFO:
+				DialogFactory.getArtistDetail(mMusicManager, mActivity, artist, mActivity.getApplicationContext()).show();
+				break;
+			default:
+				return;
 		}
 	}
 	
@@ -177,7 +197,7 @@ public class ArtistListController extends ListController implements IController 
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final OneLabelItemView view;
 			if (convertView == null) {
-				view = new OneLabelItemView(mActivity, parent.getWidth(), mFallbackBitmap, mList.getSelector(), true);
+				view = new OneLabelItemView(mActivity, mMusicManager, parent.getWidth(), mFallbackBitmap, mList.getSelector(), true);
 			} else {
 				view = (OneLabelItemView)convertView;
 			}
@@ -185,6 +205,10 @@ public class ArtistListController extends ListController implements IController 
 			view.reset();
 			view.position = position;
 			view.title = artist.name;
+			
+			if (mLoadCovers) {
+				view.getResponse().load(artist, !mPostScrollLoader.isListIdle());
+			}
 			return view;
 		}
 	}

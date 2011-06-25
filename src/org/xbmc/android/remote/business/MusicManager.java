@@ -142,7 +142,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 //		});
 		mHandler.post(new Command<ArrayList<Song>>(response, this) {
 			public void doRun() throws Exception{ 
-				response.value = music(context).getSongs(MusicManager.this, album, getSortBy(SortType.ARTIST), getSortOrder());
+				response.value = music(context).getSongs(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
 			}
 		});
 	}
@@ -598,6 +598,19 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 		mHandler.post(new Command<Album>(response, this) {
 			public void doRun() throws Exception{ 
 				response.value = music(context).updateAlbumInfo(MusicManager.this, album);
+			}
+		});
+	}
+	
+	/**
+	 * Updates the artist object with additional data from the artistinfo table
+	 * @param response Response object
+	 * @param artist Artist to update
+	 */
+	public void updateArtistInfo(final DataResponse<Artist> response, final Artist artist, final Context context) {
+		mHandler.post(new Command<Artist>(response, this) {
+			public void doRun() throws Exception{ 
+				response.value = music(context).updateArtistInfo(MusicManager.this, artist);
 			}
 		});
 	}

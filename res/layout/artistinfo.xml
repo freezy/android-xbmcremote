@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/artistinfo" android:orientation="vertical" 
+	android:layout_height="fill_parent"
+	android:layout_width="fill_parent" android:padding="10dip">
+	<LinearLayout android:layout_height="wrap_content"
+		android:layout_marginBottom="5dp" android:orientation="horizontal"
+		android:layout_width="wrap_content" android:layout_gravity="left"
+		android:id="@+id/LinearLayoutHeader">
+		<ImageView android:src="@drawable/nocover" android:id="@+id/artist_cover"
+			android:layout_height="wrap_content" android:layout_width="wrap_content"
+			android:layout_marginRight="5dip" android:scaleType="fitStart" />
+		<LinearLayout android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:orientation="vertical"
+			android:layout_marginBottom="5pt" android:id="@+id/LinearLayoutInfo">
+			<TextView android:id="@+id/artist_born"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+			<TextView android:id="@+id/artist_formed"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+			<TextView android:id="@+id/artist_genres"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+		</LinearLayout>
+	</LinearLayout>	
+
+	<ScrollView android:id="@+id/ScrollView"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		android:scrollbars="none">
+		<TextView android:id="@+id/artist_biography"
+			android:layout_height="wrap_content" android:layout_width="wrap_content"
+			android:layout_margin="5dip" android:orientation="vertical" />
+	</ScrollView>
+</LinearLayout>

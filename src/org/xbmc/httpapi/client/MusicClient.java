@@ -476,6 +476,19 @@ public class MusicClient extends Client implements IMusicClient {
 	}
 	
 	/**
+	 * Updates the artist object with additional data from the artistinfo table
+	 * @param artist
+	 * @return Updated artist
+	 */
+	public Artist updateArtistInfo(INotifiableManager manager, Artist artist) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT strBorn, strFormed, strGenres, strMoods, strStyles, strBiography");
+		sb.append("  FROM artistinfo");
+		sb.append("  WHERE idArtist = " + artist.id);
+		return parseArtistInfo(artist, mConnection.query("QueryMusicDatabase", sb.toString(), manager));
+	}
+	
+	/**
 	 * Returns a list containing tracks of a certain condition.
 	 * @param sqlCondition SQL condition which tracks to return
 	 * @return Found tracks
@@ -666,16 +679,20 @@ public class MusicClient extends Client implements IMusicClient {
 	}
 	
 	/**
-	 * Returns a pre-resized album cover. Pre-resizing is done in a way that
+	 * Returns a pre-resized album/artist cover. Pre-resizing is done in a way that
 	 * the bitmap at least as large as the specified size but not larger than
 	 * the double.
 	 * @param manager Postback manager
 	 * @param cover Cover object
-	 * @param size Minmal size to pre-resize to.
+	 * @param size Minimal size to pre-resize to.
 	 * @return Thumbnail bitmap
 	 */
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
-		return getCover(manager, cover, size, Album.getThumbUri(cover), Album.getFallbackThumbUri(cover));
+		if (cover instanceof Artist) {
+			return getCover(manager, cover, size, Artist.getThumbUri(cover), Artist.getFallbackThumbUri(cover));
+		} else {
+			return getCover(manager, cover, size, Album.getThumbUri(cover), Album.getFallbackThumbUri(cover));
+		}
 	}
 	
 	/**
@@ -779,7 +796,6 @@ public class MusicClient extends Client implements IMusicClient {
 	 * <ol>
 	 * 	<li><code>strGenre</code></li>
 	 * 	<li><code>strExtraGenres</code></li>
-	 * 	<li><code>iYear</code></li>
 	 * 	<li><code>strLabel</code></li>
 	 * 	<li><code>iRating</code></li>
 	 * </ol>  
@@ -790,14 +806,17 @@ public class MusicClient extends Client implements IMusicClient {
 	private Album parseAlbumInfo(Album album, String response) {
 		String[] fields = response.split("<field>");
 		try {
+			if (Connection.trim(fields[1]).length() > 0) {
+				album.genres = Connection.trim(fields[1]);
+			}
 			if (Connection.trim(fields[2]).length() > 0) {
-				album.genres = Connection.trim(fields[1]) + Connection.trim(fields[2]);
-			}	
+				album.genres += ((Connection.trim(fields[1]).length() > 0) ? " / " : "") + Connection.trim(fields[2]);
+			}
 			if (Connection.trim(fields[3]).length() > 0) {
-				album.label = Connection.trim(fields[4]);
+				album.label = Connection.trim(fields[3]);
 			}
 			if (Connection.trim(fields[4]).length() > 0) {
-				album.rating = Connection.trimInt(fields[5]);
+				album.rating = Connection.trimInt(fields[4]);
 			}
 		} catch (Exception e) {
 			System.err.println("ERROR: " + e.getMessage());
@@ -805,6 +824,50 @@ public class MusicClient extends Client implements IMusicClient {
 			e.printStackTrace();
 		}
 		return album;
+	}
+	
+	/**
+	 * Updates an artist with info from HTTP API query response. One row is 
+	 * expected, with the following columns:
+	 * <ol>
+	 * 	<li><code>strBorn</code></li>
+	 * 	<li><code>strFormed</code></li>
+	 *  <li><code>strGenre</code></li>
+	 * 	<li><code>strMoods</code></li>
+	 * 	<li><code>strStyles</code></li>
+	 * 	<li><code>strBiography</code></li>
+	 * </ol>  
+	 * @param artist
+	 * @param response
+	 * @return Updated artist
+	 */
+	private Artist parseArtistInfo(Artist artist, String response) {
+		String[] fields = response.split("<field>");
+		try {
+			if (Connection.trim(fields[1]).length() > 0) {
+				artist.born = Connection.trim(fields[1]);
+			}	
+			if (Connection.trim(fields[2]).length() > 0) {
+				artist.formed = Connection.trim(fields[2]);
+			}
+			if (Connection.trim(fields[3]).length() > 0) {
+				artist.genres = Connection.trim(fields[3]);
+			}
+			if (Connection.trim(fields[4]).length() > 0) {
+				artist.moods = Connection.trim(fields[4]);
+			}
+			if (Connection.trim(fields[5]).length() > 0) {
+				artist.styles = Connection.trim(fields[5]);
+			}
+			if (Connection.trim(fields[6]).length() > 0) {
+				artist.biography = Connection.trim(fields[6]);
+			}
+		} catch (Exception e) {
+			System.err.println("ERROR: " + e.getMessage());
+			System.err.println("response = " + response);
+			e.printStackTrace();
+		}
+		return artist;
 	}
 	
 	/**

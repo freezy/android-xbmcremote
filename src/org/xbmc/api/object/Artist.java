@@ -70,13 +70,17 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 		return THUMB_PREFIX + hex + ".tbn";
 	}
 	
+	public static String getFallbackThumbUri(ICoverArt cover) {
+		return null;
+	}
+	
 	/**
 	 * Returns the CRC of the artist on which the thumb name is based upon.
 	 * @return 8-char CRC32
 	 */
 	public long getCrc() {
 		if (thumbID == 0) {
-			thumbID = Crc32.computeLowerCase("artist" + id);
+			thumbID = Crc32.computeLowerCase("artist" + name);
 		}
 		return thumbID;
 	}
@@ -127,6 +131,30 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 	 * Artist name
 	 */
 	public String name;
+	/**
+	 * Born
+	 */
+	public String born = null;
+	/**
+	 * Formed
+	 */
+	public String formed = null;
+	/**
+	 * Genres, separated by " / "
+	 */
+	public String genres = null;
+	/**
+	 * Moods
+	 */
+	public String moods = null;
+	/**
+	 * Styles
+	 */
+	public String styles = null;
+	/**
+	 * Biography
+	 */
+	public String biography = null;
 	
 	public long thumbID = 0;
 	

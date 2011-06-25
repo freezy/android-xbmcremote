@@ -260,6 +260,13 @@ public interface IMusicClient extends IClient {
 	public Album updateAlbumInfo(INotifiableManager manager, Album album);
 	
 	/**
+	 * Updates the artist object with additional data from the artistinfo table
+	 * @param artist
+	 * @return Updated artist
+	 */
+	public Artist updateArtistInfo(INotifiableManager manager, Artist artist);
+	
+	/**
 	 * Returns a list containing all tracks of an album. The list is sorted by filename.
 	 * @param album Album
 	 * @param sortBy Sort field, see SortType.* 

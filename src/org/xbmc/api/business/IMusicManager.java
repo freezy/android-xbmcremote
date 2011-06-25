@@ -260,6 +260,13 @@ public interface IMusicManager extends IManager {
 	public void updateAlbumInfo(final DataResponse<Album> response, final Album album, final Context context);
 	
 	/**
+	 * Updates the artist object with additional data from the artistinfo table
+	 * @param response Response object
+	 * @param artist Artist to update
+	 */
+	public void updateArtistInfo(final DataResponse<Artist> response, final Artist artist, final Context context);
+	
+	/**
 	 * Put in here everything that has to be cleaned up after leaving an activity.
 	 */
 	public void postActivity();
