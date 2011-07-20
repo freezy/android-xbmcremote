@@ -197,7 +197,7 @@ public class ArtistListController extends ListController implements IController 
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final OneLabelItemView view;
 			if (convertView == null) {
-				view = new OneLabelItemView(mActivity, mMusicManager, parent.getWidth(), mFallbackBitmap, mList.getSelector(), true);
+				view = new OneLabelItemView(mActivity, mMusicManager, parent.getWidth(), mFallbackBitmap, mList.getSelector(), false);
 			} else {
 				view = (OneLabelItemView)convertView;
 			}
