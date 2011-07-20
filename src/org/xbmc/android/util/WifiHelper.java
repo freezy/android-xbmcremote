@@ -5,6 +5,8 @@ import java.util.List;
 import org.xbmc.api.object.Host;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -38,10 +40,13 @@ public class WifiHelper {
 	
 	private final WifiManager mManager;
 	
+	private final ConnectivityManager mConnectivityManager;
+	
 	private static WifiHelper mInstance = null;
 
 	private WifiHelper(Context context) {
 		this.mManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+		this.mConnectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		mInstance = this;
 	}
 	
@@ -105,7 +110,10 @@ public class WifiHelper {
 			final WifiInfo info = mManager.getConnectionInfo();
 			if(info != null && info.getSSID() != null) {
 				Log.d(TAG, "WIFI_STATE_CONNECTED to " + info.getSSID());
-				return WIFI_STATE_CONNECTED;
+				final NetworkInfo mWifi = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+				if (mWifi.isConnected()) {
+					return WIFI_STATE_CONNECTED;
+				}
 			}
 			Log.d(TAG, "WIFI_STATE_ENABLED");
 			return WIFI_STATE_ENABLED;
