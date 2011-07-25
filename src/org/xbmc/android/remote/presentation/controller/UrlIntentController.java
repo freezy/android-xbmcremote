@@ -39,6 +39,7 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -81,8 +82,19 @@ public class UrlIntentController extends AbstractController implements IControll
 	}
 
 	public void playUrl(String url) {
-		mControlManager.playUrl(new DataResponse<Boolean>(), url, mActivity.getApplicationContext());
-	
+		// If it is a youtube URL, we have to parse the video id from it and send it to the youtube plugin.
+		// The syntax for that is plugin://plugin.video.youtube/?path=/root/search%26action=play_video%26videoid=VIDEOID
+		Uri playuri = Uri.parse(url);
+		String playurl;
+		if (playuri.getHost().equals("www.youtube.com") || playuri.getHost().equals("youtube.com")) {
+			// We'll need to get the v= parameter from the URL and use that to send to XBMC
+			String videoid = playuri.getQueryParameter("v");
+			playurl = "plugin://plugin.video.youtube/?path=/root/search&action=play_video&videoid="+videoid;
+		} else {
+			// Not a youtube URL so just pass it on to XBMC as-is
+			playurl = playuri.toString();
+		}
+		mControlManager.playUrl(new DataResponse<Boolean>(), playurl, mActivity.getApplicationContext());
 	}
 	
 	public void setupStatusHandler() {
