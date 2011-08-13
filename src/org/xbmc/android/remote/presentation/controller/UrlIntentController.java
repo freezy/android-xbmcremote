@@ -39,6 +39,7 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -82,7 +83,6 @@ public class UrlIntentController extends AbstractController implements IControll
 
 	public void playUrl(String url) {
 		mControlManager.playUrl(new DataResponse<Boolean>(), url, mActivity.getApplicationContext());
-	
 	}
 	
 	public void setupStatusHandler() {
@@ -138,9 +138,25 @@ public class UrlIntentController extends AbstractController implements IControll
 					return;
 				}
 				
+				// If it is a youtube URL, we have to parse the video id from it and send it to the youtube plugin.
+				// The syntax for that is plugin://plugin.video.youtube/?path=/root/search%26action=play_video%26videoid=VIDEOID
+				Uri playuri = Uri.parse(path);
+				final String url;
+				String message;
+				if (playuri.getHost().equals("www.youtube.com") || playuri.getHost().equals("youtube.com")) {
+					// We'll need to get the v= parameter from the URL and use that to send to XBMC
+					String videoid = playuri.getQueryParameter("v");
+					url = "plugin://plugin.video.youtube/?path=/root/search&action=play_video&videoid="+videoid;
+					message = "Do you want to play\n" + path + "\n on XBMC? Youtube addon required!";
+				} else {
+					// Not a youtube URL so just pass it on to XBMC as-is
+					url = playuri.toString();
+					message = "Do you want to play\n" + path + "\n on XBMC?";
+				}
+								
 				final Builder builder = new Builder(mActivity);
 				builder.setTitle("Play URL on XBMC?");
-				builder.setMessage("Do you want to play\n" + path + "\non XBMC?");
+				builder.setMessage(message);
 				builder.setCancelable(true);
 				builder.setIcon(drawable.icon);
 				builder.setNeutralButton("Yes", new android.content.DialogInterface.OnClickListener() {
@@ -148,7 +164,7 @@ public class UrlIntentController extends AbstractController implements IControll
 						 new Thread(){
 							 public void run(){
 								 Looper.prepare();
-								 playUrl(path);
+								 playUrl(url);
 								 Looper.loop();
 							 }
 						 }.start();
