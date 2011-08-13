@@ -68,6 +68,11 @@
 			android:title="Show Pictures"
 			android:summary="Show the &quot;Browse your Pictures&quot; item"
 			android:enabled="true" android:defaultValue="true" />
+		<CheckBoxPreference
+			android:key="setting_show_home_powerdown"
+			android:title="Show Power Down"
+			android:summary="Display the Power Down Button"
+			android:enabled="true" android:defaultValue="false" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Screen Behaviour">
 		<ListPreference

@@ -214,9 +214,9 @@ public class NowPlayingActivity extends Activity {
 			case KeyEvent.KEYCODE_SEARCH:
 				switchMonitorMode();
 				return true;
-			case KeyEvent.KEYCODE_PAGE_UP:
+/*			case KeyEvent.KEYCODE_PAGE_UP:
 				switchMonitorMode();
-				return true;
+				return true;*/
 			}
 		} catch (IOException e) {
 			client.setController(null);

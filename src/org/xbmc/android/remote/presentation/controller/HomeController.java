@@ -42,6 +42,7 @@ import org.xbmc.android.remote.presentation.activity.TvShowLibraryActivity;
 import org.xbmc.android.util.ClientFactory;
 import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.android.util.HostFactory;
+import org.xbmc.android.util.PowerDown;
 import org.xbmc.android.util.WakeOnLan;
 import org.xbmc.android.util.WifiHelper;
 import org.xbmc.api.business.DataResponse;
@@ -104,7 +105,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private static final int HOME_ACTION_RECONNECT = 5;
 	private static final int HOME_ACTION_WOL = 6;
 	private static final int HOME_ACTION_TVSHOWS = 7;
-	
+	private static final int HOME_ACTION_POWERDOWN = 8;
 	
 	private IInfoManager mInfoManager;
 	
@@ -217,6 +218,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	
 	private void setupMenuItems(GridView menuGrid) {
 		final HomeItem remote = new HomeItem(HOME_ACTION_REMOTE, R.drawable.icon_home_remote, "Remote Control", "Use as");
+
 		final ArrayList<HomeItem> homeItems = new ArrayList<HomeItem>();
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
 		if (prefs.getBoolean("setting_show_home_music", true))
@@ -227,10 +229,13 @@ public class HomeController extends AbstractController implements INotifiableCon
 			homeItems.add(new HomeItem(HOME_ACTION_TVSHOWS, R.drawable.icon_home_tv, "TV Shows", "Watch your"));
 		if (prefs.getBoolean("setting_show_home_pictures", true))
 			homeItems.add(new HomeItem(HOME_ACTION_PICTURES, R.drawable.icon_home_picture, "Pictures", "Browse your"));
+
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.icon_home_playing, "Now Playing", "See what's"));
 		homeItems.add(remote);
-			
+		if (prefs.getBoolean("setting_show_home_powerdown", false))
+			homeItems.add(new HomeItem(HOME_ACTION_POWERDOWN, R.drawable.icon_home_power, "Power Off", "Turn your XBMC off"));
+		
 		final ArrayList<HomeItem> offlineItems = new ArrayList<HomeItem>();
 		offlineItems.add(remote);
 		offlineItems.add(new HomeItem(HOME_ACTION_RECONNECT, R.drawable.icon_home_reconnect, "Connect", "Try again to"));
@@ -310,6 +315,10 @@ public class HomeController extends AbstractController implements INotifiableCon
 							mWolCounter = new WolCounter(host.wol_wait * 1000,1000);
 							mWolCounter.start();
 						}
+						break;
+					case HOME_ACTION_POWERDOWN:
+						PowerDown powerdown = new PowerDown();
+						powerdown.ShowDialog(mActivity);
 						break;
 				}
 				if (intent != null) {
@@ -584,7 +593,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if (key.equals("setting_show_home_music") || key.equals("setting_show_home_movies") || key.equals("setting_show_home_tv") || key.equals("setting_show_home_pictures")) {
+		if (key.equals("setting_show_home_music") || key.equals("setting_show_home_movies") || key.equals("setting_show_home_tv") || key.equals("setting_show_home_pictures") || key.equals("setting_show_home_powerdown")) {
 			setupMenuItems(mMenuGrid);
 		}
 	}
