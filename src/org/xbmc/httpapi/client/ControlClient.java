@@ -145,6 +145,23 @@ public class ControlClient implements IControlClient {
 	}
 	
 	/**
+	 * Send the string <code>text</code> via keys on the virtual keyboard.
+	 * @param manager Manager reference
+	 * @param text The text string to send.
+	 * @return true on success, false otherwise.
+	 */
+	public boolean sendText(INotifiableManager manager, String text) {
+		final int codeOffset = 0xf100;
+		for (char c : text.toCharArray()) {
+			int code = (int)c+codeOffset;
+			if (! mConnection.getBoolean(manager, "SendKey", Integer.toString(code))) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
 	 * Sets the volume as a percentage of the maximum possible.
 	 * @param manager Manager reference
 	 * @param volume New volume (0-100)
