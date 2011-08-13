@@ -39,6 +39,7 @@ import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -52,8 +53,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.EditText;
 
 public class RemoteController extends AbstractController implements INotifiableController, IController {
 
@@ -66,8 +69,10 @@ public class RemoteController extends AbstractController implements INotifiableC
 	private static final int MENU_XBMC_S = 403;
 //	private static final int MENU_SWITCH_MOUSE = 404;
 	private static final int MENU_SWITCH_GESTURE = 405;
+	private static final int MENU_ENTER_TEXT = 406;
 
-	
+	public static final int DIALOG_SENDTEXT = 500;
+
 	private static final int DPAD_DOWN_MIN_DELTA_TIME = 100;
 	private static final int MOTION_EVENT_MIN_DELTA_TIME = 250;
 	private static final float MOTION_EVENT_MIN_DELTA_POSITION = 0.15f;
@@ -358,11 +363,45 @@ public class RemoteController extends AbstractController implements INotifiableC
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
 		menu.add(0, MENU_SWITCH_GESTURE, 0, "Gesture mode").setIcon(R.drawable.menu_gesture_mode);
+		menu.add(0, MENU_ENTER_TEXT, 0, "Text Entry").setIcon(R.drawable.menu_text_entry);
 		menu.add(0, MENU_XBMC_EXIT, 0, "Exit XBMC").setIcon(R.drawable.menu_xbmc_exit);
 		menu.add(0, MENU_XBMC_S, 0, "Press \"S\"").setIcon(R.drawable.menu_xbmc_s);
 		return true;
 	}
-	
+
+	public Dialog onCreateDialog(int id) {
+		final Dialog dialog;
+		switch(id) {
+		case DIALOG_SENDTEXT:
+			dialog = new Dialog(mActivity);
+			dialog.setContentView(R.layout.sendtext);
+			dialog.setTitle("Text Entry");
+			Button sendbutton = (Button) dialog.findViewById(R.id.sendtext_button_send);
+			sendbutton.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                    	final EditText text = (EditText) dialog.findViewById(R.id.sendtext_text);
+                    	mControl.sendText(new DataResponse<Boolean>(), text.getText().toString(), mActivity.getApplicationContext());
+                        dialog.dismiss();
+                    }
+                });
+			Button cancelbutton = (Button) dialog.findViewById(R.id.sendtext_button_cancel);
+			cancelbutton.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+	        break;
+		default:
+	        dialog = null;
+		}
+		return dialog;
+	}
+
+	public void onPrepareDialog (int id, Dialog dialog) {
+		final EditText text = (EditText) dialog.findViewById(R.id.sendtext_text);
+		text.setText("");
+	}
+
 	public boolean onOptionsItemSelected(MenuItem item) {
 		try {
 			Intent intent = null;
@@ -379,6 +418,9 @@ public class RemoteController extends AbstractController implements INotifiableC
 					break;
 				case MENU_XBMC_S:
 					mEventClientManager.sendButton("KB", "S", false, true, true, (short)0, (byte)0);
+					break;
+				case MENU_ENTER_TEXT:
+					showDialog(DIALOG_SENDTEXT);
 					break;
 			}
 			if (intent != null) {

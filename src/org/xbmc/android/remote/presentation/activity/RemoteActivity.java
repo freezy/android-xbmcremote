@@ -29,6 +29,7 @@ import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -124,6 +125,16 @@ public class RemoteActivity extends Activity {
 
 
 		setupButtons();
+	}
+
+	@Override
+	public Dialog onCreateDialog(int id) {
+		return mRemoteController.onCreateDialog(id);
+	}
+
+	@Override
+	public void onPrepareDialog(int id, Dialog dialog) {
+		mRemoteController.onPrepareDialog(id, dialog);
 	}
 
 	@Override

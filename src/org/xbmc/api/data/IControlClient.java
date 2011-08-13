@@ -113,6 +113,14 @@ public interface IControlClient extends IClient {
 	public boolean seek(INotifiableManager manager, SeekType type, int progress);
 	
 	/**
+	 * Send the string <code>text</code> via keys on the virtual keyboard.
+	 * @param manager Manager reference
+	 * @param text The text string to send.
+	 * @return true on success, false otherwise.
+	 */
+	public boolean sendText(INotifiableManager manager, String text);
+	
+	/**
 	 * Toggles the sound on/off.
 	 * @param manager Manager reference
 	 * @return true on success, false otherwise.

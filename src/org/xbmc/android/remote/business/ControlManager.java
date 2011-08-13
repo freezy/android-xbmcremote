@@ -138,6 +138,21 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	}
 	
 	/**
+	 * Send the string <code>text</code> via keys on the virtual keyboard.
+	 * @param response Response object
+	 * @param text The text string to send.
+	 * @return true on success, false otherwise.
+	 */
+	public void sendText(final DataResponse<Boolean> response, final String text, final Context context) {
+		mHandler.post(new Command<Boolean>(response, this){
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).sendText(ControlManager.this, text);
+			}	
+		});
+	}
+
+	/**
 	 * Seeks to a position. If type is
 	 * <ul>
 	 * 	<li><code>absolute</code> - Sets the playing position of the currently 

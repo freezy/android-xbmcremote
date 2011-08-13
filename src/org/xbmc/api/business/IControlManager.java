@@ -171,4 +171,13 @@ public interface IControlManager extends IManager {
 	 * @param context
 	 */
 	public void getVolume(final DataResponse<Integer> response, final Context context);
+	
+	/**
+	 * Send the string <code>text</code> via keys on the virtual keyboard.
+	 * @param response Response object
+	 * @param text The text string to send.
+	 * @param context Context reference
+	 * @return true on success, false otherwise.
+	 */
+	public void sendText(final DataResponse<Boolean> response, final String text, final Context context);
 }
