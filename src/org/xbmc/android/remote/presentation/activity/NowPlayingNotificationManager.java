@@ -66,7 +66,14 @@ public class NowPlayingNotificationManager implements OnSharedPreferenceChangeLi
 	}
 	
 	public void showNotification(String artist, String title, String text, int icon) {
-		Notification notification = buildNotification(artist + " - " + title, text, icon);
+		Notification notification = null;
+		if (artist==null||artist.isEmpty()){
+			// no artist given
+			notification = buildNotification(title, text, icon);
+		} else {
+			// all available
+			notification = buildNotification(artist + " - " + title, text, icon);
+		}
 		final String ns = Context.NOTIFICATION_SERVICE;
 		NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(ns);
 		notificationManager.notify(NOW_PLAYING_ID, notification);
