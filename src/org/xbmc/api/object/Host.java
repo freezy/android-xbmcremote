@@ -23,12 +23,18 @@ package org.xbmc.api.object;
 
 import java.io.Serializable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.util.Log;
+
 /**
  * Just a data container for connection data of an XBMC instance
  * 
  * @author Team XBMC
  */
 public class Host implements Serializable {
+	private static final String TAG = "Host";
 	
 	public static final int DEFAULT_HTTP_PORT = 8080;
 	public static final int DEFAULT_EVENTSERVER_PORT = 9777;
@@ -98,6 +104,28 @@ public class Host implements Serializable {
 	
 	public String getSummary() {
 		return toString();
+	}
+	
+	public String toJson() {
+		try {
+			JSONObject json = new JSONObject();
+			json.put("name", name);
+			json.put("addr", addr);
+			json.put("port", port);
+			json.put("user", user);
+			json.put("pass", pass);
+			json.put("esPort", esPort);
+			json.put("timeout", timeout);
+			json.put("wifi_only", wifi_only);
+			json.put("access_point", access_point);
+			json.put("mac_addr", mac_addr);
+			json.put("wol_wait", wol_wait);
+			json.put("wol_port", wol_port);
+			return json.toString();
+		} catch (JSONException e) {
+			Log.e(TAG, "Error in toJson", e);
+			return "";
+		}
 	}
 	
 	private static final long serialVersionUID = 7886482294339161092L;

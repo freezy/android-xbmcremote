@@ -23,6 +23,9 @@ package org.xbmc.android.util;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.xbmc.android.remote.business.provider.HostProvider;
 import org.xbmc.android.remote.business.provider.HostProvider.Hosts;
 import org.xbmc.api.object.Host;
@@ -105,6 +108,36 @@ public abstract class HostFactory {
 			cur.close();
 		}
 		return hosts;
+	}
+	
+	/**
+	 * Parses a JSON-formatted string into a Host object.
+	 * 
+	 * @param str a JSON string
+	 * @return a Host object that represents str, or null if an error occurred
+	 */
+	public static Host getHostFromJson(String str) {
+		try {
+			JSONObject json = (JSONObject) new JSONTokener(str).nextValue();
+			Host host = new Host();
+			host.name = json.getString("name");
+			host.addr = json.getString("addr");
+			host.port = json.getInt("port");
+			host.user = json.getString("user");
+			host.pass = json.getString("pass");
+			host.esPort = json.getInt("esPort");
+			host.timeout = json.getInt("timeout");
+			host.wifi_only = json.getBoolean("wifi_only");
+			host.access_point = json.getString("access_point");
+			host.mac_addr = json.getString("mac_addr");
+			host.wol_wait = json.getInt("wol_wait");
+			host.wol_port = json.getInt("wol_port");
+			return host;
+		}
+		catch (JSONException e) {
+			Log.e(TAG, "Error in parseJson", e);
+			return null;
+		}
 	}
 	
 	/**
