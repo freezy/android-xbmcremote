@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout 
+<RelativeLayout 
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent"
 	android:orientation="vertical" >
-	<include layout="@layout/titlebar" />
+	<include
+		android:id="@+id/titlebar"
+		layout="@layout/titlebar"
+		android:layout_alignParentTop="true" />
 	<ScrollView 
+		android:layout_below="@id/titlebar"
+		android:layout_above="@+id/buttonbar"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:scrollbars="none">
@@ -68,19 +73,20 @@
 				<!-- CAST -->
 				<TextView android:text="CAST" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
 			</LinearLayout>
-			<LinearLayout
-				android:layout_width="fill_parent" 
-				android:layout_height="wrap_content"
-				android:orientation="horizontal"
-				android:padding="20dip"
-				android:gravity="center_horizontal">
-				<Button 
-					android:text="Play TV Show" 
-					android:id="@+id/tvdetails_playbutton" 
-					android:layout_width="wrap_content" 
-					android:layout_height="wrap_content"
-					android:padding="7dip" />
-			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>
-</LinearLayout>
+	<LinearLayout
+		android:id="@id/buttonbar"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_alignParentBottom="true"
+		style="@android:style/ButtonBar">
+		<Button
+			android:id="@+id/tvdetails_playbutton"
+			android:text="@string/play_tv_show"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1" />
+	</LinearLayout>
+</RelativeLayout>

@@ -45,4 +45,8 @@ Have fun.</string>
 	<string name="host_scan_error">There was an error while scanning a new host. Please verify that you are scanning a valid barcode.</string>
 	<string name="added_host">Successfully added \"%s\"</string>
 	<string name="barcode_scanner_required">You need to install the Barcode Scanner app to use this feature. Would you like to install it now?</string>
+	<string name="play_movie">Play Movie</string>
+	<string name="play_trailer">Play Trailer</string>
+	<string name="play_episode">Play Episode</string>
+	<string name="play_tv_show">Play TV Show</string>
 </resources>
