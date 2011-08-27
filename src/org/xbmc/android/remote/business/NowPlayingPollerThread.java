@@ -82,6 +82,8 @@ public class NowPlayingPollerThread extends Thread {
 	private int mPlayList = -1;
 	private int mPosition = -1;
 	
+	private Context context;
+	
 	/**
 	 * Since this one is kinda of its own, we use a stub as manager.
 	 * @TODO create some toats or at least logs instead of empty on* methods.
@@ -108,25 +110,19 @@ public class NowPlayingPollerThread extends Thread {
 			public void retryAll() {
 			}
 		};
-		try {
-			mControl = ClientFactory.getControlClient(mManagerStub, context);
-		} catch (WifiStateException e2) {
-			mControl = null;
-		}
-  	  	try {
-			mInfo = ClientFactory.getInfoClient(mManagerStub, context);
-		} catch (WifiStateException e1) {
-			mInfo = null;
-		}
+		this.context = context;
   	  	mSubscribers = new HashSet<Handler>();
 	}
 	
 	public synchronized void subscribe(Handler handler) {
+		//FIXME: due to honeycomb restrictions we can't execute network code on the main thread
+		//so getCurrentlyPlaying causes a networkOnMainthreadException
+		
 		// update handler on the state of affairs
-		final ICurrentlyPlaying currPlaying = mControl.getCurrentlyPlaying(mManagerStub);
-		sendSingleMessage(handler, MESSAGE_PROGRESS_CHANGED, currPlaying);
-		sendSingleMessage(handler, MESSAGE_PLAYLIST_ITEM_CHANGED, currPlaying);
-		sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
+//		final ICurrentlyPlaying currPlaying = mControl.getCurrentlyPlaying(mManagerStub);
+//		sendSingleMessage(handler, MESSAGE_PROGRESS_CHANGED, currPlaying);
+//		sendSingleMessage(handler, MESSAGE_PLAYLIST_ITEM_CHANGED, currPlaying);
+//		sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
 		
 		mSubscribers.add(handler);
 	}
@@ -165,6 +161,16 @@ public class NowPlayingPollerThread extends Thread {
 	}
 	
 	public void run() {
+		try {
+			mControl = ClientFactory.getControlClient(mManagerStub, context);
+		} catch (WifiStateException e2) {
+			mControl = null;
+		}
+  	  	try {
+			mInfo = ClientFactory.getInfoClient(mManagerStub, context);
+		} catch (WifiStateException e1) {
+			mInfo = null;
+		}
 		String lastPos = "-1";
 		int lastPlayStatus = PlayStatus.UNKNOWN;
 		int currentPlayStatus = PlayStatus.UNKNOWN;
