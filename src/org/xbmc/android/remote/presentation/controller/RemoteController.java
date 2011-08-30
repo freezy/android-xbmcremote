@@ -382,6 +382,14 @@ public class RemoteController extends AbstractController implements INotifiableC
 				public void onClick(View v) {
 					EditText text = (EditText) v.getRootView().findViewById(R.id.sendtext_text);
 					mControl.sendText(new DataResponse<Boolean>(), text.getText().toString(), context);
+					text.setText("");
+				}
+			});
+			Button donebutton = (Button) dialog.findViewById(R.id.sendtext_button_done);
+			donebutton.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					EditText text = (EditText) v.getRootView().findViewById(R.id.sendtext_text);
+					mControl.sendText(new DataResponse<Boolean>(), text.getText().toString()+"\n", context);
 					dismissDialog(DIALOG_SENDTEXT);
 				}
 			});
