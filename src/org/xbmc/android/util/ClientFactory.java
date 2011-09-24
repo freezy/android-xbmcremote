@@ -110,9 +110,7 @@ public abstract class ClientFactory {
 	private static void assertWifiState(Context context) throws WifiStateException {
 		if (context != null && HostFactory.host != null && HostFactory.host.wifi_only){
 			final int state = WifiHelper.getInstance(context).getWifiState();
-			switch (state) {
-			case WifiHelper.WIFI_STATE_DISABLED:
-			case WifiHelper.WIFI_STATE_UNKNOWN:
+			if (state != WifiHelper.WIFI_STATE_CONNECTED) {
 				throw new WifiStateException(state);
 			}
 		}
