@@ -630,7 +630,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 			default:
 				return " ORDER BY lower(tvshow.c00) asc";
 			case SortType.TITLE:
-				return " ORDER BY CASE WHEN tvshow.c15 IS NULL OR tvshow.c15 = '' THEN lower(tvshow.c00) ELSE lower(tvshow.c15) END " + sortOrder;
+				return " ORDER BY CASE WHEN tvshow.c15 IS NULL OR tvshow.c15 = '' THEN replace(lower(tvshow.c00),'the ','') ELSE replace(lower(tvshow.c15),'the ','') END " + sortOrder;
 			case SortType.YEAR:
 				return " ORDER BY tvshow.c05 " + sortOrder + ", CASE WHEN tvshow.c15 IS NULL OR tvshow.c15 = '' THEN lower(tvshow.c00) ELSE lower(tvshow.c15) END " + sortOrder;
 			case SortType.RATING:
