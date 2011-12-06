@@ -1,91 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout 
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent" 
+	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:orientation="vertical" >
-	<include layout="@layout/titlebar" />
-	<ScrollView 
+	android:orientation="vertical">
+	<include
+		layout="@layout/titlebar"
+		android:layout_weight="0" />
+	<ScrollView
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:scrollbars="none">
-		<LinearLayout 
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"
-			android:orientation="vertical">
-			<ImageView 
-				android:id="@+id/tvepisodedetails_thumb" 
+		android:scrollbars="none"
+		android:layout_weight="1"
+		android:layout_height="fill_parent">
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:orientation="vertical" android:layout_height="wrap_content">
+			<ImageView
+				android:id="@+id/tvepisodedetails_thumb"
 				android:layout_height="wrap_content"
 				android:layout_width="fill_parent"
 				android:scaleType="centerInside"
 				android:adjustViewBounds="true"
 				android:padding="0dip" />
 			<LinearLayout
-				android:layout_width="fill_parent" 
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="-5dip"
-				android:orientation="horizontal" 
+				android:orientation="horizontal"
 				android:gravity="center_horizontal">
-				<ImageView 
-					android:id="@+id/tvepisodedetails_rating_stars" 
+				<ImageView
+					android:id="@+id/tvepisodedetails_rating_stars"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
 					android:src="@drawable/stars_0"
 					android:padding="0dip" />
-				<TextView 
-					android:id="@+id/tvepisodedetails_rating" 
-					android:layout_width="wrap_content" 
+				<TextView
+					android:id="@+id/tvepisodedetails_rating"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:textSize="18dip"
-					android:textStyle="bold" 
+					android:textStyle="bold"
 					android:paddingTop="6dip"
 					android:paddingLeft="4dip" />
-				<TextView 
-					android:id="@+id/tvepisodedetails_rating_numvotes" 
-					android:layout_width="wrap_content" 
+				<TextView
+					android:id="@+id/tvepisodedetails_rating_numvotes"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:textSize="14dip"
 					android:paddingTop="8dip"
 					android:paddingLeft="4dip" />
-			
+
 			</LinearLayout>
 			<LinearLayout
-				android:id="@+id/tvepisodedetails_datalayout" 
-				android:layout_width="fill_parent" 
+				android:id="@+id/tvepisodedetails_datalayout"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:orientation="vertical"
 				android:padding="20dip">
 				<!-- TV SHOW -->
-				<TextView android:text="TV SHOW" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/tvepisodedetails_show" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView
+					android:text="TV SHOW"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+				<TextView
+					android:id="@+id/tvepisodedetails_show"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 				<!-- FIRST AIRED -->
-				<TextView android:text="FIRST AIRED" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/tvepisodedetails_first_aired" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView
+					android:text="FIRST AIRED"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+				<TextView
+					android:id="@+id/tvepisodedetails_first_aired"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 				<!-- DIRECTOR -->
-				<TextView android:text="DIRECTOR" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/tvepisodedetails_director" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView
+					android:text="DIRECTOR"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+				<TextView
+					android:id="@+id/tvepisodedetails_director"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 				<!-- WRITER -->
-				<TextView android:text="WRITER" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/tvepisodedetails_writer" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView
+					android:text="WRITER"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+				<TextView
+					android:id="@+id/tvepisodedetails_writer"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 				<!-- PLOT -->
-				<TextView android:text="SUMMARY" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/tvepisodedetails_plot" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView
+					android:text="SUMMARY"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+				<TextView
+					android:id="@+id/tvepisodedetails_plot"
+					android:text="-"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 				<!-- CAST -->
-				<TextView android:text="CAST" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-			</LinearLayout>
-			<LinearLayout
-				android:layout_width="fill_parent" 
-				android:layout_height="wrap_content"
-				android:orientation="horizontal"
-				android:padding="20dip"
-				android:gravity="center_horizontal">
-				<Button 
-					android:text="Play Episode" 
-					android:id="@+id/tvepisodedetails_playbutton" 
-					android:layout_width="wrap_content" 
-					android:layout_height="wrap_content"
-					android:padding="7dip" />
+				<TextView
+					android:text="CAST"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:orientation="horizontal"
+		android:padding="5dip"
+		android:gravity="center_horizontal"
+		android:layout_weight="0"
+		android:layout_height="wrap_content">
+		<Button
+			android:text="Play Episode"
+			android:id="@+id/tvepisodedetails_playbutton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:padding="7dip"></Button>
+	</LinearLayout>
 </LinearLayout>
