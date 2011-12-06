@@ -369,36 +369,45 @@ public class RemoteController extends AbstractController implements INotifiableC
 		return true;
 	}
 
-	public Dialog onCreateDialog(int id) {
-		final Dialog dialog;
+	// Need Context passed in because this can be called at times when mActivity is null.
+	public Dialog onCreateDialog(int id, final Context context) {
+		Dialog dialog;
 		switch(id) {
 		case DIALOG_SENDTEXT:
-			dialog = new Dialog(mActivity);
+			dialog = new Dialog(context);
 			dialog.setContentView(R.layout.sendtext);
 			dialog.setTitle("Text Entry");
 			Button sendbutton = (Button) dialog.findViewById(R.id.sendtext_button_send);
 			sendbutton.setOnClickListener(new OnClickListener() {
-                    public void onClick(View v) {
-                    	final EditText text = (EditText) dialog.findViewById(R.id.sendtext_text);
-                    	mControl.sendText(new DataResponse<Boolean>(), text.getText().toString(), mActivity.getApplicationContext());
-                        dialog.dismiss();
-                    }
-                });
+				public void onClick(View v) {
+					EditText text = (EditText) v.getRootView().findViewById(R.id.sendtext_text);
+					mControl.sendText(new DataResponse<Boolean>(), text.getText().toString(), context);
+					text.setText("");
+				}
+			});
+			Button donebutton = (Button) dialog.findViewById(R.id.sendtext_button_done);
+			donebutton.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					EditText text = (EditText) v.getRootView().findViewById(R.id.sendtext_text);
+					mControl.sendText(new DataResponse<Boolean>(), text.getText().toString()+"\n", context);
+					dismissDialog(DIALOG_SENDTEXT);
+				}
+			});
 			Button cancelbutton = (Button) dialog.findViewById(R.id.sendtext_button_cancel);
 			cancelbutton.setOnClickListener(new OnClickListener() {
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-	        break;
+				public void onClick(View v) {
+					dismissDialog(DIALOG_SENDTEXT);
+				}
+			});
+			break;
 		default:
-	        dialog = null;
+			dialog = null;
 		}
 		return dialog;
 	}
 
 	public void onPrepareDialog (int id, Dialog dialog) {
-		final EditText text = (EditText) dialog.findViewById(R.id.sendtext_text);
+		EditText text = (EditText) dialog.findViewById(R.id.sendtext_text);
 		text.setText("");
 	}
 

@@ -39,6 +39,12 @@
 			android:layout_weight="1"
 			android:text="Send" />
 		<Button
+			android:id="@+id/sendtext_button_done"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="Done" />
+		<Button
 			android:id="@+id/sendtext_button_cancel"
 			android:layout_width="0dip"
 			android:layout_height="wrap_content"
