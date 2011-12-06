@@ -299,6 +299,10 @@ public abstract class AbstractController {
 		mActivity.showDialog(id);
 	}
 
+	protected void dismissDialog(int id){
+		mActivity.dismissDialog(id);
+	}
+
 	public void onMessage(final String message) {
 		mActivity.runOnUiThread(new Runnable() {
 			public void run() {
