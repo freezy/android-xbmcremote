@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.xbmc.android.remote.R.drawable;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.MediaIntentActivity;
+import org.xbmc.android.util.YoutubeURLParser;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IInfoManager;
@@ -153,25 +154,18 @@ public class MediaIntentController extends AbstractController implements IContro
 				// The syntax for that is plugin://plugin.video.youtube/?path=/root/search%26action=play_video%26videoid=VIDEOID
 				Uri playuri = Uri.parse(path);
 				final String url;
-				String message = null;
-				if (playuri.getHost().endsWith("youtube.com") || playuri.getHost().endsWith("youtu.be")) {
-					// We'll need to get the v= parameter from the URL and use
-					// that to send to XBMC
-					final Pattern pattern = Pattern.compile(".*v=([a-z0-9_\\-]+)(?:&.)*", Pattern.CASE_INSENSITIVE);
-					final Matcher matcher = pattern.matcher(path);
-					if (matcher.matches()) {
-						url = "plugin://plugin.video.youtube/?path=/root/search&action=play_video&videoid=" + matcher.group(1);
-						message = "Do you want to play\nYoutube video " + matcher.group(1) + " on XBMC? Youtube addon required!";
-					} else {
-						url = playuri.toString();
-					}
-				} else {
-					// Not a youtube URL so just pass it on to XBMC as-is
+				final String message;
+				String youTubeVideoId = YoutubeURLParser.parseYoutubeURL(playuri);
+				
+				if(youTubeVideoId != null){
+					url = "plugin://plugin.video.youtube/?path=/root/search&action=play_video&videoid=" + youTubeVideoId;
+					message = "Do you want to play\nYoutube video " + youTubeVideoId + " on XBMC? Youtube addon required!";					
+				}else{
+					// Not a youtube URL or unparsable YouTube URL so just pass it on to XBMC as-is
 					url = playuri.toString();
-				}
-				if (message == null) {
 					message = "Do you want to play\n" + path + "\n on XBMC?";
-				}
+				}				
+				
 				if (prefs.getBoolean(CONFIRM_PLAY_ON_XBMC, true)) {
 					final Builder builder = new Builder(mActivity);
 					builder.setTitle("Play URL on XBMC?");
