@@ -443,9 +443,15 @@ public class PlaylistController extends ListController implements IController, C
 		super.onActivityPause();
 	}
 
-	public void onActivityResume(Activity activity) {
+	public void onActivityResume(final Activity activity) {
 		super.onActivityResume(activity);
-		ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
+		new Thread("playlist-spawning") {
+			@Override
+			public void run() {
+				ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
+			}
+		}.start();
+		
 		if (mEventClient != null) {
 			mEventClient.setController(this);
 		}
