@@ -21,15 +21,13 @@
 
 package org.xbmc.android.remote.presentation.activity;
 
-import java.io.IOException;
-
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.HomeController;
 import org.xbmc.android.remote.presentation.controller.HomeController.ProgressThread;
 import org.xbmc.android.util.ImportUtilities;
-import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
+import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
@@ -39,8 +37,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -51,8 +49,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -251,21 +249,17 @@ public class HomeActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		try {
-			switch (keyCode) {
-				case KeyEvent.KEYCODE_VOLUME_UP:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_VOLUME_UP:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+				return true;
+			case KeyEvent.KEYCODE_VOLUME_DOWN:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+				return true;
+			case KeyEvent.KEYCODE_BACK:
+				if(OnLongPressBackKeyTracker.lastStage == Stage.LONG_REPEAT) {
 					return true;
-				case KeyEvent.KEYCODE_VOLUME_DOWN:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
-					return true;
-				case KeyEvent.KEYCODE_BACK:
-					if(OnLongPressBackKeyTracker.lastStage == Stage.LONG_REPEAT) {
-						return true;
-					}
-			}
-		} catch (IOException e) {
-			return false;
+				}
 		}
 		return super.onKeyDown(keyCode, event);
 	}

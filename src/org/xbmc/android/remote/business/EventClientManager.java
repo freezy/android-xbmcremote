@@ -61,7 +61,7 @@ public class EventClientManager implements INotifiableManager, IEventClientManag
 		ClientFactory.getEventClient(this).sendButton(code, repeat, down, queue, amount, axis);
 	}
 
-	public void sendButton(String mapName, String buttonName, boolean repeat, boolean down, boolean queue, short amount, byte axis) throws IOException {
+	public void sendButton(String mapName, String buttonName, boolean repeat, boolean down, boolean queue, short amount, byte axis) {
 		ClientFactory.getEventClient(this).sendButton(mapName, buttonName, repeat, down, queue, amount, axis);
 	}
 

@@ -47,11 +47,7 @@ public class PowerDown {
 
 			private void Down() {
 				EventClientManager pdEventClientManager = new EventClientManager();
-				try {
-					pdEventClientManager.sendButton("R1", ButtonCodes.REMOTE_POWER, false, true, true, (short) 0, (byte) 0);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				pdEventClientManager.sendButton("R1", ButtonCodes.REMOTE_POWER, false, true, true, (short) 0, (byte) 0);
 
 			}
 		}).setNegativeButton("No", new DialogInterface.OnClickListener() {

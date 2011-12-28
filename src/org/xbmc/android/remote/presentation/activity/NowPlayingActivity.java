@@ -21,8 +21,6 @@
 
 package org.xbmc.android.remote.presentation.activity;
 
-import java.io.IOException;
-
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.NowPlayingController;
@@ -203,24 +201,19 @@ public class NowPlayingActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		IEventClientManager client = ManagerFactory.getEventClientManager(mNowPlayingController);
-		try {
-			switch (keyCode) {
-			case KeyEvent.KEYCODE_VOLUME_UP:
-				client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short) 0, (byte) 0);
-				return true;
-			case KeyEvent.KEYCODE_VOLUME_DOWN:
-				client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short) 0, (byte) 0);
-				return true;
-			case KeyEvent.KEYCODE_SEARCH:
-				switchMonitorMode();
-				return true;
-/*			case KeyEvent.KEYCODE_PAGE_UP:
-				switchMonitorMode();
-				return true;*/
-			}
-		} catch (IOException e) {
-			client.setController(null);
-			return false;
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_VOLUME_UP:
+			client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short) 0, (byte) 0);
+			return true;
+		case KeyEvent.KEYCODE_VOLUME_DOWN:
+			client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short) 0, (byte) 0);
+			return true;
+		case KeyEvent.KEYCODE_SEARCH:
+			switchMonitorMode();
+			return true;
+/*		case KeyEvent.KEYCODE_PAGE_UP:
+			switchMonitorMode();
+			return true;*/
 		}
 		client.setController(null);
 		boolean handled = (mKeyTracker != null) ? mKeyTracker.doKeyDown(keyCode, event) : false;

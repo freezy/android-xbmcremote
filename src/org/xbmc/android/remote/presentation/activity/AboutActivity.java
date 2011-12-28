@@ -21,8 +21,6 @@
 
 package org.xbmc.android.remote.presentation.activity;
 
-import java.io.IOException;
-
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.api.business.IEventClientManager;
@@ -75,17 +73,13 @@ public class AboutActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		try {
-			switch (keyCode) {
-				case KeyEvent.KEYCODE_VOLUME_UP:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
-					return true;
-				case KeyEvent.KEYCODE_VOLUME_DOWN:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
-					return true;
-			}
-		} catch (IOException e) {
-			return false;
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_VOLUME_UP:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+				return true;
+			case KeyEvent.KEYCODE_VOLUME_DOWN:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+				return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}

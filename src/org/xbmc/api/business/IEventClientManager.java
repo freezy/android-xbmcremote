@@ -80,8 +80,7 @@ public interface IEventClientManager extends IManager {
 	 * @param axis
 	 */
 	public void sendButton(String map_name, String button_name, boolean repeat,
-			boolean down, boolean queue, short amount, byte axis)
-			throws IOException;
+			boolean down, boolean queue, short amount, byte axis);
 
 	/**
 	 * Sets the mouse position in XBMC

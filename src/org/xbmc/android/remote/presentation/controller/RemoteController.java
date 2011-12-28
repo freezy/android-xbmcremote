@@ -21,7 +21,6 @@
 
 package org.xbmc.android.remote.presentation.controller;
 
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -155,24 +154,21 @@ public class RemoteController extends AbstractController implements INotifiableC
 				}
 			}
 			private void scroll(String button, double amount) {
-				try {
-					if (amount != 0) {
-						if (!mScrolling) {
-							Log.i(TAG, "Setting " + GuiSettings.getName(GuiSettings.Services.EVENT_SERVER_INITIAL_DELAY) + " = " + 25);
-							mInfoManager.setGuiSettingInt(new DataResponse<Boolean>(), GuiSettings.Services.EVENT_SERVER_INITIAL_DELAY, 25, context);
-						}
-						mEventClientManager.sendButton("XG", button, true, true, false, (short)(amount * 65535), (byte)0);
-						mScrolling = true;
-					} else {
-						mEventClientManager.sendButton("XG", button, false, false, false, (short)0, (byte)0);
-						Log.i(TAG, "Restoring " + GuiSettings.getName(GuiSettings.Services.EVENT_SERVER_INITIAL_DELAY) + " = " + mEventServerInitialDelay);
-						mInfoManager.setGuiSettingInt(new DataResponse<Boolean>(), GuiSettings.Services.EVENT_SERVER_INITIAL_DELAY, mEventServerInitialDelay, context);
-						mScrolling = false;
+				if (amount != 0) {
+					if (!mScrolling) {
+						Log.i(TAG, "Setting " + GuiSettings.getName(GuiSettings.Services.EVENT_SERVER_INITIAL_DELAY) + " = " + 25);
+						mInfoManager.setGuiSettingInt(new DataResponse<Boolean>(), GuiSettings.Services.EVENT_SERVER_INITIAL_DELAY, 25, context);
 					}
-				} catch (IOException e) {
-					e.printStackTrace();
+					mEventClientManager.sendButton("XG", button, true, true, false, (short)(amount * 65535), (byte)0);
+					mScrolling = true;
+				} else {
+					mEventClientManager.sendButton("XG", button, false, false, false, (short)0, (byte)0);
+					Log.i(TAG, "Restoring " + GuiSettings.getName(GuiSettings.Services.EVENT_SERVER_INITIAL_DELAY) + " = " + mEventServerInitialDelay);
+					mInfoManager.setGuiSettingInt(new DataResponse<Boolean>(), GuiSettings.Services.EVENT_SERVER_INITIAL_DELAY, mEventServerInitialDelay, context);
+					mScrolling = false;
 				}
 			}
+			
 			public void onScrollDown(double amount) {
 				Log.d(TAG, "onScrollDown(" + amount + ")");
 				scroll(ButtonCodes.GAMEPAD_RIGHT_ANALOG_TRIGGER, amount);
@@ -182,41 +178,27 @@ public class RemoteController extends AbstractController implements INotifiableC
 				scroll(ButtonCodes.GAMEPAD_LEFT_ANALOG_TRIGGER, amount);
 			}
 			public void onSelect() {
-				try {
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_SELECT, false, true, false, (short)0, (byte)0);
-				} catch (IOException e) { }
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_SELECT, false, true, false, (short)0, (byte)0);
 			}
 			public void onScrollDown() {
 				Log.d(TAG, "onScrollDown()");
-				try {
-					mEventClientManager.sendButton("KB", ButtonCodes.KEYBOARD_PAGEDOWN, false, true, true, (short)0, (byte)0);
-				} catch (IOException e) { }
+				mEventClientManager.sendButton("KB", ButtonCodes.KEYBOARD_PAGEDOWN, false, true, true, (short)0, (byte)0);
 			}
 			public void onScrollUp() {
 				Log.d(TAG, "onScrollUp()");
-				try {
-					mEventClientManager.sendButton("KB", ButtonCodes.KEYBOARD_PAGEUP, false, true, true, (short)0, (byte)0);
-				} catch (IOException e) { }
+				mEventClientManager.sendButton("KB", ButtonCodes.KEYBOARD_PAGEUP, false, true, true, (short)0, (byte)0);
 			}
 			public void onBack() {
-				try {
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_BACK, false, true, true, (short)0, (byte)0);
-				} catch (IOException e) { }
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_BACK, false, true, true, (short)0, (byte)0);
 			}
 			public void onInfo() {
-				try {
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_INFO, false, true, true, (short)0, (byte)0);
-				} catch (IOException e) { }
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_INFO, false, true, true, (short)0, (byte)0);
 			}
 			public void onMenu() {
-				try {
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_MENU, false, true, true, (short)0, (byte)0);
-				} catch (IOException e) { }
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_MENU, false, true, true, (short)0, (byte)0);
 			}
 			public void onTitle() {
-				try {
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_TITLE, false, true, true, (short)0, (byte)0);
-				} catch (IOException e) { }
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_TITLE, false, true, true, (short)0, (byte)0);
 			}
 		};
 		return listener;
@@ -259,8 +241,6 @@ public class RemoteController extends AbstractController implements INotifiableC
 					Thread.sleep(mSpeed[Math.abs(mLevel)]);
 				} catch (InterruptedException e) {
 					mQuit = true;
-				} catch (IOException e1) {
-					mQuit = true;
 				}
 
 			}
@@ -283,31 +263,28 @@ public class RemoteController extends AbstractController implements INotifiableC
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		char key = (char)event.getUnicodeChar();
-		if (key > 'A' && key < 'z')
+		if (key > 'A' && key < 'z') {
 			return keyboardAction("" + key);
-		try {
-			switch (keyCode) {
-				case KeyEvent.KEYCODE_VOLUME_UP:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
-					return true;
-				case KeyEvent.KEYCODE_VOLUME_DOWN:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
-					return true;
-				case KeyEvent.KEYCODE_DPAD_DOWN:
-					return onDirectionalPadDown(keyCode);
-				case KeyEvent.KEYCODE_DPAD_UP:
-					return onDirectionalPadDown(keyCode);
-				case KeyEvent.KEYCODE_DPAD_LEFT:
-					return onDirectionalPadDown(keyCode);
-				case KeyEvent.KEYCODE_DPAD_RIGHT:
-					return onDirectionalPadDown(keyCode);
-				case KeyEvent.KEYCODE_DPAD_CENTER:
-					return onDirectionalPadDown(keyCode);
-				default: 
-					return false;
-			}
-		} catch (IOException e) {
-			return false;
+		}
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_VOLUME_UP:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+				return true;
+			case KeyEvent.KEYCODE_VOLUME_DOWN:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+				return true;
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+				return onDirectionalPadDown(keyCode);
+			case KeyEvent.KEYCODE_DPAD_UP:
+				return onDirectionalPadDown(keyCode);
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+				return onDirectionalPadDown(keyCode);
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+				return onDirectionalPadDown(keyCode);
+			case KeyEvent.KEYCODE_DPAD_CENTER:
+				return onDirectionalPadDown(keyCode);
+			default: 
+				return false;
 		}
 	}
 	
@@ -315,28 +292,24 @@ public class RemoteController extends AbstractController implements INotifiableC
 			long newstamp = System.currentTimeMillis();
 			if (newstamp - mTimestamp > DPAD_DOWN_MIN_DELTA_TIME){
 				mTimestamp = newstamp;
-				try{
-					switch (keyCode) {
-						case KeyEvent.KEYCODE_DPAD_DOWN:
-							mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_DOWN, false, true, true, (short)0, (byte)0);
-							return true;
-						case KeyEvent.KEYCODE_DPAD_UP:
-							mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_UP, false, true, true, (short)0, (byte)0);
-							return true;
-						case KeyEvent.KEYCODE_DPAD_LEFT:
-							mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_LEFT, false, true, true, (short)0, (byte)0);
-							return true;
-						case KeyEvent.KEYCODE_DPAD_RIGHT:
-							mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_RIGHT, false, true, true, (short)0, (byte)0);
-							return true;
-						case KeyEvent.KEYCODE_DPAD_CENTER:
-							mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_ENTER, false, true, true, (short)0, (byte)0);
-							return true;							
-						default:
-							return false;
-					}
-				} catch (IOException e) {
-					return false;
+				switch (keyCode) {
+					case KeyEvent.KEYCODE_DPAD_DOWN:
+						mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_DOWN, false, true, true, (short)0, (byte)0);
+						return true;
+					case KeyEvent.KEYCODE_DPAD_UP:
+						mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_UP, false, true, true, (short)0, (byte)0);
+						return true;
+					case KeyEvent.KEYCODE_DPAD_LEFT:
+						mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_LEFT, false, true, true, (short)0, (byte)0);
+						return true;
+					case KeyEvent.KEYCODE_DPAD_RIGHT:
+						mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_RIGHT, false, true, true, (short)0, (byte)0);
+						return true;
+					case KeyEvent.KEYCODE_DPAD_CENTER:
+						mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_ENTER, false, true, true, (short)0, (byte)0);
+						return true;							
+					default:
+						return false;
 				}
 			}
 			return true;
@@ -412,33 +385,29 @@ public class RemoteController extends AbstractController implements INotifiableC
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
-		try {
-			Intent intent = null;
-			switch (item.getItemId()) {
-				case MENU_NOW_PLAYING:
-					intent = new Intent(mActivity, NowPlayingActivity.class);
-					break;
-				case MENU_SWITCH_GESTURE:
-					intent = new Intent(mActivity, GestureRemoteActivity.class);
-					intent.addFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
-					break;
-				case MENU_XBMC_EXIT:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_POWER, false, true, true, (short)0, (byte)0);
-					break;
-				case MENU_XBMC_S:
-					mEventClientManager.sendButton("KB", "S", false, true, true, (short)0, (byte)0);
-					break;
-				case MENU_ENTER_TEXT:
-					showDialog(DIALOG_SENDTEXT);
-					break;
-			}
-			if (intent != null) {
-				intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				mActivity.startActivity(intent);
-				return true;
-			}
-		} catch (IOException e) {
-			return false;
+		Intent intent = null;
+		switch (item.getItemId()) {
+			case MENU_NOW_PLAYING:
+				intent = new Intent(mActivity, NowPlayingActivity.class);
+				break;
+			case MENU_SWITCH_GESTURE:
+				intent = new Intent(mActivity, GestureRemoteActivity.class);
+				intent.addFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+				break;
+			case MENU_XBMC_EXIT:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_POWER, false, true, true, (short)0, (byte)0);
+				break;
+			case MENU_XBMC_S:
+				mEventClientManager.sendButton("KB", "S", false, true, true, (short)0, (byte)0);
+				break;
+			case MENU_ENTER_TEXT:
+				showDialog(DIALOG_SENDTEXT);
+				break;
+		}
+		if (intent != null) {
+			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			mActivity.startActivity(intent);
+			return true;
 		}
 		return true;
 	}
@@ -449,12 +418,8 @@ public class RemoteController extends AbstractController implements INotifiableC
 	 * @return
 	 */
 	private boolean keyboardAction(String button) {
-		try {
-			mEventClientManager.sendButton("KB", button, false, true, true, (short)0, (byte)0);
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
+		mEventClientManager.sendButton("KB", button, false, true, true, (short)0, (byte)0);
+		return true;
 	}
 
 	/**
@@ -482,38 +447,34 @@ public class RemoteController extends AbstractController implements INotifiableC
 			mAction = action;
 		}
 		public boolean onTouch(View v, MotionEvent event) {
-			try {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					Log.d(TAG, "onTouch - ACTION_DOWN");
-					if (mDoVibrate) {
-						mVibrator.vibrate(VIBRATION_LENGTH);
-					}
-					mEventClientManager.sendButton("R1", mAction, !prefs.getBoolean("setting_send_repeats", false), true, true, (short)0, (byte)0);									
-					
-					if (prefs.getBoolean("setting_send_repeats", false) && !prefs.getBoolean("setting_send_single_click", false)) {
-															
-						if (tmrKeyPress != null) {
-							tmrKeyPress.cancel();						
-						}
-						
-						int RepeatDelay = Integer.parseInt(prefs.getString("setting_repeat_rate", "250"));
-						
-						tmrKeyPress = new Timer();
-						tmrKeyPress.schedule(new KeyPressTask(mAction), RepeatDelay, RepeatDelay);					
-					}
-					
-					
-				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					Log.d(TAG, "onTouch - ACTION_UP");
-					v.playSoundEffect(AudioManager.FX_KEY_CLICK);
-					mEventClientManager.sendButton("R1", mAction, false, false, true, (short)0, (byte)0);
-					
+			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				Log.d(TAG, "onTouch - ACTION_DOWN");
+				if (mDoVibrate) {
+					mVibrator.vibrate(VIBRATION_LENGTH);
+				}
+				mEventClientManager.sendButton("R1", mAction, !prefs.getBoolean("setting_send_repeats", false), true, true, (short)0, (byte)0);
+				
+				if (prefs.getBoolean("setting_send_repeats", false) && !prefs.getBoolean("setting_send_single_click", false)) {
+														
 					if (tmrKeyPress != null) {
 						tmrKeyPress.cancel();						
-					}					
+					}
+					
+					int RepeatDelay = Integer.parseInt(prefs.getString("setting_repeat_rate", "250"));
+					
+					tmrKeyPress = new Timer();
+					tmrKeyPress.schedule(new KeyPressTask(mAction), RepeatDelay, RepeatDelay);					
 				}
-			} catch (IOException e) {
-				return false;
+				
+				
+			} else if (event.getAction() == MotionEvent.ACTION_UP) {
+				Log.d(TAG, "onTouch - ACTION_UP");
+				v.playSoundEffect(AudioManager.FX_KEY_CLICK);
+				mEventClientManager.sendButton("R1", mAction, false, false, true, (short)0, (byte)0);
+				
+				if (tmrKeyPress != null) {
+					tmrKeyPress.cancel();						
+				}					
 			}
 			return false;
 		}			
@@ -528,13 +489,9 @@ public class RemoteController extends AbstractController implements INotifiableC
 		}
 
 		public void run() {
-			try {
-				if (mKeyPressAction.length() > 0){
-					mEventClientManager.sendButton("R1", mKeyPressAction, false, true, true, (short)0, (byte)0);
-				}				
-			} catch (IOException e) {
-				return;
-			}
+			if (mKeyPressAction.length() > 0){
+				mEventClientManager.sendButton("R1", mKeyPressAction, false, true, true, (short)0, (byte)0);
+			}				
 		}
 	}
 	

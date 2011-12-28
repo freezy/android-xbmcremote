@@ -113,11 +113,7 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 						cm.getCurrentlyPlaying(new DataResponse<ICurrentlyPlaying>() {
 							public void run() {
 								if (value != null && value.isPlaying()) {
-									try {
-										eventClient.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short) 0, (byte) 0);
-									} catch (IOException e) {
-										((INotifiableManager)cm).onError(e);
-									}
+									eventClient.sendButton("R1", ButtonCodes.REMOTE_PAUSE, false, true, true, (short) 0, (byte) 0);
 									sPlayState = PLAY_STATE_PAUSED;
 								}
 							}

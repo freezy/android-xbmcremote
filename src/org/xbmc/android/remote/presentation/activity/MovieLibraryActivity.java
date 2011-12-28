@@ -21,8 +21,6 @@
 
 package org.xbmc.android.remote.presentation.activity;
 
-import java.io.IOException;
-
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.ActorListController;
@@ -44,12 +42,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
@@ -256,19 +254,14 @@ public class MovieLibraryActivity extends SlidingTabActivity implements ViewTree
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		IEventClientManager client = ManagerFactory.getEventClientManager(mMovieController);
-		try {
-			switch (keyCode) {
-				case KeyEvent.KEYCODE_VOLUME_UP:
-					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
-					return true;
-				case KeyEvent.KEYCODE_VOLUME_DOWN:
-					client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
-					return true;
-			}
-		} catch (IOException e) {
-			client.setController(null);
-			return false;
-		} 
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_VOLUME_UP:
+				client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+				return true;
+			case KeyEvent.KEYCODE_VOLUME_DOWN:
+				client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+				return true;
+		}
 		client.setController(null);
 		return super.onKeyDown(keyCode, event);
 	}

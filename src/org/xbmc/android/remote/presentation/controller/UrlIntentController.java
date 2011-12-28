@@ -23,8 +23,6 @@ package org.xbmc.android.remote.presentation.controller;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.xbmc.android.remote.R.drawable;
 import org.xbmc.android.remote.business.ManagerFactory;
@@ -40,9 +38,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
