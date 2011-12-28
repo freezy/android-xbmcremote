@@ -234,7 +234,7 @@ public abstract class AbstractController {
 				}
 			});
 		} catch (IOException e) {
-			if (e.getMessage().startsWith("Network unreachable")) {
+			if (e.getMessage() != null && e.getMessage().startsWith("Network unreachable")) {
 				builder.setTitle("No network");
 				builder.setMessage("XBMC Remote needs local network access. Please make sure that your wireless network is activated. You can click on the Settings button below to directly access your network settings.");
 				builder.setNeutralButton("Settings", new OnClickListener() {
@@ -245,7 +245,9 @@ public abstract class AbstractController {
 				});
 			} else {
 				builder.setTitle("I/O Exception (" + e.getClass().getCanonicalName() + ")");
-				builder.setMessage(e.getMessage().toString());
+				if (e.getMessage() != null) {
+					builder.setMessage(e.getMessage().toString());
+				}
 				Log.e(TAG, e.getStackTrace().toString());
 			}
 		} catch (HttpException e) {
