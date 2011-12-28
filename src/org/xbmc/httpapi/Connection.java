@@ -21,23 +21,26 @@
 
 package org.xbmc.httpapi;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.http.HttpException;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Host;
@@ -78,6 +81,11 @@ public class Connection {
 	 * Performs HTTP Authentication
 	 */
 	private HttpAuthenticator mAuthenticator = null;
+	
+	String mHost;
+	int mPort;
+	String mUser;
+	String mPass;
 	
 	/**
 	 * Use getInstance() for public class instantiation
@@ -125,6 +133,9 @@ public class Connection {
 	 * @param port Port the HTTP API is listening to
 	 */
 	public void setHost(String host, int port) {
+		mHost = host;
+		mPort = port;
+		
 		if (host == null || port <= 0) {
 			mUrlSuffix = null;
 		} else {
@@ -150,6 +161,9 @@ public class Connection {
 			mAuthenticator = null;
 			Authenticator.setDefault(null);
 		}
+		
+		mUser = user;
+		mPass = pass;
 	}
 	
 	/**
@@ -259,40 +273,43 @@ public class Connection {
 	 * @return HTTP response string.
 	 */
 	public String query(String command, String parameters, INotifiableManager manager) {
-		URLConnection uc = null;
+		int responseCode = -1;
+		
 		try {
+			String responseString = "";
+
 			if (mUrlSuffix == null) {
 				throw new NoSettingsException();
 			}
 			if (mAuthenticator != null) {
 				mAuthenticator.resetCounter();
 			}
-			URL url = new URL(getUrl(command, parameters));
-			uc = url.openConnection();
-			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
-			uc.setReadTimeout(mSocketReadTimeout);
-			
-			final String debugUrl = URLDecoder.decode(url.toString());
-			Log.i(TAG, debugUrl);
-			
-			final BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()), 8192);
-			final StringBuilder response = new StringBuilder();
-			String line;
 
-			while ((line = in.readLine()) != null) {
-				response.append(line);
+			final String url = getUrl(command, parameters);
+			Log.i(TAG, url);
+			final DefaultHttpClient httpclient = new DefaultHttpClient();
+
+			//httpclient.getCredentialsProvider().setCredentials(new AuthScope(mHost, mPort), new UsernamePasswordCredentials(mUser, mPass));
+			final HttpResponse response = httpclient.execute(new HttpGet(url));
+			final StatusLine statusLine = response.getStatusLine();
+			responseCode = statusLine.getStatusCode();
+			if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				response.getEntity().writeTo(out);
+				out.close();
+				responseString = out.toString();
+			} else {
+				response.getEntity().getContent().close();
+				throw new IOException(statusLine.getReasonPhrase());
 			}
-			in.close();
-			return response.toString().replace("<html>", "").replace("</html>", "");
+			
+			Log.d(TAG, "Returning: " + responseString);
+			return responseString.toString().replace("<html>", "").replace("</html>", "");
 			
 		} catch (MalformedURLException e) {
 			manager.onError(e);
 		} catch (IOException e) {
-			int responseCode = -1;
-			try {
-				responseCode = ((HttpURLConnection)uc).getResponseCode();
-			} catch (IOException e1) { } // do nothing, getResponse code failed so treat as default i/o exception.
-			if (uc != null && responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+			if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
 				manager.onError(new HttpException(Integer.toString(HttpURLConnection.HTTP_UNAUTHORIZED)));
 			} else {
 				manager.onError(e);
