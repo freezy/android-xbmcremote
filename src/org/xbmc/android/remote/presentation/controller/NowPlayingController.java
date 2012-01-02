@@ -59,6 +59,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 	private int mPlayStatus = PlayStatus.UNKNOWN;
 	private int mPlayListId = -1;
 	private int mLastPosition = -1;
+	private boolean mFirstMessage = true;
 	
 	public NowPlayingController(NowPlayingActivity activity, Handler handler) {
 		super.onCreate(activity, handler);
@@ -78,6 +79,13 @@ public class NowPlayingController extends AbstractController implements INotifia
 		final Bundle data = msg.getData();
 		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying)data.getSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
 
+		if(mFirstMessage) {
+			mNowPlayingActivity.updateInfo(currentlyPlaying.getTitle(), currentlyPlaying.getArtist(), currentlyPlaying.getAlbum());
+			mLastPosition = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYPOSITION);
+			mNowPlayingActivity.updateCover(ConnectionFactory.getNowPlayingPoller(mActivity).getNowPlayingCover(), (currentlyPlaying != null) ? currentlyPlaying.getMediaType() : MediaType.UNKNOWN);
+			mFirstMessage = false;
+		}
+		
 		switch (msg.what) {
 			case NowPlayingPollerThread.MESSAGE_PROGRESS_CHANGED: 
 				mPlayStatus = currentlyPlaying.getPlayStatus();
