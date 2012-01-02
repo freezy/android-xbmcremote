@@ -1,7 +1,5 @@
 package org.xbmc.android.remote.presentation.wizard.setupwizard;
 
-import java.io.IOException;
-
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.Command;
 import org.xbmc.android.remote.business.ManagerFactory;
@@ -107,11 +105,7 @@ public class SetupWizardPage3 extends WizardPage<Host> {
 
 	private void mute() {
 		
-		try {
-			event.sendButton("R1", ButtonCodes.REMOTE_MUTE, false, true, true, (short) 0, (byte) 0);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		event.sendButton("R1", ButtonCodes.REMOTE_MUTE, false, true, true, (short) 0, (byte) 0);
 		control.getVolume(new DataResponse<Integer>() {
 			@Override
 			public void run() {
@@ -119,11 +113,7 @@ public class SetupWizardPage3 extends WizardPage<Host> {
 				if(initialVolume != value) {
 					//it worked, we muted xbmc through the eventserver
 					msg.setText(R.string.setup_wizard_final_message);
-					try {
-						event.sendButton("R1", ButtonCodes.REMOTE_MUTE, false, true, true, (short) 0, (byte) 0);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					event.sendButton("R1", ButtonCodes.REMOTE_MUTE, false, true, true, (short) 0, (byte) 0);
 					setCanFinish(true);
 				}else{
 					//we couldn't mute xbmc through the eventserver, so display some help.

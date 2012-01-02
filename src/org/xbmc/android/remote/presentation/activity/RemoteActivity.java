@@ -129,11 +129,13 @@ public class RemoteActivity extends Activity {
 
 	@Override
 	public Dialog onCreateDialog(int id) {
-		return mRemoteController.onCreateDialog(id);
+		super.onCreateDialog(id);
+		return mRemoteController.onCreateDialog(id, this);
 	}
 
 	@Override
 	public void onPrepareDialog(int id, Dialog dialog) {
+		super.onPrepareDialog(id, dialog);
 		mRemoteController.onPrepareDialog(id, dialog);
 	}
 

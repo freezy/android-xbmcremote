@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" 
 	package="org.xbmc.android.remote"
-	android:versionName="0.8.6-beta1" 
-	android:versionCode="768" 
+	android:versionName="0.8.7-beta1" 
+	android:versionCode="807" 
 	android:installLocation="auto">
 	<application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true" >
 		<activity android:name=".presentation.activity.HomeActivity"
@@ -72,7 +72,7 @@
 		<provider android:name=".business.provider.HostProvider" android:authorities="org.xbmc.android.provider.remote" />
 		
 	</application>
-	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="9" />
+	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="10" />
 	<supports-screens
 		android:largeScreens="true"
 		android:normalScreens="true"

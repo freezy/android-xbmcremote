@@ -172,13 +172,10 @@ public class EventClient implements IEventClient {
 		else
 			p = new PacketHELO(mDeviceName);
 
-		try {
-			p.send(hostAddress, hostPort);
-			// Start Thread (for Ping packets...)
-			mPingThread = new PingThread(hostAddress, hostPort, 20000);
-			mPingThread.start();
-		} catch (IOException e) {
-		}
+		p.send(hostAddress, hostPort);
+		// Start Thread (for Ping packets...)
+		mPingThread = new PingThread(hostAddress, hostPort, 20000);
+		mPingThread.start();
 
 	}
 
@@ -287,7 +284,7 @@ public class EventClient implements IEventClient {
 	 *            specifying magnitude of analog key press events
 	 * @param axis
 	 */
-	public void sendButton(String map_name, String button_name, boolean repeat, boolean down, boolean queue, short amount, byte axis) throws IOException {
+	public void sendButton(String map_name, String button_name, boolean repeat, boolean down, boolean queue, short amount, byte axis) {
 
 		final InetAddress addr = mHostAddress;
 		if (addr != null) {
@@ -394,13 +391,8 @@ public class EventClient implements IEventClient {
 
 		public void run() {
 			while (!mGiveup) {
-				try {
-					PacketPING p = new PacketPING();
-					p.send(mHostAddress, mHostPort);
-				} catch (IOException e) {
-
-					e.printStackTrace();
-				}
+				PacketPING p = new PacketPING();
+				p.send(mHostAddress, mHostPort);
 
 				try {
 					Thread.sleep(mSleepTime);

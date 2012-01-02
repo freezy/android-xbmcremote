@@ -1,7 +1,5 @@
 package org.xbmc.android.remote.presentation.controller;
 
-import java.io.IOException;
-
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.presentation.INotifiableController;
@@ -27,12 +25,8 @@ public class GestureController extends AbstractController implements INotifiable
 	 * @return
 	 */
 	private boolean keyboardAction(String button) {
-		try {
-			mEventClientManager.sendButton("KB", button, false, true, true, (short)0, (byte)0);
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
+		mEventClientManager.sendButton("KB", button, false, true, true, (short)0, (byte)0);
+		return true;
 	}
 	
 	
@@ -59,34 +53,30 @@ public class GestureController extends AbstractController implements INotifiable
 		char key = (char)event.getUnicodeChar();
 		if (key > 'A' && key < 'z')
 			return keyboardAction("" + key);
-		try {
-			switch (keyCode) {
-				case KeyEvent.KEYCODE_VOLUME_UP:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
-					return true;
-				case KeyEvent.KEYCODE_VOLUME_DOWN:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
-					return true;
-				case KeyEvent.KEYCODE_DPAD_DOWN:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_DOWN, false, true, true, (short)0, (byte)0);
-					return true;
-				case KeyEvent.KEYCODE_DPAD_UP:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_UP, false, true, true, (short)0, (byte)0);
-					return true;
-				case KeyEvent.KEYCODE_DPAD_LEFT:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_LEFT, false, true, true, (short)0, (byte)0);
-					return true;
-				case KeyEvent.KEYCODE_DPAD_RIGHT:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_RIGHT, false, true, true, (short)0, (byte)0);
-					return true;
-				case KeyEvent.KEYCODE_DPAD_CENTER:
-					mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_ENTER, false, true, true, (short)0, (byte)0);
-					return true;
-				default: 
-					return false;
-			}
-		} catch (IOException e) {
-			return false;
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_VOLUME_UP:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short)0, (byte)0);
+				return true;
+			case KeyEvent.KEYCODE_VOLUME_DOWN:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short)0, (byte)0);
+				return true;
+			case KeyEvent.KEYCODE_DPAD_DOWN:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_DOWN, false, true, true, (short)0, (byte)0);
+				return true;
+			case KeyEvent.KEYCODE_DPAD_UP:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_UP, false, true, true, (short)0, (byte)0);
+				return true;
+			case KeyEvent.KEYCODE_DPAD_LEFT:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_LEFT, false, true, true, (short)0, (byte)0);
+				return true;
+			case KeyEvent.KEYCODE_DPAD_RIGHT:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_RIGHT, false, true, true, (short)0, (byte)0);
+				return true;
+			case KeyEvent.KEYCODE_DPAD_CENTER:
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_ENTER, false, true, true, (short)0, (byte)0);
+				return true;
+			default: 
+				return false;
 		}
 	}
 

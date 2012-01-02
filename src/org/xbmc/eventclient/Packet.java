@@ -3,6 +3,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
+
+import android.util.Log;
 
 /**
  * XBMC Event Client Class
@@ -55,6 +58,8 @@ import java.net.InetAddress;
  *
  */
 public abstract class Packet {
+	
+	private final static String TAG = Packet.class.getSimpleName();
 	
 	private byte[] sig;
 	private byte[] payload = new byte[0];
@@ -226,25 +231,41 @@ public abstract class Packet {
 	 * @param port Port of the EventServer
 	 * @throws IOException
 	 */
-	public void send(InetAddress adr, int port) throws IOException
+	public void send(final InetAddress adr, final int port)
 	{
-		int maxseq = getNumPackets();
-		DatagramSocket s = new DatagramSocket();
-		
-		try {
-			// For each Packet in Sequence...
-			for(int seq=1;seq<=maxseq;seq++)
-			{
-				// Get Message and send them...
-				byte[] pack = getUDPMessage(seq);
-				DatagramPacket p = new DatagramPacket(pack, pack.length);
-				p.setAddress(adr);
-				p.setPort(port);
-				s.send(p);
+		new Thread() {
+			@Override
+			public void run() {
+				super.run();
+				int maxseq = getNumPackets();
+				DatagramSocket s;
+				try {
+					s = new DatagramSocket();
+				} catch (SocketException e) {
+					Log.e(TAG, "Error opening data socket: " + e.getMessage(), e);
+					return;
+				}
+				
+				try {
+					// For each Packet in Sequence...
+					for(int seq=1;seq<=maxseq;seq++)
+					{
+						// Get Message and send them...
+						byte[] pack = getUDPMessage(seq);
+						DatagramPacket p = new DatagramPacket(pack, pack.length);
+						p.setAddress(adr);
+						p.setPort(port);
+						try {
+							s.send(p);
+						} catch (IOException e) {
+							Log.e(TAG, "Error sending UDP packet: " + e.getMessage(), e);
+						}
+					}
+				} finally {
+					s.close();
+				}
 			}
-		} finally {
-			s.close();
-		}
+		}.start();
 	}
 	
 	/**

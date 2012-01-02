@@ -1,114 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout 
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent" 
+	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:orientation="vertical" >
-	<include layout="@layout/titlebar" />
-	<ScrollView 
+	android:orientation="vertical">
+	<include
+		layout="@layout/titlebar"
+		android:layout_weight="0" />
+	<ScrollView
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:scrollbars="none">
-		<LinearLayout 
-			android:layout_width="wrap_content" 
+		android:layout_height="fill_parent"
+		android:scrollbars="none"
+		android:layout_weight="1">
+		<LinearLayout
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:orientation="vertical">
-			<FrameLayout 
-				android:id="@+id/moviedetails_layout_poster"
-				android:layout_marginTop="10dip"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center_horizontal"
-				android:foreground="@drawable/jewel_dvd" >
-				<ImageView 
-					android:id="@+id/moviedetails_poster" 
-					android:layout_height="378dip"
-					android:layout_width="255dip"
-					android:scaleType="centerCrop"
-					android:padding="0dip" />
-			</FrameLayout>
-			<ImageView 
-				android:id="@+id/moviedetails_thumb" 
-				android:layout_height="wrap_content"
-				android:layout_width="fill_parent"
-				android:scaleType="centerInside"
-				android:padding="0dip" />
+			<org.xbmc.android.remote.presentation.widget.JewelView
+							android:id="@+id/moviedetails_jewelcase" 
+							android:layout_width="wrap_content" 
+							android:layout_height="fill_parent"
+							android:layout_gravity="center_horizontal"
+							/>
 			<LinearLayout
-				android:layout_width="fill_parent" 
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="-5dip"
-				android:orientation="horizontal" 
+				android:orientation="horizontal"
 				android:gravity="center_horizontal">
-				<ImageView 
-					android:id="@+id/moviedetails_rating_stars" 
+				<ImageView
+					android:id="@+id/moviedetails_rating_stars"
 					android:layout_height="wrap_content"
 					android:layout_width="wrap_content"
 					android:src="@drawable/stars_0"
 					android:padding="0dip" />
-				<TextView 
-					android:id="@+id/moviedetails_rating" 
-					android:layout_width="wrap_content" 
+				<TextView
+					android:id="@+id/moviedetails_rating"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:textSize="18dip"
-					android:textStyle="bold" 
+					android:textStyle="bold"
 					android:paddingTop="6dip"
 					android:paddingLeft="4dip" />
-				<TextView 
-					android:id="@+id/moviedetails_rating_numvotes" 
-					android:layout_width="wrap_content" 
+				<TextView
+					android:id="@+id/moviedetails_rating_numvotes"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:textSize="14dip"
 					android:paddingTop="8dip"
 					android:paddingLeft="4dip" />
-			
+
 			</LinearLayout>
 			<LinearLayout
-				android:id="@+id/moviedetails_datalayout" 
-				android:layout_width="fill_parent" 
+				android:id="@+id/moviedetails_datalayout"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:orientation="vertical"
 				android:padding="20dip">
 				<!-- DIRECTOR -->
-				<TextView android:text="DIRECTED BY" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/moviedetails_director" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView
+					android:text="DIRECTED BY"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+				<TextView
+					android:id="@+id/moviedetails_director"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 				<!-- GENRE -->
-				<TextView android:text="GENRE" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/moviedetails_genre" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView
+					android:text="GENRE"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+				<TextView
+					android:id="@+id/moviedetails_genre"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 				<!-- RUNTIME -->
-				<TextView android:text="RUNTIME" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/moviedetails_runtime" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView
+					android:text="RUNTIME"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+				<TextView
+					android:id="@+id/moviedetails_runtime"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 				<!-- STUDIO -->
-				<TextView android:text="STUDIO" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/moviedetails_studio" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView
+					android:text="STUDIO"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+				<TextView
+					android:id="@+id/moviedetails_studio"
+					android:text="-"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 				<!-- PLOT -->
-				<TextView android:text="SUMMARY" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/moviedetails_plot" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView
+					android:text="SUMMARY"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+				<TextView
+					android:id="@+id/moviedetails_plot"
+					android:text="-"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 				<!-- PARENTAL RATING -->
-				<TextView android:text="PARENTAL RATING" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-				<TextView android:id="@+id/moviedetails_parental" android:text="-" style="@style/details_value" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+				<TextView
+					android:text="PARENTAL RATING"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
+				<TextView
+					android:id="@+id/moviedetails_parental"
+					android:text="-"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 				<!-- CAST -->
-				<TextView android:text="CAST" style="@style/details_label" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-			</LinearLayout>
-			<LinearLayout
-				android:layout_width="fill_parent" 
-				android:layout_height="wrap_content"
-				android:orientation="horizontal"
-				android:padding="20dip"
-				android:gravity="center_horizontal">
-				<Button 
-					android:text="Play Movie" 
-					android:id="@+id/moviedetails_playbutton" 
-					android:layout_width="wrap_content" 
-					android:layout_height="wrap_content"
-					android:padding="7dip" />
-				<Button 
-					android:text="Play Trailer" 
-					android:id="@+id/moviedetails_trailerbutton" 
-					android:layout_width="wrap_content" 
-					android:layout_height="wrap_content"
-					android:enabled="false" 
-					android:padding="7dip"/>
+				<TextView
+					android:text="CAST"
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content" />
 			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:orientation="horizontal"
+		android:padding="5dip"
+		android:gravity="center_horizontal"
+		android:layout_weight="0"
+		android:layout_height="wrap_content">
+		<Button
+			android:text="Play Movie"
+			android:id="@+id/moviedetails_playbutton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:padding="7dip" />
+		<Button
+			android:text="Play Trailer"
+			android:id="@+id/moviedetails_trailerbutton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:enabled="false"
+			android:padding="7dip" />
+	</LinearLayout>
 </LinearLayout>
