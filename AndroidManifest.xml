@@ -21,16 +21,16 @@
 		<activity android:name=".presentation.activity.MovieDetailsActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".presentation.activity.TvShowDetailsActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".presentation.activity.ListActivity" android:theme="@android:style/Theme.NoTitleBar" />
-		<activity android:name=".presentation.activity.GridActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
-		<activity android:name=".presentation.activity.TvShowLibraryActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
+		<activity android:name=".presentation.activity.GridActivity" android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name=".presentation.activity.TvShowLibraryActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".presentation.activity.NowPlayingActivity" android:theme="@android:style/Theme.NoTitleBar" />
-		<activity android:name=".presentation.activity.PlaylistActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" />
+		<activity android:name=".presentation.activity.PlaylistActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".presentation.activity.AboutActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait"/>
 		<activity android:name=".presentation.activity.GestureRemoteActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:screenOrientation="portrait"/>
 		<activity android:name=".presentation.activity.SettingsActivity" />
 		<activity android:name=".presentation.activity.HostSettingsActivity" />
-		<activity android:name=".presentation.activity.EpisodeDetailsActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait"></activity>
-		<activity android:name=".presentation.activity.MediaIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" android:label="@string/play_on_xbmc">
+		<activity android:name=".presentation.activity.EpisodeDetailsActivity" android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name=".presentation.activity.MediaIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:label="@string/play_on_xbmc">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -40,7 +40,7 @@
 				<data android:scheme="http" android:mimeType="audio/*"/>
 			</intent-filter>
 		</activity>
-		<activity android:name=".presentation.activity.MediaIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" android:label="@string/play_on_xbmc">
+		<activity android:name=".presentation.activity.MediaIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:label="@string/play_on_xbmc">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -49,7 +49,7 @@
 				<data android:scheme="http" android:host="www.youtube.com"/>
 			</intent-filter>
 		</activity>
-		<activity android:name=".presentation.activity.UrlIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait" android:label="@string/play_on_xbmc">
+		<activity android:name=".presentation.activity.UrlIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:label="@string/play_on_xbmc">
 			<intent-filter>
 				<action android:name="android.intent.action.SEND"></action>
 				<category android:name="android.intent.category.DEFAULT"></category>
