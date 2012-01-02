@@ -234,11 +234,12 @@ public abstract class ClientFactory {
 				XBMC_REV = 35744;
 				sApiType = API_TYPE_JSONRPC;
 			}
+			
 				
 			// 2. try to match boxee's version
 			// 3. plex? duh.
 			
-			sApiType = API_TYPE_UNSET;
+			//sApiType = API_TYPE_UNSET;
 		}
 	}
 

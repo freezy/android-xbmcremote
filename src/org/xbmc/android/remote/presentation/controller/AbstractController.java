@@ -72,7 +72,7 @@ public abstract class AbstractController {
 		mActivity = activity;
 		mHandler = handler;
 		HostFactory.readHost(activity.getApplicationContext());
-		ClientFactory.resetClient(HostFactory.host);
+		//ClientFactory.resetClient(HostFactory.host);
 	}
 	
 	public void onWrongConnectionState(int state, final INotifiableManager manager, final Command<?> source) {

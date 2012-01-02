@@ -36,11 +36,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.http.HttpException;
+import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Host;
 
-import android.util.Base64;
 import android.util.Log;
 
 
@@ -144,7 +144,7 @@ public class Connection {
 	public void setAuth(String user, String pass) {
 		if (user != null && pass != null) {
 			String auth = user + ":" + pass;
-			authEncoded = Base64.encodeToString(auth.getBytes(), Base64.DEFAULT);
+			authEncoded = Base64.encodeBytes(auth.getBytes()).toString();
 		} else {
 			authEncoded = null;
 		}
