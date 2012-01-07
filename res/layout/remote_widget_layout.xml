@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/appwidget_dark_bg_clickable"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" >
+
+        <ImageButton
+            android:id="@+id/widget_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:background="@drawable/appwidget_dark_bg_clickable"
+            android:src="@drawable/appwidget_control_right"
+            android:contentDescription="@string/widget_button_play"/>
+
+        <ImageButton
+            android:id="@+id/widget_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:background="@drawable/appwidget_dark_bg_clickable"
+            android:src="@drawable/appwidget_arrow_up"
+            android:contentDescription="@string/widget_button_up" />
+
+        <ImageButton
+            android:id="@+id/widget_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:background="@drawable/appwidget_dark_bg_clickable"
+            android:src="@drawable/appwidget_control_stop"
+            android:contentDescription="@string/widget_button_stop" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" >
+
+        <ImageButton
+            android:id="@+id/widget_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|left"
+            android:background="@drawable/appwidget_dark_bg_clickable"
+            android:src="@drawable/appwidget_arrow_left"
+            android:contentDescription="@string/widget_button_left" />
+
+        <ImageButton
+            android:id="@+id/widget_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/appwidget_dark_bg_clickable"
+            android:src="@drawable/appwidget_control_action"
+            android:contentDescription="@string/widget_button_action" />
+
+        <ImageButton
+            android:id="@+id/widget_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:background="@drawable/appwidget_dark_bg_clickable"
+            android:src="@drawable/appwidget_arrow_right"
+            android:contentDescription="@string/widget_button_left" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" >
+
+        <ImageButton
+            android:id="@+id/widget_app"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|bottom"
+            android:background="@drawable/appwidget_dark_bg_clickable"
+            android:src="@drawable/appwidget_more" 
+            android:contentDescription="@string/widget_button_app" />
+
+        <ImageButton
+            android:id="@+id/widget_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:background="@drawable/appwidget_dark_bg_clickable"
+            android:src="@drawable/appwidget_arrow_down"
+            android:contentDescription="@string/widget_button_down" />
+
+        <ImageButton
+            android:id="@+id/widget_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:background="@drawable/appwidget_dark_bg_clickable"
+            android:src="@drawable/appwidget_back"
+            android:contentDescription="@string/widget_button_back" />
+    </LinearLayout>
+
+</LinearLayout>
