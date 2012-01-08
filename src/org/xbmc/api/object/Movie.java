@@ -139,6 +139,13 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	}
 	
 	/**
+	 * @return The Movie's IMDbId
+	 */
+	public String getIMDbId(){
+		return this.imdbId;
+	}
+	
+	/**
 	 * Returns database ID.
 	 * @return
 	 */
