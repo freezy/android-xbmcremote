@@ -270,7 +270,7 @@ public class VideoClient extends Client implements IVideoClient {
 		ArrayList<Movie> movies = new ArrayList<Movie>();
 		String[] fields = response.split("<field>");
 		try {
-			for (int row = 1; row < fields.length; row += 10) {
+			for (int row = 1; row < fields.length; row += 11) { //WHen adding a field, be sure to change this #
 				movies.add(new Movie( // int id, String title, int year, String path, String filename, String director, String runtime, String genres, Double rating, int numWatched, String imdbId
 						Connection.trimInt(fields[row]), 
 						Connection.trim(fields[row + 1]), 
