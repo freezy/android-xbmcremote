@@ -122,6 +122,17 @@ public class UrlIntentController extends AbstractController implements IControll
 		
 	}
 	
+	private static boolean isValidURL(String path){
+		if(path == null || path.equals(""))
+			return false;
+		try{
+			new URL(path);
+		} catch(MalformedURLException e) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * Checks the intent that created/resumed this activity. Used to see if we are being handed
 	 * an URL that should be passed to XBMC.
@@ -129,70 +140,54 @@ public class UrlIntentController extends AbstractController implements IControll
 	private void checkIntent(){
 		Intent intent = mActivity.getIntent();
 		final String action = intent.getAction();
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
 
 		if(action != null) {
 			Log.i("CHECKINTENT", action);
 			if ( action.equals(UrlIntentActivity.ACTION) ){
 				//final String path = intent.getData().toString();
 				final String path = intent.getStringExtra(Intent.EXTRA_TEXT);
-				if(path == null || path.equals(""))
-					return;
-				try{
-					new URL(path);
-				} catch(MalformedURLException e) {
-					return;
+				
+				if(isValidURL(path)){
+					handleURL(path);
+					cleaupIntent(intent);
 				}
-				
-				// If it is a youtube URL, we have to parse the video id from it and send it to the youtube plugin.
-				// The syntax for that is plugin://plugin.video.youtube/?path=/root/search%26action=play_video%26videoid=VIDEOID
-				Uri playuri = Uri.parse(path);
-				final String url;
-				final String message;
-				String youtubeVideoId = YoutubeURLParser.parseYoutubeURL(playuri);
-				
-				if(youtubeVideoId != null){
-					url = "plugin://plugin.video.youtube/?path=/root/search&action=play_video&videoid=" + youtubeVideoId;
-					message = "Do you want to play\nYoutube video " + youtubeVideoId + " on XBMC? Youtube addon required!";					
-				}else{
-					// Not a youtube URL or unparsable YouTube URL so just pass it on to XBMC as-is
-					url = playuri.toString();
-					message = "Do you want to play\n" + path + "\n on XBMC?";
-				}
-				
-				if (prefs.getBoolean(CONFIRM_PLAY_ON_XBMC, true)) {
-					final Builder builder = new Builder(mActivity);
-					builder.setTitle("Play URL on XBMC?");
-					builder.setMessage(message);
-					builder.setCancelable(true);
-					builder.setIcon(drawable.icon);
-					builder.setNeutralButton("Yes", new android.content.DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							new Thread(){
-								public void run(){
-									Looper.prepare();
-									playUrl(url);
-									Looper.loop();
-								}
-							}.start();
-							mActivity.finish();
-						}
-					});
-					builder.setCancelable(true);
-					builder.setNegativeButton("No", new android.content.DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.cancel();
-							mActivity.finish();
-						}
-					});
-					
-					final AlertDialog alert = builder.create();
-					try {
-						alert.show();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else {
+
+			}
+		}
+	}
+
+	private void cleaupIntent(Intent intent) {
+		//cleanup so we won't trigger again.
+		intent.setAction(null);
+		intent.setData(null);
+	}
+
+	private void handleURL(final String path) {
+		// If it is a youtube URL, we have to parse the video id from it and send it to the youtube plugin.
+		// The syntax for that is plugin://plugin.video.youtube/?path=/root/search%26action=play_video%26videoid=VIDEOID
+		Uri playuri = Uri.parse(path);
+		final String url;
+		final String message;
+		String youtubeVideoId = YoutubeURLParser.parseYoutubeURL(playuri);
+		
+		if(youtubeVideoId != null){
+			url = "plugin://plugin.video.youtube/?path=/root/search&action=play_video&videoid=" + youtubeVideoId;
+			message = "Do you want to play\nYoutube video " + youtubeVideoId + " on XBMC? Youtube addon required!";					
+		}else{
+			// Not a youtube URL or unparsable YouTube URL so just pass it on to XBMC as-is
+			url = playuri.toString();
+			message = "Do you want to play\n" + path + "\n on XBMC?";
+		}
+		
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
+		if (prefs.getBoolean(CONFIRM_PLAY_ON_XBMC, true)) {
+			final Builder builder = new Builder(mActivity);
+			builder.setTitle("Play URL on XBMC?");
+			builder.setMessage(message);
+			builder.setCancelable(true);
+			builder.setIcon(drawable.icon);
+			builder.setNeutralButton("Yes", new android.content.DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
 					new Thread(){
 						public void run(){
 							Looper.prepare();
@@ -202,10 +197,30 @@ public class UrlIntentController extends AbstractController implements IControll
 					}.start();
 					mActivity.finish();
 				}
-				//cleanup so we won't trigger again.
-				intent.setAction(null);
-				intent.setData(null);
+			});
+			builder.setCancelable(true);
+			builder.setNegativeButton("No", new android.content.DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+					mActivity.finish();
+				}
+			});
+			
+			final AlertDialog alert = builder.create();
+			try {
+				alert.show();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+		} else {
+			new Thread(){
+				public void run(){
+					Looper.prepare();
+					playUrl(url);
+					Looper.loop();
+				}
+			}.start();
+			mActivity.finish();
 		}
 	}
 }
