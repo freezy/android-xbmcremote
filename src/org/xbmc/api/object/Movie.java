@@ -164,15 +164,15 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	/**
 	 * Director(s), can be several separated by " / "
 	 */
-	public String director;
+	public final String director;
 	/**
 	 * Runtime, can be several also, separated by " | "
 	 */
-	public String runtime;
+	public final String runtime;
 	/**
 	 * Genre(s), can be several, normally separated by " / "
 	 */
-	public String genres;
+	public final String genres;
 	/**
 	 * Year released, -1 if unknown
 	 */
@@ -181,12 +181,12 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	/**
 	 * Local path of the movie (without file name)
 	 */
-	public String localPath;
+	public final String localPath;
 	
 	/**
 	 * File name of the movie
 	 */
-	public String filename;
+	public final String filename;
 	
 	/**
 	 * Rating
@@ -221,7 +221,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	/**
 	 * Number of watched, -1 if not set.
 	 */
-	public int numWatched = -1;
+	public final int numWatched;
 	
 	/**
 	 * List of actors; 
