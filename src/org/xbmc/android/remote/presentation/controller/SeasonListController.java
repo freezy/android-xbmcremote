@@ -274,11 +274,7 @@ public class SeasonListController extends ListController implements IController 
 			final Season season = getItem(position);
 			view.reset();
 			view.position = position;
-			if (season.number > 0) {
-				view.title = "Season " + season.number;
-			} else {
-				view.title = "Specials";
-			}
+			view.title = season.getShortName();
 
 			if (mLoadCovers) {
 				view.getResponse().load(season, ThumbSize.MEDIUM,

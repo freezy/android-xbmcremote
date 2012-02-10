@@ -46,13 +46,7 @@ public class Season implements Serializable, ICoverArt {
 	public long getCrc() {
 		// FileItem.cpp(1185)
 		// BGetCachedThumb("season"+seasonPath+GetLabel(),g_settings.GetVideoThumbFolder(),true);
-		if (number > 0) {
-			return Crc32.computeLowerCase("season" + show.getPath() + "Season "
-					+ number);
-		} else {
-			return Crc32.computeLowerCase("season" + show.getPath()
-					+ "Specials");
-		}
+			return Crc32.computeLowerCase("season" + show.getPath() + getShortName());
 	}
 
 	public int getFallbackCrc() {
@@ -68,12 +62,16 @@ public class Season implements Serializable, ICoverArt {
 		return MediaType.VIDEO_TVSEASON;
 	}
 
-	public String getName() {
+	public String getShortName() {
 		if (number > 0) {
-			return show.getName() + " - Season " + number;
+			return "Season " + number;
 		} else {
-			return show.getName() + " - Specials";
+			return "Specials";
 		}
+	}
+
+	public String getName() {
+		return show.getName() + " " + getShortName();
 	}
 
 	public String getPath() {
