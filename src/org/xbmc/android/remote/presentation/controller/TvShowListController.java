@@ -139,7 +139,7 @@ public class TvShowListController extends ListController implements IController 
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
 					mList.setAdapter(new TvShowAdapter(mActivity, value));
-					cacheCovers(value, mTvManager, mThumbSize);
+					preloadCovers(value, mTvManager, mThumbSize);
 				} else {
 					setTitle(title);
 					setNoDataMessage("No TV shows found.", R.drawable.icon_movie_dark);
@@ -321,6 +321,7 @@ public class TvShowListController extends ListController implements IController 
 				if (mTvManager.coverLoaded(show, mThumbSize)) {
 					view.setCover(mTvManager.getCoverSync(show, mThumbSize));
 				} else {
+					view.setCover(null);
 					view.getResponse().load(show, !mPostScrollLoader.isListIdle());
 				}
 			}

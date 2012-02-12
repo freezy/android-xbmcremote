@@ -89,7 +89,7 @@ public class ActorListController extends ListController implements IController {
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
 						mList.setAdapter(new ActorAdapter(mActivity, value));
-						cacheCovers(value, mVideoManager, mThumbSize);
+						preloadCovers(value, mVideoManager, mThumbSize);
 					} else {
 						setTitle(title);
 						setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
@@ -156,6 +156,7 @@ public class ActorListController extends ListController implements IController {
 				if(mVideoManager.coverLoaded(actor, mThumbSize)){
 					view.setCover(mVideoManager.getCoverSync(actor, mThumbSize));
 				}else{
+					view.setCover(null);
 					view.getResponse().load(actor, !mPostScrollLoader.isListIdle());
 				}
 			}

@@ -168,7 +168,7 @@ public class SongListController extends ListController implements IController {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
 					mList.setAdapter(new SongAdapter(mActivity, value));
-					cacheCovers(value, mMusicManager, mThumbSize);
+					preloadCovers(value, mMusicManager, mThumbSize);
 				} else {
 					setTitle(title);
 					setNoDataMessage("No songs found", R.drawable.icon_song_dark);
@@ -362,6 +362,7 @@ public class SongListController extends ListController implements IController {
 				if(mMusicManager.coverLoaded(song, mThumbSize)){
 					view.setCover(mMusicManager.getCoverSync(song, mThumbSize));
 				}else{
+					view.setCover(null);
 					view.getResponse().load(song, !mPostScrollLoader.isListIdle());
 				}
 			}

@@ -124,7 +124,7 @@ public class SeasonListController extends ListController implements IController 
 				if (value.size() > 0) {
 					setTitle(title +" (" + value.size() + ")");
 					mList.setAdapter(new SeasonAdapter(mActivity, value));
-					cacheCovers(value, mTvManager, mThumbSize);
+					preloadCovers(value, mTvManager, mThumbSize);
 				} else {
 					setTitle(title);
 					setNoDataMessage("No seasons found.", R.drawable.icon_movie_dark);
@@ -275,6 +275,7 @@ public class SeasonListController extends ListController implements IController 
 				if (mTvManager.coverLoaded(season, mThumbSize)) {
 					view.setCover(mTvManager.getCoverSync(season, mThumbSize));
 				} else {
+					view.setCover(null);
 					view.getResponse().load(season, mThumbSize, !mPostScrollLoader.isListIdle());
 				}
 			}

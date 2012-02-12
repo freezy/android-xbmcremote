@@ -220,7 +220,7 @@ public class AlbumListController extends ListController implements IController {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
 					setAdapter(value);
-					cacheCovers(value, mMusicManager, mThumbSize);
+					preloadCovers(value, mMusicManager, mThumbSize);
 				} else {
 					setTitle(title);
 					setNoDataMessage("No albums found.", R.drawable.default_album);
@@ -397,6 +397,7 @@ public class AlbumListController extends ListController implements IController {
 				if(mMusicManager.coverLoaded(album, mThumbSize)){
 					view.setCover(mMusicManager.getCoverSync(album, mThumbSize));
 				}else{
+					view.setCover(null);
 					view.getResponse().load(album, !mPostScrollLoader.isListIdle());
 				}
 			}

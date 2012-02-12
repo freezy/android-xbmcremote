@@ -104,7 +104,7 @@ public class ArtistListController extends ListController implements IController 
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
 						mList.setAdapter(new ArtistAdapter(mActivity, value));
-						cacheCovers(value, mMusicManager, mThumbSize);
+						preloadCovers(value, mMusicManager, mThumbSize);
 					} else {
 						setTitle(title);
 						setNoDataMessage("No artists found.", R.drawable.icon_artist_dark);
@@ -207,6 +207,7 @@ public class ArtistListController extends ListController implements IController 
 				if(mMusicManager.coverLoaded(artist, mThumbSize)){
 					view.setCover(mMusicManager.getCoverSync(artist, mThumbSize));
 				}else{
+					view.setCover(null);
 					view.getResponse().load(artist, !mPostScrollLoader.isListIdle());
 				}
 			}

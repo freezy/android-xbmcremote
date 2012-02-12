@@ -156,4 +156,10 @@ class MemCacheThread extends AbstractThread {
 			sHttpApiThread = null;
 		}
 	}
+	
+	public static void purgeCache() {
+		sCacheMedium.clear();
+		sCacheSmall.clear();
+		sNotAvailable.clear();
+	}
 }

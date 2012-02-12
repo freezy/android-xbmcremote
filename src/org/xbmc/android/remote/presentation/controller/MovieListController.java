@@ -139,7 +139,7 @@ public class MovieListController extends ListController implements IController {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
 					mList.setAdapter(new MovieAdapter(mActivity, value));
-					cacheCovers(value, mVideoManager, mThumbSize);
+					preloadCovers(value, mVideoManager, mThumbSize);
 				} else {
 					setTitle(title);
 					setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
@@ -338,6 +338,7 @@ public class MovieListController extends ListController implements IController {
 				if(mVideoManager.coverLoaded(movie, mThumbSize)){
 					view.setCover(mVideoManager.getCoverSync(movie, mThumbSize));
 				}else{
+					view.setCover(null);
 					view.getResponse().load(movie, !mPostScrollLoader.isListIdle());
 				}
 			}

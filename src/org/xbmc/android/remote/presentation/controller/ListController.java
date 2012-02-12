@@ -26,7 +26,6 @@ import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
-import org.xbmc.android.remote.presentation.widget.AbstractItemView;
 import org.xbmc.android.widget.FastScrollView;
 import org.xbmc.android.widget.IdleListDetector;
 import org.xbmc.android.widget.IdleListener;
@@ -43,7 +42,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -163,7 +161,7 @@ public abstract class ListController extends AbstractController implements Seria
 		}
 	}
 	
-	protected <T extends ICoverArt> void cacheCovers(final ArrayList<T> list, final IManager manager, final int thumbSize)
+	protected <T extends ICoverArt> void preloadCovers(final ArrayList<T> list, final IManager manager, final int thumbSize)
 	{
 		// Use the managers message queue to download the data, don't want to tie up the UI message queue
 		manager.post(new Runnable() {
@@ -171,7 +169,7 @@ public abstract class ListController extends AbstractController implements Seria
 			{
 				for(ICoverArt cover : list) {
 					CoverResponse response = new CoverResponse(null, manager, null, thumbSize, null);
-					response.load(cover, thumbSize, false);
+					response.load(cover, thumbSize, true);
 				}
 			}
 		});
