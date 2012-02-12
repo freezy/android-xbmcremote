@@ -135,11 +135,11 @@ public class EpisodeListController extends ListController implements IController
 		
 		showOnLoading();
 		if (season != null) {
-			setTitle(season.show.title + " Season " + season.number + " - Episodes");
+			setTitle(season.getName() + " - Episodes");
 			mTvManager.getEpisodes(new DataResponse<ArrayList<Episode>>() {
 				public void run() {
-					if(value.size() > 0) {
-						setTitle(season.show.title + " Season " + season.number + " - Episodes (" + value.size() + ")");
+					if (value.size() > 0) {
+						setTitle(season.getName() + " - Episodes (" + value.size() + ")");
 						mList.setAdapter(new EpisodeAdapter(mActivity, value));
 					} else {
 						setNoDataMessage("No episodes found.", R.drawable.icon_movie_dark);

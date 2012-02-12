@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -449,6 +450,28 @@ public class Connection {
 		}
 
 		return uc;
+	}
+	
+	public byte[] download(String pathToDownload) throws IOException, URISyntaxException {
+		try {
+			final URL url = new URL(pathToDownload);
+			final URLConnection uc = getUrlConnection(url);
+			
+			final InputStream is = uc.getInputStream();
+			final InputStreamReader isr = new InputStreamReader(is);
+			final BufferedReader rd = new BufferedReader(isr, 8192);
+			
+			final StringBuilder sb = new StringBuilder();
+			String line = "";
+			while ((line = rd.readLine()) != null) {    
+				sb.append(line);
+			}
+			
+			rd.close();
+			return Base64.decode(sb.toString().replace("<html>", "").replace("</html>", ""));
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**

@@ -21,22 +21,21 @@
 
 package org.xbmc.android.remote.business;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashSet;
 
-import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ClientFactory;
+import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.info.PlayStatus;
+import org.xbmc.api.object.Host;
+import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
@@ -219,13 +218,14 @@ public class NowPlayingPollerThread extends Thread {
 			  	  			if (downloadURI != null && downloadURI.length() > 0) {
 			  	  				if (!downloadURI.equals(mCoverPath)) {
 			  	  					mCoverPath = downloadURI;
-			  	  					
+			  	  								  	  					
 			  	  					byte[] buffer = download(downloadURI);
 			  	  					
 			  	  					if (buffer == null || buffer.length == 0)
 			  	  						mCover = null;
 			  	  					else 
 			  	  						mCover = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
+
 
 			  	  					for (Handler handler : subscribers) {
 			  	  						sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
@@ -246,6 +246,8 @@ public class NowPlayingPollerThread extends Thread {
 			  	  		} catch (URISyntaxException e) {
 			  	  			//e.printStackTrace();
 			  	  			Log.e(TAG, Log.getStackTraceString(e));
+			  	  		} catch (IOException e) {
+			  	  			Log.e(TAG, Log.getStackTraceString(e));
 			  	  		}
 					}
 				}
@@ -260,23 +262,16 @@ public class NowPlayingPollerThread extends Thread {
 		}
 	}
 	
-	private byte[] download(String pathToDownload) {
-		try {
-			final URL url = new URL(pathToDownload);
-			final URLConnection uc = url.openConnection();
-			
-			final BufferedReader rd = new BufferedReader(new InputStreamReader(uc.getInputStream()), 8192);
-			
-			final StringBuilder sb = new StringBuilder();
-			String line = "";
-			while ((line = rd.readLine()) != null) {    
-				sb.append(line);
+	private byte[] download(String pathToDownload) throws IOException, URISyntaxException {
+		Connection connection;	
+		final Host host = HostFactory.host;
+			if (host != null) {
+				connection = Connection.getInstance(host.addr, host.port);
+				connection.setAuth(host.user, host.pass);
+			} else {
+				connection = Connection.getInstance(null, 0);
 			}
 			
-			rd.close();
-			return Base64.decode(sb.toString().replace("<html>", "").replace("</html>", ""));
-		} catch (Exception e) {
-			return null;
-		}
+			return connection.download(pathToDownload);
 	}
 }
