@@ -22,13 +22,18 @@
 package org.xbmc.android.remote.presentation.controller;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
+import org.xbmc.android.remote.presentation.widget.AbstractItemView;
 import org.xbmc.android.widget.FastScrollView;
 import org.xbmc.android.widget.IdleListDetector;
 import org.xbmc.android.widget.IdleListener;
+import org.xbmc.api.business.CoverResponse;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IManager;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.ThumbSize;
 
@@ -38,6 +43,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -155,6 +161,20 @@ public abstract class ListController extends AbstractController implements Seria
 				}
 			});
 		}
+	}
+	
+	protected <T extends ICoverArt> void cacheCovers(final ArrayList<T> list, final IManager manager, final int thumbSize)
+	{
+		// Use the managers message queue to download the data, don't want to tie up the UI message queue
+		manager.post(new Runnable() {
+			public void run()
+			{
+				for(ICoverArt cover : list) {
+					CoverResponse response = new CoverResponse(null, manager, null, thumbSize, null);
+					response.load(cover, thumbSize, false);
+				}
+			}
+		});
 	}
 	
 	protected boolean isCreated() {

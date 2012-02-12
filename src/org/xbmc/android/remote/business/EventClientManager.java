@@ -96,6 +96,14 @@ public class EventClientManager implements INotifiableManager, IEventClientManag
 	public void getCover(DataResponse<Bitmap> response, ICoverArt cover, int thumbSize, Bitmap defaultCover, final Context context, boolean b) {
 		// only a stub;
 	}
+	
+	public Bitmap getCoverSync(final ICoverArt cover, final int thumbSize) {
+		return null;
+	}
+	
+	public boolean coverLoaded(final ICoverArt cover, final int thumbSize) {
+		return false;
+	}
 
 	public void onWrongConnectionState(int state) {
 		if (mController != null) {
@@ -111,6 +119,10 @@ public class EventClientManager implements INotifiableManager, IEventClientManag
 	public void onWrongConnectionState(int state, Command<?> cmd) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void post(Runnable r) {
+		// TODO Auto-generated method stub
 	}
 
 	public void retryAll() {

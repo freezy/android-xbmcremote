@@ -24,6 +24,7 @@ package org.xbmc.android.remote.presentation.activity;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.api.business.IEventClientManager;
+import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
@@ -31,6 +32,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.widget.TextView;
 
@@ -43,6 +45,10 @@ public class AboutActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
+		// set display size
+		final Display display = getWindowManager().getDefaultDisplay(); 
+		ThumbSize.setScreenSize(display.getWidth(), display.getHeight());
+		
 		try {
 			mEventClientManager = ManagerFactory.getEventClientManager(null);
 			final String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;

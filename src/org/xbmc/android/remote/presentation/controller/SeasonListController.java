@@ -58,6 +58,8 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class SeasonListController extends ListController implements IController {
 
+	private static final int mThumbSize = ThumbSize.MEDIUM;
+
 	public static final int ITEM_CONTEXT_BROWSE = 1;
 
 	public static final int MENU_PLAY_ALL = 1;
@@ -88,32 +90,25 @@ public class SeasonListController extends ListController implements IController 
 			super.onCreate(activity, handler, list);
 
 			if (!mLoadCovers) {
-				Toast toast = Toast.makeText(activity, sdError
-						+ " Displaying place holders only.", Toast.LENGTH_LONG);
+				Toast toast = Toast.makeText(activity, sdError + " Displaying place holders only.", Toast.LENGTH_LONG);
 				toast.show();
 			}
 
-			mShow = (TvShow) activity.getIntent().getSerializableExtra(
-					ListController.EXTRA_TVSHOW);
+			mShow = (TvShow)activity.getIntent().getSerializableExtra(ListController.EXTRA_TVSHOW);
 
 			activity.registerForContextMenu(mList);
 
-			mFallbackBitmap = BitmapFactory.decodeResource(
-					activity.getResources(), R.drawable.default_season);
-			setupIdleListener(ThumbSize.MEDIUM);
+			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.default_season);
+			
+			setupIdleListener(mThumbSize);
 
 			mList.setOnItemClickListener(new OnItemClickListener() {
-				public void onItemClick(AdapterView<?> parent, View view,
-						int position, long id) {
-					if (isLoading())
-						return;
-					final Season season = (Season) mList.getAdapter().getItem(
-							((GridPosterItemView) view).position);
-					Intent nextActivity = new Intent(view.getContext(),
-							ListActivity.class);
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					if (isLoading()) return;
+					final Season season = (Season) mList.getAdapter().getItem(((GridPosterItemView) view).position);
+					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_SEASON, season);
-					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER,
-							new EpisodeListController());
+					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new EpisodeListController());
 					mActivity.startActivity(nextActivity);
 				}
 			});
@@ -123,22 +118,24 @@ public class SeasonListController extends ListController implements IController 
 	}
 
 	private void fetch() {
-		final TvShow show = mShow;
-		showOnLoading();
-		if (show != null) {
-			setTitle(show.title + " - Seasons");
-			mTvManager.getSeasons(new DataResponse<ArrayList<Season>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle(show.title + " - Seasons (" + value.size()
-								+ ")");
-						mList.setAdapter(new SeasonAdapter(mActivity, value));
-					} else {
-						setNoDataMessage("No seasons found.",
-								R.drawable.icon_movie_dark);
-					}
+		final String title = mShow != null ? mShow.title + " - " : "" + "Seasons";
+		DataResponse<ArrayList<Season>> response = new DataResponse<ArrayList<Season>>() {
+			public void run() {
+				if (value.size() > 0) {
+					setTitle(title +" (" + value.size() + ")");
+					mList.setAdapter(new SeasonAdapter(mActivity, value));
+					cacheCovers(value, mTvManager, mThumbSize);
+				} else {
+					setTitle(title);
+					setNoDataMessage("No seasons found.", R.drawable.icon_movie_dark);
 				}
-			}, show, mActivity.getApplicationContext());
+			}
+		};
+		
+		showOnLoading();
+		setTitle(title + "...");
+		if (mShow != null) {
+			mTvManager.getSeasons(response, mShow, mActivity.getApplicationContext());
 		}
 	}
 
@@ -217,8 +214,7 @@ public class SeasonListController extends ListController implements IController 
 		// menu.add(0, MENU_PLAY_ALL, 0,
 		// "Play all").setIcon(R.drawable.menu_album);
 		// }
-		SubMenu sortMenu = menu.addSubMenu(0, MENU_SORT, 0, "Sort").setIcon(
-				R.drawable.menu_sort);
+		SubMenu sortMenu = menu.addSubMenu(0, MENU_SORT, 0, "Sort").setIcon(R.drawable.menu_sort);
 		sortMenu.add(2, MENU_SORT_BY_TITLE_ASC, 0, "by Title ascending");
 		sortMenu.add(2, MENU_SORT_BY_TITLE_DESC, 0, "by Title descending");
 		sortMenu.add(2, MENU_SORT_BY_YEAR_ASC, 0, "by Year ascending");
@@ -264,8 +260,7 @@ public class SeasonListController extends ListController implements IController 
 
 			final GridPosterItemView view;
 			if (convertView == null) {
-				view = new GridPosterItemView(mActivity, mTvManager,
-						parent.getWidth(), mFallbackBitmap,
+				view = new GridPosterItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap,
 						mList.getSelector(), false);
 			} else {
 				view = (GridPosterItemView) convertView;
@@ -277,8 +272,11 @@ public class SeasonListController extends ListController implements IController 
 			view.title = season.getShortName();
 
 			if (mLoadCovers) {
-				view.getResponse().load(season, ThumbSize.MEDIUM,
-						!mPostScrollLoader.isListIdle());
+				if (mTvManager.coverLoaded(season, mThumbSize)) {
+					view.setCover(mTvManager.getCoverSync(season, mThumbSize));
+				} else {
+					view.getResponse().load(season, mThumbSize, !mPostScrollLoader.isListIdle());
+				}
 			}
 			return view;
 		}
@@ -289,7 +287,7 @@ public class SeasonListController extends ListController implements IController 
 	public void onActivityPause() {
 		if (mTvManager != null) {
 			mTvManager.setController(null);
-			// mVideoManager.postActivity();
+			mTvManager.postActivity();
 		}
 		if (mControlManager != null) {
 			mControlManager.setController(null);
@@ -306,5 +304,4 @@ public class SeasonListController extends ListController implements IController 
 			mControlManager.setController(this);
 		}
 	}
-
 }

@@ -26,12 +26,14 @@ import org.xbmc.android.remote.presentation.activity.HomeActivity;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.ActivityGroup;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Build.VERSION;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TabHost;
@@ -63,6 +65,13 @@ public class SlidingTabActivity extends ActivityGroup {
 				
 			});
 		}
+	}
+
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// set display size
+		final Display display = getWindowManager().getDefaultDisplay(); 
+		ThumbSize.setScreenSize(display.getWidth(), display.getHeight());		
 	}
 	
 	protected void callSuperOnKeyDown(int keyCode, KeyEvent event) {

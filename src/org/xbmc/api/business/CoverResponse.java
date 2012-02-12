@@ -42,7 +42,9 @@ public class CoverResponse extends DataResponse<Bitmap> {
 	
 	public synchronized void run() {
 		if (mMostRecentCover == null) {
-			mHandler.sendMessage(mHandler.obtainMessage(AbstractItemView.MSG_UPDATE_COVER, value));
+			if(mHandler != null) {
+				mHandler.sendMessage(mHandler.obtainMessage(AbstractItemView.MSG_UPDATE_COVER, value));
+			}
 			mIsLoading = false;
 		} else {
 			mManager.getCover(this, mMostRecentCover, mThumbSize, mDefaultCover, mContext, false);
