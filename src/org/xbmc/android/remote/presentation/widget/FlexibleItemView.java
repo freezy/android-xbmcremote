@@ -14,34 +14,23 @@ import android.graphics.Paint.Align;
 import android.graphics.drawable.Drawable;
 
 public class FlexibleItemView extends FiveLabelsItemView {
-	
-//	private static final String TAG = "FlexibleItemView";
-	
-	private int POSTER_WIDTH = ThumbSize.getPixel(ThumbSize.SMALL);
-	private int POSTER_HEIGHT = (int)(POSTER_WIDTH * ThumbSize.POSTER_AR);
-	private Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
-	private int POSTER_FORMAT = Dimension.PORTRAIT;
+		private int POSTER_FORMAT = Dimension.PORTRAIT;
 	
 	public FlexibleItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection, boolean fixedSize) {
 		super(context, manager, width, defaultCover, selection, fixedSize);
 	}
-
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		setMeasuredDimension(mWidth, POSTER_HEIGHT);
-	}
 	
 	protected void onDraw(Canvas canvas) {
 		if (mCover != null && !mCover.isRecycled()) {
-			drawPoster(canvas, POSTER_WIDTH, POSTER_HEIGHT, mWidth);
-			drawPosterOverlay(canvas, POSTER_WIDTH, POSTER_HEIGHT);
+			drawPoster(canvas, posterWidth, posterHeight, mWidth);
+			drawPosterOverlay(canvas, posterWidth, posterHeight);
 			switch (POSTER_FORMAT) {
 				case Dimension.SQUARE:
 				case Dimension.PORTRAIT:
 					drawPortrait(canvas);
 					break;
 				case Dimension.LANDSCAPE:
-					drawLandscape(canvas, POSTER_WIDTH);
+					drawLandscape(canvas, posterWidth);
 					break;
 				case Dimension.BANNER:
 					drawBanner(canvas);
@@ -115,25 +104,20 @@ public class FlexibleItemView extends FiveLabelsItemView {
 		mCover = cover;
 		if(mCover != null)
 		{
-			Dimension renderDim = ThumbSize.getDimension(ThumbSize.SMALL, MediaType.VIDEO, mCover.getWidth(), mCover.getHeight());
-			POSTER_WIDTH = renderDim.x;
-			POSTER_HEIGHT = renderDim.y;
-			POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
+			Dimension renderDim = ThumbSize.getTargetDimension(ThumbSize.SMALL, MediaType.VIDEO, mCover.getWidth(), mCover.getHeight());
+			posterWidth = renderDim.x;
+			posterHeight = renderDim.y;
+			posterRect = new Rect(0, 0, posterWidth, posterHeight);
 			POSTER_FORMAT = renderDim.format;
 		}
 		else
 		{
-			POSTER_WIDTH = ThumbSize.getPixel(ThumbSize.SMALL);
-			POSTER_HEIGHT = (int)(POSTER_WIDTH * ThumbSize.POSTER_AR);
-			POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
+			posterWidth = ThumbSize.getPixel(ThumbSize.SMALL);
+			posterHeight = (int)(posterWidth * ThumbSize.POSTER_AR);
+			posterRect = new Rect(0, 0, posterWidth, posterHeight);
 			POSTER_FORMAT = Dimension.PORTRAIT;
 		}
 		requestLayout();
 		invalidate();
-	}
-	
-	@Override
-	protected Rect getPosterRect() {
-		return POSTER_RECT;
 	}
 }

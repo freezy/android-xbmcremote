@@ -38,6 +38,7 @@ public abstract class ThumbSize {
 	public static final double POSTER_AR = 1.4799154334038054968287526427061;
 	public static final double LANDSCAPE_AR = 0.5625;
 	public static final double BANNER_AR = 0.1846965699208443;
+	public static final double FULL_AR = 0.75;
 	
 	public static final int SMALL = 1;
 	public static final int MEDIUM = 2;
@@ -125,6 +126,8 @@ public abstract class ThumbSize {
 				return new Dimension(getPixel(size), getPixel(size), Dimension.SQUARE);
 			} else if (ar < 1) {			// portrait
 				return new Dimension(getPixel(size), (int)(POSTER_AR * getPixel(size)), Dimension.PORTRAIT);
+			} else if (ar < 1.5) { // landscape 4:3
+				return new Dimension((int)((double)getPixel(size) / FULL_AR), getPixel(size), Dimension.LANDSCAPE);
 			} else if (ar < 2) {			// landscape 16:9
 				return new Dimension((int)((double)getPixel(size) / LANDSCAPE_AR), getPixel(size), Dimension.LANDSCAPE);
 			} else if (ar > 5) {			// wide banner
@@ -146,90 +149,6 @@ public abstract class ThumbSize {
 				return new Dimension((int)((double)getPixel(size) / LANDSCAPE_AR), getPixel(size), Dimension.UNKNOWN);
 			}
 		}
-	}
-	
-	/**
-	 * Returns the dimensions the bitmap should be resized to before being 
-	 * cropped. Returned dimensions are with the same aspect ratio as input
-	 * parameters.
-	 * @param size      Which size
-	 * @param mediaType Which media type
-	 * @param x         Current image width
-	 * @param y         Current image height
-	 * @return
-	 */
-	public static Dimension getDimension(int size, int mediaType, int x, int y) {
-		int width = 0;
-		int height = 0;
-		int format = Dimension.UNKNOWN;
-		final double ar = ((double)x) / ((double)y);
-		switch (mediaType) {
-			default:
-			case MediaType.PICTURES:
-			case MediaType.MUSIC:
-				if (ar < 1) {
-					width = getPixel(size);
-					height = (int)((double)width / ar);
-				} else {
-					height = getPixel(size);
-					width = (int)((double)height * ar);
-				}
-				format = Dimension.SQUARE;
-				break;
-			case MediaType.VIDEO:
-			case MediaType.VIDEO_MOVIE:
-			case MediaType.VIDEO_TVEPISODE:
-			case MediaType.VIDEO_TVSEASON:
-			case MediaType.VIDEO_TVSHOW:
-				if (ar > 0.98 && ar < 1.02) { 	// square
-					if (ar < 1) {
-						width = getPixel(size);
-						height = (int)((double)width / ar);
-					} else {
-						height = getPixel(size);
-						width = (int)((double)height * ar);
-					}
-					format = Dimension.SQUARE;
-				} else if (ar < 1) {			// portrait
-					width = ThumbSize.getPixel(size);
-					final int ph = (int)(POSTER_AR * width);
-					height = (int)(width / ar); 
-					if (height < ph) { 
-						height = ph;
-						width = (int)(height * ar);
-					}
-					format = Dimension.PORTRAIT;
-				} else if (ar < 2) {			// landscape 16:9
-					height = ThumbSize.getPixel(size);
-					width = (int)(height * ar); 
-					format = Dimension.LANDSCAPE;
-				} else if (ar > 5) {			// wide banner
-					switch (size) {
-						case ThumbSize.SMALL:
-							width = ThumbSize.getPixel(ThumbSize.SCREENWIDTH);
-							height = (int)(width / ar); 
-							break;
-						case ThumbSize.MEDIUM:
-							width = ThumbSize.getPixel(ThumbSize.SCREENHEIGHT);
-							height = (int)(width / ar); 
-							break;
-						case ThumbSize.BIG:
-							height = 188;
-							width = (int)(height * ar); 
-							break;
-						default: 
-							height = -1;
-							width = -1;
-							break;
-					}
-					format = Dimension.BANNER;
-				} else {						// anything between wide banner and landscape 16:9
-					height = ThumbSize.getPixel(size);
-					width = (int)(height * ar); 
-				}
-				break;
-		}
-		return new Dimension(width, height, format);
 	}
 	
 	public static int[] values() {
