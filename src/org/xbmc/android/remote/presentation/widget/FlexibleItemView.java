@@ -104,9 +104,4 @@ public class FlexibleItemView extends FiveLabelsItemView {
 		requestLayout();
 		invalidate();
 	}
-	
-	@Override
-	protected Rect getPosterRect() {
-		return POSTER_RECT;
-	}
 }
