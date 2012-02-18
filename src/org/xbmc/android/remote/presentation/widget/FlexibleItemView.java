@@ -9,34 +9,18 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.Paint.Align;
 import android.graphics.drawable.Drawable;
 
 public class FlexibleItemView extends FiveLabelsItemView {
-	
-//	private static final String TAG = "FlexibleItemView";
-	
-	private final static int POSTER_WIDTH = ThumbSize.getPixel(ThumbSize.SMALL);;
-	private final static int POSTER_HEIGHT = (int)(POSTER_WIDTH * ThumbSize.POSTER_AR);
-	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
-	
 	public FlexibleItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection, boolean fixedSize) {
 		super(context, manager, width, defaultCover, selection, fixedSize);
 	}
 
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		if (mCover == null) {
-			setMeasuredDimension(mWidth, POSTER_HEIGHT);
-		} else {
-			setMeasuredDimension(mWidth, mCover.getHeight());
-		}
-	}
 
 	protected void onDraw(Canvas canvas) {
 		if (mCover != null && !mCover.isRecycled()) {
-			Dimension renderDim = ThumbSize.getDimension(ThumbSize.SMALL, MediaType.VIDEO, mCover.getWidth(), mCover.getHeight());
+			Dimension renderDim = ThumbSize.getTargetDimension(ThumbSize.SMALL, MediaType.VIDEO, mCover.getWidth(), mCover.getHeight());
 			drawPoster(canvas, renderDim.x, renderDim.y, mWidth);
 			drawPosterOverlay(canvas, renderDim.x, renderDim.y);
 			switch (renderDim.format) {
@@ -119,10 +103,5 @@ public class FlexibleItemView extends FiveLabelsItemView {
 		mCover = cover;
 		requestLayout();
 		invalidate();
-	}
-	
-	@Override
-	protected Rect getPosterRect() {
-		return POSTER_RECT;
 	}
 }

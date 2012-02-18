@@ -119,7 +119,7 @@ abstract class Client {
 				
 				if (bytes.length > 0) {
 					final BitmapFactory.Options opts = prefetch(manager, bytes, size);
-					final Dimension dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
+					final Dimension dim = ThumbSize.getTargetDimension(size, mediaType, opts.outWidth, opts.outHeight);
 					final int ss = ImportUtilities.calculateSampleSize(opts, dim);
 					opts.inDither = true;
 					opts.inSampleSize = ss;
@@ -165,14 +165,14 @@ abstract class Client {
 			
 			Log.i(TAG, "Starting download (" + url + ") - microhttpd");
 			BitmapFactory.Options opts = prefetch(manager, url, size);
-			Dimension dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
+			Dimension dim = ThumbSize.getTargetDimension(size, mediaType, opts.outWidth, opts.outHeight);
 			
 			Log.i(TAG, "Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
 			if (opts.outWidth < 1) {
 				if (fallbackUrl != null) {
 					Log.i(TAG, "Starting fallback download (" + fallbackUrl + ")");
 					opts = prefetch(manager, fallbackUrl, size);
-					dim = ThumbSize.getDimension(size, mediaType, opts.outWidth, opts.outHeight);
+					dim = ThumbSize.getTargetDimension(size, mediaType, opts.outWidth, opts.outHeight);
 					Log.i(TAG, "FALLBACK-Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
 					if (opts.outWidth < 1) {
 						return null;
