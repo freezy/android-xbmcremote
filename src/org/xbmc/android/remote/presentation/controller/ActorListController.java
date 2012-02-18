@@ -32,6 +32,7 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Artist;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -51,6 +52,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class ActorListController extends ListController implements IController {
 	
+	private static final int mThumbSize = ThumbSize.SMALL;
 	public static final int TYPE_ALL = 1;
 	public static final int TYPE_MOVIE = 2;
 	public static final int TYPE_TVSHOW = 3;
@@ -77,56 +79,42 @@ public class ActorListController extends ListController implements IController {
 				Toast toast = Toast.makeText(activity, sdError + " Displaying place holders only.", Toast.LENGTH_LONG);
 				toast.show();
 			}
+			
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.person_black_small);
 			setupIdleListener();
 			
-			mList.setOnKeyListener(new ListControllerOnKeyListener<Artist>());
+			final String title = mType == TYPE_MOVIE ? "Movie " : mType == TYPE_TVSHOW ? "TV " : "" + "Actors";
+			DataResponse<ArrayList<Actor>> response = new DataResponse<ArrayList<Actor>>() {
+				public void run() {
+					if (value.size() > 0) {
+						setTitle(title + " (" + value.size() + ")");
+						mList.setAdapter(new ActorAdapter(mActivity, value));
+						preloadCovers(value, mVideoManager, mThumbSize);
+					} else {
+						setTitle(title);
+						setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
+					}
+				}
+			};
+			
+			mList.setOnKeyListener(new ListControllerOnKeyListener<Artist>());			
+			
+			showOnLoading();
+			setTitle(title + "...");			
 			switch (mType) {
-			case TYPE_ALL:
-				setTitle("Actors...");
-				mVideoManager.getActors(new DataResponse<ArrayList<Actor>>() {
-					public void run() {
-						if (value.size() > 0) {
-							setTitle("Actors (" + value.size() + ")");
-							mList.setAdapter(new ActorAdapter(mActivity, value));
-						} else {
-							setTitle("Actors");
-							setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
-						}
-					}
-				}, mActivity.getApplicationContext());
-				break;
-			case TYPE_MOVIE:
-				setTitle("Movie Actors...");
-				mVideoManager.getMovieActors(new DataResponse<ArrayList<Actor>>() {
-					public void run() {
-						if (value.size() > 0) {
-							setTitle("Movie actors (" + value.size() + ")");
-							mList.setAdapter(new ActorAdapter(mActivity, value));
-						} else {
-							setTitle("Movie actors");
-							setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
-						}
-					}
-				}, mActivity.getApplicationContext());
-				break;
-			case TYPE_TVSHOW:
-				setTitle("TV Actors...");
-				mVideoManager.getTvShowActors(new DataResponse<ArrayList<Actor>>() {
-					public void run() {
-						if (value.size() > 0) {
-							setTitle("TV show actors (" + value.size() + ")");
-							mList.setAdapter(new ActorAdapter(mActivity, value));
-						} else {
-							setTitle("TV show actors");
-							setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
-						}
-					}
-				}, mActivity.getApplicationContext());
-				break;
-			case TYPE_EPISODE:
-				break;
+				case TYPE_ALL:
+					mVideoManager.getActors(response, mActivity.getApplicationContext());
+					break;
+				case TYPE_MOVIE:
+					mVideoManager.getMovieActors(response, mActivity.getApplicationContext());
+					break;
+				case TYPE_TVSHOW:
+					mVideoManager.getTvShowActors(response, mActivity.getApplicationContext());
+					break;
+				case TYPE_EPISODE:
+					break;
 			}
+			
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					if(isLoading()) return;
@@ -165,8 +153,14 @@ public class ActorListController extends ListController implements IController {
 			view.title = actor.name;
 			
 			if (mLoadCovers) {
-				view.getResponse().load(actor, !mPostScrollLoader.isListIdle());
+				if(mVideoManager.coverLoaded(actor, mThumbSize)){
+					view.setCover(mVideoManager.getCoverSync(actor, mThumbSize));
+				}else{
+					view.setCover(null);
+					view.getResponse().load(actor, !mPostScrollLoader.isListIdle());
+				}
 			}
+
 			return view;
 		}
 	}

@@ -38,6 +38,7 @@ import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.SortType;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -63,7 +64,8 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class MovieListController extends ListController implements IController {
-	
+
+	private static final int mThumbSize = ThumbSize.SMALL;
 	public static final int ITEM_CONTEXT_PLAY = 1;
 	public static final int ITEM_CONTEXT_INFO = 2;
 	
@@ -131,49 +133,28 @@ public class MovieListController extends ListController implements IController {
 	}
 	
 	private void fetch() {
-		final Actor actor = mActor;
-		final Genre genre = mGenre;
+		final String title = mActor != null ? mActor.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "Movies";
+		DataResponse<ArrayList<Movie>> response = new DataResponse<ArrayList<Movie>>() {
+			public void run() {
+				if (value.size() > 0) {
+					setTitle(title + " (" + value.size() + ")");
+					mList.setAdapter(new MovieAdapter(mActivity, value));
+					preloadCovers(value, mVideoManager, mThumbSize);
+				} else {
+					setTitle(title);
+					setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
+				}
+			}
+		};
+		
 		showOnLoading();
-		if (actor != null) {						// movies with a certain actor
-			setTitle(actor.name + " - Movies...");
-			mVideoManager.getMovies(new DataResponse<ArrayList<Movie>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle(actor.name + " - Movies (" + value.size() + ")");
-						mList.setAdapter(new MovieAdapter(mActivity, value));
-					} else {
-						setTitle(actor.name + " - Movies");
-						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
-					}
-				}
-			}, actor, mActivity.getApplicationContext());
-			
-		} else if (genre != null) {					// movies of a genre
-			setTitle(genre.name + " - Movies...");
-			mVideoManager.getMovies(new DataResponse<ArrayList<Movie>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle(genre.name + " - Movies (" + value.size() + ")");
-						mList.setAdapter(new MovieAdapter(mActivity, value));
-					} else {
-						setTitle(genre.name + " - Movies");
-						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
-					}
-				}
-			}, genre, mActivity.getApplicationContext());
-		} else {
-			setTitle("Movies...");				// all movies
-			mVideoManager.getMovies(new DataResponse<ArrayList<Movie>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle("Movies (" + value.size() + ")");
-						mList.setAdapter(new MovieAdapter(mActivity, value));
-					} else {
-						setTitle("Movies");
-						setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
-					}
-				}
-			}, mActivity.getApplicationContext());
+		setTitle(title + "...");
+		if (mActor != null) {						// movies with a certain actor
+			mVideoManager.getMovies(response, mActor, mActivity.getApplicationContext());
+		} else if (mGenre != null) {					// movies of a genre
+			mVideoManager.getMovies(response, mGenre, mActivity.getApplicationContext());
+		} else {									// all movies
+			mVideoManager.getMovies(response, mActivity.getApplicationContext());
 		}
 	}
 	
@@ -354,7 +335,12 @@ public class MovieListController extends ListController implements IController {
 			view.bottomright = String.valueOf(movie.rating);
 			
 			if (mLoadCovers) {
-				view.getResponse().load(movie, !mPostScrollLoader.isListIdle());
+				if(mVideoManager.coverLoaded(movie, mThumbSize)){
+					view.setCover(mVideoManager.getCoverSync(movie, mThumbSize));
+				}else{
+					view.setCover(null);
+					view.getResponse().load(movie, !mPostScrollLoader.isListIdle());
+				}
 			}
 			return view;
 		}

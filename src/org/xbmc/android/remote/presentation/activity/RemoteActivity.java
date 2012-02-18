@@ -26,6 +26,7 @@ import org.xbmc.android.remote.presentation.controller.RemoteController;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
+import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
@@ -90,6 +91,8 @@ public class RemoteActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		Display d = getWindowManager().getDefaultDisplay();
+		// set display size
+		ThumbSize.setScreenSize(d.getWidth(), d.getHeight());	
 		final int w = d.getWidth();
 		final int h = d.getHeight();
 		final double ar = w > h ? (double) w / (double) h : (double) h / (double) w;

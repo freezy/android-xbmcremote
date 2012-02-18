@@ -78,12 +78,10 @@ public abstract class AbstractItemView extends View {
 		this(context, null, width, defaultCover, selection, 0, fixedSize);
 	}
 	
-	
 	protected void drawPoster(Canvas canvas, int posterWidth, int posterHeight, int canvasWidth) {
 
 		// background
-		if ((isSelected() || isPressed()) && mSelection != null) { // && sSelected != null && !sSelected.isRecycled()) {
-//			canvas.drawBitmap(sSelected, null, new Rect(posterWidth, 0, canvasWidth, posterHeight), PAINT);
+		if ((isSelected() || isPressed()) && mSelection != null) {
 			mSelection.setBounds(posterWidth, 0, canvasWidth, posterHeight);
 			mSelection.draw(canvas);
 		} else {
@@ -92,30 +90,21 @@ public abstract class AbstractItemView extends View {
 		}
 		
 		// poster
-		if (mCover != null && !mCover.isRecycled()) {
-			final int w = mCover.getWidth();
-			final int h = mCover.getHeight();
-			int dx = 0;
-			int dy = 0;
-			if (w > posterWidth) {
-				dx = (w - posterWidth) / 2;  
-			}
-			if (h > posterHeight) {
-				dy = (h - posterHeight) / 2;  
-			}
-			if (dx > 0 || dy > 0) {
-				canvas.drawBitmap(mCover, new Rect(dx, dy, dx + posterWidth, dy + posterHeight), getPosterRect(), PAINT);
-			} else {
-				canvas.drawBitmap(mCover, 0.0f, 0.0f, null);
-			}
-		} else {
-			final Bitmap defaultCover = mDefaultCover;
-			if (defaultCover != null && !defaultCover.isRecycled()) {
-				PAINT.setColor(Color.WHITE);
-				canvas.drawRect(0, 0, posterWidth, posterHeight, PAINT);
-//				canvas.drawBitmap(defaultCover, 0f, 0f, PAINT);
-				canvas.drawBitmap(defaultCover, new Rect(0, 0, defaultCover.getWidth(), defaultCover.getHeight()), new Rect(0, 0, posterWidth, posterHeight), PAINT);
-			}
+		Bitmap cover = mCover;
+		if(mCover == null || mCover.isRecycled())
+		{
+			cover = mDefaultCover;
+		}
+		
+		if (cover != null && !cover.isRecycled()) {
+			int dx = (cover.getWidth() - posterWidth) / 2;  
+			int dy = (cover.getHeight() - posterHeight) / 2;
+			Rect src = null;
+			if(dx > 0 || dy > 0) {
+					src = new Rect(dx, dy, dx + posterWidth, dy + posterHeight);
+				}
+			Rect dst = getPosterRect();
+			canvas.drawBitmap(cover, src, dst, PAINT);
 		}
 	}
 	
