@@ -130,7 +130,10 @@ public class Episode implements ICoverArt {
 	}
 
 	public String getName() {
-		return season + "x" + episode + ": " + title;
+		if(season == 0)
+			return "Special " + episode + ": " + title;
+		else
+			return season + "x" + episode + ": " + title;
 	}
 
 	/**
