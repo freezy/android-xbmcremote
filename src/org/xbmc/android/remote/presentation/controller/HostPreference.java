@@ -193,7 +193,7 @@ public class HostPreference extends DialogPreference {
 		if (positiveResult) {
 			final Host host = new Host();
 			host.name = mNameView.getText().toString();
-			host.addr = mHostView.getText().toString();
+			host.addr = mHostView.getText().toString().trim();
 			try {
 				host.port = Integer.parseInt(mPortView.getText().toString());
 			} catch (NumberFormatException e) {
