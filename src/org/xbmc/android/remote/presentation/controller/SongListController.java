@@ -168,7 +168,6 @@ public class SongListController extends ListController implements IController {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
 					mList.setAdapter(new SongAdapter(mActivity, value));
-					preloadCovers(value, mMusicManager, mThumbSize);
 				} else {
 					setTitle(title);
 					setNoDataMessage("No songs found", R.drawable.icon_song_dark);

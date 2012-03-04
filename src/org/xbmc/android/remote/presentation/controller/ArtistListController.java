@@ -104,7 +104,6 @@ public class ArtistListController extends ListController implements IController 
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
 						mList.setAdapter(new ArtistAdapter(mActivity, value));
-						preloadCovers(value, mMusicManager, mThumbSize);
 					} else {
 						setTitle(title);
 						setNoDataMessage("No artists found.", R.drawable.icon_artist_dark);

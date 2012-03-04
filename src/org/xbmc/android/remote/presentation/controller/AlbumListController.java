@@ -220,7 +220,6 @@ public class AlbumListController extends ListController implements IController {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
 					setAdapter(value);
-					preloadCovers(value, mMusicManager, mThumbSize);
 				} else {
 					setTitle(title);
 					setNoDataMessage("No albums found.", R.drawable.default_album);

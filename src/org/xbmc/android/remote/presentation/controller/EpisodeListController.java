@@ -139,7 +139,6 @@ public class EpisodeListController extends ListController implements IController
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
 					mList.setAdapter(new EpisodeAdapter(mActivity, value));
-					preloadCovers(value, mTvManager, mThumbSize);
 				} else {
 					setNoDataMessage("No episodes found.", R.drawable.icon_movie_dark);
 				}

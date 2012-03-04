@@ -139,7 +139,6 @@ public class MovieListController extends ListController implements IController {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
 					mList.setAdapter(new MovieAdapter(mActivity, value));
-					preloadCovers(value, mVideoManager, mThumbSize);
 				} else {
 					setTitle(title);
 					setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);

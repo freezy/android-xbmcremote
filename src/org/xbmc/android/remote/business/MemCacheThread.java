@@ -21,6 +21,7 @@
 
 package org.xbmc.android.remote.business;
 
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 
 import org.xbmc.api.business.DataResponse;
@@ -52,10 +53,9 @@ class MemCacheThread extends AbstractThread {
 	
 	/**
 	 * The actual cache variable. Here are the thumbs stored.
-	 * Can't use SoftReference<Bitmap> or java will GC the bitmaps 
 	 */
-	private static final HashMap<Long, Bitmap> sCacheSmall = new HashMap<Long, Bitmap>();
-	private static final HashMap<Long, Bitmap> sCacheMedium = new HashMap<Long, Bitmap>();
+	private static final HashMap<Long, SoftReference<Bitmap>> sCacheSmall = new HashMap<Long, SoftReference<Bitmap>>();
+	private static final HashMap<Long, SoftReference<Bitmap>> sCacheMedium = new HashMap<Long, SoftReference<Bitmap>>();
 	private static final HashMap<Long, Boolean> sNotAvailable = new HashMap<Long, Boolean>();
 
 	/**
@@ -81,10 +81,11 @@ class MemCacheThread extends AbstractThread {
 				if (DEBUG) Log.i(TAG,  "[" + cover.getId() + "] Checking if cover in cache..");
 				if (cover != null) {
 					final long crc = cover.getCrc();
-					final Bitmap ref = getCache(thumbSize).get(crc);
+					final SoftReference<Bitmap> ref = getCache(thumbSize).get(crc);
 			        if (ref != null) {
 			        	if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] -> In cache.");
-			        	response.value = ref;
+			        	response.value = ref.get();
+			        	if (DEBUG && response.value == null) Log.w(TAG, "[" + cover.getId() + "] -> GC'd from cache.");
 			        } else if (sNotAvailable.containsKey(crc)) {
 			        	if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] -> Marked as not-in-cache (" + crc + ").");
 			        	response.value = defaultCover;
@@ -97,7 +98,7 @@ class MemCacheThread extends AbstractThread {
 		});
 	}
 	
-	private static HashMap<Long, Bitmap> getCache(int thumbSize) {
+	private static HashMap<Long, SoftReference<Bitmap>> getCache(int thumbSize) {
 		return (thumbSize == ThumbSize.MEDIUM) ? sCacheMedium : sCacheSmall;
 	}
 	
@@ -109,7 +110,7 @@ class MemCacheThread extends AbstractThread {
 	 * @return Bitmap or null if not available.
 	 */
 	public static Bitmap getCover(ICoverArt cover, int thumbSize) {
-		Bitmap cache = getCache(thumbSize).get(cover.getCrc());
+		Bitmap cache = getCache(thumbSize).get(cover.getCrc()).get();
 		return cache;
 	}
 	
@@ -119,7 +120,10 @@ class MemCacheThread extends AbstractThread {
 	 * @return True if thumb is in mem cache, false otherwise.
 	 */
 	public static boolean isInCache(ICoverArt cover, int thumbSize) {
-		return (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) && getCache(thumbSize).containsKey(cover.getCrc()) && getCache(thumbSize).get(cover.getCrc()) != null;
+		return (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) && 
+				getCache(thumbSize).containsKey(cover.getCrc()) && 
+				getCache(thumbSize).get(cover.getCrc()) != null && 
+				getCache(thumbSize).get(cover.getCrc()).get() != null;
 	}
 	
 	/**
@@ -132,7 +136,7 @@ class MemCacheThread extends AbstractThread {
 		if (bitmap == null) {
 			sNotAvailable.put(cover.getCrc(), true);
 		} else if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
-			getCache(thumbSize).put(cover.getCrc(), bitmap);
+			getCache(thumbSize).put(cover.getCrc(), new SoftReference<Bitmap>(bitmap));
 		}
 	}
 

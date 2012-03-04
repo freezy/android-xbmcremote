@@ -30,6 +30,7 @@ public abstract class AbstractItemView extends View {
 	protected Bitmap mCover;
 	protected final int mWidth;
 	protected final Drawable mSelection;
+	protected int mDefaultColor = Color.WHITE;
 	
 	private final Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
@@ -79,13 +80,12 @@ public abstract class AbstractItemView extends View {
 	}
 	
 	protected void drawPoster(Canvas canvas, int posterWidth, int posterHeight, int canvasWidth) {
-
 		// background
 		if ((isSelected() || isPressed()) && mSelection != null) {
 			mSelection.setBounds(posterWidth, 0, canvasWidth, posterHeight);
 			mSelection.draw(canvas);
 		} else {
-			PAINT.setColor(Color.WHITE);
+			PAINT.setColor(mDefaultColor);
 			canvas.drawRect(posterWidth, 0, canvasWidth, posterHeight, PAINT);
 		}
 		
@@ -104,6 +104,8 @@ public abstract class AbstractItemView extends View {
 					src = new Rect(dx, dy, dx + posterWidth, dy + posterHeight);
 				}
 			Rect dst = getPosterRect();
+			PAINT.setColor(mDefaultColor);
+			canvas.drawRect(0, 0, posterWidth, posterHeight, PAINT);
 			canvas.drawBitmap(cover, src, dst, PAINT);
 		}
 	}

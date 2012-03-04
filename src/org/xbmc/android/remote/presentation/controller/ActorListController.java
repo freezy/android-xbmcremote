@@ -39,7 +39,6 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.view.ContextMenu;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,7 +88,6 @@ public class ActorListController extends ListController implements IController {
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
 						mList.setAdapter(new ActorAdapter(mActivity, value));
-						preloadCovers(value, mVideoManager, mThumbSize);
 					} else {
 						setTitle(title);
 						setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
@@ -131,11 +129,7 @@ public class ActorListController extends ListController implements IController {
 			});
 		}
 	}
-	
-	@Override
-	public void onCreateOptionsMenu(Menu menu) {
-	}
-	
+		
 	private class ActorAdapter extends ArrayAdapter<Actor> {
 		ActorAdapter(Activity activity, ArrayList<Actor> items) {
 			super(activity, 0, items);

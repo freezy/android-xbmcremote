@@ -139,7 +139,6 @@ public class TvShowListController extends ListController implements IController 
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
 					mList.setAdapter(new TvShowAdapter(mActivity, value));
-					preloadCovers(value, mTvManager, mThumbSize);
 				} else {
 					setTitle(title);
 					setNoDataMessage("No TV shows found.", R.drawable.icon_movie_dark);

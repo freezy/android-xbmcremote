@@ -124,7 +124,6 @@ public class SeasonListController extends ListController implements IController 
 				if (value.size() > 0) {
 					setTitle(title +" (" + value.size() + ")");
 					mList.setAdapter(new SeasonAdapter(mActivity, value));
-					preloadCovers(value, mTvManager, mThumbSize);
 				} else {
 					setTitle(title);
 					setNoDataMessage("No seasons found.", R.drawable.icon_movie_dark);
