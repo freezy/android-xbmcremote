@@ -37,6 +37,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap.Config;
 import android.os.Handler;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -46,21 +48,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class SettingsController extends AbstractController implements INotifiableController, IController, OnSharedPreferenceChangeListener {
-	
+
 	public static final int MENU_ADD_HOST = 1;
 	public static final int MENU_EXIT = 2;
 	public static final int MENU_ADD_HOST_WIZARD = 3;
-	
-	private PreferenceActivity mPreferenceActivity;		
+
+	public static final String PREF_AUTO_ROTATE = "setting_auto_rotate";
+
+	private PreferenceActivity mPreferenceActivity;
 	private final Hashtable<String, String> mSummaries = new Hashtable<String, String>();
-	
+
 	public SettingsController(PreferenceActivity activity, Handler handler) {
 		mPreferenceActivity = activity;
 		super.onCreate(activity, handler);
 	}
-	
+
 	/**
-	 * Used in SettingsActivity in order to update the %value% placeholder in 
+	 * Used in SettingsActivity in order to update the %value% placeholder in
 	 * the summaries.
 	 * @param activity Reference to activity
 	 */
@@ -77,12 +81,12 @@ public class SettingsController extends AbstractController implements INotifiabl
 		}
 		updateSummaries();
 	}
-	
+
 	/**
 	 * Creates the preference screen that contains all the listed hosts.
 	 * @param root Root node
 	 * @param activity Reference to activity
-	 * @return 
+	 * @return
 	 */
 	public PreferenceScreen createHostsPreferences(PreferenceScreen root, Activity activity) {
 		final ArrayList<Host> hosts = HostFactory.getHosts(activity.getApplicationContext());
@@ -107,7 +111,7 @@ public class SettingsController extends AbstractController implements INotifiabl
 		}
 		return root;
 	}
-	
+
 	/**
 	 * Updates summaries of all known keys with the updated value.
 	 */
@@ -123,7 +127,7 @@ public class SettingsController extends AbstractController implements INotifiabl
 			}
 		}
 	}
-	
+
 	/**
 	 * Used in order to replace the %value% placeholders with real values.
 	 */
@@ -134,6 +138,11 @@ public class SettingsController extends AbstractController implements INotifiabl
 		if (origSummary != null && origSummary.contains(SettingsActivity.SUMMARY_VALUE_PLACEHOLDER)) {
 			pref.setSummary(origSummary.replaceAll(SettingsActivity.SUMMARY_VALUE_PLACEHOLDER, sharedPreferences.getString(key, "")));
 		}
+		if(key.equals( PREF_AUTO_ROTATE)) {
+			int mOrientation = (sharedPreferences.getBoolean(PREF_AUTO_ROTATE, true)) ? ActivityInfo.SCREEN_ORIENTATION_SENSOR :
+				ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+			mActivity.setRequestedOrientation(mOrientation);
+		}
 	}
 
 	public void onCreateOptionsMenu(Menu menu) {
@@ -141,7 +150,7 @@ public class SettingsController extends AbstractController implements INotifiabl
 		menu.addSubMenu(0, MENU_ADD_HOST_WIZARD, 0, "Host Wizard").setIcon(R.drawable.menu_add_host);
 		menu.addSubMenu(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
 	}
-	
+
 	public void onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_ADD_HOST:
@@ -159,14 +168,14 @@ public class SettingsController extends AbstractController implements INotifiabl
 				break;
 		}
 	}
-	
+
 	public void onActivityPause() {
 		super.onActivityPause();
 	}
-	
+
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		final ArrayList<Host> hosts = HostFactory.getHosts(activity.getApplicationContext()); 
+		final ArrayList<Host> hosts = HostFactory.getHosts(activity.getApplicationContext());
 		if (hosts.size() == 1) {
 			final Host host = hosts.get(0);
 			Log.i(TAG, "Setting host to " + (host == null ? "<null>" : host.addr) + ".");
@@ -176,5 +185,5 @@ public class SettingsController extends AbstractController implements INotifiabl
 			Log.i(TAG, "Resetting host to <null>.");
 			HostFactory.saveHost(activity.getApplicationContext(), null);
 		}
-	}	
+	}
 }

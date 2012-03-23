@@ -5,43 +5,43 @@
 			android:key="setting_instances"
 			android:title="Manage XBMC Hosts"
 			android:summary="Add, edit and remove the XBMC instances in your LAN.">
-			<intent 
-				android:action="android.intent.action.MAIN" 
-				android:targetPackage="org.xbmc.android.remote" 
-				android:targetClass="org.xbmc.android.remote.presentation.activity.HostSettingsActivity" 
-				android:data="" /> 
+			<intent
+				android:action="android.intent.action.MAIN"
+				android:targetPackage="org.xbmc.android.remote"
+				android:targetClass="org.xbmc.android.remote.presentation.activity.HostSettingsActivity"
+				android:data="" />
 		</PreferenceScreen>
-		<!-- CheckBoxPreference 
-			android:disableDependentsState="true" 
-			android:key="setting_mdns" android:defaultValue="false" 
-			android:title="Use Zeroconf for IP/Port discovery" 
+		<!-- CheckBoxPreference
+			android:disableDependentsState="true"
+			android:key="setting_mdns" android:defaultValue="false"
+			android:title="Use Zeroconf for IP/Port discovery"
 			android:summary="Use Zeroconf to discover the IP and Ports of XBMC."
-			android:enabled="false" /--> 
+			android:enabled="false" /-->
 		<CheckBoxPreference
 			android:key="setting_vibrate_on_touch"
 			android:title="Vibrate on Touch"
 			android:summary="Makes the remote control vibrate on touch." android:defaultValue="true"/>
 	</PreferenceCategory>
 	<PreferenceCategory  android:title="Startup">
-		<CheckBoxPreference 
-			android:key="setting_startup_onboot" 
-			android:title="Start on boot" 
+		<CheckBoxPreference
+			android:key="setting_startup_onboot"
+			android:title="Start on boot"
 			android:summary="Start xbmcremote on boot"/>
 	</PreferenceCategory>
-	
+
 	<PreferenceCategory  android:title="On-Screen Notifications">
-		<CheckBoxPreference 
-			android:key="setting_show_notification" 
-			android:title="Statusbar notifications" 
-			android:summary="Show now playing notifications in the status bar." 
+		<CheckBoxPreference
+			android:key="setting_show_notification"
+			android:title="Statusbar notifications"
+			android:summary="Show now playing notifications in the status bar."
 			android:enabled="true" />
-		<CheckBoxPreference 
+		<CheckBoxPreference
 			android:key="setting_show_sms"
 			android:title="Show incoming SMS"
 			android:summary="Shows incoming SMS with contact name and picture on your TV."
 			android:selectable="true" android:defaultValue="false"/>
-		<CheckBoxPreference 
-			android:key="setting_show_call" 
+		<CheckBoxPreference
+			android:key="setting_show_call"
 			android:title="Show incoming calls"
 			android:summary="Pauses playback and shows incoming calls with contact name and picture on your TV."
 			android:selectable="true"
@@ -82,6 +82,12 @@
 			android:entries="@array/KeyguardPreferenceEntries"
 			android:entryValues="@array/KeyguardPreferenceValues"
 			android:defaultValue="0" />
+		<CheckBoxPreference
+			android:key="setting_auto_rotate"
+			android:title="Auto rotate screen"
+			android:summary="Auto rotate the screen based on device orientation."
+			android:selectable="true"
+			android:enabled="true" android:defaultValue="true" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Miscellaneous options">
 		<CheckBoxPreference
@@ -95,7 +101,7 @@
 			android:title="Confirm Play on XBMC"
 			android:summary="Show a confirmation screen when playing media URLs on XBMC."
 			android:selectable="true"
-			android:enabled="true" android:defaultValue="true" />	
+			android:enabled="true" android:defaultValue="true" />
 		<ListPreference
 			android:key="setting_default_selection_action"
 			android:title="Action on selection"
@@ -109,21 +115,21 @@
 			android:key="setting_send_repeats"
 			android:title="Explicitly Send Repeats"
 			android:summary="Explicitly send repeating key presses to host."
-			android:enabled="true" 
-			android:defaultValue="false" />		
+			android:enabled="true"
+			android:defaultValue="false" />
 		<CheckBoxPreference
 			android:key="setting_send_single_click"
 			android:title="Send Single Keypress"
 			android:summary="Send only a single keypress to host."
-			android:dependency="setting_send_repeats"						
-			android:defaultValue="false" />			
+			android:dependency="setting_send_repeats"
+			android:defaultValue="false" />
         <EditTextPreference
             android:key="setting_repeat_rate"
             android:title="Keypress Repeat Rate"
             android:summary="In milliseconds, specify often repeats should be sent."
             android:dialogTitle="Repeat Rate (MS)"
             android:numeric="integer"
-            android:dependency="setting_send_repeats"			 
+            android:dependency="setting_send_repeats"
 			android:defaultValue="250" />
 	</PreferenceCategory>
 </PreferenceScreen>
