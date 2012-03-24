@@ -23,12 +23,15 @@ package org.xbmc.android.remote.presentation.activity;
 
 import static org.xbmc.android.remote.presentation.controller.SettingsController.PREF_AUTO_ROTATE;
 
+import java.util.ArrayList;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.media.AudioManager;
 import android.preference.PreferenceManager;
 
@@ -53,6 +56,7 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 
 	private int mKeyguardState = 0;
 	private int mOrientation;
+	private ArrayList<String> portraitList;
 
 	private KeyguardManager.KeyguardLock mKeyguardLock = null;
 
@@ -61,6 +65,18 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		mKeyguardState = Integer.parseInt(prefs.getString(PREF_KEYGUARD_DISABLED, KEYGUARD_STATUS_ENABLED));
+		portraitList = new ArrayList<String>();
+		try {
+			ActivityInfo[] info = mActivity.getPackageManager().getPackageInfo(mActivity.getPackageName(), PackageManager.GET_ACTIVITIES).activities;
+			for (int i = 0; i < info.length; i++) {
+				if(info[i].screenOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+					portraitList.add(info[i].name);
+				}
+			}
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
 		mOrientation = (prefs.getBoolean(PREF_AUTO_ROTATE, true)) ? ActivityInfo.SCREEN_ORIENTATION_SENSOR :
 			ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 	}
@@ -133,7 +149,9 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 
 		activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		mActivity = activity;
-		mActivity.setRequestedOrientation(mOrientation);
+		if(!portraitList.contains(mActivity.getComponentName().getClassName())) {
+			mActivity.setRequestedOrientation(mOrientation);
+		}
 	}
 
 	public void onActivityPause() {
