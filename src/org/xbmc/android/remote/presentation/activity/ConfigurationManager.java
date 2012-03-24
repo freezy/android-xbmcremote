@@ -52,7 +52,7 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 	private Activity mActivity;
 
 	private int mKeyguardState = 0;
-	private int mOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR;
+	private int mOrientation;
 
 	private KeyguardManager.KeyguardLock mKeyguardLock = null;
 
@@ -61,6 +61,8 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		mKeyguardState = Integer.parseInt(prefs.getString(PREF_KEYGUARD_DISABLED, KEYGUARD_STATUS_ENABLED));
+		mOrientation = (prefs.getBoolean(PREF_AUTO_ROTATE, true)) ? ActivityInfo.SCREEN_ORIENTATION_SENSOR :
+			ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 	}
 
 	public static ConfigurationManager getInstance(Activity activity) {
