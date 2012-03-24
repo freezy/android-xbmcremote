@@ -62,7 +62,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 	public static final int LAST_REMOTE_BUTTON = 0;
 	public static final int LAST_REMOTE_GESTURE = 1;
 	public static final String LAST_REMOTE_PREFNAME = "last_remote_type";
-	
+
 	private static final int MENU_NOW_PLAYING = 401;
 	private static final int MENU_XBMC_EXIT = 402;
 	private static final int MENU_XBMC_S = 403;
@@ -75,27 +75,27 @@ public class RemoteController extends AbstractController implements INotifiableC
 	private static final int DPAD_DOWN_MIN_DELTA_TIME = 100;
 	private static final int MOTION_EVENT_MIN_DELTA_TIME = 250;
 	private static final float MOTION_EVENT_MIN_DELTA_POSITION = 0.15f;
-	
+
 	private static final long VIBRATION_LENGTH = 45;
-	
+
 	IEventClientManager mEventClientManager;
 	IInfoManager mInfoManager;
 	IControlManager mControl;
 	GestureThread mGestureThread;
-	
+
 	/**
 	 * timestamp since last trackball use.
 	 */
 	private long mTimestamp = 0;
 	private final Vibrator mVibrator;
 	private final boolean mDoVibrate;
-	
+
 	private int mEventServerInitialDelay = 750;
-	
+
 	private Timer tmrKeyPress;
-	
+
 	final SharedPreferences prefs;
-	
+
 	public RemoteController(Context context) {
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -168,7 +168,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 					mScrolling = false;
 				}
 			}
-			
+
 			public void onScrollDown(double amount) {
 				Log.d(TAG, "onScrollDown(" + amount + ")");
 				scroll(ButtonCodes.GAMEPAD_RIGHT_ANALOG_TRIGGER, amount);
@@ -203,7 +203,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 		};
 		return listener;
 	}
-	
+
 	private static class GestureThread extends Thread {
 		public static final int ACTION_UP = 1;
 		public static final int ACTION_RIGHT = 2;
@@ -257,7 +257,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 			mQuit = true;
 		}
 	}
-	
+
 	public void showVolume() {
 	}
 
@@ -283,11 +283,11 @@ public class RemoteController extends AbstractController implements INotifiableC
 				return onDirectionalPadDown(keyCode);
 			case KeyEvent.KEYCODE_DPAD_CENTER:
 				return onDirectionalPadDown(keyCode);
-			default: 
+			default:
 				return false;
 		}
 	}
-	
+
 	private boolean onDirectionalPadDown(int keyCode){
 			long newstamp = System.currentTimeMillis();
 			if (newstamp - mTimestamp > DPAD_DOWN_MIN_DELTA_TIME){
@@ -307,14 +307,14 @@ public class RemoteController extends AbstractController implements INotifiableC
 						return true;
 					case KeyEvent.KEYCODE_DPAD_CENTER:
 						mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_ENTER, false, true, true, (short)0, (byte)0);
-						return true;							
+						return true;
 					default:
 						return false;
 				}
 			}
 			return true;
-	} 
-	
+	}
+
 	public boolean onTrackballEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN)
 			return keyboardAction(ButtonCodes.KEYBOARD_ENTER);
@@ -332,7 +332,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 		}
 		return true;
 	}
-	
+
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
 		menu.add(0, MENU_SWITCH_GESTURE, 0, "Gesture mode").setIcon(R.drawable.menu_gesture_mode);
@@ -392,7 +392,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 				break;
 			case MENU_SWITCH_GESTURE:
 				intent = new Intent(mActivity, GestureRemoteActivity.class);
-				intent.addFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+				intent.addFlags(intent.getFlags());
 				break;
 			case MENU_XBMC_EXIT:
 				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_POWER, false, true, true, (short)0, (byte)0);
@@ -405,13 +405,14 @@ public class RemoteController extends AbstractController implements INotifiableC
 				break;
 		}
 		if (intent != null) {
-			intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.setFlags(intent.getFlags());
 			mActivity.startActivity(intent);
+			mActivity.finish();
 			return true;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Sends a keyboard event
 	 * @param button
@@ -436,7 +437,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 			((Button)btn).setClickable(true);
 		}
 	}
-	
+
 	/**
 	 * Handles the push- release button code. Switches image of the pressed
 	 * button, vibrates and executes command.
@@ -453,37 +454,37 @@ public class RemoteController extends AbstractController implements INotifiableC
 					mVibrator.vibrate(VIBRATION_LENGTH);
 				}
 				mEventClientManager.sendButton("R1", mAction, !prefs.getBoolean("setting_send_repeats", false), true, true, (short)0, (byte)0);
-				
+
 				if (prefs.getBoolean("setting_send_repeats", false) && !prefs.getBoolean("setting_send_single_click", false)) {
-														
+
 					if (tmrKeyPress != null) {
-						tmrKeyPress.cancel();						
+						tmrKeyPress.cancel();
 					}
-					
+
 					int RepeatDelay = Integer.parseInt(prefs.getString("setting_repeat_rate", "250"));
-					
+
 					tmrKeyPress = new Timer();
-					tmrKeyPress.schedule(new KeyPressTask(mAction), RepeatDelay, RepeatDelay);					
+					tmrKeyPress.schedule(new KeyPressTask(mAction), RepeatDelay, RepeatDelay);
 				}
-				
-				
+
+
 			} else if (event.getAction() == MotionEvent.ACTION_UP) {
 				Log.d(TAG, "onTouch - ACTION_UP");
 				v.playSoundEffect(AudioManager.FX_KEY_CLICK);
 				mEventClientManager.sendButton("R1", mAction, false, false, true, (short)0, (byte)0);
-				
+
 				if (tmrKeyPress != null) {
-					tmrKeyPress.cancel();						
-				}					
+					tmrKeyPress.cancel();
+				}
 			}
 			return false;
-		}			
+		}
 	}
-	
+
 	private class KeyPressTask extends TimerTask {
-		
+
 		private String mKeyPressAction = "";
-		
+
 		public KeyPressTask(String mAction) {
 			mKeyPressAction = mAction;
 		}
@@ -491,10 +492,10 @@ public class RemoteController extends AbstractController implements INotifiableC
 		public void run() {
 			if (mKeyPressAction.length() > 0){
 				mEventClientManager.sendButton("R1", mKeyPressAction, false, true, true, (short)0, (byte)0);
-			}				
+			}
 		}
 	}
-	
+
 	public void onActivityPause() {
 		mEventClientManager.setController(null);
 		mInfoManager.setController(null);
