@@ -39,6 +39,7 @@ import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.TvShow;
 import org.xbmc.api.type.SortType;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -65,6 +66,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class TvShowListController extends ListController implements IController {
 	
+	private static final int mThumbSize = ThumbSize.SMALL;
 	public static final int ITEM_CONTEXT_BROWSE = 1;
 	public static final int ITEM_CONTEXT_INFO = 2;
 	
@@ -127,54 +129,31 @@ public class TvShowListController extends ListController implements IController 
 	}
 	
 	private void fetch() {
-		final Actor actor = mActor;
-		final Genre genre = mGenre;
-		
 		// tv show and episode both are using the same manager so set the sort key here
 		((ISortableManager)mTvManager).setSortKey(AbstractManager.PREF_SORT_KEY_SHOW);
 		((ISortableManager)mTvManager).setPreferences(mActivity.getPreferences(Context.MODE_PRIVATE));
+
+		final String title = mActor != null ? mActor.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "TV Shows";
+		DataResponse<ArrayList<TvShow>> response = new DataResponse<ArrayList<TvShow>>() {
+			public void run() {
+				if (value.size() > 0) {
+					setTitle(title + " (" + value.size() + ")");
+					mList.setAdapter(new TvShowAdapter(mActivity, value));
+				} else {
+					setTitle(title);
+					setNoDataMessage("No TV shows found.", R.drawable.icon_movie_dark);
+				}
+			}
+		};
 		
 		showOnLoading();
-		if (actor != null) {						// TV Shows with a certain actor
-			setTitle(actor.name + " - TV Shows...");
-			mTvManager.getTvShows(new DataResponse<ArrayList<TvShow>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle(actor.name + " - TV Shows (" + value.size() + ")");
-						mList.setAdapter(new TvShowAdapter(mActivity, value));
-					} else {
-						setTitle(actor.name + " - TV Shows");
-						setNoDataMessage("No TV shows found.", R.drawable.icon_movie_dark);
-					}
-				}
-			}, actor, mActivity.getApplicationContext());
-			
-		} else if (genre != null) {					// TV Shows of a genre
-			setTitle(genre.name + " - TV Shows...");
-			mTvManager.getTvShows(new DataResponse<ArrayList<TvShow>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle(genre.name + " - TV Shows (" + value.size() + ")");
-						mList.setAdapter(new TvShowAdapter(mActivity, value));
-					} else {
-						setTitle(genre.name + " - TV Shows");
-						setNoDataMessage("No tv shows found.", R.drawable.icon_movie_dark);
-					}
-				}
-			}, genre, mActivity.getApplicationContext());
-		} else {
-			setTitle("TV Shows...");				// all TV Shows
-			mTvManager.getTvShows(new DataResponse<ArrayList<TvShow>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle("TV Shows (" + value.size() + ")");
-						mList.setAdapter(new TvShowAdapter(mActivity, value));
-					} else {
-						setTitle("TV Shows");
-						setNoDataMessage("No TV Shows found.", R.drawable.icon_movie_dark);
-					}
-				}
-			}, mActivity.getApplicationContext());
+		setTitle(title + "...");		
+		if (mActor != null) {						// TV Shows with a certain actor
+			mTvManager.getTvShows(response, mActor, mActivity.getApplicationContext());
+		} else if (mGenre != null) {					// TV Shows of a genre
+			mTvManager.getTvShows(response, mGenre, mActivity.getApplicationContext());
+		} else {									// all TV Shows
+			mTvManager.getTvShows(response, mActivity.getApplicationContext());
 		}
 	}
 	
@@ -316,27 +295,34 @@ public class TvShowListController extends ListController implements IController 
 		TvShowAdapter(Activity activity, ArrayList<TvShow> items) {
 			super(activity, 0, items);
 		}
+
 		public View getView(int position, View convertView, ViewGroup parent) {
 
 			final FlexibleItemView view;
 			if (convertView == null) {
-				view = new FlexibleItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap, mList.getSelector(), false);
+				view = new FlexibleItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap,
+						mList.getSelector(), false);
 			} else {
-				view = (FlexibleItemView)convertView;
+				view = (FlexibleItemView) convertView;
 			}
-			
+
 			final TvShow show = getItem(position);
 			view.reset();
 			view.position = position;
 			view.posterOverlay = show.watched ? mWatchedBitmap : null;
 			view.title = show.title;
 			view.subtitle = show.genre;
-			view.subtitleRight = show.firstAired!=null?show.firstAired:"";
+			view.subtitleRight = show.firstAired != null ? show.firstAired : "";
 			view.bottomtitle = show.numEpisodes + " episodes";
-			view.bottomright = String.valueOf(((float)Math.round(show.rating *10))/ 10);
-			
+			view.bottomright = String.valueOf(((float) Math.round(show.rating * 10)) / 10);
+
 			if (mLoadCovers) {
-				view.getResponse().load(show, !mPostScrollLoader.isListIdle());
+				if (mTvManager.coverLoaded(show, mThumbSize)) {
+					view.setCover(mTvManager.getCoverSync(show, mThumbSize));
+				} else {
+					view.setCover(null);
+					view.getResponse().load(show, !mPostScrollLoader.isListIdle());
+				}
 			}
 			return view;
 		}

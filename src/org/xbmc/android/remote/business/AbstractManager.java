@@ -154,6 +154,18 @@ public abstract class AbstractManager implements INotifiableManager {
 			//mHandler.post(response);
 		}
 	}
+	public Bitmap getCoverSync(final ICoverArt cover, final int thumbSize){
+		if(MemCacheThread.isInCache(cover, thumbSize))
+			return MemCacheThread.getCover(cover, thumbSize);
+		else if(DiskCacheThread.isInCache(cover, thumbSize))
+			return DiskCacheThread.getCover(cover, thumbSize);
+		else
+			return null;			
+	}
+	
+	public boolean coverLoaded(final ICoverArt cover, final int thumbSize){
+		return (MemCacheThread.isInCache(cover, thumbSize) || DiskCacheThread.isInCache(cover, thumbSize));
+	}
 	
 	/**
 	 * Returns bitmap of any cover. Note that the callback is done by the
@@ -335,6 +347,11 @@ public abstract class AbstractManager implements INotifiableManager {
 	 */
 	public void setSortKey(int sortKey) {
 		mCurrentSortKey = sortKey;
+	}
+	
+	public void post(Runnable runnable)
+	{
+		mHandler.post(runnable);
 	}
 	
 	/**

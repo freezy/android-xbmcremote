@@ -156,7 +156,7 @@ public abstract class ListController extends AbstractController implements Seria
 			});
 		}
 	}
-	
+		
 	protected boolean isCreated() {
 		return isCreated;
 	}

@@ -23,10 +23,12 @@ package org.xbmc.android.remote.presentation.activity;
 
 
 import org.xbmc.android.remote.presentation.controller.UrlIntentController;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Display;
 
 /**
  * @author Team XBMC
@@ -42,6 +44,9 @@ public class UrlIntentActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		// set display size
+		final Display display = getWindowManager().getDefaultDisplay(); 
+		ThumbSize.setScreenSize(display.getWidth(), display.getHeight());		
   	  	mConfigurationManager = ConfigurationManager.getInstance(this);
   	  	mUrlIntentController = new UrlIntentController(this, new Handler());
   	  	mUrlIntentController.setupStatusHandler();
@@ -60,5 +65,4 @@ public class UrlIntentActivity extends Activity {
 		mUrlIntentController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
-
 }

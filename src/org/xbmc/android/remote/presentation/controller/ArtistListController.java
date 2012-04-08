@@ -33,6 +33,7 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -53,6 +54,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class ArtistListController extends ListController implements IController {
 	
+	private static final int mThumbSize = ThumbSize.SMALL;
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
 	public static final int ITEM_CONTEXT_QUEUE_GENRE = 3;
@@ -95,37 +97,28 @@ public class ArtistListController extends ListController implements IController 
 					mActivity.startActivity(nextActivity);
 				}
 			});
+					
+			final String title = mGenre != null ? mGenre.name + " - " : "" + "Artists";
+			DataResponse<ArrayList<Artist>> response = new DataResponse<ArrayList<Artist>>() {
+				public void run() {
+					if (value.size() > 0) {
+						setTitle(title + " (" + value.size() + ")");
+						mList.setAdapter(new ArtistAdapter(mActivity, value));
+					} else {
+						setTitle(title);
+						setNoDataMessage("No artists found.", R.drawable.icon_artist_dark);
+					}
+				}
+			};
+
+			mList.setOnKeyListener(new ListControllerOnKeyListener<Artist>());	
 			
-			mList.setOnKeyListener(new ListControllerOnKeyListener<Artist>());			
-			
+			showOnLoading();
+			setTitle(title + "...");			
 			if (mGenre != null) {
-				setTitle(mGenre.name + " - Artists...");
-				showOnLoading();
-				mMusicManager.getArtists(new DataResponse<ArrayList<Artist>>() {
-					public void run() {
-						if (value.size() > 0) {
-							setTitle(mGenre.name + " - Artists (" + value.size() + ")");
-							mList.setAdapter(new ArtistAdapter(mActivity, value));
-						} else {
-							setTitle(mGenre.name + " - Artists");
-							setNoDataMessage("No artists found.", R.drawable.icon_artist_dark);
-						}
-					}
-				}, mGenre, mActivity.getApplicationContext());
+				mMusicManager.getArtists(response, mGenre, mActivity.getApplicationContext());
 			} else {
-				setTitle("Artists...");
-				showOnLoading();
-				mMusicManager.getArtists(new DataResponse<ArrayList<Artist>>() {
-					public void run() {
-						if (value.size() > 0) {
-							setTitle("Artists (" + value.size() + ")");
-							mList.setAdapter(new ArtistAdapter(mActivity, value));
-						} else {
-							setTitle("Artists");
-							setNoDataMessage("No artists found.", R.drawable.icon_artist_dark);
-						}
-					}
-				}, mActivity.getApplicationContext());
+				mMusicManager.getArtists(response, mActivity.getApplicationContext());
 			}
 		}
 	}
@@ -209,6 +202,15 @@ public class ArtistListController extends ListController implements IController 
 			if (mLoadCovers) {
 				view.getResponse().load(artist, !mPostScrollLoader.isListIdle());
 			}
+			if (mLoadCovers) {
+				if(mMusicManager.coverLoaded(artist, mThumbSize)){
+					view.setCover(mMusicManager.getCoverSync(artist, mThumbSize));
+				}else{
+					view.setCover(null);
+					view.getResponse().load(artist, !mPostScrollLoader.isListIdle());
+				}
+			}
+
 			return view;
 		}
 	}

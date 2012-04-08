@@ -14,38 +14,23 @@ import android.graphics.Paint.Align;
 import android.graphics.drawable.Drawable;
 
 public class FlexibleItemView extends FiveLabelsItemView {
-	
-//	private static final String TAG = "FlexibleItemView";
-	
-	private final static int POSTER_WIDTH = ThumbSize.getPixel(ThumbSize.SMALL);;
-	private final static int POSTER_HEIGHT = (int)(POSTER_WIDTH * ThumbSize.POSTER_AR);
-	private final static Rect POSTER_RECT = new Rect(0, 0, POSTER_WIDTH, POSTER_HEIGHT);
+		private int POSTER_FORMAT = Dimension.PORTRAIT;
 	
 	public FlexibleItemView(Context context, IManager manager, int width, Bitmap defaultCover, Drawable selection, boolean fixedSize) {
 		super(context, manager, width, defaultCover, selection, fixedSize);
 	}
-
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		if (mCover == null) {
-			setMeasuredDimension(mWidth, POSTER_HEIGHT);
-		} else {
-			setMeasuredDimension(mWidth, mCover.getHeight());
-		}
-	}
-
+	
 	protected void onDraw(Canvas canvas) {
 		if (mCover != null && !mCover.isRecycled()) {
-			Dimension renderDim = ThumbSize.getDimension(ThumbSize.SMALL, MediaType.VIDEO, mCover.getWidth(), mCover.getHeight());
-			drawPoster(canvas, renderDim.x, renderDim.y, mWidth);
-			drawPosterOverlay(canvas, renderDim.x, renderDim.y);
-			switch (renderDim.format) {
+			drawPoster(canvas, posterWidth, posterHeight, mWidth);
+			drawPosterOverlay(canvas, posterWidth, posterHeight);
+			switch (POSTER_FORMAT) {
 				case Dimension.SQUARE:
 				case Dimension.PORTRAIT:
 					drawPortrait(canvas);
 					break;
 				case Dimension.LANDSCAPE:
-					drawLandscape(canvas, renderDim);
+					drawLandscape(canvas, posterWidth);
 					break;
 				case Dimension.BANNER:
 					drawBanner(canvas);
@@ -71,7 +56,7 @@ public class FlexibleItemView extends FiveLabelsItemView {
 	 * </pre>
 	 * @param canvas Canvas to draw on
 	 */
-	private void drawLandscape(Canvas canvas, Dimension coverDim) {
+	private void drawLandscape(Canvas canvas, int drawWidth) {
 		final int width = mWidth;
 		final boolean isSelected = isSelected() || isPressed();
 		
@@ -86,7 +71,7 @@ public class FlexibleItemView extends FiveLabelsItemView {
 		if (title != null) {
 			PAINT.setColor(isSelected ? Color.WHITE : Color.BLACK);
 			PAINT.setTextSize(size18);
-			canvas.drawText(ellipse(title, width - coverDim.x + padding), coverDim.x + padding, size25, PAINT);
+			canvas.drawText(ellipse(title, width - drawWidth + padding), drawWidth + padding, size25, PAINT);
 		}
 		
 		// subtitle right
@@ -105,7 +90,7 @@ public class FlexibleItemView extends FiveLabelsItemView {
 		PAINT.setTextAlign(Align.LEFT);
 		PAINT.setFakeBoldText(false);
 		if (subtitle != null) {
-			canvas.drawText(ellipse(subtitle, width - (int)subtitleRightWidth - size50), coverDim.x + padding, size42, PAINT);
+			canvas.drawText(ellipse(subtitle, width - (int)subtitleRightWidth - size50), drawWidth + padding, size42, PAINT);
 		}
 		
 	}
@@ -117,12 +102,22 @@ public class FlexibleItemView extends FiveLabelsItemView {
 	
 	public void setCover(Bitmap cover) {
 		mCover = cover;
+		if(mCover != null)
+		{
+			Dimension renderDim = ThumbSize.getTargetDimension(ThumbSize.SMALL, MediaType.VIDEO, mCover.getWidth(), mCover.getHeight());
+			posterWidth = renderDim.x;
+			posterHeight = renderDim.y;
+			posterRect = new Rect(0, 0, posterWidth, posterHeight);
+			POSTER_FORMAT = renderDim.format;
+		}
+		else
+		{
+			posterWidth = ThumbSize.getPixel(ThumbSize.SMALL);
+			posterHeight = (int)(posterWidth * ThumbSize.POSTER_AR);
+			posterRect = new Rect(0, 0, posterWidth, posterHeight);
+			POSTER_FORMAT = Dimension.PORTRAIT;
+		}
 		requestLayout();
 		invalidate();
-	}
-	
-	@Override
-	protected Rect getPosterRect() {
-		return POSTER_RECT;
 	}
 }
