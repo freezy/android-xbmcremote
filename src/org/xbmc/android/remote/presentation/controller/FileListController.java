@@ -111,8 +111,8 @@ public class FileListController extends ListController implements IController {
 						mActivity.startActivity(nextActivity);
 					} else {
 						switch(item.mediaType) {
-							case 0:
-								break;
+//							case 0:
+//								break;
 							
 							case MediaType.PICTURES:
 								mControlManager.showPicture(new DataResponse<Boolean>() {
