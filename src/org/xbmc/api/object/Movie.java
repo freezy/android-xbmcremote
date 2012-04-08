@@ -45,7 +45,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	 * @param name		Album name
 	 * @param artist	Artist
 	 */
-	public Movie(int id, String title, int year, String path, String filename, String director, String runtime, String genres, double rating, int numWatched) {
+	public Movie(int id, String title, int year, String path, String filename, String director, String runtime, String genres, double rating, int numWatched, String imdbId) {
 		this.id = id;
 		this.title = title;
 		this.year = year;
@@ -56,6 +56,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 		this.localPath = path;
 		this.filename = filename;
 		this.numWatched = numWatched;
+		this.imdbId=imdbId;
 	}
 	
 	public int getMediaType() {
@@ -138,6 +139,13 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	}
 	
 	/**
+	 * @return The Movie's IMDbId
+	 */
+	public String getIMDbId(){
+		return this.imdbId;
+	}
+	
+	/**
 	 * Returns database ID.
 	 * @return
 	 */
@@ -155,37 +163,37 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	/**
 	 * Database ID
 	 */
-	public int id;
+	private final int id;
 	/**
 	 * Movie title
 	 */
-	public String title;
+	public final String title;
 	/**
 	 * Director(s), can be several separated by " / "
 	 */
-	public String director;
+	public final String director;
 	/**
 	 * Runtime, can be several also, separated by " | "
 	 */
-	public String runtime;
+	public final String runtime;
 	/**
 	 * Genre(s), can be several, normally separated by " / "
 	 */
-	public String genres;
+	public final String genres;
 	/**
-	 * Year released
+	 * Year released, -1 if unknown
 	 */
-	public int year = -1;
+	public final int year;
 	
 	/**
 	 * Local path of the movie (without file name)
 	 */
-	public String localPath;
+	public final String localPath;
 	
 	/**
 	 * File name of the movie
 	 */
-	public String filename;
+	public final String filename;
 	
 	/**
 	 * Rating
@@ -220,14 +228,17 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	/**
 	 * Number of watched, -1 if not set.
 	 */
-	public int numWatched = -1;
+	public final int numWatched;
 	
 	/**
 	 * List of actors; 
 	 */
 	public ArrayList<Actor> actors = null;
 	
-	
+	/**
+	 * The movie's imdbId
+	 */
+	private final String imdbId;
 	
 	/**
 	 * Save this once it's calculated
