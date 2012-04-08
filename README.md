@@ -11,6 +11,17 @@ This is still considered as "in development". You're of course welcome to sugges
 
 *NEW*: IRC Channel: *#xbmc-android* on Freenode.
 
+Fork Features
+-------------
+
+This fork adds an AppWidget to control your xbmc from your Home screen.
+(The application must be on internal memory in order to use the AppWidget)
+Enjoy.
+
+AppWidget's Icons from:
+SEM Labs Icon Pack (http://semlabs.co.uk/journal/sem-labs-web-blog-icon-pack)
+By David Hopkins From SEM Labs
+Released under the Creative Commons (by) license on 7 March 2009 21:55 GMT
 
 Current Features
 ----------------
