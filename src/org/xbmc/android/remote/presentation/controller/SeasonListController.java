@@ -57,9 +57,11 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class SeasonListController extends ListController implements IController {
-	
+
+	private static final int mThumbSize = ThumbSize.MEDIUM;
+
 	public static final int ITEM_CONTEXT_BROWSE = 1;
-	
+
 	public static final int MENU_PLAY_ALL = 1;
 	public static final int MENU_SORT = 2;
 	public static final int MENU_SORT_BY_TITLE_ASC = 21;
@@ -68,22 +70,22 @@ public class SeasonListController extends ListController implements IController 
 	public static final int MENU_SORT_BY_YEAR_DESC = 24;
 	public static final int MENU_SORT_BY_RATING_ASC = 25;
 	public static final int MENU_SORT_BY_RATING_DESC = 26;
-	
+
 	private TvShow mShow;
-	
+
 	private ITvShowManager mTvManager;
 	private IControlManager mControlManager;
-	
+
 	private boolean mLoadCovers = false;
-	
+
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
-		
+
 		mTvManager = ManagerFactory.getTvManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
-		
+
 		final String sdError = ImportUtilities.assertSdCard();
 		mLoadCovers = sdError == null;
-		
+
 		if (!isCreated()) {
 			super.onCreate(activity, handler, list);
 
@@ -91,18 +93,19 @@ public class SeasonListController extends ListController implements IController 
 				Toast toast = Toast.makeText(activity, sdError + " Displaying place holders only.", Toast.LENGTH_LONG);
 				toast.show();
 			}
-			
+
 			mShow = (TvShow)activity.getIntent().getSerializableExtra(ListController.EXTRA_TVSHOW);
-			
+
 			activity.registerForContextMenu(mList);
-			
+
 			mFallbackBitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.default_season);
-			setupIdleListener(ThumbSize.MEDIUM);
 			
+			setupIdleListener(mThumbSize);
+
 			mList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					if(isLoading()) return;
-					final Season season = (Season)mList.getAdapter().getItem(((GridPosterItemView)view).position);
+					if (isLoading()) return;
+					final Season season = (Season) mList.getAdapter().getItem(((GridPosterItemView) view).position);
 					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_SEASON, season);
 					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new EpisodeListController());
@@ -113,84 +116,103 @@ public class SeasonListController extends ListController implements IController 
 			fetch();
 		}
 	}
-	
+
 	private void fetch() {
-		final TvShow show = mShow;
-		showOnLoading();
-		if (show != null) {
-			setTitle(show.title + " - Seasons");
-			mTvManager.getSeasons(new DataResponse<ArrayList<Season>>() {
-				public void run() {
-					if(value.size() > 0) {
-						setTitle(show.title + " - Seasons (" + value.size() + ")");
-						mList.setAdapter(new SeasonAdapter(mActivity, value));
-					} else {
-						setNoDataMessage("No seasons found.", R.drawable.icon_movie_dark);
-					}
+		final String title = mShow != null ? mShow.title + " - " : "" + "Seasons";
+		DataResponse<ArrayList<Season>> response = new DataResponse<ArrayList<Season>>() {
+			public void run() {
+				if (value.size() > 0) {
+					setTitle(title +" (" + value.size() + ")");
+					mList.setAdapter(new SeasonAdapter(mActivity, value));
+				} else {
+					setTitle(title);
+					setNoDataMessage("No seasons found.", R.drawable.icon_movie_dark);
 				}
-			}, show, mActivity.getApplicationContext());
+			}
+		};
+		
+		showOnLoading();
+		setTitle(title + "...");
+		if (mShow != null) {
+			mTvManager.getSeasons(response, mShow, mActivity.getApplicationContext());
 		}
 	}
-	
+
 	/**
 	 * Shows a dialog and refreshes the movie library if user confirmed.
+	 * 
 	 * @param activity
 	 */
 	public void refreshMovieLibrary(final Activity activity) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		builder.setMessage("Are you sure you want XBMC to rescan your movie library?")
-			.setCancelable(false)
-			.setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					mControlManager.updateLibrary(new DataResponse<Boolean>() {
-						public void run() {
-							final String message;
-							if (value) {
-								message = "Movie library updated has been launched.";
-							} else {
-								message = "Error launching movie library update.";
+		builder.setMessage(
+				"Are you sure you want XBMC to rescan your movie library?")
+				.setCancelable(false)
+				.setPositiveButton("Yes!",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								mControlManager.updateLibrary(
+										new DataResponse<Boolean>() {
+											public void run() {
+												final String message;
+												if (value) {
+													message = "Movie library updated has been launched.";
+												} else {
+													message = "Error launching movie library update.";
+												}
+												Toast toast = Toast.makeText(
+														activity, message,
+														Toast.LENGTH_SHORT);
+												toast.show();
+											}
+										}, "video", mActivity
+												.getApplicationContext());
 							}
-							Toast toast = Toast.makeText(activity, message, Toast.LENGTH_SHORT);
-							toast.show();
-						}
-					}, "video", mActivity.getApplicationContext());
-				}
-			})
-			.setNegativeButton("Uh, no.", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
+						})
+				.setNegativeButton("Uh, no.",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.cancel();
+							}
+						});
 		builder.create().show();
 	}
-	
+
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		final GridPosterItemView view = (GridPosterItemView)((AdapterContextMenuInfo)menuInfo).targetView;
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		final GridPosterItemView view = (GridPosterItemView) ((AdapterContextMenuInfo) menuInfo).targetView;
 		menu.setHeaderTitle(view.title);
 		menu.add(0, ITEM_CONTEXT_BROWSE, 1, "Browse Season");
 	}
-	
+
 	public void onContextItemSelected(MenuItem item) {
-		//final Season season = (Season)mList.getAdapter().getItem(((GridPosterItemView)view).position);
-		final Season season = (Season)mList.getAdapter().getItem(((GridPosterItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
+		// final Season season =
+		// (Season)mList.getAdapter().getItem(((GridPosterItemView)view).position);
+		final Season season = (Season) mList.getAdapter().getItem(
+				((GridPosterItemView) ((AdapterContextMenuInfo) item
+						.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
-			case ITEM_CONTEXT_BROWSE:
-				Intent nextActivity = new Intent(mActivity, ListActivity.class);
-				nextActivity.putExtra(ListController.EXTRA_SEASON, season);
-				nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new EpisodeListController());
-				mActivity.startActivity(nextActivity);
-				break;
-			default:
-				return;
+		case ITEM_CONTEXT_BROWSE:
+			Intent nextActivity = new Intent(mActivity, ListActivity.class);
+			nextActivity.putExtra(ListController.EXTRA_SEASON, season);
+			nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER,
+					new EpisodeListController());
+			mActivity.startActivity(nextActivity);
+			break;
+		default:
+			return;
 		}
 	}
-	
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu) {
-//		if (mActor != null || mGenre != null) {
-//			menu.add(0, MENU_PLAY_ALL, 0, "Play all").setIcon(R.drawable.menu_album);
-//		}
+		// if (mActor != null || mGenre != null) {
+		// menu.add(0, MENU_PLAY_ALL, 0,
+		// "Play all").setIcon(R.drawable.menu_album);
+		// }
 		SubMenu sortMenu = menu.addSubMenu(0, MENU_SORT, 0, "Sort").setIcon(R.drawable.menu_sort);
 		sortMenu.add(2, MENU_SORT_BY_TITLE_ASC, 0, "by Title ascending");
 		sortMenu.add(2, MENU_SORT_BY_TITLE_DESC, 0, "by Title descending");
@@ -198,13 +220,14 @@ public class SeasonListController extends ListController implements IController 
 		sortMenu.add(2, MENU_SORT_BY_YEAR_DESC, 0, "by Year descending");
 		sortMenu.add(2, MENU_SORT_BY_RATING_ASC, 0, "by Rating ascending");
 		sortMenu.add(2, MENU_SORT_BY_RATING_DESC, 0, "by Rating descending");
-//		menu.add(0, MENU_SWITCH_VIEW, 0, "Switch view").setIcon(R.drawable.menu_view);
+		// menu.add(0, MENU_SWITCH_VIEW, 0,
+		// "Switch view").setIcon(R.drawable.menu_view);
 		createShowHideWatchedToggle(menu);
 	}
-	
+
 	@Override
 	public void onOptionsItemSelected(MenuItem item) {
-//		final SharedPreferences.Editor ed;
+		// final SharedPreferences.Editor ed;
 		switch (item.getItemId()) {
 		case MENU_PLAY_ALL:
 			break;
@@ -219,45 +242,52 @@ public class SeasonListController extends ListController implements IController 
 			super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	@Override
 	protected void refreshList() {
 		hideMessage();
 		fetch();
 	}
-	
+
 	private class SeasonAdapter extends ArrayAdapter<Season> {
 		SeasonAdapter(Activity activity, ArrayList<Season> items) {
 			super(activity, 0, items);
 		}
+
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 
 			final GridPosterItemView view;
 			if (convertView == null) {
-				view = new GridPosterItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap, mList.getSelector(), false);
+				view = new GridPosterItemView(mActivity, mTvManager, parent.getWidth(), mFallbackBitmap,
+						mList.getSelector(), false);
 			} else {
-				view = (GridPosterItemView)convertView;
+				view = (GridPosterItemView) convertView;
 			}
-			
+
 			final Season season = getItem(position);
 			view.reset();
 			view.position = position;
-			view.title = "Season " + season.number;
-			
+			view.title = season.getShortName();
+
 			if (mLoadCovers) {
-				view.getResponse().load(season, ThumbSize.MEDIUM, !mPostScrollLoader.isListIdle());
+				if (mTvManager.coverLoaded(season, mThumbSize)) {
+					view.setCover(mTvManager.getCoverSync(season, mThumbSize));
+				} else {
+					view.setCover(null);
+					view.getResponse().load(season, mThumbSize, !mPostScrollLoader.isListIdle());
+				}
 			}
 			return view;
 		}
 	}
-	
+
 	private static final long serialVersionUID = 1088971882661811256L;
 
 	public void onActivityPause() {
 		if (mTvManager != null) {
 			mTvManager.setController(null);
-//			mVideoManager.postActivity();
+			mTvManager.postActivity();
 		}
 		if (mControlManager != null) {
 			mControlManager.setController(null);
@@ -274,5 +304,4 @@ public class SeasonListController extends ListController implements IController 
 			mControlManager.setController(this);
 		}
 	}
-
 }

@@ -36,6 +36,7 @@ import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.Song;
 import org.xbmc.api.type.SortType;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.content.Context;
@@ -59,6 +60,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class SongListController extends ListController implements IController {
 	
+	private static final int mThumbSize = ThumbSize.SMALL;
 	public static final int ITEM_CONTEXT_QUEUE = 1;
 	public static final int ITEM_CONTEXT_PLAY = 2;
 	public static final int ITEM_CONTEXT_INFO = 3;
@@ -160,50 +162,27 @@ public class SongListController extends ListController implements IController {
 	}
 	
 	private void fetch() {
-		final Album album = mAlbum; 
-		final Genre genre = mGenre; 
-		final Artist artist = mArtist; 
+		final String title = mAlbum != null ? mAlbum.name + " - " : mArtist != null ? mArtist.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "Songs";
+		DataResponse<ArrayList<Song>> response = new DataResponse<ArrayList<Song>>() {
+			public void run() {
+				if (value.size() > 0) {
+					setTitle(title + " (" + value.size() + ")");
+					mList.setAdapter(new SongAdapter(mActivity, value));
+				} else {
+					setTitle(title);
+					setNoDataMessage("No songs found", R.drawable.icon_song_dark);
+				}
+			}
+		};
+		
 		showOnLoading();
-		if (album != null) {
-			setTitle("Songs...");
-			mMusicManager.getSongs(new DataResponse<ArrayList<Song>>() {
-				public void run() {
-					setTitle(album.name);
-					if (value.size() > 0) {
-						mList.setAdapter(new SongAdapter(mActivity, value));
-					} else {
-						setNoDataMessage("No songs found", R.drawable.icon_song_dark);
-					}
-				}
-			}, album, mActivity.getApplicationContext());
-			
-		} else if (artist != null) {
-			setTitle(artist.name + " - Songs...");
-			mMusicManager.getSongs(new DataResponse<ArrayList<Song>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle(artist.name + " - Songs (" + value.size() + ")");
-						mList.setAdapter(new SongAdapter(mActivity, value));
-					} else {
-						setTitle(artist.name + " - Songs");
-						setNoDataMessage("No songs found.", R.drawable.icon_song_dark);
-					}
-				}
-			}, artist, mActivity.getApplicationContext());
-			
-		} else if (genre != null) {
-			setTitle(genre.name + " - Songs...");
-			mMusicManager.getSongs(new DataResponse<ArrayList<Song>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle(genre.name + " - Songs (" + value.size() + ")");
-						mList.setAdapter(new SongAdapter(mActivity, value));
-					} else {
-						setTitle(genre.name + " - Songs");
-						setNoDataMessage("No songs found.", R.drawable.icon_song_dark);
-					}
-				}
-			}, genre, mActivity.getApplicationContext());
+		setTitle(title + "...");
+		if (mAlbum != null) {
+			mMusicManager.getSongs(response, mAlbum, mActivity.getApplicationContext());
+		} else if (mArtist != null) {
+			mMusicManager.getSongs(response, mArtist, mActivity.getApplicationContext());
+		} else if (mGenre != null) {
+			mMusicManager.getSongs(response, mGenre, mActivity.getApplicationContext());
 		}
 	}
 	
@@ -379,7 +358,12 @@ public class SongListController extends ListController implements IController {
 			view.subsubtitle = song.getDuration();
 			
 			if (mLoadCovers) {
-				view.getResponse().load(song, !mPostScrollLoader.isListIdle());
+				if(mMusicManager.coverLoaded(song, mThumbSize)){
+					view.setCover(mMusicManager.getCoverSync(song, mThumbSize));
+				}else{
+					view.setCover(null);
+					view.getResponse().load(song, !mPostScrollLoader.isListIdle());
+				}
 			}
 			return view;
 		}

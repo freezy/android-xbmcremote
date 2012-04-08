@@ -465,7 +465,12 @@ public class TvShowClient extends Client implements ITvShowClient {
 				return parseTime(map.get("Duration"));
 			}
 			public String getArtist() {
-				return "Season " + map.get("Season") + " / Episode " + map.get("Episode");
+				if(Integer.valueOf(map.get("Season")) == 0) {
+					return "Specials / Episode " + map.get("Episode");
+				}
+				else {
+					return "Season " + map.get("Season") + " / Episode " + map.get("Episode");
+				}
 			}
 			public String getAlbum() {
 				return map.get("Title");

@@ -39,6 +39,7 @@ import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.object.Season;
 import org.xbmc.api.type.SortType;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -65,6 +66,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class EpisodeListController extends ListController implements IController {
 	
+	private static final int mThumbSize = ThumbSize.SMALL;
 	public static final int ITEM_CONTEXT_PLAY = 1;
 	public static final int ITEM_CONTEXT_INFO = 2;
 	
@@ -126,26 +128,27 @@ public class EpisodeListController extends ListController implements IController
 		}
 	}
 	
-	private void fetch() {
-		final Season season = mSeason;
-		
+	private void fetch() {		
 		// tv show and episode both are using the same manager so set the sort key here
 		((ISortableManager)mTvManager).setSortKey(AbstractManager.PREF_SORT_KEY_EPISODE);
 		((ISortableManager)mTvManager).setPreferences(mActivity.getPreferences(Context.MODE_PRIVATE));
 		
-		showOnLoading();
-		if (season != null) {
-			setTitle(season.show.title + " Season " + season.number + " - Episodes");
-			mTvManager.getEpisodes(new DataResponse<ArrayList<Episode>>() {
-				public void run() {
-					if(value.size() > 0) {
-						setTitle(season.show.title + " Season " + season.number + " - Episodes (" + value.size() + ")");
-						mList.setAdapter(new EpisodeAdapter(mActivity, value));
-					} else {
-						setNoDataMessage("No episodes found.", R.drawable.icon_movie_dark);
-					}
+		final String title = mSeason != null ? mSeason.getName() + " - " : "" + "Episodes";
+		DataResponse<ArrayList<Episode>> response = new DataResponse<ArrayList<Episode>>() {
+			public void run() {
+				if (value.size() > 0) {
+					setTitle(title + " (" + value.size() + ")");
+					mList.setAdapter(new EpisodeAdapter(mActivity, value));
+				} else {
+					setNoDataMessage("No episodes found.", R.drawable.icon_movie_dark);
 				}
-			}, season, mActivity.getApplicationContext());
+			}
+		};
+		
+		showOnLoading();
+		setTitle(title + "...");
+		if (mSeason != null) {
+			mTvManager.getEpisodes(response, mSeason, mActivity.getApplicationContext());
 		}
 	}
 	
@@ -310,7 +313,12 @@ public class EpisodeListController extends ListController implements IController
 			view.bottomright = String.valueOf(((float)Math.round(episode.rating *10))/ 10);
 			
 			if (mLoadCovers) {
-				view.getResponse().load(episode, !mPostScrollLoader.isListIdle());
+				if(mTvManager.coverLoaded(episode, mThumbSize)){
+					view.setCover(mTvManager.getCoverSync(episode, mThumbSize));
+				}else{
+					view.setCover(null);
+					view.getResponse().load(episode, !mPostScrollLoader.isListIdle());
+				}
 			}
 			return view;
 		}

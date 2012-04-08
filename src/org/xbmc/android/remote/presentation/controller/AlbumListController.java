@@ -38,6 +38,7 @@ import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.type.SortType;
+import org.xbmc.api.type.ThumbSize;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -68,6 +69,8 @@ import android.widget.AdapterView.OnItemClickListener;
  */
 public class AlbumListController extends ListController implements IController {
 	
+	private static final int mThumbSize = ThumbSize.SMALL;
+
 	private static final String TAG = "AlbumListController";
 	
 	public static final int ITEM_CONTEXT_QUEUE = 1;
@@ -211,68 +214,29 @@ public class AlbumListController extends ListController implements IController {
 	}
 	
 	private void fetch() {
-		final Artist artist = mArtist;
-		final Genre genre = mGenre;
-		if (artist != null) {						// albums of an artist
-			setTitle(artist.name + " - Albums...");
-			showOnLoading();
-			mMusicManager.getAlbums(new DataResponse<ArrayList<Album>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle(artist.name + " - Albums (" + value.size() + ")");
-						setAdapter(value);
-					} else {
-						setTitle(artist.name + " - Albums");
-						setNoDataMessage("No albums found.", R.drawable.default_album);
-					}
+		final String title = mArtist != null ? mArtist.name + " - " : mGenre != null ? mGenre.name + " - " : "" + (mCompilationsOnly ? "Compilations" : "Albums");
+		DataResponse<ArrayList<Album>> response = new DataResponse<ArrayList<Album>>() {
+			public void run() {
+				if (value.size() > 0) {
+					setTitle(title + " (" + value.size() + ")");
+					setAdapter(value);
+				} else {
+					setTitle(title);
+					setNoDataMessage("No albums found.", R.drawable.default_album);
 				}
-			}, artist, mActivity.getApplicationContext());
-			
-		} else if (genre != null) {					// albums of a genre
-			setTitle(genre.name + " - Albums...");
-			showOnLoading();
-			mMusicManager.getAlbums(new DataResponse<ArrayList<Album>>() {
-				public void run() {
-					if (value.size() > 0) {
-						setTitle(genre.name + " - Albums (" + value.size() + ")");
-						setAdapter(value);
-					} else {
-						setTitle(genre.name + " - Albums");
-						setNoDataMessage("No albums found.", R.drawable.default_album);
-					}
-				}
-			}, genre, mActivity.getApplicationContext());
-			
-		} else {
-			if (mCompilationsOnly) {				// compilations
-				setTitle("Compilations...");
-				showOnLoading();
-				mMusicManager.getCompilations(new DataResponse<ArrayList<Album>>() {
-					public void run() {
-						if (value.size() > 0) {
-							setTitle("Compilations (" + value.size() + ")");
-							setAdapter(value);
-						} else {
-							setTitle("Compilations");
-							setNoDataMessage("No compilations found.", R.drawable.default_album);
-						}
-					}
-				}, mActivity.getApplicationContext());
-			} else {
-				setTitle("Albums...");				// all albums
-				showOnLoading();
-				mMusicManager.getAlbums(new DataResponse<ArrayList<Album>>() {
-					public void run() {
-						if (value.size() > 0) {
-							setTitle("Albums (" + value.size() + ")");
-							setAdapter(value);
-						} else {
-							setTitle("Albums");
-							setNoDataMessage("No Albums found.", R.drawable.default_album);
-						}
-					}
-				}, mActivity.getApplicationContext());
 			}
+		};
+		
+		showOnLoading();
+		setTitle(title + "...");		
+		if (mArtist != null) {						// albums of an artist
+			mMusicManager.getAlbums(response, mArtist, mActivity.getApplicationContext());			
+		} else if (mGenre != null) {				// albums of a genre
+			mMusicManager.getAlbums(response, mGenre, mActivity.getApplicationContext());			
+		} else if (mCompilationsOnly) {				// compilations
+			mMusicManager.getCompilations(response, mActivity.getApplicationContext());
+		} else {
+			mMusicManager.getAlbums(response, mActivity.getApplicationContext());
 		}
 	}
 	
@@ -429,7 +393,12 @@ public class AlbumListController extends ListController implements IController {
 			view.subsubtitle = album.year > 0 ? String.valueOf(album.year) : "";
 			Log.i(TAG, "isListIdle: " + mPostScrollLoader.isListIdle());
 			if (mLoadCovers) {
-				view.getResponse().load(album, !mPostScrollLoader.isListIdle());
+				if(mMusicManager.coverLoaded(album, mThumbSize)){
+					view.setCover(mMusicManager.getCoverSync(album, mThumbSize));
+				}else{
+					view.setCover(null);
+					view.getResponse().load(album, !mPostScrollLoader.isListIdle());
+				}
 			}
 			return view;
 		}

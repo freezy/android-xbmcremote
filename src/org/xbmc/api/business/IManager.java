@@ -41,4 +41,7 @@ public interface IManager {
 	 * @param response Response object
 	 */
 	public void getCover(final DataResponse<Bitmap> response, final ICoverArt cover, final int thumbSize, Bitmap defaultCover, final Context context, final boolean getFromCacheOnly);
+	public Bitmap getCoverSync(final ICoverArt cover, final int thumbSize);
+	public boolean coverLoaded(final ICoverArt cover, final int thumbSize);
+	public void post(Runnable runnable);
 }

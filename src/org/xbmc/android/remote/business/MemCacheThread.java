@@ -52,7 +52,7 @@ class MemCacheThread extends AbstractThread {
 	protected static MemCacheThread sHttpApiThread;
 	
 	/**
-	 * The actual cache variable. Here are the thumbs stored. 
+	 * The actual cache variable. Here are the thumbs stored.
 	 */
 	private static final HashMap<Long, SoftReference<Bitmap>> sCacheSmall = new HashMap<Long, SoftReference<Bitmap>>();
 	private static final HashMap<Long, SoftReference<Bitmap>> sCacheMedium = new HashMap<Long, SoftReference<Bitmap>>();
@@ -85,6 +85,7 @@ class MemCacheThread extends AbstractThread {
 			        if (ref != null) {
 			        	if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] -> In cache.");
 			        	response.value = ref.get();
+			        	if (DEBUG && response.value == null) Log.w(TAG, "[" + cover.getId() + "] -> GC'd from cache.");
 			        } else if (sNotAvailable.containsKey(crc)) {
 			        	if (DEBUG) Log.i(TAG, "[" + cover.getId() + "] -> Marked as not-in-cache (" + crc + ").");
 			        	response.value = defaultCover;
@@ -109,7 +110,8 @@ class MemCacheThread extends AbstractThread {
 	 * @return Bitmap or null if not available.
 	 */
 	public static Bitmap getCover(ICoverArt cover, int thumbSize) {
-		return getCache(thumbSize).get(cover.getCrc()).get();
+		Bitmap cache = getCache(thumbSize).get(cover.getCrc()).get();
+		return cache;
 	}
 	
 	/**
@@ -118,7 +120,10 @@ class MemCacheThread extends AbstractThread {
 	 * @return True if thumb is in mem cache, false otherwise.
 	 */
 	public static boolean isInCache(ICoverArt cover, int thumbSize) {
-		return (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) && getCache(thumbSize).containsKey(cover.getCrc());
+		return (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) && 
+				getCache(thumbSize).containsKey(cover.getCrc()) && 
+				getCache(thumbSize).get(cover.getCrc()) != null && 
+				getCache(thumbSize).get(cover.getCrc()).get() != null;
 	}
 	
 	/**
@@ -154,5 +159,11 @@ class MemCacheThread extends AbstractThread {
 			sHttpApiThread.mHandler.getLooper().quit();
 			sHttpApiThread = null;
 		}
+	}
+	
+	public static void purgeCache() {
+		sCacheMedium.clear();
+		sCacheSmall.clear();
+		sNotAvailable.clear();
 	}
 }

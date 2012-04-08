@@ -22,10 +22,10 @@
 package org.xbmc.android.remote.presentation.activity;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.business.CacheManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.HomeController;
 import org.xbmc.android.remote.presentation.controller.HomeController.ProgressThread;
-import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.api.business.IEventClientManager;
@@ -172,7 +172,7 @@ public class HomeActivity extends Activity {
 			builder.setCancelable(false);
 			builder.setPositiveButton("Absolutely.", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					ImportUtilities.purgeCache();
+					CacheManager.get().purgeCache();
 					Toast.makeText(HomeActivity.this, "Cache purged.", Toast.LENGTH_SHORT).show();
 				}
 			});

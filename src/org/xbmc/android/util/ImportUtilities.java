@@ -30,11 +30,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.StatFs;
-import android.util.Log;
 
 public abstract class ImportUtilities {
 	
-	private static final String TAG = "ImportUtilities";
     private static final String CACHE_DIRECTORY = "xbmc";
     private static final double MIN_FREE_SPACE = 3;
 
@@ -55,47 +53,69 @@ public abstract class ImportUtilities {
     	return IOUtilities.getExternalFile(sb.toString());
     }
 
-    
     public static Bitmap addCoverToCache(ICoverArt cover, Bitmap bitmap, int thumbSize) {
-    	Bitmap sizeToReturn = null;
-    	Bitmap resized = null;
-    	File cacheDirectory;
-    	final int mediaType = cover.getMediaType();
-    	for (int currentThumbSize : ThumbSize.values()) {
-    		// don't save big covers
-    		if (currentThumbSize == ThumbSize.BIG) {
-    			if (thumbSize == currentThumbSize)
-    				return bitmap;
-    			else
-    				continue;
-    		}
-    		try {
-    			cacheDirectory = ensureCache(MediaType.getArtFolder(mediaType), currentThumbSize);
-    		} catch (IOException e) {
-    			return null;
-    		}
-    		File coverFile = new File(cacheDirectory, Crc32.formatAsHexLowerCase(cover.getCrc()));
-    		FileOutputStream out = null;
-    		try {
-    			final Bitmap resizing = resized == null ? bitmap : resized;
-    			Dimension uncroppedDim = ThumbSize.getDimension(currentThumbSize, mediaType, resizing.getWidth(), resizing.getHeight());
-    			Dimension targetDim = ThumbSize.getTargetDimension(currentThumbSize, mediaType, resizing.getWidth(), resizing.getHeight());
-    			// TODO: crop
-    			Log.i(TAG, "Resizing to: " + uncroppedDim + " in order to fit into " + targetDim);
-    			
-    			resized = Bitmap.createScaledBitmap(resizing, uncroppedDim.x, uncroppedDim.y, true);
-    			resized.compress(Bitmap.CompressFormat.JPEG, 85, new FileOutputStream(coverFile));
-    			if (thumbSize == currentThumbSize) {
-    				sizeToReturn = resized;
-    			}
-    		} catch (FileNotFoundException e) {
-    			return null;
-    		} finally {
-    			IOUtilities.closeStream(out);
-    		}
-    	}
-        return sizeToReturn;
-    }
+		Bitmap sizeToReturn = null;
+		File cacheDirectory;
+		final int mediaType = cover.getMediaType();
+		for (int currentThumbSize : ThumbSize.values()) {
+			// don't save big covers
+			if (currentThumbSize == ThumbSize.BIG) {
+				if (thumbSize == currentThumbSize) {
+					return bitmap;
+				} else {
+					continue;
+				}
+			}
+			
+			try {
+				cacheDirectory = ensureCache(MediaType.getArtFolder(mediaType), currentThumbSize);
+			} catch (IOException e) {
+				return null;
+			}
+
+			File coverFile = new File(cacheDirectory, Crc32.formatAsHexLowerCase(cover.getCrc()));
+			FileOutputStream out = null;
+			try {
+				final Bitmap source = bitmap;
+
+				// Centre crop and resize the image
+				Dimension targetDim = ThumbSize.getTargetDimension(currentThumbSize, mediaType, source.getWidth(), source.getHeight());
+				
+				double targetAR = targetDim.x / targetDim.y;
+				double sourceAR = source.getWidth() / source.getHeight(); 
+
+				Bitmap cropped;
+				if (sourceAR > targetAR) {
+					int boundTop = 0;
+					int boundLeft = (int) ((source.getWidth() - (source.getHeight() * targetAR)) / 2);
+					int boundBottom = source.getHeight();
+					int boundRight = (int) ((source.getWidth() + (source.getHeight() * targetAR)) / 2);
+					cropped = Bitmap.createBitmap(source, boundLeft, boundTop, boundRight, boundBottom);
+				} else if (sourceAR < targetAR) {
+					int boundTop = (int) ((source.getHeight() - (source.getWidth() * targetAR)) / 2);
+					int boundLeft = 0;
+					int boundBottom = (int) ((source.getHeight() + (source.getWidth() * targetAR)) / 2);
+					int boundRight = source.getWidth();
+					cropped = Bitmap.createBitmap(source, boundLeft, boundTop, boundRight, boundBottom);
+				} else {
+					cropped = source;
+				}
+
+				Bitmap resized = Bitmap.createScaledBitmap(cropped, targetDim.x, targetDim.y, true);
+
+				resized.compress(Bitmap.CompressFormat.JPEG, 85, new FileOutputStream(coverFile));
+				if (thumbSize == currentThumbSize) {
+					sizeToReturn = resized;
+				}				
+			} catch (FileNotFoundException e) {
+				return null;
+			} finally {
+				IOUtilities.closeStream(out);
+			}
+		}
+		
+		return sizeToReturn;
+	}
     
 	public static int calculateSampleSize(BitmapFactory.Options options, Dimension targetDimension) {
 		if (targetDimension.x == 0 || targetDimension.y == 0) {
