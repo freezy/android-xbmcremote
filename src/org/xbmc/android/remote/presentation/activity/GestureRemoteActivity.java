@@ -42,16 +42,16 @@ import android.widget.FrameLayout;
 
 /**
  * Gesture mode. Let's see how this works out...
- * 
+ *
  * @author Team XBMC
  */
 public class GestureRemoteActivity extends Activity {
-	
+
 	private final static String TAG = "GestureRemoteActivity";
-	
+
 	private ConfigurationManager mConfigurationManager;
 	private RemoteController mRemoteController;
-	
+
 	private static final int MENU_NOW_PLAYING = 401;
 	private static final int MENU_SWITCH_BUTTONS = 402;
 //	private static final int MENU_SWITCH_MOUSE = 403;
@@ -60,7 +60,7 @@ public class GestureRemoteActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		Display d = getWindowManager().getDefaultDisplay();
 		// set display size
 		ThumbSize.setScreenSize(d.getWidth(), d.getHeight());
@@ -75,15 +75,15 @@ public class GestureRemoteActivity extends Activity {
 			Log.i(TAG, "AR = " + ar + ", normal layout.");
 			setContentView(R.layout.remote_gesture);
 		}
-		
+
 		// remove nasty top fading edge
 		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
 		topFrame.setForeground(null);
-		
-		GestureRemoteView view = (GestureRemoteView)findViewById(R.id.RemoteXboxGestureZone);	
+
+		GestureRemoteView view = (GestureRemoteView)findViewById(R.id.RemoteXboxGestureZone);
 		mRemoteController = new RemoteController(getApplicationContext());
 		view.setGestureListener(mRemoteController.startGestureThread(this.getApplicationContext()));
-		
+
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		// mConfigurationManager.initKeyguard(true);
 		setupButtons();
@@ -105,12 +105,12 @@ public class GestureRemoteActivity extends Activity {
 	public boolean onTrackballEvent(MotionEvent event) {
 		return mRemoteController.onTrackballEvent(event);
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		return mRemoteController.onKeyDown(keyCode, event) ? true : super.onKeyDown(keyCode, event);
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -118,7 +118,7 @@ public class GestureRemoteActivity extends Activity {
 		mRemoteController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -132,7 +132,7 @@ public class GestureRemoteActivity extends Activity {
 	private void setupButtons() {
 		// display
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnDisplay), ButtonCodes.REMOTE_DISPLAY);
-		
+
 		// seek back
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnSeekBack), ButtonCodes.REMOTE_REVERSE);
 		// play
@@ -149,7 +149,7 @@ public class GestureRemoteActivity extends Activity {
 		// next
 		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnNext), ButtonCodes.REMOTE_SKIP_PLUS);
 	}
-	
+
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_SWITCH_BUTTONS, 0, "Switch to buttons").setIcon(R.drawable.menu_remote);
 		menu.add(0, MENU_NOW_PLAYING, 0, "Now playing").setIcon(R.drawable.menu_nowplaying);
@@ -166,7 +166,7 @@ public class GestureRemoteActivity extends Activity {
 				break;
 			case MENU_SWITCH_BUTTONS:
 				intent = new Intent(this, RemoteActivity.class);
-				intent.addFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+				intent.addFlags(intent.getFlags());
 				break;
 			case MENU_ENTER_TEXT:
 				showDialog(RemoteController.DIALOG_SENDTEXT);

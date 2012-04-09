@@ -21,17 +21,24 @@
 
 package org.xbmc.android.remote.presentation.activity;
 
+import static org.xbmc.android.remote.presentation.controller.SettingsController.PREF_AUTO_ROTATE;
+
+import java.util.ArrayList;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.media.AudioManager;
 import android.preference.PreferenceManager;
 
 class ConfigurationManager implements OnSharedPreferenceChangeListener {
 
 	public final static String PREF_KEYGUARD_DISABLED = "setting_disable_keyguard";
+
 
 	public final static String KEYGUARD_STATUS_ENABLED = "0";
 	public final static String KEYGUARD_STATUS_REMOTE_ONLY = "1";
@@ -40,7 +47,7 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 	public final static int INT_KEYGUARD_STATUS_ENABLED = 0;
 	public final static int INT_KEYGUARD_STATUS_REMOTE_ONLY = 1;
 	public final static int INT_KEYGUARD_STATUS_ALL = 2;
-	
+
 	public final static String KEYGUARD_TAG = "xbmc_remote_keyguard_lock";
 
 	private static ConfigurationManager sInstance;
@@ -48,7 +55,9 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 	private Activity mActivity;
 
 	private int mKeyguardState = 0;
-	
+	private int mOrientation;
+	private ArrayList<String> portraitList;
+
 	private KeyguardManager.KeyguardLock mKeyguardLock = null;
 
 	private ConfigurationManager(Activity activity) {
@@ -56,6 +65,20 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		mKeyguardState = Integer.parseInt(prefs.getString(PREF_KEYGUARD_DISABLED, KEYGUARD_STATUS_ENABLED));
+		portraitList = new ArrayList<String>();
+		try {
+			ActivityInfo[] info = mActivity.getPackageManager().getPackageInfo(mActivity.getPackageName(), PackageManager.GET_ACTIVITIES).activities;
+			for (int i = 0; i < info.length; i++) {
+				if(info[i].screenOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+					portraitList.add(info[i].name);
+				}
+			}
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		mOrientation = (prefs.getBoolean(PREF_AUTO_ROTATE, true)) ? ActivityInfo.SCREEN_ORIENTATION_SENSOR :
+			ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 	}
 
 	public static ConfigurationManager getInstance(Activity activity) {
@@ -68,15 +91,15 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 	}
 
 	//Use with extreme care! this could return null, so you need to null-check
-	//in the calling code! 
+	//in the calling code!
 	public static ConfigurationManager getInstance() {
 		return sInstance;
 	}
-	
+
 	public Context getActiveContext() {
 		return sInstance.mActivity;
 	}
-	
+
 	public void disableKeyguard(Activity activity) {
 		if (mKeyguardLock != null) {
 			mKeyguardLock.disableKeyguard();
@@ -86,7 +109,7 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 			mKeyguardLock.disableKeyguard();
 		}
 	}
-	
+
 	public void enableKeyguard() {
 		if (mKeyguardLock != null) {
 			mKeyguardLock.reenableKeyguard();
@@ -102,9 +125,12 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 				disableKeyguard(mActivity);
 			else
 				enableKeyguard();
+		} else if(key.equals(PREF_AUTO_ROTATE)) {
+			mOrientation = (prefs.getBoolean(PREF_AUTO_ROTATE, true)) ? ActivityInfo.SCREEN_ORIENTATION_SENSOR :
+									ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 		}
 	}
-	
+
 	public void onActivityResume(Activity activity) {
 		switch (mKeyguardState) {
 			case INT_KEYGUARD_STATUS_REMOTE_ONLY:
@@ -120,16 +146,19 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 				enableKeyguard();
 				break;
 		}
-		
+
 		activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		mActivity = activity;
+		if(!portraitList.contains(mActivity.getComponentName().getClassName())) {
+			mActivity.setRequestedOrientation(mOrientation);
+		}
 	}
-	
+
 	public void onActivityPause() {
 		if (mKeyguardLock != null){
 			mKeyguardLock.reenableKeyguard();
 			mKeyguardLock = null;
 		}
 	}
-	
+
 }
