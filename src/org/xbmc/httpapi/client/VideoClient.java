@@ -46,6 +46,12 @@ import android.graphics.Bitmap;
  */
 public class VideoClient extends Client implements IVideoClient {
 	
+	private static final String MOVIE_COLUMNS = "idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount, c09";
+
+	private static final String SELECT_MOVIES = "SELECT" + " " + MOVIE_COLUMNS;
+	
+	private static final String WHERE_MOVIES = " " + "FROM" + " " + "movie, files, path";
+
 	public static final String TAG = "VideoClient";
 
 	public static final String PLAYLIST_ID = "1";
@@ -76,8 +82,9 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount");
-		sb.append(" FROM movie, files, path WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
+		sb.append(SELECT_MOVIES);
+		sb.append(WHERE_MOVIES);
+		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
 		sb.append(watchedFilter(hideWatched));
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
@@ -91,8 +98,9 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, int offset, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount");
-		sb.append(" FROM movie, files, path WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
+		sb.append(SELECT_MOVIES);
+		sb.append(WHERE_MOVIES);
+		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
 		sb.append(watchedFilter(hideWatched));
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		sb.append(" LIMIT -1 OFFSET " + offset);
@@ -108,8 +116,8 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount");
-		sb.append(" FROM movie, files, path");
+		sb.append(SELECT_MOVIES);
+		sb.append(WHERE_MOVIES);
 		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie IN (");
 		sb.append("   SELECT DISTINCT idMovie ");
 		sb.append("   FROM actorlinkmovie ");
@@ -130,8 +138,8 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount");
-		sb.append(" FROM movie, files, path");
+		sb.append(SELECT_MOVIES);
+		sb.append(WHERE_MOVIES);
 		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie IN (");
 		sb.append("   SELECT DISTINCT idMovie ");
 		sb.append("   FROM genrelinkmovie ");
@@ -152,7 +160,8 @@ public class VideoClient extends Client implements IVideoClient {
 	public Movie updateMovieDetails(INotifiableManager manager, Movie movie) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT c03, c01, c04, c18, c12, c19");
-		sb.append(" FROM movie, files, path WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie = ");
+		sb.append(WHERE_MOVIES);
+		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie = ");
 		sb.append(movie.getId());
 		parseMovieDetails(mConnection.query("QueryVideoDatabase", sb.toString(), manager), movie);
 		sb = new StringBuilder();
@@ -251,6 +260,8 @@ public class VideoClient extends Client implements IVideoClient {
 	 * 	<li><code>c11</code></li> (runtime)
 	 * 	<li><code>c14</code></li> (genres)
 	 * 	<li><code>c05</code></li> (rating)
+	 * 	<li><code>playCount</code></li> (numWatched)
+	 * 	<li><code>c09</code></li> (imdbId)
 	 * </ol> 
 	 * @param response
 	 * @return List of movies
@@ -259,8 +270,8 @@ public class VideoClient extends Client implements IVideoClient {
 		ArrayList<Movie> movies = new ArrayList<Movie>();
 		String[] fields = response.split("<field>");
 		try {
-			for (int row = 1; row < fields.length; row += 10) {
-				movies.add(new Movie( // int id, String title, int year, String path, String filename, String director, String runtime, String genres, Double rating, int numWatched
+			for (int row = 1; row < fields.length; row += 11) { //WHen adding a field, be sure to change this #
+				movies.add(new Movie( // int id, String title, int year, String path, String filename, String director, String runtime, String genres, Double rating, int numWatched, String imdbId
 						Connection.trimInt(fields[row]), 
 						Connection.trim(fields[row + 1]), 
 						Connection.trimInt(fields[row + 2]),
@@ -270,7 +281,8 @@ public class VideoClient extends Client implements IVideoClient {
 						Connection.trim(fields[row + 6]),
 						Connection.trim(fields[row + 7]),
 						Connection.trimDouble(fields[row + 8]),
-						Connection.trimInt(fields[row + 9])
+						Connection.trimInt(fields[row + 9]),
+						Connection.trim(fields[row + 10])
 				));
 			}
 		} catch (Exception e) {
