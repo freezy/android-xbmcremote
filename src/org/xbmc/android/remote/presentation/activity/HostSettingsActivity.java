@@ -27,6 +27,7 @@ import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceActivity;
@@ -71,6 +72,12 @@ public class HostSettingsActivity extends PreferenceActivity {
 		return super.onMenuItemSelected(featureId, item);
 	}
 	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		mSettingsController.onActivityResult(requestCode, resultCode, data);
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
