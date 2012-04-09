@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.xbmc.android.remote.R;
+import org.xbmc.android.remote.presentation.activity.HostSettingsActivity;
 import org.xbmc.android.remote.presentation.activity.SettingsActivity;
-import org.xbmc.android.remote.presentation.wizard.setupwizard.SetupWizard;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.presentation.INotifiableController;
@@ -37,6 +37,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.Uri;
 import android.os.Handler;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -44,12 +45,17 @@ import android.preference.PreferenceScreen;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class SettingsController extends AbstractController implements INotifiableController, IController, OnSharedPreferenceChangeListener {
+	private static final String TAG = "SettingsController";
 	
 	public static final int MENU_ADD_HOST = 1;
-	public static final int MENU_EXIT = 2;
 	public static final int MENU_ADD_HOST_WIZARD = 3;
+	public static final int MENU_ADD_FROM_BARCODE = 4;
+	public static final int MENU_GENERATE_BARCODE = 5;
+	
+	public static final int REQUEST_SCAN_BARCODE = 1;
 	
 	private PreferenceActivity mPreferenceActivity;		
 	private final Hashtable<String, String> mSummaries = new Hashtable<String, String>();
@@ -139,7 +145,8 @@ public class SettingsController extends AbstractController implements INotifiabl
 	public void onCreateOptionsMenu(Menu menu) {
 		menu.addSubMenu(0, MENU_ADD_HOST, 0, "Add Host").setIcon(R.drawable.menu_add_host);
 		menu.addSubMenu(0, MENU_ADD_HOST_WIZARD, 0, "Host Wizard").setIcon(R.drawable.menu_add_host);
-		menu.addSubMenu(0, MENU_EXIT, 0, "Exit").setIcon(R.drawable.menu_exit);
+		menu.addSubMenu(0, MENU_ADD_FROM_BARCODE, 0, mPreferenceActivity.getString(R.string.add_from_barcode)).setIcon(R.drawable.menu_qr_code);
+		menu.addSubMenu(0, MENU_GENERATE_BARCODE, 0, mPreferenceActivity.getString(R.string.generate_barcode)).setIcon(R.drawable.menu_qr_code);
 	}
 	
 	public void onMenuItemSelected(int featureId, MenuItem item) {
@@ -150,14 +157,110 @@ public class SettingsController extends AbstractController implements INotifiabl
 				pref.create(mPreferenceActivity.getPreferenceManager());
 				mPreferenceActivity.getPreferenceScreen().addPreference(pref);
 				break;
-			case MENU_ADD_HOST_WIZARD:
-				Intent i = new Intent(mPreferenceActivity, SetupWizard.class);
-				mPreferenceActivity.startActivity(i);
+			case MENU_ADD_FROM_BARCODE:
+				final Intent scanIntent = new Intent("com.google.zxing.client.android.SCAN");
+				scanIntent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+				
+				if (mPreferenceActivity.getPackageManager().queryIntentActivities(scanIntent, 0).size() == 0) {
+					showBarcodeUnsupportedDialog();
+					break;
+				}
+				
+				mPreferenceActivity.startActivityForResult(scanIntent, REQUEST_SCAN_BARCODE);
 				break;
-			case MENU_EXIT:
-				System.exit(0);
+			case MENU_GENERATE_BARCODE:
+				final Intent intent = new Intent("com.google.zxing.client.android.ENCODE");
+				intent.putExtra("ENCODE_TYPE", "TEXT_TYPE");
+				
+				if (mPreferenceActivity.getPackageManager().queryIntentActivities(intent, 0).size() == 0) {
+					showBarcodeUnsupportedDialog();
+					break;
+				}
+				
+				final ArrayList<Host> hosts = HostFactory.getHosts(mPreferenceActivity);
+				
+				if (hosts.size() == 0) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(mPreferenceActivity);
+					builder.setMessage(mPreferenceActivity.getString(R.string.hosts_required));
+					builder.setPositiveButton(mPreferenceActivity.getString(R.string.ok), new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					});
+					builder.create().show();
+					break;
+				} else if (hosts.size() == 1) {
+					Host host = hosts.get(0);
+					intent.putExtra("ENCODE_DATA", host.toJson());
+					mPreferenceActivity.startActivity(intent);
+				} else {
+					AlertDialog.Builder builder = new AlertDialog.Builder(mPreferenceActivity);
+					builder.setTitle(mPreferenceActivity.getString(R.string.pick_host));
+					String[] names = new String[hosts.size()];
+					for (int i = 0, size = hosts.size(); i < size; i++) {
+						names[i] = hosts.get(i).name;
+					}
+					builder.setItems(names, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							Host host = hosts.get(which);
+							intent.putExtra("ENCODE_DATA", host.toJson());
+							mPreferenceActivity.startActivity(intent);
+						}
+					});
+					builder.setCancelable(true);
+					builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+						public void onCancel(DialogInterface dialog) {
+							dialog.dismiss();
+						}
+					});
+					builder.create().show();
+				}
 				break;
 		}
+	}
+	
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_SCAN_BARCODE) {
+			if (resultCode == Activity.RESULT_OK) {
+				String result = data.getStringExtra("SCAN_RESULT");
+				Host host = HostFactory.getHostFromJson(result);
+				if (host == null) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(mPreferenceActivity);
+					builder.setMessage(mPreferenceActivity.getString(R.string.host_scan_error));
+					builder.setPositiveButton(mPreferenceActivity.getString(R.string.ok), new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					});
+					builder.create().show();
+				} else {
+					HostFactory.addHost(mPreferenceActivity, host);
+					Toast.makeText(mPreferenceActivity, mPreferenceActivity.getString(R.string.added_host, host.name), Toast.LENGTH_SHORT).show();
+					
+					// Is there a better way to refresh the preferences screen?
+					mPreferenceActivity.startActivity(new Intent(mPreferenceActivity.getBaseContext(), HostSettingsActivity.class));
+					mPreferenceActivity.finish();
+				}
+			}
+		}
+	}
+	
+	private void showBarcodeUnsupportedDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(mPreferenceActivity);
+		builder.setMessage(mPreferenceActivity.getString(R.string.barcode_scanner_required));
+		builder.setPositiveButton(mPreferenceActivity.getString(R.string.yes), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setData(Uri.parse("market://search?q=pname:com.google.zxing.client.android"));
+				mPreferenceActivity.startActivity(intent);
+			}
+		});
+		builder.setNegativeButton(mPreferenceActivity.getString(R.string.no), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		builder.create().show();
 	}
 	
 	public void onActivityPause() {
