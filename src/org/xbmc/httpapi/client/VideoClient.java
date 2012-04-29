@@ -38,6 +38,7 @@ import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.Connection;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 /**
  * Takes care of everything related to the video database.
@@ -81,6 +82,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 * @return All movies
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched) {
+		Log.d("database","getmovies");
 		StringBuilder sb = new StringBuilder();
 		sb.append(SELECT_MOVIES);
 		sb.append(WHERE_MOVIES);
@@ -437,6 +439,10 @@ public class VideoClient extends Client implements IVideoClient {
 				return " ORDER BY ROUND(c05, 2) " + sortOrder;
 			case SortType.DATE_ADDED:
 				return " ORDER BY files.idFile " + sortOrder;
+			/*	Implemented by Christian Frost	- begin	*/
+			case SortType.RUNTIME:
+				return " ORDER BY CAST(c11 as INT) " + sortOrder;
+			/*	Implemented by Christian Frost	- end	*/
 		}
 	}
 	
