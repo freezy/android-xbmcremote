@@ -38,7 +38,6 @@ import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.Connection;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 /**
  * Takes care of everything related to the video database.
@@ -82,7 +81,6 @@ public class VideoClient extends Client implements IVideoClient {
 	 * @return All movies
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched) {
-		Log.d("database","getmovies");
 		StringBuilder sb = new StringBuilder();
 		sb.append(SELECT_MOVIES);
 		sb.append(WHERE_MOVIES);
