@@ -130,6 +130,8 @@ public class MediaIntentController extends AbstractController implements IContro
 	private static boolean isValidURL(String path){
 		if(path == null || path.equals(""))
 			return false;
+		if (path.startsWith("rtmp://"))
+			return true;
 		try{
 			new URL(path);
 		} catch(MalformedURLException e) {

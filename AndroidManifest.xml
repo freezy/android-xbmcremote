@@ -76,7 +76,15 @@
 				<data android:scheme="http" android:host="www.youtube.com"/>
 			</intent-filter>
 		</activity>
-		<activity android:name=".presentation.activity.UrlIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:label="@string/play_on_xbmc">
+		<activity android:name=".presentation.activity.MediaIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:label="@string/play_on_xbmc">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="rtmp"/>
+			</intent-filter>
+		</activity>
+				<activity android:name=".presentation.activity.UrlIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:label="@string/play_on_xbmc">
 			<intent-filter>
 				<action android:name="android.intent.action.SEND"></action>
 				<category android:name="android.intent.category.DEFAULT"></category>
