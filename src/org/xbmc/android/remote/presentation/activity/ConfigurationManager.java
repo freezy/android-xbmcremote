@@ -32,6 +32,7 @@ import android.preference.PreferenceManager;
 class ConfigurationManager implements OnSharedPreferenceChangeListener {
 
 	public final static String PREF_KEYGUARD_DISABLED = "setting_disable_keyguard";
+	public final static String PREF_KEEP_SCREEN_ON = "setting_keep_screen_on";
 
 	public final static String KEYGUARD_STATUS_ENABLED = "0";
 	public final static String KEYGUARD_STATUS_REMOTE_ONLY = "1";
@@ -49,6 +50,8 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 
 	private int mKeyguardState = 0;
 	
+	private boolean mKeepScreenOn = false;
+	
 	private KeyguardManager.KeyguardLock mKeyguardLock = null;
 
 	private ConfigurationManager(Activity activity) {
@@ -56,6 +59,7 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		mKeyguardState = Integer.parseInt(prefs.getString(PREF_KEYGUARD_DISABLED, KEYGUARD_STATUS_ENABLED));
+		mKeepScreenOn = prefs.getBoolean(PREF_KEEP_SCREEN_ON, false);
 	}
 
 	public static ConfigurationManager getInstance(Activity activity) {
@@ -103,6 +107,9 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 			else
 				enableKeyguard();
 		}
+		else if (key.equals(PREF_KEEP_SCREEN_ON)) {
+			mKeepScreenOn = prefs.getBoolean(PREF_KEEP_SCREEN_ON, false);
+		}
 	}
 	
 	public void onActivityResume(Activity activity) {
@@ -119,6 +126,10 @@ class ConfigurationManager implements OnSharedPreferenceChangeListener {
 			default:
 				enableKeyguard();
 				break;
+		}
+		
+		if (mKeepScreenOn) {
+			activity.getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
 		
 		activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
