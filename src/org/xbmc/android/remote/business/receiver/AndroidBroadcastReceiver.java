@@ -27,6 +27,7 @@ import java.io.IOException;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.Command;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.presentation.activity.NowPlayingNotificationManager;
 import org.xbmc.android.util.SmsMmsMessage;
 import org.xbmc.android.util.SmsPopupUtils;
 import org.xbmc.api.business.DataResponse;
@@ -146,7 +147,11 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 								eventClient.sendNotification("SMS Received from " + msg.getContactName(), msg.getMessageBody());
 						}
 					}
-				}
+                } else if (action.equals(Intent.ACTION_SCREEN_OFF) && prefs.getBoolean("setting_show_notification", false)) {
+                    NowPlayingNotificationManager.getInstance(context).stopNotificating();
+                } else if (action.equals(Intent.ACTION_SCREEN_ON) && prefs.getBoolean("setting_show_notification", false)) {
+                    NowPlayingNotificationManager.getInstance(context).startNotificating();
+                }
 			} catch (NotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
