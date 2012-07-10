@@ -1,0 +1,4 @@
+
+    <resources>
+        <dimen name="widget_margin">4dp</dimen>
+    </resources>

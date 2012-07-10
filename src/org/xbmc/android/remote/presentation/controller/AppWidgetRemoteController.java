@@ -1,32 +1,26 @@
 package org.xbmc.android.remote.presentation.controller;
 
-import java.net.ConnectException;
-
 import org.xbmc.android.remote.business.Command;
-import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.presentation.widget.RemoteControllerWidget;
+import org.xbmc.android.remote.presentation.appwidget.RemoteControllerWidget;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.presentation.INotifiableController;
 
 import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-
 import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
-public class WidgetRemoteController extends RemoteController implements
+public class AppWidgetRemoteController extends RemoteController implements
 		INotifiableController {
-	private static final String COMMAND = "command";
+	public static final String COMMAND = "remote.controller.widget.command";
 	private Context context;
 	
-	public WidgetRemoteController(Context context) {
+	public AppWidgetRemoteController(Context context) {
 		super(context);
 		this.context = context;
-		// TODO Auto-generated constructor stub
+	
 	}
 
 	@Override
@@ -41,10 +35,9 @@ public class WidgetRemoteController extends RemoteController implements
 	public void onError(Exception exception) {
 		
 		if (context != null){
-				Log.w("onCatch","Jep");
+				Log.w("onCatch","Catch Error on:" + this.getClass().toString());
 				Intent active = new Intent(context, RemoteControllerWidget.class);				
-				active.setAction(RemoteControllerWidget.ACTION_WIDGET_CONTROL);
-				// active.setData(Uri.parse(active.toUri(Intent.URI_INTENT_SCHEME)));
+				active.setAction(RemoteControllerWidget.ACTION_WIDGET_CONTROL);				
 				active.putExtra("ERROR", exception.getClass().toString());
 		        context.sendBroadcast(active);
 		}
@@ -63,7 +56,7 @@ public class WidgetRemoteController extends RemoteController implements
 	 * @param buttonCode
 	 * @param widgetId
 	 */
-	public void setupWidgetButton(RemoteViews remoteView, int viewId, Context context, Object caller,  String buttonCode, int widgetId, String uri, String action){
+	public static void setupWidgetButton(RemoteViews remoteView, int viewId, Context context, Object caller,  String buttonCode, int widgetId, String uri, String action){
 	
         Intent active = new Intent(context, caller.getClass());
         active.setAction(action);

@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:padding="@dimen/widget_margin">
 
     <LinearLayout
         android:id="@+id/RemoteXboxWidgetRow1"
@@ -21,7 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="136"
-            android:background="@drawable/remote_xbox_display" />
+            android:background="@drawable/remote_xbox_widget_display" />
 
         <ImageView
             android:layout_width="0dp"
@@ -41,21 +42,21 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="114"
-            android:background="@drawable/remote_xbox_seek_back" />
+            android:background="@drawable/remote_xbox_widget_seek_back" />
 
         <Button
             android:id="@+id/RemoteXboxWidgetImgBtnPlay"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="91"
-            android:background="@drawable/remote_xbox_play" />
+            android:background="@drawable/remote_xbox_widget_play" />
 
         <Button
             android:id="@+id/RemoteXboxWidgetImgBtnSeekForward"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="114"
-            android:background="@drawable/remote_xbox_seek_forward" />
+            android:background="@drawable/remote_xbox_widget_seek_forward" />
     </LinearLayout>
 
     <LinearLayout
@@ -69,28 +70,28 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="96"
-            android:background="@drawable/remote_xbox_previous" />
+            android:background="@drawable/remote_xbox_widget_previous" />
 
         <Button
             android:id="@+id/RemoteXboxWidgetImgBtnStop"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="64"
-            android:background="@drawable/remote_xbox_stop" />
+            android:background="@drawable/remote_xbox_widget_stop" />
 
         <Button
             android:id="@+id/RemoteXboxWidgetImgBtnPause"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="65"
-            android:background="@drawable/remote_xbox_pause" />
+            android:background="@drawable/remote_xbox_widget_pause" />
 
         <Button
             android:id="@+id/RemoteXboxWidgetImgBtnNext"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="95"
-            android:background="@drawable/remote_xbox_next" />
+            android:background="@drawable/remote_xbox_widget_next" />
     </LinearLayout>
 
     <LinearLayout
@@ -104,21 +105,21 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="99"
-            android:background="@drawable/remote_xbox_title" />
+            android:background="@drawable/remote_xbox_widget_title" />
 
         <Button
             android:id="@+id/RemoteXboxWidgetImgBtnUp"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="122"
-            android:background="@drawable/remote_xbox_up" />
+            android:background="@drawable/remote_xbox_widget_up" />
 
         <Button
             android:id="@+id/RemoteXboxWidgetImgBtnInfo"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="99"
-            android:background="@drawable/remote_xbox_info" />
+            android:background="@drawable/remote_xbox_widget_info" />
     </LinearLayout>
 
     <LinearLayout
@@ -132,21 +133,21 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="99"
-            android:background="@drawable/remote_xbox_left" />
+            android:background="@drawable/remote_xbox_widget_left" />
 
         <Button
             android:id="@+id/RemoteXboxWidgetImgBtnSelect"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="122"
-            android:background="@drawable/remote_xbox_select" />
+            android:background="@drawable/remote_xbox_widget_select" />
 
         <Button
             android:id="@+id/RemoteXboxWidgetImgBtnRight"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="99"
-            android:background="@drawable/remote_xbox_right" />
+            android:background="@drawable/remote_xbox_widget_right" />
     </LinearLayout>
 
     <LinearLayout
@@ -160,21 +161,21 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="99"
-            android:background="@drawable/remote_xbox_menu" />
+            android:background="@drawable/remote_xbox_widget_menu" />
 
         <Button
             android:id="@+id/RemoteXboxWidgetImgBtnDown"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="122"
-            android:background="@drawable/remote_xbox_down" />
+            android:background="@drawable/remote_xbox_widget_down" />
 
         <Button
             android:id="@+id/RemoteXboxWidgetImgBtnBack"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="99"
-            android:background="@drawable/remote_xbox_back" />
+            android:background="@drawable/remote_xbox_widget_back" />
     </LinearLayout>
 
 </LinearLayout>
