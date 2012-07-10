@@ -491,6 +491,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 		public void run() {
 			if (mKeyPressAction.length() > 0){
 				mEventClientManager.sendButton("R1", mKeyPressAction, false, true, true, (short)0, (byte)0);
+				
 			}				
 		}
 	}
@@ -510,4 +511,11 @@ public class RemoteController extends AbstractController implements INotifiableC
 		mEventClientManager.setController(this);
 		mInfoManager.setController(this);
 	}
+	
+	public boolean sendButton(String buttonCode){
+	
+		mEventClientManager.sendButton("R1", buttonCode, false, true, false, (short)0, (byte)0);
+		return true;
+	}
+	
 }
