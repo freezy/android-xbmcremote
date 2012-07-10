@@ -512,10 +512,8 @@ public class RemoteController extends AbstractController implements INotifiableC
 		mInfoManager.setController(this);
 	}
 	
-	public boolean sendButton(String buttonCode){
-	
+	public void sendButton(String buttonCode){
 		mEventClientManager.sendButton("R1", buttonCode, false, true, false, (short)0, (byte)0);
-		return true;
 	}
 	
 }
