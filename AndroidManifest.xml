@@ -65,9 +65,13 @@
 				<data android:scheme="http" android:mimeType="image/*"/>
 				<data android:scheme="http" android:mimeType="video/*"/>
 				<data android:scheme="http" android:mimeType="audio/*"/>
+
+				<data android:scheme="http" android:host="youtube.com"/>
+				<data android:scheme="http" android:host="www.youtube.com"/>
 			</intent-filter>
 		</activity>
-	
+		
+
 		<activity android:name=".presentation.activity.UrlIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:label="@string/play_on_xbmc">
 			<intent-filter>
 				<action android:name="android.intent.action.SEND"></action>
@@ -88,6 +92,20 @@
 				<action android:name="android.intent.action.BOOT_COMPLETED"/>
 			</intent-filter>
 		</receiver>
+		
+		<receiver android:name=".presentation.appwidget.RemoteControllerWidget" >
+            <intent-filter >
+                <action 
+                    android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            	<action android:name="org.xbmc.android.remote.WIDGET_CONTROL" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/app_widget_remote" 
+                />
+        </receiver>
+		
 		<provider android:name=".business.provider.HostProvider" android:authorities="org.xbmc.android.provider.remote" />
 		
 	</application>
