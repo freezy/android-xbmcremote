@@ -15,7 +15,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="93"
-            android:background="@drawable/remote_xbox__top_left" />
+            android:background="@drawable/remote_xbox_widget__top_left" />
 
         <ImageButton
             android:id="@+id/RemoteXboxWidgetImgBtnDisplay"
@@ -28,7 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="91"
-            android:background="@drawable/remote_xbox__top_right" />
+            android:background="@drawable/remote_xbox_widget__top_right" />
     </LinearLayout>
 
     <LinearLayout
