@@ -26,7 +26,7 @@ public class RemoteControllerWidget extends AppWidgetProvider {
 	public static final String EXTRA_ITEM = "com.example.android.stackwidget.EXTRA_ITEM";
 	public static final String ACTION_WIDGET_CONTROL = "org.xbmc.android.remote.WIDGET_CONTROL";
 	public static final String URI_SCHEME = "remote_controller_widget";
-	
+	private int count = 0;
 	
 
 	@Override
@@ -158,11 +158,11 @@ public class RemoteControllerWidget extends AppWidgetProvider {
 				AppWidgetRemoteController mRemoteController = new AppWidgetRemoteController(context);
 				mRemoteController.sendButton(extras.getString(AppWidgetRemoteController.COMMAND));
 			}
-			if (extras.containsKey("ERROR")) {
-				// This shows toast with exceptions name, in future it should
-				// put something better
-				Log.i("onReceive", "error");
-				Toast.makeText(context, extras.getString("ERROR"),
+			if (extras.containsKey(AppWidgetRemoteController.ERROR_MESSAGE)) {
+				// Error is most probably connection refused or socket timeout
+				// TODO Different error, different message
+				
+				Toast.makeText(context, context.getString(extras.getInt(AppWidgetRemoteController.ERROR_MESSAGE)),
 						Toast.LENGTH_SHORT).show();
 			}
 		}
