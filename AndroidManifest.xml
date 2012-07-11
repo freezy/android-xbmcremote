@@ -65,11 +65,13 @@
 				<data android:scheme="http" android:mimeType="image/*"/>
 				<data android:scheme="http" android:mimeType="video/*"/>
 				<data android:scheme="http" android:mimeType="audio/*"/>
+
 				<data android:scheme="http" android:host="youtube.com"/>
 				<data android:scheme="http" android:host="www.youtube.com"/>
 			</intent-filter>
 		</activity>
 		
+
 		<activity android:name=".presentation.activity.UrlIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:label="@string/play_on_xbmc">
 			<intent-filter>
 				<action android:name="android.intent.action.SEND"></action>
