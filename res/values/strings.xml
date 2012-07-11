@@ -45,4 +45,5 @@ Have fun.</string>
 	<string name="host_scan_error">There was an error while scanning a new host. Please verify that you are scanning a valid barcode.</string>
 	<string name="added_host">Successfully added \"%s\"</string>
 	<string name="barcode_scanner_required">You need to install the Barcode Scanner app to use this feature. Would you like to install it now?</string>
+	<string name="make_sure_XBMC_webserver_is_enabled_and_XBMC_is_running">Make sure XBMC webserver is enabled and XBMC is running</string>
 </resources>
