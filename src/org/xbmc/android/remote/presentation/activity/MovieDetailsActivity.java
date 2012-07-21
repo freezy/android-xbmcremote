@@ -43,16 +43,23 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnCreateContextMenuListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -64,6 +71,10 @@ import android.widget.Toast;
 public class MovieDetailsActivity extends Activity {
 	
 	private static final String NO_DATA = "-";
+
+	public static final int CAST_CONTEXT_IMDB = 1;
+	private static View selectedView;
+	private static Actor selectedAcotr;
 	
     private ConfigurationManager mConfigurationManager;
     private MovieDetailsController mMovieDetailsController;
@@ -230,6 +241,29 @@ public class MovieDetailsActivity extends Activity {
 									mActivity.startActivity(nextActivity);
 								}
 							});
+							img.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+								public void onCreateContextMenu(ContextMenu menu, View v,
+										ContextMenuInfo menuInfo) {
+									
+									selectedAcotr = (Actor) v.getTag();
+									selectedView = v;
+									
+									menu.setHeaderTitle(selectedAcotr.getShortName());
+									menu.add(0, CAST_CONTEXT_IMDB, 1, "Open IMDb").setOnMenuItemClickListener(new OnMenuItemClickListener() {
+										public boolean onMenuItemClick(MenuItem item) {
+											Intent intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("imdb:///find?s=nm&q=" + selectedAcotr.getName()));
+											if (selectedView.getContext().getPackageManager().resolveActivity(intentIMDb, PackageManager.MATCH_DEFAULT_ONLY) == null)
+											{
+										    	intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.imdb.com/find?s=nm&q=" + selectedAcotr.getName()));
+											}
+											selectedView.getContext().startActivity(intentIMDb);
+								 
+											return false;
+										}
+									});
+								}
+							});
+							
 							dataLayout.addView(view);
 							//n++;
 						}
