@@ -37,7 +37,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	/**
 	 * Points to where the movie thumbs are stored
 	 */
-	public final static String THUMB_PREFIX = "special://profile/Thumbnails/Video/";
+	public final static String THUMB_PREFIX = "special://profile/Thumbnails/";
 
 	/**
 	 * Constructor
@@ -45,7 +45,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	 * @param name		Album name
 	 * @param artist	Artist
 	 */
-	public Movie(int id, String title, int year, String path, String filename, String director, String runtime, String genres, double rating, int numWatched, String imdbId) {
+	public Movie(int id, String title, int year, String path, String filename, String director, String runtime, String genres, double rating, int numWatched, String imdbId, String artUrl) {
 		this.id = id;
 		this.title = title;
 		this.year = year;
@@ -57,6 +57,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 		this.filename = filename;
 		this.numWatched = numWatched;
 		this.imdbId=imdbId;
+		this.artUrl=artUrl;
 	}
 	
 	public int getMediaType() {
@@ -90,14 +91,14 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	
 	public static String getThumbUri(ICoverArt cover) {
 		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".jpg";
 	}
 	
 	public static String getFallbackThumbUri(ICoverArt cover) {
 		final int crc = cover.getFallbackCrc();
 		if (crc != 0) {
 			final String hex = Crc32.formatAsHexLowerCase(cover.getFallbackCrc());
-			return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+			return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".jpg";
 		} else {
 			return null;
 		}
@@ -108,12 +109,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	 * @return CRC32
 	 */
 	public long getCrc() {
-		if (thumbID == 0L && filename.startsWith("stack://")) {
-			final String[] file = filename.substring(8).split(" , ");
-			thumbID = Crc32.computeLowerCase(file[0]);
-		} else if (thumbID == 0L) {
-			thumbID = Crc32.computeLowerCase(localPath.concat(filename));
-		}
+		thumbID = Crc32.computeLowerCase(artUrl);
 		return thumbID;
 	}
 	
@@ -124,7 +120,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	 */
 	public int getFallbackCrc() {
 		if (localPath != null && filename != null) {
-			return Crc32.computeLowerCase(localPath);
+			return Crc32.computeLowerCase(artUrl);
 		} else {
 			return 0;
 		}
@@ -239,7 +235,8 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	 * The movie's imdbId
 	 */
 	private final String imdbId;
-	
+
+	public String artUrl;
 	/**
 	 * Save this once it's calculated
 	 */

@@ -79,11 +79,13 @@ public class Episode implements ICoverArt {
 	 * Title of the TV Show
 	 */
 	public String showTitle;
+	
+	public String artUrl;
 		
 	public ArrayList<Actor> actors = null;
 	
 	public Episode(int id, String title, String plot, double rating, String writer, String firstAired,
-			int numWatched, String director, int season, int episode, String localPath, String fileName, String showTitle) {
+			int numWatched, String director, int season, int episode, String localPath, String fileName, String showTitle, String artUrl) {
 		this.id = id;
 		this.title = title;
 		this.plot = plot;
@@ -97,13 +99,11 @@ public class Episode implements ICoverArt {
 		this.localPath = localPath;
 		this.showTitle = showTitle;
 		this.fileName = fileName;
+		this.artUrl = artUrl;
 	}
 
 	public long getCrc() {
-		if (fileName.contains("://"))
-		   return  Crc32.computeLowerCase(fileName);
-		else 
-			return  Crc32.computeLowerCase(localPath + fileName);			
+		return  Crc32.computeLowerCase(artUrl);			
 	}
 
 	/**
@@ -115,10 +115,7 @@ public class Episode implements ICoverArt {
 	 * </pre>
 	 */
 	public int getFallbackCrc() {
-		if (fileName.contains("://"))
-			return Crc32.computeLowerCase(fileName + "episode" + episode);
-		else
-			return Crc32.computeLowerCase(localPath +fileName + "episode" + episode);
+		return Crc32.computeLowerCase(artUrl);
 	}
 
 	public int getId() {
