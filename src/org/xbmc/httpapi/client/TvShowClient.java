@@ -100,7 +100,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("		paths.strPath,");
 		sb.append("		counts.totalcount AS totalCount,");
 		sb.append("		counts.watchedcount AS watchedCount,");
-		sb.append("		counts.totalcount = counts.watchedcount AS watched");
+		sb.append("		counts.totalcount = counts.watchedcount AS watched,");
+		sb.append("		art.url AS artUrl");
 		sb.append("	FROM (");
 		sb.append("		select min(tvshow.idShow) as idShow, tvshow.c00 from tvshow");
 		sb.append("		group by tvshow.c00");
@@ -109,8 +110,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("	LEFT OUTER join (");
 		sb.append("		SELECT min(tvshow.idShow) as idShow, tvshow.c00, count(1) AS totalcount, count(files.playCount) AS watchedcount");
 		sb.append(" 	FROM tvshow");
-		sb.append("		JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
-		sb.append("		JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
+		sb.append("		JOIN episode ON episode.idShow = tvshow.idShow");
 		sb.append("		JOIN files ON files.idFile = episode.idFile");
 		sb.append("		GROUP BY tvshow.c00");
 		sb.append("	) counts ON tvshow.idShow = counts.idShow");
@@ -121,6 +121,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("		JOIN path ON path.idpath = tvshowlinkpath.idPath");
 		sb.append("		WHERE path.idPath in (SELECT max(idPath) FROM tvshowlinkpath GROUP BY idShow)");
 		sb.append("	)  paths on tvshow.idShow = paths.idShow ");
+		sb.append(" LEFT OUTER JOIN ");
+		sb.append("		art ON art.media_id=tvshow.idShow AND art.media_type='tvshow' AND art.type='thumb'");
 		if (hideWatched) {
 			sb.append(" WHERE counts.totalcount > counts.watchedcount ");
 		}
@@ -170,7 +172,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("		paths.strPath,");
 		sb.append("		counts.totalcount AS totalCount,");
 		sb.append("		counts.watchedcount AS watchedCount,");
-		sb.append("		counts.totalcount = counts.watchedcount AS watched");
+		sb.append("		counts.totalcount = counts.watchedcount AS watched,");
+		sb.append("		art.url AS artUrl");
 		sb.append("	FROM (");
 		sb.append("		select min(tvshow.idShow) as idShow, tvshow.c00 from tvshow");
 		sb.append("		group by tvshow.c00");
@@ -179,8 +182,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("	LEFT OUTER join (");
 		sb.append("		SELECT min(tvshow.idShow) as idShow, tvshow.c00, count(1) AS totalcount, count(files.playCount) AS watchedcount");
 		sb.append(" 	FROM tvshow");
-		sb.append("		JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
-		sb.append("		JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
+		sb.append("		JOIN episode ON episode.idShow = tvshow.idShow");
 		sb.append("		JOIN files ON files.idFile = episode.idFile");
 		sb.append("		GROUP BY tvshow.c00");
 		sb.append("	) counts ON tvshow.idShow = counts.idShow");
@@ -196,6 +198,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("		LEFT OUTER JOIN actorlinktvshow ON tvshow.idShow = actorlinktvshow.idShow");
 		sb.append("		GROUP BY tvshow.c00, actorlinktvshow.idActor");
 		sb.append("	) actors on tvshow.idShow = actors.idShow");
+		sb.append(" LEFT OUTER JOIN ");
+		sb.append("		art ON art.media_id=tvshow.idShow AND art.media_type='tvshow' AND art.type='thumb'");
 		sb.append("	WHERE actors.idActor = ");
 		sb.append(actor.id);
 		if (hideWatched) {
@@ -217,7 +221,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("		paths.strPath,");
 		sb.append("		counts.totalcount AS totalCount,");
 		sb.append("		counts.watchedcount AS watchedCount,");
-		sb.append("		counts.totalcount = counts.watchedcount AS watched");
+		sb.append("		counts.totalcount = counts.watchedcount AS watched,");
+		sb.append("		art.url AS artUrl");
 		sb.append("	FROM (");
 		sb.append("		select min(tvshow.idShow) as idShow, tvshow.c00 from tvshow");
 		sb.append("		group by tvshow.c00");
@@ -226,8 +231,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("	LEFT OUTER join (");
 		sb.append("		SELECT min(tvshow.idShow) as idShow, tvshow.c00, count(1) AS totalcount, count(files.playCount) AS watchedcount");
 		sb.append(" 	FROM tvshow");
-		sb.append("		JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
-		sb.append("		JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
+		sb.append("		JOIN episode ON episode.idShow = tvshow.idShow");
 		sb.append("		JOIN files ON files.idFile = episode.idFile");
 		sb.append("		GROUP BY tvshow.c00");
 		sb.append("	) counts ON tvshow.idShow = counts.idShow");
@@ -243,6 +247,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("		LEFT OUTER JOIN genrelinktvshow ON tvshow.idShow = genrelinktvshow.idShow");
 		sb.append("		GROUP BY tvshow.c00, genrelinktvshow.idGenre");
 		sb.append("	) genres on tvshow.idShow = genres.idShow");
+		sb.append(" LEFT OUTER JOIN ");
+		sb.append("		art ON art.media_id=tvshow.idShow AND art.media_type='tvshow' AND art.type='thumb'");
 		sb.append("	WHERE genres.idGenre = ");
 		sb.append(genre.id);
 		if (hideWatched) {
@@ -262,11 +268,10 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 */
 	public ArrayList<Season> getSeasons(INotifiableManager manager, TvShow show, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT c12 from (");
-		sb.append("	SELECT episode.c12 ");
+		sb.append("SELECT c12, art.url from (");
+		sb.append("	SELECT episode.c12, tvshow.idshow ");
 		sb.append("	FROM tvshow ");
-		sb.append("		LEFT OUTER JOIN tvshowlinkepisode ON tvshowlinkepisode.idShow = tvshow.idShow ");
-		sb.append("		LEFT OUTER JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode ");
+		sb.append("		LEFT OUTER JOIN episode ON episode.idShow = tvshow.idShow ");
 		if (hideWatched) {
 			sb.append(" LEFT OUTER JOIN files ON files.idFile = episode.idFile ");
 		}
@@ -277,7 +282,10 @@ public class TvShowClient extends Client implements ITvShowClient {
 			sb.append(" AND (files.playCount IS NULL OR files.playCount = 0) ");
 		}
 		sb.append("GROUP BY episode.c12, tvshow.c00 ");
-		sb.append(") q where not q.c12 is null ");
+		sb.append(") q");
+		sb.append(" LEFT OUTER JOIN seasons ON seasons.idShow=q.idShow AND seasons.season=q.c12");
+		sb.append(" LEFT OUTER JOIN art ON art.media_id=seasons.idSeason AND art.media_type='season' AND art.type='thumb'");
+		sb.append(" where not q.c12 is null ");
 		sb.append("ORDER BY q.c12+0");
 		
 		return parseSeasons(mConnection.query("QueryVideoDatabase", sb.toString(), manager), show);
@@ -296,13 +304,14 @@ public class TvShowClient extends Client implements ITvShowClient {
 			showMap.put(tvShow.id, tvShow);
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT min(tvshow.idShow) as idShow, episode.c12 ");
+		sb.append("SELECT min(tvshow.idShow) as idShow, episode.c12, art.url ");
 		sb.append("FROM tvshow ");
-		sb.append("	LEFT OUTER JOIN tvshowlinkepisode ON tvshowlinkepisode.idShow = tvshow.idShow ");
-		sb.append("	LEFT OUTER JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode ");
+		sb.append("	LEFT OUTER JOIN episode ON episode.idShow = tvshow.idShow ");
 		if (hideWatched) {
 			sb.append(" LEFT OUTER JOIN files ON files.idFile = episode.idFile ");
 		}
+		sb.append(" LEFT OUTER JOIN seasons ON seasons.idShow=tvshow.idShow AND seasons.season=episode.c12");
+		sb.append(" LEFT OUTER JOIN art ON art.media_id=seasons.idSeason AND art.media_type='season' AND art.type='thumb'");
 		sb.append("WHERE NOT episode.c12 is null ");
 		if (hideWatched) {
 			sb.append(" AND (files.playCount IS NULL OR files.playCount = 0) ");
@@ -340,8 +349,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 */
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(c03, 2), c04, c05, c06, playCount, c10, c12, c13, strPath, strFileName, strTitle");
-		sb.append(" FROM episodeview ");
+		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(c03, 2), c04, c05, c06, playCount, c10, c12, c13, strPath, strFileName, strTitle, art.url");
+		sb.append(" FROM episodeview LEFT OUTER JOIN art ON art.media_id=episodeview.idEpisode AND art.media_type='episode' AND art.type='thumb'");
 		if (hideWatched) {
 			sb.append(" WHERE (playCount IS NULL OR playCount = 0) ");
 		}
@@ -358,8 +367,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 */
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager, TvShow show, Season season, int sortBy, String sortOrder, boolean hideWatched) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(c03, 2), c04, c05, c06, playCount, c10, c12, c13, strPath, strFileName, strTitle");
-		sb.append(" FROM episodeview ");
+		sb.append("SELECT idEpisode, c00, \"\" AS c01, ROUND(c03, 2), c04, c05, c06, playCount, c10, c12, c13, strPath, strFileName, strTitle, art.url");
+		sb.append(" FROM episodeview  LEFT OUTER JOIN art ON art.media_id=episodeview.idEpisode AND art.media_type='episode' AND art.type='thumb'");
 		sb.append(" WHERE idShow in ( select idShow from tvshow where c00 in (select c00 from tvshow where idShow = ");
 		sb.append(show.id);
 		sb.append("))");
@@ -386,8 +395,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		show = parseTvShowDetails(mConnection.query("QueryVideoDatabase", sb.toString(), manager), show);
 		//parse actors of the show
 		sb = new StringBuilder();
-		sb.append("SELECT actors.idActor, strActor, strRole");
-		sb.append(" FROM actors, actorlinktvshow");
+		sb.append("SELECT actors.idActor, strActor, strRole, art.url");
+		sb.append(" FROM actors LEFT JOIN art ON art.media_id=actors.idActor AND art.media_type='actor' AND art.type='thumb', actorlinktvshow");
 		sb.append(" WHERE actors.idActor = actorlinktvshow.idActor");
 		sb.append(" AND actorlinktvshow.idShow =");
 		sb.append(show.getId());
@@ -415,8 +424,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append(episode.id);
 		episode = parseEpisodeDetails(mConnection.query("QueryVideoDatabase", sb.toString(), manager), episode);
 		sb = new StringBuilder();
-		sb.append("SELECT actors.idActor, strActor, strRole");
-		sb.append(" FROM actors, actorlinkepisode");
+		sb.append("SELECT actors.idActor, strActor, strRole, art.url");
+		sb.append(" FROM actors, actorlinkepisode LEFT OUTER JOIN art ON art.media_id=actors.idActor AND art.media_type='actor' AND art.type='thumb'");
 		sb.append(" WHERE actors.idActor = actorlinkepisode.idActor");
 		sb.append(" AND actorlinkepisode.idEpisode =");
 		sb.append(episode.id);
@@ -544,7 +553,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		ArrayList<Episode> episodes = new ArrayList<Episode>();
 		String[] fields = response.split("<field>");
 		try {
-			for(int row = 1; row < fields.length; row += 14) {
+			for(int row = 1; row < fields.length; row += 15) {
 				episodes.add(new Episode(Connection.trimInt(fields[row]),
 						Connection.trim(fields[row + 1]),
 						Connection.trim(fields[row + 2]),
@@ -557,7 +566,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 						Connection.trimInt(fields[row + 10]),
 						Connection.trim(fields[row + 11]),
 						Connection.trim(fields[row + 12]),
-						Connection.trim(fields[row + 13])
+						Connection.trim(fields[row + 13]),
+						Connection.trim(fields[row + 14])
 					));
 			}
 		} catch (Exception e) {
@@ -573,8 +583,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		ArrayList<Season> seasons = new ArrayList<Season>();
 		String[] fields = response.split("<field>");
 		try {
-			for( int row = 1; row < fields.length; row ++) {
-				seasons.add(new Season(Connection.trimInt(fields[row]), false, show));
+			for( int row = 1; row < fields.length; row += 2) {
+				seasons.add(new Season(Connection.trimInt(fields[row]), false, show, Connection.trim(fields[row+1])));
 			}
 		}catch (Exception e) {
 			System.err.println("ERROR: " + e.getMessage());
@@ -588,10 +598,10 @@ public class TvShowClient extends Client implements ITvShowClient {
 		ArrayList<Season> seasons = new ArrayList<Season>();
 		String[] fields = response.split("<field>");
 		try {
-			for (int row = 1; row < fields.length; row += 2) {
+			for (int row = 1; row < fields.length; row += 3) {
 				final int showId = Connection.trimInt(fields[row]);
 				if (showMap.containsKey(showId)) {
-					seasons.add(new Season(Connection.trimInt(fields[row + 1]), false, showMap.get(showId)));
+					seasons.add(new Season(Connection.trimInt(fields[row + 1]), false, showMap.get(showId), Connection.trim(fields[row + 2])));
 				}
 			}
 		}catch (Exception e) {
@@ -606,7 +616,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		ArrayList<TvShow> shows = new ArrayList<TvShow>();
 		String[] fields = response.split("<field>");
 		try {
-			for (int row = 1; row < fields.length; row += 12) {
+			for (int row = 1; row < fields.length; row += 13) {
 				shows.add(new TvShow(
 						Connection.trimInt(fields[row]),
 						Connection.trim(fields[row + 1]),
@@ -619,7 +629,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 						Connection.trim(fields[row + 8]),
 						Connection.trimInt(fields[row + 9]),
 						Connection.trimInt(fields[row + 10]),
-						Connection.trimBoolean(fields[row + 11])
+						Connection.trimBoolean(fields[row + 11]),
+						Connection.trim(fields[row + 12])
 				));
 			}
 		} catch (Exception e) {

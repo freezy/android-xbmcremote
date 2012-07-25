@@ -31,13 +31,14 @@ import org.xbmc.api.type.MediaType;
  */
 public class Actor extends Artist {
 	
-	public final static String THUMB_PREFIX = "special://profile/Thumbnails/Video/";
+	public final static String THUMB_PREFIX = "special://profile/Thumbnails/";
 
-	public Actor(int id, String name) {
+	public Actor(int id, String name, String artUrl) {
 		super(id, name);
+		this.artUrl = artUrl;
 	}
 	
-	public Actor(int id, String name, String role) {
+	public Actor(int id, String name, String role, String artUrl) {
 		super(id, name);
 		this.role = role;
 	}
@@ -64,14 +65,14 @@ public class Actor extends Artist {
 	 * @return 8-char CRC32
 	 */
 	public long getCrc() {
-		if (thumbID == 0) {
-//			thumbID = Crc32.computeLowerCase("videodb://1/4/" + id);
-			thumbID = Crc32.computeLowerCase("actor" + name);
+		if (thumbID == 0 && artUrl != null && artUrl.compareTo("") != 0) {
+			thumbID = Crc32.computeLowerCase(artUrl);
 		}
 		return thumbID;
 	}
 	
 	public String role = null;
+	public String artUrl;
 
 	private static final long serialVersionUID = -7026393902334967838L;
 }

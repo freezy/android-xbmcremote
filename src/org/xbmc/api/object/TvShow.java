@@ -11,7 +11,7 @@ public class TvShow implements ICoverArt, INamedResource {
 	/**
 	 * Points to where the movie thumbs are stored
 	 */
-	public final static String THUMB_PREFIX = "special://profile/Thumbnails/Video/";
+	public final static String THUMB_PREFIX = "special://profile/Thumbnails/";
 	
 	/**
 	 * Save this once it's calculated
@@ -22,7 +22,7 @@ public class TvShow implements ICoverArt, INamedResource {
 	public List<Actor> actors = null;
 	
 	public TvShow(int id, String title, String summary, double rating, String firstAired, 
-			String genre, String contentRating, String network, String path, int numEpisodes, int watchedEpisodes, boolean watched) {
+			String genre, String contentRating, String network, String path, int numEpisodes, int watchedEpisodes, boolean watched, String artUrl) {
 		this.id = id;
 		this.title = title;
 		this.summary = summary;
@@ -35,6 +35,7 @@ public class TvShow implements ICoverArt, INamedResource {
 		this.numEpisodes = numEpisodes;
 		this.watchedEpisodes = watchedEpisodes;
 		this.watched = watched;
+		this.artUrl = artUrl;
 	}
 
 	public String getShortName() {
@@ -51,10 +52,10 @@ public class TvShow implements ICoverArt, INamedResource {
 	
 	public static String getThumbUri(ICoverArt cover) {
 		if (cover.getMediaType() == MediaType.VIDEO_TVSHOW) {
-			return cover.getPath() != null ? cover.getPath().replace("\\", "/") + "banner.jpg" : getFallbackThumbUri(cover);
+			return getFallbackThumbUri(cover);
 		} else if (cover.getMediaType() == MediaType.VIDEO_TVEPISODE) {
 			final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
-			return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+			return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".jpg";
 		} else {
 			return getFallbackThumbUri(cover);
 		}
@@ -67,12 +68,12 @@ public class TvShow implements ICoverArt, INamedResource {
 		} else {
 			hex = Crc32.formatAsHexLowerCase(cover.getCrc());
 		}
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".jpg";
 	}
 
 	public long getCrc() {
 		if (thumbID == 0L) {
-			thumbID = Crc32.computeLowerCase(path);
+			thumbID = Crc32.computeLowerCase(artUrl);
 		}
 		return thumbID;
 	}
@@ -116,6 +117,7 @@ public class TvShow implements ICoverArt, INamedResource {
 	public int numEpisodes;
 	public int watchedEpisodes;
 	public boolean watched;
+	public String artUrl;
 	
 	private static final long serialVersionUID = -902152099894950269L;
 	

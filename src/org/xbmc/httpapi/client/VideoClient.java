@@ -46,11 +46,11 @@ import android.graphics.Bitmap;
  */
 public class VideoClient extends Client implements IVideoClient {
 	
-	private static final String MOVIE_COLUMNS = "idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount, c09";
+	private static final String MOVIE_COLUMNS = "idMovie, c00, c07, strPath, strFileName, c15, c11, c14, ROUND(c05, 2), playCount, c09, art.url";
 
 	private static final String SELECT_MOVIES = "SELECT" + " " + MOVIE_COLUMNS;
 	
-	private static final String WHERE_MOVIES = " " + "FROM" + " " + "movie, files, path";
+	private static final String WHERE_MOVIES = " " + "FROM" + " " + "movie, files, path, art";
 
 	public static final String TAG = "VideoClient";
 
@@ -84,7 +84,7 @@ public class VideoClient extends Client implements IVideoClient {
 		StringBuilder sb = new StringBuilder();
 		sb.append(SELECT_MOVIES);
 		sb.append(WHERE_MOVIES);
-		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
+		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idMovie=art.media_id AND art.media_type='movie' AND art.type='thumb'");
 		sb.append(watchedFilter(hideWatched));
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
@@ -100,7 +100,7 @@ public class VideoClient extends Client implements IVideoClient {
 		StringBuilder sb = new StringBuilder();
 		sb.append(SELECT_MOVIES);
 		sb.append(WHERE_MOVIES);
-		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
+		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idMovie=art.media_id AND art.media_type='movie' AND art.type='thumb'");
 		sb.append(watchedFilter(hideWatched));
 		sb.append(moviesOrderBy(sortBy, sortOrder));
 		sb.append(" LIMIT -1 OFFSET " + offset);
@@ -118,7 +118,7 @@ public class VideoClient extends Client implements IVideoClient {
 		StringBuilder sb = new StringBuilder();
 		sb.append(SELECT_MOVIES);
 		sb.append(WHERE_MOVIES);
-		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie IN (");
+		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idMovie=art.media_id AND art.media_type='movie' AND art.type='thumb' AND movie.idmovie IN (");
 		sb.append("   SELECT DISTINCT idMovie ");
 		sb.append("   FROM actorlinkmovie ");
 		sb.append("   WHERE idActor =");
@@ -140,7 +140,7 @@ public class VideoClient extends Client implements IVideoClient {
 		StringBuilder sb = new StringBuilder();
 		sb.append(SELECT_MOVIES);
 		sb.append(WHERE_MOVIES);
-		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie IN (");
+		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath  AND movie.idMovie=art.media_id AND art.media_type='movie' AND art.type='thumb' AND movie.idmovie IN (");
 		sb.append("   SELECT DISTINCT idMovie ");
 		sb.append("   FROM genrelinkmovie ");
 		sb.append("   WHERE idGenre =");
@@ -161,12 +161,12 @@ public class VideoClient extends Client implements IVideoClient {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT c03, c01, c04, c18, c12, c19");
 		sb.append(WHERE_MOVIES);
-		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idmovie = ");
+		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath AND movie.idMovie=art.media_id AND art.media_type='movie' AND art.type='thumb' AND movie.idmovie = ");
 		sb.append(movie.getId());
 		parseMovieDetails(mConnection.query("QueryVideoDatabase", sb.toString(), manager), movie);
 		sb = new StringBuilder();
-		sb.append("SELECT actors.idActor, strActor, strRole");
-		sb.append(" FROM actors, actorlinkmovie");
+		sb.append("SELECT actors.idActor, strActor, strRole, art.url");
+		sb.append(" FROM actors LEFT OUTER JOIN art ON art.media_id=idActor AND art.media_type='actor' and art.type='thumb', actorlinkmovie");
 		sb.append(" WHERE actors.idActor = actorlinkmovie.idActor");
 		sb.append(" AND actorlinkmovie.idMovie =");
 		sb.append(movie.getId());
@@ -181,7 +181,8 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Actor> getActors(INotifiableManager manager) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idActor, strActor FROM actors");
+		sb.append("SELECT idActor, strActor, art.url");
+		sb.append(" FROM actors LEFT OUTER JOIN art ON art.media_id=idActor AND art.media_type='actor' and art.type='thumb'");
 		sb.append(" ORDER BY upper(strActor), strActor");
 		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
 	}
@@ -192,7 +193,8 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Actor> getMovieActors(INotifiableManager manager) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT DISTINCT actors.idActor, strActor FROM actors, actorlinkmovie");
+		sb.append("SELECT DISTINCT actors.idActor, strActor, art.url");
+		sb.append(" FROM actors LEFT OUTER JOIN art ON art.media_id=actors.idActor AND art.media_type='actor' and art.type='thumb', actorlinkmovie");
 		sb.append(" WHERE actorlinkmovie.idActor = actors.idActor");
 		sb.append(" ORDER BY upper(strActor), strActor");
 		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
@@ -204,7 +206,8 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Actor> getTvShowActors(INotifiableManager manager) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT DISTINCT actors.idActor, strActor FROM actors, actorlinktvshow");
+		sb.append("SELECT DISTINCT actors.idActor, strActor, art.url");
+		sb.append(" FROM actors LEFT OUTER JOIN art ON art.media_id=actors.idActor AND art.media_type='actor' and art.type='thumb', actorlinktvshow");
 		sb.append(" WHERE actorlinktvshow.idActor = actors.idActor");
 		sb.append(" ORDER BY upper(strActor), strActor");
 		return parseActors(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
@@ -262,6 +265,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 * 	<li><code>c05</code></li> (rating)
 	 * 	<li><code>playCount</code></li> (numWatched)
 	 * 	<li><code>c09</code></li> (imdbId)
+	 * <li><code>c08</code></li> (art url for hashing to get filename)
 	 * </ol> 
 	 * @param response
 	 * @return List of movies
@@ -270,7 +274,7 @@ public class VideoClient extends Client implements IVideoClient {
 		ArrayList<Movie> movies = new ArrayList<Movie>();
 		String[] fields = response.split("<field>");
 		try {
-			for (int row = 1; row < fields.length; row += 11) { //WHen adding a field, be sure to change this #
+			for (int row = 1; row < fields.length; row += 12) { //WHen adding a field, be sure to change this #
 				movies.add(new Movie( // int id, String title, int year, String path, String filename, String director, String runtime, String genres, Double rating, int numWatched, String imdbId
 						Connection.trimInt(fields[row]), 
 						Connection.trim(fields[row + 1]), 
@@ -282,7 +286,8 @@ public class VideoClient extends Client implements IVideoClient {
 						Connection.trim(fields[row + 7]),
 						Connection.trimDouble(fields[row + 8]),
 						Connection.trimInt(fields[row + 9]),
-						Connection.trim(fields[row + 10])
+						Connection.trim(fields[row + 10]),
+						Connection.trim(fields[row + 11])
 				));
 			}
 		} catch (Exception e) {
@@ -339,10 +344,11 @@ public class VideoClient extends Client implements IVideoClient {
 		ArrayList<Actor> actors = new ArrayList<Actor>();
 		String[] fields = response.split("<field>");
 		try { 
-			for (int row = 1; row < fields.length; row += 2) { 
+			for (int row = 1; row < fields.length; row += 3) { 
 				actors.add(new Actor(
 						Connection.trimInt(fields[row]), 
-						Connection.trim(fields[row + 1])
+						Connection.trim(fields[row + 1]),
+						Connection.trim(fields[row+2])
 				));
 			}
 		} catch (Exception e) {
@@ -369,11 +375,12 @@ public class VideoClient extends Client implements IVideoClient {
 		ArrayList<Actor> actors = new ArrayList<Actor>();
 		String[] fields = response.split("<field>");
 		try { 
-			for (int row = 1; row < fields.length; row += 3) { 
+			for (int row = 1; row < fields.length; row += 4) { 
 				actors.add(new Actor(
 						Connection.trimInt(fields[row]), 
 						Connection.trim(fields[row + 1]),
-						Connection.trim(fields[row + 2])
+						Connection.trim(fields[row + 2]),
+						Connection.trim(fields[row + 3])
 				));
 			}
 		} catch (Exception e) {

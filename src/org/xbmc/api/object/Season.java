@@ -32,13 +32,15 @@ public class Season implements Serializable, ICoverArt {
 	public final int number;
 	public final boolean watched;
 	public final TvShow show;
+	public final String artUrl;
 
 	public List<Episode> episodes = null;
 
-	public Season(int number, boolean watched, TvShow show) {
+	public Season(int number, boolean watched, TvShow show, String artUrl) {
 		this.number = number;
 		this.watched = watched;
 		this.show = show;
+		this.artUrl = artUrl;
 	}
 
 	private static final long serialVersionUID = -7652780720536304140L;
@@ -46,7 +48,7 @@ public class Season implements Serializable, ICoverArt {
 	public long getCrc() {
 		// FileItem.cpp(1185)
 		// BGetCachedThumb("season"+seasonPath+GetLabel(),g_settings.GetVideoThumbFolder(),true);
-			return Crc32.computeLowerCase("season" + show.getPath() + getShortName());
+			return Crc32.computeLowerCase(artUrl);
 	}
 
 	public int getFallbackCrc() {
