@@ -41,6 +41,7 @@ public class Actor extends Artist {
 	public Actor(int id, String name, String role, String artUrl) {
 		super(id, name);
 		this.role = role;
+		this.artUrl = artUrl;
 	}
 	
 	/**
