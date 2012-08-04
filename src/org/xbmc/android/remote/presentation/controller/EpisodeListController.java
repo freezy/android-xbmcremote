@@ -28,6 +28,7 @@ import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.EpisodeDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
+import org.xbmc.android.remote.presentation.controller.ListController.QueryResponse;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.remote.presentation.widget.FlexibleItemView;
 import org.xbmc.android.util.ImportUtilities;
@@ -38,6 +39,7 @@ import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.object.Season;
+import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 
@@ -69,7 +71,9 @@ public class EpisodeListController extends ListController implements IController
 	private static final int mThumbSize = ThumbSize.SMALL;
 	public static final int ITEM_CONTEXT_PLAY = 1;
 	public static final int ITEM_CONTEXT_INFO = 2;
-	
+	public static final int ITEM_CONTEXT_PLAY_FROM_HERE = 3;
+	public static final int ITEM_CONTEXT_QUEUE = 4;
+		
 	public static final int MENU_PLAY_ALL = 1;
 	public static final int MENU_SORT = 2;
 	public static final int MENU_SORT_BY_TITLE_ASC = 21;
@@ -189,25 +193,42 @@ public class EpisodeListController extends ListController implements IController
 		final FiveLabelsItemView view = (FiveLabelsItemView)((AdapterContextMenuInfo)menuInfo).targetView;
 		menu.setHeaderTitle(view.title);
 		menu.add(0, ITEM_CONTEXT_PLAY, 1, "Play Episode");
-		menu.add(0, ITEM_CONTEXT_INFO, 2, "View Details");
+		menu.add(0, ITEM_CONTEXT_PLAY_FROM_HERE, 2, "Play From Here");
+		menu.add(0, ITEM_CONTEXT_QUEUE, 3, "Queue Episode");
+		menu.add(0, ITEM_CONTEXT_INFO, 4, "View Details");
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
 		final Episode episode = (Episode)mList.getAdapter().getItem(((FiveLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_PLAY:
-				mControlManager.playFile(new DataResponse<Boolean>() {
+				mControlManager.clearPlaylist(new DataResponse<Boolean>(), "", mActivity);
+				mControlManager.addToPlaylist(new QueryResponse(mActivity, "Playing episode " + episode.getName(), "Error queueing file."), episode.getPath(), mActivity);
+				mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
 					public void run() {
-						if (value) {
-							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+					if (value) {
+						mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 						}
 					}
-				}, episode.getPath(), mActivity.getApplicationContext());
+				}, 1, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_INFO:
 				Intent nextActivity = new Intent(mActivity, EpisodeDetailsActivity.class);
 				nextActivity.putExtra(ListController.EXTRA_EPISODE, episode);
 				mActivity.startActivity(nextActivity);
+				break;
+			case ITEM_CONTEXT_PLAY_FROM_HERE:
+				mControlManager.playFolder(new QueryResponse(mActivity, "Playing from episode " + episode.getName(), "Error queueing files"), episode.localPath, MediaType.getPlaylistType(MediaType.VIDEO_TVEPISODE), mActivity);
+				mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
+					public void run() {
+					if (value) {
+						mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+						}
+					}
+				}, episode.episode, mActivity.getApplicationContext());
+				break;
+			case ITEM_CONTEXT_QUEUE:
+				mControlManager.addToPlaylist(new QueryResponse(mActivity, "Queueing episode " + episode.getName(), "Error queueing file."), episode.getPath(), mActivity);
 				break;
 			default:
 				return;
