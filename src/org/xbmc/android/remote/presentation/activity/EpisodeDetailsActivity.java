@@ -144,13 +144,15 @@ public class EpisodeDetailsActivity extends Activity {
 			button.setText("Play Episode");
 			button.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					mControlManager.playFile(new DataResponse<Boolean>() {
+					mControlManager.clearPlaylist(new DataResponse<Boolean>(), "", mActivity);
+					mControlManager.addToPlaylist(new DataResponse<Boolean>(), mEpisode.getPath(), mActivity);
+					mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
 						public void run() {
-							if (value) {
-								mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+						if (value) {
+							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 							}
 						}
-					}, mEpisode.getPath(), mActivity.getApplicationContext());
+					}, 1, mActivity.getApplicationContext());
 				}
 			});
 		}
