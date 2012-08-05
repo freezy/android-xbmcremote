@@ -316,9 +316,13 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	public ArrayList<Album> getAlbums(INotifiableManager manager, ArrayList<Integer> artistIDs) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
-		sb.append(" FROM albumview WHERE albumview.strAlbum <> ''");
-		sb.append(" AND idArtist IN (");
+		sb.append("SELECT albumview.idAlbum, strAlbum, group_concat(DISTINCT strArtist) AS strArtists, iYear, art.url");
+		sb.append(" FROM albumview");
+		sb.append(" LEFT OUTER JOIN album_artist ON album_artist.idAlbum=albumview.idAlbum");
+		sb.append(" LEFT OUTER JOIN artist ON album_artist.idArtist=artist.idArtist");
+		sb.append(" LEFT OUTER JOIN art ON art.media_id=albumview.idAlbum AND art.media_type='album' AND art.type='thumb'");
+		sb.append(" WHERE albumview.strAlbum <> ''");
+		sb.append(" AND album_artist.idArtist IN (");
 		int n = 0;
 		for (Integer id : artistIDs) {
 			sb.append(id);
@@ -327,7 +331,7 @@ public class MusicClient extends Client implements IMusicClient {
 				sb.append(", ");
 			}
 		}
-		sb.append(")");
+		sb.append(") GROUP BY albumview.idAlbum");
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
 	
@@ -339,8 +343,12 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	public ArrayList<Album> getAlbums(INotifiableManager manager, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
-		sb.append(" FROM albumview WHERE albumview.strAlbum <> ''");
+		sb.append("SELECT albumview.idAlbum, strAlbum, group_concat(DISTINCT strArtist) AS strArtists, iYear, art.url");
+		sb.append(" FROM albumview");
+		sb.append(" LEFT OUTER JOIN album_artist ON album_artist.idAlbum=albumview.idAlbum");
+		sb.append(" LEFT OUTER JOIN artist ON album_artist.idArtist=artist.idArtist");
+		sb.append(" LEFT OUTER JOIN art ON art.media_id=albumview.idAlbum AND art.media_type='album' AND art.type='thumb'");
+		sb.append(" WHERE albumview.strAlbum <> '' GROUP BY albumview.idAlbum");
 		sb.append(albumsOrderBy(sortBy, sortOrder));
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
@@ -354,10 +362,13 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	public ArrayList<Album> getAlbums(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
+		sb.append("SELECT albumview.idAlbum, strAlbum, group_concat(DISTINCT strArtist) AS strArtists, iYear, art.url");
 		sb.append(" FROM albumview");
+		sb.append(" LEFT OUTER JOIN album_artist ON album_artist.idAlbum=albumview.idAlbum");
+		sb.append(" LEFT OUTER JOIN artist ON album_artist.idArtist=artist.idArtist");
+		sb.append(" LEFT OUTER JOIN art ON art.media_id=albumview.idAlbum AND art.media_type='album' AND art.type='thumb'");
 		sb.append(" WHERE albumview.strAlbum <> ''");
-		sb.append(" AND idArtist = " + artist.id);
+		sb.append(" AND album_artist.idArtist = " + artist.id + " GROUP BY albumview.idAlbum");
 		sb.append(albumsOrderBy(sortBy, sortOrder));
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
@@ -371,18 +382,17 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	public ArrayList<Album> getAlbums(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
-		sb.append("  FROM albumview");
-		sb.append("  WHERE albumview.strAlbum <> ''");
-		sb.append("  AND (idAlbum IN ("); 
+		sb.append("SELECT albumview.idAlbum, strAlbum, group_concat(DISTINCT strArtist) AS strArtists, iYear, art.url");
+			sb.append(" FROM albumview");
+			sb.append(" LEFT OUTER JOIN album_artist ON album_artist.idAlbum=albumview.idAlbum");
+			sb.append(" LEFT OUTER JOIN artist ON album_artist.idArtist=artist.idArtist");
+			sb.append(" LEFT OUTER JOIN art ON art.media_id=albumview.idAlbum AND art.media_type='album' AND art.type='thumb'");
+			sb.append("  WHERE albumview.strAlbum <> ''");
+		sb.append("  AND (albumview.idAlbum IN ("); 
 		sb.append("        SELECT song.idAlbum FROM song"); 			
-		sb.append("        JOIN exgenresong ON song.idSong = exgenresong.idSong"); 			
-		sb.append("        WHERE exgenresong.idGenre =  " + genre.id);
-		sb.append("  ) OR idAlbum IN (");
-		sb.append("        SELECT DISTINCT idAlbum");
-		sb.append("        FROM song");
-		sb.append("        WHERE idGenre = " + genre.id);
-		sb.append("  ))");
+		sb.append("        JOIN song_genre ON song.idSong = song_genre.idSong"); 			
+		sb.append("        WHERE song_genre.idGenre =  " + genre.id);
+		sb.append("  )) GROUP BY albumview.idAlbum");
 		sb.append(albumsOrderBy(sortBy, sortOrder));
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
@@ -395,8 +405,9 @@ public class MusicClient extends Client implements IMusicClient {
 	public ArrayList<Artist> getArtists(INotifiableManager manager, boolean albumArtistsOnly) {
 		StringBuilder sb = new StringBuilder();
 		if (albumArtistsOnly) {
-			sb.append("SELECT idArtist, strArtist ");
+			sb.append("SELECT idArtist, strArtist, art.url ");
 			sb.append("  FROM artist");
+			sb.append("  LEFT JOIN art ON art.media_id=idArtist AND art.media_type='artist' AND art.type='thumb'");
 			sb.append("  WHERE (");
 			sb.append("    idArtist IN (");
 			sb.append("      SELECT album.idArtist");
@@ -409,7 +420,8 @@ public class MusicClient extends Client implements IMusicClient {
 			sb.append("    )");
 			sb.append(") AND artist.strArtist != ''");
 		} else {
-			sb.append("SELECT idArtist, strArtist FROM artist");
+			sb.append("SELECT idArtist, strArtist, art.url FROM artist");
+			sb.append("  LEFT JOIN art ON art.media_id=idArtist AND art.media_type='artist' AND art.type='thumb'");
 		}
 		sb.append(" ORDER BY upper(strArtist), strArtist");
 		return parseArtists(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
@@ -423,17 +435,14 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	public ArrayList<Artist> getArtists(INotifiableManager manager, Genre genre, boolean albumArtistsOnly) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT DISTINCT idArtist, strArtist ");
+		sb.append("SELECT DISTINCT idArtist, strArtist, art.url ");
 		sb.append("  FROM artist");
+		sb.append("  LEFT JOIN art ON art.media_id=idArtist AND art.media_type='artist' AND art.type='thumb'");
 		sb.append("  WHERE (idArtist IN (");
 		sb.append("    SELECT DISTINCT s.idArtist");
-		sb.append("    FROM exgenresong AS g, song AS s");
+		sb.append("    FROM song_genre AS g, song_artist AS s");
 		sb.append("    WHERE g.idGenre = " + genre.id);
 		sb.append("    AND g.idSong = s.idSong");
-		sb.append("  ) OR idArtist IN (");
-		sb.append("    SELECT DISTINCT idArtist");
-		sb.append("     FROM song");
-		sb.append("     WHERE idGenre = " + genre.id);
 		sb.append("  ))");
 		if (albumArtistsOnly) {
 			sb.append("  AND (");
@@ -467,9 +476,10 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	public Album updateAlbumInfo(INotifiableManager manager, Album album) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT g.strGenre, a.strExtraGenres, ai.strLabel, ai.iRating");
-		sb.append("  FROM album a, genre g");
-		sb.append("  LEFT JOIN albuminfo AS ai ON ai.idAlbumInfo = a.idAlbum");
+		sb.append("SELECT g.strGenre, ai.strLabel, ai.iRating");
+		sb.append("  FROM album_genre a");
+		sb.append("  LEFT JOIN genre g ON a.idGenre=g.idGenre");
+		sb.append("  LEFT JOIN albuminfo AS ai ON ai.idAlbum = a.idAlbum");
 		sb.append("  WHERE a.idGenre = g.idGenre");
 		sb.append("  AND a.idAlbum = " + album.id);
 		return parseAlbumInfo(album, mConnection.query("QueryMusicDatabase", sb.toString(), manager));
@@ -495,9 +505,14 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	private ArrayList<Song> getSongs(INotifiableManager manager, StringBuilder sqlCondition, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
-		sb.append(" FROM songview WHERE ");
+		sb.append("SELECT songview.idSong, strTitle, group_concat(DISTINCT strArtist) AS strArtists, strAlbum, iTrack, iDuration, strPath, strFileName, art.url");
+		sb.append(" FROM songview");
+		sb.append(" LEFT OUTER JOIN song_artist ON song_artist.idSong=songview.idSong");
+		sb.append(" LEFT OUTER JOIN artist ON song_artist.idArtist=artist.idArtist");
+		sb.append(" LEFT OUTER JOIN art ON art.media_id=songview.idSong AND art.media_type='song' AND art.type='thumb'");
+		sb.append(" WHERE ");
 		sb.append(sqlCondition);
+		sb.append(" GROUP BY idSong");
 		sb.append(songsOrderBy(sortBy, sortOrder));
 		
 		return parseSongs(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
@@ -548,10 +563,10 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	private StringBuilder getSongsCondition(Artist artist) {
 		final StringBuilder sb = new StringBuilder();
-		sb.append("(");
-		sb.append("  idArtist = ");
+		//sb.append("(");
+		sb.append("  song_artist.idArtist = ");
 		sb.append(artist.id);
-		sb.append("  OR idSong IN (");
+		/*sb.append("  OR idSong IN (");
 		sb.append("     SELECT exartistsong.idSong");
 		sb.append("     FROM exartistsong");
 		sb.append("     WHERE exartistsong.idArtist = ");
@@ -571,7 +586,7 @@ public class MusicClient extends Client implements IMusicClient {
 		sb.append(artist.id);
 		sb.append("     AND album.strExtraArtists != ''");
 		sb.append("  )");
-		sb.append(")");
+		sb.append(")");*/
 		return sb;
 	}	
 	
@@ -582,10 +597,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	private StringBuilder getSongsCondition(Genre genre) {
 		final StringBuilder sb = new StringBuilder();
-		sb.append("idGenre = ");
-		sb.append(genre.id);
-		sb.append("  OR idSong IN (");
-		sb.append("    SELECT exgenresong.idSong FROM exgenresong WHERE exgenresong.idGenre = ");
+		sb.append("  songview.idSong IN (");
+		sb.append("    SELECT song_genre.idSong FROM song_genre WHERE song_genre.idGenre = ");
 		sb.append(genre.id);
 		sb.append(")");
 		return sb;
@@ -810,13 +823,10 @@ public class MusicClient extends Client implements IMusicClient {
 				album.genres = Connection.trim(fields[1]);
 			}
 			if (Connection.trim(fields[2]).length() > 0) {
-				album.genres += ((Connection.trim(fields[1]).length() > 0) ? " / " : "") + Connection.trim(fields[2]);
+				album.label = Connection.trim(fields[2]);
 			}
 			if (Connection.trim(fields[3]).length() > 0) {
-				album.label = Connection.trim(fields[3]);
-			}
-			if (Connection.trim(fields[4]).length() > 0) {
-				album.rating = Connection.trimInt(fields[4]);
+				album.rating = Connection.trimInt(fields[3]);
 			}
 		} catch (Exception e) {
 			System.err.println("ERROR: " + e.getMessage());
@@ -990,10 +1000,11 @@ public class MusicClient extends Client implements IMusicClient {
 		ArrayList<Artist> artists = new ArrayList<Artist>();
 		String[] fields = response.split("<field>");
 		try { 
-			for (int row = 1; row < fields.length; row += 2) { 
+			for (int row = 1; row < fields.length; row += 3) { 
 				artists.add(new Artist(
 						Connection.trimInt(fields[row]), 
-						Connection.trim(fields[row + 1])
+						Connection.trim(fields[row + 1]),
+						Connection.trim(fields[row + 2])
 				));
 			}
 		} catch (Exception e) {
