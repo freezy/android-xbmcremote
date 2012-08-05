@@ -59,7 +59,7 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 		this.artist = artist;
 		this.year = year;
 		thumbPath = thumbPath.replace("\\", "/");
-		if (!thumbPath.equals("NONE")) {
+		if (!thumbPath.equals("")) {
 			try {
 				this.thumbID = Long.parseLong(thumbPath.substring(thumbPath.lastIndexOf("/") + 1, thumbPath.length() - 4), 16);
 			} catch (NumberFormatException e) {

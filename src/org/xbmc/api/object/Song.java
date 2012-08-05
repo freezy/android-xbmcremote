@@ -53,7 +53,7 @@ public class Song implements ICoverArt, INamedResource {
 		this.duration = duration;
 		this.path = path + filename;
 		this.filename = filename;
-		if (!thumbPath.equals("NONE")) {
+		if (!thumbPath.equals("")) {
 			try {
 				this.thumbID = Long.parseLong(thumbPath.substring(thumbPath.lastIndexOf("/") + 1, thumbPath.length() - 4), 16);
 			} catch (NumberFormatException e) {
