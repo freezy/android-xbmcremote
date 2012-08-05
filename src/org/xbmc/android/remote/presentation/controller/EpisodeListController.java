@@ -52,6 +52,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -199,10 +200,12 @@ public class EpisodeListController extends ListController implements IController
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
-		final Episode episode = (Episode)mList.getAdapter().getItem(((FiveLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
+		int listpos = ((FiveLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position;
+		final Episode episode = (Episode)mList.getAdapter().getItem(listpos);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_PLAY:
-				mControlManager.clearPlaylist(new DataResponse<Boolean>(), "", mActivity);
+				mControlManager.clearPlaylist(new DataResponse<Boolean>(), "1", mActivity);
+				mControlManager.setPlaylistId(new DataResponse<Boolean>(), 1, mActivity);
 				mControlManager.addToPlaylist(new QueryResponse(mActivity, "Playing episode " + episode.getName(), "Error queueing file."), episode.getPath(), mActivity);
 				mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
 					public void run() {
@@ -218,14 +221,19 @@ public class EpisodeListController extends ListController implements IController
 				mActivity.startActivity(nextActivity);
 				break;
 			case ITEM_CONTEXT_PLAY_FROM_HERE:
-				mControlManager.playFolder(new QueryResponse(mActivity, "Playing from episode " + episode.getName(), "Error queueing files"), episode.localPath, MediaType.getPlaylistType(MediaType.VIDEO_TVEPISODE), mActivity);
+				mControlManager.clearPlaylist(new DataResponse<Boolean>(), "1", mActivity);				
+				mControlManager.setPlaylistId(new DataResponse<Boolean>(), 1, mActivity);
+				int numitems = mList.getAdapter().getCount();
+				for(int i = 0; i < numitems; i++)
+					mControlManager.addToPlaylist(new DataResponse<Boolean>(), ((Episode)mList.getAdapter().getItem(i)).getPath(), mActivity);
+				
 				mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
 					public void run() {
 					if (value) {
 						mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 						}
 					}
-				}, episode.episode, mActivity.getApplicationContext());
+				}, listpos, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_QUEUE:
 				mControlManager.addToPlaylist(new QueryResponse(mActivity, "Queueing episode " + episode.getName(), "Error queueing file."), episode.getPath(), mActivity);
