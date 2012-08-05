@@ -22,6 +22,7 @@
 package org.xbmc.api.object;
 import java.util.Formatter;
 
+import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
 
@@ -55,7 +56,7 @@ public class Song implements ICoverArt, INamedResource {
 		this.filename = filename;
 		if (!thumbPath.equals("")) {
 			try {
-				this.thumbID = Long.parseLong(thumbPath.substring(thumbPath.lastIndexOf("/") + 1, thumbPath.length() - 4), 16);
+				this.thumbID = Crc32.computeLowerCase(thumbPath);
 			} catch (NumberFormatException e) {
 				this.thumbID = 0L;
 			}
