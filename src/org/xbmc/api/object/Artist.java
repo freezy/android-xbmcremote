@@ -44,9 +44,10 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 	 * @param id		Database ID
 	 * @param name		Artist name
 	 */
-	public Artist(int id, String name) {
+	public Artist(int id, String name, String arturl) {
 		this.id = id;
 		this.name = name;
+		this.arturl = arturl;
 	}
 	
 	public int getMediaType() {
@@ -155,6 +156,8 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 	 * Biography
 	 */
 	public String biography = null;
+	
+	public String arturl = null;
 	
 	public long thumbID = 0;
 	

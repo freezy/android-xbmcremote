@@ -395,7 +395,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		show = parseTvShowDetails(mConnection.query("QueryVideoDatabase", sb.toString(), manager), show);
 		//parse actors of the show
 		sb = new StringBuilder();
-		sb.append("SELECT actors.idActor, strActor, strRole, art.url");
+		sb.append("SELECT actors.idActor, strActor, art.url, strRole");
 		sb.append(" FROM actors LEFT JOIN art ON art.media_id=actors.idActor AND art.media_type='actor' AND art.type='thumb', actorlinktvshow");
 		sb.append(" WHERE actors.idActor = actorlinktvshow.idActor");
 		sb.append(" AND actorlinktvshow.idShow =");
@@ -424,7 +424,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append(episode.id);
 		episode = parseEpisodeDetails(mConnection.query("QueryVideoDatabase", sb.toString(), manager), episode);
 		sb = new StringBuilder();
-		sb.append("SELECT actors.idActor, strActor, strRole, art.url");
+		sb.append("SELECT actors.idActor, strActor, art.url, strRole");
 		sb.append(" FROM actors LEFT OUTER JOIN art ON art.media_id=actors.idActor AND art.media_type='actor' AND art.type='thumb', actorlinkepisode");
 		sb.append(" WHERE actors.idActor = actorlinkepisode.idActor");
 		sb.append(" AND actorlinkepisode.idEpisode =");

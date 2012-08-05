@@ -165,7 +165,7 @@ public class VideoClient extends Client implements IVideoClient {
 		sb.append(movie.getId());
 		parseMovieDetails(mConnection.query("QueryVideoDatabase", sb.toString(), manager), movie);
 		sb = new StringBuilder();
-		sb.append("SELECT actors.idActor, strActor, strRole, art.url");
+		sb.append("SELECT actors.idActor, strActor, art.url, strRole");
 		sb.append(" FROM actors LEFT OUTER JOIN art ON art.media_id=idActor AND art.media_type='actor' and art.type='thumb', actorlinkmovie");
 		sb.append(" WHERE actors.idActor = actorlinkmovie.idActor");
 		sb.append(" AND actorlinkmovie.idMovie =");
