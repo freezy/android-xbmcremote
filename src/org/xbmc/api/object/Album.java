@@ -37,7 +37,7 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 	/**
 	 * Points to where the album thumbs are stored
 	 */
-	public final static String THUMB_PREFIX = "special://profile/Thumbnails/Music/";
+	public final static String THUMB_PREFIX = "special://profile/Thumbnails/";
 
 	/**
 	 * Constructor
@@ -58,10 +58,9 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 		this.name = name;
 		this.artist = artist;
 		this.year = year;
-		thumbPath = thumbPath.replace("\\", "/");
 		if (!thumbPath.equals("")) {
 			try {
-				this.thumbID = Long.parseLong(thumbPath.substring(thumbPath.lastIndexOf("/") + 1, thumbPath.length() - 4), 16);
+				this.thumbID = Crc32.computeLowerCase(thumbPath);
 			} catch (NumberFormatException e) {
 				this.thumbID = 0L;
 			}
@@ -86,7 +85,7 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 	
 	public static String getThumbUri(ICoverArt cover) {
 		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
+		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".jpg";
 	}
 	
 	public static String getFallbackThumbUri(ICoverArt cover) {
@@ -104,9 +103,6 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 	 * @return CRC32
 	 */
 	public long getCrc() {
-		if (thumbID == 0) {
-			thumbID = Crc32.computeLowerCase((name + artist));
-		}
 		return thumbID;
 	}
 	
