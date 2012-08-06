@@ -145,6 +145,7 @@ public class EpisodeDetailsActivity extends Activity {
 			button.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					mControlManager.clearPlaylist(new DataResponse<Boolean>(), "", mActivity);
+					mControlManager.setPlaylistId(new DataResponse<Boolean>(), 1, mActivity);
 					mControlManager.addToPlaylist(new DataResponse<Boolean>(), mEpisode.getPath(), mActivity);
 					mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
 						public void run() {
