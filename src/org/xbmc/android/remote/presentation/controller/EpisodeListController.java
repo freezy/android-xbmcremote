@@ -213,7 +213,7 @@ public class EpisodeListController extends ListController implements IController
 						mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 						}
 					}
-				}, 1, mActivity.getApplicationContext());
+				}, 0, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_INFO:
 				Intent nextActivity = new Intent(mActivity, EpisodeDetailsActivity.class);
