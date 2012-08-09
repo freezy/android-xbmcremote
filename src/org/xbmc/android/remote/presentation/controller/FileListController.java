@@ -124,13 +124,16 @@ public class FileListController extends ListController implements IController {
 								}, item.path, mActivity.getApplicationContext());
 								break;
 							default:
-								mControlManager.playFile(new DataResponse<Boolean>() {
+								mControlManager.clearPlaylist(new DataResponse<Boolean>(), item.mediaType==MediaType.MUSIC?"0":"1", mActivity);
+								mControlManager.setPlaylistId(new DataResponse<Boolean>(), item.mediaType==MediaType.MUSIC?0:1, mActivity);
+								mControlManager.addToPlaylist(new QueryResponse(mActivity, "Playing " + item.path, "Error playing " + item.path), item.path, mActivity);					
+								mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
 									public void run() {
-										if (value) {
-											mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+									if (value) {
+										mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 										}
 									}
-								}, item.path, mActivity.getApplicationContext());
+								}, 0, mActivity.getApplicationContext());break;
 						}
 					}
 				}
@@ -233,11 +236,19 @@ public class FileListController extends ListController implements IController {
 		final FileLocation loc = (FileLocation) mList.getAdapter().getItem(((OneLabelItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch(item.getItemId()) {
 		case ITEM_CONTEXT_QUEUE:
-			mControlManager.queueFolder(new QueryResponse(mActivity, "Queueing folder " + loc.path, "Error queueing folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
+			mControlManager.queueFolder(new QueryResponse(mActivity, "Queueing " + loc.path, "Error queueing " + loc.path), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
 			break;
 		case ITEM_CONTEXT_PLAY:
-			mControlManager.playFolder(new QueryResponse(mActivity, "Playing folder " + loc.path, "Error playint folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
-			break;
+			mControlManager.clearPlaylist(new DataResponse<Boolean>(), "", mActivity);
+			mControlManager.setPlaylistId(new DataResponse<Boolean>(), 1, mActivity);
+			mControlManager.addToPlaylist(new QueryResponse(mActivity, "Playing " + loc.path, "Error playing " + loc.path), loc.path, mActivity);					
+			mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
+				public void run() {
+				if (value) {
+					mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
+					}
+				}
+			}, 0, mActivity.getApplicationContext());break;
 		}
 	}
 
@@ -247,8 +258,8 @@ public class FileListController extends ListController implements IController {
 		Log.d("FileListController", "Create Context Menu");
 		final OneLabelItemView view = (OneLabelItemView)((AdapterContextMenuInfo)menuInfo).targetView;
 		menu.setHeaderTitle(((FileLocation)mList.getItemAtPosition(view.getPosition())).name);
-		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue Folder");
-		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Folder");
+		menu.add(0, ITEM_CONTEXT_QUEUE, 1, "Queue");
+		menu.add(0, ITEM_CONTEXT_PLAY, 2, "Play Now");
 	}
 	
 	public void onActivityPause() {
