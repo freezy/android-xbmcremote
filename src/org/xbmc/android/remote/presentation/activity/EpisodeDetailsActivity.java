@@ -64,6 +64,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class EpisodeDetailsActivity extends Activity {
 	
@@ -129,6 +130,7 @@ public class EpisodeDetailsActivity extends Activity {
 		((TextView)findViewById(R.id.tvepisodedetails_rating)).setText(String.valueOf(episode.rating));
 		
 		mEpisodeDetailsController.setupPlayButton((Button)findViewById(R.id.tvepisodedetails_playbutton));
+		mEpisodeDetailsController.setupQueueButton((Button)findViewById(R.id.tvepisodedetails_queuebutton));
 		mEpisodeDetailsController.loadCover(new Handler(), (ImageView)findViewById(R.id.tvepisodedetails_thumb));
 		mEpisodeDetailsController.updateEpisodeDetails(
 				(TextView)findViewById(R.id.tvepisodedetails_plot),
@@ -155,9 +157,10 @@ public class EpisodeDetailsActivity extends Activity {
 			button.setText("Play Episode");
 			button.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
+					Toast.makeText(mActivity, "Playing Episode", Toast.LENGTH_LONG).show();
 					mControlManager.clearPlaylist(new DataResponse<Boolean>(), "", mActivity);
 					mControlManager.setPlaylistId(new DataResponse<Boolean>(), 1, mActivity);
-					mControlManager.addToPlaylist(new DataResponse<Boolean>(), mEpisode.getPath(), mActivity);
+					mControlManager.addToPlaylist(new DataResponse<Boolean>(), mEpisode.getPath(), mActivity);					
 					mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
 						public void run() {
 						if (value) {
@@ -165,6 +168,21 @@ public class EpisodeDetailsActivity extends Activity {
 							}
 						}
 					}, 1, mActivity.getApplicationContext());
+				}
+			});
+		}
+		
+		public void setupQueueButton(Button button) {
+			button.setText("Queue Episode");
+			button.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					mControlManager.addToPlaylist(new DataResponse<Boolean>(){
+						public void run() {
+							if (value) {
+								Toast.makeText(mActivity, "Episode Queued", Toast.LENGTH_LONG).show();
+							}
+						}
+					}, mEpisode.getPath(), mActivity);
 				}
 			});
 		}
