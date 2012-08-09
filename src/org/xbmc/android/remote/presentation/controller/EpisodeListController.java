@@ -236,7 +236,7 @@ public class EpisodeListController extends ListController implements IController
 				}, listpos, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_QUEUE:
-				mControlManager.addToPlaylist(new QueryResponse(mActivity, "Queueing episode " + episode.getName(), "Error queueing file."), episode.getPath(), mActivity);
+				mControlManager.addToPlaylist(new QueryResponse(mActivity, "Queued episode: " + episode.getName(), "Error queueing file."), episode.getPath(), mActivity);
 				break;
 			default:
 				return;
