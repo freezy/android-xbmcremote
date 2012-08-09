@@ -158,7 +158,7 @@ public class EpisodeDetailsActivity extends Activity {
 			button.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					Toast.makeText(mActivity, "Playing Episode", Toast.LENGTH_LONG).show();
-					mControlManager.clearPlaylist(new DataResponse<Boolean>(), "", mActivity);
+					mControlManager.clearPlaylist(new DataResponse<Boolean>(), "1", mActivity);
 					mControlManager.setPlaylistId(new DataResponse<Boolean>(), 1, mActivity);
 					mControlManager.addToPlaylist(new DataResponse<Boolean>(), mEpisode.getPath(), mActivity);					
 					mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
@@ -167,7 +167,7 @@ public class EpisodeDetailsActivity extends Activity {
 							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 							}
 						}
-					}, 1, mActivity.getApplicationContext());
+					}, 0, mActivity.getApplicationContext());
 				}
 			});
 		}
