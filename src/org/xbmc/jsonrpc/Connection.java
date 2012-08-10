@@ -188,7 +188,7 @@ public class Connection {
 	 * @param manager    Reference back to business layer
 	 * @return Parsed JSON object, empty object on error.
 	 */
-	public JsonNode query(String command, JsonNode parameters, INotifiableManager manager) {
+	protected JsonNode query(String command, JsonNode parameters, INotifiableManager manager) {
 		URLConnection uc = null;
 		try {
 			final ObjectMapper mapper = Client.MAPPER;
@@ -224,6 +224,7 @@ public class Connection {
 			final JsonParser jp = jsonFactory.createJsonParser(uc.getInputStream());
 			jp.setCodec(mapper);
 			final JsonNode ret = jp.readValueAs(JsonNode.class);
+			Log.e("Connection", ret.toString());
 			return ret;
 			
 		} catch (MalformedURLException e) {
@@ -254,12 +255,13 @@ public class Connection {
 	public JsonNode getJson(INotifiableManager manager, String method, JsonNode parameters) {
 		try {
 			final JsonNode response = query(method, parameters, manager);
+			System.err.println(response);
 			final JsonNode result = response.get(RESULT_FIELD);
-			System.err.println("RESULT: " + result);
 			if (result == null) {
 				if (response.get(ERROR_FIELD) == null) {
 					throw new Exception("Weird JSON response, could not parse error.");
 				} else {
+					System.err.println("ERROR: " + response.get(ERROR_FIELD).get("message").getTextValue());
 					throw new Exception(response.get(ERROR_FIELD).get("message").getTextValue());
 				}
 			} else {
@@ -358,8 +360,8 @@ public class Connection {
 	 * @param returnField Name of the field to return
 	 * @return Result as boolean
 	 */
-	public boolean getBoolean(INotifiableManager manager, String method, ObjectNode parameters, String returnField) {
-		return getString(manager, method, parameters, returnField).equals("true");
+	public boolean getBoolean(INotifiableManager manager, String method, ObjectNode parameters) {
+		return getJson(manager, method, parameters).getTextValue().equals("OK");
 	}
 	
 	/**
@@ -370,8 +372,8 @@ public class Connection {
 	 * @param returnField Name of the field to return
 	 * @return Result as boolean
 	 */
-	public boolean getBoolean(INotifiableManager manager, String method, String returnField) {
-		return getBoolean(manager, method, null, returnField);
+	public boolean getBoolean(INotifiableManager manager, String method) {
+		return getBoolean(manager, method, null);
 	}
 	
 	/**

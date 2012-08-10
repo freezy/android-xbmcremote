@@ -24,6 +24,8 @@ import java.util.Formatter;
 
 import org.xbmc.api.type.MediaType;
 
+import android.util.Log;
+
 
 /**
  * The song class contains everything to know about a song. It's basically a
@@ -44,6 +46,10 @@ public class Song implements ICoverArt, INamedResource {
 	 * @param filename  Filename
 	 */
 	public Song(int id, String title, String artist, String album, int track, int duration, String path, String filename, String thumbPath) {
+		this(id, title, artist, album, track, duration, path + filename, thumbPath);
+	}
+	
+	public Song(int id, String title, String artist, String album, int track, int duration, String file, String thumbPath) {
 		this.id = id;
 		this.title = title;
 		this.artist = artist;
@@ -51,9 +57,8 @@ public class Song implements ICoverArt, INamedResource {
 		this.track = track & 0xffff;
 		this.disc = track >> 16;
 		this.duration = duration;
-		this.path = path + filename;
-		this.filename = filename;
-		if (!thumbPath.equals("NONE")) {
+		this.path = file;
+		if (!"".equals(thumbPath) && !thumbPath.equals("NONE")) {
 			try {
 				this.thumbID = Long.parseLong(thumbPath.substring(thumbPath.lastIndexOf("/") + 1, thumbPath.length() - 4), 16);
 			} catch (NumberFormatException e) {
@@ -61,6 +66,12 @@ public class Song implements ICoverArt, INamedResource {
 			}
 		}
 	}
+	
+	// this is for testing
+	public Song(int id) {
+		this.id = id;
+	}
+	
 	
 	/**
 	 * Returns the duration in a nice format ([h:]mm:ss)
@@ -168,10 +179,6 @@ public class Song implements ICoverArt, INamedResource {
 	 * Absolute path from XBMC (incl filename)
 	 */
 	public String path;
-	/**
-	 * Filename of song
-	 */
-	public String filename;	
 	/**
 	 * CRC of the thumb
 	 */

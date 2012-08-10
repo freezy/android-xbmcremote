@@ -1,5 +1,7 @@
 package org.xbmc.jsonrpc.client;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.object.Host;
@@ -164,9 +166,42 @@ public class ControlClient extends Client implements IControlClient {
 	}
 
 	public ICurrentlyPlaying getCurrentlyPlaying(INotifiableManager manager) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		JsonNode player = getActivePlayer(manager);
+		if(player == null) {
+			return NOTHING_PLAYING;
+		}
+		JsonNode item = mConnection.getJson(manager, "Player.GetItem", obj().p("playerid", player.get("playerid")));
+		String type = item.get("type").getTextValue();
+		
+	    if("audio".equals(type)) {
+	    	JsonNode properties = mConnection.getJson(manager, "Player.getProperties", obj().p("playerid", player.get("playerid")).p("properties", arr().add("time").add("speed").add("position").add("percentage")));
+	    	return MusicClient.getCurrentlyPlaying(item, properties);
+	    }
+	    else if("video".equals(type)) {
+	    	JsonNode properties = mConnection.getJson(manager, "Player.getProperties", obj().p("playerid", player.get("playerid")).p("properties", arr().add("time").add("speed").add("position").add("percentage")));
+	    	return VideoClient.getCurrentlyPlaying(item, properties);
+	    }
+	    else if("picture".equals(type)) {
+	    	return PictureClient.getCurrentlyPlaying(item, obj());
+	    }
+	    return NOTHING_PLAYING;
 	}
+	
+	/**
+	 * This will just return the first active player
+	 * @param manager
+	 * @return
+	 */
+	public JsonNode getActivePlayer(INotifiableManager manager) {
+		
+		ArrayNode result = (ArrayNode) mConnection.getJson(manager, "Player.GetActivePlayers");
+		if(result.size() == 0) {
+			return null;
+		}
+		return result.get(0);
+	}
+	
 
 	public boolean setGuiSetting(INotifiableManager manager, int setting,
 			String value) {

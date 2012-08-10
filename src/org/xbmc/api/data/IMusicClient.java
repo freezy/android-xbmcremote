@@ -22,6 +22,7 @@
 package org.xbmc.api.data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Album;
@@ -307,7 +308,7 @@ public interface IMusicClient extends IClient {
 	 * Returns a list containing all artist IDs that stand for "compilation".
 	 * Best case scenario would be only one ID for "Various Artists", though
 	 * there are also just "V.A." or "VA" naming conventions.
-	 * @return List of compilation artist IDs
+	 * @return ArrayList of compilation artist IDs
 	 */
 	public ArrayList<Integer> getCompilationArtistIDs(INotifiableManager manager);
 

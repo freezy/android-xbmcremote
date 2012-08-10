@@ -11,6 +11,8 @@ import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.type.DirectoryMask;
+import org.xbmc.api.type.MediaType;
+import org.xbmc.api.type.SortType;
 import org.xbmc.jsonrpc.Connection;
 
 /**
@@ -48,7 +50,7 @@ public class InfoClient extends Client implements IInfoClient {
 	 */
 	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit,  final int mMediaType) {
 		final ArrayList<FileLocation> dirs = new ArrayList<FileLocation>();
-		final JsonNode jsonDirs = mConnection.getJson(manager, "Files.GetDirectory", obj().put("type", "files").put("directory", path), "directories");
+		final JsonNode jsonDirs = mConnection.getJson(manager, "Files.GetDirectory", sort(obj().p("media", "files").p("directory", path), SortType.FILENAME, SortType.ORDER_ASC, false), "files");
 		for (Iterator<JsonNode> i = jsonDirs.getElements(); i.hasNext();) {
 			JsonNode jsonDir = (JsonNode)i.next();
 			dirs.add(new FileLocation(getString(jsonDir, "label"), getString(jsonDir, "file")));
@@ -72,8 +74,18 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public ArrayList<FileLocation> getShares(INotifiableManager manager, int mediaType) {
+		String media = "music";
+		switch(mediaType) {
+			case MediaType.VIDEO:
+				media = "video";
+				break;
+			case MediaType.PICTURES:
+				media = "pictures";
+				break;
+		}
+		
 		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
-		final JsonNode jsonShares = mConnection.getJson(manager, "Files.GetSources", obj().put("type", "video")).get("shares");
+		final JsonNode jsonShares = mConnection.getJson(manager, "Files.GetSources", obj().put("media", media)).get("sources");
 		for (Iterator<JsonNode> i = jsonShares.getElements(); i.hasNext();) {
 			JsonNode jsonShare = (JsonNode)i.next();
 			shares.add(new FileLocation(getString(jsonShare, "label"), getString(jsonShare, "file")));

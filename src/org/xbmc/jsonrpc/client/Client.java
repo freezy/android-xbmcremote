@@ -34,7 +34,10 @@ import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
+import org.xbmc.api.data.IControlClient;
+import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.api.type.ThumbSize.Dimension;
 import org.xbmc.jsonrpc.Connection;
@@ -58,6 +61,7 @@ public abstract class Client {
 	public final static JsonNodeFactory FACTORY = JsonNodeFactory.instance;
 
 	protected final Connection mConnection;
+	
 
 	/**
 	 * Class constructor needs reference to HTTP client connection
@@ -198,7 +202,10 @@ public abstract class Client {
 			super.put(fieldName, v);
 			return this;
 		}
-		
+		public ObjNode p(String fieldName, Integer v) {
+			super.put(fieldName, v);
+			return this;
+		}
 	};
 
 	public final static ArrayNode arr() {
@@ -211,10 +218,44 @@ public abstract class Client {
 	public final static String getString(JsonNode obj, String key, String ifNullResult) {
 		return obj.get(key) == null ? ifNullResult : obj.get(key).getTextValue();
 	}
+	
+	public final static Double getDouble(JsonNode obj, String key) {
+		return getDouble(obj, key, 0d);
+	}
+	
+	public final static Double getDouble(JsonNode obj, String key, Double ifNullResult) {
+		return obj.get(key) == null ? ifNullResult : obj.get(key).getDoubleValue();
+	}
+	
 	public final static JsonNode getNode(JsonNode obj, String key) {
 		return (JsonNode) obj.get(key);
 	}
 	public final static int getInt(JsonNode obj, String key) {
 		return obj.get(key) == null ? -1 : obj.get(key).getIntValue();
 	}
+	
+	/**
+	 * Returns an object node of given sort options of albums query
+	 * @param sortBy    Sort field
+	 * @param sortOrder Sort order
+	 * @return query ObjNode
+	 */
+	protected static ObjNode sort(ObjNode params, int sortBy, String sortOrder, boolean ignoreArticle) {
+		final String order = sortOrder.equals(SortType.ORDER_DESC) ? "descending" : "ascending";
+		switch (sortBy) {
+			default:
+				
+			case SortType.ALBUM:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "label").p("ignorearticle", ignoreArticle));
+				break;
+			case SortType.ARTIST:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "artist").p("ignorearticle", ignoreArticle));
+				break;
+			case SortType.TRACK:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "track").p("ignorearticle", ignoreArticle));
+				break;
+		}
+		return params;
+	}
+	
 }
