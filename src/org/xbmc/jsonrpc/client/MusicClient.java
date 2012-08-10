@@ -40,6 +40,7 @@ import org.xbmc.api.object.Song;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
 import org.xbmc.jsonrpc.Connection;
+import org.xbmc.jsonrpc.client.Client.ObjNode;
 
 import android.graphics.Bitmap;
 
@@ -83,7 +84,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Album album, int sortBy, String sortOrder) {
-		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(album) + songsOrderBy(sortBy, sortOrder));
+		// TODO: IMPLEMENT ME
+		return false;
+		//return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(album) + songsOrderBy(sortBy, sortOrder));
 	}
 
 	/**
@@ -92,7 +95,10 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
-		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist) + songsOrderBy(sortBy, sortOrder));
+		// TODO: IMPLEMENT ME
+		return false;
+//		
+//		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist) + songsOrderBy(sortBy, sortOrder));
 	}
 
 	/**
@@ -101,7 +107,10 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
-		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(genre) + songsOrderBy(sortBy, sortOrder));
+		// TODO: IMPLEMENT ME
+		return false;
+//		
+//		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(genre) + songsOrderBy(sortBy, sortOrder));
 	}
 
 	/**
@@ -111,7 +120,10 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre, int sortBy, String sortOrder) {
-		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist, genre) + songsOrderBy(sortBy, sortOrder));
+		// TODO: IMPLEMENT ME
+		return false;
+//		
+//		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist, genre) + songsOrderBy(sortBy, sortOrder));
 	}
 	
 	/**
@@ -120,7 +132,10 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Song song) {
-		return mConnection.getBoolean(manager, "AddToPlayList", song.path + ";" + PLAYLIST_ID);
+		// TODO: IMPLEMENT ME
+		return false;
+		
+//		return mConnection.getBoolean(manager, "AddToPlayList", song.path + ";" + PLAYLIST_ID);
 	}
 	
 	/**
@@ -128,7 +143,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Number of items in the playlist
 	 */
 	public int getPlaylistSize(INotifiableManager manager) {
-		return mConnection.getInt(manager, "GetPlaylistLength", PLAYLIST_ID);
+		// TODO: IMPLEMENT ME
+		return 0;
+//		return mConnection.getInt(manager, "GetPlaylistLength", PLAYLIST_ID);
 	}
 	
 	/**
@@ -136,6 +153,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Number of items in the playlist
 	 */
 	public int getPlaylistPosition(INotifiableManager manager) {
+		// TODO: IMPLEMENT ME
 		return 0;//mConnection.getInt(manager, "GetPlaylistSong");
 	}
 	
@@ -145,7 +163,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean setPlaylistPosition(INotifiableManager manager, int position) {
-		return false; //mConnection.getBoolean(manager, "SetPlaylistSong", String.valueOf(position));
+		return mConnection.getBoolean(manager, "Playlist.Position", String.valueOf(position));
 	}
 	
 	/**
@@ -327,12 +345,15 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return All albums
 	 */
 	public ArrayList<Album> getAlbums(INotifiableManager manager, int sortBy, String sortOrder) {
-		return getAlbums(manager, sort(obj().p(PARAM_FIELDS, arr().add("artist").add("year")), sortBy, sortOrder));
+		// TODO: Make ignore article configurable
+		return getAlbums(manager, 
+				sort(obj().p("properties", arr().add("artist").add("year")), sortBy, sortOrder, true));
 	}
 	
 	private ArrayList<Album> getAlbums(INotifiableManager manager, ObjNode obj) {
+		System.err.println(obj.toString());
 		final ArrayList<Album> albums = new ArrayList<Album>();
-		final JsonNode result = mConnection.getJson(manager, "MusicLibrary.GetAlbums", obj);
+		final JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetAlbums", obj);
 		final JsonNode jsonAlbums = result.get("albums");
 		for (Iterator<JsonNode> i = jsonAlbums.getElements(); i.hasNext();) {
 			JsonNode jsonAlbum = (JsonNode)i.next();
@@ -740,18 +761,19 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param sortOrder Sort order
 	 * @return SQL "ORDER BY" string
 	 */
-	private static ObjNode sort(ObjNode params, int sortBy, String sortOrder) {
+	private static ObjNode sort(ObjNode params, int sortBy, String sortOrder, boolean ignoreArticle) {
 		final String order = sortOrder.equals(SortType.ORDER_DESC) ? "descending" : "ascending";
 		switch (sortBy) {
 			default:
+				
 			case SortType.ALBUM:
-				params.p("sortmethod", "label").p("sortorder", order);
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "label").p("ignorearticle", ignoreArticle));
 				break;
 			case SortType.ARTIST:
-				params.p("sortmethod", "artist").p("sortorder", order);
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "artist").p("ignorearticle", ignoreArticle));
 				break;
 			case SortType.TRACK:
-				params.p("sortmethod", "track").p("sortorder", order);
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "track").p("ignorearticle", ignoreArticle));
 				break;
 		}
 		return params;
@@ -1069,5 +1091,5 @@ public class MusicClient extends Client implements IMusicClient {
 				}
 			}
 		};
-	}
+	}	
 }

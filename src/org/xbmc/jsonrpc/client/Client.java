@@ -194,6 +194,11 @@ public abstract class Client {
 			super.put(fieldName, v);
 			return this;
 		}
+		public ObjNode p(String fieldName, boolean v) {
+			super.put(fieldName, v);
+			return this;
+		}
+		
 	};
 
 	public final static ArrayNode arr() {

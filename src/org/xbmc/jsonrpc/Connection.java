@@ -255,6 +255,7 @@ public class Connection {
 		try {
 			final JsonNode response = query(method, parameters, manager);
 			final JsonNode result = response.get(RESULT_FIELD);
+			System.err.println("RESULT: " + result);
 			if (result == null) {
 				if (response.get(ERROR_FIELD) == null) {
 					throw new Exception("Weird JSON response, could not parse error.");
