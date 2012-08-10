@@ -40,8 +40,8 @@ import org.xbmc.api.type.ThumbSize.Dimension;
 import org.xbmc.jsonrpc.Connection;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 /**
@@ -210,6 +210,9 @@ public abstract class Client {
 	}
 	public final static String getString(JsonNode obj, String key, String ifNullResult) {
 		return obj.get(key) == null ? ifNullResult : obj.get(key).getTextValue();
+	}
+	public final static JsonNode getNode(JsonNode obj, String key) {
+		return (JsonNode) obj.get(key);
 	}
 	public final static int getInt(JsonNode obj, String key) {
 		return obj.get(key) == null ? -1 : obj.get(key).getIntValue();

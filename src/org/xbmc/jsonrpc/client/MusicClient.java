@@ -28,8 +28,8 @@ import java.util.Iterator;
 import org.codehaus.jackson.JsonNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
-import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
@@ -40,7 +40,6 @@ import org.xbmc.api.object.Song;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
 import org.xbmc.jsonrpc.Connection;
-import org.xbmc.jsonrpc.client.Client.ObjNode;
 
 import android.graphics.Bitmap;
 
@@ -351,7 +350,6 @@ public class MusicClient extends Client implements IMusicClient {
 	}
 	
 	private ArrayList<Album> getAlbums(INotifiableManager manager, ObjNode obj) {
-		System.err.println(obj.toString());
 		final ArrayList<Album> albums = new ArrayList<Album>();
 		final JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetAlbums", obj);
 		final JsonNode jsonAlbums = result.get("albums");
@@ -539,16 +537,34 @@ public class MusicClient extends Client implements IMusicClient {
 	 * Returns a list containing tracks of a certain condition.
 	 * @param sqlCondition SQL condition which tracks to return
 	 * @return Found tracks
-	 *
-	private ArrayList<Song> getSongs(INotifiableManager manager, StringBuilder sqlCondition, int sortBy, String sortOrder) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
-		sb.append(" FROM songview WHERE ");
-		sb.append(sqlCondition);
-		sb.append(songsOrderBy(sortBy, sortOrder));
-		
-		return null; //parseSongs(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
-	}*/
+	 */
+	public ArrayList<Song> getSongs(INotifiableManager manager, ObjNode obj, int sortBy, String sortOrder) {
+		final ArrayList<Song> songs = new ArrayList<Song>();
+		obj = this.sort(obj, sortBy, sortOrder, true);
+		System.err.println(obj);
+		final JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetSongs", obj);
+		final JsonNode jsonAlbums = result.get("albums");
+		for (Iterator<JsonNode> i = jsonAlbums.getElements(); i.hasNext();) {
+			JsonNode jsonAlbum = (JsonNode)i.next();
+			
+			//TODO: File vs. Path is broken
+				
+			int id = getInt(jsonAlbum, "id");
+			JsonNode items = getNode(jsonAlbum, "items");
+			songs.add(new Song(
+				id, 
+				getString(items, "title"), 
+				getString(items, "artist"), 
+				getString(items, "album"),
+				getInt(items, "track"),
+				getInt(items, "duration"),
+				getString(items, "file"),
+				getString(items, "file"),
+				getString(items, "thumbnail", "NONE") 
+			));
+		}
+		return songs;		
+	}
 	
 	/**
 	 * Returns a hash map containing tracks of a certain condition.
