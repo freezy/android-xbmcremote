@@ -35,8 +35,7 @@ import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Host;
-import org.xbmc.httpapi.Connection;
-import org.xbmc.httpapi.WifiStateException;
+import org.xbmc.jsonrpc.Connection;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -109,12 +108,12 @@ public class NowPlayingPollerThread extends Thread {
 		};
 		try {
 			mControl = ClientFactory.getControlClient(mManagerStub, context);
-		} catch (WifiStateException e2) {
+		} catch (Exception e2) {
 			mControl = null;
 		}
   	  	try {
 			mInfo = ClientFactory.getInfoClient(mManagerStub, context);
-		} catch (WifiStateException e1) {
+		} catch (Exception e1) {
 			mInfo = null;
 		}
   	  	mSubscribers = new HashSet<Handler>();

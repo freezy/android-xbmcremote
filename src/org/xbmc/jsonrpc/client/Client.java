@@ -223,7 +223,8 @@ public abstract class Client {
 				sortby = "videorating";
 				break;
 			case SortType.DATE_ADDED:
-				sortby = "premiered";
+				sortby = "date";
+				break;
 		}
 		
 		params.p(PARAM_SORT, obj().p("method", sortby).p("order", order));

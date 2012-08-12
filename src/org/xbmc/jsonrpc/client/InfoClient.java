@@ -77,7 +77,7 @@ public class InfoClient extends Client implements IInfoClient {
 	public ArrayList<FileLocation> getShares(INotifiableManager manager, int mediaType) {
 		
 		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
-		final JsonNode jsonShares = mConnection.getJson(manager, "Files.GetSources", obj().put("media", "video")).get("sources");
+		final JsonNode jsonShares = mConnection.getJson(manager, "Files.GetSources", obj().p("media", "video")).get("sources");
 		for (Iterator<JsonNode> i = jsonShares.getElements(); i.hasNext();) {
 			JsonNode jsonShare = (JsonNode)i.next();
 			shares.add(new FileLocation(getString(jsonShare, "label"), getString(jsonShare, "file")));
@@ -89,18 +89,14 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @TODO Implement for JSON-RPC
 	 */
 	public String getCurrentlyPlayingThumbURI(INotifiableManager manager) throws MalformedURLException, URISyntaxException {
-		final JsonNode active = mConnection.getJson(manager, "Player.GetActivePlayers", null);
-		if(active.size() == 0)
+		int playerid = getActivePlayerId(manager);
+		if(playerid == -1)
 			return null;
-					
-		int playerid = active.get(0).get("playerid").getIntValue();
+		
 		final JsonNode details = mConnection.getJson(manager, "Player.GetItem", obj().p("playerid", playerid).p(PARAM_PROPERTIES, arr().add("thumbnail"))).get("item");
 		
-		long crc = Crc32.computeLowerCase(URLDecoder.decode(getString(details, "thumbnail").replaceAll("image://", "")));		
-		String hex = Crc32.formatAsHexLowerCase(crc);
-		return "special://profile/Thumbnails/"+hex.charAt(0)+"/"+hex+".jpg";
-		
-		//return URLDecoder.decode(details.get("thumbnail").getTextValue());
+		final JsonNode dl = mConnection.getJson(manager, "Files.PrepareDownload", obj().p("path", getString(details, "thumbnail"))).get("details");
+		return mConnection.getUrl(getString(dl, "path"));
 		
 	}
 	
