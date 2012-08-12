@@ -169,8 +169,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Songs in the playlist.
 	 */
 	public ArrayList<String> getPlaylist(INotifiableManager manager) {
-		return mConnection.getArray(manager, "GetPlaylistContents", PLAYLIST_ID);
-		
+		ArrayList<String> temp= mConnection.getArray(manager, "GetPlaylistContents", PLAYLIST_ID);
+		return temp;
 		
 		/*
 		final ArrayList<String> nodes = mConnection.getArray("GetDirectory", "playlistmusic://");

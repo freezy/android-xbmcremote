@@ -158,16 +158,13 @@ public class EpisodeDetailsActivity extends Activity {
 			button.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					Toast.makeText(mActivity, "Playing Episode", Toast.LENGTH_LONG).show();
-					mControlManager.clearPlaylist(new DataResponse<Boolean>(), "1", mActivity);
-					mControlManager.setPlaylistId(new DataResponse<Boolean>(), 1, mActivity);
-					mControlManager.addToPlaylist(new DataResponse<Boolean>(), mEpisode.getPath(), mActivity);					
-					mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
+					mControlManager.playFile(new DataResponse<Boolean>(){
 						public void run() {
 						if (value) {
 							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 							}
 						}
-					}, 0, mActivity.getApplicationContext());
+					}, mEpisode.fileName, 1, mActivity.getApplicationContext());
 				}
 			});
 		}
@@ -182,7 +179,7 @@ public class EpisodeDetailsActivity extends Activity {
 								Toast.makeText(mActivity, "Episode Queued", Toast.LENGTH_LONG).show();
 							}
 						}
-					}, mEpisode.getPath(), mActivity);
+					}, mEpisode.getPath(), 1, mActivity);
 				}
 			});
 		}

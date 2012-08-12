@@ -49,20 +49,20 @@ public abstract class MediaType {
 		}
 	}
 	
-	public static String getPlaylistType(int type) {
+	public static int getPlaylistType(int type) {
 		switch (type) {
 		case MUSIC:
-			return "0";
+			return 0;
 		case VIDEO:
 		case VIDEO_MOVIE:
 		case VIDEO_TVSHOW:
 		case VIDEO_TVSEASON:
 		case VIDEO_TVEPISODE:
-			return "1";
+			return 1;
 		case PICTURES:
-			return "2";
+			return 2;
 		default:
-			return "0";
+			return 0;
 		}
 	}
 	

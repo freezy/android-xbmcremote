@@ -22,6 +22,7 @@
 package org.xbmc.api.object;
 
 import java.io.Serializable;
+import java.net.URLDecoder;
 
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
@@ -47,7 +48,7 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 	public Artist(int id, String name, String arturl) {
 		this.id = id;
 		this.name = name;
-		this.arturl = arturl;
+		this.arturl = URLDecoder.decode(arturl.replaceAll("image://", ""));
 	}
 	
 	public int getMediaType() {

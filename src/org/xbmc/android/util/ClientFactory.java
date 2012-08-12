@@ -37,6 +37,7 @@ import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.Host;
 import org.xbmc.eventclient.EventClient;
+import org.xbmc.jsonrpc.JsonRpc;
 import org.xbmc.httpapi.HttpApi;
 import org.xbmc.httpapi.WifiStateException;
 
@@ -56,7 +57,7 @@ public abstract class ClientFactory {
 	public static final int API_TYPE_JSONRPC = 2;
 
 	private static HttpApi sHttpClient;
-//	private static JsonRpc sJsonClient;
+	private static JsonRpc sJsonClient;
 	private static EventClient sEventClient;
 	private static int sApiType = API_TYPE_UNSET;
 	
@@ -68,7 +69,7 @@ public abstract class ClientFactory {
 		probeQueryApiType(manager);
 		switch (sApiType) {
 			case API_TYPE_JSONRPC:
-//				return createJsonClient(manager).info;
+				return createJsonClient(manager).info;
 			case API_TYPE_UNSET:
 			case API_TYPE_HTTPIAPI:
 			default:
@@ -79,13 +80,27 @@ public abstract class ClientFactory {
 	public static IControlClient getControlClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
 		probeQueryApiType(manager);
-		return createHttpClient(manager).control;
+		switch (sApiType) {
+		case API_TYPE_JSONRPC:
+			return createJsonClient(manager).control;
+		case API_TYPE_UNSET:
+		case API_TYPE_HTTPIAPI:
+		default:
+			return createHttpClient(manager).control;
+		}
 	}
 	
 	public static IVideoClient getVideoClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
 		probeQueryApiType(manager);
-		return createHttpClient(manager).video;
+		switch (sApiType) {
+		case API_TYPE_JSONRPC:
+			return createJsonClient(manager).video;
+		case API_TYPE_UNSET:
+		case API_TYPE_HTTPIAPI:
+		default:
+			return createHttpClient(manager).video;
+		}
 	}
 	
 	public static IMusicClient getMusicClient(INotifiableManager manager, Context context) throws WifiStateException {
@@ -93,7 +108,7 @@ public abstract class ClientFactory {
 		probeQueryApiType(manager);
 		switch (sApiType) {
 			case API_TYPE_JSONRPC:
-//				return createJsonClient(manager).music;
+				return createJsonClient(manager).music;
 			case API_TYPE_UNSET:
 			case API_TYPE_HTTPIAPI:
 			default:
@@ -104,7 +119,14 @@ public abstract class ClientFactory {
 	public static ITvShowClient getTvShowClient(INotifiableManager manager, Context context) throws WifiStateException {
 		assertWifiState(context);
 		probeQueryApiType(manager);
-		return createHttpClient(manager).shows;
+		switch (sApiType) {
+		case API_TYPE_JSONRPC:
+			return createJsonClient(manager).shows;
+		case API_TYPE_UNSET:
+		case API_TYPE_HTTPIAPI:
+		default:
+			return createHttpClient(manager).shows;
+		}
 	}
 	
 	private static void assertWifiState(Context context) throws WifiStateException {
@@ -128,7 +150,9 @@ public abstract class ClientFactory {
 		sApiType = API_TYPE_UNSET;
 		if (sHttpClient != null) {
 			sHttpClient.setHost(host);
-		} else {
+		} else if(sJsonClient != null){
+			sJsonClient.setHost(host);
+		}else{
 			Log.w(TAG, "Not updating http client's host because no instance is set yet.");
 		}
 		Log.i(TAG, "Resetting client to " + (host == null ? "<nullhost>" : host.addr));
@@ -179,7 +203,7 @@ public abstract class ClientFactory {
 	 * 
 	 * @param manager Upper layer reference
 	 * @return JSON-RPC client
-	 *
+	 */
 	private static JsonRpc createJsonClient(final INotifiableManager manager) {
 		final Host host = HostFactory.host;
 		if (sJsonClient == null) {
@@ -190,7 +214,7 @@ public abstract class ClientFactory {
 			}
 		}
 		return sJsonClient;
-	}*/
+	}
 	
 	
 	/**

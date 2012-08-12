@@ -33,9 +33,9 @@ package org.xbmc.api.info;
  */
 public abstract class PlayStatus {
 	public static final int UNKNOWN = -1;
-	public static final int STOPPED = 0;
-	public static final int PAUSED = 1;
-	public static final int PLAYING = 2;
+	public static final int STOPPED = 2;
+	public static final int PAUSED = 0;
+	public static final int PLAYING = 1;
 	
 	public static int parse(String response) {
 		if (response.contains("PlayStatus:Paused") || response.equals("Paused")) {

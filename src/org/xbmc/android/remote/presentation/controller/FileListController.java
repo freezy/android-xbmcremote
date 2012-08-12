@@ -124,16 +124,13 @@ public class FileListController extends ListController implements IController {
 								}, item.path, mActivity.getApplicationContext());
 								break;
 							default:
-								mControlManager.clearPlaylist(new DataResponse<Boolean>(), item.mediaType==MediaType.MUSIC?"0":"1", mActivity);
-								mControlManager.setPlaylistId(new DataResponse<Boolean>(), item.mediaType==MediaType.MUSIC?0:1, mActivity);
-								mControlManager.addToPlaylist(new QueryResponse(mActivity, "Playing " + item.path, "Error playing " + item.path), item.path, mActivity);					
-								mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
+								mControlManager.playFile(new DataResponse<Boolean>(){
 									public void run() {
 									if (value) {
 										mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 										}
 									}
-								}, 0, mActivity.getApplicationContext());break;
+								}, item.path, MediaType.getPlaylistType(item.mediaType), mActivity.getApplicationContext());break;
 						}
 					}
 				}
@@ -234,21 +231,19 @@ public class FileListController extends ListController implements IController {
 	public void onContextItemSelected(MenuItem item) {
 		// be aware that this must be explicitly called by your activity!
 		final FileLocation loc = (FileLocation) mList.getAdapter().getItem(((OneLabelItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
+		int playlistid = Integer.valueOf(MediaType.getPlaylistType(mMediaType));
 		switch(item.getItemId()) {
 		case ITEM_CONTEXT_QUEUE:
-			mControlManager.queueFolder(new QueryResponse(mActivity, "Queueing " + loc.path, "Error queueing " + loc.path), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
+			mControlManager.queueFolder(new QueryResponse(mActivity, "Queueing " + loc.path, "Error queueing " + loc.path), loc.path, playlistid, mActivity);
 			break;
 		case ITEM_CONTEXT_PLAY:
-			mControlManager.clearPlaylist(new DataResponse<Boolean>(), "", mActivity);
-			mControlManager.setPlaylistId(new DataResponse<Boolean>(), 1, mActivity);
-			mControlManager.addToPlaylist(new QueryResponse(mActivity, "Playing " + loc.path, "Error playing " + loc.path), loc.path, mActivity);					
-			mControlManager.setPlaylistPos(new DataResponse<Boolean>(){
+			mControlManager.playFile(new DataResponse<Boolean>(){
 				public void run() {
 				if (value) {
 					mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 					}
 				}
-			}, 0, mActivity.getApplicationContext());break;
+			}, loc.path, playlistid, mActivity.getApplicationContext());break;
 		}
 	}
 

@@ -211,7 +211,7 @@ public class MovieListController extends ListController implements IController {
 							mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 						}
 					}
-				}, movie.getPath(), mActivity.getApplicationContext());
+				}, movie.getPath(), 1, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_INFO:
 				Intent nextActivity = new Intent(mActivity, MovieDetailsActivity.class);

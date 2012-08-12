@@ -1,5 +1,6 @@
 package org.xbmc.api.object;
 
+import java.net.URLDecoder;
 import java.util.List;
 
 import org.xbmc.android.util.Crc32;
@@ -35,7 +36,7 @@ public class TvShow implements ICoverArt, INamedResource {
 		this.numEpisodes = numEpisodes;
 		this.watchedEpisodes = watchedEpisodes;
 		this.watched = watched;
-		this.artUrl = artUrl;
+		this.artUrl = URLDecoder.decode(artUrl.replaceAll("image://", ""));
 	}
 
 	public String getShortName() {
