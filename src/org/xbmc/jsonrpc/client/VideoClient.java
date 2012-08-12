@@ -81,7 +81,7 @@ public class VideoClient extends Client implements IVideoClient {
 	
 	public ArrayList<Movie> getMovies(INotifiableManager manager, ObjNode obj, int sortBy, String sortOrder, boolean hideWatched) {
 		
-		obj = sort(obj.p(PARAM_PROPERTIES, arr().add("year").add("file").add("director").add("runtime").add("genre").add("rating").add("playcount").add("imdbnumber").add("thumbnail")), sortBy, sortOrder);
+		obj = sort(obj.p(PARAM_PROPERTIES, arr().add("director").add("file").add("genre").add("imdbnumber").add("playcount").add("rating").add("runtime").add("thumbnail").add("year")), sortBy, sortOrder);
 		
 		final ArrayList<Movie> movies = new ArrayList<Movie>();
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetMovies", obj);
@@ -157,7 +157,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public Movie updateMovieDetails(INotifiableManager manager, Movie movie) {
 		
-		ObjNode obj = obj().p("movieid", movie.getId()).p(PARAM_PROPERTIES, arr().add("tagline").add("plot").add("votes").add("studio").add("mpaa").add("trailer").add("cast"));
+		ObjNode obj = obj().p("movieid", movie.getId()).p(PARAM_PROPERTIES, arr().add("cast").add("mpaa").add("plot").add("studio").add("tagline").add("trailer").add("votes"));
 		
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetMovieDetails", obj);
 		final JsonNode jsonMovie = result.get("moviedetails");
@@ -166,7 +166,8 @@ public class VideoClient extends Client implements IVideoClient {
 		movie.numVotes = getInt(jsonMovie, "votes");
 		movie.studio = getString(jsonMovie, "studio");
 		movie.rated = getString(jsonMovie, "mpaa");
-		movie.trailerUrl = getString(jsonMovie, "trailer");
+		movie.trailerUrl = getString(jsonMovie, "trailer");	
+		
 		
 		ArrayList<Actor> actors = new ArrayList<Actor>();
 		final JsonNode jsonCast = jsonMovie.get("cast");

@@ -330,11 +330,11 @@ public class MusicClient extends Client implements IMusicClient {
 	public ArrayList<Album> getAlbums(INotifiableManager manager, int SortBy, String sortOrder){
 		return getAlbums(manager, obj(), SortBy, sortOrder);
 	}
-	public ArrayList<Album> getAlbums(INotifiableManager manager, ObjNode obj, int sortBy, String sortOrder) {
-		return getAlbums(manager, sort(obj.p(PARAM_PROPERTIES, arr().add("artist").add("year").add("thumbnail")), sortBy, sortOrder));
-	}
 	
-	private ArrayList<Album> getAlbums(INotifiableManager manager, ObjNode obj) {
+	private ArrayList<Album> getAlbums(INotifiableManager manager, ObjNode obj, int sortBy, String sortOrder) {
+		
+		obj = sort(obj.p(PARAM_PROPERTIES, arr().add("artist").add("year").add("thumbnail")), sortBy, sortOrder);
+		
 		final ArrayList<Album> albums = new ArrayList<Album>();
 		final JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetAlbums", obj);
 		if(result.size() > 0){
