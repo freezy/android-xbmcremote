@@ -166,8 +166,8 @@ public class NowPlayingController extends AbstractController implements INotifia
 						break;
 					case PlayStatus.STOPPED:
 						final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
-						mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
-						mControlManager.setPlaylistPos(doNothing, mLastPosition < 0 ? 0 : mLastPosition, mActivity.getApplicationContext());
+						//mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
+						mControlManager.setPlaylistPos(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mLastPosition < 0 ? 0 : mLastPosition, mActivity.getApplicationContext());
 						break;
 				}
 			}

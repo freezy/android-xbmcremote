@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" 
 	package="org.xbmc.android.remote"
-	android:versionName="0.9.3-beta_tombriden" 
-	android:versionCode="903" 
+	android:versionName="0.10.0-alpha_tombriden" 
+	android:versionCode="1000" 
 	android:installLocation="auto">
 	
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="10" />

@@ -253,7 +253,7 @@ public class UrlIntentController extends AbstractController implements IControll
 					mActivity.startActivity(new Intent(mActivity.getApplicationContext(), NowPlayingActivity.class));
 				}
 			}
-		}, movie.getPath(), mActivity.getApplicationContext());
+		}, movie.getPath(), 1, mActivity.getApplicationContext());
 	}
 
 	private boolean isIMDB(String subjectTxt) {

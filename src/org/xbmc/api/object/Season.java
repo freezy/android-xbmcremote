@@ -22,6 +22,7 @@
 package org.xbmc.api.object;
 
 import java.io.Serializable;
+import java.net.URLDecoder;
 import java.util.List;
 
 import org.xbmc.android.util.Crc32;
@@ -40,7 +41,7 @@ public class Season implements Serializable, ICoverArt {
 		this.number = number;
 		this.watched = watched;
 		this.show = show;
-		this.artUrl = artUrl;
+		this.artUrl = URLDecoder.decode(artUrl.replaceAll("image://", ""));
 	}
 
 	private static final long serialVersionUID = -7652780720536304140L;

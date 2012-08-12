@@ -68,7 +68,7 @@ public class ControlClient implements IControlClient {
 	 * @param fileOrFolder
 	 * @return true on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, String fileOrFolder) {
+	public boolean addToPlaylist(INotifiableManager manager, String fileOrFolder, int playlistId) {
 		return mConnection.getBoolean(manager, "AddToPlayList", fileOrFolder);
 	}
 	
@@ -78,7 +78,7 @@ public class ControlClient implements IControlClient {
 	 * @param filename File to play
 	 * @return true on success, false otherwise.
 	 */
-	public boolean playFile(INotifiableManager manager, String filename) {
+	public boolean playFile(INotifiableManager manager, String filename, int playlistId) {
 		return mConnection.getBoolean(manager, "PlayFile", filename);
 	}
 	
@@ -355,7 +355,7 @@ public class ControlClient implements IControlClient {
 	 * @param position New playlist position
 	 * @return True on success, false otherwise.
 	 */
-	public boolean setPlaylistPos(INotifiableManager manager, int position) {
+	public boolean setPlaylistPos(INotifiableManager manager, int playlistId, int position) {
 		return mConnection.getBoolean(manager, "SetPlaylistSong", String.valueOf(position));
 	}
 	
@@ -365,8 +365,8 @@ public class ControlClient implements IControlClient {
 	 * @param int Playlist to clear (0 = music, 1 = video)
 	 * @return True on success, false otherwise.
 	 */
-	public boolean clearPlaylist(INotifiableManager manager, String playlistId) {
-		return mConnection.getBoolean(manager, "ClearPlayList", playlistId);
+	public boolean clearPlaylist(INotifiableManager manager, int playlistId) {
+		return mConnection.getBoolean(manager, "ClearPlayList", String.valueOf(playlistId));
 	}
 	
 	/**
@@ -375,10 +375,9 @@ public class ControlClient implements IControlClient {
 	 * @param playlistId Playlist ID ("0" = music, "1" = video)
 	 * @return True on success, false otherwise.
 	 */
-	public boolean setCurrentPlaylist(INotifiableManager manager, String playlistId) {
-		return mConnection.getBoolean(manager, "SetCurrentPlaylist", playlistId);
-	}
-	
+	public boolean setCurrentPlaylist(INotifiableManager manager, int playlistId) {
+		return mConnection.getBoolean(manager, "SetCurrentPlaylist", String.valueOf(playlistId));
+	}	
 	/**
 	 * Sets the correct response format to default values
 	 * @param manager Manager reference	 

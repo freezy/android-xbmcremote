@@ -22,6 +22,7 @@
 package org.xbmc.api.object;
 
 import java.io.Serializable;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import org.xbmc.android.util.Crc32;
@@ -57,7 +58,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 		this.filename = filename;
 		this.numWatched = numWatched;
 		this.imdbId=imdbId;
-		this.artUrl=artUrl;
+		this.artUrl=URLDecoder.decode(artUrl.replaceAll("image://", ""));
 	}
 	
 	public int getMediaType() {

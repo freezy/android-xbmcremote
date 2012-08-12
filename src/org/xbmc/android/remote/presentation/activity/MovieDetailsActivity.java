@@ -166,7 +166,7 @@ public class MovieDetailsActivity extends Activity {
 								mActivity.startActivity(new Intent(mActivity, NowPlayingActivity.class));
 							}
 						}
-					}, mMovie.getPath(), mActivity.getApplicationContext());
+					}, mMovie.getPath(), 1, mActivity.getApplicationContext());
 				}
 			});
 		}
@@ -204,7 +204,7 @@ public class MovieDetailsActivity extends Activity {
 											toast.show();
 										}
 									}
-								}, movie.trailerUrl, mActivity.getApplicationContext());
+								}, movie.trailerUrl, 1, mActivity.getApplicationContext());
 							}
 						});
 					}

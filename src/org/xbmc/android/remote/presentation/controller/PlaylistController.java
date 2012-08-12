@@ -122,7 +122,7 @@ public class PlaylistController extends ListController implements IController, C
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					final PlaylistItem item = (PlaylistItem)mList.getAdapter().getItem(((OneLabelItemView)view).position);
 					final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
-					mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
+					//mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
 					switch (mPlayListId) {
 					case MUSIC_PLAYLIST_ID:
 						mMusicManager.setPlaylistSong(doNothing, item.position, mActivity.getApplicationContext());
@@ -272,8 +272,8 @@ public class PlaylistController extends ListController implements IController, C
 						break;
 					case PlayStatus.STOPPED:
 						final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
-						mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
-						mControlManager.setPlaylistPos(doNothing, mLastPosition < 0 ? 0 : mLastPosition, mActivity.getApplicationContext());
+						//mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
+						mControlManager.setPlaylistPos(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mLastPosition < 0 ? 0 : mLastPosition, mActivity.getApplicationContext());
 						break;
 				}
 			}

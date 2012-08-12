@@ -42,11 +42,11 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param response Response object
 	 * @param filename File to play
 	 */
-	public void playFile(final DataResponse<Boolean> response, final String filename, final Context context) {
+	public void playFile(final DataResponse<Boolean> response, final String filename, final int playlistType, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this){
 			@Override
 			public void doRun() throws Exception {
-				response.value = control(context).playFile(ControlManager.this, filename);
+				response.value = control(context).playFile(ControlManager.this, filename, playlistType);
 			}
 		});
 	}
@@ -57,14 +57,14 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param foldername Path to the folder to play
 	 * @param context Context reference
 	 */
-	public void playFolder(final DataResponse<Boolean> response, final String foldername, final String playlistType, final Context context) {
+	public void playFolder(final DataResponse<Boolean> response, final String foldername, final int playlistType, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this){
 			@Override
 			public void doRun() throws Exception {
 				IControlClient cc = control(context);
 				cc.stop(ControlManager.this);
 				cc.clearPlaylist(ControlManager.this, playlistType);
-				cc.addToPlaylist(ControlManager.this, foldername + ";" + playlistType + ";" + (playlistType.equals("0") ? "[music]" : "[video]"));
+				cc.addToPlaylist(ControlManager.this, foldername, playlistType);
 				cc.setCurrentPlaylist(ControlManager.this, playlistType);
 				response.value = cc.playNext(ControlManager.this);
 			}
@@ -77,12 +77,12 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param foldername Path to the folder to play
 	 * @param context Context reference
 	 */
-	public void queueFolder(final DataResponse<Boolean> response, final String foldername, final String playlistType, final Context context) {
+	public void queueFolder(final DataResponse<Boolean> response, final String foldername, final int playlistType, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this){
 			@Override
 			public void doRun() throws Exception {
 				IControlClient cc = control(context);
-				final boolean ret = cc.addToPlaylist(ControlManager.this, foldername + ";" + playlistType + ";" + (playlistType.equals("0") ? "[music]" : "[video]"));
+				final boolean ret = cc.addToPlaylist(ControlManager.this, foldername, playlistType);
 				if (!cc.getCurrentlyPlaying(ControlManager.this).isPlaying()) {
 					cc.setCurrentPlaylist(ControlManager.this, playlistType);
 					response.value = cc.playNext(ControlManager.this);
@@ -128,11 +128,11 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param response Response object
 	 * @param fileOrFolder File to play
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder, final Context context) {
+	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder, final int playlistType, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this){
 			@Override
 			public void doRun() throws Exception {
-				response.value = control(context).addToPlaylist(ControlManager.this, fileOrFolder);
+				response.value = control(context).addToPlaylist(ControlManager.this, fileOrFolder, playlistType);
 			}
 		});
 	}
@@ -253,11 +253,11 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param response Response object
 	 * @param position New playlist position
 	 */
-	public void setPlaylistPos(final DataResponse<Boolean> response, final int position, final Context context) {
+	public void setPlaylistPos(final DataResponse<Boolean> response, final int playlistId, final int position, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this){
 			@Override
 			public void doRun() throws Exception {
-				response.value = control(context).setPlaylistPos(ControlManager.this, position);
+				response.value = control(context).setPlaylistPos(ControlManager.this, playlistId, position);
 			}
 		});
 	}
@@ -268,7 +268,7 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 	 * @param playlistId Playlist ID (0 = music, 1 = video)
 	 * @param context Context reference
 	 */
-	public void clearPlaylist(final DataResponse<Boolean> response, final String playlistId, final Context context) {
+	public void clearPlaylist(final DataResponse<Boolean> response, final int playlistId, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this){
 			@Override
 			public void doRun() throws Exception {

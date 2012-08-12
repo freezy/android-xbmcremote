@@ -20,6 +20,7 @@
  */
 
 package org.xbmc.api.object;
+import java.net.URLDecoder;
 import java.util.Formatter;
 
 import org.xbmc.android.util.Crc32;
@@ -56,7 +57,7 @@ public class Song implements ICoverArt, INamedResource {
 		this.filename = filename;
 		if (!thumbPath.equals("")) {
 			try {
-				this.thumbID = Crc32.computeLowerCase(thumbPath);
+				this.thumbID = Crc32.computeLowerCase(URLDecoder.decode(thumbPath.replaceAll("image://", "")));
 			} catch (NumberFormatException e) {
 				this.thumbID = 0L;
 			}

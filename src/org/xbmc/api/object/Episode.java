@@ -21,6 +21,7 @@
 
 package org.xbmc.api.object;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import org.xbmc.android.util.Crc32;
@@ -99,7 +100,7 @@ public class Episode implements ICoverArt {
 		this.localPath = localPath;
 		this.showTitle = showTitle;
 		this.fileName = fileName;
-		this.artUrl = artUrl;
+		this.artUrl = URLDecoder.decode(artUrl.replaceAll("image://", ""));
 	}
 
 	public long getCrc() {

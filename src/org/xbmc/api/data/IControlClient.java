@@ -41,7 +41,7 @@ public interface IControlClient extends IClient {
 	 * @param fileOrFolder
 	 * @return true on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, String fileOrFolder);
+	public boolean addToPlaylist(INotifiableManager manager, String fileOrFolder, int playlistType);
 	
 	/**
 	 * Starts playing the media file <code>filename</code> .
@@ -49,7 +49,7 @@ public interface IControlClient extends IClient {
 	 * @param filename File to play
 	 * @return true on success, false otherwise.
 	 */
-	public boolean playFile(INotifiableManager manager, String filename);
+	public boolean playFile(INotifiableManager manager, String filename, int playlistType);
 	
 	/**
 	 * Starts playing/showing the next media/image in the current playlist or,
@@ -247,7 +247,7 @@ public interface IControlClient extends IClient {
 	 * @param playlistId Playlist ID ("0" = music, "1" = video)
 	 * @return True on success, false otherwise.
 	 */
-	public boolean setCurrentPlaylist(INotifiableManager manager, String playlistId);
+	public boolean setCurrentPlaylist(INotifiableManager manager, int playlistId);
 	
 	/**
 	 * Sets the current playlist identifier
@@ -263,7 +263,7 @@ public interface IControlClient extends IClient {
 	 * @param position New playlist position
 	 * @return True on success, false otherwise.
 	 */
-	public boolean setPlaylistPos(INotifiableManager manager, int position);
+	public boolean setPlaylistPos(INotifiableManager manager, int playlistId, int position);
 	
 	/**
 	 * Clears a playlist.
@@ -271,7 +271,7 @@ public interface IControlClient extends IClient {
 	 * @param playlistId Playlist ID to clear (0 = music, 1 = video)
 	 * @return True on success, false otherwise.
 	 */
-	public boolean clearPlaylist(INotifiableManager manager, String playlistId);
+	public boolean clearPlaylist(INotifiableManager manager, int playlistId);
 	
 	/**
 	 * Returns state and type of the media currently playing.
