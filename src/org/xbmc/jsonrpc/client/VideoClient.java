@@ -89,6 +89,11 @@ public class VideoClient extends Client implements IVideoClient {
 			final JsonNode jsonMovies = result.get("movies");
 			for (Iterator<JsonNode> i = jsonMovies.getElements(); i.hasNext();) {
 				JsonNode jsonMovie = (JsonNode)i.next();
+				
+				int playcount =getInt(jsonMovie, "playcount");
+				if(playcount > 0 && hideWatched)
+					continue;
+				
 				movies.add(new Movie(
 					getInt(jsonMovie, "movieid"),
 					getString(jsonMovie, "label"),
@@ -99,7 +104,7 @@ public class VideoClient extends Client implements IVideoClient {
 					getString(jsonMovie, "runtime"),
 					getString(jsonMovie, "genre"),
 					getDouble(jsonMovie, "rating"),
-					getInt(jsonMovie, "playcount"),
+					playcount,
 					getString(jsonMovie, "imdbnumber"),
 					getString(jsonMovie, "thumbnail")
 				));
