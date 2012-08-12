@@ -68,6 +68,11 @@ public class TvShowClient extends Client implements ITvShowClient {
 			final JsonNode jsonShows = result.get("tvshows");
 			for (Iterator<JsonNode> i = jsonShows.getElements(); i.hasNext();) {
 				JsonNode jsonShow = (JsonNode)i.next();
+				
+				int playcount =getInt(jsonShow, "playcount");
+				if(playcount > 0 && hideWatched)
+					continue;
+				
 				tvshows.add(new TvShow(
 					getInt(jsonShow, "tvshowid"),
 					getString(jsonShow, "label"),
@@ -79,7 +84,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 					getString(jsonShow, "studio"),
 					getString(jsonShow, "file"),
 					getInt(jsonShow, "episode"),
-					getInt(jsonShow, "playcount"),
+					playcount,
 					getInt(jsonShow, "playcount") > 0,
 					getString(jsonShow, "thumbnail")
 				));
@@ -160,10 +165,16 @@ public class TvShowClient extends Client implements ITvShowClient {
 		if(result.size() > 0){
 			final JsonNode jsonSeasons = result.get("seasons");
 			for (Iterator<JsonNode> i = jsonSeasons.getElements(); i.hasNext();) {
+				
 				JsonNode jsonShow = (JsonNode)i.next();
+				
+				int playcount =getInt(jsonShow, "playcount");
+				if(playcount > 0 && hideWatched)
+					continue;
+				
 				seasons.add(new Season(
 					getInt(jsonShow, "season"),
-					getInt(jsonShow, "playcount") > 0,
+					playcount > 0,
 					show,
 					getString(jsonShow, "thumbnail")
 				));
@@ -225,6 +236,11 @@ public class TvShowClient extends Client implements ITvShowClient {
 			final JsonNode jsonEpisodes = result.get("episodes");
 			for (Iterator<JsonNode> i = jsonEpisodes.getElements(); i.hasNext();) {
 				JsonNode jsonEpisode = (JsonNode)i.next();
+				
+				int playcount =getInt(jsonEpisode, "playcount");
+				if(playcount > 0 && hideWatched)
+					continue;
+				
 				episodes.add(new Episode(
 					getInt(jsonEpisode, "episodeid"),
 					getString(jsonEpisode, "title"),
@@ -232,7 +248,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 					getDouble(jsonEpisode, "rating"),
 					getString(jsonEpisode, "writer"),
 					getString(jsonEpisode, "firstaired"),
-					getInt(jsonEpisode, "playcount"),
+					playcount,
 					getString(jsonEpisode, "director"),
 					getInt(jsonEpisode, "season"),
 					getInt(jsonEpisode, "episode"),
