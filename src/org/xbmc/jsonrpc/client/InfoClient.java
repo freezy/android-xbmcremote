@@ -2,15 +2,18 @@ package org.xbmc.jsonrpc.client;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
+import org.xbmc.android.util.Crc32;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.type.DirectoryMask;
+import org.xbmc.api.type.SortType;
 import org.xbmc.jsonrpc.Connection;
 
 /**
@@ -48,7 +51,7 @@ public class InfoClient extends Client implements IInfoClient {
 	 */
 	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit,  final int mMediaType) {
 		final ArrayList<FileLocation> dirs = new ArrayList<FileLocation>();
-		final JsonNode jsonDirs = mConnection.getJson(manager, "Files.GetDirectory", obj().put("type", "files").put("directory", path), "directories");
+		final JsonNode jsonDirs = mConnection.getJson(manager, "Files.GetDirectory", sort(obj().p("media", "files").p("directory", path), SortType.ALBUM, "descending"), "files");
 		for (Iterator<JsonNode> i = jsonDirs.getElements(); i.hasNext();) {
 			JsonNode jsonDir = (JsonNode)i.next();
 			dirs.add(new FileLocation(getString(jsonDir, "label"), getString(jsonDir, "file")));
@@ -72,8 +75,9 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public ArrayList<FileLocation> getShares(INotifiableManager manager, int mediaType) {
+		
 		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
-		final JsonNode jsonShares = mConnection.getJson(manager, "Files.GetSources", obj().put("type", "video")).get("shares");
+		final JsonNode jsonShares = mConnection.getJson(manager, "Files.GetSources", obj().put("media", "video")).get("sources");
 		for (Iterator<JsonNode> i = jsonShares.getElements(); i.hasNext();) {
 			JsonNode jsonShare = (JsonNode)i.next();
 			shares.add(new FileLocation(getString(jsonShare, "label"), getString(jsonShare, "file")));
@@ -85,14 +89,19 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @TODO Implement for JSON-RPC
 	 */
 	public String getCurrentlyPlayingThumbURI(INotifiableManager manager) throws MalformedURLException, URISyntaxException {
-		/*
-		ArrayList<String> array = mConnection.getArray(manager, "GetCurrentlyPlaying", "");
-		for (String s : array) {
-			if (s.startsWith("Thumb")) {
-				return mConnection.getUrl("FileDownload", s.substring(6));
-			}
-		}*/
-		return null;
+		final JsonNode active = mConnection.getJson(manager, "Player.GetActivePlayers", null);
+		if(active.size() == 0)
+			return null;
+					
+		int playerid = active.get(0).get("playerid").getIntValue();
+		final JsonNode details = mConnection.getJson(manager, "Player.GetItem", obj().p("playerid", playerid).p(PARAM_PROPERTIES, arr().add("thumbnail"))).get("item");
+		
+		long crc = Crc32.computeLowerCase(URLDecoder.decode(getString(details, "thumbnail").replaceAll("image://", "")));		
+		String hex = Crc32.formatAsHexLowerCase(crc);
+		return "special://profile/Thumbnails/"+hex.charAt(0)+"/"+hex+".jpg";
+		
+		//return URLDecoder.decode(details.get("thumbnail").getTextValue());
+		
 	}
 	
 	/**
@@ -102,7 +111,8 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public String getSystemInfo(INotifiableManager manager, int field) {
-		return mConnection.getString(manager, "JSONRPC.Version", "version");
+		JsonNode version = mConnection.getJson(manager, "Application.GetProperties", obj().p(PARAM_PROPERTIES, arr().add("version"))).get("version");
+		return getInt(version, "major") + "." + getInt(version, "minor") + " " + getString(version, "tag") + "\nGit: " + getString(version, "revision"); 
 	}
 	
 	/**
@@ -112,6 +122,7 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public boolean getGuiSettingBool(INotifiableManager manager, int field) {
+		//TODO
 		//return mConnection.getBoolean(manager, "GetGuiSetting", GuiSettings.MusicLibrary.getType(field) + ";" + GuiSettings.MusicLibrary.getName(field));
 		return false;
 	}
@@ -123,6 +134,7 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public int getGuiSettingInt(INotifiableManager manager, int field) {
+		//TODO
 		//return mConnection.getInt(manager, "GetGuiSetting", GuiSettings.MusicLibrary.getType(field) + ";" + GuiSettings.MusicLibrary.getName(field));
 		return 0;
 	}
@@ -134,6 +146,7 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public boolean setGuiSettingBool(INotifiableManager manager, int field, boolean value) {
+		//TODO
 		// return mConnection.getBoolean(manager, "SetGuiSetting", GuiSettings.getType(field) + ";" + GuiSettings.getName(field) + ";" + value);
 		return false;
 	}
@@ -145,7 +158,8 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public boolean setGuiSettingInt(INotifiableManager manager, int field, int value) {
-		// return mConnection.getBoolean(manager, "SetGuiSetting", GuiSettings.getType(field) + ";" + GuiSettings.getName(field) + ";" + value);
+		//TODO 
+		//return mConnection.getBoolean(manager, "SetGuiSetting", GuiSettings.getType(field) + ";" + GuiSettings.getName(field) + ";" + value);
 		return false;
 	}
 	
@@ -156,6 +170,7 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public String getMusicInfo(INotifiableManager manager, int field) {
+		//TODO
 		//return mConnection.getString(manager, "GetMusicLabel", String.valueOf(field));
 		return "";
 	}
@@ -167,6 +182,7 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public String getVideoInfo(INotifiableManager manager, int field) {
+		//TODO
 		//return mConnection.getString(manager, "GetVideoLabel", String.valueOf(field));
 		return "";
 	}

@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -35,6 +36,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.api.type.ThumbSize.Dimension;
 import org.xbmc.jsonrpc.Connection;
@@ -53,6 +55,8 @@ public abstract class Client {
 	
 	public static final String TAG = "Client-JSON-RPC";
 	public static final String PARAM_FIELDS = "fields";
+	public static final String PARAM_PROPERTIES = "properties";
+	public static final String PARAM_SORT = "sort";
 
 	public final static ObjectMapper MAPPER = new ObjectMapper();
 	public final static JsonNodeFactory FACTORY = JsonNodeFactory.instance;
@@ -65,6 +69,14 @@ public abstract class Client {
 	 */
 	Client(Connection connection) {
 		mConnection = connection;
+	}
+	
+	public int getActivePlayerId(INotifiableManager manager){
+		final JsonNode active = mConnection.getJson(manager, "Player.GetActivePlayers", null).get(0);
+		if(active == null)
+			return -1;
+		else
+			return getInt(active, "playerid");
 	}
 	
 	/**
@@ -178,6 +190,46 @@ public abstract class Client {
 		return null;
 	}	
 	
+	/**
+	 * Returns an SQL String of given sort options of albums query
+	 * @param sortBy    Sort field
+	 * @param sortOrder Sort order
+	 * @return SQL "ORDER BY" string
+	 */
+	protected static ObjNode sort(ObjNode params, int sortBy, String sortOrder) {
+		
+			
+		
+		final String order = sortOrder.equals(SortType.ORDER_DESC) ? "descending" : "ascending";
+		final String sortby;
+		switch (sortBy) {
+			default:
+			case SortType.ALBUM:
+				sortby = "label";
+				break;
+			case SortType.ARTIST:
+				sortby = "artist";
+				break;
+			case SortType.TRACK:
+				sortby = "track";
+				break;
+			case SortType.TITLE:
+				sortby = "sorttitle";
+				break;
+			case SortType.YEAR:
+				sortby = "year";
+				break;
+			case SortType.RATING:
+				sortby = "videorating";
+				break;
+			case SortType.DATE_ADDED:
+				sortby = "premiered";
+		}
+		
+		params.p(PARAM_SORT, obj().p("method", sortby).p("order", order));
+		return params;
+	}
+	
 	public final static ObjNode obj() {
 		return new ObjNode(FACTORY);
 	}
@@ -186,11 +238,19 @@ public abstract class Client {
 		public ObjNode(JsonNodeFactory nc) {
 			super(nc);
 		}
-		public ObjNode p(String fieldName, JsonNode value) {
-			super.put(fieldName, value);
+		public ObjNode p(String fieldName, Object object) {
+			super.put(fieldName, (JsonNode) object);
 			return this;
 		}
 		public ObjNode p(String fieldName, String v) {
+			super.put(fieldName, v);
+			return this;
+		}
+		public ObjNode p(String fieldName, int v) {
+			super.put(fieldName, v);
+			return this;
+		}
+		public ObjNode p(String fieldName, boolean v) {
 			super.put(fieldName, v);
 			return this;
 		}
@@ -208,5 +268,9 @@ public abstract class Client {
 	}
 	public final static int getInt(JsonNode obj, String key) {
 		return obj.get(key) == null ? -1 : obj.get(key).getIntValue();
+	}
+	public final static double getDouble(JsonNode obj, String key) {
+		DecimalFormat twoDForm = new DecimalFormat("#.##");
+		return obj.get(key) == null ? -1 : Double.valueOf(twoDForm.format(obj.get(key).getDoubleValue()));
 	}
 }

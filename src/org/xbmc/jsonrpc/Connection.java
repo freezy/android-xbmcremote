@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 import org.apache.http.HttpException;
 import org.codehaus.jackson.JsonEncoding;
@@ -39,6 +40,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.xbmc.android.util.Base64;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Host;
 import org.xbmc.httpapi.NoSettingsException;
@@ -57,7 +59,7 @@ public class Connection {
 	private static final String TAG = "Connection-JsonRpc";
 	
 	private static final String XBMC_JSONRPC_BOOTSTRAP = "/jsonrpc";
-	private static final String XBMC_THUMB_BOOTSTRAP = "/thumb";
+	private static final String XBMC_MICROHTTPD_VFS_BOOTSTRAP =  "/vfs/";
 	private static final int SOCKET_CONNECTION_TIMEOUT = 5000;
 	
 	/**
@@ -69,7 +71,7 @@ public class Connection {
 	 * Complete URL without any attached command parameters, for instance:
 	 * <code>http://192.168.0.10:8080</code>
 	 */
-	private String mUrl;
+	private String mUrlSuffix;;
 	
 	/**
 	 * Socket read timeout (connection timeout is default)
@@ -77,10 +79,10 @@ public class Connection {
 	private int mSocketReadTimeout = 0;
 	
 	/**
-	 * Performs HTTP Authentication
+	 * Holds the base64 encoded user/pass for http authentication
 	 */
-	private HttpAuthenticator mAuthenticator = null;
-	
+	private String authEncoded = null;
+
 	/**
 	 * Use getInstance() for public class instantiation
 	 * @param host XBMC host
@@ -102,7 +104,7 @@ public class Connection {
 		if (sConnection == null) {
 			sConnection = new Connection(host, port);
 		}
-		if (sConnection.mUrl == null) {
+		if (sConnection.mUrlSuffix == null) {
 			sConnection.setHost(host, port);
 		}
 		return sConnection;
@@ -128,14 +130,14 @@ public class Connection {
 	 */
 	public void setHost(String host, int port) {
 		if (host == null || port <= 0) {
-			mUrl = null;
+			mUrlSuffix = null;
 		} else {
 			StringBuilder sb = new StringBuilder();
 			sb.append("http://");
 			sb.append(host);
 			sb.append(":");
 			sb.append(port);
-			mUrl = sb.toString();
+			mUrlSuffix = sb.toString();
 		}
 	}
 	
@@ -145,12 +147,11 @@ public class Connection {
 	 * @param pass Password
 	 */
 	public void setAuth(String user, String pass) {
-		if (pass != null && pass.length() > 0) {
-			mAuthenticator = new HttpAuthenticator(user, pass);
-			Authenticator.setDefault(mAuthenticator);
+		if (user != null && pass != null) {
+			String auth = user + ":" + pass;
+			authEncoded = Base64.encodeBytes(auth.getBytes()).toString();
 		} else {
-			mAuthenticator = null;
-			Authenticator.setDefault(null);
+			authEncoded = null;
 		}
 	}
 	
@@ -162,23 +163,48 @@ public class Connection {
 		if (timeout > 0) {
 			mSocketReadTimeout = timeout;
 		}
-	}
+	}	
 	
-	public InputStream getThumbInputStream(String url, INotifiableManager manager) throws FileNotFoundException {
+	public InputStream getThumbInputStream(String thumb, INotifiableManager manager) throws FileNotFoundException {
+		URLConnection uc = null;
 		try {
-			final URL u = new URL(mUrl + XBMC_THUMB_BOOTSTRAP + "/" + url + ".jpg");
-			Log.i(TAG, "Returning input stream for " + u.toString());
-			URLConnection uc;
-			uc = u.openConnection();
-			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
-			uc.setReadTimeout(mSocketReadTimeout);
+			if (mUrlSuffix == null) {
+				throw new NoSettingsException();
+			}
+			final URL url = new URL(mUrlSuffix + XBMC_MICROHTTPD_VFS_BOOTSTRAP + URLEncoder.encode(thumb));
+
+			Log.i(TAG, "Preparing input stream from " + url + " for microhttpd..");
+			uc = getUrlConnection(url);
 			return uc.getInputStream();
 		} catch (FileNotFoundException e) {
 			throw e;
+		} catch (MalformedURLException e) {
+			manager.onError(e);
 		} catch (IOException e) {
+			manager.onError(e);
+		} catch (NoSettingsException e) {
 			manager.onError(e);
 		}
 		return null;
+	}
+	/**
+	 * Create a new URLConnection with the request headers set, including authentication.
+	 *
+	 * @param url The request url
+	 * @return URLConnection
+	 * @throws IOException
+	 */
+	private URLConnection getUrlConnection(URL url) throws IOException {
+		final URLConnection uc = url.openConnection();
+		uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
+		uc.setReadTimeout(mSocketReadTimeout);
+		uc.setRequestProperty("Connection", "close");
+
+		if (authEncoded != null) {
+			uc.setRequestProperty("Authorization", "Basic " + authEncoded);
+		}
+
+		return uc;
 	}
 	
 	/**
@@ -193,22 +219,24 @@ public class Connection {
 		try {
 			final ObjectMapper mapper = Client.MAPPER;
 
-			if (mUrl == null) {
+			if (mUrlSuffix == null) {
 				throw new NoSettingsException();
 			}
-			if (mAuthenticator != null) {
-				mAuthenticator.resetCounter();
-			}
-			final URL url = new URL(mUrl + XBMC_JSONRPC_BOOTSTRAP);
+
+			final URL url = new URL(mUrlSuffix + XBMC_JSONRPC_BOOTSTRAP);
 			uc = url.openConnection();
 			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
 			uc.setReadTimeout(mSocketReadTimeout);
+			if (authEncoded != null) {
+				uc.setRequestProperty("Authorization", "Basic " + authEncoded);
+			}
+			uc.setRequestProperty("Content-Type", "application/json");
 			uc.setDoOutput(true);
 			
 			final ObjectNode data = Client.obj()
-				.put("jsonrpc", "2.0")
-				.put("method", command)
-				.put("id", "1");
+				.p("jsonrpc", "2.0")
+				.p("method", command)
+				.p("id", "1");
 			if (parameters != null) {
 				data.put("params", parameters);
 			}
@@ -231,7 +259,7 @@ public class Connection {
 		} catch (IOException e) {
 			int responseCode = -1;
 			try {
-				responseCode = ((HttpURLConnection)uc).getResponseCode();
+					responseCode = ((HttpURLConnection)uc).getResponseCode();
 			} catch (IOException e1) { } // do nothing, getResponse code failed so treat as default i/o exception.
 			if (uc != null && responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
 				manager.onError(new HttpException(Integer.toString(HttpURLConnection.HTTP_UNAUTHORIZED)));
@@ -305,20 +333,16 @@ public class Connection {
 	 * @return Result
 	 */
 	public String getString(INotifiableManager manager, String method, ObjectNode parameters, String returnField) {
-		final JsonNode result = query(method, parameters, manager).get(RESULT_FIELD);
-		return result == null ? "" : result.get(returnField).getValueAsText();
+		final JsonNode result = (JsonNode)query(method, parameters, manager).get(RESULT_FIELD);
+		if(returnField == null)
+			return result == null ? "" : result.getValueAsText();
+		else
+			return result == null ? "" : result.get(returnField).getValueAsText();
 	}
 	
-	/**
-	 * Executes an JSON-RPC method without parameter and returns the result 
-	 * from a field as string.
-	 * @param manager     Upper layer reference for error posting
-	 * @param method      Name of the method to run
-	 * @param returnField Name of the field to return
-	 * @return Result as string
-	 */
-	public String getString(INotifiableManager manager, String method, String returnField) {
-		return getString(manager, method, null, returnField);
+		
+	public String getString(INotifiableManager manager, String method, ObjectNode parameters) {
+		return getString(manager, method, parameters, null);
 	}
 	
 	/**
@@ -369,8 +393,8 @@ public class Connection {
 	 * @param returnField Name of the field to return
 	 * @return Result as boolean
 	 */
-	public boolean getBoolean(INotifiableManager manager, String method, String returnField) {
-		return getBoolean(manager, method, null, returnField);
+	public boolean getBoolean(INotifiableManager manager, String method, ObjectNode parameters) {
+		return getBoolean(manager, method, parameters, null);
 	}
 	
 	/**
