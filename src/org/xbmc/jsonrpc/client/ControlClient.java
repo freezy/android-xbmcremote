@@ -135,7 +135,7 @@ public class ControlClient extends Client implements IControlClient {
 	 * @return true on success, false otherwise.
 	 */
 	public boolean playUrl(INotifiableManager manager, String url) {
-		return playFile(manager, url, 0);
+		return playFile(manager, url, 1);
 	}
 	
 	/**
