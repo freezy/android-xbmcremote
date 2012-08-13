@@ -26,14 +26,11 @@ public class RemoteControllerWidget extends AppWidgetProvider {
 	public static final String EXTRA_ITEM = "com.example.android.stackwidget.EXTRA_ITEM";
 	public static final String ACTION_WIDGET_CONTROL = "org.xbmc.android.remote.WIDGET_CONTROL";
 	public static final String URI_SCHEME = "remote_controller_widget";
-	private int count = 0;
-	
-
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
 		// If the app is not initialized this should cause it to try connect to
-		// the latest host and we also avoid noSettings exception
+		// the latest host and we also avoid noSettings exceptions
 		HostFactory.readHost(context);
 		
 		ComponentName thisWidget = new ComponentName(context,

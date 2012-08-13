@@ -22,8 +22,6 @@
 package org.xbmc.api.object;
 
 import java.io.Serializable;
-import java.net.URLDecoder;
-
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
@@ -48,7 +46,7 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 	public Artist(int id, String name, String arturl) {
 		this.id = id;
 		this.name = name;
-		this.arturl = URLDecoder.decode(arturl.replaceAll("image://", ""));
+		this.arturl = arturl;
 	}
 	
 	public int getMediaType() {
@@ -68,12 +66,15 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 	}
 	
 	public static String getThumbUri(ICoverArt cover) {
-		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".jpg";
+		return cover.getThumbUrl();
 	}
 	
 	public static String getFallbackThumbUri(ICoverArt cover) {
 		return null;
+	}
+	
+	public String getThumbUrl(){
+		return arturl;
 	}
 	
 	/**

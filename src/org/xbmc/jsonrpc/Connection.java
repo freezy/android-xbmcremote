@@ -32,8 +32,6 @@ import java.net.PasswordAuthentication;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
-
 import org.apache.http.HttpException;
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonFactory;
@@ -61,7 +59,6 @@ public class Connection {
 	private static final String TAG = "Connection-JsonRpc";
 	
 	private static final String XBMC_JSONRPC_BOOTSTRAP = "/jsonrpc";
-	private static final String XBMC_MICROHTTPD_VFS_BOOTSTRAP =  "/vfs/";
 	private static final int SOCKET_CONNECTION_TIMEOUT = 5000;
 	
 	/**
@@ -173,9 +170,8 @@ public class Connection {
 			if (mUrlSuffix == null) {
 				throw new NoSettingsException();
 			}
-			final URL url = new URL(mUrlSuffix + XBMC_MICROHTTPD_VFS_BOOTSTRAP + URLEncoder.encode(thumb));
-
-			Log.i(TAG, "Preparing input stream from " + url + " for microhttpd..");
+			URL url = new URL(thumb);
+			Log.i(TAG, "Preparing input stream from " + thumb + " for microhttpd..");
 			uc = getUrlConnection(url);
 			return uc.getInputStream();
 		} catch (FileNotFoundException e) {

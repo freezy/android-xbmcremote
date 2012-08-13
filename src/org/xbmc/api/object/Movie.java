@@ -22,7 +22,6 @@
 package org.xbmc.api.object;
 
 import java.io.Serializable;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import org.xbmc.android.util.Crc32;
@@ -58,7 +57,7 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 		this.filename = filename;
 		this.numWatched = numWatched;
 		this.imdbId=imdbId;
-		this.artUrl=URLDecoder.decode(artUrl.replaceAll("image://", ""));
+		this.artUrl=artUrl;
 	}
 	
 	public int getMediaType() {
@@ -91,18 +90,12 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	}
 	
 	public static String getThumbUri(ICoverArt cover) {
-		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".jpg";
+		return cover.getThumbUrl();
 	}
 	
 	public static String getFallbackThumbUri(ICoverArt cover) {
-		final int crc = cover.getFallbackCrc();
-		if (crc != 0) {
-			final String hex = Crc32.formatAsHexLowerCase(cover.getFallbackCrc());
-			return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".jpg";
-		} else {
-			return null;
-		}
+		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
+		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".jpg";
 	}
 	
 	/**
@@ -125,6 +118,10 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 		} else {
 			return 0;
 		}
+	}
+	
+	public String getThumbUrl() {
+		return artUrl;
 	}
 	
 	/**

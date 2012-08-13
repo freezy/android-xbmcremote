@@ -58,6 +58,7 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 		this.name = name;
 		this.artist = artist;
 		this.year = year;
+		this.thumbPath = thumbPath;
 		if (!thumbPath.equals("")) {
 			try {
 				this.thumbID = Crc32.computeLowerCase(thumbPath);
@@ -84,8 +85,7 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 	}
 	
 	public static String getThumbUri(ICoverArt cover) {
-		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
-		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".jpg";
+		return cover.getThumbUrl();
 	}
 	
 	public static String getFallbackThumbUri(ICoverArt cover) {
@@ -96,6 +96,10 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 		} else {
 			return null;
 		}
+	}
+	
+	public String getThumbUrl() {
+		return thumbPath;
 	}
 	
 	/**
@@ -181,6 +185,7 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 	 */
 	public int year = -1;
 	
+	public String thumbPath;
 	/**
 	 * Local path of the album
 	 */
