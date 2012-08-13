@@ -65,7 +65,12 @@ public class ControlClient extends Client implements IControlClient {
 	 * @return true on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, String fileOrFolder, int playlistId) {
-		return mConnection.getString(manager, "Playlist.Add", obj().p("playlistid", playlistId).p("item", obj().p("file", fileOrFolder))).equals("OK");
+		
+		String type = "file";
+		if(fileOrFolder.endsWith("/") || fileOrFolder.endsWith("\\"))
+			type = "directory";
+		
+		return mConnection.getString(manager, "Playlist.Add", obj().p("playlistid", playlistId).p("item", obj().p(type, fileOrFolder))).equals("OK");
 	}
 	
 	public boolean play(INotifiableManager manager, int playlistId){
@@ -373,7 +378,10 @@ public class ControlClient extends Client implements IControlClient {
 	 */
 	public boolean setPlaylistPos(INotifiableManager manager, int playlistId, int position) {
 		int playerid = getActivePlayerId(manager);
-		if(playerid == -1)
+		int currentplaylistid = getPlaylistId(manager);
+		
+		
+		if(playerid == -1 || currentplaylistid != playlistId)
 			return mConnection.getString(manager, "Player.Open", obj().p("item", obj().p("playlistid", playlistId).p("position", position))).equals("OK");
 		else
 			return mConnection.getString(manager, "Player.GoTo", obj().p("playerid", getActivePlayerId(manager)).p("position", position)).equals("OK");
@@ -442,7 +450,6 @@ public class ControlClient extends Client implements IControlClient {
 		if(active.size() == 0)
 			return nothingPlaying;
 		
-		HashMap<String, String> map = new HashMap<String, String>();
 		int playerid = getActivePlayerId(manager);
 		
 		final JsonNode player_details = mConnection.getJson(manager, "Player.GetProperties", obj().p("playerid", playerid).p(PARAM_PROPERTIES, arr().add("percentage").add("position").add("speed").add("time").add("totaltime").add("type")));
@@ -455,64 +462,30 @@ public class ControlClient extends Client implements IControlClient {
 				return nothingPlaying;
 			}
 			
-			map.put("Percentage", String.valueOf((float)getDouble(player_details, "percentage")));
-			map.put("PlayStatus", String.valueOf(getInt(player_details, "speed")));			
-			map.put("Time", parseTime(player_details.get("time")));
-			map.put("Duration", parseTime(player_details.get("totaltime")));
-			
-			map.put("Title", getString(file_details, "title"));
-			map.put("Filename", getString(file_details, "file"));			
-			
-			final int type;
-			if(getString(file_details, "type").equals("music")){
-				type = MediaType.MUSIC;
-				map.put("SongNo", String.valueOf(getInt(player_details, "position")));
-				map.put("Artist", getString(file_details, "artist"));
-				map.put("Album", getString(file_details, "title"));
+			if(getString(file_details, "type").equals("song")){
+				return MusicClient.getCurrentlyPlaying(player_details, file_details);
 			}
 			else if(getString(file_details, "type").indexOf("video") != -1){
-				type = MediaType.VIDEO;
-				map.put("VideoNo", String.valueOf(getInt(player_details, "position")));
-				map.put("Genre", getString(file_details, "genre"));
-				map.put("Tagline", getString(file_details, "tagline"));
-				
+				return VideoClient.getCurrentlyPlaying(player_details, file_details);			
 			}
 			else if(getString(file_details, "type").equals("episode")){
-				type = MediaType.VIDEO_TVEPISODE;
-				map.put("VideoNo", String.valueOf(getInt(player_details, "position")));
-				map.put("Show Title", getString(file_details, "showtitle"));
-				map.put("Season", String.valueOf(getInt(file_details, "season")));
-				map.put("Episode", String.valueOf(getInt(file_details, "episode")));
-				
+				return TvShowClient.getCurrentlyPlaying(player_details, file_details);			
 			}
 			else
-				type = MediaType.PICTURES;
-			
-			switch (type) {
-				case MediaType.MUSIC:
-					return MusicClient.getCurrentlyPlaying(map);
-				case MediaType.VIDEO:
-					return VideoClient.getCurrentlyPlaying(map);
-				case MediaType.VIDEO_TVEPISODE:
-					return TvShowClient.getCurrentlyPlaying(map);
-				//case MediaType.PICTURES:
-				//	return PictureClient.getCurrentlyPlaying(map);
-				default:
-					return nothingPlaying;
-			}
+				return nothingPlaying;
 		}
 		else
 			return nothingPlaying;
 	}
 	
-	private String parseTime(JsonNode node) {
+	public static int parseTime(JsonNode node) {
 		
 		int time=0;
 		time += node.get("hours").getIntValue() * 3600;
 		time += node.get("minutes").getIntValue() * 60;
 		time += node.get("seconds").getIntValue();
 		
-		return String.valueOf(time);
+		return time;
 		
 	}
 }

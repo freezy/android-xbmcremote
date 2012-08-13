@@ -128,16 +128,15 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Number of items in the playlist
 	 */
 	public int getPlaylistSize(INotifiableManager manager) {
-		return 0;//mConnection.getInt(manager, "GetPlaylistLength", PLAYLIST_ID);
+		return mConnection.getInt(manager, "Playlist.GetProperties", obj().p("playlistid", PLAYLIST_ID).p(PARAM_PROPERTIES, arr().add("size")), "size");
 	}
 	
 	/**
 	 * Retrieves the currently playing song number in the playlist.
 	 * @return Number of items in the playlist
 	 */
-	public int getPlaylistPosition(INotifiableManager manager) {
-		final JsonNode active = mConnection.getJson(manager, "Player.GetActivePlayers", null);			
-		return mConnection.getInt(manager, "Player.GetItem", obj().p("playerid", getInt(active.get(0), "playerid")).p(PARAM_PROPERTIES, arr().add("position")), "position");
+	public int getPlaylistPosition(INotifiableManager manager) {		
+		return mConnection.getInt(manager, "Player.GetItem", obj().p("playerid", getActivePlayerId(manager)).p(PARAM_PROPERTIES, arr().add("position")), "position");
 	}
 	
 	/**
@@ -159,7 +158,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean removeFromPlaylist(INotifiableManager manager, int position) {
-		return mConnection.getString(manager, "Playlist.Remove", obj().p("playlistid", PLAYLIST_ID).p("position", "position")).equals("OK");
+		return mConnection.getString(manager, "Playlist.Remove", obj().p("playlistid", PLAYLIST_ID).p("position", position)).equals("OK");
 	}
 	
 	/**
@@ -168,7 +167,15 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean removeFromPlaylist(INotifiableManager manager, String path) {
-		return false; //mConnection.getBoolean(manager, "RemoveFromPlaylist", PLAYLIST_ID + ";" + path);
+		
+		JsonNode playlistitems = mConnection.getJson(manager, "Playlist.GetItems", obj().p("playlistid", PLAYLIST_ID).p(PARAM_PROPERTIES, arr().add("position").add("file")));
+		for (Iterator<JsonNode> i = playlistitems.getElements(); i.hasNext();) {
+			JsonNode jsonItem = (JsonNode)i.next();
+			if(getString(jsonItem,"file").toLowerCase().equals(path.toLowerCase()))
+				return mConnection.getString(manager, "Playlist.Remove", obj().p("playlistid", PLAYLIST_ID).p("position", getInt(jsonItem,"position"))).equals("OK");
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -361,7 +368,7 @@ public class MusicClient extends Client implements IMusicClient {
 	public ArrayList<Album> getAlbums(INotifiableManager manager, ArrayList<Integer> artistIDs) {
 		
 		final ArrayList<Album> albums = new ArrayList<Album>();
-		for(Integer id : artistIDs){
+		for(int id : artistIDs){
 			albums.addAll(getAlbums(manager, obj().p("artistid", id), SortType.TITLE, "descending"));
 		}
 		
@@ -584,50 +591,50 @@ public class MusicClient extends Client implements IMusicClient {
 				ids.add(artist.id);
 		}
 		
-		return ids; //parseIntArray(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
+		return ids;
 		
 	}
 	
 			
-	static ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
+	static ICurrentlyPlaying getCurrentlyPlaying(final JsonNode player, final JsonNode item) {
 		return new IControlClient.ICurrentlyPlaying() {
 			private static final long serialVersionUID = 5036994329211476714L;
 			public String getTitle() {
-				return map.get("Title");
+				return getString(item, "title");
 			}
 			public int getTime() {
-				return Integer.valueOf(map.get("Time"));
+				return ControlClient.parseTime(player.get("time"));
 			}
 			public int getPlayStatus() {
-				return Integer.valueOf(map.get("PlayStatus"));
+				return getInt(player, "speed");
 			}
 			public int getPlaylistPosition() {
-				return Integer.parseInt(map.get("SongNo"));
+				return getInt(player, "position");
 			}
 			//Workarond for bug in Float.valueOf(): http://code.google.com/p/android/issues/detail?id=3156
 			public float getPercentage() {
 				try{
-					return Integer.valueOf(map.get("Percentage"));
+					return getInt(player, "percentage");
 				} catch (NumberFormatException e) { }
-				return Float.valueOf(map.get("Percentage"));
+				return (float)getDouble(player, "percentage");
 			}
 			public String getFilename() {
-				return map.get("Filename");
+				return getString(item, "file");
 			}
 			public int getDuration() {
-				return Integer.valueOf(map.get("Duration"));
+				return getInt(item, "duration");
 			}
 			public String getArtist() {
-				return map.get("Artist");
+				return getString(item, "artist");
 			}
 			public String getAlbum() {
-				return map.get("Album");
+				return getString(item, "album");
 			}
 			public int getMediaType() {
 				return MediaType.MUSIC;
 			}
 			public boolean isPlaying() {
-				return Integer.valueOf(map.get("PlayStatus")) == PlayStatus.PLAYING;
+				return getInt(player, "speed") == PlayStatus.PLAYING;
 			}
 			public int getHeight() {
 				return 0;

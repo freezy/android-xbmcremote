@@ -316,50 +316,50 @@ public class TvShowClient extends Client implements ITvShowClient {
 		return episode;
 	}
 	
-	static ICurrentlyPlaying getCurrentlyPlaying(final HashMap<String, String> map) {
+	static ICurrentlyPlaying getCurrentlyPlaying(final JsonNode player, final JsonNode item) {
 		return new ICurrentlyPlaying() {
 			private static final long serialVersionUID = 5036994329211476714L;
 			public String getTitle() {
-				return map.get("Show Title");
+				return getString(item, "showtitle");
 			}
 			public int getTime() {
-				return Integer.valueOf(map.get("Time"));
+				return ControlClient.parseTime(player.get("time"));
 			}
 			public int getPlayStatus() {
-				return Integer.valueOf(map.get("PlayStatus"));
+				return getInt(player, "speed");
 			}
 			public int getPlaylistPosition() {
-				return Integer.parseInt(map.get("VideoNo"));
+				return getInt(player, "position");
 			}
 			//Workarond for bug in Float.valueOf(): http://code.google.com/p/android/issues/detail?id=3156
 			public float getPercentage() {
 				try{
-					return Integer.valueOf(map.get("Percentage"));
+					return getInt(player, "percentage");
 				} catch (NumberFormatException e) { }
-				return Float.valueOf(map.get("Percentage"));
+				return (float)getDouble(player, "percentage");
 			}
 			public String getFilename() {
-				return map.get("Filename");
+				return getString(item, "file");
 			}
 			public int getDuration() {
-				return Integer.valueOf(map.get("Duration"));
+				return ControlClient.parseTime(player.get("totaltime"));
 			}
 			public String getArtist() {
-				if(Integer.valueOf(map.get("Season")) == 0) {
-					return "Specials / Episode " + map.get("Episode");
+				if(getInt(item, "season") == 0) {
+					return "Specials / Episode " + getInt(item, "episode");
 				}
 				else {
-					return "Season " + map.get("Season") + " / Episode " + map.get("Episode");
+					return "Season " + getInt(item, "season") + " / Episode " + getInt(item, "episode");
 				}
 			}
 			public String getAlbum() {
-				return map.get("Title");
+				return getString(item, "title");
 			}
 			public int getMediaType() {
 				return MediaType.VIDEO_TVSHOW;
 			}
 			public boolean isPlaying() {
-				return Integer.valueOf(map.get("PlayStatus")) == PlayStatus.PLAYING;
+				return getInt(player, "speed") == PlayStatus.PLAYING;
 			}
 			public int getHeight() {
 				return 0;
