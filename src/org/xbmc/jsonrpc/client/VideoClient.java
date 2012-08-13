@@ -264,7 +264,16 @@ public class VideoClient extends Client implements IVideoClient {
 	 * @return Thumbnail bitmap
 	 */
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
-		return getCover(manager, cover, size, Movie.getThumbUri(cover), Movie.getFallbackThumbUri(cover));
+		String url = null;
+		if(Movie.getThumbUri(cover) != ""){
+			final JsonNode dl = mConnection.getJson(manager, "Files.PrepareDownload", obj().p("path", Movie.getThumbUri(cover)));
+			if(dl != null){
+				JsonNode details = dl.get("details");
+				if(details != null)
+					url = mConnection.getUrl(getString(details, "path"));
+			}
+		}
+		return getCover(manager, cover, size, url);
 	}
 	
 	

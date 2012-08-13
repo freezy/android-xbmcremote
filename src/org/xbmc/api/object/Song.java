@@ -55,6 +55,7 @@ public class Song implements ICoverArt, INamedResource {
 		this.duration = duration;
 		this.path = path + filename;
 		this.filename = filename;
+		this.thumbPath = thumbPath;
 		if (!thumbPath.equals("")) {
 			try {
 				this.thumbID = Crc32.computeLowerCase(URLDecoder.decode(thumbPath.replaceAll("image://", "")));
@@ -137,6 +138,10 @@ public class Song implements ICoverArt, INamedResource {
 		return MediaType.MUSIC;
 	}
 	
+	public String getThumbUrl(){
+		return thumbPath;
+	}
+	
 	/**
 	 * Database ID
 	 */
@@ -173,7 +178,9 @@ public class Song implements ICoverArt, INamedResource {
 	/**
 	 * Filename of song
 	 */
-	public String filename;	
+	public String filename;
+	
+	public String thumbPath;
 	/**
 	 * CRC of the thumb
 	 */

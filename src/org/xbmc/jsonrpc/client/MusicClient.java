@@ -574,7 +574,16 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Thumbnail bitmap
 	 */
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
-		return getCover(manager, cover, size, Album.getThumbUri(cover), Album.getFallbackThumbUri(cover));
+		String url = null;
+		if(Album.getThumbUri(cover) != ""){
+			final JsonNode dl = mConnection.getJson(manager, "Files.PrepareDownload", obj().p("path", Album.getThumbUri(cover)));
+			if(dl != null){
+				JsonNode details = dl.get("details");
+				if(details != null)
+					url = mConnection.getUrl(getString(details, "path"));
+			}
+		}
+		return getCover(manager, cover, size, url);
 	}
 	
 	/**

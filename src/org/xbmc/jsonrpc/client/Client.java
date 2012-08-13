@@ -94,7 +94,11 @@ public abstract class Client {
 	 * @param fallbackUrl URL to fallback cover
 	 * @return Bitmap
 	 */
-	protected Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size, String url, String fallbackUrl) {
+	protected Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size, String url) {
+		
+		if(url == null)
+			return null;
+		
 		final int mediaType = cover.getMediaType();
 		// don't fetch small sizes
 		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
@@ -107,20 +111,7 @@ public abstract class Client {
 			
 			Log.i(TAG, "Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
 			if (opts.outWidth < 0) {
-				if (fallbackUrl != null) {
-					Log.i(TAG, "Starting fallback download (" + fallbackUrl + ")");
-					opts = prefetch(manager, fallbackUrl, size, mediaType);
-					dim = ThumbSize.getTargetDimension(size, mediaType, opts.outWidth, opts.outHeight);
-					Log.i(TAG, "FALLBACK-Pre-fetch: " + opts.outWidth + "x" + opts.outHeight + " => " + dim);
-					if (opts.outWidth < 0) {
-						return null;
-					} else {
-						url = fallbackUrl;
-					}
-				} else {
-					Log.i(TAG, "Fallback url is null, returning null-bitmap");
-					return null;
-				}
+				return null;
 			}
 			final int ss = ImportUtilities.calculateSampleSize(opts, dim);
 			Log.i(TAG, "Sample size: " + ss);

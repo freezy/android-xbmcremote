@@ -52,14 +52,7 @@ public class TvShow implements ICoverArt, INamedResource {
 	} 
 	
 	public static String getThumbUri(ICoverArt cover) {
-		if (cover.getMediaType() == MediaType.VIDEO_TVSHOW) {
-			return getFallbackThumbUri(cover);
-		} else if (cover.getMediaType() == MediaType.VIDEO_TVEPISODE) {
-			final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
-			return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".jpg";
-		} else {
-			return getFallbackThumbUri(cover);
-		}
+		return cover.getThumbUrl();
 	}
 	
 	public static String getFallbackThumbUri(ICoverArt cover) {
@@ -97,6 +90,10 @@ public class TvShow implements ICoverArt, INamedResource {
 	
 	public String getPath() {
 		return path;
+	}
+	
+	public String getThumbUrl() {
+		return artUrl;
 	}
 	
 	/**
