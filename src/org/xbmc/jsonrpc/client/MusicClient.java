@@ -408,14 +408,16 @@ public class MusicClient extends Client implements IMusicClient {
 		obj.p(PARAM_PROPERTIES, arr().add("thumbnail")).p("albumartistsonly", albumArtistsOnly);
 		final ArrayList<Artist> artists = new ArrayList<Artist>();
 		final JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetArtists", obj);
-		final JsonNode jsonArtists = result.get("artists");
-		for (Iterator<JsonNode> i = jsonArtists.getElements(); i.hasNext();) {
-			JsonNode jsonArtist = (JsonNode)i.next();
-			artists.add(new Artist(
-				getInt(jsonArtist, "artistid"), 
-				getString(jsonArtist, "label"), 
-				getString(jsonArtist, "thumbnail", "") 
-			));
+		if(result != null){
+			final JsonNode jsonArtists = result.get("artists");
+			for (Iterator<JsonNode> i = jsonArtists.getElements(); i.hasNext();) {
+				JsonNode jsonArtist = (JsonNode)i.next();
+				artists.add(new Artist(
+					getInt(jsonArtist, "artistid"), 
+					getString(jsonArtist, "label"), 
+					getString(jsonArtist, "thumbnail", "") 
+				));
+			}
 		}
 		return artists;
 	}
