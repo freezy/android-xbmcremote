@@ -22,7 +22,6 @@
 package org.xbmc.jsonrpc.client;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
@@ -343,7 +342,7 @@ public class MusicClient extends Client implements IMusicClient {
 		obj = sort(obj.p(PARAM_PROPERTIES, arr().add("artist").add("year").add("thumbnail")), sortBy, sortOrder);
 		
 		final ArrayList<Album> albums = new ArrayList<Album>();
-		final JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetAlbums", obj);
+		final JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetAlbum", obj);
 		if(result.size() > 0){
 			final JsonNode jsonAlbums = result.get("albums");
 			for (Iterator<JsonNode> i = jsonAlbums.getElements(); i.hasNext();) {

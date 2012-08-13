@@ -21,13 +21,11 @@
 
 package org.xbmc.jsonrpc.client;
 
-import java.util.HashMap;
 import org.codehaus.jackson.JsonNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Host;
-import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SeekType;
 import org.xbmc.jsonrpc.Connection;
 

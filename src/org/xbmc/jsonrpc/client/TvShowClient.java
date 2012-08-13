@@ -22,7 +22,6 @@
 package org.xbmc.jsonrpc.client;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
