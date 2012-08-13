@@ -21,12 +21,10 @@
 
 package org.xbmc.jsonrpc;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -212,7 +210,6 @@ public class Connection {
 			final URLConnection uc = getUrlConnection(url);
 			
 			final InputStream is = uc.getInputStream();
-			final InputStreamReader isr = new InputStreamReader(is);
 			final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 			
 			byte[] data = new byte[8192];
