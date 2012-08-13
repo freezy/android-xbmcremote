@@ -27,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -270,8 +269,22 @@ public abstract class Client {
 	public final static int getInt(JsonNode obj, String key) {
 		return obj.get(key) == null ? -1 : obj.get(key).getIntValue();
 	}
+
 	public final static double getDouble(JsonNode obj, String key) {
-		DecimalFormat twoDForm = new DecimalFormat("#.##");
-		return obj.get(key) == null ? -1 : Double.valueOf(twoDForm.format(obj.get(key).getDoubleValue()));
+		
+		if(obj.get(key) == null)
+			return -1;
+		
+		DecimalFormat twoDForm = new DecimalFormat("#.0");
+		
+		double val = -1;
+		try{
+			val = Double.valueOf(twoDForm.format(obj.get(key).getDoubleValue()).replace(',', '.'));
+		}
+		catch(NumberFormatException e){
+			val = -1;
+		}
+		
+		return val;
 	}
 }
