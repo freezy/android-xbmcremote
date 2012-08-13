@@ -2,17 +2,16 @@ package org.xbmc.jsonrpc.client;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
-import org.xbmc.android.util.Crc32;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.type.DirectoryMask;
+import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
 import org.xbmc.jsonrpc.Connection;
 
@@ -76,11 +75,14 @@ public class InfoClient extends Client implements IInfoClient {
 	 */
 	public ArrayList<FileLocation> getShares(INotifiableManager manager, int mediaType) {
 		
+
 		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
-		final JsonNode jsonShares = mConnection.getJson(manager, "Files.GetSources", obj().p("media", "video")).get("sources");
-		for (Iterator<JsonNode> i = jsonShares.getElements(); i.hasNext();) {
-			JsonNode jsonShare = (JsonNode)i.next();
-			shares.add(new FileLocation(getString(jsonShare, "label"), getString(jsonShare, "file")));
+		final JsonNode jsonShares = mConnection.getJson(manager, "Files.GetSources", obj().p("media", MediaType.getName(mediaType)));
+		if(jsonShares != null){
+			for (Iterator<JsonNode> i = jsonShares.get("sources").getElements(); i.hasNext();) {
+				JsonNode jsonShare = (JsonNode)i.next();
+				shares.add(new FileLocation(getString(jsonShare, "label"), getString(jsonShare, "file")));
+			}
 		}
 		return shares;
 	}
