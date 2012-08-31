@@ -53,17 +53,17 @@ import android.util.Log;
  *
  * Please remember to unsubscribe (e.g. onPause()) in order to avoid unnecessary
  * polling.
- * 
+ *
  * @author Team XBMC
  */
 public class NowPlayingPollerThread extends Thread {
-	
+
 	private static final String TAG = "NowPlayingPollerThread";
-	
+
 	public static final String BUNDLE_CURRENTLY_PLAYING = "CurrentlyPlaying";
 	public static final String BUNDLE_LAST_PLAYLIST = "LastPlaylist";
 	public static final String BUNDLE_LAST_PLAYPOSITION = "LastPlayPosition";
-	
+
 	public static final int MESSAGE_CONNECTION_ERROR = 1;
 	public static final int MESSAGE_RECONFIGURE = 2;
 	public static final int MESSAGE_PROGRESS_CHANGED = 666;
@@ -74,21 +74,21 @@ public class NowPlayingPollerThread extends Thread {
 	private IInfoClient mInfo;
 	private IControlClient mControl;
 	private final HashSet<Handler> mSubscribers;
-	
+
 	private String mCoverPath;
 	private Bitmap mCover;
-	
+
 	private int mPlayList = -1;
 	private int mPosition = -1;
-	
+
 	/**
 	 * Since this one is kinda of its own, we use a stub as manager.
 	 * @TODO create some toats or at least logs instead of empty on* methods.
 	 */
 	private final INotifiableManager mManagerStub;
-	
+
 	public NowPlayingPollerThread(final Context context){
-  	  	mManagerStub = new INotifiableManager() {
+		mManagerStub = new INotifiableManager() {
 			public void onMessage(int code, String message) { }
 			public void onMessage(String message) { }
 			public void onError(Exception e) {
@@ -112,40 +112,75 @@ public class NowPlayingPollerThread extends Thread {
 		} catch (WifiStateException e2) {
 			mControl = null;
 		}
-  	  	try {
+		try {
 			mInfo = ClientFactory.getInfoClient(mManagerStub, context);
 		} catch (WifiStateException e1) {
 			mInfo = null;
 		}
-  	  	mSubscribers = new HashSet<Handler>();
+		mSubscribers = new HashSet<Handler>();
 	}
-	
-	public synchronized void subscribe(Handler handler) {
-		Log.i("NowPlayingPoller", "Subscribing handler " + handler.getClass().getName() + " to now playing events.");
+	public void subscribe(Handler handler) {
 		// update handler on the state of affairs
 		final ICurrentlyPlaying currPlaying = mControl.getCurrentlyPlaying(mManagerStub);
 		sendSingleMessage(handler, MESSAGE_PROGRESS_CHANGED, currPlaying);
 		sendSingleMessage(handler, MESSAGE_PLAYLIST_ITEM_CHANGED, currPlaying);
 		sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
-		
-		mSubscribers.add(handler);
+
+		synchronized (mSubscribers) {
+			mSubscribers.add(handler);
+		}
 	}
-	
-	public synchronized void unSubscribe(Handler handler){
-		mSubscribers.remove(handler);
+
+	public void unSubscribe(Handler handler){
+		synchronized (mSubscribers) {
+			mSubscribers.remove(handler);
+		}
 	}
-	
-	public synchronized Bitmap getNowPlayingCover(){
+
+	public Bitmap getNowPlayingCover(){
 		return mCover;
 	}
 	
-	public synchronized void sendMessage(int what, ICurrentlyPlaying curr) {
-		HashSet<Handler> subscribers = mSubscribers;
-		for (Handler handler : subscribers) {
-			sendSingleMessage(handler, what, curr);
+		
+	
+
+	/**
+	 * @return True if the stored cover art was updated.
+	 */
+	private boolean updateNowPlayingCover() {
+		try {
+			String downloadURI = mInfo.getCurrentlyPlayingThumbURI(mManagerStub);
+			if (downloadURI == null || downloadURI.length() == 0) {
+				mCover = null;
+				String oldCoverPath = mCoverPath;
+				mCoverPath = null;
+				// If we had previously been handing out a thumbnail, clients
+				// need to update to the lack of one.
+				return oldCoverPath != null;
+			}
+			if (!downloadURI.equals(mCoverPath)) {
+				mCoverPath = downloadURI;
+				mCover = mInfo.download(downloadURI);
+				return true;
+			}
+		} catch (MalformedURLException e) {
+			Log.e(TAG, Log.getStackTraceString(e));
+		} catch (URISyntaxException e) {
+			Log.e(TAG, Log.getStackTraceString(e));
+		} catch (IOException e) {
+			Log.e(TAG, Log.getStackTraceString(e));
+		}
+		return false;
+	}
+
+	public void sendMessage(int what, ICurrentlyPlaying curr) {
+		synchronized (mSubscribers) {
+			for (Handler handler : mSubscribers) {
+				sendSingleMessage(handler, what, curr);
+			}
 		}
 	}
-	
+
 	private void sendSingleMessage(Handler handler, int what, ICurrentlyPlaying curr) {
 		Message msg = Message.obtain(handler);
 		msg.what = what;
@@ -157,97 +192,81 @@ public class NowPlayingPollerThread extends Thread {
 		handler.sendMessage(msg);
 	}
 
-	public synchronized void sendEmptyMessage(int what) {
-		HashSet<Handler> subscribers = mSubscribers;
-		for (Handler handler : subscribers) {
-			handler.sendEmptyMessage(what);
-		}	
+	public void sendEmptyMessage(int what) {
+		synchronized (mSubscribers) {
+			for (Handler handler : mSubscribers) {
+				handler.sendEmptyMessage(what);
+			}
+		}
 	}
-	
+
 	public void run() {
 		String lastPos = "-1";
 		int lastPlayStatus = PlayStatus.UNKNOWN;
 		int currentPlayStatus = PlayStatus.UNKNOWN;
 		int currentMediaType = 0;
 		IControlClient control = mControl; // use local reference for faster access
-		HashSet<Handler> subscribers = mSubscribers;
+		HashSet<Handler> subscribers;
 		while (!isInterrupted() ) {
+			synchronized (mSubscribers) {
+				subscribers = new HashSet<Handler>(mSubscribers);
+			}
 			if (subscribers.size() > 0){
-/*				if (!control.isConnected()) {
+				/*				if (!control.isConnected()) {
 					sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
 				} else {*/
-					ICurrentlyPlaying currPlaying;
-					try{
-						 currPlaying = control.getCurrentlyPlaying(mManagerStub);
-					} catch(Exception e) {
-						e.printStackTrace();
-						sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
-						return;
-					}
-					currentPlayStatus = currPlaying.getPlayStatus();
-					String currentPos = currPlaying.getTitle() + currPlaying.getDuration();
-					
-					// send changed status
-					if (currentPlayStatus == PlayStatus.PLAYING) {
-						sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
-					}
-					
-					// play state changed?
-					if ((currentPlayStatus != lastPlayStatus) || (currentMediaType != currPlaying.getMediaType())) {
-						currentMediaType = currPlaying.getMediaType();
-						
-						if (currentPlayStatus == PlayStatus.PLAYING) {
-							mPlayList = control.getPlaylistId(mManagerStub);
-							sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);
-						} else {
-							sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);
-							sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
-						}
-					}
-					
-					// play position changed?
-					if (!lastPos.equals(currentPos)) {
-						lastPos = currentPos;
-						
-						if (currPlaying.getPlaylistPosition() >= 0) {
-							mPosition = currPlaying.getPlaylistPosition();
-						}
-						sendMessage(MESSAGE_PLAYLIST_ITEM_CHANGED, currPlaying);
-			  	  		
-			  	  		try {				
-			  	  			String downloadURI = mInfo.getCurrentlyPlayingThumbURI(mManagerStub);
-			  	  			Log.e("NowPlayingPollerThread", "Download URI: " + downloadURI);
-			  	  			if (downloadURI != null && downloadURI.length() > 0) {
-			  	  				if (!downloadURI.equals(mCoverPath)) {
-			  	  					mCoverPath = downloadURI;
-			  	  					
-			  	  					mCover = mInfo.download(downloadURI);
-			  	  								  	  					
-			  	  					for (Handler handler : subscribers) {
-			  	  						sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
-		  				  	  		}	
-			  	  				}
-			  	  			} else {
-			  	  				mCover = null;
-			  	  				if (mCoverPath != null){
-			  	  					for (Handler handler : subscribers) {
-			  	  						sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
-		  				  	  		}			  	  					
-			  	  				}
-			  	  				mCoverPath = null;
-			  	  			}
-			  	  		} catch (MalformedURLException e) {
-			  	  			//e.printStackTrace();
-			  	  			Log.e(TAG, Log.getStackTraceString(e));
-			  	  		} catch (URISyntaxException e) {
-			  	  			//e.printStackTrace();
-			  	  			Log.e(TAG, Log.getStackTraceString(e));
-			  	  		} catch (IOException e) {
-			  	  			Log.e(TAG, Log.getStackTraceString(e));
-			  	  		}
+				ICurrentlyPlaying currPlaying;
+				try{
+					currPlaying = control.getCurrentlyPlaying(mManagerStub);
+				} catch(Exception e) {
+					e.printStackTrace();
+					sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
+					return;
+				}
+				currentPlayStatus = currPlaying.getPlayStatus();
+				String currentPos = currPlaying.getTitle() + currPlaying.getDuration();
+
+				// send changed status
+				if (currentPlayStatus == PlayStatus.PLAYING) {
+					sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
+					boolean coverChanged = updateNowPlayingCover();
+					if (coverChanged) {
+						sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
 					}
 				}
-//			}
+
+				// play state changed?
+				if ((currentPlayStatus != lastPlayStatus) || (currentMediaType != currPlaying.getMediaType())) {
+					currentMediaType = currPlaying.getMediaType();
+
+					if (currentPlayStatus == PlayStatus.PLAYING) {
+						mPlayList = control.getPlaylistId(mManagerStub);
+						sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);
+					} else {
+						sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);
+						sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
+					}
+					boolean coverChanged = updateNowPlayingCover();
+					if (coverChanged) {
+						sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
+					}
+				}
+
+				// play position changed?
+				if (!lastPos.equals(currentPos)) {
+					lastPos = currentPos;
+
+					if (currPlaying.getPlaylistPosition() >= 0) {
+						mPosition = currPlaying.getPlaylistPosition();
+					}
+					sendMessage(MESSAGE_PLAYLIST_ITEM_CHANGED, currPlaying);
+
+					boolean coverChanged = updateNowPlayingCover();
+					if (coverChanged) {
+						sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
+					}
+				}
+			}
 			try {
 				sleep(1000);
 			} catch (InterruptedException e) {
@@ -256,5 +275,5 @@ public class NowPlayingPollerThread extends Thread {
 			}
 			lastPlayStatus = currentPlayStatus;
 		}
-	}	
+	}
 }
