@@ -121,6 +121,7 @@ public class NowPlayingPollerThread extends Thread {
 	}
 	
 	public synchronized void subscribe(Handler handler) {
+		Log.i("NowPlayingPoller", "Subscribing handler " + handler.getClass().getName() + " to now playing events.");
 		// update handler on the state of affairs
 		final ICurrentlyPlaying currPlaying = mControl.getCurrentlyPlaying(mManagerStub);
 		sendSingleMessage(handler, MESSAGE_PROGRESS_CHANGED, currPlaying);
@@ -215,18 +216,13 @@ public class NowPlayingPollerThread extends Thread {
 			  	  		
 			  	  		try {				
 			  	  			String downloadURI = mInfo.getCurrentlyPlayingThumbURI(mManagerStub);
+			  	  			Log.e("NowPlayingPollerThread", "Download URI: " + downloadURI);
 			  	  			if (downloadURI != null && downloadURI.length() > 0) {
 			  	  				if (!downloadURI.equals(mCoverPath)) {
 			  	  					mCoverPath = downloadURI;
-			  	  								  	  					
-			  	  					byte[] buffer = download(downloadURI);
 			  	  					
-			  	  					if (buffer == null || buffer.length == 0)
-			  	  						mCover = null;
-			  	  					else 
-			  	  						mCover = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
-
-
+			  	  					mCover = mInfo.download(downloadURI);
+			  	  								  	  					
 			  	  					for (Handler handler : subscribers) {
 			  	  						sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
 		  				  	  		}	
@@ -260,18 +256,5 @@ public class NowPlayingPollerThread extends Thread {
 			}
 			lastPlayStatus = currentPlayStatus;
 		}
-	}
-	
-	private byte[] download(String pathToDownload) throws IOException, URISyntaxException {
-		Connection connection;	
-		final Host host = HostFactory.host;
-			if (host != null) {
-				connection = Connection.getInstance(host.addr, host.port);
-				connection.setAuth(host.user, host.pass);
-			} else {
-				connection = Connection.getInstance(null, 0);
-			}
-			
-			return connection.download(pathToDownload);
-	}
+	}	
 }

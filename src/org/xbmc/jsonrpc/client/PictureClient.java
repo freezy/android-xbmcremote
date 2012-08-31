@@ -8,7 +8,7 @@ import org.xbmc.jsonrpc.client.Client.ObjNode;
 
 public class PictureClient {
 
-	static ICurrentlyPlaying getCurrentlyPlaying(final JsonNode item, final ObjNode props) {
+	static ICurrentlyPlaying getCurrentlyPlaying(final Integer currentPlayer, final JsonNode item, final ObjNode props) {
 		return new ICurrentlyPlaying() {
 			private static final long serialVersionUID = 5036994329211476713L;
 			
@@ -39,7 +39,7 @@ public class PictureClient {
 			}
 
 			public int getPlayStatus() {
-				return PlayStatus.PLAYING;
+				return PlayStatus.parse(currentPlayer, props.get("speed").getIntValue());
 			}
 
 			public int getPlaylistPosition() {

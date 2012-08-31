@@ -46,7 +46,6 @@ import org.xbmc.jsonrpc.client.Client;
 
 import android.util.Log;
 
-
 /**
  * Singleton class. Will be instantiated only once and contains mostly help
  * 
@@ -55,47 +54,54 @@ import android.util.Log;
 public class Connection {
 
 	private static final String TAG = "Connection-JsonRpc";
-	
+
 	private static final String XBMC_JSONRPC_BOOTSTRAP = "/jsonrpc";
 	private static final String XBMC_THUMB_BOOTSTRAP = "/thumb";
+	private static final String XBMC_MICROHTTPD_VFS_BOOTSTRAP = "/vfs";
 	private static final int SOCKET_CONNECTION_TIMEOUT = 5000;
-	
+
 	/**
 	 * Singleton class instance
 	 */
 	private static Connection sConnection;
-	
+
 	/**
 	 * Complete URL without any attached command parameters, for instance:
 	 * <code>http://192.168.0.10:8080</code>
 	 */
 	private String mUrl;
-	
+
 	/**
 	 * Socket read timeout (connection timeout is default)
 	 */
 	private int mSocketReadTimeout = 0;
-	
+
 	/**
 	 * Performs HTTP Authentication
 	 */
 	private HttpAuthenticator mAuthenticator = null;
-	
+
 	/**
 	 * Use getInstance() for public class instantiation
-	 * @param host XBMC host
-	 * @param port Port
+	 * 
+	 * @param host
+	 *            XBMC host
+	 * @param port
+	 *            Port
 	 */
 	private Connection(String host, int port) {
 		setHost(host, port);
 	}
-	
+
 	/**
-	 * Returns the singleton instance of this connection. Note that host and 
-	 * port settings are only looked at the first time. Use {@link setHost()}
-	 * if you want to update these parameters.
-	 * @param host XBMC host
-	 * @param port HTTP API / JSON-RPC port (it's the same)
+	 * Returns the singleton instance of this connection. Note that host and
+	 * port settings are only looked at the first time. Use {@link setHost()} if
+	 * you want to update these parameters.
+	 * 
+	 * @param host
+	 *            XBMC host
+	 * @param port
+	 *            HTTP API / JSON-RPC port (it's the same)
 	 * @return Connection instance
 	 */
 	public static Connection getInstance(String host, int port) {
@@ -107,9 +113,10 @@ public class Connection {
 		}
 		return sConnection;
 	}
-	
+
 	/**
 	 * Updates host info of the connection instance
+	 * 
 	 * @param host
 	 */
 	public void setHost(Host host) {
@@ -120,11 +127,14 @@ public class Connection {
 			setAuth(host.user, host.pass);
 		}
 	}
-	
+
 	/**
 	 * Updates host and port parameters of the connection instance.
-	 * @param host Host or IP address of the host
-	 * @param port HTTP port
+	 * 
+	 * @param host
+	 *            Host or IP address of the host
+	 * @param port
+	 *            HTTP port
 	 */
 	public void setHost(String host, int port) {
 		if (host == null || port <= 0) {
@@ -138,11 +148,14 @@ public class Connection {
 			mUrl = sb.toString();
 		}
 	}
-	
+
 	/**
 	 * Sets authentication info
-	 * @param user Username
-	 * @param pass Password
+	 * 
+	 * @param user
+	 *            Username
+	 * @param pass
+	 *            Password
 	 */
 	public void setAuth(String user, String pass) {
 		if (pass != null && pass.length() > 0) {
@@ -153,42 +166,75 @@ public class Connection {
 			Authenticator.setDefault(null);
 		}
 	}
-	
+
 	/**
 	 * Sets socket read timeout (connection timeout has constant value)
-	 * @param timeout Read timeout in milliseconds.
+	 * 
+	 * @param timeout
+	 *            Read timeout in milliseconds.
 	 */
 	public void setTimeout(int timeout) {
 		if (timeout > 0) {
 			mSocketReadTimeout = timeout;
 		}
 	}
-	
-	public InputStream getThumbInputStream(String url, INotifiableManager manager) throws FileNotFoundException {
+
+	public String getVfsPath(String path) {
+		return mUrl + XBMC_MICROHTTPD_VFS_BOOTSTRAP + "/" + path;
+	}
+
+	public InputStream getInputStream(String url) throws FileNotFoundException, MalformedURLException, IOException {
+		final URL u = new URL(url);
+		Log.i(TAG, "Returning input stream for " + u.toString());
+		URLConnection uc;
+		uc = u.openConnection();
+		uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
+		uc.setReadTimeout(mSocketReadTimeout);
+		return uc.getInputStream();
+	}
+
+	public InputStream getThumbInputStream(String url,
+			INotifiableManager manager) throws FileNotFoundException {
 		try {
-			final URL u = new URL(mUrl + XBMC_THUMB_BOOTSTRAP + "/" + url + ".jpg");
-			Log.i(TAG, "Returning input stream for " + u.toString());
-			URLConnection uc;
-			uc = u.openConnection();
-			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
-			uc.setReadTimeout(mSocketReadTimeout);
-			return uc.getInputStream();
+
+			return getInputStream(mUrl + XBMC_THUMB_BOOTSTRAP + "/" + url
+					+ ".jpg");
 		} catch (FileNotFoundException e) {
 			throw e;
 		} catch (IOException e) {
 			manager.onError(e);
 		}
 		return null;
+
 	}
-	
+
+	public InputStream getCoverInputStream(String url,
+			INotifiableManager manager) throws FileNotFoundException {
+		try {
+			return getInputStream(mUrl + XBMC_MICROHTTPD_VFS_BOOTSTRAP + "/"
+					+ url);
+		} catch (FileNotFoundException e) {
+			throw e;
+		} catch (IOException e) {
+			manager.onError(e);
+		}
+		return null;
+
+	}
+
 	/**
 	 * Executes a query.
-	 * @param command    Name of the command to execute
-	 * @param parameters Parameters
-	 * @param manager    Reference back to business layer
+	 * 
+	 * @param command
+	 *            Name of the command to execute
+	 * @param parameters
+	 *            Parameters
+	 * @param manager
+	 *            Reference back to business layer
 	 * @return Parsed JSON object, empty object on error.
 	 */
-	protected JsonNode query(String command, JsonNode parameters, INotifiableManager manager) {
+	protected JsonNode query(String command, JsonNode parameters,
+			INotifiableManager manager) {
 		URLConnection uc = null;
 		try {
 			final ObjectMapper mapper = Client.MAPPER;
@@ -204,38 +250,43 @@ public class Connection {
 			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
 			uc.setReadTimeout(mSocketReadTimeout);
 			uc.setDoOutput(true);
-			
-			final ObjectNode data = Client.obj()
-				.put("jsonrpc", "2.0")
-				.put("method", command)
-				.put("id", "1");
+
+			final ObjectNode data = Client.obj().put("jsonrpc", "2.0")
+					.put("method", command).put("id", "1");
 			if (parameters != null) {
 				data.put("params", parameters);
 			}
-			
+
 			final JsonFactory jsonFactory = new JsonFactory();
-			final JsonGenerator jg = jsonFactory.createJsonGenerator(uc.getOutputStream(), JsonEncoding.UTF8);
+			final JsonGenerator jg = jsonFactory.createJsonGenerator(
+					uc.getOutputStream(), JsonEncoding.UTF8);
 			jg.setCodec(mapper);
 
 			// POST data
 			jg.writeTree(data);
 			jg.flush();
-			
-			final JsonParser jp = jsonFactory.createJsonParser(uc.getInputStream());
+
+			final JsonParser jp = jsonFactory.createJsonParser(uc
+					.getInputStream());
 			jp.setCodec(mapper);
 			final JsonNode ret = jp.readValueAs(JsonNode.class);
-			Log.e("Connection", ret.toString());
+			Log.v("Connection", "Command " + command + ": " + data.toString());
+			Log.v("Connection", ret.toString());
 			return ret;
-			
+
 		} catch (MalformedURLException e) {
 			manager.onError(e);
 		} catch (IOException e) {
 			int responseCode = -1;
 			try {
-				responseCode = ((HttpURLConnection)uc).getResponseCode();
-			} catch (IOException e1) { } // do nothing, getResponse code failed so treat as default i/o exception.
-			if (uc != null && responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-				manager.onError(new HttpException(Integer.toString(HttpURLConnection.HTTP_UNAUTHORIZED)));
+				responseCode = ((HttpURLConnection) uc).getResponseCode();
+			} catch (IOException e1) {
+			} // do nothing, getResponse code failed so treat as default i/o
+				// exception.
+			if (uc != null
+					&& responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+				manager.onError(new HttpException(Integer
+						.toString(HttpURLConnection.HTTP_UNAUTHORIZED)));
 			} else {
 				manager.onError(e);
 			}
@@ -244,25 +295,30 @@ public class Connection {
 		}
 		return new ObjectNode(null);
 	}
-	
+
 	/**
 	 * Executes a JSON-RPC command and returns the result as JSON object.
-	 * @param manager     Upper layer reference for error posting
-	 * @param method      Name of the method to run
-	 * @param parameters  Parameters of the method
+	 * 
+	 * @param manager
+	 *            Upper layer reference for error posting
+	 * @param method
+	 *            Name of the method to run
+	 * @param parameters
+	 *            Parameters of the method
 	 * @return Result
 	 */
-	public JsonNode getJson(INotifiableManager manager, String method, JsonNode parameters) {
+	public JsonNode getJson(INotifiableManager manager, String method,
+			JsonNode parameters) {
 		try {
 			final JsonNode response = query(method, parameters, manager);
-			System.err.println(response);
 			final JsonNode result = response.get(RESULT_FIELD);
 			if (result == null) {
 				if (response.get(ERROR_FIELD) == null) {
-					throw new Exception("Weird JSON response, could not parse error.");
+					throw new Exception(
+							"Weird JSON response, could not parse error.");
 				} else {
-					System.err.println("ERROR: " + response.get(ERROR_FIELD).get("message").getTextValue());
-					throw new Exception(response.get(ERROR_FIELD).get("message").getTextValue());
+					throw new Exception(response.get(ERROR_FIELD)
+							.get("message").getTextValue());
 				}
 			} else {
 				return response.get(RESULT_FIELD);
@@ -272,13 +328,15 @@ public class Connection {
 		}
 		return Client.obj();
 	}
-	
-	public JsonNode getJson(INotifiableManager manager, String method, JsonNode parameters, String resultField) {
+
+	public JsonNode getJson(INotifiableManager manager, String method,
+			JsonNode parameters, String resultField) {
 		try {
 			final JsonNode response = getJson(manager, method, parameters);
 			final JsonNode result = response.get(resultField);
 			if (result == null) {
-				throw new Exception("Could not find field \"" + resultField + "\" as return value.");
+				throw new Exception("Could not find field \"" + resultField
+						+ "\" as return value.");
 			} else {
 				return response.get(resultField);
 			}
@@ -287,130 +345,171 @@ public class Connection {
 		}
 		return Client.obj();
 	}
-	
+
 	/**
 	 * Executes a JSON-RPC command without parameters and returns the result as
 	 * JSON object.
-	 * @param manager     Upper layer reference for error posting
-	 * @param method      Name of the method to run
+	 * 
+	 * @param manager
+	 *            Upper layer reference for error posting
+	 * @param method
+	 *            Name of the method to run
 	 * @return Result
 	 */
 	public JsonNode getJson(INotifiableManager manager, String method) {
 		return query(method, null, manager).get(RESULT_FIELD);
 	}
-	
+
 	/**
-	 * Executes an JSON-RPC method and returns the result from a field as string.
-	 * @param manager     Upper layer reference for error posting
-	 * @param method      Name of the method to run
-	 * @param parameters  Parameters of the method, separated by ";"
-	 * @param returnField Name of the field to return
+	 * Executes an JSON-RPC method and returns the result from a field as
+	 * string.
+	 * 
+	 * @param manager
+	 *            Upper layer reference for error posting
+	 * @param method
+	 *            Name of the method to run
+	 * @param parameters
+	 *            Parameters of the method, separated by ";"
+	 * @param returnField
+	 *            Name of the field to return
 	 * @return Result
 	 */
-	public String getString(INotifiableManager manager, String method, ObjectNode parameters, String returnField) {
-		final JsonNode result = query(method, parameters, manager).get(RESULT_FIELD);
+	public String getString(INotifiableManager manager, String method,
+			ObjectNode parameters, String returnField) {
+		final JsonNode result = query(method, parameters, manager).get(
+				RESULT_FIELD);
 		return result == null ? "" : result.get(returnField).getValueAsText();
 	}
-	
+
 	/**
-	 * Executes an JSON-RPC method without parameter and returns the result 
-	 * from a field as string.
-	 * @param manager     Upper layer reference for error posting
-	 * @param method      Name of the method to run
-	 * @param returnField Name of the field to return
+	 * Executes an JSON-RPC method without parameter and returns the result from
+	 * a field as string.
+	 * 
+	 * @param manager
+	 *            Upper layer reference for error posting
+	 * @param method
+	 *            Name of the method to run
+	 * @param returnField
+	 *            Name of the field to return
 	 * @return Result as string
 	 */
-	public String getString(INotifiableManager manager, String method, String returnField) {
+	public String getString(INotifiableManager manager, String method,
+			String returnField) {
 		return getString(manager, method, null, returnField);
 	}
-	
+
 	/**
-	 * Executes an JSON-RPC method and returns the result from a field as integer.
-	 * @param manager     Upper layer reference for error posting
-	 * @param method      Name of the method to run
-	 * @param parameters  Parameters of the method, separated by ";"
-	 * @param returnField Name of the field to return
+	 * Executes an JSON-RPC method and returns the result from a field as
+	 * integer.
+	 * 
+	 * @param manager
+	 *            Upper layer reference for error posting
+	 * @param method
+	 *            Name of the method to run
+	 * @param parameters
+	 *            Parameters of the method, separated by ";"
+	 * @param returnField
+	 *            Name of the field to return
 	 * @return Result as integer
 	 */
-	public int getInt(INotifiableManager manager, String method, ObjectNode parameters, String returnField) {
+	public int getInt(INotifiableManager manager, String method,
+			ObjectNode parameters, String returnField) {
 		try {
-			return Integer.parseInt(getString(manager, method, parameters, returnField));
+			return Integer.parseInt(getString(manager, method, parameters,
+					returnField));
 		} catch (NumberFormatException e) {
 			return 0;
 		}
 	}
 
 	/**
-	 * Executes an JSON-RPC method without parameter and returns the result 
-	 * from a field as integer.
-	 * @param manager     Upper layer reference for error posting
-	 * @param method      Name of the method to run
-	 * @param returnField Name of the field to return
+	 * Executes an JSON-RPC method without parameter and returns the result from
+	 * a field as integer.
+	 * 
+	 * @param manager
+	 *            Upper layer reference for error posting
+	 * @param method
+	 *            Name of the method to run
+	 * @param returnField
+	 *            Name of the field to return
 	 * @return Result as integer
 	 */
-	public int getInt(INotifiableManager manager, String method, String returnField) {
+	public int getInt(INotifiableManager manager, String method,
+			String returnField) {
 		return getInt(manager, method, null, returnField);
 	}
-	
+
 	/**
-	 * Executes an JSON-RPC method and returns the result from a field as boolean.
-	 * @param manager     Upper layer reference for error posting
-	 * @param method      Name of the method to run
-	 * @param parameters  Parameters of the method, separated by ";"
-	 * @param returnField Name of the field to return
+	 * Executes an JSON-RPC method and returns the result from a field as
+	 * boolean.
+	 * 
+	 * @param manager
+	 *            Upper layer reference for error posting
+	 * @param method
+	 *            Name of the method to run
+	 * @param parameters
+	 *            Parameters of the method, separated by ";"
+	 * @param returnField
+	 *            Name of the field to return
 	 * @return Result as boolean
 	 */
-	public boolean getBoolean(INotifiableManager manager, String method, ObjectNode parameters) {
+	public boolean getBoolean(INotifiableManager manager, String method,
+			ObjectNode parameters) {
 		return getJson(manager, method, parameters).getTextValue().equals("OK");
 	}
-	
+
 	/**
-	 * Executes an JSON-RPC method without parameters and returns the result 
+	 * Executes an JSON-RPC method without parameters and returns the result
 	 * from a field as boolean.
-	 * @param manager     Upper layer reference for error posting
-	 * @param method      Name of the method to run
-	 * @param returnField Name of the field to return
+	 * 
+	 * @param manager
+	 *            Upper layer reference for error posting
+	 * @param method
+	 *            Name of the method to run
+	 * @param returnField
+	 *            Name of the field to return
 	 * @return Result as boolean
 	 */
 	public boolean getBoolean(INotifiableManager manager, String method) {
 		return getBoolean(manager, method, null);
 	}
-	
+
 	/**
 	 * HTTP Authenticator.
+	 * 
 	 * @author Team XBMC
 	 */
-    public class HttpAuthenticator extends Authenticator {
-    	public static final int MAX_RETRY = 5;
-    	
-    	private final String mUser;
-    	private final char[] mPass;
-    	private int mRetryCount = 0;
-    	
-        public HttpAuthenticator(String user, String pass) {
-    		mUser = user;
-    		mPass = pass != null ? pass.toCharArray() : new char[0];
+	public class HttpAuthenticator extends Authenticator {
+		public static final int MAX_RETRY = 5;
+
+		private final String mUser;
+		private final char[] mPass;
+		private int mRetryCount = 0;
+
+		public HttpAuthenticator(String user, String pass) {
+			mUser = user;
+			mPass = pass != null ? pass.toCharArray() : new char[0];
 		}
 
-        /**
-         * This method is called when a password-protected URL is accessed
-         */
-        protected PasswordAuthentication getPasswordAuthentication() {
-        	if (mRetryCount < MAX_RETRY) {
-        		mRetryCount++;
-        		return new PasswordAuthentication(mUser, mPass);
-        	}
-        	return null;
-        }
-        
-        /**
-         * This method has to be called after each successful connection!!!
-         */
-        public void resetCounter() {
-        	mRetryCount = 0;
-        }
-    }
-	
+		/**
+		 * This method is called when a password-protected URL is accessed
+		 */
+		protected PasswordAuthentication getPasswordAuthentication() {
+			if (mRetryCount < MAX_RETRY) {
+				mRetryCount++;
+				return new PasswordAuthentication(mUser, mPass);
+			}
+			return null;
+		}
+
+		/**
+		 * This method has to be called after each successful connection!!!
+		 */
+		public void resetCounter() {
+			mRetryCount = 0;
+		}
+	}
+
 	public static final String RESULT_FIELD = "result";
 	public static final String ERROR_FIELD = "error";
 }

@@ -26,17 +26,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
+import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
-import org.xbmc.api.data.IControlClient;
-import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.api.type.ThumbSize.Dimension;
@@ -53,6 +57,11 @@ import android.util.Log;
  * @author Team XBMC
  */
 public abstract class Client {
+	
+	public static final Integer PLAYLIST_MUSIC = 0;
+	public static final Integer PLAYLIST_VIDEO = 1;
+	public static final Integer PLAYLIST_PICTURE = 2;
+
 	
 	public static final String TAG = "Client-JSON-RPC";
 	public static final String PARAM_FIELDS = "fields";
@@ -256,6 +265,42 @@ public abstract class Client {
 				break;
 		}
 		return params;
+	}
+	
+	public JsonNode getActivePlayer(INotifiableManager manager) {
+		ArrayNode result = (ArrayNode) mConnection.getJson(manager, "Player.GetActivePlayers");
+		if(result.size() == 0) {
+			// not currently playing
+			return null;
+		}
+		JsonNode player = result.get(0);
+		return player;
+	}
+	
+	
+	public Integer getActivePlayerId(INotifiableManager manager) {
+		ArrayNode result = (ArrayNode) mConnection.getJson(manager, "Player.GetActivePlayers");
+		if(result.size() == 0) {
+			// not currently playing
+			return null;
+		}
+		JsonNode player = result.get(0);
+		return player.get("playerid").getIntValue();
+	}
+	
+	public Integer getActivePlayerId(INotifiableManager manager, int type) {
+		
+		ArrayNode result = (ArrayNode) mConnection.getJson(manager, "Player.GetActivePlayers");
+		if(result.size() == 0) {
+			// not currently playing
+			return null;
+		}
+		for(JsonNode player : result) {
+			if(player.get("type").getTextValue().equals(MediaType.getName(type))) {
+				return player.get("playerid").getIntValue();
+			}
+		}
+		return null;
 	}
 	
 }

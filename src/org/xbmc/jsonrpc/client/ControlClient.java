@@ -4,9 +4,12 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
+import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.type.SeekType;
 import org.xbmc.jsonrpc.Connection;
+
+import android.util.Log;
 
 public class ControlClient extends Client implements IControlClient {
 
@@ -156,12 +159,32 @@ public class ControlClient extends Client implements IControlClient {
 	}
 
 	public boolean setPlaylistPos(INotifiableManager manager, int position) {
-		// TODO Auto-generated method stub
+		Integer player = getActivePlayerId(manager);
+		if(player == null) {
+			play(manager);
+			player = getActivePlayerId(manager);
+		}
+		
+		mConnection.getJson(manager, "Player.GoTo", obj().p("position", position).p("playerid", player));
+		
 		return false;
+	}
+	
+	public int play(INotifiableManager manager) {
+		// this should probably choose the playlist based upon the manager type
+		Integer player = getActivePlayerId(manager);
+		if(player != null) {
+			player = 0;
+		}
+		
+		
+		JsonNode status = mConnection.getJson(manager, "Player.PlayPause", obj().p("playerid", player));
+		Log.e("ControlClient", status.toString());
+		return PlayStatus.parse(player, status.getIntValue());
 	}
 
 	public boolean clearPlaylist(INotifiableManager manager, String playlistId) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -171,38 +194,34 @@ public class ControlClient extends Client implements IControlClient {
 		if(player == null) {
 			return NOTHING_PLAYING;
 		}
-		JsonNode item = mConnection.getJson(manager, "Player.GetItem", obj().p("playerid", player.get("playerid")));
-		String type = item.get("type").getTextValue();
+		Integer playerid = player.get("playerid").getIntValue();
+		JsonNode result = mConnection.getJson(manager, "Player.GetItem", obj().p("playerid", playerid).p("properties", arr().add("album").add("albumartist").add("duration").add("file").add("thumbnail").add("tagline").add("artist")));
+		if(result == null) {
+			return NOTHING_PLAYING;
+		}
+		
+		JsonNode item = result.get("item");
+		if(item == null) {
+			return NOTHING_PLAYING;
+		}
+		
+		String type = player.get("type").getTextValue();
+		
 		
 	    if("audio".equals(type)) {
-	    	JsonNode properties = mConnection.getJson(manager, "Player.getProperties", obj().p("playerid", player.get("playerid")).p("properties", arr().add("time").add("speed").add("position").add("percentage")));
-	    	return MusicClient.getCurrentlyPlaying(item, properties);
+	    	JsonNode properties = mConnection.getJson(manager, "Player.GetProperties", obj().p("playerid", playerid).p("properties", arr().add("time").add("speed").add("position").add("percentage")));
+	    	return MusicClient.getCurrentlyPlaying(playerid, item, properties);
 	    }
 	    else if("video".equals(type)) {
-	    	JsonNode properties = mConnection.getJson(manager, "Player.getProperties", obj().p("playerid", player.get("playerid")).p("properties", arr().add("time").add("speed").add("position").add("percentage")));
-	    	return VideoClient.getCurrentlyPlaying(item, properties);
+	    	JsonNode properties = mConnection.getJson(manager, "Player.GetProperties", obj().p("playerid", playerid).p("properties", arr().add("time").add("speed").add("position").add("percentage")));
+	    	return VideoClient.getCurrentlyPlaying(playerid, item, properties);
 	    }
 	    else if("picture".equals(type)) {
-	    	return PictureClient.getCurrentlyPlaying(item, obj());
+	    	return PictureClient.getCurrentlyPlaying(playerid, item, obj());
 	    }
 	    return NOTHING_PLAYING;
 	}
 	
-	/**
-	 * This will just return the first active player
-	 * @param manager
-	 * @return
-	 */
-	public JsonNode getActivePlayer(INotifiableManager manager) {
-		
-		ArrayNode result = (ArrayNode) mConnection.getJson(manager, "Player.GetActivePlayers");
-		if(result.size() == 0) {
-			return null;
-		}
-		return result.get(0);
-	}
-	
-
 	public boolean setGuiSetting(INotifiableManager manager, int setting,
 			String value) {
 		// TODO Auto-generated method stub

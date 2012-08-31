@@ -22,12 +22,11 @@
 package org.xbmc.jsonrpc.client;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
+import org.xbmc.android.remote.business.MusicManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
@@ -44,6 +43,7 @@ import org.xbmc.api.type.SortType;
 import org.xbmc.jsonrpc.Connection;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 /**
  * Takes care of every music related stuff, notably the music database.
@@ -57,7 +57,6 @@ public class MusicClient extends Client implements IMusicClient {
 	public static final int VIEW_ALBUMS = 1;
 	public static final int VIEW_SONGS = 2;
 	
-	public static final Integer PLAYLIST_ID = 0;
 	public static final String LIBRARY_TYPE = "songs";
 	
 	public static final int PLAYLIST_LIMIT = 100;
@@ -85,9 +84,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Album album, int sortBy, String sortOrder) {
-		// TODO: IMPLEMENT ME
-		return false;
-		//return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(album) + songsOrderBy(sortBy, sortOrder));
+		
+		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("albumid", album.getId())));
 	}
 
 	/**
@@ -96,10 +94,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
-		// TODO: IMPLEMENT ME
-		return false;
-//		
-//		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist) + songsOrderBy(sortBy, sortOrder));
+		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("artistid", artist.getId())));
 	}
 
 	/**
@@ -108,10 +103,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
-		// TODO: IMPLEMENT ME
-		return false;
-//		
-//		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(genre) + songsOrderBy(sortBy, sortOrder));
+		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("genreid", genre.getId())));
 	}
 
 	/**
@@ -121,10 +113,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre, int sortBy, String sortOrder) {
-		// TODO: IMPLEMENT ME
-		return false;
-//		
-//		return mConnection.getBoolean(manager, "AddToPlayListFromDB", LIBRARY_TYPE + ";" + getSongsCondition(artist, genre) + songsOrderBy(sortBy, sortOrder));
+		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("artistid", artist.getId()).p("genreid", genre.getId())));
 	}
 	
 	/**
@@ -133,10 +122,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Song song) {
-		// TODO: IMPLEMENT ME
-		return false;
-		
-//		return mConnection.getBoolean(manager, "AddToPlayList", song.path + ";" + PLAYLIST_ID);
+		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("songid", song.getId())));
 	}
 	
 	/**
@@ -144,9 +130,12 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Number of items in the playlist
 	 */
 	public int getPlaylistSize(INotifiableManager manager) {
-		// TODO: IMPLEMENT ME
-		return 0;
-//		return mConnection.getInt(manager, "GetPlaylistLength", PLAYLIST_ID);
+		JsonNode result = mConnection.getJson(manager, "Playlist.GetItems", obj().p("playlistid", PLAYLIST_MUSIC));
+		JsonNode items = result.get("items");
+		if(items == null) {
+			return 0;
+		}
+		return items.size();
 	}
 	
 	/**
@@ -154,8 +143,12 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Number of items in the playlist
 	 */
 	public int getPlaylistPosition(INotifiableManager manager) {
-		// TODO: IMPLEMENT ME
-		return 0;//mConnection.getInt(manager, "GetPlaylistSong");
+		Integer player = getActivePlayerId(manager, MediaType.MUSIC);
+		if(player == null) {
+			return -1;
+		}
+		JsonNode result = mConnection.getJson(manager, "Player.GetProperties", obj().p("playerid", player).p("properties", arr().add("position")));
+		return result.get("position").getIntValue();
 	}
 	
 	/**
@@ -164,7 +157,20 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean setPlaylistPosition(INotifiableManager manager, int position) {
-		return mConnection.getBoolean(manager, "Player.GoTo", obj().p("position", position).p("playerid", getActivePlayer(manager)));
+		Integer player = getActivePlayerId(manager, MediaType.MUSIC); 
+		if(player == null) {
+			return open(manager, PLAYLIST_MUSIC, position);
+		}
+		return mConnection.getBoolean(manager, "Player.GoTo", obj().p("position", position).p("playerid", player));
+	}
+	
+	public boolean open(INotifiableManager manager, int player) {
+		return open(manager, player, 0);
+	}
+	
+	public boolean open(INotifiableManager manager, int player, int position) {
+		
+		return mConnection.getBoolean(manager, "Player.Open", obj().p("item", obj().p("playlistid", player).p("position", position)));
 	}
 	
 	/**
@@ -190,43 +196,18 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Songs in the playlist.
 	 */
 	public ArrayList<String> getPlaylist(INotifiableManager manager) {
-		return null; //mConnection.getArray(manager, "GetPlaylistContents", PLAYLIST_ID);
-		
-		
-		/*
-		final ArrayList<String> nodes = mConnection.getArray("GetDirectory", "playlistmusic://");
-		final ArrayList<String> ids = new ArrayList<String>();
-		final int playlistPosition = getPlaylistPosition();
-		int i = 0;
-		for (String node : nodes) {
-			ids.add(node.substring(node.lastIndexOf('/') + 1, node.lastIndexOf('.')));
-			if (++i > PLAYLIST_LIMIT + playlistPosition) {
-				break;
-			}
+		ArrayList<String> playlistItems = new ArrayList<String>();
+		JsonNode result = mConnection.getJson(manager, "Playlist.GetItems", obj().p("playlistid", PLAYLIST_MUSIC));
+		JsonNode items = result.get("items");
+		if(items == null || items.size() == 0) {
+			playlistItems.add(MusicManager.EMPTY_PLAYLIST_ITEM);
+			return playlistItems;
 		}
-		StringBuilder sql = new StringBuilder();
-		sql.append("idSong IN (");
-		int j = 0;
-		for (String id : ids) {
-			sql.append(id);
-			if (++j < i) {
-				sql.append(',');
-			}
+		for (Iterator<JsonNode> i = items.getElements(); i.hasNext();) {
+			JsonNode item = (JsonNode)i.next();
+			playlistItems.add(item.get("label").getTextValue());
 		}
-		sql.append(")");
-		final HashMap<Integer, Song> unsortedSongs = getSongsAsHashMap(sql);
-		final ArrayList<Song> sortedSongs = new ArrayList<Song>();
-		
-		for (String node : nodes) {
-			try {
-				final int id = Integer.parseInt(node.substring(node.lastIndexOf('/') + 1, node.lastIndexOf('.')));
-				sortedSongs.add(unsortedSongs.get(id));
-			} catch (NumberFormatException e) { 
-				Log.e(TAG, e.getMessage());
-				e.printStackTrace();
-			}
-		}
-		return sortedSongs;*/
+		return playlistItems;
 	}
 	
 	/**
@@ -234,7 +215,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean clearPlaylist(INotifiableManager manager) {
-		return mConnection.getBoolean(manager, "Playlist.Clear", obj().p("playlistid", PLAYLIST_ID));
+		return mConnection.getBoolean(manager, "Playlist.Clear", obj().p("playlistid", PLAYLIST_MUSIC));
 	}
 	
 	/**
@@ -296,7 +277,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	private boolean play(INotifiableManager manager, ObjNode node) {
 		clearPlaylist(manager);
-		node.p("playlistid", PLAYLIST_ID);
+		node.p("playlistid", PLAYLIST_MUSIC);
 		if(mConnection.getBoolean(manager, "Playlist.Add", node)) {
 			System.err.println("Yes");
 			setCurrentPlaylist(manager);
@@ -312,11 +293,11 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean playNext(INotifiableManager manager) {
-		Integer player = getActivePlayer(manager);
+		Integer player = getActivePlayerId(manager, MediaType.MUSIC);
 		if(player != null) {
 			return mConnection.getBoolean(manager, "Player.GoNext", obj().p("playerid", player));
 		}
-		return mConnection.getBoolean(manager, "Player.Open", obj().p("item", obj().p("playlistid", PLAYLIST_ID)));
+		return mConnection.getBoolean(manager, "Player.Open", obj().p("item", obj().p("playlistid", PLAYLIST_MUSIC)));
 		
 	}
 
@@ -959,17 +940,17 @@ public class MusicClient extends Client implements IMusicClient {
 		return null; //genres;		
 	}*/
 	
-	static ICurrentlyPlaying getCurrentlyPlaying(final JsonNode item, final JsonNode props) {
+	static ICurrentlyPlaying getCurrentlyPlaying(final Integer currentPlayer, final JsonNode item, final JsonNode props) {
 		return new IControlClient.ICurrentlyPlaying() {
 			private static final long serialVersionUID = 5036994329211476714L;
 			public String getTitle() {
-				return item.get("title").getTextValue();
+				return item.get("label").getTextValue();
 			}
 			public int getTime() {
-				return parseTime(props.get("time").getTextValue());
+				return parseTime(props.get("time"));
 			}
 			public int getPlayStatus() {
-				return props.get("speed").getIntValue();
+				return PlayStatus.parse(currentPlayer, props.get("speed").getIntValue());
 			}
 			public int getPlaylistPosition() {
 				return props.get("position").getIntValue();
@@ -981,10 +962,14 @@ public class MusicClient extends Client implements IMusicClient {
 				return item.get("file").getTextValue();
 			}
 			public int getDuration() {
-				return parseTime(item.get("duration").getTextValue());
+				return item.get("duration").getIntValue();
 			}
 			public String getArtist() {
-				return item.get("albumartist").getTextValue();
+				String albumArtist = item.get("albumartist").getTextValue();
+				if(!"".equals(albumArtist)) {
+					return albumArtist;
+				}
+				return item.get("artist").getTextValue();
 			}
 			public String getAlbum() {
 				return item.get("album").getTextValue();
@@ -993,7 +978,7 @@ public class MusicClient extends Client implements IMusicClient {
 				return MediaType.MUSIC;
 			}
 			public boolean isPlaying() {
-				return props.get("speed").getIntValue() == PlayStatus.PLAYING;
+				return props.get("speed").getIntValue() > 0;
 			}
 			public int getHeight() {
 				return 0;
@@ -1001,31 +986,14 @@ public class MusicClient extends Client implements IMusicClient {
 			public int getWidth() {
 				return 0;
 			}
-			private int parseTime(String time) {
-				String[] s = time.split(":");
-				if (s.length == 2) {
-					return Integer.parseInt(s[0]) * 60 + Integer.parseInt(s[1]);
-				} else if (s.length == 3) {
-					return Integer.parseInt(s[0]) * 3600 + Integer.parseInt(s[1]) * 60 + Integer.parseInt(s[2]);
-				} else {
-					return 0;
-				}
+			private int parseTime(JsonNode time) {
+				int hours = time.get("hours").getIntValue();
+				//int milliseconds = time.get("milliseconds").getIntValue();
+				int minutes = time.get("minutes").getIntValue();
+				int seconds = time.get("seconds").getIntValue();
+				
+				return (hours * 3600) + (minutes * 60) + seconds;
 			}
 		};
-	}
-	
-	public Integer getActivePlayer(INotifiableManager manager) {
-		
-		ArrayNode result = (ArrayNode) mConnection.getJson(manager, "Player.GetActivePlayers");
-		if(result.size() == 0) {
-			// not currently playing
-			return null;
-		}
-		for(JsonNode player : result) {
-			if(player.get("type").getTextValue().equals("audio")) {
-				return player.get("playerid").getIntValue();
-			}
-		}
-		return null;
-	}
+	}	
 }

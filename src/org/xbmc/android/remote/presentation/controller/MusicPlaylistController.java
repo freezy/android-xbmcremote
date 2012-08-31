@@ -87,6 +87,7 @@ public class MusicPlaylistController extends ListController implements IControll
 	private static Bitmap sPlayingBitmap;
 	
 	public void onCreate(final PlaylistActivity activity, Handler handler, final AbsListView list) {
+		Log.e("MusicPlaylistClient", "On Create.");
 		
 		mPlaylistActivity = activity;
 		mMusicManager = ManagerFactory.getMusicManager(this);
@@ -150,6 +151,7 @@ public class MusicPlaylistController extends ListController implements IControll
 	 *            Message object containing currently playing info
 	 */
 	public synchronized boolean handleMessage(Message msg) {
+		Log.e("MusicPlaylistClient", "Handling a message.");
 		final Bundle data = msg.getData();
 		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying) data.getSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
 		switch (msg.what) {
@@ -257,10 +259,12 @@ public class MusicPlaylistController extends ListController implements IControll
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
-/*		final OneHolder<PlaylistItem>holder = (OneHolder<PlaylistItem>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
+		/*
+		final OneHolder<PlaylistItem>holder = (OneHolder<PlaylistItem>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
 		menu.setHeaderTitle(holder.holderItem.filename);
 		menu.add(0, ITEM_CONTEXT_PLAY, 1, "Play");
-		menu.add(0, ITEM_CONTEXT_REMOVE, 2, "Remove");*/
+		menu.add(0, ITEM_CONTEXT_REMOVE, 2, "Remove");
+		*/
 	}
 	
 	public void onContextItemSelected(MenuItem item) {

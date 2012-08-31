@@ -143,18 +143,18 @@ public class VideoClient extends Client implements IVideoClient {
 		return false;
 	}
 	
-	static ICurrentlyPlaying getCurrentlyPlaying(final JsonNode item, final JsonNode props) {
+	static ICurrentlyPlaying getCurrentlyPlaying(final Integer currentPlayer, final JsonNode item, final JsonNode props) {
 		
 		return new ICurrentlyPlaying() {
 			private static final long serialVersionUID = 5036994329211476714L;
 			public String getTitle() {
-				return item.get("title").getTextValue();
+				return item.get("label").getTextValue();
 			}
 			public int getTime() {
 				return parseTime(props.get("time").getTextValue());
 			}
 			public int getPlayStatus() {
-				return props.get("speed").getIntValue();
+				return PlayStatus.parse(currentPlayer, props.get("speed").getIntValue());
 			}
 			public int getPlaylistPosition() {
 				return props.get("position").getIntValue();

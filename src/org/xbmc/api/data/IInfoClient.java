@@ -21,6 +21,7 @@
 
 package org.xbmc.api.data;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.type.DirectoryMask;
+
+import android.graphics.Bitmap;
 
 
 /**
@@ -70,6 +73,15 @@ public interface IInfoClient extends IClient {
 	 * @throws URISyntaxException
 	 */
 	public String getCurrentlyPlayingThumbURI(INotifiableManager manager) throws MalformedURLException, URISyntaxException;
+	
+	/**
+	 * Returns a bitmap for the download URI
+	 * @return
+	 * @throws MalformedURLException
+	 * @throws URISyntaxException
+	 */
+	public Bitmap download(String downloadURI) throws MalformedURLException, URISyntaxException, IOException;
+	
 	
 	/**
 	 * Returns any system info variable, see {@link org.xbmc.api.info.SystemInfo}
