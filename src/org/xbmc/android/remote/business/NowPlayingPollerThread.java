@@ -142,6 +142,39 @@ public class NowPlayingPollerThread extends Thread {
 		return mCover;
 	}
 
+	/**
+	 * @return True if the stored cover art was updated.
+	 */
+	private boolean updateNowPlayingCover() {
+		try {
+			String downloadURI = mInfo.getCurrentlyPlayingThumbURI(mManagerStub);
+			if (downloadURI == null || downloadURI.length() == 0) {
+				mCover = null;
+				String oldCoverPath = mCoverPath;
+				mCoverPath = null;
+				// If we had previously been handing out a thumbnail, clients
+				// need to update to the lack of one.
+				return oldCoverPath != null;
+			}
+			if (!downloadURI.equals(mCoverPath)) {
+				mCoverPath = downloadURI;
+				byte[] buffer = download(downloadURI);
+				if (buffer == null || buffer.length == 0)
+					mCover = null;
+				else
+					mCover = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
+				return true;
+			}
+		} catch (MalformedURLException e) {
+			Log.e(TAG, Log.getStackTraceString(e));
+		} catch (URISyntaxException e) {
+			Log.e(TAG, Log.getStackTraceString(e));
+		} catch (IOException e) {
+			Log.e(TAG, Log.getStackTraceString(e));
+		}
+		return false;
+	}
+
 	public void sendMessage(int what, ICurrentlyPlaying curr) {
 		synchronized (mSubscribers) {
 			for (Handler handler : mSubscribers) {
@@ -198,6 +231,10 @@ public class NowPlayingPollerThread extends Thread {
 				// send changed status
 				if (currentPlayStatus == PlayStatus.PLAYING) {
 					sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
+					boolean coverChanged = updateNowPlayingCover();
+					if (coverChanged) {
+						sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
+					}
 				}
 
 				// play state changed?
@@ -211,6 +248,10 @@ public class NowPlayingPollerThread extends Thread {
 						sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);
 						sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
 					}
+					boolean coverChanged = updateNowPlayingCover();
+					if (coverChanged) {
+						sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
+					}
 				}
 
 				// play position changed?
@@ -222,41 +263,9 @@ public class NowPlayingPollerThread extends Thread {
 					}
 					sendMessage(MESSAGE_PLAYLIST_ITEM_CHANGED, currPlaying);
 
-					try {
-						String downloadURI = mInfo.getCurrentlyPlayingThumbURI(mManagerStub);
-						if (downloadURI != null && downloadURI.length() > 0) {
-							if (!downloadURI.equals(mCoverPath)) {
-								mCoverPath = downloadURI;
-
-								byte[] buffer = download(downloadURI);
-
-								if (buffer == null || buffer.length == 0)
-									mCover = null;
-								else
-									mCover = BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
-
-
-								for (Handler handler : subscribers) {
-									sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
-								}
-							}
-						} else {
-							mCover = null;
-							if (mCoverPath != null){
-								for (Handler handler : subscribers) {
-									sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
-								}
-							}
-							mCoverPath = null;
-						}
-					} catch (MalformedURLException e) {
-						//e.printStackTrace();
-						Log.e(TAG, Log.getStackTraceString(e));
-					} catch (URISyntaxException e) {
-						//e.printStackTrace();
-						Log.e(TAG, Log.getStackTraceString(e));
-					} catch (IOException e) {
-						Log.e(TAG, Log.getStackTraceString(e));
+					boolean coverChanged = updateNowPlayingCover();
+					if (coverChanged) {
+						sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
 					}
 				}
 			}
