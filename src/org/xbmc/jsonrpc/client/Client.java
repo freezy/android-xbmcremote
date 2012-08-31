@@ -280,7 +280,7 @@ public abstract class Client {
 	
 	public Integer getActivePlayerId(INotifiableManager manager) {
 		ArrayNode result = (ArrayNode) mConnection.getJson(manager, "Player.GetActivePlayers");
-		if(result.size() == 0) {
+		if(result == null || result.size() == 0) {
 			// not currently playing
 			return null;
 		}

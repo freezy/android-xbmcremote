@@ -28,8 +28,8 @@ public class ControlClient extends Client implements IControlClient {
 	}
 
 	public boolean playFile(INotifiableManager manager, String filename) {
-		// TODO Auto-generated method stub
-		return false;
+		JsonNode status = mConnection.getJson(manager, "Player.Open", obj().p("item", obj().p("file", filename)));
+		return "OK".equals(status.getTextValue());
 	}
 
 	public boolean playNext(INotifiableManager manager) {
@@ -118,8 +118,7 @@ public class ControlClient extends Client implements IControlClient {
 	}
 
 	public boolean showPicture(INotifiableManager manager, String filename) {
-		// TODO Auto-generated method stub
-		return false;
+		return playFile(manager, filename);
 	}
 
 	public boolean broadcast(INotifiableManager manager, String message) {
@@ -174,7 +173,7 @@ public class ControlClient extends Client implements IControlClient {
 		// this should probably choose the playlist based upon the manager type
 		Integer player = getActivePlayerId(manager);
 		if(player != null) {
-			player = 0;
+			player = Client.PLAYLIST_MUSIC;
 		}
 		
 		

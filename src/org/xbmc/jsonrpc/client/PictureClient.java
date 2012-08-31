@@ -39,7 +39,10 @@ public class PictureClient {
 			}
 
 			public int getPlayStatus() {
-				return PlayStatus.parse(currentPlayer, props.get("speed").getIntValue());
+				if(currentPlayer == null) {
+					return PlayStatus.STOPPED;
+				}
+				return PlayStatus.PLAYING;
 			}
 
 			public int getPlaylistPosition() {
