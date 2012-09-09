@@ -21,6 +21,13 @@
 
 package org.xbmc.android.remote.presentation.activity;
 
+import org.xbmc.android.jsonrpc.api.AbstractCall;
+import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
+import org.xbmc.android.jsonrpc.api.model.AudioModel;
+import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetails;
+import org.xbmc.android.jsonrpc.config.HostConfig;
+import org.xbmc.android.jsonrpc.io.ApiCallback;
+import org.xbmc.android.jsonrpc.io.ConnectionManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.CacheManager;
 import org.xbmc.android.remote.business.ManagerFactory;
@@ -32,6 +39,7 @@ import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -81,11 +89,30 @@ public class HomeActivity extends Activity {
 	private IEventClientManager mEventClientManager;
 
 	private ProgressThread mProgressThread;
-    private ProgressDialog mProgressDialog;
+	private ProgressDialog mProgressDialog;
+    
+	private ConnectionManager mConnectionManager = null;
 	
 	@Override
+	@TargetApi(9)
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mConnectionManager = new ConnectionManager(getApplicationContext(), new HostConfig("192.168.0.100"));
+		
+		final AudioLibrary.GetAlbums getAlbumsCall = new AudioLibrary.GetAlbums(null, null, 
+				AudioModel.AlbumFields.TITLE, AudioModel.AlbumFields.ARTISTID, AudioModel.AlbumFields.YEAR);
+		
+		mConnectionManager.call(getAlbumsCall, new ApiCallback<AudioModel.AlbumDetails>(){
+			public void onResponse(AbstractCall<AlbumDetails> apiCall) {
+				for (AlbumDetails album : apiCall.getResults()) {
+					Log.d(TAG, "Got album: " + album.title + " (" + album.year + ")");
+				}
+			}
+			public void onError(int code, String message, String hint) {
+				Log.d(TAG, "Error " + code + ": " + message);
+			}
+		});
+		
 		setContentView(R.layout.home);
 		
 		if (Build.VERSION.SDK_INT >= 9) {

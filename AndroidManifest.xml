@@ -5,7 +5,7 @@
 	android:versionCode="808" 
 	android:installLocation="auto">
 	
-	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="10" />
+	<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="10" />
 	
 	<supports-screens
 		android:largeScreens="true"
@@ -65,13 +65,6 @@
 				<data android:scheme="http" android:mimeType="image/*"/>
 				<data android:scheme="http" android:mimeType="video/*"/>
 				<data android:scheme="http" android:mimeType="audio/*"/>
-			</intent-filter>
-		</activity>
-		<activity android:name=".presentation.activity.MediaIntentActivity" android:theme="@android:style/Theme.NoTitleBar" android:label="@string/play_on_xbmc">
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<category android:name="android.intent.category.BROWSABLE" />
 				<data android:scheme="http" android:host="youtube.com"/>
 				<data android:scheme="http" android:host="www.youtube.com"/>
 			</intent-filter>
@@ -97,6 +90,7 @@
 			</intent-filter>
 		</receiver>
 		<provider android:name=".business.provider.HostProvider" android:authorities="org.xbmc.android.provider.remote" />
+		<service android:name="org.xbmc.android.jsonrpc.service.ConnectionService" />
 		
 	</application>
 </manifest>

@@ -189,7 +189,8 @@ public class Connection {
 	 * @return Parsed JSON object, empty object on error.
 	 */
 	public JsonNode query(String command, JsonNode parameters, INotifiableManager manager) {
-		URLConnection uc = null;
+		throw new RuntimeException("Obsolete, remove any calls from this.");
+/*		URLConnection uc = null;
 		try {
 			final ObjectMapper mapper = Client.MAPPER;
 
@@ -226,6 +227,7 @@ public class Connection {
 			final JsonNode ret = jp.readValueAs(JsonNode.class);
 			return ret;
 			
+			
 		} catch (MalformedURLException e) {
 			manager.onError(e);
 		} catch (IOException e) {
@@ -241,7 +243,7 @@ public class Connection {
 		} catch (NoSettingsException e) {
 			manager.onError(e);
 		}
-		return new ObjectNode(null);
+		return new ObjectNode(null);*/
 	}
 	
 	/**

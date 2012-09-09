@@ -327,7 +327,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return All albums
 	 */
 	public ArrayList<Album> getAlbums(INotifiableManager manager, int sortBy, String sortOrder) {
-		return getAlbums(manager, sort(obj().p(PARAM_FIELDS, arr().add("artist").add("year")), sortBy, sortOrder));
+		throw new RuntimeException("Obsolete, remove any calls from this.");
+		/*
+		return getAlbums(manager, sort(obj().p(PARAM_FIELDS, arr().add("artist").add("year")), sortBy, sortOrder));*/
 	}
 	
 	private ArrayList<Album> getAlbums(INotifiableManager manager, ObjNode obj) {

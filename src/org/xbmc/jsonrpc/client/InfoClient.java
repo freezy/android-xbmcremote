@@ -47,13 +47,15 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit,  final int mMediaType) {
+		throw new RuntimeException("Obsolete, remove any calls from this.");
+		/*
 		final ArrayList<FileLocation> dirs = new ArrayList<FileLocation>();
 		final JsonNode jsonDirs = mConnection.getJson(manager, "Files.GetDirectory", obj().put("type", "files").put("directory", path), "directories");
 		for (Iterator<JsonNode> i = jsonDirs.getElements(); i.hasNext();) {
 			JsonNode jsonDir = (JsonNode)i.next();
 			dirs.add(new FileLocation(getString(jsonDir, "label"), getString(jsonDir, "file")));
 		}
-		return dirs;
+		return dirs;*/
 	}
 	
 	/**
@@ -72,13 +74,15 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public ArrayList<FileLocation> getShares(INotifiableManager manager, int mediaType) {
+		throw new RuntimeException("Obsolete, remove any calls from this.");
+		/*
 		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
 		final JsonNode jsonShares = mConnection.getJson(manager, "Files.GetSources", obj().put("type", "video")).get("shares");
 		for (Iterator<JsonNode> i = jsonShares.getElements(); i.hasNext();) {
 			JsonNode jsonShare = (JsonNode)i.next();
 			shares.add(new FileLocation(getString(jsonShare, "label"), getString(jsonShare, "file")));
 		}
-		return shares;
+		return shares;*/
 	}
 	
 	/**
