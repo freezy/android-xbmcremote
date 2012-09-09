@@ -91,13 +91,13 @@ public class HomeActivity extends Activity {
 	private ProgressThread mProgressThread;
 	private ProgressDialog mProgressDialog;
     
-	private ConnectionManager mConnectionManager = null;
+//	private ConnectionManager mConnectionManager = null;
 	
 	@Override
 	@TargetApi(9)
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mConnectionManager = new ConnectionManager(getApplicationContext(), new HostConfig("192.168.0.100"));
+/*		mConnectionManager = new ConnectionManager(getApplicationContext(), new HostConfig("192.168.0.100"));
 		
 		final AudioLibrary.GetAlbums getAlbumsCall = new AudioLibrary.GetAlbums(null, null, 
 				AudioModel.AlbumFields.TITLE, AudioModel.AlbumFields.ARTISTID, AudioModel.AlbumFields.YEAR);
@@ -111,7 +111,7 @@ public class HomeActivity extends Activity {
 			public void onError(int code, String message, String hint) {
 				Log.d(TAG, "Error " + code + ": " + message);
 			}
-		});
+		});*/
 		
 		setContentView(R.layout.home);
 		
