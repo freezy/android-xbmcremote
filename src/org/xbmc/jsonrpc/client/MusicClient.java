@@ -368,7 +368,7 @@ public class MusicClient extends Client implements IMusicClient {
 		
 		final ArrayList<Album> albums = new ArrayList<Album>();
 		for(int id : artistIDs){
-			albums.addAll(getAlbums(manager, obj().p("artistid", id), SortType.TITLE, "descending"));
+			albums.addAll(getAlbums(manager, obj().p("filter", obj().p("artistid", id)), SortType.TITLE, "descending"));
 		}
 		
 		return albums;
@@ -383,7 +383,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Albums with an artist
 	 */
 	public ArrayList<Album> getAlbums(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
-		return getAlbums(manager, obj().p("artistid", artist.id), sortBy, sortOrder);
+		return getAlbums(manager, obj().p("filter", obj().p("artistid", artist.id)), sortBy, sortOrder);
 	}
 
 	/**
@@ -394,7 +394,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Albums of a genre
 	 */
 	public ArrayList<Album> getAlbums(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
-		return getAlbums(manager, obj().p("genreid", genre.id), sortBy, sortOrder);
+		return getAlbums(manager, obj().p("filter", obj().p("genreid", genre.id)), sortBy, sortOrder);
 	}
 	
 	/**
@@ -432,7 +432,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Albums with a genre
 	 */
 	public ArrayList<Artist> getArtists(INotifiableManager manager, Genre genre, boolean albumArtistsOnly) {
-		return getArtists(manager, obj().p("genreid", genre.id), albumArtistsOnly);
+		return getArtists(manager, obj().p("filter", obj().p("genreid", genre.id)), albumArtistsOnly);
 	}
 	
 	/**
@@ -527,7 +527,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return All tracks of an album
 	 */
 	public ArrayList<Song> getSongs(INotifiableManager manager, Album album, int sortBy, String sortOrder) {
-		return getSongs(manager, obj().p("albumid", album.id), sortBy, sortOrder);
+		return getSongs(manager, obj().p("filter", obj().p("albumid", album.id)), sortBy, sortOrder);
 	}
 
 	/**
@@ -538,7 +538,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return All tracks of the artist
 	 */
 	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
-		return getSongs(manager, obj().p("artistid", artist.id), sortBy, sortOrder);
+		return getSongs(manager, obj().p("filter", obj().p("artistid", artist.id)), sortBy, sortOrder);
 	}
 	
 	/**
@@ -561,7 +561,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return All tracks of the genre
 	 */
 	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, Genre genre, int sortBy, String sortOrder) {
-		return getSongs(manager, obj().p("artistid", artist.id).p("genreid", genre.id), sortBy, sortOrder);
+		return getSongs(manager, obj().p("filter", obj().p("artistid", artist.id).p("genreid", genre.id)), sortBy, sortOrder);
 	}
 	
 	/**
