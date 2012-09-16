@@ -130,8 +130,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @return
 	 */
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Actor actor, int sortBy, String sortOrder, boolean hideWatched) {
-		//TODO
-		return new ArrayList<TvShow>();
+		return getTvShows(manager, obj().p("filter",  obj().p("actor", actor.name)), sortBy, sortOrder, hideWatched);
 	}
 	
 	/**
@@ -139,14 +138,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * 
 	 */
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Genre genre, int sortBy, String sortOrder, boolean hideWatched) {
-		ArrayList<TvShow> tvshows = getTvShows(manager, obj(), sortBy, sortOrder, hideWatched);
-		ArrayList<TvShow> genre_shows = new ArrayList<TvShow>();
-		for(TvShow show : tvshows){
-			if(show.genre.toLowerCase().indexOf(genre.name.toLowerCase()) > -1)
-				genre_shows.add(show);
-		}
-		
-		return genre_shows;
+		return getTvShows(manager, obj().p("filter",  obj().p("genreid", genre.id)), sortBy, sortOrder, hideWatched);
 	}
 	
 	/**

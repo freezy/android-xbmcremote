@@ -27,6 +27,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+import java.util.Iterator;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
@@ -252,11 +254,25 @@ public abstract class Client {
 	}
 	
 	public final static String getString(JsonNode obj, String key) {
-		return getString(obj, key, "");
+		
+		if(obj.get(key) == null)
+			return "";
+		else if(obj.get(key).isArray()){
+			String retval = "";
+			for (Iterator<JsonNode> i = obj.get(key).getElements(); i.hasNext();) {
+				retval += i.next().getTextValue();
+				if(i.hasNext())
+					retval += ", ";
+			}
+			return retval;
+		}
+		else
+			return getString(obj, key, "");
 	}
 	public final static String getString(JsonNode obj, String key, String ifNullResult) {
 		return obj.get(key) == null ? ifNullResult : obj.get(key).getTextValue();
 	}
+
 	public final static int getInt(JsonNode obj, String key) {
 		return obj.get(key) == null ? -1 : obj.get(key).getIntValue();
 	}

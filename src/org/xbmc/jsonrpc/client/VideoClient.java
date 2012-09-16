@@ -131,7 +131,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 * @return All movies with an actor
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, int sortBy, String sortOrder, boolean hideWatched) {
-		return getMovies(manager, obj().p("actorid", actor.id), sortBy, sortOrder, hideWatched);
+		return getMovies(manager, obj().p("filter", obj().p("actor", actor.name)), sortBy, sortOrder, hideWatched);
 	}
 	
 	/**
@@ -143,14 +143,7 @@ public class VideoClient extends Client implements IVideoClient {
 	 */
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, int sortBy, String sortOrder, boolean hideWatched) {
 		
-		ArrayList<Movie> movies = getMovies(manager, obj(), sortBy, sortOrder, hideWatched);
-		ArrayList<Movie> genre_movies = new ArrayList<Movie>();
-		for(Movie movie : movies){
-			if(movie.genres.toLowerCase().indexOf(genre.name.toLowerCase()) > -1)
-				genre_movies.add(movie);
-		}
-		
-		return genre_movies;
+		return getMovies(manager, obj().p("filter", obj().p("genreid", genre.id)), sortBy, sortOrder, hideWatched);
 	}
 	
 	/**
