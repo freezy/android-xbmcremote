@@ -219,7 +219,7 @@ public abstract class Client {
 				break;
 		}
 		
-		params.p(PARAM_SORT, obj().p("method", sortby).p("order", order));
+		params.p(PARAM_SORT, obj().p("ignorearticle", true).p("method", sortby).p("order", order));
 		return params;
 	}
 	
