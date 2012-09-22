@@ -38,6 +38,7 @@ import org.xbmc.api.object.Song;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -124,31 +125,10 @@ public class SongListController extends ListController implements IController {
 					final int SelectionType = Integer.parseInt(prefs.getString(PREF_DEFAULT_SELECTION_ACTION, DEFAULT_ACTION_PLAY));
 					switch (SelectionType) {
 						case INT_DEFAULT_ACTION_PLAY:
-							if (mAlbum == null) {
-								mMusicManager.play(new QueryResponse(
-									mActivity, 
-									"Playing \"" + song.title + "\" by " + song.artist + "...", 
-									"Error playing song!",
-									true
-								), song, mActivity.getApplicationContext());
-							} else {
-								mMusicManager.play(new QueryResponse(
-									mActivity, 
-									"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
-									"Error playing song!",
-									true
-								), mAlbum, song, mActivity.getApplicationContext());
-							}
+							playSongAlbum(song);
 							break;
-						case INT_DEFAULT_ACTION_QUEUE:					
-							if (mAlbum == null) 
-							{
-								mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Song added to playlist.", "Error adding song!"), song, mActivity.getApplicationContext());
-							} 
-							else 
-							{
-								mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, song, mActivity.getApplicationContext());
-							}
+						case INT_DEFAULT_ACTION_QUEUE:
+							queueSongAlbum(song);
 							break;
 						default:
 							return;
@@ -160,10 +140,11 @@ public class SongListController extends ListController implements IController {
 			fetch();
 		}
 	}
-	
+		
 	private void fetch() {
 		final String title = mAlbum != null ? mAlbum.name + " - " : mArtist != null ? mArtist.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "Songs";
 		DataResponse<ArrayList<Song>> response = new DataResponse<ArrayList<Song>>() {
+			@TargetApi(11)
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
@@ -200,28 +181,10 @@ public class SongListController extends ListController implements IController {
 		final Song song = (Song)mList.getAdapter().getItem(((ThreeLabelsItemView)((AdapterContextMenuInfo)item.getMenuInfo()).targetView).position);
 		switch (item.getItemId()) {
 			case ITEM_CONTEXT_QUEUE:
-				if (mAlbum == null) {
-					mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Song added to playlist.", "Error adding song!"), song, mActivity.getApplicationContext());
-				} else {
-					mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, song, mActivity.getApplicationContext());
-				}
+				queueSongAlbum(song);
 				break;
 			case ITEM_CONTEXT_PLAY:
-				if (mAlbum == null) {
-					mMusicManager.play(new QueryResponse(
-						mActivity, 
-						"Playing \"" + song.title + "\" by " + song.artist + "...", 
-						"Error playing song!",
-						true
-					), song, mActivity.getApplicationContext());
-				} else {
-					mMusicManager.play(new QueryResponse(
-						mActivity, 
-						"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
-						"Error playing song!",
-						true
-					), mAlbum, song, mActivity.getApplicationContext());
-				}
+				playSongAlbum(song);
 				break;
 			default:
 				return;
@@ -384,5 +347,44 @@ public class SongListController extends ListController implements IController {
 		}
 	}
 	
+	/**
+	 * Plays a song or its album
+	 * if song belong to an album and "auto queue album" set, play the full album (starting with selected song).
+	 * Else play only the given song.
+	 * @param song Song to play
+	 */
+	private void playSongAlbum(Song song) {
+		if (mAlbum == null) {
+			mMusicManager.play(new QueryResponse(
+				mActivity, 
+				"Playing \"" + song.title + "\" by " + song.artist + "...", 
+				"Error playing song!",
+				true
+			), song, mActivity.getApplicationContext());
+		} else {
+			mMusicManager.play(new QueryResponse(
+				mActivity, 
+				"Playing album \"" + song.album + "\" starting with song \"" + song.title + "\" by " + song.artist + "...",
+				"Error playing song!",
+				true
+			), mAlbum, song, mActivity.getApplicationContext());
+		}
+	}
+		
+	/**
+	 * Queue a song or play its album
+	 * If playlist is not empty, queue the song.
+	 * Else if song belong to an album and "auto queue album" set, play the full album (starting with selected song).
+	 * Else play only the given song.
+	 * @param song Song to play
+	 */
+	private void queueSongAlbum(Song song) {
+		if (mAlbum == null) {
+			mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Song added to playlist.", "Error adding song!"), song, mActivity.getApplicationContext());
+		} else { 
+			mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, song, mActivity.getApplicationContext());
+		}
+	}
+
 	private static final long serialVersionUID = 755529227668553163L;
 }
