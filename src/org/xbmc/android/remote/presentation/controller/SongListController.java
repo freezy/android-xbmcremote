@@ -38,7 +38,6 @@ import org.xbmc.api.object.Song;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -146,7 +145,6 @@ public class SongListController extends ListController implements IController {
 	private void fetch() {
 		final String title = mAlbum != null ? mAlbum.name + " - " : mArtist != null ? mArtist.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "Songs";
 		DataResponse<ArrayList<Song>> response = new DataResponse<ArrayList<Song>>() {
-			@TargetApi(11)
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
