@@ -80,6 +80,8 @@ public class SongListController extends ListController implements IController {
 	private static final String PREF_DEFAULT_SELECTION_ACTION = "setting_default_selection_action";
 	private static final String DEFAULT_ACTION_PLAY = "0";	
 	
+	private static final String PREF_AUTO_QUEUE_ALBUM = "setting_auto_queue_album";
+	
 	private static final int INT_DEFAULT_ACTION_PLAY = 0;
 	private static final int INT_DEFAULT_ACTION_QUEUE = 1;	
 	
@@ -354,7 +356,9 @@ public class SongListController extends ListController implements IController {
 	 * @param song Song to play
 	 */
 	private void playSongAlbum(Song song) {
-		if (mAlbum == null) {
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
+		boolean queueAlbum = prefs.getBoolean(PREF_AUTO_QUEUE_ALBUM, true);
+		if (mAlbum == null || queueAlbum == false) {
 			mMusicManager.play(new QueryResponse(
 				mActivity, 
 				"Playing \"" + song.title + "\" by " + song.artist + "...", 
@@ -379,7 +383,9 @@ public class SongListController extends ListController implements IController {
 	 * @param song Song to play
 	 */
 	private void queueSongAlbum(Song song) {
-		if (mAlbum == null) {
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
+		boolean queueAlbum = prefs.getBoolean(PREF_AUTO_QUEUE_ALBUM, true);
+		if (mAlbum == null || queueAlbum == false) {
 			mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Song added to playlist.", "Error adding song!"), song, mActivity.getApplicationContext());
 		} else { 
 			mMusicManager.addToPlaylist(new QueryResponse(mActivity, "Playlist empty, added whole album.", "Song added to playlist."), mAlbum, song, mActivity.getApplicationContext());
