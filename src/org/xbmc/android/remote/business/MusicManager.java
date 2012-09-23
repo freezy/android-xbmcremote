@@ -309,8 +309,12 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	 */
 	public void addToPlaylist(final DataResponse<Boolean> response, final Song song, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
+			public void doRun() throws Exception{
+				final IMusicClient mc = music(context);
+				final IControlClient cc = control(context);
+				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
 				response.value = music(context).addToPlaylist(MusicManager.this, song);
+				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 			}
 		});
 	}
