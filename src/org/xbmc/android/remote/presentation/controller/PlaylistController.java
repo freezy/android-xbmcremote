@@ -329,10 +329,10 @@ public class PlaylistController extends ListController implements IController, C
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
-		final PlaylistItem playlistItem = (PlaylistItem)(mList.getAdapter().getItem(((AdapterContextMenuInfo)menuInfo).position));
-		menu.setHeaderTitle(playlistItem.filename);
+/*		final OneHolder<PlaylistItem>holder = (OneHolder<PlaylistItem>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
+		menu.setHeaderTitle(holder.holderItem.filename);
 		menu.add(0, ITEM_CONTEXT_PLAY, 1, "Play");
-		menu.add(0, ITEM_CONTEXT_REMOVE, 2, "Remove");
+		menu.add(0, ITEM_CONTEXT_REMOVE, 2, "Remove");*/
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
@@ -357,8 +357,7 @@ public class PlaylistController extends ListController implements IController, C
 				case VIDEO_PLAYLIST_ID:
 					mVideoManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path, mActivity.getApplicationContext());
 					break;
-				}
-				updatePlaylist();
+				}	
 				break;
 			default:
 				return;

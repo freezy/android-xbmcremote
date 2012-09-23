@@ -152,7 +152,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean removeFromPlaylist(INotifiableManager manager, int position) {
-		return mConnection.getBoolean(manager, "RemoveFromPlaylist", position + ";" + PLAYLIST_ID);
+		return mConnection.getBoolean(manager, "RemoveFromPlaylist", PLAYLIST_ID + ";" + position);
 	}
 	
 	/**
@@ -161,7 +161,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean removeFromPlaylist(INotifiableManager manager, String path) {
-		return mConnection.getBoolean(manager, "RemoveFromPlaylist", path + ";" + PLAYLIST_ID);
+		return mConnection.getBoolean(manager, "RemoveFromPlaylist", PLAYLIST_ID + ";" + path);
 	}
 	
 	/**
