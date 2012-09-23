@@ -539,6 +539,6 @@ public class VideoClient extends Client implements IVideoClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean removeFromPlaylist(INotifiableManager manager, String path) {
-		return mConnection.getBoolean(manager, "RemoveFromPlaylist", PLAYLIST_ID + ";" + path);
+		return mConnection.getBoolean(manager, "RemoveFromPlaylist", path + ";" + PLAYLIST_ID);
 	}
 }
