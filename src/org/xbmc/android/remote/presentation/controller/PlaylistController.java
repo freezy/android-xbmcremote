@@ -59,6 +59,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -352,13 +353,26 @@ public class PlaylistController extends ListController implements IController, C
 			case ITEM_CONTEXT_REMOVE:
 				switch (mPlayListId) {
 				case MUSIC_PLAYLIST_ID:
-					mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path, mActivity.getApplicationContext());
+					mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(){
+						public void run() {
+							if (value == false) {
+								Toast.makeText(mActivity.getApplicationContext(), "Failed to remove song!", Toast.LENGTH_SHORT).show();
+							}
+							updatePlaylist();
+						}
+					}, playlistItem.path, mActivity.getApplicationContext());
 					break;
 				case VIDEO_PLAYLIST_ID:
-					mVideoManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path, mActivity.getApplicationContext());
+					mVideoManager.removeFromPlaylist(new DataResponse<Boolean>(){
+						public void run() {
+							if (value == false) {
+								Toast.makeText(mActivity.getApplicationContext(), "Failed to remove video!", Toast.LENGTH_SHORT).show();
+							}
+							updatePlaylist();
+						}
+					}, playlistItem.path, mActivity.getApplicationContext());
 					break;
 				}
-				updatePlaylist();
 				break;
 			default:
 				return;
