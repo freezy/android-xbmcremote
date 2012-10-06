@@ -84,6 +84,7 @@ public class EpisodeListController extends ListController implements IController
 	public static final int MENU_SORT_BY_EPISODE_DESC = 28;
 	
 	private Season mSeason;
+	private boolean mRecentEpisodes = false;
 	
 	private ITvShowManager mTvManager;
 	private IControlManager mControlManager;
@@ -149,9 +150,10 @@ public class EpisodeListController extends ListController implements IController
 		
 		showOnLoading();
 		setTitle(title + "...");
-		if (mSeason != null) {
-			mTvManager.getEpisodes(response, mSeason, mActivity.getApplicationContext());
-		}
+		if(mSeason == null)
+			mRecentEpisodes = true;
+		
+		mTvManager.getEpisodes(response, mSeason, mActivity.getApplicationContext());
 	}
 	
 	/**
@@ -329,7 +331,10 @@ public class EpisodeListController extends ListController implements IController
 			view.position = position;
 			view.posterOverlay = episode.numWatched > 0 ? mWatchedBitmap : null;
 			view.title = episode.episode + ". " + episode.title;
-//			view.subtitle = episode.;
+			if(mRecentEpisodes){
+				view.title = episode.showTitle;
+				view.subtitle = episode.season + "x" + (episode.episode < 10? "0" : "") + episode.episode + ". " + episode.title;
+			}
 			view.subtitleRight = episode.firstAired!=null?episode.firstAired:"";
 //			view.bottomtitle = show.numEpisodes + " episodes";
 			view.bottomright = String.valueOf(((float)Math.round(episode.rating *10))/ 10);

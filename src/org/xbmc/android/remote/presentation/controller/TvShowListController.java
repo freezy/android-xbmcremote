@@ -27,6 +27,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.GridActivity;
+import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.TvShowDetailsActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.remote.presentation.widget.FlexibleItemView;
@@ -81,6 +82,7 @@ public class TvShowListController extends ListController implements IController 
 	public static final int MENU_SORT_BY_YEAR_DESC = 24;
 	public static final int MENU_SORT_BY_RATING_ASC = 25;
 	public static final int MENU_SORT_BY_RATING_DESC = 26;
+	public static final int MENU_RECENT_EPISODES = 27;
 	
 	private Actor mActor;
 	private Genre mGenre;
@@ -240,6 +242,7 @@ public class TvShowListController extends ListController implements IController 
 		sortMenu.add(2, MENU_SORT_BY_YEAR_DESC, 0, "by Year descending");
 		sortMenu.add(2, MENU_SORT_BY_RATING_ASC, 0, "by Rating ascending");
 		sortMenu.add(2, MENU_SORT_BY_RATING_DESC, 0, "by Rating descending");
+		sortMenu.add(2, MENU_RECENT_EPISODES, 0, "Recent Episodes");
 //		menu.add(0, MENU_SWITCH_VIEW, 0, "Switch view").setIcon(R.drawable.menu_view);
 		createShowHideWatchedToggle(menu);
 	}
@@ -291,6 +294,11 @@ public class TvShowListController extends ListController implements IController 
 			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
+			break;
+		case MENU_RECENT_EPISODES:
+			Intent recentEpisodesActivity = new Intent(mActivity, ListActivity.class);
+			recentEpisodesActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new EpisodeListController());
+			mActivity.startActivity(recentEpisodesActivity);
 			break;
 		default:
 			super.onOptionsItemSelected(item);
