@@ -51,6 +51,13 @@ public interface ITvShowManager extends IManager{
 	public void getEpisodes(DataResponse<ArrayList<Episode>> response, Season season, Context context) ;
 	
 	/**
+	 * Gets all recently added episodes
+	 * @param response
+	 * @param context
+	 */
+	public void getRecentlyAddedEpisodes(DataResponse<ArrayList<Episode>> response, Context context) ;
+	
+	/**
 	 * Gets all seasons for the specified show
 	 * @param show
 	 */

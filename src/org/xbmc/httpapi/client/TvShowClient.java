@@ -667,4 +667,10 @@ public class TvShowClient extends Client implements ITvShowClient {
 	public void setHost(Host host) {
 		mConnection.setHost(host);
 	}
+
+	public ArrayList<Episode> getRecentlyAddedEpisodes(
+			INotifiableManager manager, boolean hideWatched) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

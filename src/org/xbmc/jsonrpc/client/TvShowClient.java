@@ -206,15 +206,12 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @return
 	 */
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager, Season season, int sortBy, String sortOrder, boolean hideWatched) {
-		if(season != null)
-			return getEpisodes(manager, season.show, season, sortBy, sortOrder, hideWatched);
-		else
-			return getRecentlyAddedEpisodes(manager, sortBy, sortOrder, hideWatched);
+		return getEpisodes(manager, season.show, season, sortBy, sortOrder, hideWatched);
 	}
 	
-	public ArrayList<Episode> getRecentlyAddedEpisodes(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched) {
+	public ArrayList<Episode> getRecentlyAddedEpisodes(INotifiableManager manager, boolean hideWatched) {
 		
-		ObjNode obj = sort(obj().p(PARAM_PROPERTIES, arr().add("title").add("plot").add("rating").add("writer").add("firstaired").add("playcount").add("director").add("season").add("episode").add("file").add("showtitle").add("thumbnail")), sortBy, sortOrder);
+		ObjNode obj = obj().p(PARAM_PROPERTIES, arr().add("title").add("plot").add("rating").add("writer").add("firstaired").add("playcount").add("director").add("season").add("episode").add("file").add("showtitle").add("thumbnail"));
 		
 		final ArrayList<Episode> episodes = new ArrayList<Episode>();
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetRecentlyAddedEpisodes", obj);

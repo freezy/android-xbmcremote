@@ -214,4 +214,15 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 			}
 		});
 	}
+
+	public void getRecentlyAddedEpisodes(
+			DataResponse<ArrayList<Episode>> response, final Context context) {
+		mHandler.post(new Command<ArrayList<Episode>>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				mResponse.value = shows(context).getRecentlyAddedEpisodes(TvShowManager.this, getHideWatched(context));
+			}
+		});
+		
+	}
 }
