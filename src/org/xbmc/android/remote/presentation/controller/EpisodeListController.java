@@ -150,10 +150,14 @@ public class EpisodeListController extends ListController implements IController
 		
 		showOnLoading();
 		setTitle(title + "...");
-		if(mSeason == null)
+		if(mSeason != null){
+			mTvManager.getEpisodes(response, mSeason, mActivity.getApplicationContext());
+		}
+		else{
+			mTvManager.getRecentlyAddedEpisodes(response, mActivity.getApplicationContext());
 			mRecentEpisodes = true;
+		}
 		
-		mTvManager.getEpisodes(response, mSeason, mActivity.getApplicationContext());
 	}
 	
 	/**

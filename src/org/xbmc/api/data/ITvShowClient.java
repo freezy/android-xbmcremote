@@ -67,6 +67,12 @@ public interface ITvShowClient extends IClient {
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched);
 	
 	/**
+	 * Gets recently added episodes
+	 * @param manager
+	 * @return
+	 */
+	public ArrayList<Episode> getRecentlyAddedEpisodes(INotifiableManager manager, boolean hideWatched) ;
+	/**
 	 * Gets all seasons for the specified show
 	 * @param manager
 	 * @param show
