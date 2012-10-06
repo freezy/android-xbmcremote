@@ -409,7 +409,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
 		
 		String url = null;
-		if(TvShow.getThumbUri(cover) != ""){
+		if(!TvShow.getThumbUri(cover).equals("")){
 			final JsonNode dl = mConnection.getJson(manager, "Files.PrepareDownload", obj().p("path", TvShow.getThumbUri(cover)));
 			if(dl != null){
 				JsonNode details = dl.get("details");
