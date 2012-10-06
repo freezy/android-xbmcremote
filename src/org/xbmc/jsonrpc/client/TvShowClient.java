@@ -206,7 +206,46 @@ public class TvShowClient extends Client implements ITvShowClient {
 	 * @return
 	 */
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager, Season season, int sortBy, String sortOrder, boolean hideWatched) {
-		return getEpisodes(manager, season.show, season, sortBy, sortOrder, hideWatched);
+		if(season != null)
+			return getEpisodes(manager, season.show, season, sortBy, sortOrder, hideWatched);
+		else
+			return getRecentlyAddedEpisodes(manager, sortBy, sortOrder, hideWatched);
+	}
+	
+	public ArrayList<Episode> getRecentlyAddedEpisodes(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched) {
+		
+		ObjNode obj = sort(obj().p(PARAM_PROPERTIES, arr().add("title").add("plot").add("rating").add("writer").add("firstaired").add("playcount").add("director").add("season").add("episode").add("file").add("showtitle").add("thumbnail")), sortBy, sortOrder);
+		
+		final ArrayList<Episode> episodes = new ArrayList<Episode>();
+		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetRecentlyAddedEpisodes", obj);
+		if(result.size() > 0){
+			final JsonNode jsonEpisodes = result.get("episodes");
+			for (Iterator<JsonNode> i = jsonEpisodes.getElements(); i.hasNext();) {
+				JsonNode jsonEpisode = (JsonNode)i.next();
+				
+				int playcount =getInt(jsonEpisode, "playcount");
+				if(playcount > 0 && hideWatched)
+					continue;
+				
+				episodes.add(new Episode(
+					getInt(jsonEpisode, "episodeid"),
+					getString(jsonEpisode, "title"),
+					getString(jsonEpisode, "plot"),
+					getDouble(jsonEpisode, "rating"),
+					getString(jsonEpisode, "writer"),
+					getString(jsonEpisode, "firstaired"),
+					playcount,
+					getString(jsonEpisode, "director"),
+					getInt(jsonEpisode, "season"),
+					getInt(jsonEpisode, "episode"),
+					"",
+					getString(jsonEpisode, "file"),
+					getString(jsonEpisode, "showtitle"),
+					getString(jsonEpisode, "thumbnail")
+				));
+			}
+		}
+		return episodes;
 	}
 	
 	/**
