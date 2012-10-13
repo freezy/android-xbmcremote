@@ -36,7 +36,7 @@ public class TvShow implements ICoverArt, INamedResource {
 		this.numEpisodes = numEpisodes;
 		this.watchedEpisodes = watchedEpisodes;
 		this.watched = watched;
-		this.artUrl = URLDecoder.decode(artUrl.replaceAll("image://", ""));
+		this.artUrl = artUrl;
 	}
 
 	public String getShortName() {
