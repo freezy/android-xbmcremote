@@ -59,7 +59,7 @@ public abstract class ClientFactory {
 	private static HttpApi sHttpClient;
 	private static JsonRpc sJsonClient;
 	private static EventClient sEventClient;
-	private static int sApiType = API_TYPE_UNSET;
+	private static int sApiType = API_TYPE_JSONRPC;
 	
 	private static final String TAG = "ClientFactory";
 	private static final String NAME = "Android XBMC Remote";
