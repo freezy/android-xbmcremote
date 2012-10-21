@@ -253,7 +253,8 @@ public abstract class Client {
 		final String order = sortOrder.equals(SortType.ORDER_DESC) ? "descending" : "ascending";
 		switch (sortBy) {
 			default:
-				
+
+			case SortType.GENRE:
 			case SortType.ALBUM:
 				params.p("sort", MusicClient.obj().p("order", order).p("method", "label").p("ignorearticle", ignoreArticle));
 				break;

@@ -91,23 +91,6 @@ public class VideoClient extends Client implements IVideoClient {
 	}
 	
 	/**
-	 * Gets movies from database with offset
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
-	 * @return Movies with offset
-	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, int offset, boolean hideWatched) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(SELECT_MOVIES);
-		sb.append(WHERE_MOVIES);
-		sb.append(" WHERE movie.idFile=files.idFile AND path.idPath=files.idPath");
-		sb.append(watchedFilter(hideWatched));
-		sb.append(moviesOrderBy(sortBy, sortOrder));
-		sb.append(" LIMIT -1 OFFSET " + offset);
-		return parseMovies(mConnection.query("QueryVideoDatabase", sb.toString(), manager));
-	}
-	
-	/**
 	 * Gets all movies with an actor from database
 	 * @param actor Display only movies with this actor.
 	 * @param sortBy Sort field, see SortType.* 
@@ -541,4 +524,9 @@ public class VideoClient extends Client implements IVideoClient {
 	public boolean removeFromPlaylist(INotifiableManager manager, String path) {
 		return mConnection.getBoolean(manager, "RemoveFromPlaylist", PLAYLIST_ID + ";" + path);
 	}
+	
+	public boolean supportsActors() {
+		return true;
+	}
+	
 }

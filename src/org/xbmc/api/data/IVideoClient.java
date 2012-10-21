@@ -49,15 +49,6 @@ public interface IVideoClient extends IClient {
 	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched);
 	
 	/**
-	 * Gets all movies from database
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
-	 * @param offset Offset
-	 * @return All movies
-	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, int offset, boolean hideWatched);
-	
-	/**
 	 * Gets all movies with an actor from database
 	 * @param actor Display only movies with this actor.
 	 * @param sortBy Sort field, see SortType.* 
@@ -146,5 +137,10 @@ public interface IVideoClient extends IClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean removeFromPlaylist(INotifiableManager manager, String path);
-	 
+
+	/**
+	 * Checks to see if the current API has actor support
+	 * @return True on success, false otherwise
+	 */
+	public boolean supportsActors();
 }
