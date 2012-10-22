@@ -314,7 +314,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param artistIDs Array of artist IDs
 	 * @return All compilation albums
 	 */
-	public ArrayList<Album> getAlbums(INotifiableManager manager, ArrayList<Integer> artistIDs) {
+	public ArrayList<Album> getAlbums(INotifiableManager manager, ArrayList<Integer> artistIDs, int sortBy, String sortOrder) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
 		sb.append(" FROM albumview WHERE albumview.strAlbum <> ''");
@@ -328,6 +328,7 @@ public class MusicClient extends Client implements IMusicClient {
 			}
 		}
 		sb.append(")");
+		sb.append(albumsOrderBy(sortBy, sortOrder));
 		return parseAlbums(mConnection.query("QueryMusicDatabase", sb.toString(), manager));
 	}
 	

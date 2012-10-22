@@ -113,8 +113,11 @@ public class ControlClient extends Client implements IControlClient {
 	}
 
 	public boolean updateLibrary(INotifiableManager manager, String mediaType) {
-		// TODO Auto-generated method stub
-		return false;
+		Log.d("ControlClient", "Scanning audio library");
+		mConnection.getJson(manager, "AudioLibrary.Scan");
+		Log.d("ControlClient", "Scanning video library");
+		mConnection.getJson(manager, "VideoLibrary.Scan");
+		return true;
 	}
 
 	public boolean showPicture(INotifiableManager manager, String filename) {

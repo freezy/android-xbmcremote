@@ -367,12 +367,12 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param artistIDs Array of artist IDs
 	 * @return All compilation albums
 	 */
-	public ArrayList<Album> getAlbums(INotifiableManager manager, ArrayList<Integer> artistIDs) {
+	public ArrayList<Album> getAlbums(INotifiableManager manager, ArrayList<Integer> artistIDs, int sortBy, String sortOrder) {
 		
 		// TODO: Make ignore article configurable
 		final ArrayList<Album> albums = new ArrayList<Album>();
 		for (Integer id : artistIDs) {
-			ObjNode node = sort(obj().p("artistid", id), SortType.ALBUM, SortType.ORDER_ASC, true);
+			ObjNode node = sort(obj().p("artistid", id), sortBy, sortOrder, true);
 			albums.addAll(parseAlbums(mConnection.getJson(manager, "AudioLibrary.GetAlbums", node)));
 		}
 		return albums;

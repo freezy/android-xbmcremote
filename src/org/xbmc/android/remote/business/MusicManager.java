@@ -60,7 +60,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 			public void doRun() throws Exception {
 				final IMusicClient mc = music(context);
 				ArrayList<Integer> compilationArtistIDs = mc.getCompilationArtistIDs(MusicManager.this);
-				response.value = mc.getAlbums(MusicManager.this, compilationArtistIDs);
+				response.value = mc.getAlbums(MusicManager.this, compilationArtistIDs, getSortBy(SortType.ALBUM), getSortOrder());
 			}
 		});
 	}
