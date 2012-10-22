@@ -23,8 +23,7 @@ public class ControlClient extends Client implements IControlClient {
 	}
 
 	public boolean addToPlaylist(INotifiableManager manager, String fileOrFolder) {
-		// TODO Auto-generated method stub
-		return false;
+		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", 0).p("item", obj().p("file", fileOrFolder)));
 	}
 
 	public boolean playFile(INotifiableManager manager, String filename) {
@@ -175,7 +174,7 @@ public class ControlClient extends Client implements IControlClient {
 	public int play(INotifiableManager manager) {
 		// this should probably choose the playlist based upon the manager type
 		Integer player = getActivePlayerId(manager);
-		if(player != null) {
+		if(player == null) {
 			player = Client.PLAYLIST_MUSIC;
 		}
 		
@@ -187,7 +186,7 @@ public class ControlClient extends Client implements IControlClient {
 
 	public boolean clearPlaylist(INotifiableManager manager, String playlistId) {
 		
-		return false;
+		return mConnection.getBoolean(manager, "Playlist.Clear", obj().p("playlistid", playlistId));
 	}
 
 	public ICurrentlyPlaying getCurrentlyPlaying(INotifiableManager manager) {
@@ -205,6 +204,12 @@ public class ControlClient extends Client implements IControlClient {
 		JsonNode item = result.get("item");
 		if(item == null) {
 			return NOTHING_PLAYING;
+		}
+		
+		// currently streams don't work properly
+		JsonNode file = item.get("file");
+		if(file == null) {
+			return PLAYING_UNKNOWN;
 		}
 		
 		String type = player.get("type").getTextValue();

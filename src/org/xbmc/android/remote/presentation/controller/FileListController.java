@@ -236,7 +236,7 @@ public class FileListController extends ListController implements IController {
 			mControlManager.queueFolder(new QueryResponse(mActivity, "Queueing folder " + loc.path, "Error queueing folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
 			break;
 		case ITEM_CONTEXT_PLAY:
-			mControlManager.playFolder(new QueryResponse(mActivity, "Playing folder " + loc.path, "Error playint folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
+			mControlManager.playFolder(new QueryResponse(mActivity, "Playing folder " + loc.path, "Error playing folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
 			break;
 		}
 	}

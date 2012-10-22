@@ -26,19 +26,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
-import org.xbmc.android.util.Base64;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
+import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
@@ -165,6 +163,7 @@ public abstract class Client {
 			opts.inJustDecodeBounds = true;
 			BitmapFactory.decodeStream(is, null, opts);
 		} catch (FileNotFoundException e) {
+			Log.e("Client", e.getMessage(), e);
 			return opts;
 		}
 		return opts;
@@ -303,5 +302,24 @@ public abstract class Client {
 		}
 		return null;
 	}
+	
+	protected ArrayList<Genre> parseGenres(JsonNode result) {
+		ArrayList<Genre> genres = new ArrayList<Genre>();
+		final JsonNode jsonAlbums = result.get("genres");
+		if(jsonAlbums == null) {
+			return genres;
+		}
+		
+		for (Iterator<JsonNode> i = jsonAlbums.getElements(); i.hasNext();) {
+			JsonNode jsonArtist = (JsonNode)i.next();
+			genres.add(new Genre(
+					getInt(jsonArtist, "genreid"), 
+					getString(jsonArtist, "label") 
+					));			
+		}
+		
+		return genres;
+	}
+
 	
 }

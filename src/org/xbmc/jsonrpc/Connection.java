@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 import org.apache.http.HttpException;
 import org.codehaus.jackson.JsonEncoding;
@@ -183,7 +184,8 @@ public class Connection {
 		return mUrl + XBMC_MICROHTTPD_VFS_BOOTSTRAP + "/" + path;
 	}
 
-	public InputStream getInputStream(String url) throws FileNotFoundException, MalformedURLException, IOException {
+	public InputStream getInputStream(String url) throws FileNotFoundException,
+			MalformedURLException, IOException {
 		final URL u = new URL(url);
 		Log.i(TAG, "Returning input stream for " + u.toString());
 		URLConnection uc;
@@ -196,9 +198,15 @@ public class Connection {
 	public InputStream getThumbInputStream(String url,
 			INotifiableManager manager) throws FileNotFoundException {
 		try {
+			
+			url = URLEncoder.encode(url);
+			if(url.startsWith("/") == false) {
+				url = "/" + url;
+			}
 
-			return getInputStream(mUrl + XBMC_THUMB_BOOTSTRAP + "/" + url
-					+ ".jpg");
+		    String isUrl = mUrl + XBMC_MICROHTTPD_VFS_BOOTSTRAP + url;
+		    Log.e("Connection", isUrl);
+			return getInputStream(isUrl);
 		} catch (FileNotFoundException e) {
 			throw e;
 		} catch (IOException e) {

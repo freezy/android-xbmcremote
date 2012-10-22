@@ -16,8 +16,10 @@ import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
 import org.xbmc.jsonrpc.Connection;
+import org.xbmc.jsonrpc.client.Client.ObjNode;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 public class VideoClient extends Client implements IVideoClient {
 
@@ -45,13 +47,17 @@ public class VideoClient extends Client implements IVideoClient {
 			if (playcount > 0 && hideWatched) {
 				continue;
 			}
+			String fullpath = getString(jsonMovie, "file").replace("\\", "/");
+			String localPath = fullpath.substring(0, fullpath.lastIndexOf('/'));
+			String filename = fullpath.replace(localPath, "");
+
 			movies.add(new Movie(getInt(jsonMovie, "movieid"), getString(
-					jsonMovie, "label"), getInt(jsonMovie, "year"), getString(
-					jsonMovie, "file"), getString(jsonMovie, "file"),
-					getString(jsonMovie, "director"), getString(jsonMovie,
-							"runtime"), getString(jsonMovie, "genre"),
-					getDouble(jsonMovie, "rating"), playcount, getString(
-							jsonMovie, "imdbnumber")));
+					jsonMovie, "label"), getInt(jsonMovie, "year"), localPath,
+					filename, getString(jsonMovie, "director"), getString(
+							jsonMovie, "runtime"),
+					getString(jsonMovie, "genre"), getDouble(jsonMovie,
+							"rating"), playcount, getString(jsonMovie,
+							"imdbnumber")));
 		}
 
 		return movies;
@@ -79,7 +85,7 @@ public class VideoClient extends Client implements IVideoClient {
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre,
 			int sortBy, String sortOrder, boolean hideWatched) {
 		// unfortunately no ability to query by genres currently
-		ArrayList<Movie> movies =  parseMovies(mConnection.getJson(
+		ArrayList<Movie> movies = parseMovies(mConnection.getJson(
 				manager,
 				"VideoLibrary.GetMovies",
 				sort(obj().p(
@@ -88,9 +94,9 @@ public class VideoClient extends Client implements IVideoClient {
 								.add("director").add("runtime").add("genre")
 								.add("rating").add("imdbnumber")), sortBy,
 						sortOrder, true)), hideWatched);
-		for(Iterator<Movie> i = movies.iterator(); i.hasNext();) {
+		for (Iterator<Movie> i = movies.iterator(); i.hasNext();) {
 			Movie movie = i.next();
-			if(!movie.isGenre(genre)) {
+			if (!movie.isGenre(genre)) {
 				i.remove();
 			}
 		}
@@ -98,23 +104,40 @@ public class VideoClient extends Client implements IVideoClient {
 	}
 
 	public Movie updateMovieDetails(INotifiableManager manager, Movie movie) {
-		// TODO Auto-generated method stub
-		return null;
+
+		ObjNode obj = obj().p("movieid", movie.getId()).p(
+				"properties",
+				arr().add("tagline").add("plot").add("votes").add("studio")
+						.add("mpaa").add("trailer"));
+		JsonNode result = mConnection.getJson(manager,
+				"VideoLibrary.GetMovieDetails", obj);
+		JsonNode movieDetails = result.get("moviedetails");
+		if (movieDetails == null) {
+			return movie;
+		}
+		Log.e("VideoClient", result.toString());
+		movie.tagline = getString(movieDetails, "tagline");
+		movie.plot = getString(movieDetails, "plot");
+		movie.numVotes = getInt(movieDetails, "votes");
+		movie.studio = getString(movieDetails, "studio");
+		movie.rated = getString(movieDetails, "mpaa");
+		movie.trailerUrl = getString(movieDetails, "trailer");
+		return movie;
 	}
 
 	public ArrayList<Actor> getActors(INotifiableManager manager) {
-
-		return null;
+		// TODO, we can't lookup actors currently
+		return new ArrayList<Actor>();
 	}
 
 	public ArrayList<Actor> getMovieActors(INotifiableManager manager) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO, we can't lookup actors currently
+		return new ArrayList<Actor>();
 	}
 
 	public ArrayList<Actor> getTvShowActors(INotifiableManager manager) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO, we can't lookup actors currently
+		return new ArrayList<Actor>();
 	}
 
 	public ArrayList<Genre> getMovieGenres(INotifiableManager manager) {
@@ -125,22 +148,18 @@ public class VideoClient extends Client implements IVideoClient {
 				sort(obj().p("type", "movie"), SortType.GENRE,
 						SortType.ORDER_DESC, true));
 
-		ArrayList<Genre> genres = new ArrayList<Genre>();
-		for (JsonNode genre : result.get("genres")) {
-			genres.add(new Genre(genre.get("genreid").getIntValue(), genre.get(
-					"label").getTextValue()));
-		}
-		return genres;
+		return parseGenres(result);
+
 	}
 
 	public ArrayList<Genre> getTvShowGenres(INotifiableManager manager) {
-		// TODO Auto-generated method stub
-		return null;
+		// we can't lookup genres currently
+		return new ArrayList<Genre>();
 	}
 
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
-		// TODO Auto-generated method stub
-		return null;
+		return getCover(manager, cover, size, Movie.getThumbUri(cover),
+				Movie.getFallbackThumbUri(cover));
 	}
 
 	public int getPlaylistPosition(INotifiableManager manager) {
@@ -195,10 +214,16 @@ public class VideoClient extends Client implements IVideoClient {
 			}
 
 			public int getDuration() {
+				if (item.get("duration") == null) {
+					return 0;
+				}
 				return parseTime(item.get("duration").getTextValue());
 			}
 
 			public String getArtist() {
+				if (item.get("genre") == null) {
+					return "";
+				}
 				return item.get("genre").getTextValue();
 			}
 
@@ -241,7 +266,7 @@ public class VideoClient extends Client implements IVideoClient {
 			}
 		};
 	}
-	
+
 	public boolean supportsActors() {
 		return false;
 	}

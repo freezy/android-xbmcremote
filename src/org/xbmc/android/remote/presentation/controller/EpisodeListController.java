@@ -38,9 +38,11 @@ import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.object.Season;
+import org.xbmc.api.object.TvShow;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -51,19 +53,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
+@SuppressLint("NewApi")
 public class EpisodeListController extends ListController implements IController {
 	
 	private static final int mThumbSize = ThumbSize.SMALL;
@@ -82,6 +85,7 @@ public class EpisodeListController extends ListController implements IController
 	public static final int MENU_SORT_BY_EPISODE_DESC = 28;
 	
 	private Season mSeason;
+	private TvShow mTvShow;
 	
 	private ITvShowManager mTvManager;
 	private IControlManager mControlManager;
@@ -107,6 +111,7 @@ public class EpisodeListController extends ListController implements IController
 			}
 			
 			mSeason = (Season)activity.getIntent().getSerializableExtra(ListController.EXTRA_SEASON);
+			mTvShow = (TvShow)activity.getIntent().getSerializableExtra(ListController.EXTRA_TVSHOW);
 			
 			activity.registerForContextMenu(mList);
 			
@@ -147,8 +152,8 @@ public class EpisodeListController extends ListController implements IController
 		
 		showOnLoading();
 		setTitle(title + "...");
-		if (mSeason != null) {
-			mTvManager.getEpisodes(response, mSeason, mActivity.getApplicationContext());
+		if (mSeason != null && mTvShow != null) {
+			mTvManager.getEpisodes(response, mTvShow, mSeason, mActivity.getApplicationContext());
 		}
 	}
 	

@@ -41,6 +41,7 @@ import org.xbmc.api.object.TvShow;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -64,6 +65,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
+@TargetApi(11)
 public class TvShowListController extends ListController implements IController {
 	
 	private static final int mThumbSize = ThumbSize.SMALL;

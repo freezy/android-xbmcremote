@@ -36,6 +36,7 @@ import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
 import org.xbmc.api.type.ThumbSize;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -56,6 +57,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
+@TargetApi(11)
 public class SeasonListController extends ListController implements IController {
 
 	private static final int mThumbSize = ThumbSize.MEDIUM;
@@ -108,6 +110,7 @@ public class SeasonListController extends ListController implements IController 
 					final Season season = (Season) mList.getAdapter().getItem(((GridPosterItemView) view).position);
 					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_SEASON, season);
+					nextActivity.putExtra(ListController.EXTRA_TVSHOW, mShow);
 					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new EpisodeListController());
 					mActivity.startActivity(nextActivity);
 				}
@@ -198,6 +201,7 @@ public class SeasonListController extends ListController implements IController 
 		case ITEM_CONTEXT_BROWSE:
 			Intent nextActivity = new Intent(mActivity, ListActivity.class);
 			nextActivity.putExtra(ListController.EXTRA_SEASON, season);
+			nextActivity.putExtra(ListController.EXTRA_TVSHOW, mShow);
 			nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER,
 					new EpisodeListController());
 			mActivity.startActivity(nextActivity);

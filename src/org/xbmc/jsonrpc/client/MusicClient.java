@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
 import org.xbmc.android.remote.business.MusicManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
@@ -235,7 +234,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean play(INotifiableManager manager, Album album, int sortBy, String sortOrder) {
-		return false; //play(manager, getSongsCondition(album).append(songsOrderBy(sortBy, sortOrder)));
+		// ignoring sort as not applicable in jsonrpc API
+		return play(manager, obj().p("item", getSongsCondition(album)));
 	}
 	
 	/**
@@ -279,11 +279,9 @@ public class MusicClient extends Client implements IMusicClient {
 		clearPlaylist(manager);
 		node.p("playlistid", PLAYLIST_MUSIC);
 		if(mConnection.getBoolean(manager, "Playlist.Add", node)) {
-			System.err.println("Yes");
 			setCurrentPlaylist(manager);
 			return playNext(manager);
 		}
-		System.err.println("No");
 		return false;
 	}
 	
@@ -460,38 +458,24 @@ public class MusicClient extends Client implements IMusicClient {
 		return parseGenres(mConnection.getJson(manager, "AudioLibrary.GetGenres", node));
 	}
 	
-	private ArrayList<Genre> parseGenres(JsonNode result) {
-		ArrayList<Genre> genres = new ArrayList<Genre>();
-		final JsonNode jsonAlbums = result.get("genres");
-		if(jsonAlbums == null) {
-			return genres;
-		}
-		
-		for (Iterator<JsonNode> i = jsonAlbums.getElements(); i.hasNext();) {
-			JsonNode jsonArtist = (JsonNode)i.next();
-			genres.add(new Genre(
-					getInt(jsonArtist, "genreid"), 
-					getString(jsonArtist, "label") 
-					));			
-		}
-		
-		return genres;
-	}
-	
-	
 	/**
 	 * Updates the album object with additional data from the albuminfo table
 	 * @param album
 	 * @return Updated album
 	 */
 	public Album updateAlbumInfo(INotifiableManager manager, Album album) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT g.strGenre, a.strExtraGenres, ai.strLabel, ai.iRating");
-		sb.append("  FROM album a, genre g");
-		sb.append("  LEFT JOIN albuminfo AS ai ON ai.idAlbumInfo = a.idAlbum");
-		sb.append("  WHERE a.idGenre = g.idGenre");
-		sb.append("  AND a.idAlbum = " + album.id);
-		return null; //parseAlbumInfo(album, mConnection.query("QueryMusicDatabase", sb.toString(), manager));
+		ObjNode obj = obj().p("albumid", album.getId()).p("properties", arr()
+				.add("genre").add("rating"));
+		JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetAlbumDetails", obj);
+		JsonNode albumDetails = result.get("albumdetails");
+		if(albumDetails == null) {
+			return album;
+		}
+		Log.e("MusicClient", result.toString());
+		album.genres = getString(albumDetails, "genre");
+		album.label = getString(albumDetails, "label");
+		album.rating = getInt(albumDetails, "rating");
+		return album;
 	}
 	
 	/**
@@ -500,12 +484,22 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Updated artist
 	 */
 	public Artist updateArtistInfo(INotifiableManager manager, Artist artist) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT strBorn, strFormed, strGenre, strMoods, strStyles, strBiography");
-		sb.append("  FROM artist");
-		sb.append("  LEFT JOIN genre ON artist.idGenre = genre.idGenre");
-		sb.append("  WHERE idArtist = " + artist.id);
-		return null; //parseArtistInfo(artist, mConnection.query("QueryMusicDatabase", sb.toString(), manager));
+
+		ObjNode obj = obj().p("artistid", artist.getId()).p("properties", arr().add("born").add("formed")
+				.add("genre").add("mood").add("style").add("description"));
+		JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetArtistDetails", obj);
+		JsonNode artistDetails = result.get("artistdetails");
+		if(artistDetails == null) {
+			return artist;
+		}
+		Log.e("MusicClient", result.toString());
+		artist.born = getString(artistDetails, "born");
+		artist.formed = getString(artistDetails, "formed");
+		artist.genres = getString(artistDetails, "genre");
+		artist.moods = getString(artistDetails, "mood");
+		artist.styles = getString(artistDetails, "style");
+		artist.biography = getString(artistDetails, "description");
+		return artist;
 	}
 	
 	/**
@@ -658,7 +652,13 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Thumbnail bitmap
 	 */
 	public Bitmap getCover(INotifiableManager manager, ICoverArt cover, int size) {
-		return getCover(manager, cover, size, Album.getThumbUri(cover), Album.getFallbackThumbUri(cover));
+		if(cover instanceof Album) {
+			return getCover(manager, cover, size, Album.getThumbUri(cover), Album.getFallbackThumbUri(cover));
+		}
+		else if(cover instanceof Artist) {
+			return getCover(manager, cover, size, Artist.getThumbUri(cover), Artist.getFallbackThumbUri(cover));
+		}
+		throw new RuntimeException("Unsupported cover type");
 	}
 	
 	/**

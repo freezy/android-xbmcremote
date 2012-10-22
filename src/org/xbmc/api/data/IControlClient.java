@@ -51,7 +51,24 @@ public interface IControlClient extends IClient {
 		public String getAlbum() { return ""; }
 		public int getHeight() { return 0; }
 		public int getWidth() { return 0; }
+	};
+	
+	public static final IControlClient.ICurrentlyPlaying PLAYING_UNKNOWN = new IControlClient.ICurrentlyPlaying() {
+		public boolean isPlaying() { return true; }
+		public int getMediaType() { return 0; }
+		public int getPlaylistPosition() { return -1; }
+		public String getTitle() { return ""; }
+		public int getTime() { return 0; }
+		public int getPlayStatus() { return PlayStatus.PLAYING; }
+		public float getPercentage() { return 0; }
+		public String getFilename() { return ""; }
+		public int getDuration() { return 0; }
+		public String getArtist() { return ""; }
+		public String getAlbum() { return ""; }
+		public int getHeight() { return 0; }
+		public int getWidth() { return 0; }
 	};	
+	
 	
 	/**
 	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.
