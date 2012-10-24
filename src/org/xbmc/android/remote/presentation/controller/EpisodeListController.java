@@ -66,7 +66,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-@SuppressLint("NewApi")
+@SuppressLint({ "NewApi", "NewApi" })
 public class EpisodeListController extends ListController implements IController {
 	
 	private static final int mThumbSize = ThumbSize.SMALL;

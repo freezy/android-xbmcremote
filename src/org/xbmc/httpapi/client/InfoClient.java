@@ -9,6 +9,7 @@ import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.info.GuiSettings;
+import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.type.DirectoryMask;
@@ -128,8 +129,8 @@ public class InfoClient implements IInfoClient {
 	 * @param field Field to return
 	 * @return
 	 */
-	public String getSystemInfo(INotifiableManager manager, int field) {
-		return mConnection.getString(manager, "GetSystemInfo", String.valueOf(field));
+	public String getSystemVersion(INotifiableManager manager) {
+		return mConnection.getString(manager, "GetSystemInfo", String.valueOf(SystemInfo.SYSTEM_BUILD_VERSION));
 	}
 	
 	/**

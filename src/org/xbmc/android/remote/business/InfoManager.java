@@ -44,11 +44,11 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	 * @param response Response object
 	 * @param field Field to return
 	 */
-	public void getSystemInfo(final DataResponse<String> response, final int field, final Context context) {
+	public void getSystemVersion(final DataResponse<String> response, final Context context) {
 		mHandler.post(new Command<String>(response, this){
 			@Override
 			public void doRun() throws Exception {
-				response.value = info(context).getSystemInfo(InfoManager.this, field);
+				response.value = info(context).getSystemVersion(InfoManager.this);
 			}
 			
 		});

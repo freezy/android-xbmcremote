@@ -114,7 +114,7 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 						});
 					}
 				});
-		info.getSystemInfo(new DataResponse<String>() {
+		info.getSystemVersion(new DataResponse<String>() {
 			@Override
 			public void run() {
 				if (value != null && !value.equals("")) {
@@ -125,7 +125,7 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 					showNextPage();
 				}
 			}
-		}, SystemInfo.SYSTEM_BUILD_VERSION, getContext());
+		}, getContext());
 	}
 
 	@Override

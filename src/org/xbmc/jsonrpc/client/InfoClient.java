@@ -1,19 +1,12 @@
 package org.xbmc.jsonrpc.client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
-import org.xbmc.android.util.Base64;
-import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.object.FileLocation;
@@ -25,6 +18,7 @@ import org.xbmc.jsonrpc.Connection;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 /**
  * The InfoClient basically takes care of everything else not covered by the
@@ -154,8 +148,15 @@ public class InfoClient extends Client implements IInfoClient {
 	 *            Field to return
 	 * @return
 	 */
-	public String getSystemInfo(INotifiableManager manager, int field) {
-		return mConnection.getString(manager, "JSONRPC.Version", "version");
+	public String getSystemVersion(INotifiableManager manager) {
+		ObjNode obj = obj().p("properties", arr().add("version"));
+		JsonNode result = mConnection.getJson(manager, "Application.GetProperties", obj);
+		Log.e("InfoClient", result.toString());
+		JsonNode version = result.get("version");
+		if(version == null) {
+			return "Unknown";
+		}
+		return version.get("major").getValueAsText() + "." + version.get("minor").getValueAsText() + " " + version.get("revision").getValueAsText();
 	}
 
 	/**

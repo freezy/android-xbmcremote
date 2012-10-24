@@ -83,7 +83,7 @@ public class MediaIntentController extends AbstractController implements IContro
 		super.onActivityResume(activity);
 		mInfoManager.setController(this);
 		mControlManager.setController(this);
-		mInfoManager.getSystemInfo(mXbmcStatusHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
+		mInfoManager.getSystemVersion(mXbmcStatusHandler, mActivity.getApplicationContext());
 	}
 
 	public void playUrl(String url) {

@@ -175,7 +175,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 						versionButton.setText("Connecting...");
 						Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
 						ClientFactory.resetClient(host);
-						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
+						mInfoManager.getSystemVersion(mUpdateVersionHandler, mActivity.getApplicationContext());
 					}
 				}
 			});
@@ -306,7 +306,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 					case HOME_ACTION_RECONNECT:
 						((Button)mActivity.findViewById(R.id.home_version_button)).setText("Reconnecting...");
 						ClientFactory.resetClient(host);
-						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
+						mInfoManager.getSystemVersion(mUpdateVersionHandler, mActivity.getApplicationContext());
 						break;
 					case HOME_ACTION_WOL:
 						WakeOnLan wol = new WakeOnLan();
@@ -391,7 +391,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 		@Override
 		public void onFinish() {
 			((Button)mActivity.findViewById(R.id.home_version_button)).setText("Attempting to reconnect...");
-			mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
+			mInfoManager.getSystemVersion(mUpdateVersionHandler, mActivity.getApplicationContext());
 			mWolCounter = null;
 		}
 
@@ -589,7 +589,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
 		mInfoManager.setController(this);
-		mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
+		mInfoManager.getSystemVersion(mUpdateVersionHandler, mActivity.getApplicationContext());
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {

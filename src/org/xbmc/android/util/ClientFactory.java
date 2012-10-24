@@ -24,8 +24,6 @@ package org.xbmc.android.util;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
@@ -34,7 +32,6 @@ import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.ITvShowClient;
 import org.xbmc.api.data.IVideoClient;
-import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.Host;
 import org.xbmc.eventclient.EventClient;
 import org.xbmc.httpapi.HttpApi;
@@ -42,6 +39,8 @@ import org.xbmc.httpapi.WifiStateException;
 import org.xbmc.jsonrpc.JsonRpc;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public abstract class ClientFactory {
@@ -67,7 +66,7 @@ public abstract class ClientFactory {
 	public static IInfoClient getInfoClient(INotifiableManager manager,
 			Context context) throws WifiStateException {
 		assertWifiState(context);
-		probeQueryApiType(manager);
+		probeQueryApiType(manager, context);
 		switch (sApiType) {
 		case API_TYPE_JSONRPC:
 			return createJsonClient(manager).info;
@@ -81,7 +80,7 @@ public abstract class ClientFactory {
 	public static IControlClient getControlClient(INotifiableManager manager,
 			Context context) throws WifiStateException {
 		assertWifiState(context);
-		probeQueryApiType(manager);
+		probeQueryApiType(manager, context);
 		switch (sApiType) {
 		case API_TYPE_JSONRPC:
 			return createJsonClient(manager).control;
@@ -95,7 +94,7 @@ public abstract class ClientFactory {
 	public static IVideoClient getVideoClient(INotifiableManager manager,
 			Context context) throws WifiStateException {
 		assertWifiState(context);
-		probeQueryApiType(manager);
+		probeQueryApiType(manager, context);
 		switch (sApiType) {
 		case API_TYPE_JSONRPC:
 			return createJsonClient(manager).video;
@@ -109,7 +108,7 @@ public abstract class ClientFactory {
 	public static IMusicClient getMusicClient(INotifiableManager manager,
 			Context context) throws WifiStateException {
 		assertWifiState(context);
-		probeQueryApiType(manager);
+		probeQueryApiType(manager, context);
 		switch (sApiType) {
 		case API_TYPE_JSONRPC:
 			return createJsonClient(manager).music;
@@ -123,7 +122,7 @@ public abstract class ClientFactory {
 	public static ITvShowClient getTvShowClient(INotifiableManager manager,
 			Context context) throws WifiStateException {
 		assertWifiState(context);
-		probeQueryApiType(manager);
+		probeQueryApiType(manager, context);
 		switch (sApiType) {
 		case API_TYPE_JSONRPC:
 			return createJsonClient(manager).shows;
@@ -239,52 +238,63 @@ public abstract class ClientFactory {
 	 * @param manager
 	 *            Upper layer reference
 	 */
-	private static void probeQueryApiType(final INotifiableManager manager) {
+	private static void probeQueryApiType(final INotifiableManager manager, Context context) {
 		final Host host = HostFactory.host;
 
 		if (sApiType != API_TYPE_UNSET) {
 			return;
 		}
 
+		// TODO: Once stability of JSONRPC api is proven we should
+		// move to detecting this based on straightforward major version numbers
+		
+		sApiType = API_TYPE_HTTPIAPI;
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		boolean enableJsonRPC = prefs.getBoolean("setting_jsonrpc", false);
+		if(enableJsonRPC) {
+			sApiType = API_TYPE_JSONRPC;
+		}
+		
 		// try to get version string via http api
-		final HttpApi httpClient;
-		if (host != null && !host.addr.equals("")) {
-			httpClient = new HttpApi(host, host.timeout >= 0 ? host.timeout
-					: Host.DEFAULT_TIMEOUT);
-		} else {
-			httpClient = new HttpApi(null, -1);
-		}
-		final String version = httpClient.info.getSystemInfo(manager,
-				SystemInfo.SYSTEM_BUILD_VERSION);
-		Log.i(TAG, "VERSION = " + version);
-
-		// 1. try to match xbmc's version
-		Pattern pattern = Pattern.compile("r\\d+");
-		Matcher matcher = pattern.matcher(version);
-		if (matcher.find()) {
-			final int rev = Integer.parseInt(matcher.group().substring(1));
-			Log.i(TAG, "Found XBMC at revision " + rev + "!");
-			XBMC_REV = rev;
-			sApiType = rev >= MIN_JSONRPC_REV ? API_TYPE_JSONRPC
-					: API_TYPE_HTTPIAPI;
-		} else {
-			// parse git version
-			pattern = Pattern.compile("Git.([a-f\\d]+)");
-			matcher = pattern.matcher(version);
-			if (matcher.find()) {
-				final String commit = matcher.group(1);
-				Log.i(TAG, "Found XBMC at Git commit " + commit + "!");
-
-				// set to last revision where we used SVN
-				XBMC_REV = 35744;
-				sApiType = API_TYPE_JSONRPC;
-			}
-
-			// 2. try to match boxee's version
-			// 3. plex? duh.
-
-			// sApiType = API_TYPE_UNSET;
-		}
+//		final HttpApi httpClient;
+//		if (host != null && !host.addr.equals("")) {
+//			httpClient = new HttpApi(host, host.timeout >= 0 ? host.timeout
+//					: Host.DEFAULT_TIMEOUT);
+//		} else {
+//			httpClient = new HttpApi(null, -1);
+//		}
+//		final String version = httpClient.info.getSystemInfo(manager,
+//				SystemInfo.SYSTEM_BUILD_VERSION);
+//		Log.i(TAG, "VERSION = " + version);
+//
+//		// 1. try to match xbmc's version
+//		Pattern pattern = Pattern.compile("r\\d+");
+//		Matcher matcher = pattern.matcher(version);
+//		if (matcher.find()) {
+//			final int rev = Integer.parseInt(matcher.group().substring(1));
+//			Log.i(TAG, "Found XBMC at revision " + rev + "!");
+//			XBMC_REV = rev;
+//			sApiType = rev >= MIN_JSONRPC_REV ? API_TYPE_JSONRPC
+//					: API_TYPE_HTTPIAPI;
+//		} else {
+//			// parse git version
+//			pattern = Pattern.compile("Git.([a-f\\d]+)");
+//			matcher = pattern.matcher(version);
+//			if (matcher.find()) {
+//				final String commit = matcher.group(1);
+//				Log.i(TAG, "Found XBMC at Git commit " + commit + "!");
+//
+//				// set to last revision where we used SVN
+//				XBMC_REV = 35744;
+//				sApiType = API_TYPE_JSONRPC;
+//			}
+//
+//			// 2. try to match boxee's version
+//			// 3. plex? duh.
+//
+//			// sApiType = API_TYPE_UNSET;
+//		}
 	}
 
 	/**

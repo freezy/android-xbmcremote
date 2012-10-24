@@ -41,7 +41,7 @@ public interface IInfoManager extends IManager {
 	 * @param response Response object
 	 * @param field Field to return
 	 */
-	public void getSystemInfo(final DataResponse<String> response, final int field, final Context context);
+	public void getSystemVersion(final DataResponse<String> response, final Context context);
 	
 	/**
 	 * Returns all defined shares of a media type

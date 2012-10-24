@@ -57,7 +57,6 @@ public class Connection {
 	private static final String TAG = "Connection-JsonRpc";
 
 	private static final String XBMC_JSONRPC_BOOTSTRAP = "/jsonrpc";
-	private static final String XBMC_THUMB_BOOTSTRAP = "/thumb";
 	private static final String XBMC_MICROHTTPD_VFS_BOOTSTRAP = "/vfs";
 	private static final int SOCKET_CONNECTION_TIMEOUT = 5000;
 

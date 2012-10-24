@@ -126,4 +126,12 @@
             android:dependency="setting_send_repeats"			 
 			android:defaultValue="250" />
 	</PreferenceCategory>
+    <PreferenceCategory android:title="Advanced">
+        <CheckBoxPreference
+            android:key="setting_jsonrpc"
+            android:title="Enable JSON API"
+            android:summary="Experimental support."
+            android:enabled="true" 
+            android:defaultValue="false" />     
+	</PreferenceCategory>	
 </PreferenceScreen>

@@ -84,11 +84,11 @@ public interface IInfoClient extends IClient {
 	
 	
 	/**
-	 * Returns any system info variable, see {@link org.xbmc.api.info.SystemInfo}
+	 * Returns the system version
 	 * @param field Field to return
 	 * @return
 	 */
-	public String getSystemInfo(INotifiableManager manager, int field);
+	public String getSystemVersion(INotifiableManager manager);
 	
 	/**
 	 * Returns a boolean GUI setting
