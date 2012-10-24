@@ -1,9 +1,10 @@
 package org.codehaus.jackson.map.deser;
 
-import java.util.*;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 
 import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.type.*;
+import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.map.util.Provider;
 import org.codehaus.jackson.type.JavaType;
 

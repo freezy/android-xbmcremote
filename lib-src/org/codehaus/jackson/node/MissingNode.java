@@ -2,7 +2,10 @@ package org.codehaus.jackson.node;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.map.SerializerProvider;
 
 /**

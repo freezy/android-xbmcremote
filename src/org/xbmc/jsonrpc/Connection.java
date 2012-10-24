@@ -256,7 +256,10 @@ public class Connection {
 			uc = url.openConnection();
 			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
 			uc.setReadTimeout(mSocketReadTimeout);
+			uc.setRequestProperty("Content-Type", "application/json");
 			uc.setDoOutput(true);
+			uc.setDoInput(true);			
+			//uc.setDoOutput(true);
 
 			final ObjectNode data = Client.obj().put("jsonrpc", "2.0")
 					.put("method", command).put("id", "1");

@@ -9,10 +9,14 @@ import java.lang.reflect.Type;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.map.ResolvableSerializer;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.type.TypeFactory;
-import org.codehaus.jackson.schema.SchemaAware;
 import org.codehaus.jackson.schema.JsonSchema;
+import org.codehaus.jackson.schema.SchemaAware;
 import org.codehaus.jackson.type.JavaType;
 
 /**

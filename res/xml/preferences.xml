@@ -95,7 +95,13 @@
 			android:title="Confirm Play on XBMC"
 			android:summary="Show a confirmation screen when playing media URLs on XBMC."
 			android:selectable="true"
-			android:enabled="true" android:defaultValue="true" />	
+			android:enabled="true" android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="setting_ignore_article"
+            android:title="Ignore Articles"
+            android:summary="Ignore leading articles when sorting."
+            android:selectable="true"
+            android:enabled="true" android:defaultValue="true" />   
 		<ListPreference
 			android:key="setting_default_selection_action"
 			android:title="Action on selection"

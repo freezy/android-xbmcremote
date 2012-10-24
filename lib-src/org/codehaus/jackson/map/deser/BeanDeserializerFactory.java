@@ -1,12 +1,29 @@
 package org.codehaus.jackson.map.deser;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.map.*;
-import org.codehaus.jackson.map.introspect.*;
-import org.codehaus.jackson.map.type.*;
+import org.codehaus.jackson.map.AnnotationIntrospector;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.DeserializerProvider;
+import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.TypeDeserializer;
+import org.codehaus.jackson.map.introspect.AnnotatedClass;
+import org.codehaus.jackson.map.introspect.AnnotatedConstructor;
+import org.codehaus.jackson.map.introspect.AnnotatedField;
+import org.codehaus.jackson.map.introspect.AnnotatedMethod;
+import org.codehaus.jackson.map.introspect.AnnotatedParameter;
+import org.codehaus.jackson.map.introspect.BasicBeanDescription;
+import org.codehaus.jackson.map.introspect.VisibilityChecker;
+import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.map.util.ArrayBuilders;
 import org.codehaus.jackson.map.util.ClassUtil;
 import org.codehaus.jackson.type.JavaType;

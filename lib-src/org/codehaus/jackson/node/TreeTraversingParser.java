@@ -4,7 +4,14 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.Base64Variant;
+import org.codehaus.jackson.JsonLocation;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonStreamContext;
+import org.codehaus.jackson.JsonToken;
+import org.codehaus.jackson.ObjectCodec;
 
 /**
  * Facade over {@link JsonNode} that implements {@link JsonParser} to allow

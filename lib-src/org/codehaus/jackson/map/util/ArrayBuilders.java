@@ -1,6 +1,8 @@
 package org.codehaus.jackson.map.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Helper class that contains set of distinct builders for different

@@ -2,12 +2,12 @@ package org.codehaus.jackson.map.deser;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashMap;
 
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.KeyDeserializer;
-import org.codehaus.jackson.map.type.*;
 import org.codehaus.jackson.map.introspect.BasicBeanDescription;
+import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
 
 /**

@@ -3,10 +3,10 @@ package org.codehaus.jackson.map.jsontype.impl;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
-import org.codehaus.jackson.type.JavaType;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.map.util.ClassUtil;
+import org.codehaus.jackson.type.JavaType;
 
 public class ClassNameIdResolver
     extends TypeIdResolverBase

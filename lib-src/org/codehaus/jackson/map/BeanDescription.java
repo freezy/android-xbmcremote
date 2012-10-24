@@ -1,6 +1,7 @@
 package org.codehaus.jackson.map;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 
 import org.codehaus.jackson.map.introspect.AnnotatedMethod;
 import org.codehaus.jackson.map.introspect.VisibilityChecker;

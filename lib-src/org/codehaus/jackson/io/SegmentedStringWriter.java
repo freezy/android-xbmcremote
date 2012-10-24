@@ -1,6 +1,7 @@
 package org.codehaus.jackson.io;
 
-import java.io.*;
+import java.io.StringWriter;
+import java.io.Writer;
 
 import org.codehaus.jackson.util.BufferRecycler;
 import org.codehaus.jackson.util.TextBuffer;

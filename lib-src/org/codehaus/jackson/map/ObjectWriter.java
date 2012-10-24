@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonEncoding;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.io.SegmentedStringWriter;
 import org.codehaus.jackson.map.introspect.VisibilityChecker;
 import org.codehaus.jackson.map.jsontype.TypeResolverBuilder;

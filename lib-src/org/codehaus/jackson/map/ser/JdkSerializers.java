@@ -1,13 +1,20 @@
 package org.codehaus.jackson.map.ser;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collection;
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.util.Provider;
 
 /**

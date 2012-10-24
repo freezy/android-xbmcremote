@@ -3,7 +3,7 @@ package org.codehaus.jackson.map.jsontype.impl;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.JsonDeserializer;

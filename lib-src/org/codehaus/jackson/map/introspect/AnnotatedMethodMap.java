@@ -1,7 +1,10 @@
 package org.codehaus.jackson.map.introspect;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Simple helper class used to keep track of collection of

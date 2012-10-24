@@ -1,8 +1,8 @@
 package org.codehaus.jackson.map.deser;
 
-import org.codehaus.jackson.map.AnnotationIntrospector;
+import java.util.HashMap;
 
-import java.util.*;
+import org.codehaus.jackson.map.AnnotationIntrospector;
 
 /**
  * Helper class used to resolve String values (either Json Object field

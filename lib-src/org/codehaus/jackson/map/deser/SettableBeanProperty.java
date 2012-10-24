@@ -1,10 +1,16 @@
 package org.codehaus.jackson.map.deser;
 
 import java.io.IOException;
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.JsonToken;
+import org.codehaus.jackson.map.DeserializationContext;
+import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.TypeDeserializer;
 import org.codehaus.jackson.type.JavaType;
 import org.codehaus.jackson.util.InternCache;
 

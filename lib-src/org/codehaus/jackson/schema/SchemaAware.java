@@ -1,10 +1,10 @@
 package org.codehaus.jackson.schema;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.SerializerProvider;
-import org.codehaus.jackson.map.JsonMappingException;
-
 import java.lang.reflect.Type;
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.SerializerProvider;
 
 /**
  * Marker interface for schema-aware serializers.

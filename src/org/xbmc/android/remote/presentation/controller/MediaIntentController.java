@@ -31,7 +31,6 @@ import org.xbmc.android.util.YoutubeURLParser;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IInfoManager;
-import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.presentation.INotifiableController;
 
 import android.app.Activity;

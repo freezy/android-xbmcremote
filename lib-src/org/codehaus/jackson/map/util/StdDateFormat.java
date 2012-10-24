@@ -5,7 +5,8 @@ import java.text.FieldPosition;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.codehaus.jackson.io.NumberInput;
 

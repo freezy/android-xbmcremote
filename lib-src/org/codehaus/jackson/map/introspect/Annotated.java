@@ -5,9 +5,9 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 
-import org.codehaus.jackson.type.JavaType;
 import org.codehaus.jackson.map.type.TypeBindings;
 import org.codehaus.jackson.map.type.TypeFactory;
+import org.codehaus.jackson.type.JavaType;
 
 /**
  * Shared base class used for anything on which annotations (included

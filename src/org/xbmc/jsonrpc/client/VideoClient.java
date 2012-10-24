@@ -10,13 +10,11 @@ import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
-import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.MediaType;
-import org.xbmc.api.type.SortType;
+import org.xbmc.api.type.Sort;
 import org.xbmc.jsonrpc.Connection;
-import org.xbmc.jsonrpc.client.Client.ObjNode;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -26,11 +24,6 @@ public class VideoClient extends Client implements IVideoClient {
 	public VideoClient(Connection connection) {
 		super(connection);
 		// TODO Auto-generated constructor stub
-	}
-
-	public void setHost(Host host) {
-		// TODO Auto-generated method stub
-
 	}
 
 	private ArrayList<Movie> parseMovies(JsonNode result, boolean hideWatched) {
@@ -63,37 +56,41 @@ public class VideoClient extends Client implements IVideoClient {
 		return movies;
 	}
 
-	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy,
-			String sortOrder, boolean hideWatched) {
+	public ArrayList<Movie> getMovies(INotifiableManager manager, Sort sort,
+			boolean hideWatched) {
 
-		return parseMovies(mConnection.getJson(
-				manager,
-				"VideoLibrary.GetMovies",
-				sort(obj().p(
-						"properties",
-						arr().add("playcount").add("year").add("file")
-								.add("director").add("runtime").add("genre")
-								.add("rating").add("imdbnumber")), sortBy,
-						sortOrder, true)), hideWatched);
+		return parseMovies(
+				mConnection.getJson(
+						manager,
+						"VideoLibrary.GetMovies",
+						sort(obj().p(
+								"properties",
+								arr().add("playcount").add("year").add("file")
+										.add("director").add("runtime")
+										.add("genre").add("rating")
+										.add("imdbnumber")), sort)),
+				hideWatched);
 	}
 
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor,
-			int sortBy, String sortOrder, boolean hideWatched) {
-		return null;
+			Sort sort, boolean hideWatched) {
+		return new ArrayList<Movie>();
 	}
 
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre,
-			int sortBy, String sortOrder, boolean hideWatched) {
+			Sort sort, boolean hideWatched) {
 		// unfortunately no ability to query by genres currently
-		ArrayList<Movie> movies = parseMovies(mConnection.getJson(
-				manager,
-				"VideoLibrary.GetMovies",
-				sort(obj().p(
-						"properties",
-						arr().add("playcount").add("year").add("file")
-								.add("director").add("runtime").add("genre")
-								.add("rating").add("imdbnumber")), sortBy,
-						sortOrder, true)), hideWatched);
+		ArrayList<Movie> movies = parseMovies(
+				mConnection.getJson(
+						manager,
+						"VideoLibrary.GetMovies",
+						sort(obj().p(
+								"properties",
+								arr().add("playcount").add("year").add("file")
+										.add("director").add("runtime")
+										.add("genre").add("rating")
+										.add("imdbnumber")), sort)),
+				hideWatched);
 		for (Iterator<Movie> i = movies.iterator(); i.hasNext();) {
 			Movie movie = i.next();
 			if (!movie.isGenre(genre)) {
@@ -140,13 +137,10 @@ public class VideoClient extends Client implements IVideoClient {
 		return new ArrayList<Actor>();
 	}
 
-	public ArrayList<Genre> getMovieGenres(INotifiableManager manager) {
+	public ArrayList<Genre> getMovieGenres(INotifiableManager manager, Sort sort) {
 
-		JsonNode result = mConnection.getJson(
-				manager,
-				"VideoLibrary.GetGenres",
-				sort(obj().p("type", "movie"), SortType.GENRE,
-						SortType.ORDER_DESC, true));
+		JsonNode result = mConnection.getJson(manager,
+				"VideoLibrary.GetGenres", sort(obj().p("type", "movie"), sort));
 
 		return parseGenres(result);
 
@@ -266,9 +260,4 @@ public class VideoClient extends Client implements IVideoClient {
 			}
 		};
 	}
-
-	public boolean supportsActors() {
-		return false;
-	}
-
 }

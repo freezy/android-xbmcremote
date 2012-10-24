@@ -27,20 +27,16 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 
 import org.xbmc.android.util.ClientFactory;
-import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.info.PlayStatus;
-import org.xbmc.api.object.Host;
-import org.xbmc.httpapi.Connection;
 import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;

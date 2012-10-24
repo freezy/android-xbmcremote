@@ -1,6 +1,7 @@
 package org.codehaus.jackson.map.deser;
 
 import java.io.IOException;
+
 import org.codehaus.jackson.JsonProcessingException;
 
 /**

@@ -1,6 +1,8 @@
 package org.codehaus.jackson.io;
 
-import java.io.*;
+import java.io.CharConversionException;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 /**

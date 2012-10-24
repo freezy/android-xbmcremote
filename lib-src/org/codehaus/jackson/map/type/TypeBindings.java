@@ -1,7 +1,12 @@
 package org.codehaus.jackson.map.type;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import org.codehaus.jackson.type.JavaType;
 

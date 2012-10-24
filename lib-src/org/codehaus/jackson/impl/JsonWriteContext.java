@@ -1,6 +1,6 @@
 package org.codehaus.jackson.impl;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonStreamContext;
 
 /**
  * Extension of {@link JsonStreamContext}, which implements

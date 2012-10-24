@@ -24,8 +24,6 @@ import java.util.Formatter;
 
 import org.xbmc.api.type.MediaType;
 
-import android.util.Log;
-
 
 /**
  * The song class contains everything to know about a song. It's basically a

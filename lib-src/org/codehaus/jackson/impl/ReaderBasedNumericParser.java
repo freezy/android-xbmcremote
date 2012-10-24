@@ -3,9 +3,9 @@ package org.codehaus.jackson.impl;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.codehaus.jackson.io.IOContext;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonToken;
+import org.codehaus.jackson.io.IOContext;
 
 /**
  * Intermediate class that implements handling of numeric parsing.

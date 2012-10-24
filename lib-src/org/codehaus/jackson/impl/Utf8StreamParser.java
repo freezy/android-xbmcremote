@@ -1,11 +1,18 @@
 package org.codehaus.jackson.impl;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.Base64Variant;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
+import org.codehaus.jackson.ObjectCodec;
 import org.codehaus.jackson.io.IOContext;
-import org.codehaus.jackson.sym.*;
-import org.codehaus.jackson.util.*;
+import org.codehaus.jackson.sym.BytesToNameCanonicalizer;
+import org.codehaus.jackson.sym.Name;
+import org.codehaus.jackson.util.ByteArrayBuilder;
+import org.codehaus.jackson.util.CharTypes;
 
 /**
  * This is a concrete implementation of {@link JsonParser}, which is

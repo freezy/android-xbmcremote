@@ -1,15 +1,22 @@
 package org.codehaus.jackson.map;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.codehaus.jackson.type.JavaType;
-import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.introspect.*;
+import org.codehaus.jackson.map.introspect.Annotated;
+import org.codehaus.jackson.map.introspect.AnnotatedClass;
+import org.codehaus.jackson.map.introspect.AnnotatedConstructor;
+import org.codehaus.jackson.map.introspect.AnnotatedField;
+import org.codehaus.jackson.map.introspect.AnnotatedMember;
+import org.codehaus.jackson.map.introspect.AnnotatedMethod;
+import org.codehaus.jackson.map.introspect.AnnotatedParameter;
+import org.codehaus.jackson.map.introspect.NopAnnotationIntrospector;
+import org.codehaus.jackson.map.introspect.VisibilityChecker;
 import org.codehaus.jackson.map.jsontype.NamedType;
 import org.codehaus.jackson.map.jsontype.TypeResolverBuilder;
+import org.codehaus.jackson.type.JavaType;
 
 /**
  * Abstract class that defines API used for introspecting annotation-based

@@ -1,11 +1,12 @@
 package org.codehaus.jackson.map;
 
 import java.text.DateFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.codehaus.jackson.Base64Variant;
 import org.codehaus.jackson.Base64Variants;
-import org.codehaus.jackson.annotate.*;
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.map.introspect.AnnotatedClass;
 import org.codehaus.jackson.map.introspect.NopAnnotationIntrospector;
 import org.codehaus.jackson.map.introspect.VisibilityChecker;

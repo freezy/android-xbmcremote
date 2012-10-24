@@ -3,8 +3,8 @@ package org.codehaus.jackson.schema;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonValue;
-import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
+import org.codehaus.jackson.node.ObjectNode;
 
 /**
  * A {@link org.codehaus.jackson.JsonNode} that represents a JSON-Schema instance.

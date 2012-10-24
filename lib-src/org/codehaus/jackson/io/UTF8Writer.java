@@ -1,6 +1,8 @@
 package org.codehaus.jackson.io;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 
 
 public final class UTF8Writer

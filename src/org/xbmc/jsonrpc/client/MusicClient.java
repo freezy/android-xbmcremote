@@ -34,10 +34,10 @@ import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
-import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Song;
 import org.xbmc.api.type.MediaType;
+import org.xbmc.api.type.Sort;
 import org.xbmc.api.type.SortType;
 import org.xbmc.jsonrpc.Connection;
 
@@ -69,22 +69,14 @@ public class MusicClient extends Client implements IMusicClient {
 	}
 	
 	/**
-	 * Updates host info on the connection.
-	 * @param host
-	 */
-	public void setHost(Host host) {
-		mConnection.setHost(host);
-	}
-
-	
-	/**
 	 * Adds an album to the current playlist.
 	 * @param album Album
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Album album, int sortBy, String sortOrder) {
+	public boolean addToPlaylist(INotifiableManager manager, Album album, Sort sort) {
 		
-		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("albumid", album.getId())));
+		return mConnection.getBoolean(manager, "Playlist.Add", 
+				sort(obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("albumid", album.getId())), sort));
 	}
 
 	/**
@@ -92,8 +84,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param artist Artist
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
-		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("artistid", artist.getId())));
+	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Sort sort) {
+		return mConnection.getBoolean(manager, "Playlist.Add", sort(obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("artistid", artist.getId())), sort));
 	}
 
 	/**
@@ -101,8 +93,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
-		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("genreid", genre.getId())));
+	public boolean addToPlaylist(INotifiableManager manager, Genre genre, Sort sort) {
+		return mConnection.getBoolean(manager, "Playlist.Add", sort(obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("genreid", genre.getId())), sort));
 	}
 
 	/**
@@ -111,8 +103,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre, int sortBy, String sortOrder) {
-		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("artistid", artist.getId()).p("genreid", genre.getId())));
+	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre, Sort sort) {
+		return mConnection.getBoolean(manager, "Playlist.Add", sort(obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("artistid", artist.getId()).p("genreid", genre.getId())), sort));
 	}
 	
 	/**
@@ -229,35 +221,29 @@ public class MusicClient extends Client implements IMusicClient {
 	/**
 	 * Plays an album. Playlist is previously cleared.
 	 * @param album Album to play
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(INotifiableManager manager, Album album, int sortBy, String sortOrder) {
+	public boolean play(INotifiableManager manager, Album album, Sort sort) {
 		// ignoring sort as not applicable in jsonrpc API
-		return play(manager, obj().p("item", getSongsCondition(album)));
+		return play(manager, sort(obj().p("item", getSongsCondition(album)), sort));
 	}
 	
 	/**
 	 * Plays all songs of a genre. Playlist is previously cleared.
 	 * @param genre Genre
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
-		return false; //play(manager, getSongsCondition(genre).append(songsOrderBy(sortBy, sortOrder)));
+	public boolean play(INotifiableManager manager, Genre genre, Sort sort) {
+		return play(manager, sort(getSongsCondition(genre), sort));
 	}
 	
 	/**
 	 * Plays all songs from an artist. Playlist is previously cleared.
 	 * @param artist Artist
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
-		return false; //play(manager, getSongsCondition(artist).append(songsOrderBy(sortBy, sortOrder)));
+	public boolean play(INotifiableManager manager, Artist artist, Sort sort) {
+		return play(manager, sort(getSongsCondition(artist), sort));
 	}
 	
 	/**
@@ -266,8 +252,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param genre Genre
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(INotifiableManager manager, Artist artist, Genre genre) {
-		return false; //play(manager, getSongsCondition(artist, genre).append(songsOrderBy(SortType.ARTIST, SortType.ORDER_ASC)));
+	public boolean play(INotifiableManager manager, Artist artist, Genre genre, Sort sort) {
+		return play(manager, sort(getSongsCondition(artist, genre), sort));
 	}
 
 	/**
@@ -330,14 +316,12 @@ public class MusicClient extends Client implements IMusicClient {
 	
 	/**
 	 * Gets all albums from database
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All albums
 	 */
-	public ArrayList<Album> getAlbums(INotifiableManager manager, int sortBy, String sortOrder) {
+	public ArrayList<Album> getAlbums(INotifiableManager manager, Sort sort) {
 		// TODO: Make ignore article configurable
 		return parseAlbums(mConnection.getJson(manager, "AudioLibrary.GetAlbums",
-				sort(obj().p("properties", arr().add("artist").add("year")), sortBy, sortOrder, true)));
+				sort(obj().p("properties", arr().add("artist").add("year")), sort)));
 	}
 	
 	private ArrayList<Album> parseAlbums(JsonNode result) {
@@ -365,12 +349,12 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param artistIDs Array of artist IDs
 	 * @return All compilation albums
 	 */
-	public ArrayList<Album> getAlbums(INotifiableManager manager, ArrayList<Integer> artistIDs, int sortBy, String sortOrder) {
+	public ArrayList<Album> getAlbums(INotifiableManager manager, ArrayList<Integer> artistIDs, Sort sort) {
 		
 		// TODO: Make ignore article configurable
 		final ArrayList<Album> albums = new ArrayList<Album>();
 		for (Integer id : artistIDs) {
-			ObjNode node = sort(obj().p("artistid", id), sortBy, sortOrder, true);
+			ObjNode node = sort(obj().p("artistid", id), sort);
 			albums.addAll(parseAlbums(mConnection.getJson(manager, "AudioLibrary.GetAlbums", node)));
 		}
 		return albums;
@@ -380,28 +364,24 @@ public class MusicClient extends Client implements IMusicClient {
 	/**
 	 * Gets all albums of an artist from database
 	 * @param artist Artist
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return Albums with an artist
 	 */
-	public ArrayList<Album> getAlbums(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
+	public ArrayList<Album> getAlbums(INotifiableManager manager, Artist artist, Sort sort) {
 		
 		// TODO: Make ignore article configurable
-		ObjNode node = sort(obj().p("artistid", artist.getId()), sortBy, sortOrder, true);
+		ObjNode node = sort(obj().p("artistid", artist.getId()), sort);
 		return parseAlbums(mConnection.getJson(manager, "AudioLibrary.GetAlbums", node));
 	}
 
 	/**
 	 * Gets all albums of with at least one song in a genre
 	 * @param genre Genre
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return Albums of a genre
 	 */
-	public ArrayList<Album> getAlbums(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
+	public ArrayList<Album> getAlbums(INotifiableManager manager, Genre genre, Sort sort) {
 		
 		// TODO: Make ignore article configurable		
-		ObjNode node = sort(obj().p("genreid", genre.getId()), sortBy, sortOrder, true);
+		ObjNode node = sort(obj().p("genreid", genre.getId()), sort);
 		return parseAlbums(mConnection.getJson(manager, "AudioLibrary.GetAlbums", node));
 	}
 	
@@ -428,10 +408,10 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param albumArtistsOnly If set to true, hide artists who appear only on compilations.
 	 * @return All albums
 	 */
-	public ArrayList<Artist> getArtists(INotifiableManager manager, boolean albumArtistsOnly) {
+	public ArrayList<Artist> getArtists(INotifiableManager manager, boolean albumArtistsOnly, Sort sort) {
 		
 		// TODO: add ignore article as setting
-		ObjNode node = sort(obj().p("albumartistsonly", albumArtistsOnly), SortType.ARTIST, SortType.ORDER_ASC, true);
+		ObjNode node = sort(obj().p("albumartistsonly", albumArtistsOnly), sort);
 		return parseArtists(mConnection.getJson(manager, "AudioLibrary.GetArtists", node));
 	}
 
@@ -441,10 +421,10 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param albumArtistsOnly If set to true, hide artists who appear only on compilations.
 	 * @return Albums with a genre
 	 */
-	public ArrayList<Artist> getArtists(INotifiableManager manager, Genre genre, boolean albumArtistsOnly) {
+	public ArrayList<Artist> getArtists(INotifiableManager manager, Genre genre, boolean albumArtistsOnly, Sort sort) {
 		
 		// TODO: add ignore article as setting
-		ObjNode node = sort(obj().p("albumartistsonly", albumArtistsOnly).p("genreid", genre.getId()), SortType.ARTIST, SortType.ORDER_ASC, true);
+		ObjNode node = sort(obj().p("albumartistsonly", albumArtistsOnly).p("genreid", genre.getId()), sort);
 		return parseArtists(mConnection.getJson(manager, "AudioLibrary.GetArtists", node));
 	}
 	
@@ -452,9 +432,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 * Gets all genres from database
 	 * @return All genres
 	 */
-	public ArrayList<Genre> getGenres(INotifiableManager manager) {
+	public ArrayList<Genre> getGenres(INotifiableManager manager, Sort sort) {
 		// TODO: add ignore article as setting
-		ObjNode node = sort(obj(), SortType.GENRE, SortType.ORDER_ASC, true);
+		ObjNode node = sort(obj(), sort);
 		return parseGenres(mConnection.getJson(manager, "AudioLibrary.GetGenres", node));
 	}
 	
@@ -507,9 +487,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @param sqlCondition SQL condition which tracks to return
 	 * @return Found tracks
 	 */
-	public ArrayList<Song> getSongs(INotifiableManager manager, ObjNode obj, int sortBy, String sortOrder) {
+	public ArrayList<Song> getSongs(INotifiableManager manager, ObjNode obj, Sort sort) {
 		obj.p("properties", arr().add("duration").add("artist").add("album").add("track").add("file").add("thumbnail"));
-		obj = sort(obj, sortBy, sortOrder, true);
+		obj = sort(obj, sort);
 		return parseSongs(mConnection.getJson(manager, "AudioLibrary.GetSongs", obj));
 	}
 	
@@ -536,20 +516,6 @@ public class MusicClient extends Client implements IMusicClient {
 		}
 		return songs;		
 	}
-	
-	/**
-	 * Returns a hash map containing tracks of a certain condition.
-	 * @param sqlCondition SQL condition which tracks to return
-	 * @return Found tracks
-	 *
-	private HashMap<Integer, Song> getSongsAsHashMap(StringBuilder sqlCondition) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT idSong, strTitle, strArtist, strAlbum, iTrack, iDuration, strPath, strFileName, strThumb");
-		sb.append(" FROM songview WHERE ");
-		sb.append(sqlCondition);
-		sb.append(" ORDER BY iTrack, strFileName");
-		parseSongsAsHashMap(mConnection.query("QueryMusicDatabase", sb.toString()));
-	}*/
 	
 	/**
 	 * Returns the SQL condition that returns all songs of a song.
@@ -600,46 +566,38 @@ public class MusicClient extends Client implements IMusicClient {
 	/**
 	 * Returns a list containing all tracks of an album. The list is sorted by filename.
 	 * @param album Album
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.	 
 	 * @return All tracks of an album
 	 */
-	public ArrayList<Song> getSongs(INotifiableManager manager, Album album, int sortBy, String sortOrder) {
-		return getSongs(manager, getSongsCondition(album), sortBy, sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Album album, Sort sort) {
+		return getSongs(manager, getSongsCondition(album), sort);
 	}
 
 	/**
 	 * Returns a list containing all tracks of an artist. The list is sorted by album name, filename.
 	 * @param artist Artist
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All tracks of the artist
 	 */
-	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, int sortBy, String sortOrder) {
-		return getSongs(manager, getSongsCondition(artist), sortBy, sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, Sort sort) {
+		return getSongs(manager, getSongsCondition(artist), sort);
 	}
 	
 	/**
 	 * Returns a list containing all tracks of a genre. The list is sorted by artist, album name, filename.
 	 * @param genre Genre
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All tracks of the genre
 	 */
-	public ArrayList<Song> getSongs(INotifiableManager manager, Genre genre, int sortBy, String sortOrder) {
-		return getSongs(manager, getSongsCondition(genre), sortBy, sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Genre genre, Sort sort) {
+		return getSongs(manager, getSongsCondition(genre), sort);
 	}
 	
 	/**
 	 * Returns a list containing all tracks of a genre AND and artist. The list is sorted by 
 	 * artist, album name, filename.
 	 * @param genre Genre
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All tracks of the genre
 	 */
-	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, Genre genre, int sortBy, String sortOrder) {
-		return getSongs(manager, getSongsCondition(artist, genre), sortBy, sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, Genre genre, Sort sort) {
+		return getSongs(manager, getSongsCondition(artist, genre), sort);
 	}
 	
 	/**
@@ -672,7 +630,7 @@ public class MusicClient extends Client implements IMusicClient {
 		// TODO: Should this feature potentially be removed?
 		ArrayList<Integer> ids = new ArrayList<Integer>();
 		
-		ArrayList<Artist> artists = getArtists(manager, true);
+		ArrayList<Artist> artists = getArtists(manager, true, new Sort(SortType.ARTIST, SortType.ORDER_ASC, true));
 		for(Artist artist : artists) {
 			if(artist.getName() != null) {
 				String name = artist.getName().toLowerCase();
@@ -683,262 +641,6 @@ public class MusicClient extends Client implements IMusicClient {
 		}
 		return ids;
 	}
-	
-
-	/**
-	 * Returns an SQL String of given sort options of songs query
-	 * @param sortBy    Sort field
-	 * @param sortOrder Sort order
-	 * @return SQL "ORDER BY" string
-	 */
-	private String songsOrderBy(int sortBy, String sortOrder) {
-		switch (sortBy) {
-			case SortType.ALBUM:
-				return " ORDER BY lower(strAlbum) " + sortOrder + ", iTrack " + sortOrder;
-			case SortType.ARTIST:
-				return " ORDER BY lower(strArtist) " + sortOrder + ", lower(strAlbum) " + sortOrder + ", iTrack " + sortOrder;
-			case SortType.TITLE:
-				return " ORDER BY lower(strTitle)" + sortOrder;
-			case SortType.FILENAME:
-				return " ORDER BY lower(strFileName)" + sortOrder;
-			default:
-			case SortType.TRACK:
-				return " ORDER BY iTrack " + sortOrder + ", lower(strFileName) " + sortOrder;
-			case SortType.DONT_SORT:
-				return "";
-		}
-	}
-
-	/**
-	 * Converts query response from HTTP API to a list of Album objects. Each
-	 * row must return the following attributes in the following order:
-	 * <ol>
-	 * 	<li><code>idAlbum</code></li>
-	 * 	<li><code>strAlbum</code></li>
-	 * 	<li><code>strArtist</code></li>
-	 * 	<li><code>iYear</code></li>
-	 * 	<li><code>strThumb</code></li>
-	 * </ol> 
-	 * @param response
-	 * @return List of albums
-	 *
-	private ArrayList<Album> parseAlbums(String response) {
-		ArrayList<Album> albums = new ArrayList<Album>();
-		String[] fields = response.split("<field>");
-		try {
-			for (int row = 1; row < fields.length; row += 5) {
-				albums.add(new Album(
-						Connection.trimInt(fields[row]), 
-						Connection.trim(fields[row + 1]), 
-						Connection.trim(fields[row + 2]),
-						Connection.trimInt(fields[row + 3]),
-						Connection.trim(fields[row + 4])
-				));
-			}
-		} catch (Exception e) {
-			System.err.println("ERROR: " + e.getMessage());
-			System.err.println("response = " + response);
-			e.printStackTrace();
-		}
-		return albums;
-		return null;
-	}*/
-	
-	/**
-	 * Updates an album with info from HTTP API query response. One row is 
-	 * expected, with the following columns:
-	 * <ol>
-	 * 	<li><code>strGenre</code></li>
-	 * 	<li><code>strExtraGenres</code></li>
-	 * 	<li><code>iYear</code></li>
-	 * 	<li><code>strLabel</code></li>
-	 * 	<li><code>iRating</code></li>
-	 * </ol>  
-	 * @param album
-	 * @param response
-	 * @return Updated album
-	 *
-	private Album parseAlbumInfo(Album album, String response) {
-		String[] fields = response.split("<field>");
-		try {
-			if (Connection.trim(fields[2]).length() > 0) {
-				album.genres = Connection.trim(fields[1]) + Connection.trim(fields[2]);
-			}	
-			if (Connection.trim(fields[3]).length() > 0) {
-				album.label = Connection.trim(fields[4]);
-			}
-			if (Connection.trim(fields[4]).length() > 0) {
-				album.rating = Connection.trimInt(fields[5]);
-			}
-		} catch (Exception e) {
-			System.err.println("ERROR: " + e.getMessage());
-			System.err.println("response = " + response);
-			e.printStackTrace();
-		}
-		return null; //album;
-	}*/
-	
-	/**
-	 * Converts query response from HTTP API to a list of Song objects. Each
-	 * row must return the following columns in the following order:
-	 * <ol>
-	 * 	<li><code>idSong</code></li>
-	 * 	<li><code>strTitle</code></li>
-	 * 	<li><code>strArtist</code></li>
-	 * 	<li><code>strAlbum</code></li>
-	 * 	<li><code>iTrack</code></li>
-	 * 	<li><code>iDuration</code></li>
-	 * 	<li><code>strPath</code></li>
-	 * 	<li><code>strFileName</code></li>
-	 * 	<li><code>strThumb</code></li>
-	 * </ol> 
-	 * @param response
-	 * @return List of Songs
-	 *
-	private ArrayList<Song> parseSongs(String response) {
-		ArrayList<Song> songs = new ArrayList<Song>();
-		String[] fields = response.split("<field>");
-		try { 
-			for (int row = 1; row < fields.length; row += 9) { 
-				songs.add(new Song( // int id, String title, String artist, String album, int track, int duration, String path, String filename, String thumbPath
-						Connection.trimInt(fields[row]),
-						Connection.trim(fields[row + 1]), 
-						Connection.trim(fields[row + 2]), 
-						Connection.trim(fields[row + 3]), 
-						Connection.trimInt(fields[row + 4]), 
-						Connection.trimInt(fields[row + 5]), 
-						Connection.trim(fields[row + 6]),
-						Connection.trim(fields[row + 7]), 
-						Connection.trim(fields[row + 8]) 
-				));
-			}
-		} catch (Exception e) {
-			System.err.println("ERROR: " + e.getMessage());
-			System.err.println("response = " + response);
-			e.printStackTrace();
-		}
-		return null; //songs;		
-	}*/
-	
-	/**
-	 * Converts query response from HTTP API to a list of Song objects. Each
-	 * row must return the following columns in the following order:
-	 * <ol>
-	 * 	<li><code>idSong</code></li>
-	 * 	<li><code>strTitle</code></li>
-	 * 	<li><code>strArtist</code></li>
-	 * 	<li><code>strAlbum</code></li>
-	 * 	<li><code>iTrack</code></li>
-	 * 	<li><code>iDuration</code></li>
-	 * 	<li><code>strPath</code></li>
-	 * 	<li><code>strFileName</code></li>
-	 * 	<li><code>strThumb</code></li>
-	 * </ol> 
-	 * @param response
-	 * @return List of Songs
-	 *
-	private HashMap<Integer, Song> parseSongsAsHashMap(String response) {
-		HashMap<Integer, Song> songs = new HashMap<Integer, Song>();
-		String[] fields = response.split("<field>");
-		try { 
-			for (int row = 1; row < fields.length; row += 9) { 
-				songs.put(Connection.trimInt(fields[row]),
-					new Song( // int id, String title, String artist, String album, int track, int duration, String path, String filename, String thumbPath
-						Connection.trimInt(fields[row]),
-						Connection.trim(fields[row + 1]), 
-						Connection.trim(fields[row + 2]), 
-						Connection.trim(fields[row + 3]), 
-						Connection.trimInt(fields[row + 4]), 
-						Connection.trimInt(fields[row + 5]), 
-						Connection.trim(fields[row + 6]),
-						Connection.trim(fields[row + 7]), 
-						Connection.trim(fields[row + 8])
-					)
-				);
-			}
-		} catch (Exception e) {
-			System.err.println("ERROR: " + e.getMessage());
-			System.err.println("response = " + response);
-			e.printStackTrace();
-		}
-		return songs;		
-	}*/
-	
-	/**
-	 * Converts query response from HTTP API to a list of integer values.
-	 * @param response
-	 * @return
-	 *
-	private ArrayList<Integer> parseIntArray(String response) {
-		ArrayList<Integer> array = new ArrayList<Integer>();
-		String[] fields = response.split("<field>");
-		try { 
-			for (int row = 1; row < fields.length; row += 9) {
-				array.add(Connection.trimInt(fields[row]));
-			}
-		} catch (Exception e) {
-			System.err.println("ERROR: " + e.getMessage());
-			System.err.println("response = " + response);
-			e.printStackTrace();
-		}
-		return null; //array;
-	}*/
-	
-	/**
-	 * Converts query response from HTTP API to a list of Artist objects. Each
-	 * row must return the following columns in the following order:
-	 * <ol>
-	 * 	<li><code>idArtist</code></li>
-	 * 	<li><code>strArtist</code></li>
-	 * </ol>
-	 * @param response
-	 * @return List of Artists
-	 *
-	private ArrayList<Artist> parseArtists(String response) {
-		ArrayList<Artist> artists = new ArrayList<Artist>();
-		String[] fields = response.split("<field>");
-		try { 
-			for (int row = 1; row < fields.length; row += 2) { 
-				artists.add(new Artist(
-						Connection.trimInt(fields[row]), 
-						Connection.trim(fields[row + 1])
-				));
-			}
-		} catch (Exception e) {
-			System.err.println("ERROR: " + e.getMessage());
-			System.err.println("response = " + response);
-			e.printStackTrace();
-		}
-		return null; //artists;		
-	}*/
-	
-	/**
-	 * Converts query response from HTTP API to a list of Genre objects. Each
-	 * row must return the following columns in the following order:
-	 * <ol>
-	 * 	<li><code>idGenre</code></li>
-	 * 	<li><code>strGenre</code></li>
-	 * </ol>
-	 * @param response
-	 * @return List of Genres
-	 *
-	private ArrayList<Genre> parseGenres(String response) {
-		ArrayList<Genre> genres = new ArrayList<Genre>();
-		String[] fields = response.split("<field>");
-		try { 
-			for (int row = 1; row < fields.length; row += 2) { 
-				genres.add(new Genre(
-						Connection.trimInt(fields[row]), 
-						Connection.trim(fields[row + 1])
-				));
-			}
-		} catch (Exception e) {
-			System.err.println("ERROR: " + e.getMessage());
-			System.err.println("response = " + response);
-			e.printStackTrace();
-		}
-		return null; //genres;		
-	}*/
 	
 	static ICurrentlyPlaying getCurrentlyPlaying(final Integer currentPlayer, final JsonNode item, final JsonNode props) {
 		return new IControlClient.ICurrentlyPlaying() {

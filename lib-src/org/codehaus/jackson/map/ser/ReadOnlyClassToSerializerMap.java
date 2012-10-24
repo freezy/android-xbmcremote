@@ -1,10 +1,12 @@
 package org.codehaus.jackson.map.ser;
 
-import java.util.*;
+import java.util.HashMap;
 
-import org.codehaus.jackson.type.JavaType;
 import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.ser.SerializerCache.*;
+import org.codehaus.jackson.map.ser.SerializerCache.TypedKeyFull;
+import org.codehaus.jackson.map.ser.SerializerCache.TypedKeyRaw;
+import org.codehaus.jackson.map.ser.SerializerCache.UntypedKeyRaw;
+import org.codehaus.jackson.type.JavaType;
 
 /**
  * Optimized lookup table for accessing two types of serializers; typed

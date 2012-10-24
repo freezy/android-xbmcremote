@@ -9,14 +9,13 @@ import org.xbmc.api.data.ITvShowClient;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Genre;
-import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
+import org.xbmc.api.type.Sort;
 import org.xbmc.jsonrpc.Connection;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 public class TvShowClient extends Client implements ITvShowClient {
 
@@ -24,48 +23,43 @@ public class TvShowClient extends Client implements ITvShowClient {
 		super(connection);
 	}
 
-	public void setHost(Host host) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public ArrayList<TvShow> getTvShows(INotifiableManager manager, int sortBy,
-			String sortOrder, boolean hideWatched) {
+	public ArrayList<TvShow> getTvShows(INotifiableManager manager, Sort sort,
+			boolean hideWatched) {
 		// TODO: handle filters
-		return getTvShows(manager, obj(), sortBy, sortOrder, hideWatched);
+		return getTvShows(manager, obj(), sort, hideWatched);
 	}
 
 	public ArrayList<Actor> getTvShowActors(INotifiableManager manager) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO: Add back in actor support
+		return new ArrayList<Actor>();
 	}
 
 	public ArrayList<Genre> getTvShowGenres(INotifiableManager manager) {
 		// TODO: unused? This also exists in VideoClient
-		return null;
+		return new ArrayList<Genre>();
 
 	}
 
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager,
-			Genre genre, int sortBy, String sortOrder, boolean hideWatched) {
+			Genre genre, Sort sort, boolean hideWatched) {
 		// ObjNode obj = obj().p("filter", obj().p("field",
 		// "genre").p("operator", "is").p("value", genre.getId()));
-		return getTvShows(manager, obj(), sortBy, sortOrder, hideWatched);
+		return getTvShows(manager, obj(), sort, hideWatched);
 	}
 
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager,
-			Actor actor, int sortBy, String sortOrder, boolean hideWatched) {
+			Actor actor, Sort sort, boolean hideWatched) {
 		// ObjNode obj = obj().p("filter", obj().p("field",
 		// "actor").p("operator", "is").p("value", actor.getId()));
-		return getTvShows(manager, obj(), sortBy, sortOrder, hideWatched);
+		return getTvShows(manager, obj(), sort, hideWatched);
 	}
 
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager,
-			ObjNode obj, int sortBy, String sortOrder, boolean hideWatched) {
+			ObjNode obj, Sort sort, boolean hideWatched) {
 		obj.p("properties",
 				arr().add("title").add("rating").add("premiered").add("genre")
 						.add("mpaa").add("studio").add("file").add("episode"));
-		obj = sort(obj, sortBy, sortOrder, true);
+		obj = sort(obj, sort);
 		return parseTvShows(mConnection.getJson(manager,
 				"VideoLibrary.GetTvShows", obj));
 	}
@@ -111,21 +105,20 @@ public class TvShowClient extends Client implements ITvShowClient {
 	}
 
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager,
-			TvShow show, int sortBy, String sortOrder, boolean hideWatched) {
+			TvShow show, Sort sort, boolean hideWatched) {
 		// TODO: we can no longer pull down all episodes
 		// this is only used for coverart caching
 		return new ArrayList<Episode>();
 	}
 
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager,
-			Season season, int sortBy, String sortOrder, boolean hideWatched) {
-		// TODO Auto-generated method stub
-		return null;
+			Season season, Sort sort, boolean hideWatched) {
+		// TODO we can not pull down epsiodes for a season without the TV show
+		return new ArrayList<Episode>();
 	}
 
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager,
-			TvShow show, Season season, int sortBy, String sortOrder,
-			boolean hideWatched) {
+			TvShow show, Season season, Sort sort, boolean hideWatched) {
 		ObjNode obj = obj();
 		obj.p("tvshowid", show.getId());
 		obj.p("season", season.getNumber());
@@ -133,7 +126,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 				arr().add("title").add("plot").add("rating").add("writer")
 						.add("firstaired").add("director").add("season")
 						.add("episode").add("file").add("showtitle"));
-		obj = sort(obj, sortBy, sortOrder, true);
+		obj = sort(obj, sort);
 		return parseEpisodes(mConnection.getJson(manager,
 				"VideoLibrary.GetEpisodes", obj));
 	}
@@ -163,7 +156,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	}
 
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager,
-			int sortBy, String sortOrder, boolean hideWatched) {
+			Sort sort, boolean hideWatched) {
 		// TODO we can't do this without a TV show and season any longer
 		// we mainly do this for thumbnail caching, though
 		return new ArrayList<Episode>();
@@ -175,8 +168,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		return getSeasons(manager, obj, hideWatched);
 	}
 
-	public ArrayList<Season> getSeasons(INotifiableManager manager, int sortBy,
-			String sortOrder, boolean hideWatched) {
+	public ArrayList<Season> getSeasons(INotifiableManager manager, Sort sort,
+			boolean hideWatched) {
 		// TODO we can't do this without a TV show any longer
 		// we mainly do this for thumbnail caching, though
 		return new ArrayList<Season>();

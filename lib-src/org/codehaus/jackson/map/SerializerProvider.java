@@ -3,7 +3,9 @@ package org.codehaus.jackson.map;
 import java.io.IOException;
 import java.util.Date;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.schema.JsonSchema;
 import org.codehaus.jackson.type.JavaType;
 

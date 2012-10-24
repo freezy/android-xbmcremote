@@ -1,8 +1,9 @@
 package org.codehaus.jackson.impl;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.io.IOContext;
 
 /**

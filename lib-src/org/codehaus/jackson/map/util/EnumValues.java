@@ -1,8 +1,11 @@
 package org.codehaus.jackson.map.util;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.map.AnnotationIntrospector;
 
 public final class EnumValues
 {

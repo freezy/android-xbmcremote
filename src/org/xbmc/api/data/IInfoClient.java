@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.type.DirectoryMask;
+import org.xbmc.api.type.Sort;
 
 import android.graphics.Bitmap;
 
@@ -49,14 +50,14 @@ public interface IInfoClient extends IClient {
 	 * @param limit   Limit (0 for none)
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit, int mediaType);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit, int mediaType, Sort sort);
 	
 	/**
 	 * Returns all the contents of a directory
 	 * @param path    Path to the directory
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, int mediaType);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, int mediaType, Sort sort);
 
 	
 	/**
@@ -85,10 +86,16 @@ public interface IInfoClient extends IClient {
 	
 	/**
 	 * Returns the system version
-	 * @param field Field to return
 	 * @return
 	 */
 	public String getSystemVersion(INotifiableManager manager);
+	
+	/**
+	 * Returns the api version
+	 * @param manager
+	 * @return
+	 */
+	public int getAPIVersion(INotifiableManager manager);
 	
 	/**
 	 * Returns a boolean GUI setting

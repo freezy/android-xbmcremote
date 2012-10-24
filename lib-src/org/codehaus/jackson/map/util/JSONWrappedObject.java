@@ -2,8 +2,11 @@ package org.codehaus.jackson.map.util;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.JsonSerializableWithType;
+import org.codehaus.jackson.map.SerializerProvider;
+import org.codehaus.jackson.map.TypeSerializer;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.JavaType;
 

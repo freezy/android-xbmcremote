@@ -3,7 +3,9 @@ package org.codehaus.jackson;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**

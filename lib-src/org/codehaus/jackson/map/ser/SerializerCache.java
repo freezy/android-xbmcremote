@@ -1,9 +1,9 @@
 package org.codehaus.jackson.map.ser;
 
-import java.util.*;
+import java.util.HashMap;
 
-import org.codehaus.jackson.type.JavaType;
 import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.type.JavaType;
 
 /**
  * Simple cache object that allows for doing 2-level lookups: first level is

@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
-import android.util.Log;
-
 /**
  * Stores what we can get from the movieview table.
  * 

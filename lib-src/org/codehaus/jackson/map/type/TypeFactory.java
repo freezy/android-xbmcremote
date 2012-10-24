@@ -1,7 +1,13 @@
 package org.codehaus.jackson.map.type;
 
-import java.util.*;
-import java.lang.reflect.*;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jackson.type.JavaType;
 import org.codehaus.jackson.type.TypeReference;

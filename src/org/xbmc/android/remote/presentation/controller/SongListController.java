@@ -45,18 +45,18 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 public class SongListController extends ListController implements IController {
 	
@@ -95,6 +95,7 @@ public class SongListController extends ListController implements IController {
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		
 		((ISortableManager)mMusicManager).setSortKey(AbstractManager.PREF_SORT_KEY_SONG);
+		((ISortableManager)mMusicManager).setIgnoreArticle(PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext()).getBoolean(ISortableManager.SETTING_IGNORE_ARTICLE, true));
 		((ISortableManager)mMusicManager).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		
 		final String sdError = ImportUtilities.assertSdCard();

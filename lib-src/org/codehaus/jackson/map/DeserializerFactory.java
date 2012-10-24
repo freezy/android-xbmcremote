@@ -1,7 +1,9 @@
 package org.codehaus.jackson.map;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.type.*;
+import org.codehaus.jackson.map.type.ArrayType;
+import org.codehaus.jackson.map.type.CollectionType;
+import org.codehaus.jackson.map.type.MapType;
 import org.codehaus.jackson.type.JavaType;
 
 /**

@@ -5,7 +5,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.map.DeserializationContext;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.KeyDeserializer;
 
 /**
  * Base class for simple key deserializers.

@@ -2,7 +2,9 @@ package org.codehaus.jackson.map;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.JsonToken;
 
 /**
  * Abstract class that defines API used by {@link ObjectMapper} (and

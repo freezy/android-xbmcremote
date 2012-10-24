@@ -6,7 +6,8 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 */
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 
 import org.codehaus.jackson.type.JavaType;
 

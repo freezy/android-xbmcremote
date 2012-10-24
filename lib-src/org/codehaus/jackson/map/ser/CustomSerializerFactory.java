@@ -1,9 +1,10 @@
 package org.codehaus.jackson.map.ser;
 
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.HashMap;
 
-import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.type.ClassKey;
 import org.codehaus.jackson.type.JavaType;
 

@@ -1,8 +1,12 @@
 package org.codehaus.jackson.impl;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.Base64Variant;
+import org.codehaus.jackson.JsonLocation;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.io.IOContext;
 import org.codehaus.jackson.util.ByteArrayBuilder;
 import org.codehaus.jackson.util.TextBuffer;

@@ -1,9 +1,19 @@
 package org.codehaus.jackson.impl;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.CharConversionException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.io.*;
+import org.codehaus.jackson.JsonEncoding;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.ObjectCodec;
+import org.codehaus.jackson.io.IOContext;
+import org.codehaus.jackson.io.MergedStream;
+import org.codehaus.jackson.io.UTF32Reader;
 import org.codehaus.jackson.sym.BytesToNameCanonicalizer;
 import org.codehaus.jackson.sym.CharsToNameCanonicalizer;
 

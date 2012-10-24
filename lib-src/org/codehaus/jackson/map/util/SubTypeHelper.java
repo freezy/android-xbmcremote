@@ -1,8 +1,12 @@
 package org.codehaus.jackson.map.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
-import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.map.AnnotationIntrospector;
+import org.codehaus.jackson.map.MapperConfig;
 import org.codehaus.jackson.map.introspect.Annotated;
 import org.codehaus.jackson.map.introspect.AnnotatedClass;
 import org.codehaus.jackson.map.jsontype.NamedType;

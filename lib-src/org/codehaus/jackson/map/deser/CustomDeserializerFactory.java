@@ -1,10 +1,13 @@
 package org.codehaus.jackson.map.deser;
 
-import java.util.*;
+import java.util.HashMap;
 
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.DeserializerProvider;
+import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.type.ClassKey;
 import org.codehaus.jackson.type.JavaType;
-import org.codehaus.jackson.map.*;
-import org.codehaus.jackson.map.type.*;
 
 /**
  * Deserializer factory implementation that allows for configuring

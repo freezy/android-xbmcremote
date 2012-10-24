@@ -1,11 +1,12 @@
 package org.codehaus.jackson.impl;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import java.io.*;
-
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.io.IOContext;
 import org.codehaus.jackson.io.NumberInput;
 

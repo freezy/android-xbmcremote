@@ -1,6 +1,7 @@
 package org.codehaus.jackson.impl;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.codehaus.jackson.io.IOContext;
 

@@ -1,6 +1,7 @@
 package org.codehaus.jackson.map.jsontype.impl;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
 
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.jsontype.NamedType;

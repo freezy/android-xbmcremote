@@ -1,7 +1,7 @@
 package org.codehaus.jackson.util;
 
-import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Singleton class that adds a simple first-level cache in front of

@@ -36,9 +36,12 @@ import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
+import org.xbmc.api.data.IClient;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.type.MediaType;
+import org.xbmc.api.type.Sort;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.api.type.ThumbSize.Dimension;
@@ -54,7 +57,7 @@ import android.util.Log;
  * 
  * @author Team XBMC
  */
-public abstract class Client {
+public abstract class Client implements IClient {
 	
 	public static final Integer PLAYLIST_MUSIC = 0;
 	public static final Integer PLAYLIST_VIDEO = 1;
@@ -76,6 +79,10 @@ public abstract class Client {
 	 */
 	Client(Connection connection) {
 		mConnection = connection;
+	}
+	
+	public void setHost(Host host) {
+		mConnection.setHost(host);
 	}
 	
 	/**
@@ -248,12 +255,16 @@ public abstract class Client {
 	 * @param sortOrder Sort order
 	 * @return query ObjNode
 	 */
-	protected static ObjNode sort(ObjNode params, int sortBy, String sortOrder, boolean ignoreArticle) {
-		final String order = sortOrder.equals(SortType.ORDER_DESC) ? "descending" : "ascending";
-		switch (sortBy) {
+	protected static ObjNode sort(ObjNode params, Sort sort) {
+		
+		final boolean ignoreArticle = sort.ignoreArticle;
+		final String order = sort.sortOrder.equals(SortType.ORDER_DESC) ? "descending" : "ascending";
+		switch (sort.sortBy) {
 			default:
 
 			case SortType.GENRE:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "genre").p("ignorearticle", ignoreArticle));
+				break;
 			case SortType.ALBUM:
 				params.p("sort", MusicClient.obj().p("order", order).p("method", "label").p("ignorearticle", ignoreArticle));
 				break;
@@ -263,13 +274,22 @@ public abstract class Client {
 			case SortType.TRACK:
 				params.p("sort", MusicClient.obj().p("order", order).p("method", "track").p("ignorearticle", ignoreArticle));
 				break;
+			case SortType.DATE_ADDED:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "dateadded").p("ignorearticle", ignoreArticle));
+				break;
+			case SortType.PLAYCOUNT:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "playcount").p("ignorearticle", ignoreArticle));
+				break;
+			case SortType.LASTPLAYED:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "lastplayed").p("ignorearticle", ignoreArticle));
+				break;
 		}
 		return params;
 	}
 	
 	public JsonNode getActivePlayer(INotifiableManager manager) {
 		ArrayNode result = (ArrayNode) mConnection.getJson(manager, "Player.GetActivePlayers");
-		if(result.size() == 0) {
+		if(result == null || result.size() == 0) {
 			// not currently playing
 			return null;
 		}

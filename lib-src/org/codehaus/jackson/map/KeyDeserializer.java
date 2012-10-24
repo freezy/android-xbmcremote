@@ -2,7 +2,7 @@ package org.codehaus.jackson.map;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonProcessingException;
 
 /**
  * Abstract class that defines API used for deserializing Json content

@@ -14,14 +14,24 @@
  */
 package org.codehaus.jackson;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
 import java.lang.ref.SoftReference;
 import java.net.URL;
 
-import org.codehaus.jackson.io.*;
 import org.codehaus.jackson.impl.ByteSourceBootstrapper;
 import org.codehaus.jackson.impl.ReaderBasedParser;
 import org.codehaus.jackson.impl.WriterBasedGenerator;
+import org.codehaus.jackson.io.IOContext;
+import org.codehaus.jackson.io.UTF8Writer;
 import org.codehaus.jackson.sym.BytesToNameCanonicalizer;
 import org.codehaus.jackson.sym.CharsToNameCanonicalizer;
 import org.codehaus.jackson.util.BufferRecycler;

@@ -60,7 +60,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 			public void doRun() throws Exception {
 				final IMusicClient mc = music(context);
 				ArrayList<Integer> compilationArtistIDs = mc.getCompilationArtistIDs(MusicManager.this);
-				response.value = mc.getAlbums(MusicManager.this, compilationArtistIDs, getSortBy(SortType.ALBUM), getSortOrder());
+				response.value = mc.getAlbums(MusicManager.this, compilationArtistIDs, getSort(SortType.ALBUM));
 			}
 		});
 	}
@@ -73,7 +73,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 		mHandler.post(new Command<ArrayList<Album>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
-				response.value = music(context).getAlbums(MusicManager.this, getSortBy(SortType.ALBUM), getSortOrder());
+				response.value = music(context).getAlbums(MusicManager.this, getSort(SortType.ALBUM));
 			}
 		});
 	}
@@ -84,7 +84,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	 */
 	public ArrayList<Album> getAlbums(final Context context) {
 		try { //TODO fix this to throw 
-			return music(context).getAlbums(MusicManager.this, getSortBy(SortType.ALBUM), getSortOrder());
+			return music(context).getAlbums(MusicManager.this, getSort(SortType.ALBUM));
 		} catch (WifiStateException e) {
 			e.printStackTrace();
 		}
@@ -100,7 +100,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 		mHandler.post(new Command<ArrayList<Album>>(response, this){
 			@Override
 			public void doRun() throws Exception {
-				response.value = music(context).getAlbums(MusicManager.this, artist, getSortBy(SortType.ALBUM), getSortOrder());
+				response.value = music(context).getAlbums(MusicManager.this, artist, getSort(SortType.ALBUM));
 			}
 		});
 	}
@@ -113,7 +113,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getAlbums(final DataResponse<ArrayList<Album>> response, final Genre genre, final Context context) {
 		mHandler.post(new Command<ArrayList<Album>>(response, this) {
 			public void doRun() throws Exception{ 
-				response.value = music(context).getAlbums(MusicManager.this, genre, getSortBy(SortType.ALBUM), getSortOrder());
+				response.value = music(context).getAlbums(MusicManager.this, genre, getSort(SortType.ALBUM));
 			}
 		});
 	}
@@ -126,7 +126,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getSongs(final DataResponse<ArrayList<Song>> response, final Album album, final Context context) {
 		mHandler.post(new Command<ArrayList<Song>>(response, this) {
 			public void doRun() throws Exception{ 
-				response.value = music(context).getSongs(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
+				response.value = music(context).getSongs(MusicManager.this, album, getSort(SortType.TRACK));
 			}
 		});
 	}
@@ -139,7 +139,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getSongs(final DataResponse<ArrayList<Song>> response, final Artist artist, final Context context) {
 		mHandler.post(new Command<ArrayList<Song>>(response, this) {
 			public void doRun() throws Exception{ 
-				response.value = music(context).getSongs(MusicManager.this, artist, getSortBy(SortType.ARTIST), getSortOrder());
+				response.value = music(context).getSongs(MusicManager.this, artist, getSort(SortType.ARTIST));
 			}
 		});
 	}
@@ -152,7 +152,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	public void getSongs(final DataResponse<ArrayList<Song>> response, final Genre genre, final Context context) {
 		mHandler.post(new Command<ArrayList<Song>>(response, this) {
 			public void doRun() throws Exception{ 
-				response.value = music(context).getSongs(MusicManager.this, genre, getSortBy(SortType.ARTIST), getSortOrder());
+				response.value = music(context).getSongs(MusicManager.this, genre, getSort(SortType.ARTIST));
 			}
 		});
 	}
@@ -162,22 +162,10 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	 * @param response Response object
 	 */
 	public void getArtists(final DataResponse<ArrayList<Artist>> response, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				boolean albumArtistsOnly;
-//				try {
-//					albumArtistsOnly = info(context).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
-//					response.value = music(context).getArtists(MusicManager.this, albumArtistsOnly);
-//					onFinish(response);
-//				} catch (WifiStateException e) {
-//					onWrongConnectionState(e.getState());
-//				}
-//			}
-//		});
 		mHandler.post(new Command<ArrayList<Artist>>(response, this) {
 			public void doRun() throws Exception{ 
 				final boolean albumArtistsOnly = !info(context).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.SHOW_COMPLATION_ARTISTS);
-				response.value = music(context).getArtists(MusicManager.this, albumArtistsOnly);
+				response.value = music(context).getArtists(MusicManager.this, albumArtistsOnly, getSort(SortType.ARTIST));
 			}
 		});
 	}
@@ -188,22 +176,10 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	 * @param genre Genre
 	 */
 	public void getArtists(final DataResponse<ArrayList<Artist>> response, final Genre genre, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				boolean albumArtistsOnly;
-//				try {
-//					albumArtistsOnly = info(context).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
-//					response.value = music(context).getArtists(MusicManager.this, genre, albumArtistsOnly);
-//					onFinish(response);
-//				} catch (WifiStateException e) {
-//					onWrongConnectionState(e.getState());
-//				}
-//			}
-//		});
 		mHandler.post(new Command<ArrayList<Artist>>(response, this) {
 			public void doRun() throws Exception{ 
 				final boolean albumArtistsOnly = !info(context).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.SHOW_COMPLATION_ARTISTS);
-				response.value = music(context).getArtists(MusicManager.this, genre, albumArtistsOnly);
+				response.value = music(context).getArtists(MusicManager.this, genre, albumArtistsOnly, getSort(SortType.ARTIST));
 			}
 		});
 	}
@@ -221,7 +197,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 //		});
 		mHandler.post(new Command<ArrayList<Genre>>(response, this) {
 			public void doRun() throws Exception{ 
-				response.value = music(context).getGenres(MusicManager.this);
+				response.value = music(context).getGenres(MusicManager.this, getSort(SortType.GENRE));
 			}
 		});
 	}
@@ -240,7 +216,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-				response.value = mc.addToPlaylist(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
+				response.value = mc.addToPlaylist(MusicManager.this, album, getSort(SortType.TRACK));
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 			}
 		});
@@ -258,7 +234,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-				response.value = mc.addToPlaylist(MusicManager.this, genre, getSortBy(SortType.ARTIST), getSortOrder());
+				response.value = mc.addToPlaylist(MusicManager.this, genre, getSort(SortType.ARTIST));
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 			}
 		});
@@ -300,14 +276,14 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				int playPos = -1;
 				if (playlistSize == 0) {  // if playlist is empty, add the whole album
 					int n = 0;
-					for (Song albumSong : mc.getSongs(MusicManager.this, album, getSortBy(PREF_SORT_KEY_ALBUM), getSortOrder())) {
+					for (Song albumSong : mc.getSongs(MusicManager.this, album, getSort(PREF_SORT_KEY_ALBUM))) {
 						if (albumSong.id == song.id) {
 							playPos = n;
 							break;
 						}
 						n++;
 					}
-					mc.addToPlaylist(MusicManager.this, album, getSortBy(PREF_SORT_KEY_ALBUM), getSortOrder());
+					mc.addToPlaylist(MusicManager.this, album, getSort(PREF_SORT_KEY_ALBUM));
 					response.value = true;
 				} else {                          // otherwise, only add the song
 					mc.addToPlaylist(MusicManager.this, song);
@@ -343,7 +319,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-				response.value = mc.addToPlaylist(MusicManager.this, artist, getSortBy(SortType.ALBUM), getSortOrder());
+				response.value = mc.addToPlaylist(MusicManager.this, artist, getSort(SortType.ALBUM));
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 			}
 		});
@@ -362,7 +338,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
 				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-				response.value = mc.addToPlaylist(MusicManager.this, artist, genre, getSortBy(SortType.ARTIST), getSortOrder());
+				response.value = mc.addToPlaylist(MusicManager.this, artist, genre, getSort(SortType.ARTIST));
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 			}
 		});
@@ -416,7 +392,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 		mHandler.post(new Command<Boolean>(response, this) {
 			public void doRun() throws Exception{ 
 				control(context).stop(MusicManager.this);
-				response.value = music(context).play(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
+				response.value = music(context).play(MusicManager.this, album, getSort(SortType.TRACK));
 			}
 		});
 	}
@@ -430,7 +406,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 		mHandler.post(new Command<Boolean>(response, this) {
 			public void doRun() throws Exception{ 
 				control(context).stop(MusicManager.this);
-				response.value = music(context).play(MusicManager.this, genre, getSortBy(SortType.ARTIST), getSortOrder());
+				response.value = music(context).play(MusicManager.this, genre, getSort(SortType.ARTIST));
 			}
 		});
 	}
@@ -463,7 +439,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				int n = 0;
 				int playPos = 0;
 				mc.clearPlaylist(MusicManager.this);
-				for (Song albumSong : mc.getSongs(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder())) {
+				for (Song albumSong : mc.getSongs(MusicManager.this, album, getSort(SortType.TRACK))) {
 					if (albumSong.id == song.id) {
 						playPos = n;
 						break;
@@ -471,7 +447,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 					n++;
 				}
 				cc.stop(MusicManager.this);
-				mc.addToPlaylist(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
+				mc.addToPlaylist(MusicManager.this, album, getSort(SortType.TRACK));
 				cc.setCurrentPlaylist(MusicManager.this, MusicClient.PLAYLIST_MUSIC.toString());
 				if (playPos > 0) {
 					mc.playlistSetSong(MusicManager.this, playPos - 1);
@@ -490,7 +466,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 		mHandler.post(new Command<Boolean>(response, this) {
 			public void doRun() throws Exception{ 
 				control(context).stop(MusicManager.this);
-				response.value = music(context).play(MusicManager.this, artist, getSortBy(SortType.ALBUM), getSortOrder());
+				response.value = music(context).play(MusicManager.this, artist, getSort(SortType.ALBUM));
 			}
 		});
 	}
@@ -505,7 +481,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 		mHandler.post(new Command<Boolean>(response, this) {
 			public void doRun() throws Exception{ 
 				control(context).stop(MusicManager.this);
-				response.value = music(context).play(MusicManager.this, artist, genre);
+				response.value = music(context).play(MusicManager.this, artist, genre, getSort(SortType.ARTIST));
 			}
 		});
 	}

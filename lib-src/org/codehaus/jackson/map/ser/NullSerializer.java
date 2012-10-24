@@ -1,10 +1,13 @@
 package org.codehaus.jackson.map.ser;
 
-import java.lang.reflect.Type;
 import java.io.IOException;
+import java.lang.reflect.Type;
 
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.SerializerProvider;
 
 /**
  * This is a simple dummy serializer that will just output literal

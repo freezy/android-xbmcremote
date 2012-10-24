@@ -12,7 +12,6 @@ import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.INotifiableManager;
-import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.presentation.INotifiableController;
 

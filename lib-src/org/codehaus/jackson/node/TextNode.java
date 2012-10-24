@@ -2,7 +2,13 @@ package org.codehaus.jackson.node;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.Base64Variant;
+import org.codehaus.jackson.Base64Variants;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonLocation;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.util.ByteArrayBuilder;
 import org.codehaus.jackson.util.CharTypes;

@@ -38,6 +38,8 @@ public abstract class SortType {
 	public static final int EPISODE_RATING = 10;
 	public static final int DATE_ADDED = 11;
 	public static final int GENRE = 12;
+	public static final int PLAYCOUNT = 13;
+	public static final int LASTPLAYED = 14;
 	
 	public static final int DONT_SORT = -1;
 }

@@ -3,14 +3,14 @@ package org.codehaus.jackson.map.introspect;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import org.codehaus.jackson.type.JavaType;
+import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.KeyDeserializer;
-import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Typing;
 import org.codehaus.jackson.map.jsontype.NamedType;
 import org.codehaus.jackson.map.jsontype.TypeResolverBuilder;
+import org.codehaus.jackson.type.JavaType;
 
 /**
  * Dummy, "no-operation" implementation of {@link AnnotationIntrospector}.

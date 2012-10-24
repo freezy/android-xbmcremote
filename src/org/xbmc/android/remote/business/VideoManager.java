@@ -64,7 +64,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<Movie>>(response, this) {
 			@Override
 			public void doRun() throws Exception { 
-				response.value = video(context).getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
+				response.value = video(context).getMovies(VideoManager.this, getSort(SortType.TITLE), getHideWatched(context));
 			}
 		});
 	}
@@ -75,7 +75,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 */
 	public ArrayList<Movie> getMovies(final Context context) {
 		try {
-			return video(context).getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
+			return video(context).getMovies(VideoManager.this, getSort(SortType.TITLE), getHideWatched(context));
 		} catch (WifiStateException e) {
 			e.printStackTrace();
 		}
@@ -91,7 +91,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<Movie>>(response, this) {
 			@Override
 			public void doRun() throws Exception { 
-				response.value = video(context).getMovies(VideoManager.this, actor, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
+				response.value = video(context).getMovies(VideoManager.this, actor, getSort(SortType.TITLE), getHideWatched(context));
 			}
 		});
 	}
@@ -105,7 +105,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<Movie>>(response, this) {
 			@Override
 			public void doRun() throws Exception { 
-				response.value = video(context).getMovies(VideoManager.this, genre, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
+				response.value = video(context).getMovies(VideoManager.this, genre, getSort(SortType.TITLE), getHideWatched(context));
 			}
 		});
 	}
@@ -172,7 +172,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<Genre>>(response, this) {
 			@Override
 			public void doRun() throws Exception { 
-				response.value = video(context).getMovieGenres(VideoManager.this);
+				response.value = video(context).getMovieGenres(VideoManager.this, getSort(SortType.GENRE));
 			}
 		});
 	}

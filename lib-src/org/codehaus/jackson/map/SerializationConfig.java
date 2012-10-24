@@ -1,17 +1,20 @@
 package org.codehaus.jackson.map;
 
 import java.text.DateFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.codehaus.jackson.annotate.*;
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonWriteNullProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion; // for javadocs
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.codehaus.jackson.map.introspect.AnnotatedClass;
 import org.codehaus.jackson.map.introspect.VisibilityChecker;
 import org.codehaus.jackson.map.jsontype.TypeResolverBuilder;
 import org.codehaus.jackson.map.type.ClassKey;
 import org.codehaus.jackson.map.util.StdDateFormat;
 import org.codehaus.jackson.type.JavaType;
+// for javadocs
 
 /**
  * Object that contains baseline configuration for serialization

@@ -1,6 +1,6 @@
 package org.codehaus.jackson.map.util;
 
-import java.util.*;
+import java.util.Collection;
 
 /**
 * Simple helper class used for decoupling instantiation of

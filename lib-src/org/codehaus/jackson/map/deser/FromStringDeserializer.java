@@ -7,8 +7,8 @@ import java.util.Currency;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.map.DeserializationContext;
 

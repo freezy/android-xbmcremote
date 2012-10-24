@@ -14,7 +14,8 @@
  */
 package org.codehaus.jackson.map;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.ObjectCodec;
 
 /**
  * Sub-class of {@link JsonFactory} that will create a proper

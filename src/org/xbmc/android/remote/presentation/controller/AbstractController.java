@@ -247,7 +247,7 @@ public abstract class AbstractController {
 				if (e.getMessage() != null) {
 					builder.setMessage(e.getMessage().toString());
 				}
-				Log.e(TAG, e.getStackTrace().toString());
+				Log.e(TAG, e.getMessage(), e);
 			}
 		} catch (HttpException e) {
 			if (e.getMessage().startsWith("401")) {

@@ -159,6 +159,8 @@ public abstract class ClientFactory {
 		sApiType = API_TYPE_UNSET;
 		if (sHttpClient != null) {
 			sHttpClient.setHost(host);
+		} else if(sJsonClient != null) {
+			sJsonClient.setHost(host);
 		} else {
 			Log.w(TAG,
 					"Not updating http client's host because no instance is set yet.");

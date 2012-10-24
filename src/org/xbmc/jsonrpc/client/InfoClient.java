@@ -10,10 +10,9 @@ import org.codehaus.jackson.JsonNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.object.FileLocation;
-import org.xbmc.api.object.Host;
 import org.xbmc.api.type.DirectoryMask;
 import org.xbmc.api.type.MediaType;
-import org.xbmc.api.type.SortType;
+import org.xbmc.api.type.Sort;
 import org.xbmc.jsonrpc.Connection;
 
 import android.graphics.Bitmap;
@@ -28,6 +27,8 @@ import android.util.Log;
  * @author Team XBMC
  */
 public class InfoClient extends Client implements IInfoClient {
+	
+	private int apiVersion = -1;
 
 	/**
 	 * Class constructor needs reference to HTTP client connection
@@ -36,15 +37,6 @@ public class InfoClient extends Client implements IInfoClient {
 	 */
 	public InfoClient(Connection connection) {
 		super(connection);
-	}
-
-	/**
-	 * Updates host info on the connection.
-	 * 
-	 * @param host
-	 */
-	public void setHost(Host host) {
-		mConnection.setHost(host);
 	}
 
 	/**
@@ -62,13 +54,13 @@ public class InfoClient extends Client implements IInfoClient {
 	 */
 	public ArrayList<FileLocation> getDirectory(INotifiableManager manager,
 			String path, DirectoryMask mask, int offset, int limit,
-			final int mMediaType) {
+			final int mMediaType, Sort sort) {
 		final ArrayList<FileLocation> dirs = new ArrayList<FileLocation>();
 		final JsonNode jsonDirs = mConnection.getJson(
 				manager,
 				"Files.GetDirectory",
 				sort(obj().p("media", "files").p("directory", path),
-						SortType.FILENAME, SortType.ORDER_ASC, false), "files");
+						sort), "files");
 		for (Iterator<JsonNode> i = jsonDirs.getElements(); i.hasNext();) {
 			JsonNode jsonDir = (JsonNode) i.next();
 			dirs.add(new FileLocation(getString(jsonDir, "label"), getString(
@@ -85,8 +77,8 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public ArrayList<FileLocation> getDirectory(INotifiableManager manager,
-			String path, int mMediaType) {
-		return getDirectory(manager, path, null, 0, 0, mMediaType);
+			String path, int mMediaType, Sort sort) {
+		return getDirectory(manager, path, null, 0, 0, mMediaType, sort);
 	}
 
 	/**
@@ -157,6 +149,17 @@ public class InfoClient extends Client implements IInfoClient {
 			return "Unknown";
 		}
 		return version.get("major").getValueAsText() + "." + version.get("minor").getValueAsText() + " " + version.get("revision").getValueAsText();
+	}
+	
+	public int getAPIVersion(INotifiableManager manager) {
+		if(apiVersion > 0) {
+			return apiVersion;
+		}
+		if(apiVersion == -1) {
+			String version = mConnection.getString(manager, "JSONRPC.Version", "version");
+			apiVersion = Integer.parseInt(version);
+		}
+		return apiVersion;
 	}
 
 	/**

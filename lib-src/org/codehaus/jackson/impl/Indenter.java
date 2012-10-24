@@ -2,7 +2,8 @@ package org.codehaus.jackson.impl;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
 
 /**
  * Interface that defines objects that can produce indentation used

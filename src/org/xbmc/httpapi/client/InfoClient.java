@@ -14,6 +14,7 @@ import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.type.DirectoryMask;
 import org.xbmc.api.type.MediaType;
+import org.xbmc.api.type.Sort;
 import org.xbmc.httpapi.Connection;
 
 import android.graphics.Bitmap;
@@ -56,7 +57,7 @@ public class InfoClient implements IInfoClient {
 	 * @param mediaType MediaType
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit, int mediaType) {
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit, int mediaType, Sort sort) {
 		ArrayList<String> result = new ArrayList<String>();
 
 		if (mediaType == MediaType.UNKNOWN) {
@@ -87,8 +88,8 @@ public class InfoClient implements IInfoClient {
 	 * @param path    Path to the directory
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, int mediaType) {
-		return this.getDirectory(manager, path, null, 0, 0, mediaType);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, int mediaType, Sort sort) {
+		return this.getDirectory(manager, path, null, 0, 0, mediaType, sort);
 	}
 
 	
@@ -131,6 +132,11 @@ public class InfoClient implements IInfoClient {
 	 */
 	public String getSystemVersion(INotifiableManager manager) {
 		return mConnection.getString(manager, "GetSystemInfo", String.valueOf(SystemInfo.SYSTEM_BUILD_VERSION));
+	}
+	
+	public int getAPIVersion(INotifiableManager manager) {
+		// since this is basically the first API level
+		return 1;
 	}
 	
 	/**

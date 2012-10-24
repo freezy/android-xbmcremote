@@ -1,6 +1,7 @@
 package org.codehaus.jackson.impl;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonLocation;
+import org.codehaus.jackson.JsonStreamContext;
 import org.codehaus.jackson.util.CharTypes;
 
 /**

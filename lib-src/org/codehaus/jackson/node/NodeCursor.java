@@ -1,8 +1,11 @@
 package org.codehaus.jackson.node;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.codehaus.jackson.*;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonStreamContext;
+import org.codehaus.jackson.JsonToken;
 
 /**
  * Helper class used by {@link TreeTraversingParser} to keep track

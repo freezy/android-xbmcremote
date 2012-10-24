@@ -6,8 +6,8 @@ import java.lang.reflect.Type;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.SerializerProvider;
 
 /**
  * Specialized serializer that can be used as the generic key

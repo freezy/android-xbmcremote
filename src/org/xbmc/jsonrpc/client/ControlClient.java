@@ -1,11 +1,9 @@
 package org.xbmc.jsonrpc.client;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.info.PlayStatus;
-import org.xbmc.api.object.Host;
 import org.xbmc.api.type.SeekType;
 import org.xbmc.jsonrpc.Connection;
 
@@ -15,11 +13,6 @@ public class ControlClient extends Client implements IControlClient {
 
 	public ControlClient(Connection connection) {
 		super(connection);
-	}
-
-	public void setHost(Host host) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public boolean addToPlaylist(INotifiableManager manager, String fileOrFolder) {
