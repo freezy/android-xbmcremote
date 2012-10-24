@@ -28,8 +28,6 @@ import android.util.Log;
  */
 public class InfoClient extends Client implements IInfoClient {
 	
-	private int apiVersion = -1;
-
 	/**
 	 * Class constructor needs reference to HTTP client connection
 	 * 
@@ -141,9 +139,11 @@ public class InfoClient extends Client implements IInfoClient {
 	 * @return
 	 */
 	public String getSystemVersion(INotifiableManager manager) {
+		// get and cache the api version while we're here
+		getAPIVersion(manager);
+		
 		ObjNode obj = obj().p("properties", arr().add("version"));
 		JsonNode result = mConnection.getJson(manager, "Application.GetProperties", obj);
-		Log.e("InfoClient", result.toString());
 		JsonNode version = result.get("version");
 		if(version == null) {
 			return "Unknown";
@@ -152,14 +152,7 @@ public class InfoClient extends Client implements IInfoClient {
 	}
 	
 	public int getAPIVersion(INotifiableManager manager) {
-		if(apiVersion > 0) {
-			return apiVersion;
-		}
-		if(apiVersion == -1) {
-			String version = mConnection.getString(manager, "JSONRPC.Version", "version");
-			apiVersion = Integer.parseInt(version);
-		}
-		return apiVersion;
+		return super.getAPIVersion(manager);
 	}
 
 	/**

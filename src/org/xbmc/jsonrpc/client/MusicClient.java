@@ -76,7 +76,7 @@ public class MusicClient extends Client implements IMusicClient {
 	public boolean addToPlaylist(INotifiableManager manager, Album album, Sort sort) {
 		
 		return mConnection.getBoolean(manager, "Playlist.Add", 
-				sort(obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("albumid", album.getId())), sort));
+				obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("albumid", album.getId())));
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Sort sort) {
-		return mConnection.getBoolean(manager, "Playlist.Add", sort(obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("artistid", artist.getId())), sort));
+		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("artistid", artist.getId())));
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Genre genre, Sort sort) {
-		return mConnection.getBoolean(manager, "Playlist.Add", sort(obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("genreid", genre.getId())), sort));
+		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("genreid", genre.getId())));
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre, Sort sort) {
-		return mConnection.getBoolean(manager, "Playlist.Add", sort(obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("artistid", artist.getId()).p("genreid", genre.getId())), sort));
+		return mConnection.getBoolean(manager, "Playlist.Add", obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("artistid", artist.getId()).p("genreid", genre.getId())));
 	}
 	
 	/**
@@ -354,7 +354,7 @@ public class MusicClient extends Client implements IMusicClient {
 		// TODO: Make ignore article configurable
 		final ArrayList<Album> albums = new ArrayList<Album>();
 		for (Integer id : artistIDs) {
-			ObjNode node = sort(obj().p("artistid", id), sort);
+			ObjNode node = sort(filter(obj(), "artistid", id), sort);
 			albums.addAll(parseAlbums(mConnection.getJson(manager, "AudioLibrary.GetAlbums", node)));
 		}
 		return albums;
@@ -369,7 +369,7 @@ public class MusicClient extends Client implements IMusicClient {
 	public ArrayList<Album> getAlbums(INotifiableManager manager, Artist artist, Sort sort) {
 		
 		// TODO: Make ignore article configurable
-		ObjNode node = sort(obj().p("artistid", artist.getId()), sort);
+		ObjNode node = sort(filter(obj(), "artistid", artist.getId()), sort);
 		return parseAlbums(mConnection.getJson(manager, "AudioLibrary.GetAlbums", node));
 	}
 
@@ -381,7 +381,7 @@ public class MusicClient extends Client implements IMusicClient {
 	public ArrayList<Album> getAlbums(INotifiableManager manager, Genre genre, Sort sort) {
 		
 		// TODO: Make ignore article configurable		
-		ObjNode node = sort(obj().p("genreid", genre.getId()), sort);
+		ObjNode node = sort(filter(obj(), "genreid", genre.getId()), sort);
 		return parseAlbums(mConnection.getJson(manager, "AudioLibrary.GetAlbums", node));
 	}
 	
@@ -523,7 +523,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return SQL string
 	 */
 	private ObjNode getSongsCondition(Song song) {
-		return obj().p("songid", song.getId());
+		return filter(obj(), "songid", song.getId());
 	}
 
 	/**
@@ -532,7 +532,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return SQL string
 	 */
 	private ObjNode getSongsCondition(Album album) {
-		return obj().p("albumid", album.getId());
+		return filter(obj(), "albumid", album.getId());
 	}
 
 	/**
@@ -541,7 +541,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return SQL string
 	 */
 	private ObjNode getSongsCondition(Artist artist) {
-		return obj().p("artistid", artist.getId());
+		return filter(obj(), "artistid", artist.getId());
 	}	
 	
 	/**
@@ -550,7 +550,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return SQL string
 	 */
 	private ObjNode getSongsCondition(Genre genre) {
-		return obj().p("genreid", genre.getId());
+		return filter(obj(), "genreid", genre.getId());
 	}
 	
 	/**
@@ -560,7 +560,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return SQL string
 	 */
 	private ObjNode getSongsCondition(Artist artist, Genre genre) {
-		return obj().p("genreid", genre.getId()).p("artistid", artist.getId());
+		return filter(obj(), "genreid", genre.getId(), "artistid", artist.getId());
 	}
 	
 	/**

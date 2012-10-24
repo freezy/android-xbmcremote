@@ -285,7 +285,9 @@ public class Connection {
 			return ret;
 
 		} catch (MalformedURLException e) {
-			manager.onError(e);
+			if(manager != null) {
+				manager.onError(e);
+			}
 		} catch (IOException e) {
 			int responseCode = -1;
 			try {
@@ -293,15 +295,19 @@ public class Connection {
 			} catch (IOException e1) {
 			} // do nothing, getResponse code failed so treat as default i/o
 				// exception.
-			if (uc != null
-					&& responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-				manager.onError(new HttpException(Integer
-						.toString(HttpURLConnection.HTTP_UNAUTHORIZED)));
-			} else {
-				manager.onError(e);
+			if(manager != null) {
+				if (uc != null
+						&& responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+					manager.onError(new HttpException(Integer
+							.toString(HttpURLConnection.HTTP_UNAUTHORIZED)));
+				} else {
+					manager.onError(e);
+				}
 			}
 		} catch (NoSettingsException e) {
-			manager.onError(e);
+			if(manager != null) {
+				manager.onError(e);
+			}
 		}
 		return new ObjectNode(null);
 	}

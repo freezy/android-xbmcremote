@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -45,6 +46,7 @@ import org.xbmc.api.type.Sort;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.api.type.ThumbSize.Dimension;
+import org.xbmc.api.type.Version;
 import org.xbmc.jsonrpc.Connection;
 
 import android.graphics.Bitmap;
@@ -71,6 +73,7 @@ public abstract class Client implements IClient {
 	public final static JsonNodeFactory FACTORY = JsonNodeFactory.instance;
 
 	protected final Connection mConnection;
+	private int apiVersion = -1;
 	
 
 	/**
@@ -82,6 +85,8 @@ public abstract class Client implements IClient {
 	}
 	
 	public void setHost(Host host) {
+		// reset the API Version
+		apiVersion = -1;
 		mConnection.setHost(host);
 	}
 	
@@ -249,13 +254,44 @@ public abstract class Client implements IClient {
 		return obj.get(key) == null ? -1 : obj.get(key).getIntValue();
 	}
 	
+	protected ObjNode filter(ObjNode params, Object ... filterStrings) {
+		if(getAPIVersion() >= Version.FRODO.ordinal()) {
+			
+			ObjNode filters = obj();
+			for(int i = 0; i < filterStrings.length; i+=2) {
+				addObject(filters, filterStrings[i].toString(), filterStrings[i + 1]);
+			}
+			params.p("filter", filters);
+			return params;
+		}
+		for(int i = 0; i < filterStrings.length; i+=2) {
+			addObject(params, filterStrings[i].toString(), filterStrings[i + 1]);
+		}
+		return params;
+	}	
+	
+	private void addObject(ObjNode parent, String key, Object value) {
+		if(value instanceof Integer) {
+			parent.p(key, (Integer) value);
+		}
+		else if(value instanceof JsonNode) {
+			parent.p(key, (JsonNode) value);
+		}
+		else if(value instanceof Boolean) {
+			parent.p(key, (Boolean) value);
+		}
+		else {
+			parent.p(key, value.toString());
+		}
+	}
+	
 	/**
 	 * Returns an object node of given sort options of albums query
 	 * @param sortBy    Sort field
 	 * @param sortOrder Sort order
 	 * @return query ObjNode
 	 */
-	protected static ObjNode sort(ObjNode params, Sort sort) {
+	protected ObjNode sort(ObjNode params, Sort sort) {
 		
 		final boolean ignoreArticle = sort.ignoreArticle;
 		final String order = sort.sortOrder.equals(SortType.ORDER_DESC) ? "descending" : "ascending";
@@ -340,6 +376,19 @@ public abstract class Client implements IClient {
 		
 		return genres;
 	}
+
+	public int getAPIVersion() {
+		return getAPIVersion(null);
+	}
+	public int getAPIVersion(INotifiableManager manager) {
+		if(apiVersion > 0) {
+			return apiVersion;
+		}
+		String version = mConnection.getString(manager, "JSONRPC.Version", "version");
+		apiVersion = Integer.parseInt(version);
+		return apiVersion;
+	}
+
 
 	
 }
