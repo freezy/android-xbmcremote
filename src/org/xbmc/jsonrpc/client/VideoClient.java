@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
 import org.xbmc.api.data.IVideoClient;
@@ -43,12 +44,26 @@ public class VideoClient extends Client implements IVideoClient {
 			String fullpath = getString(jsonMovie, "file").replace("\\", "/");
 			String localPath = fullpath.substring(0, fullpath.lastIndexOf('/'));
 			String filename = fullpath.replace(localPath, "");
-
+			
+			// FIXME: Ugly backwards compatability hack
+			String genre = getString(jsonMovie, "genre");
+			if(jsonMovie.get("genre") != null && jsonMovie.get("genre") instanceof ArrayNode) {
+				ArrayNode genreArrayNode = (ArrayNode) jsonMovie.get("genre");
+				
+				genre = "";
+				for(int j = 0; j < genreArrayNode.size(); j++) {
+					genre += genreArrayNode.get(j).getTextValue();
+					if(j < genreArrayNode.size() - 1) {
+						genre += " / ";
+					}
+				}
+			}
+			
 			movies.add(new Movie(getInt(jsonMovie, "movieid"), getString(
 					jsonMovie, "label"), getInt(jsonMovie, "year"), localPath,
 					filename, getString(jsonMovie, "director"), getString(
 							jsonMovie, "runtime"),
-					getString(jsonMovie, "genre"), getDouble(jsonMovie,
+					genre, getDouble(jsonMovie,
 							"rating"), playcount, getString(jsonMovie,
 							"imdbnumber")));
 		}
@@ -116,7 +131,18 @@ public class VideoClient extends Client implements IVideoClient {
 		movie.tagline = getString(movieDetails, "tagline");
 		movie.plot = getString(movieDetails, "plot");
 		movie.numVotes = getInt(movieDetails, "votes");
-		movie.studio = getString(movieDetails, "studio");
+		
+		JsonNode node = movieDetails.get("studio");
+		if(node instanceof ArrayNode) {
+			ArrayNode arrNode = (ArrayNode) node;
+			if(arrNode.size() > 0) {
+				movie.studio = arrNode.get(0).getTextValue();
+			} else {
+				movie.studio = "";
+			}
+		} else {
+			movie.studio = getString(movieDetails, "studio");
+		}
 		movie.rated = getString(movieDetails, "mpaa");
 		movie.trailerUrl = getString(movieDetails, "trailer");
 		return movie;
