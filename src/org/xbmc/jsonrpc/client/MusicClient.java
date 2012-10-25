@@ -225,7 +225,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	public boolean play(INotifiableManager manager, Album album, Sort sort) {
 		// ignoring sort as not applicable in jsonrpc API
-		return play(manager, sort(obj().p("item", getSongsCondition(album)), sort));
+		return play(manager, obj().p("item", getSongsCondition(album)));
 	}
 	
 	/**
@@ -234,7 +234,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean play(INotifiableManager manager, Genre genre, Sort sort) {
-		return play(manager, sort(getSongsCondition(genre), sort));
+		return play(manager, getSongsCondition(genre));
 	}
 	
 	/**
@@ -243,7 +243,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean play(INotifiableManager manager, Artist artist, Sort sort) {
-		return play(manager, sort(getSongsCondition(artist), sort));
+		return play(manager, getSongsCondition(artist));
 	}
 	
 	/**
@@ -253,7 +253,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean play(INotifiableManager manager, Artist artist, Genre genre, Sort sort) {
-		return play(manager, sort(getSongsCondition(artist, genre), sort));
+		return play(manager, getSongsCondition(artist, genre));
 	}
 
 	/**
