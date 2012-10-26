@@ -159,14 +159,13 @@ public class ControlClient extends Client implements IControlClient {
 	 * @return true on success, false otherwise.
 	 */
 	public boolean sendText(INotifiableManager manager, String text) {
-		/*final int codeOffset = 0xf100;
-		for (char c : text.toCharArray()) {
-			int code = (int)c+codeOffset;
-			if (! mConnection.getBoolean(manager, "SendKey", Integer.toString(code))) {
-				return false;
-			}
-		}*/
-		return false;
+		
+		boolean done = false;
+		if(text.endsWith("\n")){
+			text = text.substring(0, text.length()-1);
+			done = true;
+		}
+		return mConnection.getString(manager, "Input.SendText", obj().p("text", text).p("done", done)).equals("OK");
 	}
 	
 	/**
