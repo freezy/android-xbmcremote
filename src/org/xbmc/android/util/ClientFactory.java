@@ -147,7 +147,7 @@ public abstract class ClientFactory {
 	 * @param host New host settings, can be null.
 	 */
 	public static void resetClient(Host host) {
-		sApiType = API_TYPE_UNSET;
+		//sApiType = API_TYPE_UNSET;
 		if (sHttpClient != null) {
 			sHttpClient.setHost(host);
 		} else if(sJsonClient != null){
@@ -222,6 +222,7 @@ public abstract class ClientFactory {
 	 * @param manager Upper layer reference
 	 */
 	private static void probeQueryApiType(final INotifiableManager manager) {
+		
 		final Host host = HostFactory.host;
 		
 		if (sApiType != API_TYPE_UNSET) {
