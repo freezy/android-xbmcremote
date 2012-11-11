@@ -27,6 +27,7 @@
 	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="com.sonyericsson.extras.liveware.aef.EXTENSION_PERMISSION" />
 	
 	<uses-feature android:name="android.hardware.telephony" android:required="false" />
 	<uses-feature android:name="android.hardware.location.network" android:required="false" />
@@ -89,8 +90,37 @@
 				<action android:name="android.intent.action.BOOT_COMPLETED"/>
 			</intent-filter>
 		</receiver>
+		<receiver android:name="org.xbmc.android.smartextension.XbmcExtensionReceiver" >
+			<intent-filter>
+				<!-- Generic extension intents. -->
+				<action android:name="com.sonyericsson.extras.liveware.aef.registration.EXTENSION_REGISTER_REQUEST" />
+				<action android:name="com.sonyericsson.extras.liveware.aef.registration.ACCESSORY_CONNECTION" />
+				<action android:name="android.intent.action.LOCALE_CHANGED" />
+
+				<!-- Notification intents -->
+				<action android:name="com.sonyericsson.extras.liveware.aef.notification.VIEW_EVENT_DETAIL" />
+				<action android:name="com.sonyericsson.extras.liveware.aef.notification.REFRESH_REQUEST" />
+
+				<!-- Widget intents -->
+				<action android:name="com.sonyericsson.extras.aef.widget.START_REFRESH_IMAGE_REQUEST" />
+				<action android:name="com.sonyericsson.extras.aef.widget.STOP_REFRESH_IMAGE_REQUEST" />
+				<action android:name="com.sonyericsson.extras.aef.widget.ONTOUCH" />
+				<action android:name="com.sonyericsson.extras.liveware.extension.util.widget.scheduled.refresh" />
+
+				<!-- Control intents -->
+				<action android:name="com.sonyericsson.extras.aef.control.START" />
+				<action android:name="com.sonyericsson.extras.aef.control.STOP" />
+				<action android:name="com.sonyericsson.extras.aef.control.PAUSE" />
+				<action android:name="com.sonyericsson.extras.aef.control.RESUME" />
+				<action android:name="com.sonyericsson.extras.aef.control.ERROR" />
+				<action android:name="com.sonyericsson.extras.aef.control.KEY_EVENT" />
+				<action android:name="com.sonyericsson.extras.aef.control.TOUCH_EVENT" />
+				<action android:name="com.sonyericsson.extras.aef.control.SWIPE_EVENT" />
+			</intent-filter>
+		</receiver>
 		<provider android:name=".business.provider.HostProvider" android:authorities="org.xbmc.android.provider.remote" />
 		<service android:name="org.xbmc.android.jsonrpc.service.ConnectionService" />
+		<service android:name="org.xbmc.android.smartextension.XbmcExtensionService" />
 		
 	</application>
 </manifest>
