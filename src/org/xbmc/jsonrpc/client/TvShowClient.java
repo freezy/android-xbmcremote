@@ -59,7 +59,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 	}	
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager, ObjNode obj, int sortBy, String sortOrder, boolean hideWatched) {
 		
-		sort(obj.p(PARAM_PROPERTIES, arr().add("plot").add("rating").add("premiered").add("genre").add("mpaa").add("studio").add("file").add("episode").add("playcount").add("thumbnail")), sortBy, sortOrder);
+		sort(obj.p(PARAM_PROPERTIES, arr().add("plot").add("rating").add("premiered").add("genre").add("mpaa").add("studio").add("file").add("episode").add("playcount").add("art")), sortBy, sortOrder);
 		
 		final ArrayList<TvShow> tvshows = new ArrayList<TvShow>();
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetTvShows", obj);
@@ -85,7 +85,7 @@ public class TvShowClient extends Client implements ITvShowClient {
 					getInt(jsonShow, "episode"),
 					playcount,
 					getInt(jsonShow, "playcount") > 0,
-					getString(jsonShow, "thumbnail")
+					jsonShow.get("art") != null? getString(jsonShow.get("art"), "banner") : ""
 				));
 			}
 		}
