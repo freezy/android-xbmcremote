@@ -25,11 +25,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.codehaus.jackson.JsonNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
-import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.data.IMusicClient;
 import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
@@ -42,6 +41,8 @@ import org.xbmc.api.type.SortType;
 import org.xbmc.jsonrpc.Connection;
 
 import android.graphics.Bitmap;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Takes care of every music related stuff, notably the music database.
@@ -336,7 +337,7 @@ public class MusicClient extends Client implements IMusicClient {
 		final ArrayList<Album> albums = new ArrayList<Album>();
 		final JsonNode result = mConnection.getJson(manager, "MusicLibrary.GetAlbums", obj);
 		final JsonNode jsonAlbums = result.get("albums");
-		for (Iterator<JsonNode> i = jsonAlbums.getElements(); i.hasNext();) {
+		for (Iterator<JsonNode> i = jsonAlbums.elements(); i.hasNext();) {
 			JsonNode jsonAlbum = (JsonNode)i.next();
 			albums.add(new Album(
 				getInt(jsonAlbum, "albumid"), 

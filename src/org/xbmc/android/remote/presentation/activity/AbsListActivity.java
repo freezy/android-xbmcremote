@@ -116,7 +116,7 @@ public abstract class AbsListActivity extends Activity {
 	public boolean onContextItemSelected(MenuItem item) {
 		mListController.onContextItemSelected(item);
 		return super.onContextItemSelected(item);
-	}
+	} 
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

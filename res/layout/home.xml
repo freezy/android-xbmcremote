@@ -3,7 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent" 
-	android:orientation="vertical" android:paddingTop="10dip">
+	android:orientation="vertical">
 	<RelativeLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -34,9 +34,9 @@
 			 android:layout_width="fill_parent"
 			 android:layout_height="fill_parent"
 			 android:layout_above="@id/home_bottombar">
-			<GridView 
+			<ListView
 				android:layout_width="fill_parent"
-				android:id="@+id/HomeItemGridView" 
+				android:id="@+id/HomeItemListView" 
 				android:layout_height="wrap_content" />
 		</FrameLayout>
 	</RelativeLayout>

@@ -21,13 +21,6 @@
 
 package org.xbmc.android.remote.presentation.activity;
 
-import org.xbmc.android.jsonrpc.api.AbstractCall;
-import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
-import org.xbmc.android.jsonrpc.api.model.AudioModel;
-import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetails;
-import org.xbmc.android.jsonrpc.config.HostConfig;
-import org.xbmc.android.jsonrpc.io.ApiCallback;
-import org.xbmc.android.jsonrpc.io.ConnectionManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.CacheManager;
 import org.xbmc.android.remote.business.ManagerFactory;
@@ -39,7 +32,6 @@ import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -47,11 +39,9 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -63,6 +53,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class HomeActivity extends Activity {
@@ -91,43 +82,20 @@ public class HomeActivity extends Activity {
 	private ProgressThread mProgressThread;
 	private ProgressDialog mProgressDialog;
     
-//	private ConnectionManager mConnectionManager = null;
-	
 	@Override
-	@TargetApi(9)
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-/*		mConnectionManager = new ConnectionManager(getApplicationContext(), new HostConfig("192.168.0.100"));
-		
-		final AudioLibrary.GetAlbums getAlbumsCall = new AudioLibrary.GetAlbums(null, null, 
-				AudioModel.AlbumFields.TITLE, AudioModel.AlbumFields.ARTISTID, AudioModel.AlbumFields.YEAR);
-		
-		mConnectionManager.call(getAlbumsCall, new ApiCallback<AudioModel.AlbumDetails>(){
-			public void onResponse(AbstractCall<AlbumDetails> apiCall) {
-				for (AlbumDetails album : apiCall.getResults()) {
-					Log.d(TAG, "Got album: " + album.title + " (" + album.year + ")");
-				}
-			}
-			public void onError(int code, String message, String hint) {
-				Log.d(TAG, "Error " + code + ": " + message);
-			}
-		});*/
 		
 		setContentView(R.layout.home);
-		
-		if (Build.VERSION.SDK_INT >= 9) {
-			final StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-			StrictMode.setThreadPolicy(policy);
-		}
-		
+			
 		// set display size
 		final Display display = getWindowManager().getDefaultDisplay(); 
 		ThumbSize.setScreenSize(display.getWidth(), display.getHeight());
 		
 		final Button versionButton = (Button)findViewById(R.id.home_version_button);
-		final GridView menuGrid = (GridView)findViewById(R.id.HomeItemGridView);
-		mHomeController = new HomeController(this, new Handler(), menuGrid);
-		mHomeController.setupVersionHandler(new Handler(), versionButton, menuGrid);
+		final ListView menuList = (ListView)findViewById(R.id.HomeItemListView);
+		mHomeController = new HomeController(this, new Handler(), menuList);
+		mHomeController.setupVersionHandler(new Handler(), versionButton, menuList);
 		
 		mEventClientManager = ManagerFactory.getEventClientManager(mHomeController);
 		mConfigurationManager = ConfigurationManager.getInstance(this);
