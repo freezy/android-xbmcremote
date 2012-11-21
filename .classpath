@@ -6,7 +6,7 @@
 	<classpathentry kind="lib" path="lib/jmdns.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="lib" path="lib/jackson-core-2.1.1.jar"/>
-	<classpathentry kind="lib" path="/home/ian/projects/android/xbmc-remote/android-xbmcremote/lib/jackson-databind-2.1.1.jar"/>
-	<classpathentry kind="lib" path="/home/ian/projects/android/xbmc-remote/android-xbmcremote/lib/jackson-annotations-2.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-annotations-2.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.1.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
