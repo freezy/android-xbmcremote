@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:layout_width="fill_parent"
-	android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/OuterLinearLayout" android:paddingLeft="10dip" android:paddingBottom="5dip">
-	<ImageView android:layout_width="64dip" android:layout_height="64dip" android:id="@+id/IconImageView"></ImageView>
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/OuterLinearLayout"
+	android:paddingTop="4dp"
+	android:paddingBottom="4dp"
+	android:layout_height="48dp">
+	<ImageView android:id="@+id/IconImageView"
+	    android:layout_width="32dp"
+	    android:layout_height="32dp"
+	    android:layout_margin="8dp" />
 	<LinearLayout android:id="@+id/LinearLayout02"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:orientation="vertical" android:paddingTop="5dip" android:paddingLeft="10dip">
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/SubtitleTextView"
-			android:text="Subtitle" android:textColor="#909090"></TextView>
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/TitleTextView"
-			android:textSize="24dip" android:text="Title" android:textColor="#ffffff"></TextView>
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+		<TextView android:id="@+id/SubtitleTextView"
+		    style="@android:style/TextAppearance.Small"
+		    android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:text="Subtitle" />
+		<TextView android:id="@+id/TitleTextView"
+		    android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			style="@android:style/TextAppearance.Medium"
+			android:text="Title" 
+			android:textColor="#ffffff"/>
 	</LinearLayout>
 </LinearLayout>

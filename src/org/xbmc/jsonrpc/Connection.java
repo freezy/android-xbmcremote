@@ -25,26 +25,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.http.HttpException;
-import org.codehaus.jackson.JsonEncoding;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Host;
-import org.xbmc.httpapi.NoSettingsException;
 import org.xbmc.jsonrpc.client.Client;
 
 import android.util.Log;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
 /**
@@ -261,7 +253,7 @@ public class Connection {
 				if (response.get(ERROR_FIELD) == null) {
 					throw new Exception("Weird JSON response, could not parse error.");
 				} else {
-					throw new Exception(response.get(ERROR_FIELD).get("message").getTextValue());
+					throw new Exception(response.get(ERROR_FIELD).get("message").textValue());
 				}
 			} else {
 				return response.get(RESULT_FIELD);
@@ -308,7 +300,7 @@ public class Connection {
 	 */
 	public String getString(INotifiableManager manager, String method, ObjectNode parameters, String returnField) {
 		final JsonNode result = query(method, parameters, manager).get(RESULT_FIELD);
-		return result == null ? "" : result.get(returnField).getValueAsText();
+		return result == null ? "" : result.get(returnField).textValue();
 	}
 	
 	/**

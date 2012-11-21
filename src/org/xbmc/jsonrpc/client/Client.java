@@ -27,11 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
-import org.codehaus.jackson.node.ObjectNode;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.ICoverArt;
@@ -40,9 +35,15 @@ import org.xbmc.api.type.ThumbSize.Dimension;
 import org.xbmc.jsonrpc.Connection;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.util.Log;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Abstract super class of all (media) clients.
@@ -204,9 +205,9 @@ public abstract class Client {
 		return getString(obj, key, "");
 	}
 	public final static String getString(JsonNode obj, String key, String ifNullResult) {
-		return obj.get(key) == null ? ifNullResult : obj.get(key).getTextValue();
+		return obj.get(key) == null ? ifNullResult : obj.get(key).textValue();
 	}
 	public final static int getInt(JsonNode obj, String key) {
-		return obj.get(key) == null ? -1 : obj.get(key).getIntValue();
+		return obj.get(key) == null ? -1 : obj.get(key).intValue();
 	}
 }

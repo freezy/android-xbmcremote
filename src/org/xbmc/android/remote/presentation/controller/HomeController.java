@@ -83,17 +83,17 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class HomeController extends AbstractController implements INotifiableController, IController, Observer, OnSharedPreferenceChangeListener {
 	
@@ -123,12 +123,12 @@ public class HomeController extends AbstractController implements INotifiableCon
 	
 	private final HomeItem mHomeWol = new HomeItem(HOME_ACTION_WOL, R.drawable.icon_home_power, "Power On", "Turn your XBMC's");
 	
-	private final GridView mMenuGrid;
+	private final ListView mMenuList;
     
-	public HomeController(Activity activity, Handler handler, GridView menuGrid) {
+	public HomeController(Activity activity, Handler handler, ListView menuGrid) {
 		super.onCreate(activity, handler);
 		mInfoManager = ManagerFactory.getInfoManager(this);
-		mMenuGrid = menuGrid;
+		mMenuList = menuGrid;
 		setupMenuItems(menuGrid);
 //		BroadcastListener bcl = BroadcastListener.getInstance(ConnectionManager.getHttpClient(this));
 //		bcl.addObserver(this);
@@ -168,9 +168,9 @@ public class HomeController extends AbstractController implements INotifiableCon
 					} else {
 						Log.i(TAG, "Switching host to " + (host == null ? "<null>" : host.addr) + ".");
 						HostFactory.saveHost(mActivity.getApplicationContext(), host);
-						final GridView menuGrid = (GridView)mActivity.findViewById(R.id.HomeItemGridView);
+						final ListView menuList = (ListView)mActivity.findViewById(R.id.HomeItemListView);
 						resetupOfflineMenuItems();
-						setHomeAdapter(menuGrid, mOfflineMenu);
+						setHomeAdapter(menuList, mOfflineMenu);
 						final Button versionButton = (Button)mActivity.findViewById(R.id.home_version_button);
 						versionButton.setText("Connecting...");
 						Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
@@ -189,7 +189,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 		}
 	}
 	
-	public void setupVersionHandler(final Handler handler, final Button versionTextView, final GridView homeItemGrid) {
+	public void setupVersionHandler(final Handler handler, final Button versionTextView, final ListView homeItemList) {
 		mUpdateVersionHandler = new DataResponse<String>() {
 			public void run() {
 				if (!mPaused) {
@@ -203,11 +203,11 @@ public class HomeController extends AbstractController implements INotifiableCon
 									mWolCounter.cancel();
 								}
 								versionTextView.setText("XBMC " + value);
-								homeItemGrid.setAdapter(mHomeMenu);
+								homeItemList.setAdapter(mHomeMenu);
 								NowPlayingNotificationManager.getInstance(mActivity.getApplicationContext()).startNotificating();
 							} else {
 								versionTextView.setText("Check Settings and retry");
-								homeItemGrid.setAdapter(mOfflineMenu);
+								homeItemList.setAdapter(mOfflineMenu);
 							}
 						}
 					});
@@ -216,7 +216,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 		};		
 	}
 	
-	private void setupMenuItems(GridView menuGrid) {
+	private void setupMenuItems(ListView menuList) {
 		final HomeItem remote = new HomeItem(HOME_ACTION_REMOTE, R.drawable.icon_home_remote, "Remote Control", "Use as");
 
 		final ArrayList<HomeItem> homeItems = new ArrayList<HomeItem>();
@@ -248,7 +248,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 		mHomeMenu = new HomeAdapter(mActivity, homeItems);
 		mOfflineMenu = new HomeAdapter(mActivity, offlineItems);
 		
-		setHomeAdapter(menuGrid, mOfflineMenu);
+		setHomeAdapter(menuList, mOfflineMenu);
 	}
 	
 	/**
@@ -261,11 +261,11 @@ public class HomeController extends AbstractController implements INotifiableCon
 			mOfflineMenu.add(mHomeWol);
 	}
 	
-	private void setHomeAdapter(GridView menuGrid, HomeAdapter adapter) {
-		menuGrid.setAdapter(adapter);
-		menuGrid.setOnItemClickListener(getHomeMenuOnClickListener());
-		menuGrid.setSelected(true);
-		menuGrid.setSelection(0);
+	private void setHomeAdapter(ListView menuList, HomeAdapter adapter) {
+		menuList.setAdapter(adapter);
+		menuList.setOnItemClickListener(getHomeMenuOnClickListener());
+		menuList.setSelected(true);
+		menuList.setSelection(0);
 	}
 	
 	private OnItemClickListener getHomeMenuOnClickListener() {
@@ -594,7 +594,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		if (key.equals("setting_show_home_music") || key.equals("setting_show_home_movies") || key.equals("setting_show_home_tv") || key.equals("setting_show_home_pictures") || key.equals("setting_show_home_powerdown")) {
-			setupMenuItems(mMenuGrid);
+			setupMenuItems(mMenuList);
 		}
 	}
 }
