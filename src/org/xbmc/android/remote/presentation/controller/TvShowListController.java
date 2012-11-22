@@ -48,8 +48,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
@@ -72,6 +74,7 @@ public class TvShowListController extends ListController implements IController 
 	private static final int mThumbSize = ThumbSize.SMALL;
 	public static final int ITEM_CONTEXT_BROWSE = 1;
 	public static final int ITEM_CONTEXT_INFO = 2;
+	public static final int ITEM_CONTEXT_IMDB = 3;
 	
 	public static final int MENU_PLAY_ALL = 1;
 	public static final int MENU_SORT = 2;
@@ -199,6 +202,7 @@ public class TvShowListController extends ListController implements IController 
 		menu.setHeaderTitle(view.title);
 		menu.add(0, ITEM_CONTEXT_BROWSE, 1, "Browse TV Show");
 		menu.add(0, ITEM_CONTEXT_INFO, 2, "View Details");
+		menu.add(0, ITEM_CONTEXT_IMDB, 3, "Open IMDb");
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
@@ -214,6 +218,14 @@ public class TvShowListController extends ListController implements IController 
 				Intent nextActivity = new Intent(mActivity, TvShowDetailsActivity.class);
 				nextActivity.putExtra(ListController.EXTRA_TVSHOW, show);
 				mActivity.startActivity(nextActivity);
+				break;
+			case ITEM_CONTEXT_IMDB:
+				Intent intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("imdb:///find?s=tt&q=" + show.getName()));
+				if (mActivity.getPackageManager().resolveActivity(intentIMDb, PackageManager.MATCH_DEFAULT_ONLY) == null)
+				{
+					intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.imdb.com/search/title?title=" + show.getShortName() + "&title_type=tv_series&release_date=" + show.firstAired));
+				}
+				mActivity.startActivity(intentIMDb);
 				break;
 			default:
 				return;

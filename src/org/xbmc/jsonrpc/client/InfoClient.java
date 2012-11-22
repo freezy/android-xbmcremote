@@ -64,7 +64,7 @@ public class InfoClient extends Client implements IInfoClient {
 			dirs.add(new FileLocation(getString(jsonDir, "label"), getString(
 					jsonDir, "file")));
 		}
-		return dirs;
+		return dirs;*/
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class InfoClient extends Client implements IInfoClient {
 			shares.add(new FileLocation(getString(jsonShare, "label"),
 					getString(jsonShare, "file")));
 		}
-		return shares;
+		return shares;*/
 	}
 
 	/**

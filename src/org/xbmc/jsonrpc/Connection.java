@@ -283,7 +283,6 @@ public class Connection {
 			Log.v("Connection", "Command " + command + ": " + data.toString());
 			Log.v("Connection", ret.toString());
 			return ret;
-
 		} catch (MalformedURLException e) {
 			if(manager != null) {
 				manager.onError(e);
@@ -309,7 +308,7 @@ public class Connection {
 				manager.onError(e);
 			}
 		}
-		return new ObjectNode(null);
+		return new ObjectNode(null);*/
 	}
 
 	/**

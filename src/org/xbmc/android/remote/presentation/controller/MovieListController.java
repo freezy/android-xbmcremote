@@ -46,8 +46,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
@@ -69,6 +71,7 @@ public class MovieListController extends ListController implements IController {
 	private static final int mThumbSize = ThumbSize.SMALL;
 	public static final int ITEM_CONTEXT_PLAY = 1;
 	public static final int ITEM_CONTEXT_INFO = 2;
+	public static final int ITEM_CONTEXT_IMDB = 3;
 	
 	public static final int MENU_PLAY_ALL = 1;
 	public static final int MENU_SORT = 2;
@@ -197,6 +200,7 @@ public class MovieListController extends ListController implements IController {
 		menu.setHeaderTitle(view.title);
 		menu.add(0, ITEM_CONTEXT_PLAY, 1, "Play Movie");
 		menu.add(0, ITEM_CONTEXT_INFO, 2, "View Details");
+		menu.add(0, ITEM_CONTEXT_IMDB, 3, "Open IMDb");
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
@@ -215,6 +219,29 @@ public class MovieListController extends ListController implements IController {
 				Intent nextActivity = new Intent(mActivity, MovieDetailsActivity.class);
 				nextActivity.putExtra(ListController.EXTRA_MOVIE, movie);
 				mActivity.startActivity(nextActivity);
+				break;
+			case ITEM_CONTEXT_IMDB:
+				Intent intentIMDb = null;
+				if (movie.getIMDbId().equals(""))
+				{
+					intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("imdb:///find?s=tt&q=" + movie.getName()));
+				}
+				else
+				{
+					intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("imdb:///title/" + movie.getIMDbId()));
+				}
+				if (mActivity.getPackageManager().resolveActivity(intentIMDb, PackageManager.MATCH_DEFAULT_ONLY) == null)
+				{
+					if (movie.getIMDbId().equals(""))
+					{
+						intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.imdb.com/search/title?title=" + movie.getShortName() + "&title_type=feature,tv_movie&release_date=" + movie.year));
+					}
+					else
+					{
+						intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.imdb.com/title/" + movie.getIMDbId()));
+					}
+				}
+				mActivity.startActivity(intentIMDb);
 				break;
 			default:
 				return;
