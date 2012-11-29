@@ -22,6 +22,7 @@
 package org.xbmc.api.object;
 import java.util.Formatter;
 
+import org.xbmc.android.jsonrpc.api.model.AudioModel.SongDetail;
 import org.xbmc.api.type.MediaType;
 
 
@@ -63,6 +64,20 @@ public class Song implements ICoverArt, INamedResource {
 				this.thumbID = 0L;
 			}
 		}
+	}
+	
+	public Song(SongDetail detail) {
+		this.id = detail.songid;
+		this.title = detail.title;
+		if(detail.artist.size() > 0) {
+			this.artist = detail.artist.get(0);
+		}
+		this.album = detail.album;
+		this.track = detail.track + 0xffff;
+		this.disc = detail.disc;
+		this.duration = detail.duration;
+		this.path = detail.file;
+		this.thumbUri = detail.thumbnail;
 	}
 	
 	// this is for testing
@@ -181,6 +196,8 @@ public class Song implements ICoverArt, INamedResource {
 	 * CRC of the thumb
 	 */
 	public long thumbID = 0;
+	
+	private String thumbUri;
 	
 	private static final long serialVersionUID = 911367816075830385L;
 }

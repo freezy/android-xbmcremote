@@ -279,8 +279,8 @@ public class MovieDetailsActivity extends Activity {
 		}
 
 		public void onActivityResume(Activity activity) {
-			mVideoManager.setController(this);
-			mControlManager.setController(this);
+			mVideoManager = ManagerFactory.getVideoManager(this);
+			mControlManager = ManagerFactory.getControlManager(this);
 		}
 	}
 

@@ -21,12 +21,17 @@
 
 package org.xbmc.jsonrpc;
 
+import org.xbmc.android.jsonrpc.io.ConnectionManager;
+import org.xbmc.android.util.HostFactory;
+import org.xbmc.api.data.IConnectionManager;
 import org.xbmc.api.object.Host;
 import org.xbmc.jsonrpc.client.ControlClient;
 import org.xbmc.jsonrpc.client.InfoClient;
 import org.xbmc.jsonrpc.client.MusicClient;
 import org.xbmc.jsonrpc.client.TvShowClient;
 import org.xbmc.jsonrpc.client.VideoClient;
+
+import android.content.Context;
 
 /**
  * Wrapper class for JSON-RPC clients. The idea is to separate the loads of API
@@ -98,4 +103,10 @@ public class JsonRpc {
 		control.setHost(host);
 		shows.setHost(host);
 	}
+	
+	public IConnectionManager getConnectionManager(Context context) {
+		// TODO: It would probably be better to wrap this
+		return (IConnectionManager) new ConnectionManager(context, HostFactory.host.toHostConfig());
+	}
+	
 }

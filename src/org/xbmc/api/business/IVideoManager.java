@@ -25,9 +25,12 @@ import java.util.ArrayList;
 
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 /**
  * This is the interface between the presentation layer and the business layer.
@@ -137,4 +140,12 @@ public interface IVideoManager extends IManager {
 	 */
 	public void postActivity();
 	
+	/**
+	 * Does the actual downloading of images into various caches
+	 * @param response
+	 * @param cover
+	 * @param thumbSize
+	 * @param context
+	 */
+	public void downloadCover(final DataResponse<Bitmap> response, ICoverArt cover, int thumbSize, Context context) throws WifiStateException;
 }

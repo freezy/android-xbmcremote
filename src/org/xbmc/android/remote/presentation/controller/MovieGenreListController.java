@@ -31,6 +31,7 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Genre;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -82,6 +83,7 @@ public class MovieGenreListController extends ListController implements IControl
 			
 			final String title = mType == TYPE_MOVIE ? "Movie " : mType == TYPE_TVSHOW ? "TV Show " : "" + "genres";
 			DataResponse<ArrayList<Genre>> response = new DataResponse<ArrayList<Genre>>() {
+				@SuppressLint("NewApi")
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
@@ -146,8 +148,6 @@ public class MovieGenreListController extends ListController implements IControl
 	
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mVideoManager != null) {
-			mVideoManager.setController(this);
-		}
+		mVideoManager = ManagerFactory.getVideoManager(this);
 	}
 }

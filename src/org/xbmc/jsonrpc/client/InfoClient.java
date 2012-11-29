@@ -64,7 +64,7 @@ public class InfoClient extends Client implements IInfoClient {
 			dirs.add(new FileLocation(getString(jsonDir, "label"), getString(
 					jsonDir, "file")));
 		}
-		return dirs;*/
+		return dirs;
 	}
 
 	/**
@@ -99,14 +99,14 @@ public class InfoClient extends Client implements IInfoClient {
 		}
 
 		final ArrayList<FileLocation> shares = new ArrayList<FileLocation>();
-		final JsonNode jsonShares = mConnection.getJson(manager,
-				"Files.GetSources", obj().put("media", media)).get("sources");
-		for (Iterator<JsonNode> i = jsonShares.getElements(); i.hasNext();) {
-			JsonNode jsonShare = (JsonNode) i.next();
-			shares.add(new FileLocation(getString(jsonShare, "label"),
-					getString(jsonShare, "file")));
-		}
-		return shares;*/
+//		final JsonNode jsonShares = mConnection.getJson(manager,
+//				"Files.GetSources", obj().put("media", media)).get("sources");
+//		for (Iterator<JsonNode> i = jsonShares.getElements(); i.hasNext();) {
+//			JsonNode jsonShare = (JsonNode) i.next();
+//			shares.add(new FileLocation(getString(jsonShare, "label"),
+//					getString(jsonShare, "file")));
+//		}
+		return shares;
 	}
 
 	/**
@@ -119,14 +119,14 @@ public class InfoClient extends Client implements IInfoClient {
 			return null;
 		}
 
-		JsonNode result = mConnection.getJson(manager, "Player.GetItem", obj()
-				.p("playerid", player).p("properties", arr().add("thumbnail")));
-		JsonNode item = result.get("item");
-		if (item == null) {
+//		JsonNode result = mConnection.getJson(manager, "Player.GetItem", obj()
+//				.p("playerid", player).p("properties", arr().add("thumbnail")));
+//		JsonNode item = result.get("item");
+//		if (item == null) {
 			return null;
-		}
-		String specialPath = item.get("thumbnail").getTextValue();
-		return mConnection.getVfsPath(specialPath);
+//		}
+//		String specialPath = item.get("thumbnail").getTextValue();
+//		return mConnection.getVfsPath(specialPath);
 	}
 
 	/**
@@ -142,13 +142,13 @@ public class InfoClient extends Client implements IInfoClient {
 		// get and cache the api version while we're here
 		getAPIVersion(manager);
 		
-		ObjNode obj = obj().p("properties", arr().add("version"));
-		JsonNode result = mConnection.getJson(manager, "Application.GetProperties", obj);
-		JsonNode version = result.get("version");
-		if(version == null) {
+//		ObjNode obj = obj().p("properties", arr().add("version"));
+//		JsonNode result = mConnection.getJson(manager, "Application.GetProperties", obj);
+//		JsonNode version = result.get("version");
+//		if(version == null) {
 			return "Unknown";
-		}
-		return version.get("major").getValueAsText() + "." + version.get("minor").getValueAsText() + " " + version.get("revision").getValueAsText();
+//		}
+//		return version.get("major").getValueAsText() + "." + version.get("minor").getValueAsText() + " " + version.get("revision").getValueAsText();
 	}
 	
 	public int getAPIVersion(INotifiableManager manager) {

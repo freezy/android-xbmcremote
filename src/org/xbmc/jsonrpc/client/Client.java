@@ -28,13 +28,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
+import org.xbmc.android.jsonrpc.api.Version.Branch;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IClient;
@@ -46,7 +46,6 @@ import org.xbmc.api.type.Sort;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.api.type.ThumbSize.Dimension;
-import org.xbmc.api.type.Version;
 import org.xbmc.jsonrpc.Connection;
 
 import android.graphics.Bitmap;
@@ -75,7 +74,6 @@ public abstract class Client implements IClient {
 	protected final Connection mConnection;
 	private int apiVersion = -1;
 	
-
 	/**
 	 * Class constructor needs reference to HTTP client connection
 	 * @param connection
@@ -255,7 +253,7 @@ public abstract class Client implements IClient {
 	}
 	
 	protected ObjNode filter(ObjNode params, Object ... filterStrings) {
-		if(getAPIVersion() >= Version.FRODO.ordinal()) {
+		if(getAPIVersion() >= Branch.FRODO.ordinal()) {
 			
 			ObjNode filters = obj();
 			for(int i = 0; i < filterStrings.length; i+=2) {

@@ -40,6 +40,7 @@ import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -140,6 +141,7 @@ public class MovieListController extends ListController implements IController {
 	private void fetch() {
 		final String title = mActor != null ? mActor.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "Movies";
 		DataResponse<ArrayList<Movie>> response = new DataResponse<ArrayList<Movie>>() {
+			@SuppressLint("NewApi")
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
@@ -389,12 +391,8 @@ public class MovieListController extends ListController implements IController {
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mVideoManager != null) {
-			mVideoManager.setController(this);
-		}
-		if (mControlManager != null) {
-			mControlManager.setController(this);
-		}
+		mVideoManager = ManagerFactory.getVideoManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 	}
 
 }

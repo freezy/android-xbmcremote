@@ -80,8 +80,8 @@ public class MediaIntentController extends AbstractController implements IContro
 	 */
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		mInfoManager.setController(this);
-		mControlManager.setController(this);
+		mInfoManager = ManagerFactory.getInfoManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 		mInfoManager.getSystemVersion(mXbmcStatusHandler, mActivity.getApplicationContext());
 	}
 

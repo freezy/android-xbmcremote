@@ -112,6 +112,9 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 							}
 						});
 					}
+					public Context getApplicationContext() {
+						return null;
+					}
 				});
 		info.getSystemVersion(new DataResponse<String>() {
 			@Override

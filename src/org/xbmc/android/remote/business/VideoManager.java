@@ -23,17 +23,20 @@ package org.xbmc.android.remote.business;
 
 import java.util.ArrayList;
 
+import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.VideoClient} class.
@@ -244,5 +247,11 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 				response.value = video(context).removeFromPlaylist(VideoManager.this, path);
 			}
 		});
+	}
+	
+	public void downloadCover(DataResponse<Bitmap> response, ICoverArt cover,
+			int thumbSize, Context context) throws WifiStateException {
+		response.value = ClientFactory.getVideoClient(this, context).getCover(this, cover,
+				thumbSize);
 	}
 }

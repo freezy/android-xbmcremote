@@ -242,73 +242,74 @@ public class Connection {
 	 */
 	protected JsonNode query(String command, JsonNode parameters,
 			INotifiableManager manager) {
-		URLConnection uc = null;
-		try {
-			final ObjectMapper mapper = Client.MAPPER;
-
-			if (mUrl == null) {
-				throw new NoSettingsException();
-			}
-			if (mAuthenticator != null) {
-				mAuthenticator.resetCounter();
-			}
-			final URL url = new URL(mUrl + XBMC_JSONRPC_BOOTSTRAP);
-			uc = url.openConnection();
-			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
-			uc.setReadTimeout(mSocketReadTimeout);
-			uc.setRequestProperty("Content-Type", "application/json");
-			uc.setDoOutput(true);
-			uc.setDoInput(true);			
-			//uc.setDoOutput(true);
-
-			final ObjectNode data = Client.obj().put("jsonrpc", "2.0")
-					.put("method", command).put("id", "1");
-			if (parameters != null) {
-				data.put("params", parameters);
-			}
-
-			final JsonFactory jsonFactory = new JsonFactory();
-			final JsonGenerator jg = jsonFactory.createJsonGenerator(
-					uc.getOutputStream(), JsonEncoding.UTF8);
-			jg.setCodec(mapper);
-
-			// POST data
-			jg.writeTree(data);
-			jg.flush();
-
-			final JsonParser jp = jsonFactory.createJsonParser(uc
-					.getInputStream());
-			jp.setCodec(mapper);
-			final JsonNode ret = jp.readValueAs(JsonNode.class);
-			Log.v("Connection", "Command " + command + ": " + data.toString());
-			Log.v("Connection", ret.toString());
-			return ret;
-		} catch (MalformedURLException e) {
-			if(manager != null) {
-				manager.onError(e);
-			}
-		} catch (IOException e) {
-			int responseCode = -1;
-			try {
-				responseCode = ((HttpURLConnection) uc).getResponseCode();
-			} catch (IOException e1) {
-			} // do nothing, getResponse code failed so treat as default i/o
-				// exception.
-			if(manager != null) {
-				if (uc != null
-						&& responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-					manager.onError(new HttpException(Integer
-							.toString(HttpURLConnection.HTTP_UNAUTHORIZED)));
-				} else {
-					manager.onError(e);
-				}
-			}
-		} catch (NoSettingsException e) {
-			if(manager != null) {
-				manager.onError(e);
-			}
-		}
-		return new ObjectNode(null);*/
+//		URLConnection uc = null;
+//		try {
+//			final ObjectMapper mapper = Client.MAPPER;
+//
+//			if (mUrl == null) {
+//				throw new NoSettingsException();
+//			}
+//			if (mAuthenticator != null) {
+//				mAuthenticator.resetCounter();
+//			}
+//			final URL url = new URL(mUrl + XBMC_JSONRPC_BOOTSTRAP);
+//			uc = url.openConnection();
+//			uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
+//			uc.setReadTimeout(mSocketReadTimeout);
+//			uc.setRequestProperty("Content-Type", "application/json");
+//			uc.setDoOutput(true);
+//			uc.setDoInput(true);			
+//			//uc.setDoOutput(true);
+//
+//			final ObjectNode data = Client.obj().put("jsonrpc", "2.0")
+//					.put("method", command).put("id", "1");
+//			if (parameters != null) {
+//				data.put("params", parameters);
+//			}
+//
+//			final JsonFactory jsonFactory = new JsonFactory();
+//			final JsonGenerator jg = jsonFactory.createJsonGenerator(
+//					uc.getOutputStream(), JsonEncoding.UTF8);
+//			jg.setCodec(mapper);
+//
+//			// POST data
+//			jg.writeTree(data);
+//			jg.flush();
+//
+//			final JsonParser jp = jsonFactory.createJsonParser(uc
+//					.getInputStream());
+//			jp.setCodec(mapper);
+//			final JsonNode ret = jp.readValueAs(JsonNode.class);
+//			Log.v("Connection", "Command " + command + ": " + data.toString());
+//			Log.v("Connection", ret.toString());
+//			return ret;
+//		} catch (MalformedURLException e) {
+//			if(manager != null) {
+//				manager.onError(e);
+//			}
+//		} catch (IOException e) {
+//			int responseCode = -1;
+//			try {
+//				responseCode = ((HttpURLConnection) uc).getResponseCode();
+//			} catch (IOException e1) {
+//			} // do nothing, getResponse code failed so treat as default i/o
+//				// exception.
+//			if(manager != null) {
+//				if (uc != null
+//						&& responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+//					manager.onError(new HttpException(Integer
+//							.toString(HttpURLConnection.HTTP_UNAUTHORIZED)));
+//				} else {
+//					manager.onError(e);
+//				}
+//			}
+//		} catch (NoSettingsException e) {
+//			if(manager != null) {
+//				manager.onError(e);
+//			}
+//		}
+//		return new ObjectNode(null);
+		return null;
 	}
 
 	/**

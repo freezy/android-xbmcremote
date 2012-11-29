@@ -41,6 +41,7 @@ import org.xbmc.api.object.Song;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.httpapi.client.MusicClient;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -110,7 +111,8 @@ public class MusicPlaylistController extends ListController implements IControll
 			}, mActivity.getApplicationContext());
 			
 			mMusicManager.getPlaylist(new DataResponse<ArrayList<String>>() {
-	  	  		public void run() {
+	  	  		@SuppressLint("NewApi")
+				public void run() {
 	  	  			if (value.size() > 0) {
 		  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
 		  	  			int i = 0;
@@ -355,15 +357,10 @@ public class MusicPlaylistController extends ListController implements IControll
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
 		ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
-		if (mEventClient != null) {
-			mEventClient.setController(this);
-		}
-		if (mMusicManager != null) {
-			mMusicManager.setController(this);
-		}
-		if (mControlManager != null) {
-			mControlManager.setController(this);
-		}
+		
+		mEventClient = ManagerFactory.getEventClientManager(this);
+		mMusicManager = ManagerFactory.getMusicManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 	}
 	
 	private static final long serialVersionUID = 755529227668553163L;

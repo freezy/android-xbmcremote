@@ -31,6 +31,7 @@ import org.xbmc.android.remote.presentation.activity.TvShowDetailsActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.remote.presentation.widget.FlexibleItemView;
 import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.util.StringUtil;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.ISortableManager;
@@ -327,7 +328,7 @@ public class TvShowListController extends ListController implements IController 
 			view.position = position;
 			view.posterOverlay = show.watched ? mWatchedBitmap : null;
 			view.title = show.title;
-			view.subtitle = show.genre;
+			view.subtitle = StringUtil.join(",", show.genre);
 			view.subtitleRight = show.firstAired != null ? show.firstAired : "";
 			view.bottomtitle = show.numEpisodes + " episodes";
 			view.bottomright = String.valueOf(((float) Math.round(show.rating * 10)) / 10);
@@ -359,12 +360,8 @@ public class TvShowListController extends ListController implements IController 
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mTvManager != null) {
-			mTvManager.setController(this);
-		}
-		if (mControlManager != null) {
-			mControlManager.setController(this);
-		}
+		mTvManager = ManagerFactory.getTvManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 	}
 
 }

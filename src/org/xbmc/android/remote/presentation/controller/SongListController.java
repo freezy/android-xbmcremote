@@ -38,6 +38,7 @@ import org.xbmc.api.object.Song;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -91,7 +92,7 @@ public class SongListController extends ListController implements IController {
 	private boolean mLoadCovers = false;
 	
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
-		
+		mActivity = activity;
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		
 		((ISortableManager)mMusicManager).setSortKey(AbstractManager.PREF_SORT_KEY_SONG);
@@ -162,6 +163,7 @@ public class SongListController extends ListController implements IController {
 		}
 	}
 	
+	@SuppressLint("NewApi")
 	private void fetch() {
 		final String title = mAlbum != null ? mAlbum.name + " - " : mArtist != null ? mArtist.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "Songs";
 		DataResponse<ArrayList<Song>> response = new DataResponse<ArrayList<Song>>() {
@@ -380,9 +382,7 @@ public class SongListController extends ListController implements IController {
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mMusicManager != null) {
-			mMusicManager.setController(this);
-		}
+		mMusicManager = ManagerFactory.getMusicManager(this);
 	}
 	
 	private static final long serialVersionUID = 755529227668553163L;

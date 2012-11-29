@@ -14,11 +14,11 @@ public class NotificationBuilder {
      * Return the richest NotificationBuilder that will work on this platform.
      */
     public static NotificationBuilder getInstance(Context context) {
-        if (Integer.valueOf(Build.VERSION.SDK) >= Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             return new BigPictureNotificationBuilder(context);
         }
 
-        if (Integer.valueOf(Build.VERSION.SDK) >= Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             return new LargeIconNotificationBuilder(context);
         }
 

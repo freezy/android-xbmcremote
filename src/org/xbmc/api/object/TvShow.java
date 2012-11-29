@@ -1,7 +1,9 @@
 package org.xbmc.api.object;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.xbmc.android.jsonrpc.api.model.VideoModel.TVShowDetail;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
@@ -29,12 +31,27 @@ public class TvShow implements ICoverArt, INamedResource {
 		this.rating = rating;
 		this.firstAired = firstAired;
 		this.contentRating = contentRating;
-		this.network = network;
-		this.genre = genre;
+		this.network.add(network);
+		this.genre.add(genre);
 		this.path = path;
 		this.numEpisodes = numEpisodes;
 		this.watchedEpisodes = watchedEpisodes;
 		this.watched = watched;
+	}
+	
+	public TvShow(TVShowDetail detail) {
+		this.id = detail.tvshowid;
+		this.title = detail.title;
+		this.summary = detail.plot;
+		this.rating = detail.rating;
+		this.firstAired = detail.premiered;
+		this.contentRating = Double.toString(detail.rating);
+		this.network = detail.studio;
+		this.genre = detail.genre;
+		this.path = detail.file;
+		this.numEpisodes = detail.episode;
+		this.watchedEpisodes = detail.watchedepisodes;
+		
 	}
 
 	public String getShortName() {
@@ -110,8 +127,8 @@ public class TvShow implements ICoverArt, INamedResource {
 	public double rating = 0.0;
 	public String firstAired;
 	public String contentRating;
-	public String network;
-	public String genre;
+	public List<String> network = new ArrayList<String>();
+	public List<String> genre = new ArrayList<String>();
 	public String path;
 	public int numEpisodes;
 	public int watchedEpisodes;

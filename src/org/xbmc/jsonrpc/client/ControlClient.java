@@ -1,6 +1,9 @@
 package org.xbmc.jsonrpc.client;
 
 import org.codehaus.jackson.JsonNode;
+import org.xbmc.android.jsonrpc.api.call.Playlist;
+import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item;
+import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item.File;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.info.PlayStatus;
@@ -184,41 +187,41 @@ public class ControlClient extends Client implements IControlClient {
 
 	public ICurrentlyPlaying getCurrentlyPlaying(INotifiableManager manager) {
 		
-		JsonNode player = getActivePlayer(manager);
-		if(player == null) {
-			return NOTHING_PLAYING;
-		}
-		Integer playerid = player.get("playerid").getIntValue();
-		JsonNode result = mConnection.getJson(manager, "Player.GetItem", obj().p("playerid", playerid).p("properties", arr().add("album").add("albumartist").add("duration").add("file").add("thumbnail").add("tagline").add("artist")));
-		if(result == null) {
-			return NOTHING_PLAYING;
-		}
-		
-		JsonNode item = result.get("item");
-		if(item == null) {
-			return NOTHING_PLAYING;
-		}
-		
-		// currently streams don't work properly
-		JsonNode file = item.get("file");
-		if(file == null) {
-			return PLAYING_UNKNOWN;
-		}
-		
-		String type = player.get("type").getTextValue();
-		
-		
-	    if("audio".equals(type)) {
-	    	JsonNode properties = mConnection.getJson(manager, "Player.GetProperties", obj().p("playerid", playerid).p("properties", arr().add("time").add("speed").add("position").add("percentage")));
-	    	return MusicClient.getCurrentlyPlaying(playerid, item, properties);
-	    }
-	    else if("video".equals(type)) {
-	    	JsonNode properties = mConnection.getJson(manager, "Player.GetProperties", obj().p("playerid", playerid).p("properties", arr().add("time").add("speed").add("position").add("percentage")));
-	    	return VideoClient.getCurrentlyPlaying(playerid, item, properties);
-	    }
-	    else if("picture".equals(type)) {
-	    	return PictureClient.getCurrentlyPlaying(playerid, item, obj());
-	    }
+//		JsonNode player = getActivePlayer(manager);
+//		if(player == null) {
+//			return NOTHING_PLAYING;
+//		}
+//		Integer playerid = player.get("playerid").getIntValue();
+//		JsonNode result = mConnection.getJson(manager, "Player.GetItem", obj().p("playerid", playerid).p("properties", arr().add("album").add("albumartist").add("duration").add("file").add("thumbnail").add("tagline").add("artist")));
+//		if(result == null) {
+//			return NOTHING_PLAYING;
+//		}
+//		
+//		JsonNode item = result.get("item");
+//		if(item == null) {
+//			return NOTHING_PLAYING;
+//		}
+//		
+//		// currently streams don't work properly
+//		JsonNode file = item.get("file");
+//		if(file == null) {
+//			return PLAYING_UNKNOWN;
+//		}
+//		
+//		String type = player.get("type").getTextValue();
+//		
+//		
+//	    if("audio".equals(type)) {
+//	    	JsonNode properties = mConnection.getJson(manager, "Player.GetProperties", obj().p("playerid", playerid).p("properties", arr().add("time").add("speed").add("position").add("percentage")));
+//	    	return MusicClient.getCurrentlyPlaying(playerid, item, properties);
+//	    }
+//	    else if("video".equals(type)) {
+//	    	JsonNode properties = mConnection.getJson(manager, "Player.GetProperties", obj().p("playerid", playerid).p("properties", arr().add("time").add("speed").add("position").add("percentage")));
+//	    	return VideoClient.getCurrentlyPlaying(playerid, item, properties);
+//	    }
+//	    else if("picture".equals(type)) {
+//	    	return PictureClient.getCurrentlyPlaying(playerid, item, obj());
+//	    }
 	    return NOTHING_PLAYING;
 	}
 	

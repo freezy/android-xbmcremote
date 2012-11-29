@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
+import org.xbmc.android.jsonrpc.api.call.Playlist;
+import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item;
+import org.xbmc.android.jsonrpc.api.model.PlaylistModel.Item.Albumid;
 import org.xbmc.android.remote.business.MusicManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient;
@@ -75,8 +78,8 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	public boolean addToPlaylist(INotifiableManager manager, Album album, Sort sort) {
 		
-		return mConnection.getBoolean(manager, "Playlist.Add", 
-				obj().p("playlistid", PLAYLIST_MUSIC).p("item", obj().p("albumid", album.getId())));
+		//return new Playlist.Add(PLAYLIST_MUSIC, new Item(new Albumid(album.getId())));
+		return false;
 	}
 
 	/**
@@ -134,12 +137,12 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Number of items in the playlist
 	 */
 	public int getPlaylistPosition(INotifiableManager manager) {
-		Integer player = getActivePlayerId(manager, MediaType.MUSIC);
-		if(player == null) {
+//		Integer player = getActivePlayerId(manager, MediaType.MUSIC);
+//		if(player == null) {
 			return -1;
-		}
-		JsonNode result = mConnection.getJson(manager, "Player.GetProperties", obj().p("playerid", player).p("properties", arr().add("position")));
-		return result.get("position").getIntValue();
+//		}
+//		JsonNode result = mConnection.getJson(manager, "Player.GetProperties", obj().p("playerid", player).p("properties", arr().add("position")));
+//		return result.get("position").getIntValue();
 	}
 	
 	/**
@@ -320,8 +323,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	public ArrayList<Album> getAlbums(INotifiableManager manager, Sort sort) {
 		// TODO: Make ignore article configurable
-		return parseAlbums(mConnection.getJson(manager, "AudioLibrary.GetAlbums",
-				sort(obj().p("properties", arr().add("artist").add("year")), sort)));
+		return null;
+//		return parseAlbums(mConnection.getJson(manager, "AudioLibrary.GetAlbums",
+//				sort(obj().p("properties", arr().add("artist").add("year")), sort)));
 	}
 	
 	private ArrayList<Album> parseAlbums(JsonNode result) {
@@ -444,18 +448,19 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Updated album
 	 */
 	public Album updateAlbumInfo(INotifiableManager manager, Album album) {
-		ObjNode obj = obj().p("albumid", album.getId()).p("properties", arr()
-				.add("genre").add("rating"));
-		JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetAlbumDetails", obj);
-		JsonNode albumDetails = result.get("albumdetails");
-		if(albumDetails == null) {
-			return album;
-		}
-		Log.e("MusicClient", result.toString());
-		album.genres = getString(albumDetails, "genre");
-		album.label = getString(albumDetails, "label");
-		album.rating = getInt(albumDetails, "rating");
-		return album;
+//		ObjNode obj = obj().p("albumid", album.getId()).p("properties", arr()
+//				.add("genre").add("rating"));
+//		JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetAlbumDetails", obj);
+//		JsonNode albumDetails = result.get("albumdetails");
+//		if(albumDetails == null) {
+//			return album;
+//		}
+//		Log.e("MusicClient", result.toString());
+//		album.genres = getString(albumDetails, "genre");
+//		album.label = getString(albumDetails, "label");
+//		album.rating = getInt(albumDetails, "rating");
+//		return album;
+		return null;
 	}
 	
 	/**
@@ -465,21 +470,22 @@ public class MusicClient extends Client implements IMusicClient {
 	 */
 	public Artist updateArtistInfo(INotifiableManager manager, Artist artist) {
 
-		ObjNode obj = obj().p("artistid", artist.getId()).p("properties", arr().add("born").add("formed")
-				.add("genre").add("mood").add("style").add("description"));
-		JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetArtistDetails", obj);
-		JsonNode artistDetails = result.get("artistdetails");
-		if(artistDetails == null) {
-			return artist;
-		}
-		Log.e("MusicClient", result.toString());
-		artist.born = getString(artistDetails, "born");
-		artist.formed = getString(artistDetails, "formed");
-		artist.genres = getString(artistDetails, "genre");
-		artist.moods = getString(artistDetails, "mood");
-		artist.styles = getString(artistDetails, "style");
-		artist.biography = getString(artistDetails, "description");
-		return artist;
+//		ObjNode obj = obj().p("artistid", artist.getId()).p("properties", arr().add("born").add("formed")
+//				.add("genre").add("mood").add("style").add("description"));
+//		JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetArtistDetails", obj);
+//		JsonNode artistDetails = result.get("artistdetails");
+//		if(artistDetails == null) {
+//			return artist;
+//		}
+//		Log.e("MusicClient", result.toString());
+//		artist.born = getString(artistDetails, "born");
+//		artist.formed = getString(artistDetails, "formed");
+//		artist.genres = getString(artistDetails, "genre");
+//		artist.moods = getString(artistDetails, "mood");
+//		artist.styles = getString(artistDetails, "style");
+//		artist.biography = getString(artistDetails, "description");
+//		return artist;
+		return null;
 	}
 	
 	/**
@@ -488,9 +494,10 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return Found tracks
 	 */
 	public ArrayList<Song> getSongs(INotifiableManager manager, ObjNode obj, Sort sort) {
-		obj.p("properties", arr().add("duration").add("artist").add("album").add("track").add("file").add("thumbnail"));
-		obj = sort(obj, sort);
-		return parseSongs(mConnection.getJson(manager, "AudioLibrary.GetSongs", obj));
+//		obj.p("properties", arr().add("duration").add("artist").add("album").add("track").add("file").add("thumbnail"));
+//		obj = sort(obj, sort);
+//		return parseSongs(mConnection.getJson(manager, "AudioLibrary.GetSongs", obj));
+		return null;
 	}
 	
 	private ArrayList<Song> parseSongs(JsonNode result) {

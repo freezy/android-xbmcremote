@@ -215,8 +215,6 @@ public class NowPlayingController extends AbstractController implements INotifia
 				ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
 			}
 		}.start();
-		if (mControlManager != null) {
-			mControlManager.setController(this);
-		}
+		mControlManager = ManagerFactory.getControlManager(this);
 	}
 }

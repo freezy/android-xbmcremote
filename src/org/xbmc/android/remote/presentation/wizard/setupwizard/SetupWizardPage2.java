@@ -71,6 +71,10 @@ public class SetupWizardPage2 extends WizardPage<Host> {
 			public void onError(Exception e) {
 
 			}
+			public Context getApplicationContext() {
+				return null;
+			}
+			
 		});
 		control = ManagerFactory.getControlManager(new INotifiableController() {
 			public void runOnUI(Runnable action) {
@@ -86,6 +90,10 @@ public class SetupWizardPage2 extends WizardPage<Host> {
 
 			public void onError(Exception e) {
 			}
+			public Context getApplicationContext() {
+				return null;
+			}
+			
 		});
 		info.getGuiSettingBool(new DataResponse<Boolean>() {
 			@Override

@@ -296,6 +296,7 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return All albums
 	 */
 	public ArrayList<Album> getAlbums(INotifiableManager manager, Sort sort) {
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT idAlbum, strAlbum, strArtist, iYear, strThumb");
 		sb.append(" FROM albumview WHERE albumview.strAlbum <> ''");
@@ -753,10 +754,10 @@ public class MusicClient extends Client implements IMusicClient {
 		String[] fields = response.split("<field>");
 		try {
 			if (Connection.trim(fields[1]).length() > 0) {
-				album.genres = Connection.trim(fields[1]);
+				album.genres.add(Connection.trim(fields[1]));
 			}
 			if (Connection.trim(fields[2]).length() > 0) {
-				album.genres += ((Connection.trim(fields[1]).length() > 0) ? " / " : "") + Connection.trim(fields[2]);
+				album.genres.add(((Connection.trim(fields[1]).length() > 0) ? " / " : "") + Connection.trim(fields[2]));
 			}
 			if (Connection.trim(fields[3]).length() > 0) {
 				album.label = Connection.trim(fields[3]);
@@ -797,13 +798,13 @@ public class MusicClient extends Client implements IMusicClient {
 				artist.formed = Connection.trim(fields[2]);
 			}
 			if (Connection.trim(fields[3]).length() > 0) {
-				artist.genres = Connection.trim(fields[3]);
+				artist.genres.add(Connection.trim(fields[3]));
 			}
 			if (Connection.trim(fields[4]).length() > 0) {
-				artist.moods = Connection.trim(fields[4]);
+				artist.moods.add(Connection.trim(fields[4]));
 			}
 			if (Connection.trim(fields[5]).length() > 0) {
-				artist.styles = Connection.trim(fields[5]);
+				artist.styles.add(Connection.trim(fields[5]));
 			}
 			if (Connection.trim(fields[6]).length() > 0) {
 				artist.biography = Connection.trim(fields[6]);

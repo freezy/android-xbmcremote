@@ -211,11 +211,15 @@ public class NowPlayingPollerThread extends Thread {
 				/*				if (!control.isConnected()) {
 					sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
 				} else {*/
+				//FIXME:
+				if(true) {
+					return;
+				}
 				ICurrentlyPlaying currPlaying;
 				try{
 					currPlaying = control.getCurrentlyPlaying(mManagerStub);
 				} catch(Exception e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 					sendEmptyMessage(MESSAGE_CONNECTION_ERROR);
 					return;
 				}

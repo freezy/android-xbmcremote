@@ -22,7 +22,10 @@
 package org.xbmc.api.object;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
@@ -68,6 +71,16 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 		}
 	}
 	
+	public Album(AlbumDetail detail) {
+		this.id = detail.albumid;
+		this.name = detail.label;
+		if(detail.artist.size() > 0) {
+			this.artist = detail.artist.get(0);
+		}
+		this.year = detail.year;
+		this.thumbUri = detail.thumbnail;
+	}
+	
 	public int getMediaType() {
 		return MediaType.MUSIC;
 	}
@@ -81,10 +94,16 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 	 * @return Path to thumbnail
 	 */
 	public String getThumbUri() {
+		if(thumbUri != null) {
+			return thumbUri;
+		}
 		return getThumbUri(this);
 	}
 	
 	public static String getThumbUri(ICoverArt cover) {
+		if(cover instanceof Album && ((Album) cover).thumbUri != null) {
+			return ((Album) cover).thumbUri;
+		}
 		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
 	}
@@ -197,7 +216,7 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 	/**
 	 * Genres, separated by " / "
 	 */
-	public String genres = null;
+	public List<String> genres = new ArrayList<String>();
 	/**
 	 * Music label
 	 */
@@ -206,6 +225,8 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 	 * Save this once it's calculated
 	 */
 	public long thumbID = 0;
+	
+	private String thumbUri;
 	
 	private static final long serialVersionUID = 4779827915067184250L;
 

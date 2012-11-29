@@ -42,7 +42,7 @@ import android.graphics.BitmapFactory;
  * 
  * @author Team XBMC
  */
-class DiskCacheThread extends AbstractThread {
+public class DiskCacheThread extends AbstractThread {
 	
 	/**
 	 * Singleton instance of this thread

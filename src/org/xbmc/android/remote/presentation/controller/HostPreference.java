@@ -50,10 +50,10 @@ import android.widget.Toast;
  */
 public class HostPreference extends DialogPreference {
 	
-	private EditText mNameView, mHostView, mPortView, mUserView, mPassView, 
+	private EditText mNameView, mHostView, mPortView, mJsonPortView, mUserView, mPassView, 
 				mEsPortView, mTimeoutView, mAccPointView, mMacAddrView, mWolWaitView, mWolPortView;
 	
-	private CheckBox mWifiOnlyView;
+	private CheckBox mWifiOnlyView, mJsonApiView;
 	
 	private Host mHost;
 	private Context mContext;
@@ -148,6 +148,8 @@ public class HostPreference extends DialogPreference {
 			}
 		});
 		mPortView = (EditText)parent.findViewById(R.id.pref_port);
+		mJsonPortView = (EditText)parent.findViewById(R.id.pref_jsonPort);
+		mJsonApiView = (CheckBox)parent.findViewById(R.id.pref_jsonApi);
 		mUserView = (EditText)parent.findViewById(R.id.pref_user);
 		mPassView = (EditText)parent.findViewById(R.id.pref_pass);
 		mEsPortView = (EditText)parent.findViewById(R.id.pref_eventserver_port);
@@ -167,6 +169,8 @@ public class HostPreference extends DialogPreference {
 			mNameView.setText(mHost.name);
 			mHostView.setText(mHost.addr);
 			mPortView.setText(String.valueOf(mHost.port));
+			mJsonPortView.setText(String.valueOf(mHost.jsonPort));
+			mJsonApiView.setChecked(mHost.jsonApi);
 			mUserView.setText(mHost.user);
 			mPassView.setText(mHost.pass);
 			
@@ -180,6 +184,7 @@ public class HostPreference extends DialogPreference {
 		} else {
 			//set defaults:
 			mPortView.setText("" + Host.DEFAULT_HTTP_PORT);
+			mJsonPortView.setText("" + Host.DEFAULT_JSON_PORT);
 			mEsPortView.setText("" + Host.DEFAULT_EVENTSERVER_PORT);
 			mTimeoutView.setText("" + Host.DEFAULT_TIMEOUT);
 			mWolPortView.setText("" + Host.DEFAULT_WOL_PORT);
@@ -199,6 +204,12 @@ public class HostPreference extends DialogPreference {
 			} catch (NumberFormatException e) {
 				host.port = Host.DEFAULT_HTTP_PORT;
 			}
+			try {
+				host.jsonPort = Integer.parseInt(mJsonPortView.getText().toString());
+			} catch (NumberFormatException e) {
+				host.jsonPort = Host.DEFAULT_JSON_PORT;
+			}
+			host.jsonApi = mJsonApiView.isChecked();
 			host.user = mUserView.getText().toString();
 			host.pass = mPassView.getText().toString();
 

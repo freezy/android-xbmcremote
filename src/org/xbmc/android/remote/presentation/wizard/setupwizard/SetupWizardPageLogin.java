@@ -94,6 +94,9 @@ public class SetupWizardPageLogin extends WizardPage<Host> {
 					errorMsg.setText(R.string.setup_wizard_login_wrong);
 				}
 			}
+			public Context getApplicationContext() {
+				return null;
+			}
 		});
 		info.getSystemVersion(new DataResponse<String>() {
 			@Override

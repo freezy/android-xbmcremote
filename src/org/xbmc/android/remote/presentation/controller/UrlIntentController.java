@@ -65,9 +65,9 @@ public class UrlIntentController extends AbstractController implements IControll
 	private static final String IMDb_SHARE_PREFIX = "IMDb:";
 	private static final String CONFIRM_PLAY_ON_XBMC = "setting_confirm_play_on_xbmc";
 	
-	private final IControlManager mControlManager;
-	private final IInfoManager mInfoManager;
-	private final IVideoManager mVideoManager;
+	private IControlManager mControlManager;
+	private IInfoManager mInfoManager;
+	private IVideoManager mVideoManager;
 
 	private DataResponse<String> mXbmcStatusHandler;
 	
@@ -93,9 +93,9 @@ public class UrlIntentController extends AbstractController implements IControll
 	 */
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		mInfoManager.setController(this);
-		mControlManager.setController(this);
-		mVideoManager.setController(this);
+		mInfoManager = ManagerFactory.getInfoManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
+		mVideoManager = ManagerFactory.getVideoManager(this);
 		mInfoManager.getSystemVersion(mXbmcStatusHandler, mActivity.getApplicationContext());
 	}
 

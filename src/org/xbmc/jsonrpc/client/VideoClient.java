@@ -74,17 +74,18 @@ public class VideoClient extends Client implements IVideoClient {
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Sort sort,
 			boolean hideWatched) {
 
-		return parseMovies(
-				mConnection.getJson(
-						manager,
-						"VideoLibrary.GetMovies",
-						sort(obj().p(
-								"properties",
-								arr().add("playcount").add("year").add("file")
-										.add("director").add("runtime")
-										.add("genre").add("rating")
-										.add("imdbnumber")), sort)),
-				hideWatched);
+//		return parseMovies(
+//				mConnection.getJson(
+//						manager,
+//						"VideoLibrary.GetMovies",
+//						sort(obj().p(
+//								"properties",
+//								arr().add("playcount").add("year").add("file")
+//										.add("director").add("runtime")
+//										.add("genre").add("rating")
+//										.add("imdbnumber")), sort)),
+//				hideWatched);
+		return null;
 	}
 
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor,
@@ -95,57 +96,59 @@ public class VideoClient extends Client implements IVideoClient {
 	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre,
 			Sort sort, boolean hideWatched) {
 		// unfortunately no ability to query by genres currently
-		ArrayList<Movie> movies = parseMovies(
-				mConnection.getJson(
-						manager,
-						"VideoLibrary.GetMovies",
-						sort(obj().p(
-								"properties",
-								arr().add("playcount").add("year").add("file")
-										.add("director").add("runtime")
-										.add("genre").add("rating")
-										.add("imdbnumber")), sort)),
-				hideWatched);
-		for (Iterator<Movie> i = movies.iterator(); i.hasNext();) {
-			Movie movie = i.next();
-			if (!movie.isGenre(genre)) {
-				i.remove();
-			}
-		}
-		return movies;
+//		ArrayList<Movie> movies = parseMovies(
+//				mConnection.getJson(
+//						manager,
+//						"VideoLibrary.GetMovies",
+//						sort(obj().p(
+//								"properties",
+//								arr().add("playcount").add("year").add("file")
+//										.add("director").add("runtime")
+//										.add("genre").add("rating")
+//										.add("imdbnumber")), sort)),
+//				hideWatched);
+//		for (Iterator<Movie> i = movies.iterator(); i.hasNext();) {
+//			Movie movie = i.next();
+//			if (!movie.isGenre(genre)) {
+//				i.remove();
+//			}
+//		}
+//		return movies;
+		return null;
 	}
 
 	public Movie updateMovieDetails(INotifiableManager manager, Movie movie) {
 
-		ObjNode obj = obj().p("movieid", movie.getId()).p(
-				"properties",
-				arr().add("tagline").add("plot").add("votes").add("studio")
-						.add("mpaa").add("trailer"));
-		JsonNode result = mConnection.getJson(manager,
-				"VideoLibrary.GetMovieDetails", obj);
-		JsonNode movieDetails = result.get("moviedetails");
-		if (movieDetails == null) {
-			return movie;
-		}
-		Log.e("VideoClient", result.toString());
-		movie.tagline = getString(movieDetails, "tagline");
-		movie.plot = getString(movieDetails, "plot");
-		movie.numVotes = getInt(movieDetails, "votes");
-		
-		JsonNode node = movieDetails.get("studio");
-		if(node instanceof ArrayNode) {
-			ArrayNode arrNode = (ArrayNode) node;
-			if(arrNode.size() > 0) {
-				movie.studio = arrNode.get(0).getTextValue();
-			} else {
-				movie.studio = "";
-			}
-		} else {
-			movie.studio = getString(movieDetails, "studio");
-		}
-		movie.rated = getString(movieDetails, "mpaa");
-		movie.trailerUrl = getString(movieDetails, "trailer");
-		return movie;
+//		ObjNode obj = obj().p("movieid", movie.getId()).p(
+//				"properties",
+//				arr().add("tagline").add("plot").add("votes").add("studio")
+//						.add("mpaa").add("trailer"));
+//		JsonNode result = mConnection.getJson(manager,
+//				"VideoLibrary.GetMovieDetails", obj);
+//		JsonNode movieDetails = result.get("moviedetails");
+//		if (movieDetails == null) {
+//			return movie;
+//		}
+//		Log.e("VideoClient", result.toString());
+//		movie.tagline = getString(movieDetails, "tagline");
+//		movie.plot = getString(movieDetails, "plot");
+//		movie.numVotes = getInt(movieDetails, "votes");
+//		
+//		JsonNode node = movieDetails.get("studio");
+//		if(node instanceof ArrayNode) {
+//			ArrayNode arrNode = (ArrayNode) node;
+//			if(arrNode.size() > 0) {
+//				movie.studio = arrNode.get(0).getTextValue();
+//			} else {
+//				movie.studio = "";
+//			}
+//		} else {
+//			movie.studio = getString(movieDetails, "studio");
+//		}
+//		movie.rated = getString(movieDetails, "mpaa");
+//		movie.trailerUrl = getString(movieDetails, "trailer");
+//		return movie;
+		return null;
 	}
 
 	public ArrayList<Actor> getActors(INotifiableManager manager) {

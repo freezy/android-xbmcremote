@@ -174,6 +174,8 @@ public class HomeController extends AbstractController implements INotifiableCon
 						versionButton.setText("Connecting...");
 						Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
 						ClientFactory.resetClient(host);
+						// we need to be sure we get the appropriate manager
+						mInfoManager = ManagerFactory.getInfoManager(HomeController.this);
 						mInfoManager.getSystemVersion(mUpdateVersionHandler, mActivity.getApplicationContext());
 					}
 				}
@@ -305,6 +307,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 					case HOME_ACTION_RECONNECT:
 						((Button)mActivity.findViewById(R.id.home_version_button)).setText("Reconnecting...");
 						ClientFactory.resetClient(host);
+						mInfoManager = ManagerFactory.getInfoManager(HomeController.this);
 						mInfoManager.getSystemVersion(mUpdateVersionHandler, mActivity.getApplicationContext());
 						break;
 					case HOME_ACTION_WOL:
@@ -587,7 +590,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		mInfoManager.setController(this);
+		mInfoManager = ManagerFactory.getInfoManager(this);
 		mInfoManager.getSystemVersion(mUpdateVersionHandler, mActivity.getApplicationContext());
 	}
 

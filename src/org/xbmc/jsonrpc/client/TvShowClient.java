@@ -56,27 +56,29 @@ public class TvShowClient extends Client implements ITvShowClient {
 
 	public ArrayList<TvShow> getTvShows(INotifiableManager manager,
 			ObjNode obj, Sort sort, boolean hideWatched) {
-		obj.p("properties",
-				arr().add("title").add("rating").add("premiered").add("genre")
-						.add("mpaa").add("studio").add("file").add("episode"));
-		obj = sort(obj, sort);
-		return parseTvShows(mConnection.getJson(manager,
-				"VideoLibrary.GetTvShows", obj));
+//		obj.p("properties",
+//				arr().add("title").add("rating").add("premiered").add("genre")
+//						.add("mpaa").add("studio").add("file").add("episode"));
+//		obj = sort(obj, sort);
+//		return parseTvShows(mConnection.getJson(manager,
+//				"VideoLibrary.GetTvShows", obj));
+			return null;
 	}
 
 	public TvShow getTvShow(INotifiableManager manager, int tvshowid) {
-		ObjNode obj = obj().p("tvshowid", tvshowid);
-		obj.p("properties",
-				arr().add("title").add("rating").add("premiered").add("genre")
-						.add("mpaa").add("studio").add("file").add("episode"));
-
-		JsonNode result = mConnection.getJson(manager,
-				"VideoLibrary.GetTvShowDetails", obj);
-		JsonNode tvshowdetails = result.get("tvshowdetails");
-		if (tvshowdetails == null) {
-			return null;
-		}
-		return parseTvShow(tvshowdetails);
+//		ObjNode obj = obj().p("tvshowid", tvshowid);
+//		obj.p("properties",
+//				arr().add("title").add("rating").add("premiered").add("genre")
+//						.add("mpaa").add("studio").add("file").add("episode"));
+//
+//		JsonNode result = mConnection.getJson(manager,
+//				"VideoLibrary.GetTvShowDetails", obj);
+//		JsonNode tvshowdetails = result.get("tvshowdetails");
+//		if (tvshowdetails == null) {
+//			return null;
+//		}
+//		return parseTvShow(tvshowdetails);
+		return null;
 
 	}
 
@@ -119,16 +121,17 @@ public class TvShowClient extends Client implements ITvShowClient {
 
 	public ArrayList<Episode> getEpisodes(INotifiableManager manager,
 			TvShow show, Season season, Sort sort, boolean hideWatched) {
-		ObjNode obj = obj();
-		obj.p("tvshowid", show.getId());
-		obj.p("season", season.getNumber());
-		obj.p("properties",
-				arr().add("title").add("plot").add("rating").add("writer")
-						.add("firstaired").add("director").add("season")
-						.add("episode").add("file").add("showtitle"));
-		obj = sort(obj, sort);
-		return parseEpisodes(mConnection.getJson(manager,
-				"VideoLibrary.GetEpisodes", obj));
+//		ObjNode obj = obj();
+//		obj.p("tvshowid", show.getId());
+//		obj.p("season", season.getNumber());
+//		obj.p("properties",
+//				arr().add("title").add("plot").add("rating").add("writer")
+//						.add("firstaired").add("director").add("season")
+//						.add("episode").add("file").add("showtitle"));
+//		obj = sort(obj, sort);
+//		return parseEpisodes(mConnection.getJson(manager,
+//				"VideoLibrary.GetEpisodes", obj));
+		return null;
 	}
 
 	private ArrayList<Episode> parseEpisodes(JsonNode result) {
@@ -177,9 +180,10 @@ public class TvShowClient extends Client implements ITvShowClient {
 
 	public ArrayList<Season> getSeasons(INotifiableManager manager,
 			ObjNode obj, boolean hideWatched) {
-		obj.p("properties", arr().add("season").add("tvshowid"));
-		return parseSeasons(manager,
-				mConnection.getJson(manager, "VideoLibrary.GetSeasons", obj));
+//		obj.p("properties", arr().add("season").add("tvshowid"));
+//		return parseSeasons(manager,
+//				mConnection.getJson(manager, "VideoLibrary.GetSeasons", obj));
+		return null;
 	}
 
 	private ArrayList<Season> parseSeasons(INotifiableManager manager,

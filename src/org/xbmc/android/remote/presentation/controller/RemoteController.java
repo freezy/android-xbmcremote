@@ -507,7 +507,7 @@ public class RemoteController extends AbstractController implements INotifiableC
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
 		mHandler = new Handler();
-		mEventClientManager.setController(this);
-		mInfoManager.setController(this);
+		mEventClientManager = ManagerFactory.getEventClientManager(this);
+		mControl = ManagerFactory.getControlManager(this);
 	}
 }

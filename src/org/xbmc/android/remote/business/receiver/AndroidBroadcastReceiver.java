@@ -182,6 +182,11 @@ public class AndroidBroadcastReceiver extends BroadcastReceiver {
 			
 		}
 		
+		public Context getApplicationContext() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 	}
 
 }

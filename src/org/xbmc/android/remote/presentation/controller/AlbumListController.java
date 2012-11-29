@@ -23,6 +23,7 @@ package org.xbmc.android.remote.presentation.controller;
 
 import java.util.ArrayList;
 
+import org.xbmc.android.jsonrpc.api.Version.Branch;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
@@ -40,7 +41,6 @@ import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
-import org.xbmc.api.type.Version;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -137,6 +137,7 @@ public class AlbumListController extends ListController implements IController {
 	
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
+		mActivity = activity;
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
 		mInfoManager = ManagerFactory.getInfoManager(this);
@@ -309,7 +310,7 @@ public class AlbumListController extends ListController implements IController {
 			sortMenu.add(2, MENU_SORT_BY_ARTIST_DESC, 0, "by Artist descending");
 		}
 		
-		if(mInfoManager.getAPIVersion(mActivity.getApplicationContext()) >= Version.FRODO.ordinal()) {
+		if(mInfoManager.getAPIVersion(mActivity.getApplicationContext()) >= Branch.FRODO.ordinal()) {
 			sortMenu.add(2, MENU_SORT_BY_PLAYCOUNT_ASC, 0, "by Play Count ascending");
 			sortMenu.add(2, MENU_SORT_BY_PLAYCOUNT_DESC, 0, "by Play Count descending");
 			sortMenu.add(2, MENU_SORT_BY_DATEADDED_ASC, 0, "by Date Added ascending");
@@ -526,12 +527,8 @@ public class AlbumListController extends ListController implements IController {
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mMusicManager != null) {
-			mMusicManager.setController(this);
-		}
-		if (mControlManager != null) {
-			mControlManager.setController(this);
-		}
+		mMusicManager = ManagerFactory.getMusicManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 	}
 	
 	private static final long serialVersionUID = 1088971882661811256L;
