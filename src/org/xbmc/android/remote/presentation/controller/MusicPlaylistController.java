@@ -41,6 +41,7 @@ import org.xbmc.api.object.Song;
 import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.httpapi.client.MusicClient;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -87,6 +88,7 @@ public class MusicPlaylistController extends ListController implements IControll
 	private static Bitmap sPlayingBitmap;
 	
 	public void onCreate(final PlaylistActivity activity, Handler handler, final AbsListView list) {
+		Log.e("MusicPlaylistClient", "On Create.");
 		
 		mPlaylistActivity = activity;
 		mMusicManager = ManagerFactory.getMusicManager(this);
@@ -109,7 +111,8 @@ public class MusicPlaylistController extends ListController implements IControll
 			}, mActivity.getApplicationContext());
 			
 			mMusicManager.getPlaylist(new DataResponse<ArrayList<String>>() {
-	  	  		public void run() {
+	  	  		@SuppressLint("NewApi")
+				public void run() {
 	  	  			if (value.size() > 0) {
 		  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
 		  	  			int i = 0;
@@ -150,6 +153,7 @@ public class MusicPlaylistController extends ListController implements IControll
 	 *            Message object containing currently playing info
 	 */
 	public synchronized boolean handleMessage(Message msg) {
+		Log.e("MusicPlaylistClient", "Handling a message.");
 		final Bundle data = msg.getData();
 		final ICurrentlyPlaying currentlyPlaying = (ICurrentlyPlaying) data.getSerializable(NowPlayingPollerThread.BUNDLE_CURRENTLY_PLAYING);
 		switch (msg.what) {
@@ -257,10 +261,12 @@ public class MusicPlaylistController extends ListController implements IControll
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		// be aware that this must be explicitly called by your activity!
-/*		final OneHolder<PlaylistItem>holder = (OneHolder<PlaylistItem>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
+		/*
+		final OneHolder<PlaylistItem>holder = (OneHolder<PlaylistItem>)((AdapterContextMenuInfo)menuInfo).targetView.getTag();
 		menu.setHeaderTitle(holder.holderItem.filename);
 		menu.add(0, ITEM_CONTEXT_PLAY, 1, "Play");
-		menu.add(0, ITEM_CONTEXT_REMOVE, 2, "Remove");*/
+		menu.add(0, ITEM_CONTEXT_REMOVE, 2, "Remove");
+		*/
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
@@ -351,15 +357,10 @@ public class MusicPlaylistController extends ListController implements IControll
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
 		ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
-		if (mEventClient != null) {
-			mEventClient.setController(this);
-		}
-		if (mMusicManager != null) {
-			mMusicManager.setController(this);
-		}
-		if (mControlManager != null) {
-			mControlManager.setController(this);
-		}
+		
+		mEventClient = ManagerFactory.getEventClientManager(this);
+		mMusicManager = ManagerFactory.getMusicManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 	}
 	
 	private static final long serialVersionUID = 755529227668553163L;

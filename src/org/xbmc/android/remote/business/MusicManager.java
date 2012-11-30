@@ -23,6 +23,7 @@ package org.xbmc.android.remote.business;
 
 import java.util.ArrayList;
 
+import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.business.INotifiableManager;
@@ -34,283 +35,296 @@ import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Song;
 import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.WifiStateException;
 import org.xbmc.jsonrpc.client.MusicClient;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.InfoClient} class.
  * 
  * @author Team XBMC
  */
-public class MusicManager extends AbstractManager implements IMusicManager, ISortableManager, INotifiableManager {
-	
+public class MusicManager extends AbstractManager implements IMusicManager,
+		ISortableManager, INotifiableManager {
+
+	public static final String EMPTY_PLAYLIST_ITEM = "[Empty]";
+
 	/**
 	 * Gets all albums from database
-	 * @param response Response object
+	 * 
+	 * @param response
+	 *            Response object
 	 */
-	public void getCompilations(final DataResponse<ArrayList<Album>> response, final Context context) {
-		mHandler.post(new Command<ArrayList<Album>>(response, this){
-			@Override
-			public void doRun() throws Exception {
-				final IMusicClient mc = music(context);
-				ArrayList<Integer> compilationArtistIDs = mc.getCompilationArtistIDs(MusicManager.this);
-				response.value = mc.getAlbums(MusicManager.this, compilationArtistIDs);
-			}
-		});
-	}
-	
-	/**
-	 * Gets all albums from database
-	 * @param response Response object
-	 */
-	public void getAlbums(final DataResponse<ArrayList<Album>> response, final Context context) {
+	public void getCompilations(final DataResponse<ArrayList<Album>> response,
+			final Context context) {
 		mHandler.post(new Command<ArrayList<Album>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
-				response.value = music(context).getAlbums(MusicManager.this, getSortBy(SortType.ALBUM), getSortOrder());
+				final IMusicClient mc = music(context);
+				ArrayList<Integer> compilationArtistIDs = mc
+						.getCompilationArtistIDs(MusicManager.this);
+				response.value = mc.getAlbums(MusicManager.this,
+						compilationArtistIDs, getSort(SortType.ALBUM));
 			}
 		});
 	}
-	
+
+	/**
+	 * Gets all albums from database
+	 * 
+	 * @param response
+	 *            Response object
+	 */
+	public void getAlbums(final DataResponse<ArrayList<Album>> response,
+			final Context context) {
+		mHandler.post(new Command<ArrayList<Album>>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = music(context).getAlbums(MusicManager.this,
+						getSort(SortType.ALBUM));
+			}
+		});
+	}
+
 	/**
 	 * SYNCHRONOUSLY gets all albums from database
+	 * 
 	 * @return All albums in database
 	 */
 	public ArrayList<Album> getAlbums(final Context context) {
-		try { //TODO fix this to throw 
-			return music(context).getAlbums(MusicManager.this, getSortBy(SortType.ALBUM), getSortOrder());
+		try { // TODO fix this to throw
+			return music(context).getAlbums(MusicManager.this,
+					getSort(SortType.ALBUM));
 		} catch (WifiStateException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gets all albums of an artist from database
-	 * @param response Response object
-	 * @param artist  Artist of the albums
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param artist
+	 *            Artist of the albums
 	 */
-	public void getAlbums(final DataResponse<ArrayList<Album>> response, final Artist artist, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				response.value = music(context).getAlbums(MusicManager.this, artist, getSortBy(SortType.ALBUM), getSortOrder());
-//				onFinish(response);
-//			}
-//		});
-		mHandler.post(new Command<ArrayList<Album>>(response, this){
+	public void getAlbums(final DataResponse<ArrayList<Album>> response,
+			final Artist artist, final Context context) {
+		mHandler.post(new Command<ArrayList<Album>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
-				response.value = music(context).getAlbums(MusicManager.this, artist, getSortBy(SortType.ALBUM), getSortOrder());
+				response.value = music(context).getAlbums(MusicManager.this,
+						artist, getSort(SortType.ALBUM));
 			}
 		});
 	}
 
 	/**
 	 * Gets all albums of a genre from database
-	 * @param response Response object
-	 * @param artist  Genre of the albums
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param artist
+	 *            Genre of the albums
 	 */
-	public void getAlbums(final DataResponse<ArrayList<Album>> response, final Genre genre, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				response.value = music(context).getAlbums(MusicManager.this, genre, getSortBy(SortType.ALBUM), getSortOrder());
-//				onFinish(response);
-//			}
-//		});
+	public void getAlbums(final DataResponse<ArrayList<Album>> response,
+			final Genre genre, final Context context) {
 		mHandler.post(new Command<ArrayList<Album>>(response, this) {
-			public void doRun() throws Exception{ 
-				response.value = music(context).getAlbums(MusicManager.this, genre, getSortBy(SortType.ALBUM), getSortOrder());
+			public void doRun() throws Exception {
+				response.value = music(context).getAlbums(MusicManager.this,
+						genre, getSort(SortType.ALBUM));
 			}
 		});
 	}
-	
+
 	/**
 	 * Gets all songs of an album from database
-	 * @param response Response object
-	 * @param album Album
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param album
+	 *            Album
 	 */
-	public void getSongs(final DataResponse<ArrayList<Song>> response, final Album album, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				response.value = music(context).getSongs(MusicManager.this, album, getSortBy(SortType.ARTIST), getSortOrder());
-//				onFinish(response);
-//			}
-//		});
+	public void getSongs(final DataResponse<ArrayList<Song>> response,
+			final Album album, final Context context) {
 		mHandler.post(new Command<ArrayList<Song>>(response, this) {
-			public void doRun() throws Exception{ 
-				response.value = music(context).getSongs(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
+			public void doRun() throws Exception {
+				response.value = music(context).getSongs(MusicManager.this,
+						album, getSort(SortType.TRACK));
 			}
 		});
 	}
 
 	/**
 	 * Gets all songs from an artist from database
-	 * @param response Response object
-	 * @param album Artist
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param album
+	 *            Artist
 	 */
-	public void getSongs(final DataResponse<ArrayList<Song>> response, final Artist artist, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				response.value = music(context).getSongs(MusicManager.this, artist, getSortBy(SortType.ARTIST), getSortOrder());
-//				onFinish(response);
-//			}
-//		});
+	public void getSongs(final DataResponse<ArrayList<Song>> response,
+			final Artist artist, final Context context) {
 		mHandler.post(new Command<ArrayList<Song>>(response, this) {
-			public void doRun() throws Exception{ 
-				response.value = music(context).getSongs(MusicManager.this, artist, getSortBy(SortType.ARTIST), getSortOrder());
+			public void doRun() throws Exception {
+				response.value = music(context).getSongs(MusicManager.this,
+						artist, getSort(SortType.ARTIST));
 			}
 		});
 	}
-	
+
 	/**
 	 * Gets all songs of a genre from database
-	 * @param response Response object
-	 * @param album Genre
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param album
+	 *            Genre
 	 */
-	public void getSongs(final DataResponse<ArrayList<Song>> response, final Genre genre, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				response.value = music(context).getSongs(MusicManager.this, genre, getSortBy(SortType.ARTIST), getSortOrder());
-//				onFinish(response);
-//			}
-//		});
+	public void getSongs(final DataResponse<ArrayList<Song>> response,
+			final Genre genre, final Context context) {
 		mHandler.post(new Command<ArrayList<Song>>(response, this) {
-			public void doRun() throws Exception{ 
-				response.value = music(context).getSongs(MusicManager.this, genre, getSortBy(SortType.ARTIST), getSortOrder());
+			public void doRun() throws Exception {
+				response.value = music(context).getSongs(MusicManager.this,
+						genre, getSort(SortType.ARTIST));
 			}
 		});
 	}
 
 	/**
 	 * Gets all artists from database
-	 * @param response Response object
+	 * 
+	 * @param response
+	 *            Response object
 	 */
-	public void getArtists(final DataResponse<ArrayList<Artist>> response, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				boolean albumArtistsOnly;
-//				try {
-//					albumArtistsOnly = info(context).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
-//					response.value = music(context).getArtists(MusicManager.this, albumArtistsOnly);
-//					onFinish(response);
-//				} catch (WifiStateException e) {
-//					onWrongConnectionState(e.getState());
-//				}
-//			}
-//		});
+	public void getArtists(final DataResponse<ArrayList<Artist>> response,
+			final Context context) {
 		mHandler.post(new Command<ArrayList<Artist>>(response, this) {
-			public void doRun() throws Exception{ 
-				final boolean albumArtistsOnly = !info(context).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.SHOW_COMPLATION_ARTISTS);
-				response.value = music(context).getArtists(MusicManager.this, albumArtistsOnly);
+			public void doRun() throws Exception {
+				final boolean albumArtistsOnly = !info(context)
+						.getGuiSettingBool(
+								MusicManager.this,
+								GuiSettings.MusicLibrary.SHOW_COMPLATION_ARTISTS);
+				response.value = music(context).getArtists(MusicManager.this,
+						albumArtistsOnly, getSort(SortType.ARTIST));
 			}
 		});
 	}
-	
+
 	/**
 	 * Gets all artists with at least one song of a genre.
-	 * @param response Response object
-	 * @param genre Genre
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param genre
+	 *            Genre
 	 */
-	public void getArtists(final DataResponse<ArrayList<Artist>> response, final Genre genre, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				boolean albumArtistsOnly;
-//				try {
-//					albumArtistsOnly = info(context).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.ALBUM_ARTISTS_ONLY);
-//					response.value = music(context).getArtists(MusicManager.this, genre, albumArtistsOnly);
-//					onFinish(response);
-//				} catch (WifiStateException e) {
-//					onWrongConnectionState(e.getState());
-//				}
-//			}
-//		});
+	public void getArtists(final DataResponse<ArrayList<Artist>> response,
+			final Genre genre, final Context context) {
 		mHandler.post(new Command<ArrayList<Artist>>(response, this) {
-			public void doRun() throws Exception{ 
-				final boolean albumArtistsOnly = !info(context).getGuiSettingBool(MusicManager.this, GuiSettings.MusicLibrary.SHOW_COMPLATION_ARTISTS);
-				response.value = music(context).getArtists(MusicManager.this, genre, albumArtistsOnly);
+			public void doRun() throws Exception {
+				final boolean albumArtistsOnly = !info(context)
+						.getGuiSettingBool(
+								MusicManager.this,
+								GuiSettings.MusicLibrary.SHOW_COMPLATION_ARTISTS);
+				response.value = music(context).getArtists(MusicManager.this,
+						genre, albumArtistsOnly, getSort(SortType.ARTIST));
 			}
 		});
 	}
-	
+
 	/**
 	 * Gets all artists from database
-	 * @param response Response object
+	 * 
+	 * @param response
+	 *            Response object
 	 */
-	public void getGenres(final DataResponse<ArrayList<Genre>> response, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				response.value = music(context).getGenres(MusicManager.this);
-//				onFinish(response);
-//			}
-//		});
+	public void getGenres(final DataResponse<ArrayList<Genre>> response,
+			final Context context) {
+		// mHandler.post(new Runnable() {
+		// public void run() {
+		// response.value = music(context).getGenres(MusicManager.this);
+		// onFinish(response);
+		// }
+		// });
 		mHandler.post(new Command<ArrayList<Genre>>(response, this) {
-			public void doRun() throws Exception{ 
-				response.value = music(context).getGenres(MusicManager.this);
+			public void doRun() throws Exception {
+				response.value = music(context).getGenres(MusicManager.this,
+						getSort(SortType.GENRE));
 			}
 		});
 	}
-	
+
 	/**
 	 * Adds an album to the current playlist. If current playlist is stopped,
-	 * the album is added to playlist and the first song is selected to play. 
-	 * If something is playing already, the album is only queued.
+	 * the album is added to playlist and the first song is selected to play. If
+	 * something is playing already, the album is only queued.
 	 * 
-	 * @param response Response object
-	 * @param album Album to add
+	 * @param response
+	 *            Response object
+	 * @param album
+	 *            Album to add
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> response, final Album album, final Context context) {
-//		mHandler.post(new Runnable() {
-//			public void run() { 
-//				final IMusicClient mc = music(context);
-//				final IControlClient cc = control(context);
-//				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-//				response.value = mc.addToPlaylist(MusicManager.this, album);
-//				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
-//				onFinish(response);
-//			}
-//		});
+	public void addToPlaylist(final DataResponse<Boolean> response,
+			final Album album, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
+			public void doRun() throws Exception {
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
-				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-				response.value = mc.addToPlaylist(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
+				final int numAlreadyQueued = mc
+						.getPlaylistSize(MusicManager.this);
+				response.value = mc.addToPlaylist(MusicManager.this, album,
+						getSort(SortType.TRACK));
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 			}
 		});
 	}
-	
+
 	/**
-	 * Adds all songs of a genre to the current playlist. If current playlist is stopped,
-	 * play is executed. Value is the first song of the added album.
-	 * @param response Response object
-	 * @param genre Genre of songs to add
+	 * Adds all songs of a genre to the current playlist. If current playlist is
+	 * stopped, play is executed. Value is the first song of the added album.
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param genre
+	 *            Genre of songs to add
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> response, final Genre genre, final Context context) {
+	public void addToPlaylist(final DataResponse<Boolean> response,
+			final Genre genre, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
+			public void doRun() throws Exception {
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
-				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-				response.value = mc.addToPlaylist(MusicManager.this, genre, getSortBy(SortType.ARTIST), getSortOrder());
+				final int numAlreadyQueued = mc
+						.getPlaylistSize(MusicManager.this);
+				response.value = mc.addToPlaylist(MusicManager.this, genre,
+						getSort(SortType.ARTIST));
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 			}
 		});
 	}
-	
+
 	/**
-	 * Adds a song to the current playlist. Even if the playlist is empty, only this song will be added.
-	 * @param response Response object
-	 * @param album Song to add
+	 * Adds a song to the current playlist. Even if the playlist is empty, only
+	 * this song will be added.
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param album
+	 *            Song to add
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> response, final Song song, final Context context) {
+	public void addToPlaylist(final DataResponse<Boolean> response,
+			final Song song, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
-				response.value = music(context).addToPlaylist(MusicManager.this, song);
+			public void doRun() throws Exception {
+				response.value = music(context).addToPlaylist(
+						MusicManager.this, song);
 			}
 		});
 	}
@@ -320,38 +334,48 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	 * album will be added with this song playing, otherwise only this song is
 	 * added.
 	 * 
-	 * <b>Attention</b>, the response.value result is different as usual: True 
+	 * <b>Attention</b>, the response.value result is different as usual: True
 	 * means the whole album was added, false means ony the song.
-	 *  
-	 * @param response Response object
-	 * @param album Album to add
-	 * @param song Song to play
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param album
+	 *            Album to add
+	 * @param song
+	 *            Song to play
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> response, final Album album, final Song song, final Context context) {
+	public void addToPlaylist(final DataResponse<Boolean> response,
+			final Album album, final Song song, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
+			public void doRun() throws Exception {
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
 				final int playStatus = cc.getPlayState(MusicManager.this);
-				cc.setCurrentPlaylist(MusicManager.this, MusicClient.PLAYLIST_ID);
-				final int playlistSize = mc.getPlaylistSize(MusicManager.this); 
+				cc.setCurrentPlaylist(MusicManager.this,
+						MusicClient.PLAYLIST_MUSIC.toString());
+				final int playlistSize = mc.getPlaylistSize(MusicManager.this);
 				int playPos = -1;
-				if (playlistSize == 0) {  // if playlist is empty, add the whole album
+				if (playlistSize == 0) { // if playlist is empty, add the whole
+											// album
 					int n = 0;
-					for (Song albumSong : mc.getSongs(MusicManager.this, album, getSortBy(PREF_SORT_KEY_ALBUM), getSortOrder())) {
+					for (Song albumSong : mc.getSongs(MusicManager.this, album,
+							getSort(PREF_SORT_KEY_ALBUM))) {
 						if (albumSong.id == song.id) {
 							playPos = n;
 							break;
 						}
 						n++;
 					}
-					mc.addToPlaylist(MusicManager.this, album, getSortBy(PREF_SORT_KEY_ALBUM), getSortOrder());
+					mc.addToPlaylist(MusicManager.this, album,
+							getSort(PREF_SORT_KEY_ALBUM));
 					response.value = true;
-				} else {                          // otherwise, only add the song
+				} else { // otherwise, only add the song
 					mc.addToPlaylist(MusicManager.this, song);
 					response.value = false;
 				}
-				if (playStatus == PlayStatus.STOPPED) { // if nothing is playing, play the song
+				if (playStatus == PlayStatus.STOPPED) { // if nothing is
+														// playing, play the
+														// song
 					if (playPos == 0) {
 						mc.playlistSetSong(MusicManager.this, playPos + 1);
 						mc.playPrev(MusicManager.this);
@@ -372,136 +396,186 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 	 * stopped, the all songs of the artist are added to playlist and the first
 	 * song is selected to play. If something is playing already, the songs are
 	 * only queued.
-	 * @param response Response object
-	 * @param artist Artist
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param artist
+	 *            Artist
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> response, final Artist artist, final Context context) {
+	public void addToPlaylist(final DataResponse<Boolean> response,
+			final Artist artist, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{  
+			public void doRun() throws Exception {
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
-				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-				response.value = mc.addToPlaylist(MusicManager.this, artist, getSortBy(SortType.ALBUM), getSortOrder());
+				final int numAlreadyQueued = mc
+						.getPlaylistSize(MusicManager.this);
+				response.value = mc.addToPlaylist(MusicManager.this, artist,
+						getSort(SortType.ALBUM));
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
 			}
 		});
 	}
 
 	/**
-	 * Adds all songs of a genre from an artist to the playlist. If nothing is playing, 
-	 * the first song will be played, otherwise songs are just added to the playlist.
-	 * @param response Response object
-	 * @param artist Artist
-	 * @param genre Genre
+	 * Adds all songs of a genre from an artist to the playlist. If nothing is
+	 * playing, the first song will be played, otherwise songs are just added to
+	 * the playlist.
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param artist
+	 *            Artist
+	 * @param genre
+	 *            Genre
 	 */
-	public void addToPlaylist(final DataResponse<Boolean> response, final Artist artist, final Genre genre, final Context context) {
+	public void addToPlaylist(final DataResponse<Boolean> response,
+			final Artist artist, final Genre genre, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
+			public void doRun() throws Exception {
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
-				final int numAlreadyQueued = mc.getPlaylistSize(MusicManager.this);
-				response.value = mc.addToPlaylist(MusicManager.this, artist, genre, getSortBy(SortType.ARTIST), getSortOrder());
+				final int numAlreadyQueued = mc
+						.getPlaylistSize(MusicManager.this);
+				response.value = mc.addToPlaylist(MusicManager.this, artist,
+						genre, getSort(SortType.ARTIST));
 				checkForPlayAfterQueue(mc, cc, numAlreadyQueued);
-			}
-		});
-	}
-	
-	/**
-	 * Sets the media at playlist position position to be the next item to be played.
-	 * @param response Response object
-	 * @param position Position, starting with 0.
-	 */
-	public void setPlaylistSong(final DataResponse<Boolean> response, final int position, final Context context) {
-		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
-				response.value = music(context).setPlaylistPosition(MusicManager.this, position);
-			}
-		});
-	}
-	
-	/**
-	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
-	 * @param position Position to remove, starting with 0.
-	 * @return True on success, false otherwise.
-	 */
-	public void removeFromPlaylist(final DataResponse<Boolean> response, final int position, final Context context) {
-		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
-				response.value = music(context).removeFromPlaylist(MusicManager.this, position);
 			}
 		});
 	}
 
 	/**
-	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
-	 * @param position Complete path (including filename) of the media to be removed.
-	 * @return True on success, false otherwise.
+	 * Sets the media at playlist position position to be the next item to be
+	 * played.
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param position
+	 *            Position, starting with 0.
 	 */
-	public void removeFromPlaylist(final DataResponse<Boolean> response, final String path, final Context context) {
+	public void setPlaylistSong(final DataResponse<Boolean> response,
+			final int position, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
-				response.value = music(context).removeFromPlaylist(MusicManager.this, path);
+			public void doRun() throws Exception {
+				response.value = music(context).setPlaylistPosition(
+						MusicManager.this, position);
 			}
 		});
 	}
-	
+
+	/**
+	 * Removes media from the current playlist. It is not possible to remove the
+	 * media if it is currently being played.
+	 * 
+	 * @param position
+	 *            Position to remove, starting with 0.
+	 * @return True on success, false otherwise.
+	 */
+	public void removeFromPlaylist(final DataResponse<Boolean> response,
+			final int position, final Context context) {
+		mHandler.post(new Command<Boolean>(response, this) {
+			public void doRun() throws Exception {
+				response.value = music(context).removeFromPlaylist(
+						MusicManager.this, position);
+			}
+		});
+	}
+
+	/**
+	 * Removes media from the current playlist. It is not possible to remove the
+	 * media if it is currently being played.
+	 * 
+	 * @param position
+	 *            Complete path (including filename) of the media to be removed.
+	 * @return True on success, false otherwise.
+	 */
+	public void removeFromPlaylist(final DataResponse<Boolean> response,
+			final String path, final Context context) {
+		mHandler.post(new Command<Boolean>(response, this) {
+			public void doRun() throws Exception {
+				response.value = music(context).removeFromPlaylist(
+						MusicManager.this, path);
+			}
+		});
+	}
+
 	/**
 	 * Plays an album
-	 * @param response Response object
-	 * @param album Album to play
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param album
+	 *            Album to play
 	 */
-	public void play(final DataResponse<Boolean> response, final Album album, final Context context) {
+	public void play(final DataResponse<Boolean> response, final Album album,
+			final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
+			public void doRun() throws Exception {
 				control(context).stop(MusicManager.this);
-				response.value = music(context).play(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
+				response.value = music(context).play(MusicManager.this, album,
+						getSort(SortType.TRACK));
 			}
 		});
 	}
-	
+
 	/**
 	 * Plays all songs of a genre
-	 * @param response Response object
-	 * @param genre Genre of songs to play
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param genre
+	 *            Genre of songs to play
 	 */
-	public void play(final DataResponse<Boolean> response, final Genre genre, final Context context) {
+	public void play(final DataResponse<Boolean> response, final Genre genre,
+			final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
+			public void doRun() throws Exception {
 				control(context).stop(MusicManager.this);
-				response.value = music(context).play(MusicManager.this, genre, getSortBy(SortType.ARTIST), getSortOrder());
+				response.value = music(context).play(MusicManager.this, genre,
+						getSort(SortType.ARTIST));
 			}
 		});
 	}
-	
+
 	/**
 	 * Plays a song
-	 * @param response Response object
-	 * @param song Song to play
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param song
+	 *            Song to play
 	 */
-	public void play(final DataResponse<Boolean> response, final Song song, final Context context) {
+	public void play(final DataResponse<Boolean> response, final Song song,
+			final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
+			public void doRun() throws Exception {
 				control(context).stop(MusicManager.this);
 				response.value = music(context).play(MusicManager.this, song);
 			}
 		});
 	}
-	
+
 	/**
 	 * Plays a song, but the whole album is added to the playlist.
-	 * @param response Response object
-	 * @param album Album to queue
-	 * @param song Song to play
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param album
+	 *            Album to queue
+	 * @param song
+	 *            Song to play
 	 */
-	public void play(final DataResponse<Boolean> response, final Album album, final Song song, final Context context) {
+	public void play(final DataResponse<Boolean> response, final Album album,
+			final Song song, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{  
+			public void doRun() throws Exception {
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
 				int n = 0;
 				int playPos = 0;
 				mc.clearPlaylist(MusicManager.this);
-				for (Song albumSong : mc.getSongs(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder())) {
+				for (Song albumSong : mc.getSongs(MusicManager.this, album,
+						getSort(SortType.TRACK))) {
 					if (albumSong.id == song.id) {
 						playPos = n;
 						break;
@@ -509,11 +583,13 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 					n++;
 				}
 				cc.stop(MusicManager.this);
-				mc.addToPlaylist(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
-				cc.setCurrentPlaylist(MusicManager.this, MusicClient.PLAYLIST_ID);
+				mc.addToPlaylist(MusicManager.this, album,
+						getSort(SortType.TRACK));
+				cc.setCurrentPlaylist(MusicManager.this,
+						MusicClient.PLAYLIST_MUSIC.toString());
 				if (playPos > 0) {
 					mc.playlistSetSong(MusicManager.this, playPos - 1);
-				}				
+				}
 				response.value = mc.playNext(MusicManager.this);
 			}
 		});
@@ -521,112 +597,153 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 
 	/**
 	 * Plays all songs from an artist
-	 * @param response Response object
-	 * @param artist Artist whose songs to play
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param artist
+	 *            Artist whose songs to play
 	 */
-	public void play(final DataResponse<Boolean> response, final Artist artist, final Context context) {
+	public void play(final DataResponse<Boolean> response, final Artist artist,
+			final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
+			public void doRun() throws Exception {
 				control(context).stop(MusicManager.this);
-				response.value = music(context).play(MusicManager.this, artist, getSortBy(SortType.ALBUM), getSortOrder());
+				response.value = music(context).play(MusicManager.this, artist,
+						getSort(SortType.ALBUM));
 			}
 		});
 	}
-	
+
 	/**
 	 * Plays songs of a genre from an artist
-	 * @param response Response object
-	 * @param artist Artist whose songs to play
-	 * @param genre  Genre filter
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param artist
+	 *            Artist whose songs to play
+	 * @param genre
+	 *            Genre filter
 	 */
-	public void play(final DataResponse<Boolean> response, final Artist artist, final Genre genre, final Context context) {
+	public void play(final DataResponse<Boolean> response, final Artist artist,
+			final Genre genre, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{ 
+			public void doRun() throws Exception {
 				control(context).stop(MusicManager.this);
-				response.value = music(context).play(MusicManager.this, artist, genre);
+				response.value = music(context).play(MusicManager.this, artist,
+						genre, getSort(SortType.ARTIST));
 			}
 		});
 	}
-	
-	
+
 	/**
-	 * Starts playing the next media in the current playlist. 
-	 * @param response Response object
+	 * Starts playing the next media in the current playlist.
+	 * 
+	 * @param response
+	 *            Response object
 	 */
-	public void playlistNext(final DataResponse<Boolean> response, final Context context) {
+	public void playlistNext(final DataResponse<Boolean> response,
+			final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception{  
+			public void doRun() throws Exception {
 				response.value = music(context).playNext(MusicManager.this);
 			}
 		});
 	}
-	
+
 	/**
-	 * Returns an array of songs on the playlist. Empty array if nothing is playing.
-	 * @param response Response object
+	 * Returns an array of songs on the playlist. Empty array if nothing is
+	 * playing.
+	 * 
+	 * @param response
+	 *            Response object
 	 */
-	public void getPlaylist(final DataResponse<ArrayList<String>> response, final Context context) {
+	public void getPlaylist(final DataResponse<ArrayList<String>> response,
+			final Context context) {
 		mHandler.post(new Command<ArrayList<String>>(response, this) {
-			public void doRun() throws Exception{ 
+			public void doRun() throws Exception {
 				response.value = music(context).getPlaylist(MusicManager.this);
+				if (response.value.size() == 0) {
+				}
 				final String firstEntry = response.value.get(0);
-				if (firstEntry != null && firstEntry.equals("[Empty]")) {
+				if (firstEntry != null
+						&& firstEntry.equals(EMPTY_PLAYLIST_ITEM)) {
 					response.value = new ArrayList<String>();
-				} 
+				}
 			}
 		});
 	}
-	
+
 	/**
-	 * Returns the position of the currently playing song in the playlist. First position is 0.
-	 * @param response Response object
+	 * Returns the position of the currently playing song in the playlist. First
+	 * position is 0.
+	 * 
+	 * @param response
+	 *            Response object
 	 */
-	public void getPlaylistPosition(final DataResponse<Integer> response, final Context context) {
+	public void getPlaylistPosition(final DataResponse<Integer> response,
+			final Context context) {
 		mHandler.post(new Command<Integer>(response, this) {
-			public void doRun() throws Exception{ 
-				response.value = music(context).getPlaylistPosition(MusicManager.this);
+			public void doRun() throws Exception {
+				response.value = music(context).getPlaylistPosition(
+						MusicManager.this);
 			}
 		});
 	}
-	
+
 	/**
 	 * Updates the album object with additional data from the albuminfo table
-	 * @param response Response object
-	 * @param album Album to update
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param album
+	 *            Album to update
 	 */
-	public void updateAlbumInfo(final DataResponse<Album> response, final Album album, final Context context) {
+	public void updateAlbumInfo(final DataResponse<Album> response,
+			final Album album, final Context context) {
 		mHandler.post(new Command<Album>(response, this) {
-			public void doRun() throws Exception{ 
-				response.value = music(context).updateAlbumInfo(MusicManager.this, album);
+			public void doRun() throws Exception {
+				response.value = music(context).updateAlbumInfo(
+						MusicManager.this, album);
 			}
 		});
 	}
-	
+
 	/**
 	 * Updates the artist object with additional data from the artistinfo table
-	 * @param response Response object
-	 * @param artist Artist to update
+	 * 
+	 * @param response
+	 *            Response object
+	 * @param artist
+	 *            Artist to update
 	 */
-	public void updateArtistInfo(final DataResponse<Artist> response, final Artist artist, final Context context) {
+	public void updateArtistInfo(final DataResponse<Artist> response,
+			final Artist artist, final Context context) {
 		mHandler.post(new Command<Artist>(response, this) {
-			public void doRun() throws Exception{ 
-				response.value = music(context).updateArtistInfo(MusicManager.this, artist);
+			public void doRun() throws Exception {
+				response.value = music(context).updateArtistInfo(
+						MusicManager.this, artist);
 			}
 		});
 	}
-	
+
 	/**
-	 * Checks if something's playing. If that's not the case, set the 
-	 * playlist's play position either to the start if there were no items
-	 * before, or to the first position of the newly added files.
-	 * @param mc Music client
-	 * @param cc Control client
-	 * @param numAlreadyQueued Number of previously queued items
+	 * Checks if something's playing. If that's not the case, set the playlist's
+	 * play position either to the start if there were no items before, or to
+	 * the first position of the newly added files.
+	 * 
+	 * @param mc
+	 *            Music client
+	 * @param cc
+	 *            Control client
+	 * @param numAlreadyQueued
+	 *            Number of previously queued items
 	 */
-	private void checkForPlayAfterQueue(final IMusicClient mc, final IControlClient cc, int numAlreadyQueued) {
+	private void checkForPlayAfterQueue(final IMusicClient mc,
+			final IControlClient cc, int numAlreadyQueued) {
 		final int ps = cc.getPlayState(MusicManager.this);
 		if (ps == PlayStatus.STOPPED) { // if nothing is playing, play the song
-			cc.setCurrentPlaylist(MusicManager.this, MusicClient.PLAYLIST_ID);
+			cc.setCurrentPlaylist(MusicManager.this,
+					MusicClient.PLAYLIST_MUSIC.toString());
 			if (numAlreadyQueued == 0) {
 				mc.playNext(MusicManager.this);
 			} else {
@@ -637,6 +754,12 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 
 	public void onWrongConnectionState(int state) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public void downloadCover(DataResponse<Bitmap> response, ICoverArt cover,
+			int thumbSize, Context context) throws WifiStateException {
+		response.value = ClientFactory.getMusicClient(this, context).getCover(
+				this, cover, thumbSize);
 	}
 }

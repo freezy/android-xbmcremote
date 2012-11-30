@@ -37,8 +37,8 @@ import org.xbmc.api.type.ThumbSize.Dimension;
 import org.xbmc.httpapi.Connection;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 /**

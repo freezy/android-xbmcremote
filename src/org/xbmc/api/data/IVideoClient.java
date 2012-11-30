@@ -28,6 +28,7 @@ import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
+import org.xbmc.api.type.Sort;
 
 import android.graphics.Bitmap;
 
@@ -46,16 +47,7 @@ public interface IVideoClient extends IClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies
 	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, boolean hideWatched);
-	
-	/**
-	 * Gets all movies from database
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
-	 * @param offset Offset
-	 * @return All movies
-	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, int sortBy, String sortOrder, int offset, boolean hideWatched);
+	public ArrayList<Movie> getMovies(INotifiableManager manager, Sort sort, boolean hideWatched);
 	
 	/**
 	 * Gets all movies with an actor from database
@@ -64,7 +56,7 @@ public interface IVideoClient extends IClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies with an actor
 	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, int sortBy, String sortOrder, boolean hideWatched);
+	public ArrayList<Movie> getMovies(INotifiableManager manager, Actor actor, Sort sort, boolean hideWatched);
 	
 	/**
 	 * Gets all movies of a genre from database
@@ -73,7 +65,7 @@ public interface IVideoClient extends IClient {
 	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
 	 * @return All movies of a genre
 	 */
-	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, int sortBy, String sortOrder, boolean hideWatched);
+	public ArrayList<Movie> getMovies(INotifiableManager manager, Genre genre, Sort sort, boolean hideWatched);
 	
 	/**
 	 * Gets all movies from database
@@ -106,7 +98,7 @@ public interface IVideoClient extends IClient {
 	 * Gets all movie genres from database
 	 * @return All movie genres
 	 */
-	public ArrayList<Genre> getMovieGenres(INotifiableManager manager);
+	public ArrayList<Genre> getMovieGenres(INotifiableManager manager, Sort sort);
 	
 	/**
 	 * Gets all tv show genres from the database
@@ -146,5 +138,5 @@ public interface IVideoClient extends IClient {
 	 * @return True on success, false otherwise.
 	 */
 	public boolean removeFromPlaylist(INotifiableManager manager, String path);
-	 
+
 }

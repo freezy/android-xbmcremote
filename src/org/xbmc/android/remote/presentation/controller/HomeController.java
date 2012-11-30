@@ -36,9 +36,9 @@ import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.MovieLibraryActivity;
 import org.xbmc.android.remote.presentation.activity.MusicLibraryActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
-import org.xbmc.android.remote.presentation.activity.NowPlayingNotificationManager;
 import org.xbmc.android.remote.presentation.activity.RemoteActivity;
 import org.xbmc.android.remote.presentation.activity.TvShowLibraryActivity;
+import org.xbmc.android.remote.presentation.notification.NowPlayingNotificationManager;
 import org.xbmc.android.util.ClientFactory;
 import org.xbmc.android.util.ConnectionFactory;
 import org.xbmc.android.util.HostFactory;
@@ -51,7 +51,6 @@ import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.business.IVideoManager;
-import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Episode;
@@ -83,17 +82,17 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class HomeController extends AbstractController implements INotifiableController, IController, Observer, OnSharedPreferenceChangeListener {
 	
@@ -175,7 +174,9 @@ public class HomeController extends AbstractController implements INotifiableCon
 						versionButton.setText("Connecting...");
 						Toast.makeText(mActivity.getApplicationContext(), "Changed host to " + host.toString() + ".", Toast.LENGTH_SHORT).show();
 						ClientFactory.resetClient(host);
-						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
+						// we need to be sure we get the appropriate manager
+						mInfoManager = ManagerFactory.getInfoManager(HomeController.this);
+						mInfoManager.getSystemVersion(mUpdateVersionHandler, mActivity.getApplicationContext());
 					}
 				}
 			});
@@ -306,7 +307,8 @@ public class HomeController extends AbstractController implements INotifiableCon
 					case HOME_ACTION_RECONNECT:
 						((Button)mActivity.findViewById(R.id.home_version_button)).setText("Reconnecting...");
 						ClientFactory.resetClient(host);
-						mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
+						mInfoManager = ManagerFactory.getInfoManager(HomeController.this);
+						mInfoManager.getSystemVersion(mUpdateVersionHandler, mActivity.getApplicationContext());
 						break;
 					case HOME_ACTION_WOL:
 						WakeOnLan wol = new WakeOnLan();
@@ -391,7 +393,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 		@Override
 		public void onFinish() {
 			((Button)mActivity.findViewById(R.id.home_version_button)).setText("Attempting to reconnect...");
-			mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
+			mInfoManager.getSystemVersion(mUpdateVersionHandler, mActivity.getApplicationContext());
 			mWolCounter = null;
 		}
 
@@ -588,8 +590,8 @@ public class HomeController extends AbstractController implements INotifiableCon
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		mInfoManager.setController(this);
-		mInfoManager.getSystemInfo(mUpdateVersionHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
+		mInfoManager = ManagerFactory.getInfoManager(this);
+		mInfoManager.getSystemVersion(mUpdateVersionHandler, mActivity.getApplicationContext());
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {

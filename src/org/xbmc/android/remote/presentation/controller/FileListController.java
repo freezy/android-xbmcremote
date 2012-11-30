@@ -36,6 +36,7 @@ import org.xbmc.api.info.FileTypes;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.type.MediaType;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -43,16 +44,16 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 
 public class FileListController extends ListController implements IController {
 	
@@ -220,7 +221,8 @@ public class FileListController extends ListController implements IController {
     /**
      * Provide the cursor for the list view.
      */
-    public void setListAdapter(ListAdapter adapter) {
+    @SuppressLint("NewApi")
+	public void setListAdapter(ListAdapter adapter) {
         synchronized (this) {
             mAdapter = adapter;
             mList.setAdapter(adapter);
@@ -236,7 +238,7 @@ public class FileListController extends ListController implements IController {
 			mControlManager.queueFolder(new QueryResponse(mActivity, "Queueing folder " + loc.path, "Error queueing folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
 			break;
 		case ITEM_CONTEXT_PLAY:
-			mControlManager.playFolder(new QueryResponse(mActivity, "Playing folder " + loc.path, "Error playint folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
+			mControlManager.playFolder(new QueryResponse(mActivity, "Playing folder " + loc.path, "Error playing folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
 			break;
 		}
 	}
@@ -262,12 +264,8 @@ public class FileListController extends ListController implements IController {
 	}
 
 	public void onActivityResume(Activity activity) {
-		if (mInfoManager != null) {
-			mInfoManager.setController(this);
-		}
-		if (mControlManager != null) {
-			mControlManager.setController(this);
-		}
+		mInfoManager = ManagerFactory.getInfoManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 		super.onActivityResume(activity);
 	}
 	

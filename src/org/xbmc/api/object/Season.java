@@ -46,7 +46,8 @@ public class Season implements Serializable, ICoverArt {
 	public long getCrc() {
 		// FileItem.cpp(1185)
 		// BGetCachedThumb("season"+seasonPath+GetLabel(),g_settings.GetVideoThumbFolder(),true);
-			return Crc32.computeLowerCase("season" + show.getPath() + getShortName());
+		return Crc32.computeLowerCase("season" + show.getPath()
+				+ getShortName());
 	}
 
 	public int getFallbackCrc() {
@@ -81,5 +82,9 @@ public class Season implements Serializable, ICoverArt {
 
 	public String toString() {
 		return getName();
+	}
+
+	public int getNumber() {
+		return number;
 	}
 }

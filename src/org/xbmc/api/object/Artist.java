@@ -22,7 +22,10 @@
 package org.xbmc.api.object;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.xbmc.android.jsonrpc.api.model.AudioModel.ArtistDetail;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
@@ -49,6 +52,12 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 		this.name = name;
 	}
 	
+	public Artist(ArtistDetail detail) {
+		this.id = detail.artistid;
+		this.name = detail.artist;
+		this.thumbUri = detail.thumbnail;
+	}
+	
 	public int getMediaType() {
 		return MediaType.MUSIC;
 	}
@@ -66,6 +75,10 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 	}
 	
 	public static String getThumbUri(ICoverArt cover) {
+		if(cover instanceof Artist && ((Artist)cover).thumbUri != null) {
+			return ((Artist)cover).thumbUri;
+		}
+		
 		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
 		return THUMB_PREFIX + hex + ".tbn";
 	}
@@ -142,21 +155,23 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 	/**
 	 * Genres, separated by " / "
 	 */
-	public String genres = null;
+	public List<String> genres = new ArrayList<String>();
 	/**
 	 * Moods
 	 */
-	public String moods = null;
+	public List<String> moods = null;
 	/**
 	 * Styles
 	 */
-	public String styles = null;
+	public List<String> styles = null;
 	/**
 	 * Biography
 	 */
 	public String biography = null;
 	
 	public long thumbID = 0;
+	
+	private String thumbUri;
 	
 	private static final long serialVersionUID = 9073064679039418773L;
 

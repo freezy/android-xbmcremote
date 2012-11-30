@@ -40,6 +40,7 @@ import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -51,19 +52,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 public class MovieListController extends ListController implements IController {
 
@@ -100,6 +102,7 @@ public class MovieListController extends ListController implements IController {
 		mControlManager = ManagerFactory.getControlManager(this);
 		
 		((ISortableManager)mVideoManager).setSortKey(AbstractManager.PREF_SORT_KEY_MOVIE);
+		((ISortableManager)mVideoManager).setIgnoreArticle(PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext()).getBoolean(ISortableManager.SETTING_IGNORE_ARTICLE, true));
 		((ISortableManager)mVideoManager).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		
 		final String sdError = ImportUtilities.assertSdCard();
@@ -138,6 +141,7 @@ public class MovieListController extends ListController implements IController {
 	private void fetch() {
 		final String title = mActor != null ? mActor.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "Movies";
 		DataResponse<ArrayList<Movie>> response = new DataResponse<ArrayList<Movie>>() {
+			@SuppressLint("NewApi")
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
@@ -387,12 +391,8 @@ public class MovieListController extends ListController implements IController {
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mVideoManager != null) {
-			mVideoManager.setController(this);
-		}
-		if (mControlManager != null) {
-			mControlManager.setController(this);
-		}
+		mVideoManager = ManagerFactory.getVideoManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 	}
 
 }

@@ -38,9 +38,11 @@ import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.object.Season;
+import org.xbmc.api.object.TvShow;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -50,20 +52,22 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
+@SuppressLint({ "NewApi", "NewApi" })
 public class EpisodeListController extends ListController implements IController {
 	
 	private static final int mThumbSize = ThumbSize.SMALL;
@@ -82,6 +86,7 @@ public class EpisodeListController extends ListController implements IController
 	public static final int MENU_SORT_BY_EPISODE_DESC = 28;
 	
 	private Season mSeason;
+	private TvShow mTvShow;
 	
 	private ITvShowManager mTvManager;
 	private IControlManager mControlManager;
@@ -107,6 +112,7 @@ public class EpisodeListController extends ListController implements IController
 			}
 			
 			mSeason = (Season)activity.getIntent().getSerializableExtra(ListController.EXTRA_SEASON);
+			mTvShow = (TvShow)activity.getIntent().getSerializableExtra(ListController.EXTRA_TVSHOW);
 			
 			activity.registerForContextMenu(mList);
 			
@@ -131,6 +137,7 @@ public class EpisodeListController extends ListController implements IController
 	private void fetch() {		
 		// tv show and episode both are using the same manager so set the sort key here
 		((ISortableManager)mTvManager).setSortKey(AbstractManager.PREF_SORT_KEY_EPISODE);
+		((ISortableManager)mTvManager).setIgnoreArticle(PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext()).getBoolean(ISortableManager.SETTING_IGNORE_ARTICLE, true));
 		((ISortableManager)mTvManager).setPreferences(mActivity.getPreferences(Context.MODE_PRIVATE));
 		
 		final String title = mSeason != null ? mSeason.getName() + " - " : "" + "Episodes";
@@ -147,8 +154,8 @@ public class EpisodeListController extends ListController implements IController
 		
 		showOnLoading();
 		setTitle(title + "...");
-		if (mSeason != null) {
-			mTvManager.getEpisodes(response, mSeason, mActivity.getApplicationContext());
+		if (mSeason != null && mTvShow != null) {
+			mTvManager.getEpisodes(response, mTvShow, mSeason, mActivity.getApplicationContext());
 		}
 	}
 	
@@ -339,12 +346,8 @@ public class EpisodeListController extends ListController implements IController
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mTvManager != null) {
-			mTvManager.setController(this);
-		}
-		if (mControlManager != null) {
-			mControlManager.setController(this);
-		}
+		mTvManager = ManagerFactory.getTvManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 	}
 
 }

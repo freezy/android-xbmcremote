@@ -26,22 +26,31 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
+import org.xbmc.android.jsonrpc.api.Version.Branch;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.INotifiableManager;
+import org.xbmc.api.data.IClient;
+import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
+import org.xbmc.api.type.MediaType;
+import org.xbmc.api.type.Sort;
+import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.api.type.ThumbSize.Dimension;
 import org.xbmc.jsonrpc.Connection;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 /**
@@ -49,7 +58,12 @@ import android.util.Log;
  * 
  * @author Team XBMC
  */
-public abstract class Client {
+public abstract class Client implements IClient {
+	
+	public static final Integer PLAYLIST_MUSIC = 0;
+	public static final Integer PLAYLIST_VIDEO = 1;
+	public static final Integer PLAYLIST_PICTURE = 2;
+
 	
 	public static final String TAG = "Client-JSON-RPC";
 	public static final String PARAM_FIELDS = "fields";
@@ -58,13 +72,20 @@ public abstract class Client {
 	public final static JsonNodeFactory FACTORY = JsonNodeFactory.instance;
 
 	protected final Connection mConnection;
-
+	private int apiVersion = -1;
+	
 	/**
 	 * Class constructor needs reference to HTTP client connection
 	 * @param connection
 	 */
 	Client(Connection connection) {
 		mConnection = connection;
+	}
+	
+	public void setHost(Host host) {
+		// reset the API Version
+		apiVersion = -1;
+		mConnection.setHost(host);
 	}
 	
 	/**
@@ -152,6 +173,7 @@ public abstract class Client {
 			opts.inJustDecodeBounds = true;
 			BitmapFactory.decodeStream(is, null, opts);
 		} catch (FileNotFoundException e) {
+			Log.e("Client", e.getMessage(), e);
 			return opts;
 		}
 		return opts;
@@ -194,6 +216,14 @@ public abstract class Client {
 			super.put(fieldName, v);
 			return this;
 		}
+		public ObjNode p(String fieldName, boolean v) {
+			super.put(fieldName, v);
+			return this;
+		}
+		public ObjNode p(String fieldName, Integer v) {
+			super.put(fieldName, v);
+			return this;
+		}
 	};
 
 	public final static ArrayNode arr() {
@@ -206,7 +236,157 @@ public abstract class Client {
 	public final static String getString(JsonNode obj, String key, String ifNullResult) {
 		return obj.get(key) == null ? ifNullResult : obj.get(key).getTextValue();
 	}
+	
+	public final static Double getDouble(JsonNode obj, String key) {
+		return getDouble(obj, key, 0d);
+	}
+	
+	public final static Double getDouble(JsonNode obj, String key, Double ifNullResult) {
+		return obj.get(key) == null ? ifNullResult : obj.get(key).getDoubleValue();
+	}
+	
+	public final static JsonNode getNode(JsonNode obj, String key) {
+		return (JsonNode) obj.get(key);
+	}
 	public final static int getInt(JsonNode obj, String key) {
 		return obj.get(key) == null ? -1 : obj.get(key).getIntValue();
 	}
+	
+	protected ObjNode filter(ObjNode params, Object ... filterStrings) {
+		if(getAPIVersion() >= Branch.FRODO.ordinal()) {
+			
+			ObjNode filters = obj();
+			for(int i = 0; i < filterStrings.length; i+=2) {
+				addObject(filters, filterStrings[i].toString(), filterStrings[i + 1]);
+			}
+			params.p("filter", filters);
+			return params;
+		}
+		for(int i = 0; i < filterStrings.length; i+=2) {
+			addObject(params, filterStrings[i].toString(), filterStrings[i + 1]);
+		}
+		return params;
+	}	
+	
+	private void addObject(ObjNode parent, String key, Object value) {
+		if(value instanceof Integer) {
+			parent.p(key, (Integer) value);
+		}
+		else if(value instanceof JsonNode) {
+			parent.p(key, (JsonNode) value);
+		}
+		else if(value instanceof Boolean) {
+			parent.p(key, (Boolean) value);
+		}
+		else {
+			parent.p(key, value.toString());
+		}
+	}
+	
+	/**
+	 * Returns an object node of given sort options of albums query
+	 * @param sortBy    Sort field
+	 * @param sortOrder Sort order
+	 * @return query ObjNode
+	 */
+	protected ObjNode sort(ObjNode params, Sort sort) {
+		
+		final boolean ignoreArticle = sort.ignoreArticle;
+		final String order = sort.sortOrder.equals(SortType.ORDER_DESC) ? "descending" : "ascending";
+		switch (sort.sortBy) {
+			default:
+
+			case SortType.GENRE:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "genre").p("ignorearticle", ignoreArticle));
+				break;
+			case SortType.ALBUM:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "label").p("ignorearticle", ignoreArticle));
+				break;
+			case SortType.ARTIST:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "artist").p("ignorearticle", ignoreArticle));
+				break;
+			case SortType.TRACK:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "track").p("ignorearticle", ignoreArticle));
+				break;
+			case SortType.DATE_ADDED:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "dateadded").p("ignorearticle", ignoreArticle));
+				break;
+			case SortType.PLAYCOUNT:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "playcount").p("ignorearticle", ignoreArticle));
+				break;
+			case SortType.LASTPLAYED:
+				params.p("sort", MusicClient.obj().p("order", order).p("method", "lastplayed").p("ignorearticle", ignoreArticle));
+				break;
+		}
+		return params;
+	}
+	
+	public JsonNode getActivePlayer(INotifiableManager manager) {
+		ArrayNode result = (ArrayNode) mConnection.getJson(manager, "Player.GetActivePlayers");
+		if(result == null || result.size() == 0) {
+			// not currently playing
+			return null;
+		}
+		JsonNode player = result.get(0);
+		return player;
+	}
+	
+	
+	public Integer getActivePlayerId(INotifiableManager manager) {
+		ArrayNode result = (ArrayNode) mConnection.getJson(manager, "Player.GetActivePlayers");
+		if(result == null || result.size() == 0) {
+			// not currently playing
+			return null;
+		}
+		JsonNode player = result.get(0);
+		return player.get("playerid").getIntValue();
+	}
+	
+	public Integer getActivePlayerId(INotifiableManager manager, int type) {
+		
+		ArrayNode result = (ArrayNode) mConnection.getJson(manager, "Player.GetActivePlayers");
+		if(result.size() == 0) {
+			// not currently playing
+			return null;
+		}
+		for(JsonNode player : result) {
+			if(player.get("type").getTextValue().equals(MediaType.getName(type))) {
+				return player.get("playerid").getIntValue();
+			}
+		}
+		return null;
+	}
+	
+	protected ArrayList<Genre> parseGenres(JsonNode result) {
+		ArrayList<Genre> genres = new ArrayList<Genre>();
+		final JsonNode jsonAlbums = result.get("genres");
+		if(jsonAlbums == null) {
+			return genres;
+		}
+		
+		for (Iterator<JsonNode> i = jsonAlbums.getElements(); i.hasNext();) {
+			JsonNode jsonArtist = (JsonNode)i.next();
+			genres.add(new Genre(
+					getInt(jsonArtist, "genreid"), 
+					getString(jsonArtist, "label") 
+					));			
+		}
+		
+		return genres;
+	}
+
+	public int getAPIVersion() {
+		return getAPIVersion(null);
+	}
+	public int getAPIVersion(INotifiableManager manager) {
+		if(apiVersion > 0) {
+			return apiVersion;
+		}
+		String version = mConnection.getString(manager, "JSONRPC.Version", "version");
+		apiVersion = Integer.parseInt(version);
+		return apiVersion;
+	}
+
+
+	
 }

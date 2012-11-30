@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.util.StringUtil;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.object.Album;
@@ -88,7 +89,7 @@ public abstract class DialogFactory {
 					yearText.setVisibility(View.GONE);
 				}
 				if (album.genres != null) {
-					genresText.setText(album.genres);
+					genresText.setText(StringUtil.join(" / ", album.genres));
 				} else {
 					genresText.setVisibility(View.GONE);
 				}

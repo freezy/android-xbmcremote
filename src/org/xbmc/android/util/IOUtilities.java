@@ -16,13 +16,13 @@
 
 package org.xbmc.android.util;
 
-import android.os.Environment;
-
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
 import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import android.os.Environment;
 
 public final class IOUtilities {
     private static final String LOG_TAG = "IOUtilities";

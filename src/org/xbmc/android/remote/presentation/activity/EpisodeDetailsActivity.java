@@ -221,13 +221,12 @@ public class EpisodeDetailsActivity extends Activity {
 
 		public void onActivityPause() {
 			mShowManager.setController(null);
-//			mShowManager.postActivity();
 			mControlManager.setController(null);
 		}
 
 		public void onActivityResume(Activity activity) {
-			mShowManager.setController(this);
-			mControlManager.setController(this);
+			mShowManager = ManagerFactory.getTvManager(this);
+			mControlManager = ManagerFactory.getControlManager(this);
 		}
 	}
 

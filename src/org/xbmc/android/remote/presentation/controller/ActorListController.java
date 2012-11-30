@@ -34,20 +34,21 @@ import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.type.ThumbSize;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class ActorListController extends ListController implements IController {
 	
@@ -84,6 +85,7 @@ public class ActorListController extends ListController implements IController {
 			
 			final String title = mType == TYPE_MOVIE ? "Movie " : mType == TYPE_TVSHOW ? "TV " : "" + "Actors";
 			DataResponse<ArrayList<Actor>> response = new DataResponse<ArrayList<Actor>>() {
+				@SuppressLint("NewApi")
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
@@ -179,8 +181,6 @@ public class ActorListController extends ListController implements IController {
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mVideoManager != null) {
-			mVideoManager.setController(this);
-		}
+		mVideoManager = ManagerFactory.getVideoManager(this);
 	}
 }

@@ -23,17 +23,20 @@ package org.xbmc.android.remote.business;
 
 import java.util.ArrayList;
 
+import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.business.ISortableManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 /**
  * Asynchronously wraps the {@link org.xbmc.httpapi.client.VideoClient} class.
@@ -64,7 +67,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<Movie>>(response, this) {
 			@Override
 			public void doRun() throws Exception { 
-				response.value = video(context).getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
+				response.value = video(context).getMovies(VideoManager.this, getSort(SortType.TITLE), getHideWatched(context));
 			}
 		});
 	}
@@ -75,20 +78,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 */
 	public ArrayList<Movie> getMovies(final Context context) {
 		try {
-			return video(context).getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
-		} catch (WifiStateException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	/**
-	 * SYNCHRONOUSLY gets movies from database with offset
-	 * @return Movies in database with offset
-	 */
-	public ArrayList<Movie> getMovies(final Context context, int offset) {
-		try {
-			return video(context).getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder(), offset, getHideWatched(context));
+			return video(context).getMovies(VideoManager.this, getSort(SortType.TITLE), getHideWatched(context));
 		} catch (WifiStateException e) {
 			e.printStackTrace();
 		}
@@ -104,7 +94,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<Movie>>(response, this) {
 			@Override
 			public void doRun() throws Exception { 
-				response.value = video(context).getMovies(VideoManager.this, actor, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
+				response.value = video(context).getMovies(VideoManager.this, actor, getSort(SortType.TITLE), getHideWatched(context));
 			}
 		});
 	}
@@ -118,7 +108,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<Movie>>(response, this) {
 			@Override
 			public void doRun() throws Exception { 
-				response.value = video(context).getMovies(VideoManager.this, genre, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
+				response.value = video(context).getMovies(VideoManager.this, genre, getSort(SortType.TITLE), getHideWatched(context));
 			}
 		});
 	}
@@ -185,7 +175,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<Genre>>(response, this) {
 			@Override
 			public void doRun() throws Exception { 
-				response.value = video(context).getMovieGenres(VideoManager.this);
+				response.value = video(context).getMovieGenres(VideoManager.this, getSort(SortType.GENRE));
 			}
 		});
 	}
@@ -257,5 +247,11 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 				response.value = video(context).removeFromPlaylist(VideoManager.this, path);
 			}
 		});
+	}
+	
+	public void downloadCover(DataResponse<Bitmap> response, ICoverArt cover,
+			int thumbSize, Context context) throws WifiStateException {
+		response.value = ClientFactory.getVideoClient(this, context).getCover(this, cover,
+				thumbSize);
 	}
 }

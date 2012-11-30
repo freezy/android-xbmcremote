@@ -41,7 +41,7 @@ import android.util.Log;
  * 
  * @author Team XBMC
  */
-class MemCacheThread extends AbstractThread {
+public class MemCacheThread extends AbstractThread {
 	
 	private final static String TAG = "MemCacheThread";
 	private final static boolean DEBUG = AbstractManager.DEBUG;

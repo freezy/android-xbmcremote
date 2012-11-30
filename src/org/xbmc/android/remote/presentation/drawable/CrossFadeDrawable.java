@@ -16,11 +16,11 @@
 
 package org.xbmc.android.remote.presentation.drawable;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
-import android.graphics.PixelFormat;
-import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.SystemClock;

@@ -246,5 +246,15 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 	public long thumbID = 0L;
 	
 	private static final long serialVersionUID = 4779827915067184250L;
+	
+	public boolean isGenre(Genre genre) {
+		String[] genretitles = this.genres.split("\\s*\\/\\s*");
+		for(String genretitle : genretitles) {
+			if(genretitle.equals(genre.getShortName())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

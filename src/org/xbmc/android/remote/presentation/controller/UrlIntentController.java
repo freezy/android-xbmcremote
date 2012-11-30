@@ -36,14 +36,13 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.IVideoManager;
-import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.Movie;
 import org.xbmc.api.presentation.INotifiableController;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -66,9 +65,9 @@ public class UrlIntentController extends AbstractController implements IControll
 	private static final String IMDb_SHARE_PREFIX = "IMDb:";
 	private static final String CONFIRM_PLAY_ON_XBMC = "setting_confirm_play_on_xbmc";
 	
-	private final IControlManager mControlManager;
-	private final IInfoManager mInfoManager;
-	private final IVideoManager mVideoManager;
+	private IControlManager mControlManager;
+	private IInfoManager mInfoManager;
+	private IVideoManager mVideoManager;
 
 	private DataResponse<String> mXbmcStatusHandler;
 	
@@ -94,10 +93,10 @@ public class UrlIntentController extends AbstractController implements IControll
 	 */
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		mInfoManager.setController(this);
-		mControlManager.setController(this);
-		mVideoManager.setController(this);
-		mInfoManager.getSystemInfo(mXbmcStatusHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
+		mInfoManager = ManagerFactory.getInfoManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
+		mVideoManager = ManagerFactory.getVideoManager(this);
+		mInfoManager.getSystemVersion(mXbmcStatusHandler, mActivity.getApplicationContext());
 	}
 
 	public void playUrl(String url) {

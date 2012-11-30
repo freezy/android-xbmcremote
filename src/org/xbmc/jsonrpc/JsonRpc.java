@@ -21,49 +21,59 @@
 
 package org.xbmc.jsonrpc;
 
+import org.xbmc.android.jsonrpc.io.ConnectionManager;
+import org.xbmc.android.util.HostFactory;
+import org.xbmc.api.data.IConnectionManager;
 import org.xbmc.api.object.Host;
+import org.xbmc.jsonrpc.client.ControlClient;
 import org.xbmc.jsonrpc.client.InfoClient;
 import org.xbmc.jsonrpc.client.MusicClient;
+import org.xbmc.jsonrpc.client.TvShowClient;
+import org.xbmc.jsonrpc.client.VideoClient;
+
+import android.content.Context;
 
 /**
- * Wrapper class for JSON-RPC clients. The idea is to separate the loads of
- * API method we're going to have into separate classes. The ClientFactory class
+ * Wrapper class for JSON-RPC clients. The idea is to separate the loads of API
+ * method we're going to have into separate classes. The ClientFactory class
  * instantiates them and keeps them in a central place.
  * 
  * @author Team XBMC
  */
 public class JsonRpc {
-	
-	
+
 	/**
 	 * Use this client for anything system related
 	 */
 	public final InfoClient info;
-	
+
 	/**
 	 * Use this client for anything music related
 	 */
 	public final MusicClient music;
-	
+
 	/**
 	 * Use this client for anything video related
-	 *
+	 */
 	public final VideoClient video;
-	
+
 	/**
 	 * Use this client for anything media controller related
-	 *
+	 */
 	public final ControlClient control;
-	
+
 	/**
 	 * Use this client for anything tv show related
-	 *
+	 */
 	public final TvShowClient shows;
-	
+
 	/**
 	 * Construct with all paramaters
-	 * @param host    Connection data of the host
-	 * @param timeout Read timeout
+	 * 
+	 * @param host
+	 *            Connection data of the host
+	 * @param timeout
+	 *            Read timeout
 	 */
 	public JsonRpc(Host host, int timeout) {
 		Connection connection;
@@ -76,20 +86,27 @@ public class JsonRpc {
 		connection.setTimeout(timeout);
 		info = new InfoClient(connection);
 		music = new MusicClient(connection);
-/*		video = new VideoClient(connection);
+		video = new VideoClient(connection);
 		control = new ControlClient(connection);
-		shows = new TvShowClient(connection);*/
+		shows = new TvShowClient(connection);
 	}
-	
+
 	/**
 	 * Updates host info on all clients
+	 * 
 	 * @param host
 	 */
 	public void setHost(Host host) {
 		info.setHost(host);
 		music.setHost(host);
-/*		video.setHost(host);
+		video.setHost(host);
 		control.setHost(host);
-		shows.setHost(host);*/
+		shows.setHost(host);
 	}
+	
+	public IConnectionManager getConnectionManager(Context context) {
+		// TODO: It would probably be better to wrap this
+		return (IConnectionManager) new ConnectionManager(context, HostFactory.host.toHostConfig());
+	}
+	
 }
