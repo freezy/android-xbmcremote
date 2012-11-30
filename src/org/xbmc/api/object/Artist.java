@@ -54,7 +54,7 @@ public class Artist implements ICoverArt, Serializable, INamedResource {
 	
 	public Artist(ArtistDetail detail) {
 		this.id = detail.artistid;
-		this.name = detail.label;
+		this.name = detail.artist;
 		this.thumbUri = detail.thumbnail;
 	}
 	
