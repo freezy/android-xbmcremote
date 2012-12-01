@@ -87,25 +87,6 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	 * Returns the contents of a directory
 	 * @param response Response object
 	 * @param path     Path to the directory
-	 * @param mask     Mask to filter
-	 * @param offset   Offset (0 for none)
-	 * @param limit    Limit (0 for none)
-	 * @return
-	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit, final Context context, final int mediaType) {
-		mHandler.post(new Command<ArrayList<FileLocation>>(response, this){
-			@Override
-			public void doRun() throws Exception {
-				response.value = info(context).getDirectory(InfoManager.this, path, mask, offset, limit, mediaType, getSort(SortType.FILENAME));
-			}
-			
-		});
-	}
-	
-	/**
-	 * Returns the contents of a directory
-	 * @param response Response object
-	 * @param path     Path to the directory
 	 * @return
 	 */
 	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final Context context, final int mediaType) {

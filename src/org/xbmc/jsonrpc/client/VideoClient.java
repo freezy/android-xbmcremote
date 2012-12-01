@@ -200,8 +200,7 @@ public class VideoClient extends Client implements IVideoClient {
 		return null;
 	}
 
-	public boolean removeFromPlaylist(INotifiableManager manager, String path) {
-		// TODO Auto-generated method stub
+	public boolean removeFromPlaylist(INotifiableManager manager, int position) {
 		return false;
 	}
 

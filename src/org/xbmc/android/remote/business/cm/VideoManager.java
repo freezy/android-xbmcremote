@@ -85,7 +85,7 @@ public class VideoManager extends AbstractManager implements IVideoManager {
 
 	}
 
-	public void removeFromPlaylist(DataResponse<Boolean> response, String path,
+	public void removeFromPlaylist(DataResponse<Boolean> response, int position,
 			Context context) {
 		// TODO Auto-generated method stub
 

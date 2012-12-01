@@ -482,24 +482,6 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 	}
 
 	/**
-	 * Removes media from the current playlist. It is not possible to remove the
-	 * media if it is currently being played.
-	 * 
-	 * @param position
-	 *            Complete path (including filename) of the media to be removed.
-	 * @return True on success, false otherwise.
-	 */
-	public void removeFromPlaylist(final DataResponse<Boolean> response,
-			final String path, final Context context) {
-		mHandler.post(new Command<Boolean>(response, this) {
-			public void doRun() throws Exception {
-				response.value = music(context).removeFromPlaylist(
-						MusicManager.this, path);
-			}
-		});
-	}
-
-	/**
 	 * Plays an album
 	 * 
 	 * @param response

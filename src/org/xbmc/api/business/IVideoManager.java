@@ -121,7 +121,7 @@ public interface IVideoManager extends IManager {
 	 * @param position Complete path (including filename) of the media to be removed.
 	 * @return True on success, false otherwise.
 	 */
-	public void removeFromPlaylist(final DataResponse<Boolean> response, final String path, final Context context);
+	public void removeFromPlaylist(final DataResponse<Boolean> response, final int position, final Context context);
 	
 	/**
 	 * Returns an array of videos on the playlist. Empty array if nothing is playing.

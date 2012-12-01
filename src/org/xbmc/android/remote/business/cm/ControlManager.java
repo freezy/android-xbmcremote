@@ -1,5 +1,11 @@
 package org.xbmc.android.remote.business.cm;
 
+import java.util.ArrayList;
+
+import org.xbmc.android.jsonrpc.api.AbstractCall;
+import org.xbmc.android.jsonrpc.api.call.Player;
+import org.xbmc.android.jsonrpc.api.call.Player.GetActivePlayers;
+import org.xbmc.android.jsonrpc.api.call.Player.GetActivePlayers.GetActivePlayersResult;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
@@ -69,8 +75,19 @@ public class ControlManager extends AbstractManager implements IControlManager {
 	}
 
 	public void getPlaylistId(DataResponse<Integer> response, Context context) {
-		// TODO Auto-generated method stub
-
+		call(new Player.GetActivePlayers(),
+				new ApiHandler<Integer, GetActivePlayers.GetActivePlayersResult>() {
+					@Override
+					public Integer handleResponse(
+							AbstractCall<GetActivePlayersResult> apiCall) {
+						ArrayList<GetActivePlayersResult> results = apiCall.getResults();
+						if(results.size() == 0) {
+							return 0;
+						}
+						GetActivePlayersResult result = results.get(0);
+						return result.playerid;
+					}
+				}, response, context);
 	}
 
 	public void setPlaylistId(DataResponse<Boolean> response, int id,

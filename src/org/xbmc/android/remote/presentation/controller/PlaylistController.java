@@ -355,10 +355,10 @@ public class PlaylistController extends ListController implements IController, C
 			case ITEM_CONTEXT_REMOVE:
 				switch (mPlayListId) {
 				case MUSIC_PLAYLIST_ID:
-					mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path, mActivity.getApplicationContext());
+					mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.position, mActivity.getApplicationContext());
 					break;
 				case VIDEO_PLAYLIST_ID:
-					mVideoManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path, mActivity.getApplicationContext());
+					mVideoManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.position, mActivity.getApplicationContext());
 					break;
 				}	
 				break;

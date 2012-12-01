@@ -137,6 +137,6 @@ public interface IVideoClient extends IClient {
 	 * @param position Complete path (including filename) of the media to be removed.
 	 * @return True on success, false otherwise.
 	 */
-	public boolean removeFromPlaylist(INotifiableManager manager, String path);
+	public boolean removeFromPlaylist(INotifiableManager manager, int position);
 
 }

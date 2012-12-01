@@ -277,7 +277,7 @@ public class MusicPlaylistController extends ListController implements IControll
 				mMusicManager.setPlaylistSong(new DataResponse<Boolean>(), playlistItem.position, mActivity.getApplicationContext());
 				break;
 			case ITEM_CONTEXT_REMOVE:
-				mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path, mActivity.getApplicationContext());
+				mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.position, mActivity.getApplicationContext());
 				break;
 			default:
 				return;

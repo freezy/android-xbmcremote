@@ -43,10 +43,8 @@ public abstract class ManagerFactory {
 	private static ApiType getApiType(INotifiableController controller) {
 		
 		if(HostFactory.host !=null && HostFactory.host.jsonApi) {
-			Log.e("ManagerFactory", "JSON API");
 			return ApiType.JSON_FRODO;
 		}
-		Log.e("ManagerFactory", "HTTP API");
 		return ApiType.HTTP;
 
 	}

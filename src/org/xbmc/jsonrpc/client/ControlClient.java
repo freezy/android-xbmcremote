@@ -140,7 +140,6 @@ public class ControlClient extends Client implements IControlClient {
 	}
 
 	public int getPlaylistId(INotifiableManager manager) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

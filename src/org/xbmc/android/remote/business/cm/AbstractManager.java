@@ -36,6 +36,10 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 public class AbstractManager implements INotifiableManager {
+	
+	public static final Integer PLAYLIST_MUSIC = 0;
+	public static final Integer PLAYLIST_VIDEO = 1;
+	public static final Integer PLAYLIST_PICTURE = 2;
 
 	public static final Boolean DEBUG = false;
 	protected static final String TAG = "cm.AbstractManager";

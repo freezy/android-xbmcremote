@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
 import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
+import org.xbmc.android.jsonrpc.api.call.Player;
+import org.xbmc.android.jsonrpc.api.call.Playlist;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetail;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.ArtistDetail;
 import org.xbmc.android.jsonrpc.api.model.AudioModel.SongDetail;
@@ -13,6 +15,10 @@ import org.xbmc.android.jsonrpc.api.model.ListModel;
 import org.xbmc.android.jsonrpc.api.model.ListModel.AlbumFilter;
 import org.xbmc.android.jsonrpc.api.model.ListModel.AlbumFilterRule;
 import org.xbmc.android.jsonrpc.api.model.ListModel.FilterRule.Value;
+import org.xbmc.android.jsonrpc.api.model.ListModel.SongFilter;
+import org.xbmc.android.jsonrpc.api.model.ListModel.SongFilterRule;
+import org.xbmc.android.jsonrpc.api.model.PlayerModel;
+import org.xbmc.android.jsonrpc.api.model.PlaylistModel;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.business.INotifiableManager;
@@ -26,9 +32,12 @@ import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 public class MusicManager extends AbstractManager implements IMusicManager,
 		ISortableManager, INotifiableManager {
+
+	public static final String EMPTY_PLAYLIST_ITEM = "[Empty]";
 
 	public void getCompilations(DataResponse<ArrayList<Album>> response,
 			Context context) {
@@ -273,108 +282,366 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 
 	public void addToPlaylist(DataResponse<Boolean> response, Album album,
 			Context context) {
-		// TODO Auto-generated method stub
 
+		call(new Playlist.Add(PLAYLIST_MUSIC, new PlaylistModel.Item(
+				new PlaylistModel.Item.Albumid(album.getId()))),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
 	}
 
 	public void addToPlaylist(DataResponse<Boolean> response, Genre genre,
 			Context context) {
-		// TODO Auto-generated method stub
-
+		call(new Playlist.Add(PLAYLIST_MUSIC, new PlaylistModel.Item(
+				new PlaylistModel.Item.Genreid(genre.getId()))),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
 	}
 
 	public void addToPlaylist(DataResponse<Boolean> response, Song song,
 			Context context) {
-		// TODO Auto-generated method stub
-
+		call(new Playlist.Add(PLAYLIST_MUSIC, new PlaylistModel.Item(
+				new PlaylistModel.Item.Songid(song.getId()))),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
 	}
 
 	public void addToPlaylist(DataResponse<Boolean> response, Album album,
 			Song song, Context context) {
-		// TODO Auto-generated method stub
+		call(new Playlist.Add(PLAYLIST_MUSIC, new PlaylistModel.Item(
+				new PlaylistModel.Item.Albumid(album.getId()))),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
 
 	}
 
 	public void addToPlaylist(DataResponse<Boolean> response, Artist artist,
 			Context context) {
-		// TODO Auto-generated method stub
 
+		call(new Playlist.Add(PLAYLIST_MUSIC, new PlaylistModel.Item(
+				new PlaylistModel.Item.Artistid(artist.getId()))),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
 	}
 
-	public void addToPlaylist(DataResponse<Boolean> response, Artist artist,
-			Genre genre, Context context) {
-		// TODO Auto-generated method stub
+	public void addToPlaylist(final DataResponse<Boolean> response,
+			Artist artist, Genre genre, final Context context) {
 
+		List<SongFilter> songFilters = new ArrayList<SongFilter>();
+		// SongFilterRule(String operator, Value value, String field)
+		songFilters.add(new SongFilter(new SongFilterRule("is", new Value(
+				Integer.toString(artist.getId())), "artist")));
+		songFilters.add(new SongFilter(new SongFilterRule("is", new Value(
+				Integer.toString(genre.getId())), "genre")));
+		ListModel.SongFilter filter = new ListModel.SongFilter(
+				new ListModel.SongFilter.And(songFilters));
+
+		callRaw(new AudioLibrary.GetSongs(null, filter),
+				new ApiHandler<Boolean, SongDetail>() {
+
+					@Override
+					public Boolean handleResponse(
+							AbstractCall<SongDetail> apiCall) {
+						List<SongDetail> songDetails = apiCall.getResults();
+
+						int currentSong = 1;
+						ArrayList<Song> result = new ArrayList<Song>();
+						for (SongDetail songDetail : songDetails) {
+							final boolean lastSong = currentSong == songDetails
+									.size();
+							callRaw(new Playlist.Add(PLAYLIST_MUSIC,
+									new PlaylistModel.Item(
+											new PlaylistModel.Item.Songid(
+													songDetail.songid))),
+									new ApiHandler<Boolean, String>() {
+										@Override
+										public Boolean handleResponse(
+												AbstractCall<String> apiCall) {
+											boolean result = "OK"
+													.equals(apiCall
+															.getResult());
+											if (lastSong) {
+												response.value = result;
+												MusicManager.this
+														.onFinish(response);
+											}
+											return result;
+										}
+									}, context);
+							currentSong++;
+						}
+
+						return Boolean.TRUE;
+					}
+				}, context);
 	}
 
 	public void setPlaylistSong(DataResponse<Boolean> response, int position,
 			Context context) {
-		// TODO Auto-generated method stub
+
+		call(new Player.GoTo(PLAYLIST_MUSIC, position),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
 
 	}
 
 	public void removeFromPlaylist(DataResponse<Boolean> response,
 			int position, Context context) {
-		// TODO Auto-generated method stub
 
-	}
-
-	public void removeFromPlaylist(DataResponse<Boolean> response, String path,
-			Context context) {
-		// TODO Auto-generated method stub
-
+		call(new Playlist.Remove(PLAYLIST_MUSIC, position),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
 	}
 
 	public void play(DataResponse<Boolean> response, Album album,
 			Context context) {
-		// TODO Auto-generated method stub
-
+		call(new Player.Open(new PlaylistModel.Item(
+				new PlaylistModel.Item.Albumid(album.getId()))),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
 	}
 
 	public void play(DataResponse<Boolean> response, Genre genre,
 			Context context) {
-		// TODO Auto-generated method stub
+		call(new Player.Open(new PlaylistModel.Item(
+				new PlaylistModel.Item.Genreid(genre.getId()))),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
 
 	}
 
 	public void play(DataResponse<Boolean> response, Song song, Context context) {
-		// TODO Auto-generated method stub
+		call(new Player.Open(new PlaylistModel.Item(
+				new PlaylistModel.Item.Songid(song.getId()))),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
 
 	}
 
-	public void play(DataResponse<Boolean> response, Album album, Song song,
-			Context context) {
-		// TODO Auto-generated method stub
+	public void play(final DataResponse<Boolean> response, final Album album,
+			final Song song, final Context context) {
+		
+		callRaw(new AudioLibrary.GetSongs(null, getSort(SongDetail.TRACK),
+				new AudioLibrary.GetSongs.FilterAlbumId(album.getId()),
+				SongDetail.ARTIST, SongDetail.TITLE, SongDetail.ALBUM,
+				SongDetail.TRACK, SongDetail.DISC, SongDetail.DURATION,
+				SongDetail.FILE, SongDetail.THUMBNAIL),
+				new ApiHandler<Boolean, SongDetail>() {
+
+					@Override
+					public Boolean handleResponse(
+							AbstractCall<SongDetail> apiCall) {
+						List<SongDetail> songDetails = apiCall.getResults();
+
+						int songCount = 0;
+						boolean foundStart = false;
+						for (SongDetail songDetail : songDetails) {
+							songCount++;
+							if(songDetail.songid == song.getId()) {
+								callRaw(new Player.Open(new PlaylistModel.Item(
+										new PlaylistModel.Item.Songid(songDetail.songid))),
+										new ApiHandler<Boolean, String>() {
+											@Override
+											public Boolean handleResponse(AbstractCall<String> apiCall) {
+												return "OK".equals(apiCall.getResult());
+											}
+										}, context);
+								foundStart = true;
+							}
+							else if(foundStart && songDetails.size() == songCount) {
+								call(new Playlist.Add(PLAYLIST_MUSIC, new PlaylistModel.Item(
+										new PlaylistModel.Item.Songid(songDetail.songid))),
+										new ApiHandler<Boolean, String>() {
+											@Override
+											public Boolean handleResponse(AbstractCall<String> apiCall) {
+												return "OK".equals(apiCall.getResult());
+											}
+										}, response, context);
+								
+							}
+							else if(foundStart) {
+								callRaw(new Playlist.Add(PLAYLIST_MUSIC, new PlaylistModel.Item(
+										new PlaylistModel.Item.Songid(songDetail.songid))),
+										new ApiHandler<Boolean, String>() {
+											@Override
+											public Boolean handleResponse(AbstractCall<String> apiCall) {
+												return "OK".equals(apiCall.getResult());
+											}
+										}, context);
+							}
+						}
+						return Boolean.TRUE;
+					}
+				}, context);
+		
 
 	}
 
 	public void play(DataResponse<Boolean> response, Artist artist,
 			Context context) {
-		// TODO Auto-generated method stub
-
+		call(new Player.Open(new PlaylistModel.Item(
+				new PlaylistModel.Item.Artistid(artist.getId()))),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
 	}
 
-	public void play(DataResponse<Boolean> response, Artist artist,
-			Genre genre, Context context) {
-		// TODO Auto-generated method stub
+	public void play(final DataResponse<Boolean> response, Artist artist,
+			Genre genre, final Context context) {
+		
+		List<SongFilter> songFilters = new ArrayList<SongFilter>();
+		// SongFilterRule(String operator, Value value, String field)
+		songFilters.add(new SongFilter(new SongFilterRule("is", new Value(
+				Integer.toString(artist.getId())), "artist")));
+		songFilters.add(new SongFilter(new SongFilterRule("is", new Value(
+				Integer.toString(genre.getId())), "genre")));
+		ListModel.SongFilter filter = new ListModel.SongFilter(
+				new ListModel.SongFilter.And(songFilters));
 
-	}
+		callRaw(new AudioLibrary.GetSongs(null, filter),
+				new ApiHandler<Boolean, SongDetail>() {
 
-	public void playlistNext(DataResponse<Boolean> response, Context context) {
-		// TODO Auto-generated method stub
+					@Override
+					public Boolean handleResponse(
+							AbstractCall<SongDetail> apiCall) {
+						List<SongDetail> songDetails = apiCall.getResults();
 
+						int currentSong = 1;
+						ArrayList<Song> result = new ArrayList<Song>();
+						for (SongDetail songDetail : songDetails) {
+							final boolean lastSong = currentSong == songDetails
+									.size();
+							if(currentSong == 1) {
+								callRaw(new Player.Open(
+										new PlaylistModel.Item(
+												new PlaylistModel.Item.Songid(
+														songDetail.songid))),
+										new ApiHandler<Boolean, String>() {
+											@Override
+											public Boolean handleResponse(
+													AbstractCall<String> apiCall) {
+												boolean result = "OK"
+														.equals(apiCall
+																.getResult());
+												if (lastSong) {
+													response.value = result;
+													MusicManager.this
+															.onFinish(response);
+												}
+												return result;
+											}
+										}, context);
+								
+								continue;
+							}
+							callRaw(new Playlist.Add(PLAYLIST_MUSIC,
+									new PlaylistModel.Item(
+											new PlaylistModel.Item.Songid(
+													songDetail.songid))),
+									new ApiHandler<Boolean, String>() {
+										@Override
+										public Boolean handleResponse(
+												AbstractCall<String> apiCall) {
+											boolean result = "OK"
+													.equals(apiCall
+															.getResult());
+											if (lastSong) {
+												response.value = result;
+												MusicManager.this
+														.onFinish(response);
+											}
+											return result;
+										}
+									}, context);
+							currentSong++;
+						}
+
+						return Boolean.TRUE;
+					}
+				}, context);
 	}
 
 	public void getPlaylist(DataResponse<ArrayList<String>> response,
 			Context context) {
-		// TODO Auto-generated method stub
 
+		call(new Playlist.GetItems(PLAYLIST_MUSIC),
+				new ApiHandler<ArrayList<String>, ListModel.AllItems>() {
+
+					@Override
+					public ArrayList<String> handleResponse(
+							AbstractCall<ListModel.AllItems> apiCall) {
+						ArrayList<String> playlistItems = new ArrayList<String>();
+
+						ArrayList<ListModel.AllItems> items = apiCall
+								.getResults();
+						Log.e("MusicManager", "Playlist size" + items.size());
+						if (items == null || items.size() == 0) {
+
+							playlistItems.add(EMPTY_PLAYLIST_ITEM);
+						}
+						for (ListModel.AllItems item : items) {
+							playlistItems.add(item.label);
+						}
+						return playlistItems;
+					}
+				}, response, context);
 	}
 
 	public void getPlaylistPosition(DataResponse<Integer> response,
 			Context context) {
-		// TODO Auto-generated method stub
+		call(new Player.GetProperties(PLAYLIST_MUSIC, "position"),
+				new ApiHandler<Integer, PlayerModel.PropertyValue>() {
 
+					@Override
+					public Integer handleResponse(
+							AbstractCall<PlayerModel.PropertyValue> apiCall) {
+						PlayerModel.PropertyValue properties = apiCall
+								.getResult();
+						return properties.position;
+					}
+				}, response, context);
 	}
 
 	public void updateAlbumInfo(DataResponse<Album> response,
@@ -394,17 +661,11 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 				}, response, context);
 	}
 
-	public void updateArtistInfo(DataResponse<Artist> response, final Artist artist,
-			Context context) {
-//		artist.born = getString(artistDetails, "born");
-//		artist.formed = getString(artistDetails, "formed");
-//		artist.genres = getString(artistDetails, "genre");
-//		artist.moods = getString(artistDetails, "mood");
-//		artist.styles = getString(artistDetails, "style");
-//		artist.biography = getString(artistDetails, "description");
-		
-		call(new AudioLibrary.GetArtistDetails(artist.getId(), ArtistDetail.BORN, ArtistDetail.FORMED,
-				ArtistDetail.GENRE, ArtistDetail.MOOD, ArtistDetail.STYLE, ArtistDetail.DESCRIPTION),
+	public void updateArtistInfo(DataResponse<Artist> response,
+			final Artist artist, Context context) {
+		call(new AudioLibrary.GetArtistDetails(artist.getId(),
+				ArtistDetail.BORN, ArtistDetail.FORMED, ArtistDetail.GENRE,
+				ArtistDetail.MOOD, ArtistDetail.STYLE, ArtistDetail.DESCRIPTION),
 				new ApiHandler<Artist, ArtistDetail>() {
 					@Override
 					public Artist handleResponse(

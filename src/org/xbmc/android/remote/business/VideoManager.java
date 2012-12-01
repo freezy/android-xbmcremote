@@ -241,10 +241,10 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 * @param position Complete path (including filename) of the media to be removed.
 	 * @return True on success, false otherwise.
 	 */
-	public void removeFromPlaylist(final DataResponse<Boolean> response, final String path, final Context context) {
+	public void removeFromPlaylist(final DataResponse<Boolean> response, final int position, final Context context) {
 		mHandler.post(new Command<Boolean>(response, this) {
 			public void doRun() throws Exception{ 
-				response.value = video(context).removeFromPlaylist(VideoManager.this, path);
+				response.value = video(context).removeFromPlaylist(VideoManager.this, position);
 			}
 		});
 	}

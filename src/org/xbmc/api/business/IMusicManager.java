@@ -187,13 +187,6 @@ public interface IMusicManager extends IManager {
 	public void removeFromPlaylist(final DataResponse<Boolean> response, final int position, final Context context);
 	
 	/**
-	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
-	 * @param position Complete path (including filename) of the media to be removed.
-	 * @return True on success, false otherwise.
-	 */
-	public void removeFromPlaylist(final DataResponse<Boolean> response, final String path, final Context context);
-	
-	/**
 	 * Plays an album
 	 * @param response Response object
 	 * @param album Album to play
@@ -236,12 +229,6 @@ public interface IMusicManager extends IManager {
 	 * @param genre  Genre filter
 	 */
 	public void play(final DataResponse<Boolean> response, final Artist artist, final Genre genre, final Context context);
-	
-	/**
-	 * Starts playing the next media in the current playlist. 
-	 * @param response Response object
-	 */
-	public void playlistNext(final DataResponse<Boolean> response, final Context context);
 	
 	/**
 	 * Returns an array of songs on the playlist. Empty array if nothing is playing.
