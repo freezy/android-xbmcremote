@@ -51,6 +51,7 @@ public interface IControlClient extends IClient {
 		public String getAlbum() { return ""; }
 		public int getHeight() { return 0; }
 		public int getWidth() { return 0; }
+		public String getThumbnail() { return ""; }
 	};
 	
 	public static final IControlClient.ICurrentlyPlaying PLAYING_UNKNOWN = new IControlClient.ICurrentlyPlaying() {
@@ -67,6 +68,7 @@ public interface IControlClient extends IClient {
 		public String getAlbum() { return ""; }
 		public int getHeight() { return 0; }
 		public int getWidth() { return 0; }
+		public String getThumbnail() { return ""; }
 	};	
 	
 	
@@ -347,5 +349,7 @@ public interface IControlClient extends IClient {
 		
 		public int getWidth();
 		public int getHeight();
+		
+		public String getThumbnail();
 	}
 }

@@ -24,6 +24,7 @@ package org.xbmc.api.object;
 import java.io.Serializable;
 import java.util.List;
 
+import org.xbmc.android.jsonrpc.api.model.VideoModel.SeasonDetail;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
@@ -40,6 +41,13 @@ public class Season implements Serializable, ICoverArt {
 		this.watched = watched;
 		this.show = show;
 	}
+	
+	public Season(SeasonDetail detail, TvShow show) {
+		this.number = detail.season;
+		this.watched = detail.watchedepisodes > 0;
+		this.show = show;
+	}
+	
 
 	private static final long serialVersionUID = -7652780720536304140L;
 

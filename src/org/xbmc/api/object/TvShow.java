@@ -39,6 +39,10 @@ public class TvShow implements ICoverArt, INamedResource {
 		this.watched = watched;
 	}
 	
+	public TvShow(int id) {
+		this.id = id;
+	}
+	
 	public TvShow(TVShowDetail detail) {
 		this.id = detail.tvshowid;
 		this.title = detail.title;

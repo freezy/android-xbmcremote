@@ -50,6 +50,33 @@ public class InfoManager extends AbstractManager implements IInfoManager {
 
 	public void getShares(DataResponse<ArrayList<FileLocation>> response,
 			int mediaType, Context context) {
+		final String media = MediaType.getName(mediaType);
+		
+		call(new Files.GetSources(media,
+				null, getSort(ListModel.Sort.Method.FILE)),
+				new ApiHandler<ArrayList<FileLocation>, ListModel.SourceItem>() {
+					@Override
+					public ArrayList<FileLocation> handleResponse(
+							AbstractCall<ListModel.SourceItem> apiCall) {
+						ArrayList<FileLocation> result = new ArrayList<FileLocation>();
+						
+						ArrayList<ListModel.SourceItem> items = apiCall.getResults();
+						for(ListModel.SourceItem item : items) {
+							FileLocation location = new FileLocation(item);
+							location.isDirectory = true;
+							result.add(location);
+						}
+						if("video".equals(media) || "music".equals(media)) {
+							FileLocation location = new FileLocation(("music".equals(media) ? "Music" : "Video") + " Playlists", "special://" + media + "playlists/");
+							location.isDirectory = true;
+							result.add(location);
+						}
+						
+						
+						return result;
+					}
+				}, response, context);
+		
 
 
 	}
@@ -97,6 +124,26 @@ public class InfoManager extends AbstractManager implements IInfoManager {
 			boolean val, Context context) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void getCurrentlyPlayingThumbURI(DataResponse<String> response,
+			Context context) {
+		
+//		Integer player = getActivePlayerId(manager);
+//		if (player == null) {
+//			return null;
+//		}
+//
+//		JsonNode result = mConnection.getJson(manager, "Player.GetItem", obj()
+//				.p("playerid", player).p("properties", arr().add("thumbnail")));
+//		JsonNode item = result.get("item");
+//		if (item == null) {
+//			return null;
+//		}
+//		String specialPath = item.get("thumbnail").getTextValue();
+//		return mConnection.getVfsPath(specialPath);
+		
+		
 	}
 
 }

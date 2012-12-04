@@ -46,14 +46,6 @@ public interface ITvShowManager extends IManager{
 	public void getEpisodes(DataResponse<ArrayList<Episode>> response, TvShow show, Season season, Context context) ;
 	
 	/**
-	 * Gets all Episodes for the specified season
-	 * @param response
-	 * @param season
-	 * @param context
-	 */
-	public void getEpisodes(DataResponse<ArrayList<Episode>> response, Season season, Context context) ;
-	
-	/**
 	 * Gets all seasons for the specified show
 	 * @param show
 	 */

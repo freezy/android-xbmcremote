@@ -41,6 +41,7 @@ import android.graphics.Bitmap;
 import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;

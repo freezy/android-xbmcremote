@@ -80,6 +80,7 @@ public class FileListController extends ListController implements IController {
 	
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 
+		mActivity = activity;
 		mInfoManager = ManagerFactory.getInfoManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
 		

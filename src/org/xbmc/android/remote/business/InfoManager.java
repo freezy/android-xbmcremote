@@ -21,6 +21,8 @@
 
 package org.xbmc.android.remote.business;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.xbmc.api.business.DataResponse;
@@ -169,16 +171,14 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 		});
 	}
 	
-//	public <T> void getGuiSetting(final Class<T> t, final DataResponse<T> response, final int setting) {
-//		mHandler.post(new Command<T>(response, this) {
-//			@Override
-//			public void doRun() throws Exception {
-//				switch(GuiSettings.getTypeInt(setting)) {
-//				case 1:
-//					
-//				case 3:
-//				}
-//			}
-//		});
-//	}
+	public void getCurrentlyPlayingThumbURI(final DataResponse<String> response, final Context context) {
+		
+		mHandler.post(new Command<String>(response, this) {
+			@Override
+			public void doRun() throws Exception { 
+				response.value = info(context).getCurrentlyPlayingThumbURI(InfoManager.this);
+			}
+		});
+	}
+	
 }

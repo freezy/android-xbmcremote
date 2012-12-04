@@ -21,6 +21,8 @@
 
 package org.xbmc.api.business;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.xbmc.api.object.FileLocation;
@@ -96,6 +98,12 @@ public interface IInfoManager extends IManager {
 	 * @param val Boolean value to set
 	 */
 	public void setGuiSettingBool(final DataResponse<Boolean> response, final int field, final boolean val, final Context context);
-
 	
+	/**
+	 * Get the URI for the currently playing item
+	 * @param response
+	 * @throws MalformedURLException
+	 * @throws URISyntaxException
+	 */
+	public void getCurrentlyPlayingThumbURI(final DataResponse<String> response, final Context context);	
 }

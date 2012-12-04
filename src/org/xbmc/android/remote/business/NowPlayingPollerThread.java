@@ -22,19 +22,21 @@
 package org.xbmc.android.remote.business;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashSet;
 
+import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
-import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.info.PlayStatus;
+import org.xbmc.api.presentation.INotifiableController;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -64,8 +66,9 @@ public class NowPlayingPollerThread extends Thread {
 	public static final int MESSAGE_PLAYLIST_ITEM_CHANGED = 667;
 	public static final int MESSAGE_COVER_CHANGED = 668;
 	public static final int MESSAGE_PLAYSTATE_CHANGED = 669;
+	
+	private static final int SOCKET_CONNECTION_TIMEOUT = 5000;
 
-	private IInfoClient mInfo;
 	private final HashSet<Handler> mSubscribers;
 
 	private String mCoverPath;
@@ -75,37 +78,42 @@ public class NowPlayingPollerThread extends Thread {
 	private int mPosition = -1;
 	private int lastPlayStatus;
 
-	/**
-	 * Since this one is kinda of its own, we use a stub as manager.
-	 * @TODO create some toats or at least logs instead of empty on* methods.
-	 */
-	private final INotifiableManager mManagerStub;
+	private final INotifiableController mControllerStub;
 
 	public NowPlayingPollerThread(final Context context){
-		mManagerStub = new INotifiableManager() {
-			public void onMessage(int code, String message) { }
-			public void onMessage(String message) { }
+		mControllerStub = new INotifiableController() {
+
+			public void onWrongConnectionState(int state,
+					INotifiableManager manager, Command<?> source) {
+			}
+
 			public void onError(Exception e) {
-				// XXX link to context will eventually change if activity which created the thread changes (java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare())
-				//Toast toast = Toast.makeText(context, "Poller Error: " + e.getMessage(), Toast.LENGTH_LONG);
-				//toast.show();
 				if (e.getMessage() != null) {
 					Log.e(TAG, e.getMessage());
 				}
 				e.printStackTrace();
 			}
-			public void onFinish(DataResponse<?> response) {
+
+			public void onMessage(String message) {
+				Log.d(TAG, message);
 			}
-			public void onWrongConnectionState(int state, Command<?> cmd) {
+
+			public void runOnUI(Runnable action) {
+				new Thread(action).start();
+				
 			}
-			public void retryAll() {
+
+			public Context getApplicationContext() {
+				return context;
 			}
+			
+			
 		};
 		mSubscribers = new HashSet<Handler>();
 	}
 	public void subscribe(final Handler handler) {
 		// update handler on the state of affairs
-		ManagerFactory.getControlManager(null).getCurrentlyPlaying(new DataResponse<ICurrentlyPlaying>() {
+		ManagerFactory.getControlManager(mControllerStub).getCurrentlyPlaying(new DataResponse<ICurrentlyPlaying>() {
 
 			@Override
 			public void run() {
@@ -138,9 +146,9 @@ public class NowPlayingPollerThread extends Thread {
 	/**
 	 * @return True if the stored cover art was updated.
 	 */
-	private boolean updateNowPlayingCover() {
+	private boolean updateNowPlayingCover(ICurrentlyPlaying currPlaying) {
 		try {
-			String downloadURI = mInfo.getCurrentlyPlayingThumbURI(mManagerStub);
+			String downloadURI = currPlaying.getThumbnail();
 			if (downloadURI == null || downloadURI.length() == 0) {
 				mCover = null;
 				String oldCoverPath = mCoverPath;
@@ -151,17 +159,23 @@ public class NowPlayingPollerThread extends Thread {
 			}
 			if (!downloadURI.equals(mCoverPath)) {
 				mCoverPath = downloadURI;
-				mCover = mInfo.download(downloadURI);
+				mCover = download(HostFactory.host.getVfsUrl(mCoverPath));
 				return true;
 			}
-		} catch (MalformedURLException e) {
-			Log.e(TAG, Log.getStackTraceString(e));
-		} catch (URISyntaxException e) {
-			Log.e(TAG, Log.getStackTraceString(e));
 		} catch (IOException e) {
 			Log.e(TAG, Log.getStackTraceString(e));
 		}
 		return false;
+	}
+	
+	private Bitmap download(String downloadURI) throws IOException {
+		final URL u = new URL(downloadURI);
+		Log.i(TAG, "Returning input stream for " + u.toString());
+		URLConnection uc;
+		uc = u.openConnection();
+		uc.setConnectTimeout(SOCKET_CONNECTION_TIMEOUT);
+		uc.setReadTimeout(HostFactory.host.getTimeout());
+		return BitmapFactory.decodeStream(uc.getInputStream());
 	}
 
 	public void sendMessage(int what, ICurrentlyPlaying curr) {
@@ -193,7 +207,7 @@ public class NowPlayingPollerThread extends Thread {
 
 	public void run() {
 		lastPlayStatus = PlayStatus.UNKNOWN;
-		final IControlManager control = ManagerFactory.getControlManager(null); 
+		 
 		HashSet<Handler> subscribers;
 		while (!isInterrupted() ) {
 			synchronized (mSubscribers) {
@@ -202,6 +216,7 @@ public class NowPlayingPollerThread extends Thread {
 			if (subscribers.size() > 0){
 				
 				try{
+					final IControlManager control = ManagerFactory.getControlManager(mControllerStub);
 					control.getCurrentlyPlaying(new DataResponse<ICurrentlyPlaying>() {
 						@Override
 						public void run() {
@@ -217,7 +232,7 @@ public class NowPlayingPollerThread extends Thread {
 							// send changed status
 							if (currentPlayStatus == PlayStatus.PLAYING) {
 								sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
-								boolean coverChanged = updateNowPlayingCover();
+								boolean coverChanged = updateNowPlayingCover(currPlaying);
 								if (coverChanged) {
 									sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
 								}
@@ -239,7 +254,7 @@ public class NowPlayingPollerThread extends Thread {
 									sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);
 									sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
 								}
-								boolean coverChanged = updateNowPlayingCover();
+								boolean coverChanged = updateNowPlayingCover(currPlaying);
 								if (coverChanged) {
 									sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
 								}
@@ -254,7 +269,7 @@ public class NowPlayingPollerThread extends Thread {
 								}
 								sendMessage(MESSAGE_PLAYLIST_ITEM_CHANGED, currPlaying);
 
-								boolean coverChanged = updateNowPlayingCover();
+								boolean coverChanged = updateNowPlayingCover(currPlaying);
 								if (coverChanged) {
 									sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
 								}

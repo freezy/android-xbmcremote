@@ -118,6 +118,10 @@ public class PictureClient {
 					return 0;
 				}
 			}			
+			
+			public String getThumbnail() {
+				return map.get("Thumb");
+			}
 		};
 	}
 }

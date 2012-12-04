@@ -176,21 +176,6 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 	}
 
 	/**
-	 * Gets all episodes of a season from database
-	 * @param response Response object
-	 * @param season Season the returning episodes belong to
-	 */
-	public void getEpisodes(DataResponse<ArrayList<Episode>> response,
-			final Season season, final Context context) {
-		mHandler.post(new Command<ArrayList<Episode>>(response, this) {
-			@Override
-			public void doRun() throws Exception {
-				mResponse.value = shows(context).getEpisodes(TvShowManager.this, season, getSort(SortType.EPISODE_NUM), getHideWatched(context));
-			}
-		});
-	}
-
-	/**
 	 * Updates the episode object with additional data from the episodeview table
 	 * @param response Response object
 	 * @param episode Episode to update

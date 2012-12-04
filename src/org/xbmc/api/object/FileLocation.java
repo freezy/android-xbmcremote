@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.xbmc.android.jsonrpc.api.model.ListModel.FileItem;
+import org.xbmc.android.jsonrpc.api.model.ListModel.SourceItem;
 import org.xbmc.api.info.FileTypes;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.Connection;
@@ -42,10 +43,15 @@ public class FileLocation implements INamedResource {
 	}
 	
 	public FileLocation(FileItem detail) {
-		Log.e("FileLocation", detail.file);
-		this.name = detail.file;
+		this.name = detail.label;
 		this.path = detail.file;
 	}
+	
+	public FileLocation(SourceItem detail) {
+		this.name = detail.label;
+		this.path = detail.file;
+	}
+	
 	
 	public String getShortName(){
 		return this.name;

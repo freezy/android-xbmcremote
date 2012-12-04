@@ -91,23 +91,10 @@ public interface IVideoManager extends IManager {
 	public void getMovieActors(final DataResponse<ArrayList<Actor>> response, final Context context);
 
 	/**
-	 * Gets all TV show actors from database
-	 * @param response Response object
-	 */
-	public void getTvShowActors(final DataResponse<ArrayList<Actor>> response, final Context context);
-	
-	/**
 	 * Gets all movie genres from database
 	 * @param response Response object
 	 */
 	public void getMovieGenres(final DataResponse<ArrayList<Genre>> response, final Context context);
-	
-	/**
-	 * Gets all tv show genres from the database
-	 * @param response Response object
-	 * @param context
-	 */
-	public void getTvShowGenres(final DataResponse< ArrayList<Genre>> response, final Context context);
 	
 	/**
 	 * Sets the media at playlist position to be the next item to be played.

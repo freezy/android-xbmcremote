@@ -146,6 +146,21 @@ public class Host implements Serializable {
 		return new HostConfig(addr, port, jsonPort, user, pass);
 	}
 	
+	public int getTimeout() {
+		return this.timeout >= 0 ? this.timeout : Host.DEFAULT_TIMEOUT;		
+	}
+	
+	public String getVfsUrl(String path) {
+		if(path.startsWith("image://")) {
+			path = path.replace("image://", "");
+			// trim trailing slash
+			if(path.lastIndexOf('/') == path.length() - 1) {
+				path = path.substring(0, path.length() - 1);
+			}
+		}
+		return "http://" + addr + ":" + port + "/vfs/" + path;
+	}
+	
 	private static final long serialVersionUID = 7886482294339161092L;
 	
 }

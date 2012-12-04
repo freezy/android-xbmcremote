@@ -4,8 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
+import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
 import org.xbmc.android.jsonrpc.api.call.VideoLibrary;
+import org.xbmc.android.jsonrpc.api.model.LibraryModel;
+import org.xbmc.android.jsonrpc.api.model.VideoModel;
+import org.xbmc.android.jsonrpc.api.model.AudioModel.ArtistDetail;
+import org.xbmc.android.jsonrpc.api.model.LibraryModel.GenreDetail;
+import org.xbmc.android.jsonrpc.api.model.VideoModel.EpisodeDetail;
 import org.xbmc.android.jsonrpc.api.model.VideoModel.TVShowDetail;
+import org.xbmc.android.remote.business.cm.AbstractManager.ApiHandler;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.business.ISortableManager;
@@ -20,6 +27,7 @@ import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 public class TvShowManager extends AbstractManager implements ITvShowManager,
 		ISortableManager, INotifiableManager {
@@ -51,76 +59,188 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 
 	public void getTvShowActors(DataResponse<ArrayList<Actor>> response,
 			Context context) {
-		// TODO: Add to API
-
+		// Currently FRODO doesn't support Actor listings.
+		response.value = new ArrayList<Actor>();
+		onFinish(response);
 	}
 
 	public void getTvShowGenres(DataResponse<ArrayList<Genre>> response,
 			Context context) {
-		// TODO: Add to API
+		call(new VideoLibrary.GetGenres("tvshow", null, getSort(ArtistDetail.LABEL)),
+				new ApiHandler<ArrayList<Genre>, LibraryModel.GenreDetail>() {
+					@Override
+					public ArrayList<Genre> handleResponse(
+							AbstractCall<GenreDetail> apiCall) {
+						List<GenreDetail> genreDetails = apiCall.getResults();
+
+						ArrayList<Genre> result = new ArrayList<Genre>();
+						for (GenreDetail genreDetail : genreDetails) {
+							result.add(new Genre(genreDetail));
+						}
+						return result;
+					}
+				}, response, context);
+		
 	}
 
 	public void getTvShows(DataResponse<ArrayList<TvShow>> response,
 			Genre genre, Context context) {
-		// TODO Auto-generated method stub
+		call(new VideoLibrary.GetTVShows(null, getSort(TVShowDetail.TITLE),
+				new VideoLibrary.GetTVShows.FilterGenreId(genre.getId()),
+				TVShowDetail.TITLE, TVShowDetail.RATING,
+				TVShowDetail.PREMIERED, TVShowDetail.GENRE, TVShowDetail.MPAA,
+				TVShowDetail.STUDIO, TVShowDetail.FILE, TVShowDetail.EPISODE,
+				TVShowDetail.WATCHEDEPISODES, TVShowDetail.PLOT),
+				new ApiHandler<ArrayList<TvShow>, TVShowDetail>() {
 
+					@Override
+					public ArrayList<TvShow> handleResponse(
+							AbstractCall<TVShowDetail> apiCall) {
+						List<TVShowDetail> tvShowDetails = apiCall.getResults();
+
+						ArrayList<TvShow> result = new ArrayList<TvShow>();
+						for (TVShowDetail tvShow : tvShowDetails) {
+							result.add(new TvShow(tvShow));
+						}
+						return result;
+					}
+				}, response, context);
 	}
 
 	public ArrayList<TvShow> getTvShows(Context context) {
-		// TODO Auto-generated method stub
+		// TODO Remove me
 		return null;
 	}
 
 	public ArrayList<Season> getAllSeasons(Context context) {
-		// TODO Auto-generated method stub
+		// TODO Remove me
 		return null;
 	}
 
 	public ArrayList<Episode> getAllEpisodes(Context context) {
-		// TODO Auto-generated method stub
+		// TODO Remove me
 		return null;
 	}
 
 	public void getTvShows(DataResponse<ArrayList<TvShow>> response,
 			Actor actor, Context context) {
-		// TODO Auto-generated method stub
+		call(new VideoLibrary.GetTVShows(null, getSort(TVShowDetail.TITLE),
+				new VideoLibrary.GetTVShows.FilterActor(actor.getName()),
+				TVShowDetail.TITLE, TVShowDetail.RATING,
+				TVShowDetail.PREMIERED, TVShowDetail.GENRE, TVShowDetail.MPAA,
+				TVShowDetail.STUDIO, TVShowDetail.FILE, TVShowDetail.EPISODE,
+				TVShowDetail.WATCHEDEPISODES, TVShowDetail.PLOT),
+				new ApiHandler<ArrayList<TvShow>, TVShowDetail>() {
 
+					@Override
+					public ArrayList<TvShow> handleResponse(
+							AbstractCall<TVShowDetail> apiCall) {
+						List<TVShowDetail> tvShowDetails = apiCall.getResults();
+
+						ArrayList<TvShow> result = new ArrayList<TvShow>();
+						for (TVShowDetail tvShow : tvShowDetails) {
+							result.add(new TvShow(tvShow));
+						}
+						return result;
+					}
+				}, response, context);
 	}
 
 	public void getEpisodes(DataResponse<ArrayList<Episode>> response,
 			TvShow show, Context context) {
-		// TODO Auto-generated method stub
+		
+		call(new VideoLibrary.GetEpisodes(show.getId(), getSort(TVShowDetail.TITLE),
+				VideoModel.EpisodeDetail.TITLE, VideoModel.EpisodeDetail.PLOT,
+				VideoModel.EpisodeDetail.RATING, VideoModel.EpisodeDetail.WRITER, VideoModel.EpisodeDetail.FIRSTAIRED,
+				VideoModel.EpisodeDetail.DIRECTOR, VideoModel.EpisodeDetail.EPISODE,
+				VideoModel.EpisodeDetail.FILE, VideoModel.EpisodeDetail.SHOWTITLE),
+				new ApiHandler<ArrayList<Episode>, VideoModel.EpisodeDetail>() {
+
+					@Override
+					public ArrayList<Episode> handleResponse(
+							AbstractCall<EpisodeDetail> apiCall) {
+						List<VideoModel.EpisodeDetail> episodeDetails = apiCall.getResults();
+
+						ArrayList<Episode> result = new ArrayList<Episode>();
+						for (VideoModel.EpisodeDetail episode : episodeDetails) {
+							result.add(new Episode(episode));
+						}
+						return result;
+
+					}
+					
+					
+				}, response, context);
+
 
 	}
 
 	public void getEpisodes(DataResponse<ArrayList<Episode>> response,
 			TvShow show, Season season, Context context) {
-		// TODO Auto-generated method stub
+		call(new VideoLibrary.GetEpisodes(show.getId(), season.number, getSort(VideoModel.EpisodeDetail.EPISODE),
+				VideoModel.EpisodeDetail.TITLE, VideoModel.EpisodeDetail.PLOT,
+				VideoModel.EpisodeDetail.RATING, VideoModel.EpisodeDetail.WRITER, VideoModel.EpisodeDetail.FIRSTAIRED,
+				VideoModel.EpisodeDetail.DIRECTOR, VideoModel.EpisodeDetail.EPISODE,
+				VideoModel.EpisodeDetail.FILE, VideoModel.EpisodeDetail.SHOWTITLE),
+				new ApiHandler<ArrayList<Episode>, VideoModel.EpisodeDetail>() {
 
-	}
+					@Override
+					public ArrayList<Episode> handleResponse(
+							AbstractCall<EpisodeDetail> apiCall) {
+						List<VideoModel.EpisodeDetail> episodeDetails = apiCall.getResults();
 
-	public void getEpisodes(DataResponse<ArrayList<Episode>> response,
-			Season season, Context context) {
-		// TODO Auto-generated method stub
+						Log.e(TAG, "Found " + episodeDetails.size() + " episodes");
+						ArrayList<Episode> result = new ArrayList<Episode>();
+						for (VideoModel.EpisodeDetail episode : episodeDetails) {
+							result.add(new Episode(episode));
+						}
+						return result;
+
+					}
+					
+					
+				}, response, context);
+
 
 	}
 
 	public void getSeasons(DataResponse<ArrayList<Season>> response,
-			TvShow show, Context context) {
-		// TODO Auto-generated method stub
+			final TvShow show, Context context) {
+		call(new VideoLibrary.GetSeasons(show.getId(), getSort(VideoModel.SeasonDetail.SEASON), VideoModel.SeasonDetail.SEASON,
+				VideoModel.SeasonDetail.WATCHEDEPISODES, VideoModel.SeasonDetail.TVSHOWID),
+				new ApiHandler<ArrayList<Season>, VideoModel.SeasonDetail>() {
+
+					@Override
+					public ArrayList<Season> handleResponse(
+							AbstractCall<VideoModel.SeasonDetail> apiCall) {
+						List< VideoModel.SeasonDetail> seasonDetails = apiCall.getResults();
+
+						ArrayList<Season> result = new ArrayList<Season>();
+						for (VideoModel.SeasonDetail season : seasonDetails) {
+							result.add(new Season(season, show));
+						}
+						return result;
+
+					}
+					
+					
+				}, response, context);
+
 
 	}
 
 	public void updateEpisodeDetails(DataResponse<Episode> response,
 			Episode episode, Context context) {
-		// TODO Auto-generated method stub
-
+		// TODO: More detail?
+		response.value = episode;
+		onFinish(response);
 	}
 
 	public void updateTvShowDetails(DataResponse<TvShow> response, TvShow show,
 			Context context) {
-		// TODO Auto-generated method stub
-
+		// TODO: More detail?
+		response.value = show;
+		onFinish(response);
 	}
 
 	public void downloadCover(DataResponse<Bitmap> response, ICoverArt cover,

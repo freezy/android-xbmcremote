@@ -28,6 +28,7 @@ import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Genre;
 
@@ -52,6 +53,7 @@ public class MovieGenreListController extends ListController implements IControl
 	public static final int TYPE_TVSHOW = 1;
 	
 	private IVideoManager mVideoManager;
+	private ITvShowManager mTvShowManager;
 	private int mType;
 	
 	public MovieGenreListController(int type) {
@@ -104,7 +106,7 @@ public class MovieGenreListController extends ListController implements IControl
 				mVideoManager.getMovieGenres(response, mActivity.getApplicationContext());
 				break;
 			case TYPE_TVSHOW:
-				mVideoManager.getTvShowGenres(response, mActivity.getApplicationContext());
+				mTvShowManager.getTvShowGenres(response, mActivity.getApplicationContext());
 				break;
 			}			
 		}
@@ -143,11 +145,15 @@ public class MovieGenreListController extends ListController implements IControl
 		if (mVideoManager != null) {
 			mVideoManager.setController(null);
 		}
+		if (mTvShowManager != null) {
+			mTvShowManager.setController(null);
+		}
 		super.onActivityPause();
 	}
 	
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
 		mVideoManager = ManagerFactory.getVideoManager(this);
+		mTvShowManager = ManagerFactory.getTvManager(this);
 	}
 }

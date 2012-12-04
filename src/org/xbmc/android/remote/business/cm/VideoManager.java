@@ -61,19 +61,7 @@ public class VideoManager extends AbstractManager implements IVideoManager {
 
 	}
 
-	public void getTvShowActors(DataResponse<ArrayList<Actor>> response,
-			Context context) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public void getMovieGenres(DataResponse<ArrayList<Genre>> response,
-			Context context) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void getTvShowGenres(DataResponse<ArrayList<Genre>> response,
 			Context context) {
 		// TODO Auto-generated method stub
 

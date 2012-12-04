@@ -29,6 +29,7 @@ import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Artist;
@@ -62,6 +63,7 @@ public class ActorListController extends ListController implements IController {
 	private final int mType;
 	
 	private IVideoManager mVideoManager;
+	private ITvShowManager mTvShowManager;
 	
 	public ActorListController(int type) {
 		mType = type;
@@ -70,6 +72,7 @@ public class ActorListController extends ListController implements IController {
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
 		mVideoManager = ManagerFactory.getVideoManager(this);
+		mTvShowManager = ManagerFactory.getTvManager(this);
 		
 		if (!isCreated()) {
 			super.onCreate(activity, handler, list);
@@ -109,7 +112,7 @@ public class ActorListController extends ListController implements IController {
 					mVideoManager.getMovieActors(response, mActivity.getApplicationContext());
 					break;
 				case TYPE_TVSHOW:
-					mVideoManager.getTvShowActors(response, mActivity.getApplicationContext());
+					mTvShowManager.getTvShowActors(response, mActivity.getApplicationContext());
 					break;
 				case TYPE_EPISODE:
 					break;
@@ -176,11 +179,15 @@ public class ActorListController extends ListController implements IController {
 		if (mVideoManager != null) {
 			mVideoManager.setController(null);
 		}
+		if (mTvShowManager != null) {
+			mTvShowManager.setController(null);
+		}
 		super.onActivityPause();
 	}
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
 		mVideoManager = ManagerFactory.getVideoManager(this);
+		mTvShowManager = ManagerFactory.getTvManager(this);
 	}
 }

@@ -113,9 +113,7 @@ public class PlaylistController extends ListController implements IController, C
 			
 			mControlManager.getPlaylistId(new DataResponse<Integer>() {
 				public void run() {
-					mPlayListId = value;
-					
-					updatePlaylist();
+					updatePlaylist(value);
 				}
 			}, mActivity.getApplicationContext());			
 			
@@ -139,15 +137,9 @@ public class PlaylistController extends ListController implements IController, C
 		}
 	}
 	
-	private void updatePlaylist() {
-		switch (mPlayListId) {
+	private void updatePlaylist(int playListId) {
+		switch (playListId) {
 		case MUSIC_PLAYLIST_ID:
-			mMusicManager.getPlaylistPosition(new DataResponse<Integer>() {
-				public void run() {
-					mCurrentPosition = value;
-				}
-			}, mActivity.getApplicationContext());
-			
 			mMusicManager.getPlaylist(new DataResponse<ArrayList<String>>() {
 	  	  		@SuppressLint("NewApi")
 				public void run() {
@@ -172,12 +164,6 @@ public class PlaylistController extends ListController implements IController, C
 	  	  	}, mActivity.getApplicationContext());
 			break;
 		case VIDEO_PLAYLIST_ID:
-			mVideoManager.getPlaylistPosition(new DataResponse<Integer>() {
-				public void run() {
-					mCurrentPosition = value;
-				}
-			}, mActivity.getApplicationContext());
-			
 			mVideoManager.getPlaylist(new DataResponse<ArrayList<String>>() {
 	  	  		@SuppressLint("NewApi")
 				public void run() {
@@ -237,9 +223,7 @@ public class PlaylistController extends ListController implements IController, C
 			final int playListId = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYLIST);
 			if (playListId != mPlayListId) {
 				// music <-> video playlist changed
-				mPlayListId = playListId;
-				
-				updatePlaylist();
+				updatePlaylist(playListId);
 			}
 			return true;
 			

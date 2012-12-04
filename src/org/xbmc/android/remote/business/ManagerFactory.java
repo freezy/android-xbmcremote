@@ -36,11 +36,11 @@ public abstract class ManagerFactory {
 
 	private static EventClientManager sEventClientManager = null;
 
-	private enum ApiType {
+	private  enum ApiType {
 		HTTP, JSON_FRODO
 	}
 
-	private static ApiType getApiType(INotifiableController controller) {
+	private static ApiType getApiType() {
 		
 		if(HostFactory.host !=null && HostFactory.host.jsonApi) {
 			return ApiType.JSON_FRODO;
@@ -48,9 +48,18 @@ public abstract class ManagerFactory {
 		return ApiType.HTTP;
 
 	}
+	
+	public static boolean isHttp() {
+		return ApiType.HTTP.equals(getApiType());
+	}
+	
+	public static boolean isFrodo() {
+		return ApiType.JSON_FRODO.equals(getApiType());
+	}
+	
 
 	public static IInfoManager getInfoManager(INotifiableController controller) {
-		switch (getApiType(controller)) {
+		switch (getApiType()) {
 		case JSON_FRODO:
 			org.xbmc.android.remote.business.cm.InfoManager manager = new org.xbmc.android.remote.business.cm.InfoManager();
 			manager.setController(controller);
@@ -63,7 +72,7 @@ public abstract class ManagerFactory {
 
 	public static IControlManager getControlManager(
 			INotifiableController controller) {
-		switch (getApiType(controller)) {
+		switch (getApiType()) {
 		case JSON_FRODO:
 			org.xbmc.android.remote.business.cm.ControlManager manager = new org.xbmc.android.remote.business.cm.ControlManager();
 			manager.setController(controller);
@@ -75,7 +84,7 @@ public abstract class ManagerFactory {
 	}
 
 	public static IVideoManager getVideoManager(INotifiableController controller) {
-		switch (getApiType(controller)) {
+		switch (getApiType()) {
 		case JSON_FRODO:
 			org.xbmc.android.remote.business.cm.VideoManager manager = new org.xbmc.android.remote.business.cm.VideoManager();
 			manager.setController(controller);
@@ -87,7 +96,7 @@ public abstract class ManagerFactory {
 	}
 
 	public static ITvShowManager getTvManager(INotifiableController controller) {
-		switch (getApiType(controller)) {
+		switch (getApiType()) {
 		case JSON_FRODO:
 			org.xbmc.android.remote.business.cm.TvShowManager manager = new org.xbmc.android.remote.business.cm.TvShowManager();
 			manager.setController(controller);
@@ -99,7 +108,7 @@ public abstract class ManagerFactory {
 	}
 
 	public static IMusicManager getMusicManager(INotifiableController controller) {
-		switch (getApiType(controller)) {
+		switch (getApiType()) {
 		case JSON_FRODO:
 			org.xbmc.android.remote.business.cm.MusicManager manager = new org.xbmc.android.remote.business.cm.MusicManager();
 			manager.setController(controller);

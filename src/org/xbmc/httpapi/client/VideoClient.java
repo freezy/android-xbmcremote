@@ -564,6 +564,10 @@ public class VideoClient extends Client implements IVideoClient {
 					return 0;
 				}
 			}
+			
+			public String getThumbnail() {
+				return map.get("Thumb");
+			}
 		};
 	}
 

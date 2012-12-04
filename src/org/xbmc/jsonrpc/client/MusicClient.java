@@ -703,6 +703,10 @@ public class MusicClient extends Client implements IMusicClient {
 				
 				return (hours * 3600) + (minutes * 60) + seconds;
 			}
+			
+			public String getThumbnail() {
+				return props.get("thumbnail").getTextValue();
+			}
 		};
 	}	
 }

@@ -93,7 +93,10 @@ public class PictureClient {
 				} catch (NumberFormatException e) {
 					return 0;
 				}
-			}			
+			}
+			public String getThumbnail() {
+				return item.get("thumbnail").getTextValue();
+			}
 		};
 	}
 

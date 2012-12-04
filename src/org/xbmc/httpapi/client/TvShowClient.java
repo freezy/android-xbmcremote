@@ -558,6 +558,10 @@ public class TvShowClient extends Client implements ITvShowClient {
 					return 0;
 				}
 			}
+			
+			public String getThumbnail() {
+				return map.get("Thumb");
+			}
 		};
 	}
 

@@ -1035,6 +1035,9 @@ public class MusicClient extends Client implements IMusicClient {
 					return 0;
 				}
 			}
+			public String getThumbnail() {
+				return map.get("Thumb");
+			}
 		};
 	}
 }
