@@ -35,8 +35,6 @@
 			</RelativeLayout>
 		</LinearLayout>
 
-		<include layout="@layout/titlebar" />
-				
 		<!-- ##### UPPER BODY ##### -->
 		<LinearLayout android:id="@+id/home_upper"
 			android:orientation="vertical" 
@@ -53,7 +51,7 @@
 				
 				<!-- ##### TOP TITLE ##### -->
 				<TextView android:id="@+id/now_playing_top_title"
-					android:text="TITLE"
+					android:text=""
 					android:layout_weight="1.8" 
 					android:layout_height="0px"
 					android:layout_width="fill_parent" 
@@ -109,7 +107,6 @@
 							
 						<TextView android:id="@+id/now_playing_counter_left" 
 							android:layout_width="wrap_content" 
-							android:text="left"
 							android:textColor="#d0d0d0"
 							android:shadowDy="-1" 
 							android:shadowDx="0"
@@ -121,7 +118,6 @@
 							android:layout_alignLeft="@+id/now_playing_progessbar" />
 							
 						<TextView android:id="@+id/now_playing_counter_right" 
-							android:text="right" 
 							android:textColor="#d0d0d0"
 							android:shadowDy="-1" 
 							android:shadowDx="0"
@@ -139,7 +135,7 @@
 				<!-- ##### BOTTOM TITLE ##### -->
 				<TextView 
 					android:id="@+id/now_playing_bottom_title" 
-					android:text="bottom title"
+					android:text=""
 					android:textSize="16dip"
 					android:textColor="#ffffffff"
 					android:singleLine="true"
@@ -157,7 +153,7 @@
 				<!-- ##### BOTTOM SUB TITLE ##### -->
 				<TextView 
 					android:id="@+id/now_playing_bottom_subtitle" 
-					android:text="bottom sub title"
+					android:text=""
 					android:textSize="14dip"
 					android:singleLine="true"
 					android:paddingTop="3dip"

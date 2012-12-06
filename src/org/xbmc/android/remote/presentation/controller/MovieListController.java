@@ -30,6 +30,7 @@ import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.util.StringUtil;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.ISortableManager;
@@ -359,7 +360,7 @@ public class MovieListController extends ListController implements IController {
 			view.position = position;
 			view.posterOverlay = movie.numWatched > 0 ? mWatchedBitmap : null;
 			view.title = movie.title;
-			view.subtitle = movie.genres;
+			view.subtitle = StringUtil.join(" / ", movie.genres);
 			view.subtitleRight = movie.year > 0 ? String.valueOf(movie.year) : "";
 			view.bottomtitle = movie.runtime;
 			view.bottomright = String.valueOf(movie.rating);

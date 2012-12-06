@@ -56,7 +56,14 @@ public abstract class ManagerFactory {
 	public static boolean isFrodo() {
 		return ApiType.JSON_FRODO.equals(getApiType());
 	}
-	
+
+	public static void resetClient() {
+		switch (getApiType()) {
+		case JSON_FRODO:
+			org.xbmc.android.remote.business.cm.AbstractManager.resetClient();
+			break;
+		}
+	}
 
 	public static IInfoManager getInfoManager(INotifiableController controller) {
 		switch (getApiType()) {

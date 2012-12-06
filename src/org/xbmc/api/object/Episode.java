@@ -83,6 +83,8 @@ public class Episode implements ICoverArt {
 	public String showTitle;
 
 	public ArrayList<Actor> actors = null;
+	
+	public String thumbnail;
 
 	public Episode(int id, String title, String plot, double rating,
 			String writer, String firstAired, int numWatched, String director,
@@ -116,8 +118,7 @@ public class Episode implements ICoverArt {
 		this.localPath = "";
 		this.showTitle = detail.showtitle;
 		this.fileName = detail.file;
-
-
+		this.thumbnail = detail.thumbnail;
 	}
 
 	public long getCrc() {
@@ -171,6 +172,10 @@ public class Episode implements ICoverArt {
 		} else {
 			return localPath + fileName;
 		}
+	}
+	
+	public String getThumbnail() {
+		return thumbnail;
 	}
 
 	private static final long serialVersionUID = 5317212562013683169L;

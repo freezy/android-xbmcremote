@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
-import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
 import org.xbmc.android.jsonrpc.api.call.VideoLibrary;
 import org.xbmc.android.jsonrpc.api.model.LibraryModel;
-import org.xbmc.android.jsonrpc.api.model.VideoModel;
-import org.xbmc.android.jsonrpc.api.model.AudioModel.ArtistDetail;
 import org.xbmc.android.jsonrpc.api.model.LibraryModel.GenreDetail;
+import org.xbmc.android.jsonrpc.api.model.VideoModel;
+import org.xbmc.android.jsonrpc.api.model.VideoModel.Cast;
 import org.xbmc.android.jsonrpc.api.model.VideoModel.EpisodeDetail;
 import org.xbmc.android.jsonrpc.api.model.VideoModel.TVShowDetail;
-import org.xbmc.android.remote.business.cm.AbstractManager.ApiHandler;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.business.ISortableManager;
@@ -40,7 +38,8 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 				TVShowDetail.TITLE, TVShowDetail.RATING,
 				TVShowDetail.PREMIERED, TVShowDetail.GENRE, TVShowDetail.MPAA,
 				TVShowDetail.STUDIO, TVShowDetail.FILE, TVShowDetail.EPISODE,
-				TVShowDetail.WATCHEDEPISODES, TVShowDetail.PLOT),
+				TVShowDetail.WATCHEDEPISODES, TVShowDetail.PLOT,
+				TVShowDetail.THUMBNAIL),
 				new ApiHandler<ArrayList<TvShow>, TVShowDetail>() {
 
 					@Override
@@ -66,7 +65,9 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 
 	public void getTvShowGenres(DataResponse<ArrayList<Genre>> response,
 			Context context) {
-		call(new VideoLibrary.GetGenres("tvshow", null, getSort(ArtistDetail.LABEL)),
+		call(new VideoLibrary.GetGenres("tvshow", null,
+				getSort(GenreDetail.LABEL),
+				GenreDetail.THUMBNAIL),
 				new ApiHandler<ArrayList<Genre>, LibraryModel.GenreDetail>() {
 					@Override
 					public ArrayList<Genre> handleResponse(
@@ -80,7 +81,7 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 						return result;
 					}
 				}, response, context);
-		
+
 	}
 
 	public void getTvShows(DataResponse<ArrayList<TvShow>> response,
@@ -90,7 +91,8 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 				TVShowDetail.TITLE, TVShowDetail.RATING,
 				TVShowDetail.PREMIERED, TVShowDetail.GENRE, TVShowDetail.MPAA,
 				TVShowDetail.STUDIO, TVShowDetail.FILE, TVShowDetail.EPISODE,
-				TVShowDetail.WATCHEDEPISODES, TVShowDetail.PLOT),
+				TVShowDetail.WATCHEDEPISODES, TVShowDetail.PLOT,
+				TVShowDetail.THUMBNAIL),
 				new ApiHandler<ArrayList<TvShow>, TVShowDetail>() {
 
 					@Override
@@ -129,7 +131,8 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 				TVShowDetail.TITLE, TVShowDetail.RATING,
 				TVShowDetail.PREMIERED, TVShowDetail.GENRE, TVShowDetail.MPAA,
 				TVShowDetail.STUDIO, TVShowDetail.FILE, TVShowDetail.EPISODE,
-				TVShowDetail.WATCHEDEPISODES, TVShowDetail.PLOT),
+				TVShowDetail.WATCHEDEPISODES, TVShowDetail.PLOT,
+				TVShowDetail.THUMBNAIL),
 				new ApiHandler<ArrayList<TvShow>, TVShowDetail>() {
 
 					@Override
@@ -148,18 +151,24 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 
 	public void getEpisodes(DataResponse<ArrayList<Episode>> response,
 			TvShow show, Context context) {
-		
-		call(new VideoLibrary.GetEpisodes(show.getId(), getSort(TVShowDetail.TITLE),
-				VideoModel.EpisodeDetail.TITLE, VideoModel.EpisodeDetail.PLOT,
-				VideoModel.EpisodeDetail.RATING, VideoModel.EpisodeDetail.WRITER, VideoModel.EpisodeDetail.FIRSTAIRED,
-				VideoModel.EpisodeDetail.DIRECTOR, VideoModel.EpisodeDetail.EPISODE,
-				VideoModel.EpisodeDetail.FILE, VideoModel.EpisodeDetail.SHOWTITLE),
+
+		call(new VideoLibrary.GetEpisodes(show.getId(),
+				getSort(TVShowDetail.TITLE), VideoModel.EpisodeDetail.TITLE,
+				VideoModel.EpisodeDetail.PLOT, VideoModel.EpisodeDetail.RATING,
+				VideoModel.EpisodeDetail.WRITER,
+				VideoModel.EpisodeDetail.FIRSTAIRED,
+				VideoModel.EpisodeDetail.DIRECTOR,
+				VideoModel.EpisodeDetail.EPISODE,
+				VideoModel.EpisodeDetail.FILE,
+				VideoModel.EpisodeDetail.SHOWTITLE,
+				VideoModel.EpisodeDetail.THUMBNAIL),
 				new ApiHandler<ArrayList<Episode>, VideoModel.EpisodeDetail>() {
 
 					@Override
 					public ArrayList<Episode> handleResponse(
 							AbstractCall<EpisodeDetail> apiCall) {
-						List<VideoModel.EpisodeDetail> episodeDetails = apiCall.getResults();
+						List<VideoModel.EpisodeDetail> episodeDetails = apiCall
+								.getResults();
 
 						ArrayList<Episode> result = new ArrayList<Episode>();
 						for (VideoModel.EpisodeDetail episode : episodeDetails) {
@@ -168,28 +177,34 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 						return result;
 
 					}
-					
-					
-				}, response, context);
 
+				}, response, context);
 
 	}
 
 	public void getEpisodes(DataResponse<ArrayList<Episode>> response,
 			TvShow show, Season season, Context context) {
-		call(new VideoLibrary.GetEpisodes(show.getId(), season.number, getSort(VideoModel.EpisodeDetail.EPISODE),
+		call(new VideoLibrary.GetEpisodes(show.getId(), season.number,
+				getSort(VideoModel.EpisodeDetail.EPISODE),
 				VideoModel.EpisodeDetail.TITLE, VideoModel.EpisodeDetail.PLOT,
-				VideoModel.EpisodeDetail.RATING, VideoModel.EpisodeDetail.WRITER, VideoModel.EpisodeDetail.FIRSTAIRED,
-				VideoModel.EpisodeDetail.DIRECTOR, VideoModel.EpisodeDetail.EPISODE,
-				VideoModel.EpisodeDetail.FILE, VideoModel.EpisodeDetail.SHOWTITLE),
+				VideoModel.EpisodeDetail.RATING,
+				VideoModel.EpisodeDetail.WRITER,
+				VideoModel.EpisodeDetail.FIRSTAIRED,
+				VideoModel.EpisodeDetail.DIRECTOR,
+				VideoModel.EpisodeDetail.EPISODE,
+				VideoModel.EpisodeDetail.FILE,
+				VideoModel.EpisodeDetail.SHOWTITLE,
+				VideoModel.EpisodeDetail.THUMBNAIL),
 				new ApiHandler<ArrayList<Episode>, VideoModel.EpisodeDetail>() {
 
 					@Override
 					public ArrayList<Episode> handleResponse(
 							AbstractCall<EpisodeDetail> apiCall) {
-						List<VideoModel.EpisodeDetail> episodeDetails = apiCall.getResults();
+						List<VideoModel.EpisodeDetail> episodeDetails = apiCall
+								.getResults();
 
-						Log.e(TAG, "Found " + episodeDetails.size() + " episodes");
+						Log.e(TAG, "Found " + episodeDetails.size()
+								+ " episodes");
 						ArrayList<Episode> result = new ArrayList<Episode>();
 						for (VideoModel.EpisodeDetail episode : episodeDetails) {
 							result.add(new Episode(episode));
@@ -197,23 +212,26 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 						return result;
 
 					}
-					
-					
-				}, response, context);
 
+				}, response, context);
 
 	}
 
 	public void getSeasons(DataResponse<ArrayList<Season>> response,
 			final TvShow show, Context context) {
-		call(new VideoLibrary.GetSeasons(show.getId(), getSort(VideoModel.SeasonDetail.SEASON), VideoModel.SeasonDetail.SEASON,
-				VideoModel.SeasonDetail.WATCHEDEPISODES, VideoModel.SeasonDetail.TVSHOWID),
+		call(new VideoLibrary.GetSeasons(show.getId(),
+				getSort(VideoModel.SeasonDetail.SEASON),
+				VideoModel.SeasonDetail.SEASON,
+				VideoModel.SeasonDetail.WATCHEDEPISODES,
+				VideoModel.SeasonDetail.TVSHOWID,
+				VideoModel.SeasonDetail.THUMBNAIL),
 				new ApiHandler<ArrayList<Season>, VideoModel.SeasonDetail>() {
 
 					@Override
 					public ArrayList<Season> handleResponse(
 							AbstractCall<VideoModel.SeasonDetail> apiCall) {
-						List< VideoModel.SeasonDetail> seasonDetails = apiCall.getResults();
+						List<VideoModel.SeasonDetail> seasonDetails = apiCall
+								.getResults();
 
 						ArrayList<Season> result = new ArrayList<Season>();
 						for (VideoModel.SeasonDetail season : seasonDetails) {
@@ -222,10 +240,8 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 						return result;
 
 					}
-					
-					
-				}, response, context);
 
+				}, response, context);
 
 	}
 
@@ -236,11 +252,23 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 		onFinish(response);
 	}
 
-	public void updateTvShowDetails(DataResponse<TvShow> response, TvShow show,
+	public void updateTvShowDetails(DataResponse<TvShow> response, final TvShow show,
 			Context context) {
-		// TODO: More detail?
-		response.value = show;
-		onFinish(response);
+		call(new VideoLibrary.GetTVShowDetails(show.getId(),
+				TVShowDetail.CAST),
+				new ApiHandler<TvShow, TVShowDetail>() {
+
+					@Override
+					public TvShow handleResponse(
+							AbstractCall<TVShowDetail> apiCall) {
+						TVShowDetail tvShowDetail = apiCall.getResult();
+						List<Cast> cast = tvShowDetail.cast;
+						for(Cast member : cast) {
+							show.actors.add(new Actor(member));
+						}
+						return show;
+					}
+				}, response, context);		
 	}
 
 	public void downloadCover(DataResponse<Bitmap> response, ICoverArt cover,
@@ -248,6 +276,44 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 		response.value = getCover(cover, thumbSize, TvShow.getThumbUri(cover),
 				TvShow.getFallbackThumbUri(cover));
 
+	}
+	
+	public void getAllEpisodes(DataResponse<ArrayList<Episode>> response,
+			Context context) {
+		call(new VideoLibrary.GetEpisodes(
+				getSort(TVShowDetail.TITLE), VideoModel.EpisodeDetail.TITLE,
+				VideoModel.EpisodeDetail.PLOT, VideoModel.EpisodeDetail.RATING,
+				VideoModel.EpisodeDetail.WRITER,
+				VideoModel.EpisodeDetail.FIRSTAIRED,
+				VideoModel.EpisodeDetail.DIRECTOR,
+				VideoModel.EpisodeDetail.EPISODE,
+				VideoModel.EpisodeDetail.FILE,
+				VideoModel.EpisodeDetail.SHOWTITLE,
+				VideoModel.EpisodeDetail.THUMBNAIL),
+				new ApiHandler<ArrayList<Episode>, VideoModel.EpisodeDetail>() {
+
+					@Override
+					public ArrayList<Episode> handleResponse(
+							AbstractCall<EpisodeDetail> apiCall) {
+						List<VideoModel.EpisodeDetail> episodeDetails = apiCall
+								.getResults();
+
+						ArrayList<Episode> result = new ArrayList<Episode>();
+						for (VideoModel.EpisodeDetail episode : episodeDetails) {
+							result.add(new Episode(episode));
+						}
+						return result;
+
+					}
+
+				}, response, context);
+	}
+	
+	public void getAllSeasons(DataResponse<ArrayList<Season>> response,
+			Context context) {
+		// currently we can't pull all seasons via the API
+		response.value = new ArrayList<Season>();
+		onFinish(response);
 	}
 
 }

@@ -25,6 +25,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IConnectionManager;
 import org.xbmc.api.data.IControlClient;
@@ -115,6 +116,9 @@ public abstract class ClientFactory {
 	 *            New host settings, can be null.
 	 */
 	public static void resetClient(Host host) {
+		
+		ManagerFactory.resetClient();
+		
 		if (sHttpClient != null) {
 			sHttpClient.setHost(host);
 		} else {

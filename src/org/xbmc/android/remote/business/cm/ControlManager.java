@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
+import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
 import org.xbmc.android.jsonrpc.api.call.Player;
+import org.xbmc.android.jsonrpc.api.call.Playlist;
 import org.xbmc.android.jsonrpc.api.call.Player.GetActivePlayers;
-import org.xbmc.android.jsonrpc.api.call.Player.Seek;
 import org.xbmc.android.jsonrpc.api.call.Player.GetActivePlayers.GetActivePlayersResult;
+import org.xbmc.android.jsonrpc.api.call.Player.Seek;
+import org.xbmc.android.jsonrpc.api.call.VideoLibrary;
 import org.xbmc.android.jsonrpc.api.model.GlobalModel.Time;
 import org.xbmc.android.jsonrpc.api.model.ListModel;
 import org.xbmc.android.jsonrpc.api.model.ListModel.AllItems;
@@ -15,6 +18,7 @@ import org.xbmc.android.jsonrpc.api.model.ListModel.BaseItem;
 import org.xbmc.android.jsonrpc.api.model.PlayerModel;
 import org.xbmc.android.jsonrpc.api.model.PlayerModel.PropertyValue;
 import org.xbmc.android.jsonrpc.api.model.PlaylistModel;
+import org.xbmc.android.remote.business.cm.AbstractManager.ApiHandler;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.data.IControlClient;
@@ -39,32 +43,37 @@ public class ControlManager extends AbstractManager implements IControlManager {
 				}, response, context);
 	}
 
-	public void playFolder(DataResponse<Boolean> response, String foldername,
+	public void playFolder(DataResponse<Boolean> response, final String foldername,
 			String playlistType, Context context) {
-		// TODO Auto-generated method stub
+		call(new Player.Open(new PlaylistModel.Item(
+				new PlaylistModel.Item.Directory(foldername))),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
+
 
 	}
 
 	public void queueFolder(DataResponse<Boolean> response, String foldername,
 			String playlistType, Context context) {
-		// TODO Auto-generated method stub
+		call(new Playlist.Add(Integer.parseInt(playlistType), new PlaylistModel.Item(
+				new PlaylistModel.Item.Directory(foldername))),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
+
 
 	}
 
 	public void playUrl(DataResponse<Boolean> response, String url,
 			Context context) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void playNext(DataResponse<Boolean> response, Context context) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void addToPlaylist(DataResponse<Boolean> response,
-			String fileOrFolder, Context context) {
-		// TODO Auto-generated method stub
+		// we need to determine what playlist to put this in
 
 	}
 
@@ -105,7 +114,31 @@ public class ControlManager extends AbstractManager implements IControlManager {
 
 	public void updateLibrary(DataResponse<Boolean> response, String mediaType,
 			Context context) {
-		// TODO Auto-generated method stub
+
+		if ("music".equals(mediaType)) {
+			call(new AudioLibrary.Scan(""), new ApiHandler<Boolean, String>() {
+
+				@Override
+				public Boolean handleResponse(AbstractCall<String> apiCall) {
+					return "OK".equals(apiCall.getResult());
+				}
+			}, response, context);
+
+		} else if ("pictures".equals(mediaType)) {
+			
+			//?
+
+			
+		} else if ("video".equals(mediaType)) {
+			call(new VideoLibrary.Scan(""), new ApiHandler<Boolean, String>() {
+
+				@Override
+				public Boolean handleResponse(AbstractCall<String> apiCall) {
+					return "OK".equals(apiCall.getResult());
+				}
+			}, response, context);
+
+		}
 
 	}
 
@@ -298,7 +331,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 
 	public void setPlaylistId(DataResponse<Boolean> response, int id,
 			Context context) {
-		// TODO Auto-generated method stub
+		// ?
 
 	}
 

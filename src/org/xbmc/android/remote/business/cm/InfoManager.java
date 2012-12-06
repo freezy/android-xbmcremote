@@ -119,31 +119,4 @@ public class InfoManager extends AbstractManager implements IInfoManager {
 		// TODO Auto-generated method stub
 
 	}
-
-	public void setGuiSettingBool(DataResponse<Boolean> response, int field,
-			boolean val, Context context) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void getCurrentlyPlayingThumbURI(DataResponse<String> response,
-			Context context) {
-		
-//		Integer player = getActivePlayerId(manager);
-//		if (player == null) {
-//			return null;
-//		}
-//
-//		JsonNode result = mConnection.getJson(manager, "Player.GetItem", obj()
-//				.p("playerid", player).p("properties", arr().add("thumbnail")));
-//		JsonNode item = result.get("item");
-//		if (item == null) {
-//			return null;
-//		}
-//		String specialPath = item.get("thumbnail").getTextValue();
-//		return mConnection.getVfsPath(specialPath);
-		
-		
-	}
-
 }

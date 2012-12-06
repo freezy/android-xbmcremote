@@ -22,6 +22,7 @@
 package org.xbmc.api.object;
 
 import java.io.Serializable;
+import java.net.URLEncoder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -151,14 +152,18 @@ public class Host implements Serializable {
 	}
 	
 	public String getVfsUrl(String path) {
-		if(path.startsWith("image://")) {
-			path = path.replace("image://", "");
-			// trim trailing slash
-			if(path.lastIndexOf('/') == path.length() - 1) {
-				path = path.substring(0, path.length() - 1);
-			}
-		}
-		return "http://" + addr + ":" + port + "/vfs/" + path;
+		String specialPath = "vfs";
+//		if(path.startsWith("image://")) {
+//			path = path.replace("image://", "");
+//			// trim trailing slash
+//			if(path.lastIndexOf('/') == path.length() - 1) {
+//				path = path.substring(0, path.length() - 1);
+//			}
+//			if(ManagerFactory.isFrodo()) {
+//				specialPath = "image";
+//			}
+//		}
+		return "http://" + addr + ":" + port + "/" + specialPath + "/" + URLEncoder.encode(path);
 	}
 	
 	private static final long serialVersionUID = 7886482294339161092L;

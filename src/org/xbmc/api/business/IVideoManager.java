@@ -72,17 +72,11 @@ public interface IVideoManager extends IManager {
 	public void getMovies(final DataResponse<ArrayList<Movie>> response, final Genre genre, final Context context);
 	
 	/**
-	 * Gets all actors from database. Use {@link getMovieActors()} and
-	 * {@link getTvActors()} for filtered actors. 
-	 * @param response Response object
+	 * gets all actors from database.
+	 * @return All actors 
 	 */
 	public void getActors(final DataResponse<ArrayList<Actor>> response, final Context context);
 	
-	/**
-	 * SYNCHRONOUSLY gets all actors from database.
-	 * @return All actors 
-	 */
-	public ArrayList<Actor> getActors(final Context context);
 	
 	/**
 	 * Gets all movie actors from database

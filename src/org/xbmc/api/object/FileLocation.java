@@ -28,6 +28,10 @@ public class FileLocation implements INamedResource {
 	public FileLocation(String name, String path) {
 		this.name = name;
 		this.path = path;
+		init();
+	}
+	
+	private void init() {
 		isDirectory = path.endsWith("/") || path.endsWith("\\");
 		isArchive = isDirectory && path.startsWith("rar://") || path.startsWith("zip://");
 		isMultipath = path.startsWith("multipath://");
@@ -45,11 +49,13 @@ public class FileLocation implements INamedResource {
 	public FileLocation(FileItem detail) {
 		this.name = detail.label;
 		this.path = detail.file;
+		init();
 	}
 	
 	public FileLocation(SourceItem detail) {
 		this.name = detail.label;
 		this.path = detail.file;
+		init();
 	}
 	
 	

@@ -5,9 +5,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
+import org.xbmc.android.jsonrpc.api.call.Player;
+import org.xbmc.android.jsonrpc.api.call.Playlist;
+import org.xbmc.android.jsonrpc.api.model.ListModel;
 import org.xbmc.android.jsonrpc.api.model.ListModel.Sort;
+import org.xbmc.android.jsonrpc.api.model.PlayerModel;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 import org.xbmc.android.jsonrpc.io.ConnectionManager;
 import org.xbmc.android.remote.business.Command;
@@ -19,14 +26,12 @@ import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
-import org.xbmc.api.object.Host;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.CacheType;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.api.type.ThumbSize.Dimension;
-import org.xbmc.jsonrpc.Connection;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -36,7 +41,9 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 public class AbstractManager implements INotifiableManager {
-	
+
+	public static final String EMPTY_PLAYLIST_ITEM = "[Empty]";
+
 	public static final Integer PLAYLIST_MUSIC = 0;
 	public static final Integer PLAYLIST_VIDEO = 1;
 	public static final Integer PLAYLIST_PICTURE = 2;
@@ -65,6 +72,11 @@ public class AbstractManager implements INotifiableManager {
 		return connectionManager;
 	}
 
+	public static void resetClient() {
+		connectionManager.disconnect();
+		connectionManager = null;
+	}
+
 	protected abstract static class ApiHandler<T, S> {
 		public abstract T handleResponse(AbstractCall<S> apiCall);
 	}
@@ -85,10 +97,9 @@ public class AbstractManager implements INotifiableManager {
 		});
 
 	}
-	
+
 	protected <T, S> void callRaw(AbstractCall<S> call,
-			final ApiHandler<T, S> handler,
-			Context context) {
+			final ApiHandler<T, S> handler, Context context) {
 		getConnectionManager(context).call(call, new ApiCallback<S>() {
 
 			public void onResponse(AbstractCall<S> apiCall) {
@@ -100,7 +111,6 @@ public class AbstractManager implements INotifiableManager {
 			}
 		});
 	}
-	
 
 	public void postActivity() {
 		// TODO Auto-generated method stub
@@ -444,9 +454,9 @@ public class AbstractManager implements INotifiableManager {
 		size = size < ThumbSize.BIG ? ThumbSize.MEDIUM : ThumbSize.BIG;
 		InputStream is = null;
 		try {
-			Log.i(TAG, "Starting download (" + url + ")");
+			Log.i(TAG, "Starting download (" + HostFactory.host.getVfsUrl(url) + ")");
 
-			BitmapFactory.Options opts = prefetch(url, size, mediaType);
+			BitmapFactory.Options opts = prefetch(HostFactory.host.getVfsUrl(url), size, mediaType);
 			Dimension dim = ThumbSize.getTargetDimension(size, mediaType,
 					opts.outWidth, opts.outHeight);
 
@@ -474,8 +484,7 @@ public class AbstractManager implements INotifiableManager {
 			final int ss = ImportUtilities.calculateSampleSize(opts, dim);
 			Log.i(TAG, "Sample size: " + ss);
 
-			is = new BufferedInputStream(getConnection().getThumbInputStream(
-					url, this), 8192);
+			is = new BufferedInputStream(getInputStream(HostFactory.host.getVfsUrl(url)), 8192);
 			opts.inDither = true;
 			opts.inSampleSize = ss;
 			opts.inJustDecodeBounds = false;
@@ -508,26 +517,28 @@ public class AbstractManager implements INotifiableManager {
 		}
 		return null;
 	}
-
+	
+	private InputStream getInputStream(String downloadURI) throws IOException {
+		final URL u = new URL(downloadURI);
+		Log.i(TAG, "Returning input stream for " + u.toString());
+		URLConnection uc;
+		uc = u.openConnection();
+		uc.setConnectTimeout(5000);
+		uc.setReadTimeout(HostFactory.host.getTimeout());
+		return uc.getInputStream();
+	}
+	
 	private BitmapFactory.Options prefetch(String url, int size, int mediaType) {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		try {
-			InputStream is = new BufferedInputStream(getConnection()
-					.getThumbInputStream(url, this), 8192);
+			InputStream is = new BufferedInputStream(getInputStream(url), 8192);
 			opts.inJustDecodeBounds = true;
 			BitmapFactory.decodeStream(is, null, opts);
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			Log.e("Client", e.getMessage(), e);
 			return opts;
 		}
 		return opts;
-	}
-
-	private Connection getConnection() {
-		Host host = HostFactory.host;
-		Connection connection = Connection.getInstance(host.addr, host.port);
-		connection.setAuth(host.user, host.pass);
-		return connection;
 	}
 
 	/**
@@ -552,4 +563,68 @@ public class AbstractManager implements INotifiableManager {
 		}
 		return null;
 	}
+
+	protected void setPlaylist(int playlistid, DataResponse<Boolean> response,
+			int position, Context context) {
+		call(new Player.GoTo(playlistid, position),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
+	}
+
+	protected void removeFromPlaylist(int playlistid,
+			DataResponse<Boolean> response, int position, Context context) {
+		call(new Playlist.Remove(playlistid, position),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
+	}
+
+	protected void getPlaylist(int playlistid,
+			DataResponse<ArrayList<String>> response, Context context) {
+		call(new Playlist.GetItems(playlistid),
+				new ApiHandler<ArrayList<String>, ListModel.AllItems>() {
+
+					@Override
+					public ArrayList<String> handleResponse(
+							AbstractCall<ListModel.AllItems> apiCall) {
+						ArrayList<String> playlistItems = new ArrayList<String>();
+
+						ArrayList<ListModel.AllItems> items = apiCall
+								.getResults();
+						if (items == null || items.size() == 0) {
+
+							playlistItems.add(EMPTY_PLAYLIST_ITEM);
+						}
+						for (ListModel.AllItems item : items) {
+							playlistItems.add(item.label);
+						}
+						return playlistItems;
+					}
+				}, response, context);
+
+	}
+
+	protected void getPlaylistPosition(int playlistid,
+			DataResponse<Integer> response, Context context) {
+		call(new Player.GetProperties(playlistid, "position"),
+				new ApiHandler<Integer, PlayerModel.PropertyValue>() {
+
+					@Override
+					public Integer handleResponse(
+							AbstractCall<PlayerModel.PropertyValue> apiCall) {
+						PlayerModel.PropertyValue properties = apiCall
+								.getResult();
+						return properties.position;
+					}
+				}, response, context);
+
+	}
+
 }

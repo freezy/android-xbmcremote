@@ -54,7 +54,6 @@ import android.widget.Toast;
 public class ActorListController extends ListController implements IController {
 	
 	private static final int mThumbSize = ThumbSize.SMALL;
-	public static final int TYPE_ALL = 1;
 	public static final int TYPE_MOVIE = 2;
 	public static final int TYPE_TVSHOW = 3;
 	public static final int TYPE_EPISODE = 4;
@@ -105,9 +104,6 @@ public class ActorListController extends ListController implements IController {
 			showOnLoading();
 			setTitle(title + "...");			
 			switch (mType) {
-				case TYPE_ALL:
-					mVideoManager.getActors(response, mActivity.getApplicationContext());
-					break;
 				case TYPE_MOVIE:
 					mVideoManager.getMovieActors(response, mActivity.getApplicationContext());
 					break;

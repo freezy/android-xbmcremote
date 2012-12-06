@@ -89,21 +89,5 @@ public interface IInfoManager extends IManager {
 	 * @param field Field to return (see GuiSettings.java)
 	 * @param val Integer value to set
 	 */
-	public void setGuiSettingInt(final DataResponse<Boolean> response, final int field, final int val, final Context context);
-	
-	/**
-	 * Sets an integer GUI setting
-	 * @param response Response object
-	 * @param field Field to return (see GuiSettings.java)
-	 * @param val Boolean value to set
-	 */
-	public void setGuiSettingBool(final DataResponse<Boolean> response, final int field, final boolean val, final Context context);
-	
-	/**
-	 * Get the URI for the currently playing item
-	 * @param response
-	 * @throws MalformedURLException
-	 * @throws URISyntaxException
-	 */
-	public void getCurrentlyPlayingThumbURI(final DataResponse<String> response, final Context context);	
+	public void setGuiSettingInt(final DataResponse<Boolean> response, final int field, final int val, final Context context);	
 }

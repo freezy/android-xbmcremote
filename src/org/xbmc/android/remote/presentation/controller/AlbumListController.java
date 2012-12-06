@@ -299,24 +299,24 @@ public class AlbumListController extends ListController implements IController {
 			menu.add(0, MENU_PLAY_ALL, 0, "Play all").setIcon(R.drawable.menu_album);
 		}
 		SubMenu sortMenu = menu.addSubMenu(0, MENU_SORT, 0, "Sort").setIcon(R.drawable.menu_sort);
-		sortMenu.add(2, MENU_SORT_BY_ALBUM_ASC, 0, "by Album ascending");
-		sortMenu.add(2, MENU_SORT_BY_ALBUM_DESC, 0, "by Album descending");
+		sortMenu.add(2, MENU_SORT_BY_ALBUM_ASC, 0, mActivity.getString(R.string.sort_album));
+		sortMenu.add(2, MENU_SORT_BY_ALBUM_DESC, 0, mActivity.getString(R.string.sort_album_r));
 		
 		if (mArtist != null) {
-			sortMenu.add(2, MENU_SORT_BY_YEAR_ASC, 0, "by Year ascending");
-			sortMenu.add(2, MENU_SORT_BY_YEAR_DESC, 0, "by Year descending");
+			sortMenu.add(2, MENU_SORT_BY_YEAR_DESC, 0, mActivity.getString(R.string.sort_year));
+			sortMenu.add(2, MENU_SORT_BY_YEAR_ASC, 0, mActivity.getString(R.string.sort_album_r));
 		} else {
-			sortMenu.add(2, MENU_SORT_BY_ARTIST_ASC, 0, "by Artist ascending");
-			sortMenu.add(2, MENU_SORT_BY_ARTIST_DESC, 0, "by Artist descending");
+			sortMenu.add(2, MENU_SORT_BY_ARTIST_ASC, 0, mActivity.getString(R.string.sort_artist));
+			sortMenu.add(2, MENU_SORT_BY_ARTIST_DESC, 0, mActivity.getString(R.string.sort_artist_r));
 		}
 		
 		if(mInfoManager.getAPIVersion(mActivity.getApplicationContext()) >= Branch.FRODO.ordinal()) {
-			sortMenu.add(2, MENU_SORT_BY_PLAYCOUNT_ASC, 0, "by Play Count ascending");
-			sortMenu.add(2, MENU_SORT_BY_PLAYCOUNT_DESC, 0, "by Play Count descending");
-			sortMenu.add(2, MENU_SORT_BY_DATEADDED_ASC, 0, "by Date Added ascending");
-			sortMenu.add(2, MENU_SORT_BY_DATEADDED_DESC, 0, "by Date Added descending");
-			sortMenu.add(2, MENU_SORT_BY_LASTPLAYED_ASC, 0, "by Last Played ascending");
-			sortMenu.add(2, MENU_SORT_BY_LASTPLAYED_DESC, 0, "by Last Played descending");
+			sortMenu.add(2, MENU_SORT_BY_PLAYCOUNT_DESC, 0, mActivity.getString(R.string.sort_playcount));
+			sortMenu.add(2, MENU_SORT_BY_PLAYCOUNT_ASC, 0, mActivity.getString(R.string.sort_playcount_r));
+			sortMenu.add(2, MENU_SORT_BY_DATEADDED_DESC, 0, mActivity.getString(R.string.sort_dateadded));
+			sortMenu.add(2, MENU_SORT_BY_DATEADDED_ASC, 0, mActivity.getString(R.string.sort_dateadded_r));
+			sortMenu.add(2, MENU_SORT_BY_LASTPLAYED_DESC, 0, mActivity.getString(R.string.sort_lastplayed));
+			sortMenu.add(2, MENU_SORT_BY_LASTPLAYED_ASC, 0, mActivity.getString(R.string.sort_lastplayed_r));
 		}
 //		menu.add(0, MENU_SWITCH_VIEW, 0, "Switch view").setIcon(R.drawable.menu_view);
 	}
@@ -395,43 +395,43 @@ public class AlbumListController extends ListController implements IController {
 			break;
 		case MENU_SORT_BY_PLAYCOUNT_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_PLAYCOUNT, SortType.PLAYCOUNT);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_PLAYCOUNT, SortType.ORDER_ASC);
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.PLAYCOUNT);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_PLAYCOUNT_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_PLAYCOUNT, SortType.PLAYCOUNT);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_PLAYCOUNT, SortType.ORDER_DESC);
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.PLAYCOUNT);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_DATEADDED_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_DATEADDED, SortType.PLAYCOUNT);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_DATEADDED, SortType.ORDER_ASC);
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.DATE_ADDED);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_DATEADDED_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_DATEADDED, SortType.PLAYCOUNT);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_DATEADDED, SortType.ORDER_DESC);
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.DATE_ADDED);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_LASTPLAYED_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_DATEADDED, SortType.LASTPLAYED);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_DATEADDED, SortType.ORDER_ASC);
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.LASTPLAYED);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_LASTPLAYED_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_LASTPLAYED, SortType.LASTPLAYED);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_LASTPLAYED, SortType.ORDER_DESC);
+			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.LASTPLAYED);
+			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_ALBUM, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;

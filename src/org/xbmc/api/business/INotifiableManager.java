@@ -40,9 +40,6 @@ public interface INotifiableManager {
 	public static final int PREF_SORT_KEY_SHOW = 6;
 	public static final int PREF_SORT_KEY_MOVIE = 7;
 	public static final int PREF_SORT_KEY_EPISODE = 8;
-	public static final int PREF_SORT_KEY_PLAYCOUNT = 9;
-	public static final int PREF_SORT_KEY_DATEADDED = 10;
-	public static final int PREF_SORT_KEY_LASTPLAYED = 11;
 	
 	
 	public void onFinish(DataResponse<?> response);

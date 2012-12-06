@@ -347,7 +347,7 @@ public class VideoClient extends Client implements IVideoClient {
 			movie.tagline = Connection.trim(fields[1]);
 			movie.plot = Connection.trim(fields[2]);
 			movie.numVotes = Connection.trimInt(fields[3]);
-			movie.studio = Connection.trim(fields[4]);
+			movie.studio.add(Connection.trim(fields[4]));
 			movie.rated = Connection.trim(fields[5]);
 			movie.trailerUrl = Connection.trim(fields[6]);
 		} catch (Exception e) {

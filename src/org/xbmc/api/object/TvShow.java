@@ -20,8 +20,10 @@ public class TvShow implements ICoverArt, INamedResource {
 	 */
 	public long thumbID = 0L;
 	
-	public List<Season> seasons = null;
-	public List<Actor> actors = null;
+	protected String thumbnail; 
+	
+	public List<Season> seasons = new ArrayList<Season>();
+	public List<Actor> actors = new ArrayList<Actor>();
 	
 	public TvShow(int id, String title, String summary, double rating, String firstAired, 
 			String genre, String contentRating, String network, String path, int numEpisodes, int watchedEpisodes, boolean watched) {
@@ -55,7 +57,7 @@ public class TvShow implements ICoverArt, INamedResource {
 		this.path = detail.file;
 		this.numEpisodes = detail.episode;
 		this.watchedEpisodes = detail.watchedepisodes;
-		
+		this.thumbnail = detail.thumbnail;
 	}
 
 	public String getShortName() {
@@ -71,6 +73,9 @@ public class TvShow implements ICoverArt, INamedResource {
 	} 
 	
 	public static String getThumbUri(ICoverArt cover) {
+		if(cover.getThumbnail() != null) {
+			return cover.getThumbnail();
+		}
 		if (cover.getMediaType() == MediaType.VIDEO_TVSHOW) {
 			return cover.getPath() != null ? cover.getPath().replace("\\", "/") + "banner.jpg" : getFallbackThumbUri(cover);
 		} else if (cover.getMediaType() == MediaType.VIDEO_TVEPISODE) {
@@ -116,6 +121,10 @@ public class TvShow implements ICoverArt, INamedResource {
 	
 	public String getPath() {
 		return path;
+	}
+	
+	public String getThumbnail() {
+		return thumbnail;
 	}
 	
 	/**

@@ -37,8 +37,6 @@ import android.util.Log;
 public class MusicManager extends AbstractManager implements IMusicManager,
 		ISortableManager, INotifiableManager {
 
-	public static final String EMPTY_PLAYLIST_ITEM = "[Empty]";
-
 	public void getCompilations(DataResponse<ArrayList<Album>> response,
 			Context context) {
 
@@ -263,7 +261,8 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 
 	public void getGenres(DataResponse<ArrayList<Genre>> response,
 			Context context) {
-		call(new AudioLibrary.GetGenres(null, getSort(ArtistDetail.LABEL)),
+		call(new AudioLibrary.GetGenres(null, getSort(ArtistDetail.LABEL),
+				ArtistDetail.THUMBNAIL),
 				new ApiHandler<ArrayList<Genre>, GenreDetail>() {
 					@Override
 					public ArrayList<Genre> handleResponse(
@@ -377,8 +376,7 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 										public Boolean handleResponse(
 												AbstractCall<String> apiCall) {
 											boolean result = "OK"
-													.equals(apiCall
-															.getResult());
+													.equals(apiCall.getResult());
 											if (lastSong) {
 												response.value = result;
 												MusicManager.this
@@ -397,27 +395,22 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 
 	public void setPlaylistSong(DataResponse<Boolean> response, int position,
 			Context context) {
-
-		call(new Player.GoTo(PLAYLIST_MUSIC, position),
-				new ApiHandler<Boolean, String>() {
-					@Override
-					public Boolean handleResponse(AbstractCall<String> apiCall) {
-						return "OK".equals(apiCall.getResult());
-					}
-				}, response, context);
-
+		setPlaylist(PLAYLIST_MUSIC, response, position, context);
 	}
 
 	public void removeFromPlaylist(DataResponse<Boolean> response,
 			int position, Context context) {
+		removeFromPlaylist(PLAYLIST_MUSIC, response, position, context);
+	}
 
-		call(new Playlist.Remove(PLAYLIST_MUSIC, position),
-				new ApiHandler<Boolean, String>() {
-					@Override
-					public Boolean handleResponse(AbstractCall<String> apiCall) {
-						return "OK".equals(apiCall.getResult());
-					}
-				}, response, context);
+	public void getPlaylist(DataResponse<ArrayList<String>> response,
+			Context context) {
+		getPlaylist(PLAYLIST_MUSIC, response, context);
+	}
+
+	public void getPlaylistPosition(DataResponse<Integer> response,
+			Context context) {
+		getPlaylistPosition(PLAYLIST_MUSIC, response, context);
 	}
 
 	public void play(DataResponse<Boolean> response, Album album,
@@ -459,7 +452,7 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 
 	public void play(final DataResponse<Boolean> response, final Album album,
 			final Song song, final Context context) {
-		
+
 		callRaw(new AudioLibrary.GetSongs(null, getSort(SongDetail.TRACK),
 				new AudioLibrary.GetSongs.FilterAlbumId(album.getId()),
 				SongDetail.ARTIST, SongDetail.TITLE, SongDetail.ALBUM,
@@ -476,35 +469,45 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 						boolean foundStart = false;
 						for (SongDetail songDetail : songDetails) {
 							songCount++;
-							if(songDetail.songid == song.getId()) {
+							if (songDetail.songid == song.getId()) {
 								callRaw(new Player.Open(new PlaylistModel.Item(
-										new PlaylistModel.Item.Songid(songDetail.songid))),
+										new PlaylistModel.Item.Songid(
+												songDetail.songid))),
 										new ApiHandler<Boolean, String>() {
 											@Override
-											public Boolean handleResponse(AbstractCall<String> apiCall) {
-												return "OK".equals(apiCall.getResult());
+											public Boolean handleResponse(
+													AbstractCall<String> apiCall) {
+												return "OK".equals(apiCall
+														.getResult());
 											}
 										}, context);
 								foundStart = true;
-							}
-							else if(foundStart && songDetails.size() == songCount) {
-								call(new Playlist.Add(PLAYLIST_MUSIC, new PlaylistModel.Item(
-										new PlaylistModel.Item.Songid(songDetail.songid))),
+							} else if (foundStart
+									&& songDetails.size() == songCount) {
+								call(new Playlist.Add(PLAYLIST_MUSIC,
+										new PlaylistModel.Item(
+												new PlaylistModel.Item.Songid(
+														songDetail.songid))),
 										new ApiHandler<Boolean, String>() {
 											@Override
-											public Boolean handleResponse(AbstractCall<String> apiCall) {
-												return "OK".equals(apiCall.getResult());
+											public Boolean handleResponse(
+													AbstractCall<String> apiCall) {
+												return "OK".equals(apiCall
+														.getResult());
 											}
 										}, response, context);
-								
-							}
-							else if(foundStart) {
-								callRaw(new Playlist.Add(PLAYLIST_MUSIC, new PlaylistModel.Item(
-										new PlaylistModel.Item.Songid(songDetail.songid))),
+
+							} else if (foundStart) {
+								callRaw(new Playlist.Add(PLAYLIST_MUSIC,
+										new PlaylistModel.Item(
+												new PlaylistModel.Item.Songid(
+														songDetail.songid))),
 										new ApiHandler<Boolean, String>() {
 											@Override
-											public Boolean handleResponse(AbstractCall<String> apiCall) {
-												return "OK".equals(apiCall.getResult());
+											public Boolean handleResponse(
+													AbstractCall<String> apiCall) {
+												return "OK".equals(apiCall
+														.getResult());
 											}
 										}, context);
 							}
@@ -512,7 +515,6 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 						return Boolean.TRUE;
 					}
 				}, context);
-		
 
 	}
 
@@ -530,7 +532,7 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 
 	public void play(final DataResponse<Boolean> response, Artist artist,
 			Genre genre, final Context context) {
-		
+
 		List<SongFilter> songFilters = new ArrayList<SongFilter>();
 		// SongFilterRule(String operator, Value value, String field)
 		songFilters.add(new SongFilter(new SongFilterRule("is", new Value(
@@ -553,11 +555,10 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 						for (SongDetail songDetail : songDetails) {
 							final boolean lastSong = currentSong == songDetails
 									.size();
-							if(currentSong == 1) {
-								callRaw(new Player.Open(
-										new PlaylistModel.Item(
-												new PlaylistModel.Item.Songid(
-														songDetail.songid))),
+							if (currentSong == 1) {
+								callRaw(new Player.Open(new PlaylistModel.Item(
+										new PlaylistModel.Item.Songid(
+												songDetail.songid))),
 										new ApiHandler<Boolean, String>() {
 											@Override
 											public Boolean handleResponse(
@@ -573,7 +574,7 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 												return result;
 											}
 										}, context);
-								
+
 								continue;
 							}
 							callRaw(new Playlist.Add(PLAYLIST_MUSIC,
@@ -585,8 +586,7 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 										public Boolean handleResponse(
 												AbstractCall<String> apiCall) {
 											boolean result = "OK"
-													.equals(apiCall
-															.getResult());
+													.equals(apiCall.getResult());
 											if (lastSong) {
 												response.value = result;
 												MusicManager.this
@@ -601,47 +601,6 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 						return Boolean.TRUE;
 					}
 				}, context);
-	}
-
-	public void getPlaylist(DataResponse<ArrayList<String>> response,
-			Context context) {
-
-		call(new Playlist.GetItems(PLAYLIST_MUSIC),
-				new ApiHandler<ArrayList<String>, ListModel.AllItems>() {
-
-					@Override
-					public ArrayList<String> handleResponse(
-							AbstractCall<ListModel.AllItems> apiCall) {
-						ArrayList<String> playlistItems = new ArrayList<String>();
-
-						ArrayList<ListModel.AllItems> items = apiCall
-								.getResults();
-						Log.e("MusicManager", "Playlist size" + items.size());
-						if (items == null || items.size() == 0) {
-
-							playlistItems.add(EMPTY_PLAYLIST_ITEM);
-						}
-						for (ListModel.AllItems item : items) {
-							playlistItems.add(item.label);
-						}
-						return playlistItems;
-					}
-				}, response, context);
-	}
-
-	public void getPlaylistPosition(DataResponse<Integer> response,
-			Context context) {
-		call(new Player.GetProperties(PLAYLIST_MUSIC, "position"),
-				new ApiHandler<Integer, PlayerModel.PropertyValue>() {
-
-					@Override
-					public Integer handleResponse(
-							AbstractCall<PlayerModel.PropertyValue> apiCall) {
-						PlayerModel.PropertyValue properties = apiCall
-								.getResult();
-						return properties.position;
-					}
-				}, response, context);
 	}
 
 	public void updateAlbumInfo(DataResponse<Album> response,

@@ -62,42 +62,32 @@ public class TvShowManager extends AbstractManager implements ITvShowManager,
 	}
 	
 	/**
-	 * SYNCHRONOUSLY gets all tv shows from database
-	 * @return All tv shows in database
-	 */
-	public ArrayList<TvShow> getTvShows(Context context) {
-		try {
-			return shows(context).getTvShows(TvShowManager.this, getSort(SortType.TITLE), getHideWatched(context));
-		} catch (WifiStateException e) {
-			TvShowManager.this.onError(e);
-		}
-		return new ArrayList<TvShow>();
-	}
-	
-	/**
-	 * SYNCHRONOUSLY gets all tv show seasons from database
+	 * gets all tv show seasons from database
 	 * @return All tv show seasons in database
 	 */
-	public ArrayList<Season> getAllSeasons(Context context) {
-		try {
-			return shows(context).getSeasons(TvShowManager.this, getSort(SortType.TITLE), getHideWatched(context));
-		} catch (WifiStateException e) {
-			TvShowManager.this.onError(e);
-		}
-		return new ArrayList<Season>();
+	public void getAllSeasons(DataResponse<ArrayList<Season>> response, final Context context) {
+		
+		mHandler.post(new Command<ArrayList<Season>>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				mResponse.value = shows(context).getSeasons(TvShowManager.this, getSort(SortType.TITLE), getHideWatched(context));
+			}
+		});
 	}
 	
 	/**
-	 * SYNCHRONOUSLY gets all tv show episodes from database
+	 * gets all tv show episodes from database
 	 * @return All tv show episodes in database
 	 */
-	public ArrayList<Episode> getAllEpisodes(Context context) {
-		try {
-			return shows(context).getEpisodes(TvShowManager.this, getSort(SortType.EPISODE_NUM), getHideWatched(context));
-		} catch (WifiStateException e) {
-			TvShowManager.this.onError(e);
-		}
-		return new ArrayList<Episode>();
+	public void getAllEpisodes(DataResponse<ArrayList<Episode>> response, final Context context) {
+		
+		mHandler.post(new Command<ArrayList<Episode>>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+
+				mResponse.value =  shows(context).getEpisodes(TvShowManager.this, getSort(SortType.EPISODE_NUM), getHideWatched(context));
+			}
+		});
 	}
 
 	/**

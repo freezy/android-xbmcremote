@@ -154,31 +154,5 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 				response.value = info(context).setGuiSettingInt(InfoManager.this, field, val);
 			}
 		});
-	}
-	
-	/**
-	 * Sets an integer GUI setting
-	 * @param response Response object
-	 * @param field Field to return (see GuiSettings.java)
-	 * @param val Boolean value to set
-	 */
-	public void setGuiSettingBool(final DataResponse<Boolean> response, final int field, final boolean val, final Context context) {
-		mHandler.post(new Command<Boolean>(response, this) {
-			@Override
-			public void doRun() throws Exception { 
-				response.value = info(context).setGuiSettingBool(InfoManager.this, field, val);
-			}
-		});
-	}
-	
-	public void getCurrentlyPlayingThumbURI(final DataResponse<String> response, final Context context) {
-		
-		mHandler.post(new Command<String>(response, this) {
-			@Override
-			public void doRun() throws Exception { 
-				response.value = info(context).getCurrentlyPlayingThumbURI(InfoManager.this);
-			}
-		});
-	}
-	
+	}	
 }

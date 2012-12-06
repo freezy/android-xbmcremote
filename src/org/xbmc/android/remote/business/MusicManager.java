@@ -37,9 +37,10 @@ import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Song;
+import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.WifiStateException;
-import org.xbmc.jsonrpc.client.MusicClient;
+import org.xbmc.httpapi.client.MusicClient;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -352,7 +353,7 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 				final IControlClient cc = control(context);
 				final int playStatus = cc.getPlayState(MusicManager.this);
 				cc.setCurrentPlaylist(MusicManager.this,
-						MusicClient.PLAYLIST_MUSIC.toString());
+						MediaType.getPlaylistType(MediaType.MUSIC));
 				final int playlistSize = mc.getPlaylistSize(MusicManager.this);
 				int playPos = -1;
 				if (playlistSize == 0) { // if playlist is empty, add the whole
@@ -568,7 +569,7 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 				mc.addToPlaylist(MusicManager.this, album,
 						getSort(SortType.TRACK));
 				cc.setCurrentPlaylist(MusicManager.this,
-						MusicClient.PLAYLIST_MUSIC.toString());
+						MediaType.getPlaylistType(MediaType.MUSIC));
 				if (playPos > 0) {
 					mc.playlistSetSong(MusicManager.this, playPos - 1);
 				}
@@ -725,7 +726,7 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 		final int ps = cc.getPlayState(MusicManager.this);
 		if (ps == PlayStatus.STOPPED) { // if nothing is playing, play the song
 			cc.setCurrentPlaylist(MusicManager.this,
-					MusicClient.PLAYLIST_MUSIC.toString());
+					MediaType.getPlaylistType(MediaType.MUSIC));
 			if (numAlreadyQueued == 0) {
 				mc.playNext(MusicManager.this);
 			} else {

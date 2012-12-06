@@ -19,9 +19,8 @@ public interface ITvShowManager extends IManager{
 	public void getTvShowActors(DataResponse<ArrayList<Actor>> response, Context context) ;
 	public void getTvShowGenres(DataResponse<ArrayList<Genre>> response, Context context);
 	public void getTvShows(DataResponse<ArrayList<TvShow>> response, Genre genre, Context context);
-	public ArrayList<TvShow> getTvShows(Context context);
-	public ArrayList<Season> getAllSeasons(Context context);
-	public ArrayList<Episode> getAllEpisodes(Context context);
+	public void getAllSeasons(DataResponse<ArrayList<Season>> response, Context context);
+	public void getAllEpisodes(DataResponse<ArrayList<Episode>> response, Context context);
 	
 	/**
 	 * Gets all tv shows with the specified actor

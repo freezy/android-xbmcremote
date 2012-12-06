@@ -78,7 +78,7 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 			this.artist = detail.artist.get(0);
 		}
 		this.year = detail.year;
-		this.thumbUri = detail.thumbnail;
+		this.thumbnail = detail.thumbnail;
 	}
 	
 	public int getMediaType() {
@@ -93,16 +93,13 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 	 * Composes the complete path to the album's thumbnail
 	 * @return Path to thumbnail
 	 */
-	public String getThumbUri() {
-		if(thumbUri != null) {
-			return thumbUri;
-		}
-		return getThumbUri(this);
+	public String getThumbnail() {
+		return thumbnail;
 	}
 	
 	public static String getThumbUri(ICoverArt cover) {
-		if(cover instanceof Album && ((Album) cover).thumbUri != null) {
-			return ((Album) cover).thumbUri;
+		if(cover.getThumbnail() != null) {
+			return cover.getThumbnail();
 		}
 		final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
 		return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
@@ -226,7 +223,7 @@ public class Album implements ICoverArt, Serializable, INamedResource {
 	 */
 	public long thumbID = 0;
 	
-	private String thumbUri;
+	public String thumbnail;
 	
 	private static final long serialVersionUID = 4779827915067184250L;
 

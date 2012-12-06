@@ -32,6 +32,7 @@ public class Season implements Serializable, ICoverArt {
 
 	public final int number;
 	public final boolean watched;
+	public final String thumbnail;
 	public final TvShow show;
 
 	public List<Episode> episodes = null;
@@ -40,12 +41,14 @@ public class Season implements Serializable, ICoverArt {
 		this.number = number;
 		this.watched = watched;
 		this.show = show;
+		this.thumbnail = null;
 	}
 	
 	public Season(SeasonDetail detail, TvShow show) {
 		this.number = detail.season;
 		this.watched = detail.watchedepisodes > 0;
 		this.show = show;
+		this.thumbnail = detail.thumbnail;
 	}
 	
 
@@ -94,5 +97,9 @@ public class Season implements Serializable, ICoverArt {
 
 	public int getNumber() {
 		return number;
+	}
+	
+	public String getThumbnail() {
+		return thumbnail;
 	}
 }

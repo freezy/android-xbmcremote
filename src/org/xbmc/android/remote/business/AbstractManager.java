@@ -196,7 +196,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 */
 	public static boolean cacheCover(final ICoverArt cover, final INotifiableManager manager, final Context context) {
 		if (!DiskCacheThread.isInCache(cover, ThumbSize.MEDIUM)) {
-			return DownloadThread.download(null, cover, ThumbSize.MEDIUM, null, manager, context, false);
+			return DownloadThread.download(new DataResponse<Bitmap>(), cover, ThumbSize.MEDIUM, null, manager, context, false);
 		}
 		return false;
 	}

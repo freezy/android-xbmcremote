@@ -77,7 +77,7 @@ public class Song implements ICoverArt, INamedResource {
 		this.disc = detail.disc;
 		this.duration = detail.duration;
 		this.path = detail.file;
-		this.thumbUri = detail.thumbnail;
+		this.thumbnail = detail.thumbnail;
 	}
 	
 	// this is for testing
@@ -159,6 +159,10 @@ public class Song implements ICoverArt, INamedResource {
 		return MediaType.MUSIC;
 	}
 	
+	public String getThumbnail() {
+		return thumbnail;
+	}
+	
 	/**
 	 * Database ID
 	 */
@@ -197,7 +201,7 @@ public class Song implements ICoverArt, INamedResource {
 	 */
 	public long thumbID = 0;
 	
-	private String thumbUri;
+	public String thumbnail;
 	
 	private static final long serialVersionUID = 911367816075830385L;
 }

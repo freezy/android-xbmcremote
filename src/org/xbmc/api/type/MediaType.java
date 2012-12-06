@@ -66,6 +66,23 @@ public abstract class MediaType {
 		}
 	}
 	
+	public static int getPlaylist(int type) {
+		switch (type) {
+		case MUSIC:
+			return 0;
+		case VIDEO:
+		case VIDEO_MOVIE:
+		case VIDEO_TVSHOW:
+		case VIDEO_TVSEASON:
+		case VIDEO_TVEPISODE:
+			return 1;
+		case PICTURES:
+			return 2;
+		default:
+			return 0;
+		}
+	}
+	
 	/**
 	 * Returns all media types.
 	 * @return
