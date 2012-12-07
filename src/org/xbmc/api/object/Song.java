@@ -22,6 +22,7 @@
 package org.xbmc.api.object;
 import java.util.Formatter;
 
+import org.xbmc.android.jsonrpc.api.model.AudioModel.SongDetail;
 import org.xbmc.api.type.MediaType;
 
 
@@ -44,6 +45,10 @@ public class Song implements ICoverArt, INamedResource {
 	 * @param filename  Filename
 	 */
 	public Song(int id, String title, String artist, String album, int track, int duration, String path, String filename, String thumbPath) {
+		this(id, title, artist, album, track, duration, path + filename, thumbPath);
+	}
+	
+	public Song(int id, String title, String artist, String album, int track, int duration, String file, String thumbPath) {
 		this.id = id;
 		this.title = title;
 		this.artist = artist;
@@ -51,9 +56,8 @@ public class Song implements ICoverArt, INamedResource {
 		this.track = track & 0xffff;
 		this.disc = track >> 16;
 		this.duration = duration;
-		this.path = path + filename;
-		this.filename = filename;
-		if (!thumbPath.equals("NONE")) {
+		this.path = file;
+		if (!"".equals(thumbPath) && !thumbPath.equals("NONE")) {
 			try {
 				this.thumbID = Long.parseLong(thumbPath.substring(thumbPath.lastIndexOf("/") + 1, thumbPath.length() - 4), 16);
 			} catch (NumberFormatException e) {
@@ -61,6 +65,26 @@ public class Song implements ICoverArt, INamedResource {
 			}
 		}
 	}
+	
+	public Song(SongDetail detail) {
+		this.id = detail.songid;
+		this.title = detail.title;
+		if(detail.artist.size() > 0) {
+			this.artist = detail.artist.get(0);
+		}
+		this.album = detail.album;
+		this.track = detail.track + 0xffff;
+		this.disc = detail.disc;
+		this.duration = detail.duration;
+		this.path = detail.file;
+		this.thumbnail = detail.thumbnail;
+	}
+	
+	// this is for testing
+	public Song(int id) {
+		this.id = id;
+	}
+	
 	
 	/**
 	 * Returns the duration in a nice format ([h:]mm:ss)
@@ -135,6 +159,10 @@ public class Song implements ICoverArt, INamedResource {
 		return MediaType.MUSIC;
 	}
 	
+	public String getThumbnail() {
+		return thumbnail;
+	}
+	
 	/**
 	 * Database ID
 	 */
@@ -169,13 +197,11 @@ public class Song implements ICoverArt, INamedResource {
 	 */
 	public String path;
 	/**
-	 * Filename of song
-	 */
-	public String filename;	
-	/**
 	 * CRC of the thumb
 	 */
 	public long thumbID = 0;
+	
+	public String thumbnail;
 	
 	private static final long serialVersionUID = 911367816075830385L;
 }

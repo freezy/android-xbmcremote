@@ -31,6 +31,7 @@ import org.xbmc.android.remote.presentation.activity.TvShowDetailsActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.remote.presentation.widget.FlexibleItemView;
 import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.util.StringUtil;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.ISortableManager;
@@ -41,6 +42,7 @@ import org.xbmc.api.object.TvShow;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -52,20 +54,22 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
+@TargetApi(11)
 public class TvShowListController extends ListController implements IController {
 	
 	private static final int mThumbSize = ThumbSize.SMALL;
@@ -134,6 +138,7 @@ public class TvShowListController extends ListController implements IController 
 	private void fetch() {
 		// tv show and episode both are using the same manager so set the sort key here
 		((ISortableManager)mTvManager).setSortKey(AbstractManager.PREF_SORT_KEY_SHOW);
+		((ISortableManager)mTvManager).setIgnoreArticle(PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext()).getBoolean(ISortableManager.SETTING_IGNORE_ARTICLE, true));
 		((ISortableManager)mTvManager).setPreferences(mActivity.getPreferences(Context.MODE_PRIVATE));
 
 		final String title = mActor != null ? mActor.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "TV Shows";
@@ -323,7 +328,7 @@ public class TvShowListController extends ListController implements IController 
 			view.position = position;
 			view.posterOverlay = show.watched ? mWatchedBitmap : null;
 			view.title = show.title;
-			view.subtitle = show.genre;
+			view.subtitle = StringUtil.join(",", show.genre);
 			view.subtitleRight = show.firstAired != null ? show.firstAired : "";
 			view.bottomtitle = show.numEpisodes + " episodes";
 			view.bottomright = String.valueOf(((float) Math.round(show.rating * 10)) / 10);
@@ -355,12 +360,8 @@ public class TvShowListController extends ListController implements IController 
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mTvManager != null) {
-			mTvManager.setController(this);
-		}
-		if (mControlManager != null) {
-			mControlManager.setController(this);
-		}
+		mTvManager = ManagerFactory.getTvManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 	}
 
 }

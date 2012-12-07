@@ -429,26 +429,10 @@ public class ControlClient implements IControlClient {
 	 */
 	public ICurrentlyPlaying getCurrentlyPlaying(INotifiableManager manager) {
 		final HashMap<String, String> map = mConnection.getPairs(manager, "GetCurrentlyPlaying", " ; ; ;true");
-		final IControlClient.ICurrentlyPlaying nothingPlaying = new IControlClient.ICurrentlyPlaying() {
-			private static final long serialVersionUID = -1554068775915058884L;
-			public boolean isPlaying() { return false; }
-			public int getMediaType() { return 0; }
-			public int getPlaylistPosition() { return -1; }
-			public String getTitle() { return ""; }
-			public int getTime() { return 0; }
-			public int getPlayStatus() { return PlayStatus.STOPPED; }
-			public float getPercentage() { return 0; }
-			public String getFilename() { return ""; }
-			public int getDuration() { return 0; }
-			public String getArtist() { return ""; }
-			public String getAlbum() { return ""; }
-			public int getHeight() { return 0; }
-			public int getWidth() { return 0; }
-		};
 		if (map == null)
-			return nothingPlaying;
+			return NOTHING_PLAYING;
 		if (map.get("Filename") != null && map.get("Filename").contains("Nothing Playing")) {
-			return nothingPlaying;
+			return NOTHING_PLAYING;
 		} else {
 			//final int type = map.get("Type").contains("Audio") ? MediaType.MUSIC : (map.get("Type").contains("Video") ? MediaType.VIDEO : MediaType.PICTURES );
 			final int type;
@@ -464,7 +448,7 @@ public class ControlClient implements IControlClient {
 				else
 					type = MediaType.PICTURES;
 			} else {
-				return nothingPlaying;
+				return NOTHING_PLAYING;
 			}
 			switch (type) {
 				case MediaType.MUSIC:
@@ -476,7 +460,7 @@ public class ControlClient implements IControlClient {
 				case MediaType.PICTURES:
 					return PictureClient.getCurrentlyPlaying(map);
 				default:
-					return nothingPlaying;
+					return NOTHING_PLAYING;
 			}
 		}
 	}

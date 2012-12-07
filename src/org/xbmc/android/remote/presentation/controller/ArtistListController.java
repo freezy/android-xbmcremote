@@ -35,22 +35,23 @@ import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.type.ThumbSize;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 public class ArtistListController extends ListController implements IController {
 	
@@ -67,6 +68,7 @@ public class ArtistListController extends ListController implements IController 
 	
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
+		mActivity = activity;
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		
 		final String sdError = ImportUtilities.assertSdCard();
@@ -100,6 +102,7 @@ public class ArtistListController extends ListController implements IController 
 					
 			final String title = mGenre != null ? mGenre.name + " - " : "" + "Artists";
 			DataResponse<ArrayList<Artist>> response = new DataResponse<ArrayList<Artist>>() {
+				@SuppressLint("NewApi")
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
@@ -227,8 +230,6 @@ public class ArtistListController extends ListController implements IController 
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mMusicManager != null) {
-			mMusicManager.setController(this);
-		}
+		mMusicManager = ManagerFactory.getMusicManager(this);
 	}
 }

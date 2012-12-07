@@ -23,12 +23,14 @@ package org.xbmc.api.data;
 
 import java.util.ArrayList;
 
+import org.xbmc.android.jsonrpc.api.call.Playlist;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Song;
+import org.xbmc.api.type.Sort;
 
 import android.graphics.Bitmap;
 
@@ -55,31 +57,35 @@ public interface IMusicClient extends IClient {
 	/**
 	 * Adds an album to the current playlist.
 	 * @param album Album
+	 * @param sort TODO
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Album album, int sortBy, String sortOrder);
+	public boolean addToPlaylist(INotifiableManager manager, Album album, Sort sort);
 
 	/**
 	 * Adds all songs from an artist to the current playlist.
 	 * @param artist Artist
+	 * @param sort TODO
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Artist artist, int sortBy, String sortOrder);
+	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Sort sort);
 
 	/**
 	 * Adds all songs from a genre to the current playlist.
 	 * @param genre Genre
+	 * @param sort TODO
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Genre genre, int sortBy, String sortOrder);
+	public boolean addToPlaylist(INotifiableManager manager, Genre genre, Sort sort);
 
 	/**
 	 * Adds songs of a genre from an artist to the current playlist.
 	 * @param artist Artist
 	 * @param genre Genre
+	 * @param sort TODO
 	 * @return True on success, false otherwise.
 	 */
-	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre, int sortBy, String sortOrder);
+	public boolean addToPlaylist(INotifiableManager manager, Artist artist, Genre genre, Sort sort);
 	
 	/**
 	 * Adds a song to the current playlist.
@@ -143,37 +149,35 @@ public interface IMusicClient extends IClient {
 	/**
 	 * Plays an album. Playlist is previously cleared.
 	 * @param album Album to play
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @param sort TODO
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(INotifiableManager manager, Album album, int sortBy, String sortOrder);
+	public boolean play(INotifiableManager manager, Album album, Sort sort);
 	
 	/**
 	 * Plays all songs of a genre. Playlist is previously cleared.
 	 * @param genre Genre
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @param sort TODO
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(INotifiableManager manager, Genre genre, int sortBy, String sortOrder);
+	public boolean play(INotifiableManager manager, Genre genre, Sort sort);
 	
 	/**
 	 * Plays all songs from an artist. Playlist is previously cleared.
 	 * @param artist Artist
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @param sort TODO
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(INotifiableManager manager, Artist artist, int sortBy, String sortOrder);
+	public boolean play(INotifiableManager manager, Artist artist, Sort sort);
 	
 	/**
 	 * Plays songs of a genre from an artist. Playlist is previously cleared.
 	 * @param artist Artist
 	 * @param genre Genre
+	 * @param sort TODO
 	 * @return True on success, false otherwise.
 	 */
-	public boolean play(INotifiableManager manager, Artist artist, Genre genre);
+	public boolean play(INotifiableManager manager, Artist artist, Genre genre, Sort sort);
 
 	/**
 	 * Starts playing/showing the next media/image in the current playlist
@@ -201,56 +205,57 @@ public interface IMusicClient extends IClient {
 	/**
 	 * Gets all albums with given artist IDs
 	 * @param artistIDs Array of artist IDs
+	 * @param sort TODO
 	 * @return All compilation albums
 	 */
-	public ArrayList<Album> getAlbums(INotifiableManager manager, ArrayList<Integer> artistIDs);
+	public ArrayList<Album> getAlbums(INotifiableManager manager, ArrayList<Integer> artistIDs, Sort sort);
 	
 	/**
 	 * Gets all albums from database
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @param sort TODO
 	 * @return All albums
 	 */
-	public ArrayList<Album> getAlbums(INotifiableManager manager, int sortBy, String sortOrder);
+	public ArrayList<Album> getAlbums(INotifiableManager manager, Sort sort);
 
 	/**
 	 * Gets all albums of an artist from database
 	 * @param artist Artist
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @param sort TODO
 	 * @return Albums with an artist
 	 */
-	public ArrayList<Album> getAlbums(INotifiableManager manager, Artist artist, int sortBy, String sortOrder);
+	public ArrayList<Album> getAlbums(INotifiableManager manager, Artist artist, Sort sort);
 
 	/**
 	 * Gets all albums of with at least one song in a genre
 	 * @param genre Genre
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @param sort TODO
 	 * @return Albums of a genre
 	 */
-	public ArrayList<Album> getAlbums(INotifiableManager manager, Genre genre, int sortBy, String sortOrder);
+	public ArrayList<Album> getAlbums(INotifiableManager manager, Genre genre, Sort sort);
 	
 	/**
 	 * Gets all albums from database
 	 * @param albumArtistsOnly If set to true, hide artists who appear only on compilations.
+	 * @param sort TODO
 	 * @return All albums
 	 */
-	public ArrayList<Artist> getArtists(INotifiableManager manager, boolean albumArtistsOnly);
+	public ArrayList<Artist> getArtists(INotifiableManager manager, boolean albumArtistsOnly, Sort sort);
 
 	/**
 	 * Gets all artists with at least one song of a genre.
 	 * @param genre Genre
 	 * @param albumArtistsOnly If set to true, hide artists who appear only on compilations.
+	 * @param sort TODO
 	 * @return Albums with a genre
 	 */
-	public ArrayList<Artist> getArtists(INotifiableManager manager, Genre genre, boolean albumArtistsOnly);
+	public ArrayList<Artist> getArtists(INotifiableManager manager, Genre genre, boolean albumArtistsOnly, Sort sort);
 	
 	/**
 	 * Gets all genres from database
+	 * @param sort TODO
 	 * @return All genres
 	 */
-	public ArrayList<Genre> getGenres(INotifiableManager manager);
+	public ArrayList<Genre> getGenres(INotifiableManager manager, Sort sort);
 	
 	/**
 	 * Updates the album object with additional data from the albuminfo table
@@ -269,45 +274,41 @@ public interface IMusicClient extends IClient {
 	/**
 	 * Returns a list containing all tracks of an album. The list is sorted by filename.
 	 * @param album Album
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.	 
+	 * @param sort TODO
 	 * @return All tracks of an album
 	 */
-	public ArrayList<Song> getSongs(INotifiableManager manager, Album album, int sortBy, String sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Album album, Sort sort);
 
 	/**
 	 * Returns a list containing all tracks of an artist. The list is sorted by album name, filename.
 	 * @param artist Artist
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @param sort TODO
 	 * @return All tracks of the artist
 	 */
-	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, int sortBy, String sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, Sort sort);
 	
 	/**
 	 * Returns a list containing all tracks of a genre. The list is sorted by artist, album name, filename.
 	 * @param genre Genre
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @param sort TODO
 	 * @return All tracks of the genre
 	 */
-	public ArrayList<Song> getSongs(INotifiableManager manager, Genre genre, int sortBy, String sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Genre genre, Sort sort);
 	
 	/**
 	 * Returns a list containing all tracks of a genre AND and artist. The list is sorted by 
 	 * artist, album name, filename.
 	 * @param genre Genre
-	 * @param sortBy Sort field, see SortType.* 
-	 * @param sortOrder Sort order, must be either SortType.ASC or SortType.DESC.
+	 * @param sort TODO
 	 * @return All tracks of the genre
 	 */
-	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, Genre genre, int sortBy, String sortOrder);
+	public ArrayList<Song> getSongs(INotifiableManager manager, Artist artist, Genre genre, Sort sort);
 	
 	/**
 	 * Returns a list containing all artist IDs that stand for "compilation".
 	 * Best case scenario would be only one ID for "Various Artists", though
 	 * there are also just "V.A." or "VA" naming conventions.
-	 * @return List of compilation artist IDs
+	 * @return ArrayList of compilation artist IDs
 	 */
 	public ArrayList<Integer> getCompilationArtistIDs(INotifiableManager manager);
 

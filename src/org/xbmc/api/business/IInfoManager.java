@@ -21,6 +21,8 @@
 
 package org.xbmc.api.business;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.xbmc.api.object.FileLocation;
@@ -37,11 +39,18 @@ import android.content.Context;
 public interface IInfoManager extends IManager {
 	
 	/**
-	 * Returns any system info variable, see {@link org.xbmc.api.info.SystemInfo}
+	 * Returns system version, see {@link org.xbmc.api.info.SystemInfo}
 	 * @param response Response object
 	 * @param field Field to return
 	 */
-	public void getSystemInfo(final DataResponse<String> response, final int field, final Context context);
+	public void getSystemVersion(final DataResponse<String> response, final Context context);
+	
+	/**
+	 * Returns current API version synchronously
+	 * @param response Response object
+	 * @param field Field to return
+	 */
+	public int getAPIVersion(final Context context);
 	
 	/**
 	 * Returns all defined shares of a media type
@@ -49,17 +58,6 @@ public interface IInfoManager extends IManager {
 	 * @param mediaType Media type
 	 */
 	public void getShares(final DataResponse<ArrayList<FileLocation>> response, final int mediaType, final Context context);
-	
-	/**
-	 * Returns the contents of a directory
-	 * @param response Response object
-	 * @param path     Path to the directory
-	 * @param mask     Mask to filter
-	 * @param offset   Offset (0 for none)
-	 * @param limit    Limit (0 for none)
-	 * @return
-	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit, final Context context, final int mediaType);
 	
 	/**
 	 * Returns the contents of a directory
@@ -91,15 +89,5 @@ public interface IInfoManager extends IManager {
 	 * @param field Field to return (see GuiSettings.java)
 	 * @param val Integer value to set
 	 */
-	public void setGuiSettingInt(final DataResponse<Boolean> response, final int field, final int val, final Context context);
-	
-	/**
-	 * Sets an integer GUI setting
-	 * @param response Response object
-	 * @param field Field to return (see GuiSettings.java)
-	 * @param val Boolean value to set
-	 */
-	public void setGuiSettingBool(final DataResponse<Boolean> response, final int field, final boolean val, final Context context);
-
-	
+	public void setGuiSettingInt(final DataResponse<Boolean> response, final int field, final int val, final Context context);	
 }

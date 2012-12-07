@@ -31,20 +31,21 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
 import org.xbmc.api.object.Genre;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 
 public class MusicGenreListController extends ListController implements IController {
 	
@@ -77,6 +78,7 @@ public class MusicGenreListController extends ListController implements IControl
 			
 			final String title = "Genres";
 			DataResponse<ArrayList<Genre>> response = new DataResponse<ArrayList<Genre>>() {
+				@SuppressLint("NewApi")
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
@@ -157,8 +159,6 @@ public class MusicGenreListController extends ListController implements IControl
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mMusicManager != null) {
-			mMusicManager.setController(this);
-		}
+		mMusicManager = ManagerFactory.getMusicManager(this);
 	}
 }

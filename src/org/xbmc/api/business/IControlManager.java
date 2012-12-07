@@ -69,22 +69,6 @@ public interface IControlManager extends IManager {
 	public void playUrl(final DataResponse<Boolean> response, String url, final Context context);
 	
 	/**
-	 * Plays the next item in the playlist.
-	 * @param response Response object
-	 * @param context Context reference
-	 * @return true on success, false otherwise.
-	 */
-	public void playNext(final DataResponse<Boolean> response, final Context context);
-	
-	/**
-	 * Adds a file or folder (<code>fileOrFolder</code> is either a file or a folder) to the current playlist.
-	 * @param response Response object
-	 * @param fileOrFolder File to play
-	 * @param context Context reference
-	 */
-	public void addToPlaylist(final DataResponse<Boolean> response, final String fileOrFolder, final Context context);
-	
-	/**
 	 * Seeks to a position. If type is
 	 * <ul>
 	 * 	<li><code>absolute</code> - Sets the playing position of the currently 
