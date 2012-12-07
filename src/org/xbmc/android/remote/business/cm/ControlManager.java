@@ -73,8 +73,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 
 	public void playUrl(DataResponse<Boolean> response, String url,
 			Context context) {
-		// we need to determine what playlist to put this in
-
+		playFile(response, url, context);
 	}
 
 	public void seek(final DataResponse<Boolean> response, SeekType type,
@@ -90,7 +89,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 						if (results.size() == 0) {
 							return 0;
 						}
-						GetActivePlayersResult result = results.get(0);
+						GetActivePlayersResult result = results.get(results.size() - 1);
 						final int playerid = result.playerid;
 						call(new Player.Seek(playerid, (double) progress),
 								new ApiHandler<Boolean, Seek.SeekResult>() {
@@ -144,8 +143,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 
 	public void showPicture(DataResponse<Boolean> response, String filename,
 			Context context) {
-		// TODO Auto-generated method stub
-
+		playFile(response, filename, context);
 	}
 
 	public void getCurrentlyPlaying(
@@ -162,7 +160,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 						if (results.size() == 0) {
 							return 0;
 						}
-						GetActivePlayersResult result = results.get(0);
+						GetActivePlayersResult result = results.get(results.size() - 1);
 						final int playerid = result.playerid;
 						callRaw(new Player.GetProperties(playerid, "time",
 								"speed", "position", "percentage"),
@@ -182,6 +180,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 												BaseItem.SHOWTITLE,
 												BaseItem.SEASON,
 												BaseItem.EPISODE,
+												BaseItem.FANART,
 												BaseItem.RUNTIME),
 												new ApiHandler<ICurrentlyPlaying, ListModel.AllItems>() {
 													@Override
@@ -307,11 +306,18 @@ public class ControlManager extends AbstractManager implements IControlManager {
 				public String getThumbnail() {
 					return item.thumbnail;
 				}
+				
+				public String getFanart() {
+					return item.fanart;
+				}
 			};
 
 		}
 	}
 
+	/**
+	 * getPlaylistId only returns Music or Video currently so it's useful for playlist management
+	 */
 	public void getPlaylistId(DataResponse<Integer> response, Context context) {
 		call(new Player.GetActivePlayers(),
 				new ApiHandler<Integer, GetActivePlayers.GetActivePlayersResult>() {
@@ -331,20 +337,35 @@ public class ControlManager extends AbstractManager implements IControlManager {
 
 	public void setPlaylistId(DataResponse<Boolean> response, int id,
 			Context context) {
-		// ?
-
+		response.value = Boolean.TRUE;
+		onFinish(response);
 	}
 
-	public void setPlaylistPos(DataResponse<Boolean> response, int position,
-			Context context) {
-		// TODO Auto-generated method stub
-
+	public void setPlaylistPos(final DataResponse<Boolean> response, final int position,
+			final Context context) {
+		getPlaylistId(new DataResponse<Integer>() {
+			@Override
+			public void run() {
+				call(new Player.GoTo(value, position),
+						new ApiHandler<Boolean, String>() {
+							@Override
+							public Boolean handleResponse(AbstractCall<String> apiCall) {
+								return "OK".equals(apiCall.getResult());
+							}
+						}, response, context);
+			}
+		}, context);
 	}
 
 	public void clearPlaylist(DataResponse<Boolean> response,
 			String playlistId, Context context) {
-		// TODO Auto-generated method stub
-
+		call(new Playlist.Clear(Integer.parseInt(playlistId)),
+				new ApiHandler<Boolean, String>() {
+					@Override
+					public Boolean handleResponse(AbstractCall<String> apiCall) {
+						return "OK".equals(apiCall.getResult());
+					}
+				}, response, context);
 	}
 
 	public void setGuiSetting(DataResponse<Boolean> response, int setting,

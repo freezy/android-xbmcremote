@@ -122,14 +122,7 @@ public class PlaylistController extends ListController implements IController, C
 					final PlaylistItem item = (PlaylistItem)mList.getAdapter().getItem(((OneLabelItemView)view).position);
 					final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
 					mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
-					switch (mPlayListId) {
-					case MUSIC_PLAYLIST_ID:
-						mMusicManager.setPlaylistSong(doNothing, item.position, mActivity.getApplicationContext());
-						break;
-					case VIDEO_PLAYLIST_ID:
-						mVideoManager.setPlaylistVideo(doNothing, item.position, mActivity.getApplicationContext());
-						break;
-					}
+					mControlManager.setPlaylistPos(doNothing, item.position, mActivity.getApplicationContext());
 				}
 			});
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Song>());
@@ -159,7 +152,6 @@ public class PlaylistController extends ListController implements IController, C
 						setTitle("Music playlist");
 						setNoDataMessage("No tracks in playlist.", R.drawable.icon_playlist_dark);
 					}
-
 	  	  		}
 	  	  	}, mActivity.getApplicationContext());
 			break;

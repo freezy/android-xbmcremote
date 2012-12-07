@@ -568,6 +568,10 @@ public class VideoClient extends Client implements IVideoClient {
 			public String getThumbnail() {
 				return map.get("Thumb");
 			}
+			
+			public String getFanart() {
+				return "";
+			}
 		};
 	}
 

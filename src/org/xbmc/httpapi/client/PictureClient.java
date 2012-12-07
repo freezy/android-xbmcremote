@@ -122,6 +122,10 @@ public class PictureClient {
 			public String getThumbnail() {
 				return map.get("Thumb");
 			}
+			
+			public String getFanart() {
+				return "";
+			}
 		};
 	}
 }

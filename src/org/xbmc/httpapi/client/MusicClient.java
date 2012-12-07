@@ -1038,6 +1038,10 @@ public class MusicClient extends Client implements IMusicClient {
 			public String getThumbnail() {
 				return map.get("Thumb");
 			}
+			
+			public String getFanart() {
+				return "";
+			}
 		};
 	}
 }

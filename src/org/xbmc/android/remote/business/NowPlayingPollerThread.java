@@ -66,6 +66,8 @@ public class NowPlayingPollerThread extends Thread {
 	public static final int MESSAGE_PLAYLIST_ITEM_CHANGED = 667;
 	public static final int MESSAGE_COVER_CHANGED = 668;
 	public static final int MESSAGE_PLAYSTATE_CHANGED = 669;
+	public static final int MESSAGE_FANART_CHANGED = 670;
+	
 	
 	private static final int SOCKET_CONNECTION_TIMEOUT = 5000;
 
@@ -73,6 +75,9 @@ public class NowPlayingPollerThread extends Thread {
 
 	private String mCoverPath;
 	private Bitmap mCover;
+
+	private String mFanartPath;
+	private Bitmap mFanart;	
 
 	private int mPlayList = -1;
 	private int mPosition = -1;
@@ -121,6 +126,7 @@ public class NowPlayingPollerThread extends Thread {
 				sendSingleMessage(handler, MESSAGE_PROGRESS_CHANGED, currPlaying);
 				sendSingleMessage(handler, MESSAGE_PLAYLIST_ITEM_CHANGED, currPlaying);
 				sendSingleMessage(handler, MESSAGE_COVER_CHANGED, currPlaying);
+				sendSingleMessage(handler, MESSAGE_FANART_CHANGED, currPlaying);
 
 				synchronized (mSubscribers) {
 					mSubscribers.add(handler);
@@ -140,8 +146,9 @@ public class NowPlayingPollerThread extends Thread {
 		return mCover;
 	}
 	
-		
-	
+	public Bitmap getNowPlayingFanart(){
+		return mFanart;
+	}
 
 	/**
 	 * @return True if the stored cover art was updated.
@@ -167,6 +174,32 @@ public class NowPlayingPollerThread extends Thread {
 		}
 		return false;
 	}
+	
+	/**
+	 * @return True if the stored fan art was updated.
+	 */
+	private boolean updateNowPlayingFanart(ICurrentlyPlaying currPlaying) {
+		try {
+			String downloadURI = currPlaying.getFanart();
+			if (downloadURI == null || downloadURI.length() == 0) {
+				mFanart = null;
+				String oldFanartPath = mFanartPath;
+				mFanartPath = null;
+				// If we had previously been handing out a thumbnail, clients
+				// need to update to the lack of one.
+				return oldFanartPath != null;
+			}
+			if (!downloadURI.equals(mFanartPath)) {
+				mFanartPath = downloadURI;
+				mFanart = download(HostFactory.host.getVfsUrl(mFanartPath));
+				return true;
+			}
+		} catch (IOException e) {
+			Log.e(TAG, Log.getStackTraceString(e));
+		}
+		return false;
+	}
+	
 	
 	private Bitmap download(String downloadURI) throws IOException {
 		final URL u = new URL(downloadURI);
@@ -204,6 +237,17 @@ public class NowPlayingPollerThread extends Thread {
 			}
 		}
 	}
+	
+	private void checkArt(ICurrentlyPlaying currPlaying) {
+		boolean coverChanged = updateNowPlayingCover(currPlaying);
+		if (coverChanged) {
+			sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
+		}
+		boolean fanartChanged = updateNowPlayingFanart(currPlaying);
+		if (fanartChanged) {
+			sendMessage(MESSAGE_FANART_CHANGED, currPlaying);
+		}
+	}
 
 	public void run() {
 		lastPlayStatus = PlayStatus.UNKNOWN;
@@ -232,10 +276,8 @@ public class NowPlayingPollerThread extends Thread {
 							// send changed status
 							if (currentPlayStatus == PlayStatus.PLAYING) {
 								sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
-								boolean coverChanged = updateNowPlayingCover(currPlaying);
-								if (coverChanged) {
-									sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
-								}
+								checkArt(currPlaying);
+								
 							}
 
 							// play state changed?
@@ -254,10 +296,7 @@ public class NowPlayingPollerThread extends Thread {
 									sendMessage(MESSAGE_PLAYSTATE_CHANGED, currPlaying);
 									sendMessage(MESSAGE_PROGRESS_CHANGED, currPlaying);
 								}
-								boolean coverChanged = updateNowPlayingCover(currPlaying);
-								if (coverChanged) {
-									sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
-								}
+								checkArt(currPlaying);
 							}
 
 							// play position changed?
@@ -269,10 +308,7 @@ public class NowPlayingPollerThread extends Thread {
 								}
 								sendMessage(MESSAGE_PLAYLIST_ITEM_CHANGED, currPlaying);
 
-								boolean coverChanged = updateNowPlayingCover(currPlaying);
-								if (coverChanged) {
-									sendMessage(MESSAGE_COVER_CHANGED, currPlaying);
-								}
+								checkArt(currPlaying);
 							}
 							lastPlayStatus = currentPlayStatus;
 						}

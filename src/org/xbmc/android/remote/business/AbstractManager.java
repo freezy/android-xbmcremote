@@ -341,11 +341,6 @@ public abstract class AbstractManager implements INotifiableManager {
 		mCurrentIgnoreArticle = ignoreArticle;
 	}
 	
-	public void post(Runnable runnable)
-	{
-		mHandler.post(runnable);
-	}
-	
 	/**
 	 * Returns currently saved "sort by" value. If the preference was not set yet, or
 	 * if the current sort key is not set, return default value.

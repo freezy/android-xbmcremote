@@ -562,6 +562,10 @@ public class TvShowClient extends Client implements ITvShowClient {
 			public String getThumbnail() {
 				return map.get("Thumb");
 			}
+			
+			public String getFanart() {
+				return "";
+			}
 		};
 	}
 

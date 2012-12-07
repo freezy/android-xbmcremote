@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
 import org.xbmc.android.jsonrpc.api.call.Player;
@@ -17,6 +18,7 @@ import org.xbmc.android.jsonrpc.api.model.ListModel.Sort;
 import org.xbmc.android.jsonrpc.api.model.PlayerModel;
 import org.xbmc.android.jsonrpc.io.ApiCallback;
 import org.xbmc.android.jsonrpc.io.ConnectionManager;
+import org.xbmc.android.remote.business.AbstractThread;
 import org.xbmc.android.remote.business.Command;
 import org.xbmc.android.remote.business.DiskCacheThread;
 import org.xbmc.android.remote.business.DownloadThread;
@@ -59,6 +61,8 @@ public class AbstractManager implements INotifiableManager {
 	protected SharedPreferences mPref;
 	protected int mCurrentSortKey;
 	protected boolean mCurrentIgnoreArticle;
+	
+	protected List<Runnable> failedRequests = new ArrayList<Runnable>();
 
 	public void setController(INotifiableController controller) {
 		this.mController = controller;
@@ -73,6 +77,9 @@ public class AbstractManager implements INotifiableManager {
 	}
 
 	public static void resetClient() {
+		if(connectionManager == null) {
+			return;
+		}
 		connectionManager.disconnect();
 		connectionManager = null;
 	}
@@ -113,11 +120,8 @@ public class AbstractManager implements INotifiableManager {
 	}
 
 	public void postActivity() {
-		// TODO Auto-generated method stub
+		AbstractThread.quitThreads();
 
-	}
-
-	public void post(Runnable runnable) {
 	}
 
 	public void getCover(DataResponse<Bitmap> response, ICoverArt cover,
@@ -290,13 +294,16 @@ public class AbstractManager implements INotifiableManager {
 	}
 
 	public Bitmap getCoverSync(ICoverArt cover, int thumbSize) {
-		// TODO Auto-generated method stub
-		return null;
+		if(MemCacheThread.isInCache(cover, thumbSize))
+			return MemCacheThread.getCover(cover, thumbSize);
+		else if(DiskCacheThread.isInCache(cover, thumbSize))
+			return DiskCacheThread.getCover(cover, thumbSize);
+		else
+			return null;			
 	}
 
 	public boolean coverLoaded(ICoverArt cover, int thumbSize) {
-		// TODO Auto-generated method stub
-		return false;
+		return (MemCacheThread.isInCache(cover, thumbSize) || DiskCacheThread.isInCache(cover, thumbSize));
 	}
 
 	public void onFinish(DataResponse<?> response) {
@@ -306,8 +313,9 @@ public class AbstractManager implements INotifiableManager {
 	}
 
 	public void onWrongConnectionState(int state, Command<?> cmd) {
-		// TODO Auto-generated method stub
-
+		failedRequests.add(cmd);
+		if (mController != null)
+			mController.onWrongConnectionState(state, this, cmd);
 	}
 
 	public void onError(Exception e) {
@@ -317,17 +325,18 @@ public class AbstractManager implements INotifiableManager {
 	}
 
 	public void onMessage(String message) {
-		// TODO Auto-generated method stub
-
+		if (mController != null) {
+			mController.onMessage(message);
+		}
 	}
 
 	public void onMessage(int code, String message) {
-		// TODO Auto-generated method stub
+		onMessage(message);
 
 	}
 
 	public void retryAll() {
-		// TODO Auto-generated method stub
+		// TODO make this queue work
 
 	}
 
@@ -351,6 +360,7 @@ public class AbstractManager implements INotifiableManager {
 	}
 
 	public void setIgnoreArticle(boolean ignoreArticle) {
+		// FIXME: make this configurable and respected
 		mCurrentIgnoreArticle = ignoreArticle;
 	}
 

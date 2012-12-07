@@ -52,6 +52,7 @@ public interface IControlClient extends IClient {
 		public int getHeight() { return 0; }
 		public int getWidth() { return 0; }
 		public String getThumbnail() { return ""; }
+		public String getFanart() { return ""; }
 	};
 	
 	public static final IControlClient.ICurrentlyPlaying PLAYING_UNKNOWN = new IControlClient.ICurrentlyPlaying() {
@@ -69,6 +70,7 @@ public interface IControlClient extends IClient {
 		public int getHeight() { return 0; }
 		public int getWidth() { return 0; }
 		public String getThumbnail() { return ""; }
+		public String getFanart() { return ""; }
 	};	
 	
 	
@@ -351,5 +353,7 @@ public interface IControlClient extends IClient {
 		public int getHeight();
 		
 		public String getThumbnail();
+		
+		public String getFanart();
 	}
 }

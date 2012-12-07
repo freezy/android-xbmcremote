@@ -103,6 +103,12 @@ public class NowPlayingController extends AbstractController implements INotifia
 				mNowPlayingActivity.updateCover(ConnectionFactory.getNowPlayingPoller(mActivity).getNowPlayingCover(), (currentlyPlaying != null) ? currentlyPlaying.getMediaType() : MediaType.UNKNOWN);
 				return true;
 				
+			case NowPlayingPollerThread.MESSAGE_FANART_CHANGED:
+				// TODO: FIX!!
+				mNowPlayingActivity.updateFanart(ConnectionFactory.getNowPlayingPoller(mActivity).getNowPlayingFanart(), (currentlyPlaying != null) ? currentlyPlaying.getMediaType() : MediaType.UNKNOWN);
+				return true;
+				
+				
 			case NowPlayingPollerThread.MESSAGE_CONNECTION_ERROR:
 				mPlayStatus = PlayStatus.UNKNOWN;
 				Log.w(TAG,"Received connection error from poller!");
