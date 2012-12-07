@@ -686,6 +686,9 @@ public class MusicClient extends Client implements IMusicClient {
 	 * @return SQL "ORDER BY" string
 	 */
 	private String songsOrderBy(Sort sort) {
+		if(sort == null) {
+			return "";
+		}
 		switch (sort.sortBy) {
 			case SortType.ALBUM:
 				return " ORDER BY lower(strAlbum) " + sort.sortOrder + ", iTrack " + sort.sortOrder;

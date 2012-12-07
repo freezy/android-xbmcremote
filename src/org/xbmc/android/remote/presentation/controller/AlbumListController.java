@@ -66,12 +66,13 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 /**
  * TODO Once we move to 1.6+, waste the deprecated code. 
  */
-@SuppressLint("NewApi")
+@SuppressLint("")
 public class AlbumListController extends ListController implements IController {
 	
 	private static final int mThumbSize = ThumbSize.SMALL;
@@ -137,7 +138,6 @@ public class AlbumListController extends ListController implements IController {
 	
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
-		mActivity = activity;
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
 		mInfoManager = ManagerFactory.getInfoManager(this);
@@ -183,7 +183,7 @@ public class AlbumListController extends ListController implements IController {
 	private void setAdapter(ArrayList<Album> value) {
 		switch (mCurrentView) {
 			case VIEW_LIST:
-				mList.setAdapter(new AlbumAdapter(mActivity, value));
+				((ListView)mList).setAdapter(new AlbumAdapter(mActivity, value));
 				mList.setVisibility(View.VISIBLE);
 				if (mGrid != null) {
 					mGrid.setVisibility(View.GONE);
@@ -191,12 +191,12 @@ public class AlbumListController extends ListController implements IController {
 				break;
 			case VIEW_GRID:
 				if (mGrid != null) {
-					mGrid.setAdapter(new AlbumGridAdapter(mActivity, value));
+					((GridView)mGrid).setAdapter(new AlbumGridAdapter(mActivity, value));
 					mGrid.setVisibility(View.VISIBLE);
 					mList.setVisibility(View.GONE);
 				} else {
 					mList.setVisibility(View.VISIBLE);
-					mList.setAdapter(new AlbumAdapter(mActivity, value));
+					((ListView)mList).setAdapter(new AlbumAdapter(mActivity, value));
 				}
 			break;
 		}

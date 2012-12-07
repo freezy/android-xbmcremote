@@ -65,9 +65,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
-@SuppressLint({ "NewApi", "NewApi" })
+@SuppressLint({ "", "" })
 public class EpisodeListController extends ListController implements IController {
 	
 	private static final int mThumbSize = ThumbSize.SMALL;
@@ -145,7 +146,7 @@ public class EpisodeListController extends ListController implements IController
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
-					mList.setAdapter(new EpisodeAdapter(mActivity, value));
+					((ListView)mList).setAdapter(new EpisodeAdapter(mActivity, value));
 				} else {
 					setNoDataMessage("No episodes found.", R.drawable.icon_movie_dark);
 				}

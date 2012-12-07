@@ -36,7 +36,6 @@ import org.xbmc.api.info.FileTypes;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.type.MediaType;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -54,6 +53,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 
 public class FileListController extends ListController implements IController {
 	
@@ -222,11 +222,10 @@ public class FileListController extends ListController implements IController {
     /**
      * Provide the cursor for the list view.
      */
-    @SuppressLint("NewApi")
 	public void setListAdapter(ListAdapter adapter) {
         synchronized (this) {
             mAdapter = adapter;
-            mList.setAdapter(adapter);
+            ((ListView)mList).setAdapter(adapter);
         }
     }
 

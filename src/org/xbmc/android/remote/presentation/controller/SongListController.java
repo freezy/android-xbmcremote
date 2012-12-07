@@ -57,6 +57,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class SongListController extends ListController implements IController {
@@ -92,7 +93,7 @@ public class SongListController extends ListController implements IController {
 	private boolean mLoadCovers = false;
 	
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
-		mActivity = activity;
+		
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		
 		((ISortableManager)mMusicManager).setSortKey(AbstractManager.PREF_SORT_KEY_SONG);
@@ -163,14 +164,14 @@ public class SongListController extends ListController implements IController {
 		}
 	}
 	
-	@SuppressLint("NewApi")
+	@SuppressLint("")
 	private void fetch() {
 		final String title = mAlbum != null ? mAlbum.name + " - " : mArtist != null ? mArtist.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "Songs";
 		DataResponse<ArrayList<Song>> response = new DataResponse<ArrayList<Song>>() {
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
-					mList.setAdapter(new SongAdapter(mActivity, value));
+					((ListView)mList).setAdapter(new SongAdapter(mActivity, value));
 				} else {
 					setTitle(title);
 					setNoDataMessage("No songs found", R.drawable.icon_song_dark);

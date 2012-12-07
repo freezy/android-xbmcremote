@@ -51,6 +51,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class ArtistListController extends ListController implements IController {
@@ -102,11 +103,11 @@ public class ArtistListController extends ListController implements IController 
 					
 			final String title = mGenre != null ? mGenre.name + " - " : "" + "Artists";
 			DataResponse<ArrayList<Artist>> response = new DataResponse<ArrayList<Artist>>() {
-				@SuppressLint("NewApi")
+				@SuppressLint("")
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
-						mList.setAdapter(new ArtistAdapter(mActivity, value));
+						((ListView)mList).setAdapter(new ArtistAdapter(mActivity, value));
 					} else {
 						setTitle(title);
 						setNoDataMessage("No artists found.", R.drawable.icon_artist_dark);

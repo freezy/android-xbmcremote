@@ -320,6 +320,8 @@ public abstract class AbstractController implements INotifiableController {
 			Log.i(TAG, "### running on UI at " + mActivity.getClass().getSimpleName());
 			mHandler.post(action);
 			//mActivity.runOnUiThread(action);
+		} else {
+			Log.e(TAG, "### no UI to run on " + mActivity.getClass().getSimpleName());
 		}
 	}
 	

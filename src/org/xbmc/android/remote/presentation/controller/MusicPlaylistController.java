@@ -61,6 +61,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 public class MusicPlaylistController extends ListController implements IController, Callback {
 	
@@ -111,7 +112,7 @@ public class MusicPlaylistController extends ListController implements IControll
 			}, mActivity.getApplicationContext());
 			
 			mMusicManager.getPlaylist(new DataResponse<ArrayList<String>>() {
-	  	  		@SuppressLint("NewApi")
+	  	  		@SuppressLint("")
 				public void run() {
 	  	  			if (value.size() > 0) {
 		  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
@@ -121,7 +122,7 @@ public class MusicPlaylistController extends ListController implements IControll
 						}
 						setTitle("Music playlist (" + (value.size() > MusicClient.PLAYLIST_LIMIT ? MusicClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
 						mSongAdapter = new SongAdapter(activity, items);
-						mList.setAdapter(mSongAdapter);
+						((ListView)mList).setAdapter(mSongAdapter);
 						if (mCurrentPosition >= 0) {
 							mList.setSelection(mCurrentPosition);
 						}

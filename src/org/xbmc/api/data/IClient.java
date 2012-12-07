@@ -23,8 +23,6 @@ package org.xbmc.api.data;
 
 import org.xbmc.api.object.Host;
 
-import android.content.Context;
-
 
 /**
  * This is the interface between the business layer and the presentation layer.

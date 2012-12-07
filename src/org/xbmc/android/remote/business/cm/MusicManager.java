@@ -17,7 +17,6 @@ import org.xbmc.android.jsonrpc.api.model.ListModel.AlbumFilterRule;
 import org.xbmc.android.jsonrpc.api.model.ListModel.FilterRule.Value;
 import org.xbmc.android.jsonrpc.api.model.ListModel.SongFilter;
 import org.xbmc.android.jsonrpc.api.model.ListModel.SongFilterRule;
-import org.xbmc.android.jsonrpc.api.model.PlayerModel;
 import org.xbmc.android.jsonrpc.api.model.PlaylistModel;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IMusicManager;
@@ -32,7 +31,6 @@ import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 public class MusicManager extends AbstractManager implements IMusicManager,
 		ISortableManager, INotifiableManager {

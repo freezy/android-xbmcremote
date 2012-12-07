@@ -21,12 +21,9 @@
 
 package org.xbmc.api.business;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.xbmc.api.object.FileLocation;
-import org.xbmc.api.type.DirectoryMask;
 
 import android.content.Context;
 

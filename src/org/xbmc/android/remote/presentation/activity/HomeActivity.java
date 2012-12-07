@@ -33,7 +33,6 @@ import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -88,7 +87,6 @@ public class HomeActivity extends Activity {
 //	private ConnectionManager mConnectionManager = null;
 	
 	@Override
-	@TargetApi(9)
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 /*		mConnectionManager = new ConnectionManager(getApplicationContext(), new HostConfig("192.168.0.100"));

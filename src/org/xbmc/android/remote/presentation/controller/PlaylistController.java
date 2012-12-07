@@ -63,6 +63,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 public class PlaylistController extends ListController implements IController, Callback {
 	
@@ -134,7 +135,7 @@ public class PlaylistController extends ListController implements IController, C
 		switch (playListId) {
 		case MUSIC_PLAYLIST_ID:
 			mMusicManager.getPlaylist(new DataResponse<ArrayList<String>>() {
-	  	  		@SuppressLint("NewApi")
+	  	  		@SuppressLint("")
 				public void run() {
 	  	  			if (value.size() > 0) {
 		  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
@@ -144,7 +145,7 @@ public class PlaylistController extends ListController implements IController, C
 						}
 						setTitle("Music playlist (" + (value.size() > MusicClient.PLAYLIST_LIMIT ? MusicClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
 						mItemAdapter = new ItemAdapter(mPlaylistActivity, items);
-						mList.setAdapter(mItemAdapter);
+						((ListView)mList).setAdapter(mItemAdapter);
 						if (mCurrentPosition >= 0) {
 							mList.setSelection(mCurrentPosition);
 						}
@@ -157,7 +158,7 @@ public class PlaylistController extends ListController implements IController, C
 			break;
 		case VIDEO_PLAYLIST_ID:
 			mVideoManager.getPlaylist(new DataResponse<ArrayList<String>>() {
-	  	  		@SuppressLint("NewApi")
+	  	  		@SuppressLint("")
 				public void run() {
 	  	  			if (value.size() > 0) {
 		  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
@@ -167,7 +168,7 @@ public class PlaylistController extends ListController implements IController, C
 						}
 						setTitle("Video playlist (" + (value.size() > VideoClient.PLAYLIST_LIMIT ? VideoClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
 						mItemAdapter = new ItemAdapter(mPlaylistActivity, items);
-						mList.setAdapter(mItemAdapter);
+						((ListView)mList).setAdapter(mItemAdapter);
 						if (mCurrentPosition >= 0) {
 							mList.setSelection(mCurrentPosition);
 						}

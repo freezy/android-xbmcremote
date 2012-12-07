@@ -40,7 +40,6 @@ import org.xbmc.api.object.Song;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.WifiStateException;
-import org.xbmc.httpapi.client.MusicClient;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -120,7 +119,7 @@ public class MusicManager extends AbstractManager implements IMusicManager,
 		mHandler.post(new Command<ArrayList<Album>>(response, this) {
 			@Override
 			public void doRun() throws Exception {
-				response.value = music(context).getAlbums(MusicManager.this,
+				mResponse.value = music(context).getAlbums(MusicManager.this,
 						artist, getSort(SortType.ALBUM));
 			}
 		});

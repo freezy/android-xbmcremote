@@ -46,6 +46,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 public class MovieGenreListController extends ListController implements IController {
 	
@@ -85,11 +86,11 @@ public class MovieGenreListController extends ListController implements IControl
 			
 			final String title = mType == TYPE_MOVIE ? "Movie " : mType == TYPE_TVSHOW ? "TV Show " : "" + "genres";
 			DataResponse<ArrayList<Genre>> response = new DataResponse<ArrayList<Genre>>() {
-				@SuppressLint("NewApi")
+				@SuppressLint("")
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
-						mList.setAdapter(new GenreAdapter(mActivity, value));
+						((ListView)mList).setAdapter(new GenreAdapter(mActivity, value));
 					} else {
 						setTitle(title);
 						setNoDataMessage("No genres found.", R.drawable.icon_genre_dark);

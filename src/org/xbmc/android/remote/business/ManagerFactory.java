@@ -30,8 +30,6 @@ import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.presentation.INotifiableController;
 
-import android.util.Log;
-
 public abstract class ManagerFactory {
 
 	private static EventClientManager sEventClientManager = null;

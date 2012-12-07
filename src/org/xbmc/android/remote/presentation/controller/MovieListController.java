@@ -66,6 +66,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class MovieListController extends ListController implements IController {
@@ -142,11 +143,11 @@ public class MovieListController extends ListController implements IController {
 	private void fetch() {
 		final String title = mActor != null ? mActor.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "Movies";
 		DataResponse<ArrayList<Movie>> response = new DataResponse<ArrayList<Movie>>() {
-			@SuppressLint("NewApi")
+			@SuppressLint("")
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
-					mList.setAdapter(new MovieAdapter(mActivity, value));
+					((ListView)mList).setAdapter(new MovieAdapter(mActivity, value));
 				} else {
 					setTitle(title);
 					setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);

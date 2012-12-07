@@ -49,6 +49,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class ActorListController extends ListController implements IController {
@@ -87,11 +88,11 @@ public class ActorListController extends ListController implements IController {
 			
 			final String title = mType == TYPE_MOVIE ? "Movie " : mType == TYPE_TVSHOW ? "TV " : "" + "Actors";
 			DataResponse<ArrayList<Actor>> response = new DataResponse<ArrayList<Actor>>() {
-				@SuppressLint("NewApi")
+				@SuppressLint("")
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
-						mList.setAdapter(new ActorAdapter(mActivity, value));
+						((ListView)mList).setAdapter(new ActorAdapter(mActivity, value));
 					} else {
 						setTitle(title);
 						setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);

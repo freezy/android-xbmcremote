@@ -10,8 +10,6 @@ import org.xbmc.api.info.FileTypes;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.httpapi.Connection;
 
-import android.util.Log;
-
 public class FileLocation implements INamedResource {
 
 	public String name, path, displayPath;

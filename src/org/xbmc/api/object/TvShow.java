@@ -64,26 +64,23 @@ public class TvShow implements ICoverArt, INamedResource {
 		return title;
 	}
 	
-	/**
-	 * Composes the complete path to the album's thumbnail
-	 * @return Path to thumbnail
-	 */
-	public String getThumbUri() {
-		return getThumbUri(this);
-	} 
-	
 	public static String getThumbUri(ICoverArt cover) {
+		// use the banner if possible
+		if (cover.getMediaType() == MediaType.VIDEO_TVSHOW) {
+			return cover.getPath() != null ? cover.getPath().replace("\\", "/") + "banner.jpg" : getFallbackThumbUri(cover);
+		}
+		
+		// then use the thumbnail
 		if(cover.getThumbnail() != null) {
 			return cover.getThumbnail();
 		}
-		if (cover.getMediaType() == MediaType.VIDEO_TVSHOW) {
-			return cover.getPath() != null ? cover.getPath().replace("\\", "/") + "banner.jpg" : getFallbackThumbUri(cover);
-		} else if (cover.getMediaType() == MediaType.VIDEO_TVEPISODE) {
+
+		// then fallback
+		if (cover.getMediaType() == MediaType.VIDEO_TVEPISODE) {
 			final String hex = Crc32.formatAsHexLowerCase(cover.getCrc());
 			return THUMB_PREFIX + hex.charAt(0) + "/" + hex + ".tbn";
-		} else {
-			return getFallbackThumbUri(cover);
-		}
+		} 
+		return getFallbackThumbUri(cover);
 	}
 	
 	public static String getFallbackThumbUri(ICoverArt cover) {

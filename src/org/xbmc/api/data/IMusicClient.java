@@ -23,7 +23,6 @@ package org.xbmc.api.data;
 
 import java.util.ArrayList;
 
-import org.xbmc.android.jsonrpc.api.call.Playlist;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;

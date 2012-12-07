@@ -36,7 +36,6 @@ import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
 import org.xbmc.api.type.ThumbSize;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -55,9 +54,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.Toast;
 
-@TargetApi(11)
 public class SeasonListController extends ListController implements IController {
 
 	private static final int mThumbSize = ThumbSize.MEDIUM;
@@ -126,7 +125,7 @@ public class SeasonListController extends ListController implements IController 
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title +" (" + value.size() + ")");
-					mList.setAdapter(new SeasonAdapter(mActivity, value));
+					((GridView)mList).setAdapter(new SeasonAdapter(mActivity, value));
 				} else {
 					setTitle(title);
 					setNoDataMessage("No seasons found.", R.drawable.icon_movie_dark);

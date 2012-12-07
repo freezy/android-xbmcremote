@@ -175,7 +175,7 @@ public class NowPlayingActivity extends Activity {
 		}
 	}
 
-	@SuppressLint("NewApi")
+	@SuppressLint("")
 	public void updateFanart(Bitmap fanart, int mediaType) {
 		final ImageView background = (ImageView) findViewById(R.id.fanart);
 		if (fanart == null) {

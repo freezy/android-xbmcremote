@@ -21,15 +21,12 @@
 
 package org.xbmc.android.remote.business;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.FileLocation;
-import org.xbmc.api.type.DirectoryMask;
 import org.xbmc.api.type.SortType;
 import org.xbmc.httpapi.WifiStateException;
 
