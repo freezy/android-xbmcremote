@@ -87,7 +87,7 @@ public class FileLocation implements INamedResource {
 			name = trimmed.substring(trimmed.lastIndexOf("/") + 1);
 		}
 		
-		if (path.endsWith(".m3u") || path.endsWith(".pls")) {
+		if (path.endsWith(".m3u") || path.endsWith(".pls") || path.endsWith(".xsp")) {
 			isDirectory = false;
 		}
 		
