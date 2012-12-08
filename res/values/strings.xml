@@ -60,5 +60,6 @@ Have fun.</string>
     <string name="sort_lastplayed">Recently Played</string>
     <string name="sort_lastplayed_r">Recently Played (reverse)</string>
     <!-- End sort -->
+    <string name="crash_toast_text">XBMC Crashed. Generating error report.</string>
 
 </resources>
