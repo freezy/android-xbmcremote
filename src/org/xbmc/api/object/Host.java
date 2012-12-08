@@ -22,9 +22,11 @@
 package org.xbmc.api.object;
 
 import java.io.Serializable;
+import java.net.URLEncoder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xbmc.android.jsonrpc.config.HostConfig;
 
 import android.util.Log;
 
@@ -37,6 +39,7 @@ public class Host implements Serializable {
 	private static final String TAG = "Host";
 	
 	public static final int DEFAULT_HTTP_PORT = 8080;
+	public static final int DEFAULT_JSON_PORT = 9090;
 	public static final int DEFAULT_EVENTSERVER_PORT = 9777;
 	public static final int DEFAULT_TIMEOUT = 5000;
 	public static final int DEFAULT_WOL_WAIT = 40;
@@ -58,6 +61,11 @@ public class Host implements Serializable {
 	 * HTTP API Port
 	 */
 	public int port = DEFAULT_HTTP_PORT;
+	/**
+	 * JSON API Port
+	 */
+	public int jsonPort = DEFAULT_JSON_PORT;
+	
 	/**
 	 * User name of in case of HTTP authentication
 	 */
@@ -96,6 +104,11 @@ public class Host implements Serializable {
 	public int wol_port = DEFAULT_WOL_PORT;
 	
 	/**
+	 * Whether or not to use the JSON api
+	 */
+	public boolean jsonApi = false;
+	
+	/**
 	 * Something readable
 	 */
 	public String toString() {
@@ -115,6 +128,8 @@ public class Host implements Serializable {
 			json.put("user", user);
 			json.put("pass", pass);
 			json.put("esPort", esPort);
+			json.put("jsonPort", jsonPort);
+			json.put("jsonApi", jsonApi);
 			json.put("timeout", timeout);
 			json.put("wifi_only", wifi_only);
 			json.put("access_point", access_point);
@@ -126,6 +141,29 @@ public class Host implements Serializable {
 			Log.e(TAG, "Error in toJson", e);
 			return "";
 		}
+	}
+	
+	public HostConfig toHostConfig() {
+		return new HostConfig(addr, port, jsonPort, user, pass);
+	}
+	
+	public int getTimeout() {
+		return this.timeout >= 0 ? this.timeout : Host.DEFAULT_TIMEOUT;		
+	}
+	
+	public String getVfsUrl(String path) {
+		String specialPath = "vfs";
+//		if(path.startsWith("image://")) {
+//			path = path.replace("image://", "");
+//			// trim trailing slash
+//			if(path.lastIndexOf('/') == path.length() - 1) {
+//				path = path.substring(0, path.length() - 1);
+//			}
+//			if(ManagerFactory.isFrodo()) {
+//				specialPath = "image";
+//			}
+//		}
+		return "http://" + addr + ":" + port + "/" + specialPath + "/" + URLEncoder.encode(path);
 	}
 	
 	private static final long serialVersionUID = 7886482294339161092L;

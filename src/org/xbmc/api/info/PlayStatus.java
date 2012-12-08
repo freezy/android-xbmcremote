@@ -21,6 +21,7 @@ $ *      Copyright (C) 2005-2009 Team XBMC
 
 package org.xbmc.api.info;
 
+
 /**
  * Describes a play status, which can be:
  * <ul>
@@ -46,4 +47,16 @@ public abstract class PlayStatus {
 			return PlayStatus.STOPPED;
 		}
 	}
+	
+	// JSON-RPC handler
+	public static int parse(Integer currentPlayer, Integer response) {
+		if (response == 0 && currentPlayer != null) {
+			return PlayStatus.PAUSED;
+		// we could be going backwards or forwards, but we're playing
+		} else if (response >= 0 || response <= 0) {
+			return PlayStatus.PLAYING;
+		}
+		return PlayStatus.STOPPED;
+	}
+	
 }

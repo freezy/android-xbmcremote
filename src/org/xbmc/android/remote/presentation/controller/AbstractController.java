@@ -33,6 +33,7 @@ import org.xbmc.android.util.HostFactory;
 import org.xbmc.android.util.WifiHelper;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.Host;
+import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.httpapi.NoNetworkException;
 import org.xbmc.httpapi.NoSettingsException;
 import org.xbmc.httpapi.WrongDataFormatException;
@@ -40,6 +41,7 @@ import org.xbmc.httpapi.WrongDataFormatException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
@@ -54,7 +56,7 @@ import android.widget.Toast;
  * 
  * @author Team XBMC
  */
-public abstract class AbstractController {
+public abstract class AbstractController implements INotifiableController {
 	
 	public static final int MAX_WAIT_FOR_WIFI = 20;
 	public static final String TAG = "AbstractController";
@@ -247,7 +249,7 @@ public abstract class AbstractController {
 				if (e.getMessage() != null) {
 					builder.setMessage(e.getMessage().toString());
 				}
-				Log.e(TAG, e.getStackTrace().toString());
+				Log.e(TAG, e.getMessage(), e);
 			}
 		} catch (HttpException e) {
 			if (e.getMessage().startsWith("401")) {
@@ -315,9 +317,11 @@ public abstract class AbstractController {
 
 	public void runOnUI(Runnable action) {
 		if (mHandler != null) {
-			//Log.i(TAG, "### running on UI at " + mActivity.getClass().getSimpleName());
+			Log.i(TAG, "### running on UI at " + mActivity.getClass().getSimpleName());
 			mHandler.post(action);
 			//mActivity.runOnUiThread(action);
+		} else {
+			Log.e(TAG, "### no UI to run on " + mActivity.getClass().getSimpleName());
 		}
 	}
 	
@@ -330,4 +334,9 @@ public abstract class AbstractController {
 		mActivity = activity;
 		mPaused = false;
 	}
+	
+	public Context getApplicationContext() {
+		return mActivity.getApplicationContext();
+	}
+	
 }

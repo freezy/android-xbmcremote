@@ -21,8 +21,6 @@
 
 package org.xbmc.android.util;
 
-import java.io.IOException;
-
 import org.xbmc.android.remote.business.EventClientManager;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.eventclient.ButtonCodes;

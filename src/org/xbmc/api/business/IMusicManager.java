@@ -26,9 +26,12 @@ import java.util.ArrayList;
 import org.xbmc.api.object.Album;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.object.Genre;
+import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Song;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 /**
  * This is the interface between the presentation layer and the business layer.
@@ -184,13 +187,6 @@ public interface IMusicManager extends IManager {
 	public void removeFromPlaylist(final DataResponse<Boolean> response, final int position, final Context context);
 	
 	/**
-	 * Removes media from the current playlist. It is not possible to remove the media if it is currently being played.
-	 * @param position Complete path (including filename) of the media to be removed.
-	 * @return True on success, false otherwise.
-	 */
-	public void removeFromPlaylist(final DataResponse<Boolean> response, final String path, final Context context);
-	
-	/**
 	 * Plays an album
 	 * @param response Response object
 	 * @param album Album to play
@@ -235,12 +231,6 @@ public interface IMusicManager extends IManager {
 	public void play(final DataResponse<Boolean> response, final Artist artist, final Genre genre, final Context context);
 	
 	/**
-	 * Starts playing the next media in the current playlist. 
-	 * @param response Response object
-	 */
-	public void playlistNext(final DataResponse<Boolean> response, final Context context);
-	
-	/**
 	 * Returns an array of songs on the playlist. Empty array if nothing is playing.
 	 * @param response Response object
 	 */
@@ -270,5 +260,14 @@ public interface IMusicManager extends IManager {
 	 * Put in here everything that has to be cleaned up after leaving an activity.
 	 */
 	public void postActivity();
+	
+	/**
+	 * Does the actual downloading of images into various caches
+	 * @param response
+	 * @param cover
+	 * @param thumbSize
+	 * @param context
+	 */
+	public void downloadCover(final DataResponse<Bitmap> response, ICoverArt cover, int thumbSize, Context context) throws WifiStateException;
 	
 }

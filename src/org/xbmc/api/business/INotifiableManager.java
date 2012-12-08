@@ -25,6 +25,23 @@ import org.xbmc.android.remote.business.Command;
 
 public interface INotifiableManager {
 	
+	public static final String PREF_SORT_BY_PREFIX = "sort_by_";
+	public static final String PREF_SORT_ORDER_PREFIX = "sort_order_";
+	
+	/* The idea of the sort keys is to remember different sort settings for
+	 * each type. In your controller, make sure you run setSortKey() in the
+	 * onCreate() method.
+	 */
+	public static final int PREF_SORT_KEY_ALBUM = 1;
+	public static final int PREF_SORT_KEY_ARTIST = 2;
+	public static final int PREF_SORT_KEY_SONG = 3;
+	public static final int PREF_SORT_KEY_GENRE = 4;
+	public static final int PREF_SORT_KEY_FILEMODE = 5;
+	public static final int PREF_SORT_KEY_SHOW = 6;
+	public static final int PREF_SORT_KEY_MOVIE = 7;
+	public static final int PREF_SORT_KEY_EPISODE = 8;
+	
+	
 	public void onFinish(DataResponse<?> response);
 	public void onWrongConnectionState(int state, Command<?> cmd);
 	public void onError(Exception e);

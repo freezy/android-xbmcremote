@@ -31,7 +31,6 @@ import org.xbmc.android.util.YoutubeURLParser;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IInfoManager;
-import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.presentation.INotifiableController;
 
 import android.app.Activity;
@@ -81,9 +80,9 @@ public class MediaIntentController extends AbstractController implements IContro
 	 */
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		mInfoManager.setController(this);
-		mControlManager.setController(this);
-		mInfoManager.getSystemInfo(mXbmcStatusHandler, SystemInfo.SYSTEM_BUILD_VERSION, mActivity.getApplicationContext());
+		mInfoManager = ManagerFactory.getInfoManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
+		mInfoManager.getSystemVersion(mXbmcStatusHandler, mActivity.getApplicationContext());
 	}
 
 	public void playUrl(String url) {

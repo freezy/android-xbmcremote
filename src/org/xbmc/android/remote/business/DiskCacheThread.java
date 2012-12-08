@@ -29,6 +29,7 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.MediaType;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -41,7 +42,7 @@ import android.graphics.BitmapFactory;
  * 
  * @author Team XBMC
  */
-class DiskCacheThread extends AbstractThread {
+public class DiskCacheThread extends AbstractThread {
 	
 	/**
 	 * Singleton instance of this thread
