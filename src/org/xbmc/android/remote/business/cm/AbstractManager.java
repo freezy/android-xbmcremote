@@ -72,6 +72,7 @@ public class AbstractManager implements INotifiableManager {
 		if (connectionManager == null) {
 			connectionManager = new ConnectionManager(context,
 					HostFactory.host.toHostConfig());
+			connectionManager.setPreferHTTP();
 		}
 		return connectionManager;
 	}
