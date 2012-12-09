@@ -21,6 +21,7 @@
 
 package org.xbmc.android.remote.presentation.controller;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -231,6 +232,15 @@ public abstract class AbstractController implements INotifiableController {
 			builder.setNeutralButton("Settings", new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					mActivity.startActivity(new Intent(mActivity, SettingsActivity.class));
+					mDialogShowing = false;
+				}
+			});
+		} catch (FileNotFoundException e) {
+			builder.setTitle("HTTPAPI not found.");
+			builder.setMessage("With XBMC 12 (Frodo), the API this remote is using, was removed. If you've updated to Frodo recently, please enable the new JSON-RPC API in your host settings.");
+			builder.setNeutralButton("Enable JSON-RPC", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					mActivity.startActivity(new Intent(mActivity, HostSettingsActivity.class));
 					mDialogShowing = false;
 				}
 			});

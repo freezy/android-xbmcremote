@@ -21,6 +21,7 @@
 
 package org.xbmc.android.remote.presentation.controller;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
@@ -364,7 +365,8 @@ public class MovieListController extends ListController implements IController {
 			view.subtitle = StringUtil.join(" / ", movie.genres);
 			view.subtitleRight = movie.year > 0 ? String.valueOf(movie.year) : "";
 			view.bottomtitle = movie.runtime;
-			view.bottomright = String.valueOf(movie.rating);
+			final DecimalFormat df = new DecimalFormat("#.0");
+			view.bottomright = String.valueOf(df.format(movie.rating));
 			
 			if (mLoadCovers) {
 				if(mVideoManager.coverLoaded(movie, mThumbSize)){

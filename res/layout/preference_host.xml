@@ -55,7 +55,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:text="" />
+            android:text="9090" />
 
         <CheckBox
             android:id="@+id/pref_jsonApi"

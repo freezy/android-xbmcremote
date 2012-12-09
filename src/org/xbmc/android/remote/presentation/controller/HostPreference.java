@@ -169,7 +169,7 @@ public class HostPreference extends DialogPreference {
 			mNameView.setText(mHost.name);
 			mHostView.setText(mHost.addr);
 			mPortView.setText(String.valueOf(mHost.port));
-			mJsonPortView.setText(String.valueOf(mHost.jsonPort));
+			mJsonPortView.setText(String.valueOf(mHost.jsonPort == 0 ? Host.DEFAULT_JSON_PORT : mHost.jsonPort));
 			mJsonApiView.setChecked(mHost.jsonApi);
 			mUserView.setText(mHost.user);
 			mPassView.setText(mHost.pass);
