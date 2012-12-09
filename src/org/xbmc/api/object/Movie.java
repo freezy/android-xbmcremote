@@ -66,7 +66,8 @@ public class Movie implements ICoverArt, Serializable, INamedResource {
 		this.title = detail.title;
 		this.year = detail.year;
 		this.director = detail.director;
-		this.runtime = Integer.toString(detail.runtime);
+		// runtime is in minutes
+		this.runtime = Integer.toString(detail.runtime / 60);
 		this.genres = detail.genre;
 		this.rating = detail.rating;
 		this.localPath = "";
