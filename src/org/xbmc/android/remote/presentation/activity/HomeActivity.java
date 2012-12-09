@@ -21,25 +21,18 @@
 
 package org.xbmc.android.remote.presentation.activity;
 
-import org.xbmc.android.jsonrpc.api.AbstractCall;
-import org.xbmc.android.jsonrpc.api.call.AudioLibrary;
-import org.xbmc.android.jsonrpc.api.model.AudioModel;
-import org.xbmc.android.jsonrpc.api.model.AudioModel.AlbumDetails;
-import org.xbmc.android.jsonrpc.config.HostConfig;
-import org.xbmc.android.jsonrpc.io.ApiCallback;
-import org.xbmc.android.jsonrpc.io.ConnectionManager;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.CacheManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.HomeController;
 import org.xbmc.android.remote.presentation.controller.HomeController.ProgressThread;
+import org.xbmc.android.remote.presentation.notification.NowPlayingNotificationManager;
 import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -94,7 +87,6 @@ public class HomeActivity extends Activity {
 //	private ConnectionManager mConnectionManager = null;
 	
 	@Override
-	@TargetApi(9)
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 /*		mConnectionManager = new ConnectionManager(getApplicationContext(), new HostConfig("192.168.0.100"));

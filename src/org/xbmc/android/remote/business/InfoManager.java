@@ -27,9 +27,11 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.FileLocation;
-import org.xbmc.api.type.DirectoryMask;
+import org.xbmc.api.type.SortType;
+import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
+import android.util.Log;
 
 
 /**
@@ -44,14 +46,26 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	 * @param response Response object
 	 * @param field Field to return
 	 */
-	public void getSystemInfo(final DataResponse<String> response, final int field, final Context context) {
+	public void getSystemVersion(final DataResponse<String> response, final Context context) {
 		mHandler.post(new Command<String>(response, this){
 			@Override
 			public void doRun() throws Exception {
-				response.value = info(context).getSystemInfo(InfoManager.this, field);
+				response.value = info(context).getSystemVersion(InfoManager.this);
 			}
 			
 		});
+	}
+	
+	/**
+	 * SYNCHRONOUSLY gets API Version (since we need this for layout capabilities)
+	 */
+	public int getAPIVersion(final Context context) {
+		try {
+			return info(context).getAPIVersion(InfoManager.this);
+		} catch(WifiStateException e) {
+			Log.e("InfoManager", e.getMessage(), e);
+		}
+		return 0;
 	}
 	
 	/**
@@ -72,32 +86,13 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	 * Returns the contents of a directory
 	 * @param response Response object
 	 * @param path     Path to the directory
-	 * @param mask     Mask to filter
-	 * @param offset   Offset (0 for none)
-	 * @param limit    Limit (0 for none)
-	 * @return
-	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit, final Context context, final int mediaType) {
-		mHandler.post(new Command<ArrayList<FileLocation>>(response, this){
-			@Override
-			public void doRun() throws Exception {
-				response.value = info(context).getDirectory(InfoManager.this, path, mask, offset, limit, mediaType);
-			}
-			
-		});
-	}
-	
-	/**
-	 * Returns the contents of a directory
-	 * @param response Response object
-	 * @param path     Path to the directory
 	 * @return
 	 */
 	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final Context context, final int mediaType) {
 		mHandler.post(new Command<ArrayList<FileLocation>>(response, this){
 			@Override
 			public void doRun() throws Exception {
-				response.value = info(context).getDirectory(InfoManager.this, path, mediaType);
+				response.value = info(context).getDirectory(InfoManager.this, path, mediaType, getSort(SortType.FILENAME));
 			}
 			
 		});
@@ -156,33 +151,5 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 				response.value = info(context).setGuiSettingInt(InfoManager.this, field, val);
 			}
 		});
-	}
-	
-	/**
-	 * Sets an integer GUI setting
-	 * @param response Response object
-	 * @param field Field to return (see GuiSettings.java)
-	 * @param val Boolean value to set
-	 */
-	public void setGuiSettingBool(final DataResponse<Boolean> response, final int field, final boolean val, final Context context) {
-		mHandler.post(new Command<Boolean>(response, this) {
-			@Override
-			public void doRun() throws Exception { 
-				response.value = info(context).setGuiSettingBool(InfoManager.this, field, val);
-			}
-		});
-	}
-	
-//	public <T> void getGuiSetting(final Class<T> t, final DataResponse<T> response, final int setting) {
-//		mHandler.post(new Command<T>(response, this) {
-//			@Override
-//			public void doRun() throws Exception {
-//				switch(GuiSettings.getTypeInt(setting)) {
-//				case 1:
-//					
-//				case 3:
-//				}
-//			}
-//		});
-//	}
+	}	
 }

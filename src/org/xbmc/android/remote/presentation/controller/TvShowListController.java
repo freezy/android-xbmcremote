@@ -31,6 +31,7 @@ import org.xbmc.android.remote.presentation.activity.TvShowDetailsActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.remote.presentation.widget.FlexibleItemView;
 import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.util.StringUtil;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.ISortableManager;
@@ -52,19 +53,21 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 public class TvShowListController extends ListController implements IController {
 	
@@ -134,6 +137,7 @@ public class TvShowListController extends ListController implements IController 
 	private void fetch() {
 		// tv show and episode both are using the same manager so set the sort key here
 		((ISortableManager)mTvManager).setSortKey(AbstractManager.PREF_SORT_KEY_SHOW);
+		((ISortableManager)mTvManager).setIgnoreArticle(PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext()).getBoolean(ISortableManager.SETTING_IGNORE_ARTICLE, true));
 		((ISortableManager)mTvManager).setPreferences(mActivity.getPreferences(Context.MODE_PRIVATE));
 
 		final String title = mActor != null ? mActor.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "TV Shows";
@@ -141,7 +145,7 @@ public class TvShowListController extends ListController implements IController 
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
-					mList.setAdapter(new TvShowAdapter(mActivity, value));
+					((ListView)mList).setAdapter(new TvShowAdapter(mActivity, value));
 				} else {
 					setTitle(title);
 					setNoDataMessage("No TV shows found.", R.drawable.icon_movie_dark);
@@ -323,7 +327,7 @@ public class TvShowListController extends ListController implements IController 
 			view.position = position;
 			view.posterOverlay = show.watched ? mWatchedBitmap : null;
 			view.title = show.title;
-			view.subtitle = show.genre;
+			view.subtitle = StringUtil.join(",", show.genre);
 			view.subtitleRight = show.firstAired != null ? show.firstAired : "";
 			view.bottomtitle = show.numEpisodes + " episodes";
 			view.bottomright = String.valueOf(((float) Math.round(show.rating * 10)) / 10);
@@ -355,12 +359,8 @@ public class TvShowListController extends ListController implements IController 
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mTvManager != null) {
-			mTvManager.setController(this);
-		}
-		if (mControlManager != null) {
-			mControlManager.setController(this);
-		}
+		mTvManager = ManagerFactory.getTvManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 	}
 
 }

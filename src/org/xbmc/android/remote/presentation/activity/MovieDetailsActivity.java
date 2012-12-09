@@ -31,6 +31,7 @@ import org.xbmc.android.remote.presentation.widget.JewelView;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
+import org.xbmc.android.util.StringUtil;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
@@ -125,8 +126,8 @@ public class MovieDetailsActivity extends Activity {
 		if (movie.rating > -1) {
 			((ImageView)findViewById(R.id.moviedetails_rating_stars)).setImageResource(sStarImages[(int)Math.round(movie.rating % 10)]);
 		}
-		((TextView)findViewById(R.id.moviedetails_director)).setText(movie.director);
-		((TextView)findViewById(R.id.moviedetails_genre)).setText(movie.genres);
+		((TextView)findViewById(R.id.moviedetails_director)).setText(StringUtil.join(",  ", movie.director));
+		((TextView)findViewById(R.id.moviedetails_genre)).setText(StringUtil.join(" / ", movie.genres));
 		((TextView)findViewById(R.id.moviedetails_runtime)).setText(movie.runtime);
 		((TextView)findViewById(R.id.moviedetails_rating)).setText(String.valueOf(movie.rating));
 		
@@ -190,7 +191,7 @@ public class MovieDetailsActivity extends Activity {
 						return;
 					}
 					numVotesView.setText(movie.numVotes > 0 ? " (" + movie.numVotes + " votes)" : "");
-					studioView.setText(movie.studio.equals("") ? NO_DATA : movie.studio);
+					studioView.setText(movie.studio.size() == 0 ? NO_DATA : StringUtil.join(", ", movie.studio));
 					plotView.setText(movie.plot.equals("") ? NO_DATA : movie.plot);
 					parentalView.setText(movie.rated.equals("") ? NO_DATA : movie.rated);
 					if (movie.trailerUrl != null && !movie.trailerUrl.equals("")) {
@@ -279,8 +280,8 @@ public class MovieDetailsActivity extends Activity {
 		}
 
 		public void onActivityResume(Activity activity) {
-			mVideoManager.setController(this);
-			mControlManager.setController(this);
+			mVideoManager = ManagerFactory.getVideoManager(this);
+			mControlManager = ManagerFactory.getControlManager(this);
 		}
 	}
 
