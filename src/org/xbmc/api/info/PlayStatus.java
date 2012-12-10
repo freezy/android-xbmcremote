@@ -49,14 +49,11 @@ public abstract class PlayStatus {
 	}
 	
 	// JSON-RPC handler
-	public static int parse(Integer currentPlayer, Integer response) {
-		if (response == 0 && currentPlayer != null) {
-			return PlayStatus.PAUSED;
+	public static int parse(Integer response) {
 		// we could be going backwards or forwards, but we're playing
-		} else if (response >= 0 || response <= 0) {
+		if (response >= 0 || response <= 0) {
 			return PlayStatus.PLAYING;
 		}
-		return PlayStatus.STOPPED;
+		return PlayStatus.PAUSED;
 	}
-	
 }
