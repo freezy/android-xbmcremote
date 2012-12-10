@@ -82,7 +82,7 @@ public class Episode implements ICoverArt {
 	 */
 	public String showTitle;
 
-	public ArrayList<Actor> actors = null;
+	public ArrayList<Actor> actors = new ArrayList<Actor>();
 	
 	public String thumbnail;
 

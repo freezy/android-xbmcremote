@@ -1,6 +1,7 @@
 package org.xbmc.android.remote.business.cm;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
@@ -22,6 +23,7 @@ import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IControlClient.ICurrentlyPlaying;
+import org.xbmc.api.info.PlayStatus;
 import org.xbmc.api.type.MediaType;
 import org.xbmc.api.type.SeekType;
 
@@ -210,7 +212,6 @@ public class ControlManager extends AbstractManager implements IControlManager {
 		if (item.file != null && item.file.contains("Nothing Playing")) {
 			return IControlClient.NOTHING_PLAYING;
 		} else {
-			Log.e("ControlManager", item.toString());
 			return new IControlClient.ICurrentlyPlaying() {
 				private static final long serialVersionUID = 5036994329211476714L;
 
@@ -228,7 +229,7 @@ public class ControlManager extends AbstractManager implements IControlManager {
 				}
 
 				public int getPlayStatus() {
-					return propertyValue.speed;
+					return PlayStatus.parse(propertyValue.speed);
 				}
 
 				public int getPlaylistPosition() {

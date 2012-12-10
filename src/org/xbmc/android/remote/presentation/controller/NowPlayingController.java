@@ -215,12 +215,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 
 	public void onActivityResume(final Activity activity) {
 		super.onActivityResume(activity);
-		new Thread("nowplaying-spawning") {
-			@Override
-			public void run() {
-				ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
-			}
-		}.start();
+		ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
 		mControlManager = ManagerFactory.getControlManager(this);
 	}
 }
