@@ -1,7 +1,6 @@
 package org.xbmc.android.remote.business.cm;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.xbmc.android.jsonrpc.api.AbstractCall;
@@ -19,6 +18,7 @@ import org.xbmc.android.jsonrpc.api.model.ListModel.BaseItem;
 import org.xbmc.android.jsonrpc.api.model.PlayerModel;
 import org.xbmc.android.jsonrpc.api.model.PlayerModel.PropertyValue;
 import org.xbmc.android.jsonrpc.api.model.PlaylistModel;
+import org.xbmc.android.util.StringUtil;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.data.IControlClient;
@@ -182,7 +182,10 @@ public class ControlManager extends AbstractManager implements IControlManager {
 												BaseItem.SEASON,
 												BaseItem.EPISODE,
 												BaseItem.FANART,
-												BaseItem.RUNTIME),
+												BaseItem.RUNTIME,
+												BaseItem.TAGLINE,
+												BaseItem.TITLE,
+												BaseItem.GENRE),
 												new ApiHandler<ICurrentlyPlaying, ListModel.AllItems>() {
 													@Override
 													public ICurrentlyPlaying handleResponse(
@@ -220,8 +223,11 @@ public class ControlManager extends AbstractManager implements IControlManager {
 						return item.label;
 					} else if ("episode".equals(item.type)) {
 						return item.showtitle;
+					} else if ("movie".equals(item.type)) {
+						return item.title;
 					}
-					return "";
+					String[] path = item.file.split("/");
+					return path[path.length - 1];
 				}
 
 				public int getTime() {
@@ -264,6 +270,10 @@ public class ControlManager extends AbstractManager implements IControlManager {
 							return "Season " + item.season + " / Episode "
 									+ item.episode;
 						}
+					} else if ("movie".equals(item.type)) {
+						return StringUtil.join(" / ", item.genre);
+					} else if ("picture".equals(item.type)) {
+						return "Image";
 					}
 					return "";
 				}
@@ -272,9 +282,15 @@ public class ControlManager extends AbstractManager implements IControlManager {
 					if ("song".equals(item.type)) {
 						return item.album;
 					} else if ("episode".equals(item.type)) {
-						return item.label;
+						return item.title;
+					} else if ("movie".equals(item.type)) {
+						String title = item.tagline;
+						if (title != null) {
+							return title;
+						}
 					}
-					return "";
+					String[] path = item.file.replaceAll("\\\\", "/").split("/");
+					return path[path.length - 2];
 				}
 
 				public int getMediaType() {
