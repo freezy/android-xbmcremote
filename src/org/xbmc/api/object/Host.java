@@ -153,16 +153,6 @@ public class Host implements Serializable {
 	
 	public String getVfsUrl(String path) {
 		String specialPath = "vfs";
-//		if(path.startsWith("image://")) {
-//			path = path.replace("image://", "");
-//			// trim trailing slash
-//			if(path.lastIndexOf('/') == path.length() - 1) {
-//				path = path.substring(0, path.length() - 1);
-//			}
-//			if(ManagerFactory.isFrodo()) {
-//				specialPath = "image";
-//			}
-//		}
 		return "http://" + addr + ":" + port + "/" + specialPath + "/" + URLEncoder.encode(path);
 	}
 	
