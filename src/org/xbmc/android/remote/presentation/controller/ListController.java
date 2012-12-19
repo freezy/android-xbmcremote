@@ -169,7 +169,11 @@ public abstract class ListController extends AbstractController implements Seria
 				public void run() {
 					mMessageText.setText(message);
 					mMessageText.setCompoundDrawablesWithIntrinsicBounds(imageResource, 0, 0, 0);
-					((ListView)mList).setAdapter(null);
+					if(mList instanceof GridView) {
+						((GridView)mList).setAdapter(null);
+					} else {
+						((ListView)mList).setAdapter(null);
+					}
 					mMessageGroup.setVisibility(View.VISIBLE);
 				}
 			});
