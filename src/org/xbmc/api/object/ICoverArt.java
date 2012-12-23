@@ -30,4 +30,5 @@ public interface ICoverArt extends Serializable {
 	public long getCrc();
 	public String getPath();
 	public String getName();
+	public String getThumbnail();
 }

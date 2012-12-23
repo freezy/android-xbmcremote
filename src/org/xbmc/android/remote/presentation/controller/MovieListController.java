@@ -21,6 +21,7 @@
 
 package org.xbmc.android.remote.presentation.controller;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
@@ -30,6 +31,7 @@ import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.util.ImportUtilities;
+import org.xbmc.android.util.StringUtil;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.ISortableManager;
@@ -40,6 +42,7 @@ import org.xbmc.api.object.Movie;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -51,19 +54,21 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 public class MovieListController extends ListController implements IController {
 
@@ -100,6 +105,7 @@ public class MovieListController extends ListController implements IController {
 		mControlManager = ManagerFactory.getControlManager(this);
 		
 		((ISortableManager)mVideoManager).setSortKey(AbstractManager.PREF_SORT_KEY_MOVIE);
+		((ISortableManager)mVideoManager).setIgnoreArticle(PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext()).getBoolean(ISortableManager.SETTING_IGNORE_ARTICLE, true));
 		((ISortableManager)mVideoManager).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		
 		final String sdError = ImportUtilities.assertSdCard();
@@ -138,10 +144,11 @@ public class MovieListController extends ListController implements IController {
 	private void fetch() {
 		final String title = mActor != null ? mActor.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "Movies";
 		DataResponse<ArrayList<Movie>> response = new DataResponse<ArrayList<Movie>>() {
+			@SuppressLint("")
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
-					mList.setAdapter(new MovieAdapter(mActivity, value));
+					((ListView)mList).setAdapter(new MovieAdapter(mActivity, value));
 				} else {
 					setTitle(title);
 					setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);
@@ -355,10 +362,11 @@ public class MovieListController extends ListController implements IController {
 			view.position = position;
 			view.posterOverlay = movie.numWatched > 0 ? mWatchedBitmap : null;
 			view.title = movie.title;
-			view.subtitle = movie.genres;
+			view.subtitle = StringUtil.join(" / ", movie.genres);
 			view.subtitleRight = movie.year > 0 ? String.valueOf(movie.year) : "";
 			view.bottomtitle = movie.runtime;
-			view.bottomright = String.valueOf(movie.rating);
+			final DecimalFormat df = new DecimalFormat("#.0");
+			view.bottomright = String.valueOf(df.format(movie.rating));
 			
 			if (mLoadCovers) {
 				if(mVideoManager.coverLoaded(movie, mThumbSize)){
@@ -387,12 +395,8 @@ public class MovieListController extends ListController implements IController {
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		if (mVideoManager != null) {
-			mVideoManager.setController(this);
-		}
-		if (mControlManager != null) {
-			mControlManager.setController(this);
-		}
+		mVideoManager = ManagerFactory.getVideoManager(this);
+		mControlManager = ManagerFactory.getControlManager(this);
 	}
 
 }

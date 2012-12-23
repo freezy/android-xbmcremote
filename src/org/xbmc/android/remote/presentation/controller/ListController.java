@@ -39,14 +39,16 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -167,7 +169,11 @@ public abstract class ListController extends AbstractController implements Seria
 				public void run() {
 					mMessageText.setText(message);
 					mMessageText.setCompoundDrawablesWithIntrinsicBounds(imageResource, 0, 0, 0);
-					mList.setAdapter(null);
+					if(mList instanceof GridView) {
+						((GridView)mList).setAdapter(null);
+					} else {
+						((ListView)mList).setAdapter(null);
+					}
 					mMessageGroup.setVisibility(View.VISIBLE);
 				}
 			});
@@ -183,7 +189,11 @@ public abstract class ListController extends AbstractController implements Seria
 	protected void showOnLoading() {
 		mHandler.post(new Runnable() {
 			public void run() {
-				mList.setAdapter(new LoadingAdapter(mActivity));
+				if(mList instanceof GridView) {
+					((GridView)mList).setAdapter(new LoadingAdapter(mActivity));
+				} else {
+					((ListView)mList).setAdapter(new LoadingAdapter(mActivity));
+				}
 				mList.setVisibility(View.VISIBLE);
 			}
 		});

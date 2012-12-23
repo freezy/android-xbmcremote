@@ -22,14 +22,16 @@
 package org.xbmc.api.object;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.xbmc.android.jsonrpc.api.model.VideoModel.EpisodeDetail;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
 public class Episode implements ICoverArt {
-	
+
 	public final static String TAG = "Episode";
-	
+
 	/**
 	 * Database primary key
 	 */
@@ -39,12 +41,12 @@ public class Episode implements ICoverArt {
 	 * Local path of this episode (without file name)
 	 */
 	public String localPath;
-	
+
 	/**
 	 * File name of this episode
 	 */
 	public String fileName;
-	
+
 	/**
 	 * Title of this episode
 	 */
@@ -60,38 +62,42 @@ public class Episode implements ICoverArt {
 	/**
 	 * Writer of this episode
 	 */
-	public String writer;
+	public List<String> writer = new ArrayList<String>();
 	public String firstAired;
-	
+
 	/**
 	 * Number of watched, -1 if not set.
 	 */
 	public int numWatched = -1;
-	public String director;
+	public List<String> director = new ArrayList<String>();
 	public int season;
-	
+
 	/**
 	 * Number of this episode within the season
 	 */
 	public int episode;
-	
+
 	/**
 	 * Title of the TV Show
 	 */
 	public String showTitle;
-		
-	public ArrayList<Actor> actors = null;
+
+	public ArrayList<Actor> actors = new ArrayList<Actor>();
 	
-	public Episode(int id, String title, String plot, double rating, String writer, String firstAired,
-			int numWatched, String director, int season, int episode, String localPath, String fileName, String showTitle) {
+	public String thumbnail;
+
+	public Episode(int id, String title, String plot, double rating,
+			String writer, String firstAired, int numWatched, String director,
+			int season, int episode, String localPath, String fileName,
+			String showTitle) {
 		this.id = id;
 		this.title = title;
 		this.plot = plot;
 		this.rating = rating;
-		this.writer = writer;
+		this.writer.add(writer);
 		this.firstAired = firstAired;
 		this.numWatched = numWatched;
-		this.director = director;
+		this.director.add(director);
 		this.season = season;
 		this.episode = episode;
 		this.localPath = localPath;
@@ -99,26 +105,44 @@ public class Episode implements ICoverArt {
 		this.fileName = fileName;
 	}
 
+	public Episode(EpisodeDetail detail) {
+		this.id = detail.episodeid;
+		this.title = detail.title;
+		this.plot = detail.plot;
+		this.rating = detail.rating;
+		this.writer = detail.writer;
+		this.firstAired = detail.firstaired;
+		this.director = detail.director;
+		this.season = detail.season;
+		this.episode = detail.episode;
+		this.localPath = "";
+		this.showTitle = detail.showtitle;
+		this.fileName = detail.file;
+		this.thumbnail = detail.thumbnail;
+	}
+
 	public long getCrc() {
 		if (fileName.contains("://"))
-		   return  Crc32.computeLowerCase(fileName);
-		else 
-			return  Crc32.computeLowerCase(localPath + fileName);			
+			return Crc32.computeLowerCase(fileName);
+		else
+			return Crc32.computeLowerCase(localPath + fileName);
 	}
 
 	/**
 	 * Returns CRC for episode thumb. From FileItem.cpp(2597):
+	 * 
 	 * <pre>
 	 * 	CStdString strCRC;
-	 *	strCRC.Format("%sepisode%i",GetVideoInfoTag()->m_strFileNameAndPath.c_str(),GetVideoInfoTag()->m_iEpisode);
-	 *	return GetCachedThumb(strCRC,g_settings.GetVideoThumbFolder(),true);
+	 * strCRC.Format("%sepisode%i",GetVideoInfoTag()->m_strFileNameAndPath.c_str(),GetVideoInfoTag()->m_iEpisode);
+	 * return GetCachedThumb(strCRC,g_settings.GetVideoThumbFolder(),true);
 	 * </pre>
 	 */
 	public int getFallbackCrc() {
 		if (fileName.contains("://"))
 			return Crc32.computeLowerCase(fileName + "episode" + episode);
 		else
-			return Crc32.computeLowerCase(localPath +fileName + "episode" + episode);
+			return Crc32.computeLowerCase(localPath + fileName + "episode"
+					+ episode);
 	}
 
 	public int getId() {
@@ -130,7 +154,7 @@ public class Episode implements ICoverArt {
 	}
 
 	public String getName() {
-		if(season == 0)
+		if (season == 0)
 			return "Special " + episode + ": " + title;
 		else
 			return season + "x" + episode + ": " + title;
@@ -138,16 +162,21 @@ public class Episode implements ICoverArt {
 
 	/**
 	 * Returns the path XBMC needs to play the episode. This can either
-	 * localPath + filename or filename only (in case of stacks) 
+	 * localPath + filename or filename only (in case of stacks)
+	 * 
 	 * @return
 	 */
 	public String getPath() {
-		   if (fileName.contains("://")) {
-			   return fileName;
-		   } 
-		   else {
-				return localPath + fileName;
-			}
+		if (fileName.contains("://")) {
+			return fileName;
+		} else {
+			return localPath + fileName;
+		}
 	}
-	private static final long serialVersionUID = 5317212562013683169L;	
+	
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
+	private static final long serialVersionUID = 5317212562013683169L;
 }

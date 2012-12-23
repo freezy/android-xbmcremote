@@ -15,7 +15,6 @@ import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.INotifiableManager;
-import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.presentation.INotifiableController;
 
@@ -113,8 +112,11 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 							}
 						});
 					}
+					public Context getApplicationContext() {
+						return null;
+					}
 				});
-		info.getSystemInfo(new DataResponse<String>() {
+		info.getSystemVersion(new DataResponse<String>() {
 			@Override
 			public void run() {
 				if (value != null && !value.equals("")) {
@@ -125,7 +127,7 @@ public class SetupWizardPage1 extends WizardPage<Host> {
 					showNextPage();
 				}
 			}
-		}, SystemInfo.SYSTEM_BUILD_VERSION, getContext());
+		}, getContext());
 	}
 
 	@Override
