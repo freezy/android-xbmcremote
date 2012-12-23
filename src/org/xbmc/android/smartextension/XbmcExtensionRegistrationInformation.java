@@ -66,12 +66,12 @@ public class XbmcExtensionRegistrationInformation extends
 		values.put(Registration.ExtensionColumns.EXTENSION_KEY,
 				XbmcExtensionService.EXTENSION_KEY);
 		values.put(Registration.ExtensionColumns.HOST_APP_ICON_URI,
-				ExtensionUtils.getUriString(mContext, R.drawable.icon));
+				ExtensionUtils.getUriString(mContext, org.xbmc.android.remote.R.drawable.icon));
 		values.put(Registration.ExtensionColumns.EXTENSION_ICON_URI,
-				ExtensionUtils.getUriString(mContext, R.drawable.ext_icon));
+				ExtensionUtils.getUriString(mContext, org.xbmc.android.remote.R.drawable.ext_icon));
 		values.put(
 				Registration.ExtensionColumns.EXTENSION_ICON_URI_BLACK_WHITE,
-				ExtensionUtils.getUriString(mContext, R.drawable.ext_icon_bw));
+				ExtensionUtils.getUriString(mContext, org.xbmc.android.remote.R.drawable.ext_icon_bw));
 		values.put(Registration.ExtensionColumns.NOTIFICATION_API_VERSION,
 				getRequiredNotificationApiVersion());
 		values.put(Registration.ExtensionColumns.PACKAGE_NAME,

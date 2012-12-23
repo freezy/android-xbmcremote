@@ -20,6 +20,7 @@
 
 package org.xbmc.android.smartextension;
 
+import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.NowPlayingPollerThread;
 import org.xbmc.android.util.ConnectionFactory;
@@ -46,7 +47,6 @@ import android.widget.LinearLayout;
 import com.sonyericsson.extras.liveware.aef.control.Control;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlExtension;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlTouchEvent;
-import com.sonyericsson.extras.liveware.sdk.R;
 
 public class XbmcSmartWatchControlExtension extends ControlExtension implements
 		Callback {
@@ -82,9 +82,9 @@ public class XbmcSmartWatchControlExtension extends ControlExtension implements
 		mControlManager = ManagerFactory.getControlManager(null);
 		mEventClientManager = ManagerFactory.getEventClientManager(null);
 		mWidth = context.getResources().getDimensionPixelSize(
-				R.dimen.smart_watch_control_width);
+				com.sonyericsson.extras.liveware.extension.util.R.dimen.smart_watch_control_width);
 		mHeight = context.getResources().getDimensionPixelSize(
-				R.dimen.smart_watch_control_height);
+				com.sonyericsson.extras.liveware.extension.util.R.dimen.smart_watch_control_height);
 		mLayoutParams = new LayoutParams(mWidth, mHeight);
 
 		// Create background bitmap for drawing.
