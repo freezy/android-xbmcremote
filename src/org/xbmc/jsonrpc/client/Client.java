@@ -212,7 +212,7 @@ public abstract class Client {
 				sortby = "year";
 				break;
 			case SortType.RATING:
-				sortby = "videorating";
+				sortby = "rating";
 				break;
 			case SortType.DATE_ADDED:
 				sortby = "dateadded";
