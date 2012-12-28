@@ -114,8 +114,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("	LEFT OUTER join (");
 		sb.append("		SELECT min(tvshow.idShow) as idShow, tvshow.c00, count(1) AS totalcount, count(files.playCount) AS watchedcount");
 		sb.append(" 	FROM tvshow");
-		sb.append("		JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
-		sb.append("		JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
+		sb.append("		JOIN episode ON tvshow.idShow = episode.idShow");
+		// sb.append("		JOIN episode ON episode.idEpisode = episode.idEpisode");
 		sb.append("		JOIN files ON files.idFile = episode.idFile");
 		sb.append("		GROUP BY tvshow.c00");
 		sb.append("	) counts ON tvshow.idShow = counts.idShow");
@@ -193,8 +193,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("	LEFT OUTER join (");
 		sb.append("		SELECT min(tvshow.idShow) as idShow, tvshow.c00, count(1) AS totalcount, count(files.playCount) AS watchedcount");
 		sb.append(" 	FROM tvshow");
-		sb.append("		JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
-		sb.append("		JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
+		sb.append("		JOIN episode ON tvshow.idShow = episode.idShow");
+		//sb.append("		JOIN episode ON episode.idEpisode = episode.idEpisode");
 		sb.append("		JOIN files ON files.idFile = episode.idFile");
 		sb.append("		GROUP BY tvshow.c00");
 		sb.append("	) counts ON tvshow.idShow = counts.idShow");
@@ -242,8 +242,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("	LEFT OUTER join (");
 		sb.append("		SELECT min(tvshow.idShow) as idShow, tvshow.c00, count(1) AS totalcount, count(files.playCount) AS watchedcount");
 		sb.append(" 	FROM tvshow");
-		sb.append("		JOIN tvshowlinkepisode ON tvshow.idShow = tvshowlinkepisode.idShow");
-		sb.append("		JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode");
+		sb.append("		JOIN episode ON tvshow.idShow = episode.idShow");
+		//sb.append("		JOIN episode ON episode.idEpisode = episode.idEpisode");
 		sb.append("		JOIN files ON files.idFile = episode.idFile");
 		sb.append("		GROUP BY tvshow.c00");
 		sb.append("	) counts ON tvshow.idShow = counts.idShow");
@@ -284,8 +284,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		sb.append("SELECT c12 from (");
 		sb.append("	SELECT episode.c12 ");
 		sb.append("	FROM tvshow ");
-		sb.append("		LEFT OUTER JOIN tvshowlinkepisode ON tvshowlinkepisode.idShow = tvshow.idShow ");
-		sb.append("		LEFT OUTER JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode ");
+		sb.append("		LEFT OUTER JOIN episode ON episode.idShow = tvshow.idShow ");
+		//sb.append("		LEFT OUTER JOIN episode ON episode.idEpisode = episode.idEpisode ");
 		if (hideWatched) {
 			sb.append(" LEFT OUTER JOIN files ON files.idFile = episode.idFile ");
 		}
@@ -321,8 +321,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT min(tvshow.idShow) as idShow, episode.c12 ");
 		sb.append("FROM tvshow ");
-		sb.append("	LEFT OUTER JOIN tvshowlinkepisode ON tvshowlinkepisode.idShow = tvshow.idShow ");
-		sb.append("	LEFT OUTER JOIN episode ON episode.idEpisode = tvshowlinkepisode.idEpisode ");
+		sb.append("	LEFT OUTER JOIN episode ON episode.idShow = tvshow.idShow ");
+		//sb.append("	LEFT OUTER JOIN episode ON episode.idEpisode = episode.idEpisode ");
 		if (hideWatched) {
 			sb.append(" LEFT OUTER JOIN files ON files.idFile = episode.idFile ");
 		}
