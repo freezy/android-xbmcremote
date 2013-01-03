@@ -24,8 +24,8 @@ package org.xbmc.android.remote.presentation.activity;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.controller.RemoteController;
 import org.xbmc.android.util.KeyTracker;
-import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
+import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
 
@@ -33,8 +33,8 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Build.VERSION;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -45,6 +45,7 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ViewFlipper;
 
@@ -70,16 +71,18 @@ public class RemoteActivity extends Activity {
 	private float mOldTouchValue;
 
 	public RemoteActivity() {
-		if(Integer.parseInt(VERSION.SDK) < 5) {
+		if (Integer.parseInt(VERSION.SDK) < 5) {
 			mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
-	
+
 				@Override
-				public void onLongPressBack(int keyCode, KeyEvent event, Stage stage, int duration) {
+				public void onLongPressBack(int keyCode, KeyEvent event,
+						Stage stage, int duration) {
 					onKeyLongPress(keyCode, event);
 				}
-	
+
 				@Override
-				public void onShortPressBack(int keyCode, KeyEvent event, Stage stage, int duration) {
+				public void onShortPressBack(int keyCode, KeyEvent event,
+						Stage stage, int duration) {
 					RemoteActivity.super.onKeyDown(keyCode, event);
 				}
 			});
@@ -89,13 +92,14 @@ public class RemoteActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		Display d = getWindowManager().getDefaultDisplay();
 		// set display size
-		ThumbSize.setScreenSize(d.getWidth(), d.getHeight());	
+		ThumbSize.setScreenSize(d.getWidth(), d.getHeight());
 		final int w = d.getWidth();
 		final int h = d.getHeight();
-		final double ar = w > h ? (double) w / (double) h : (double) h / (double) w;
+		final double ar = w > h ? (double) w / (double) h : (double) h
+				/ (double) w;
 		if (ar > 1.6) {
 			Log.i(TAG, "AR = " + ar + ", using extended layout.");
 			setContentView(R.layout.remote_xbox_extended);
@@ -103,9 +107,8 @@ public class RemoteActivity extends Activity {
 			Log.i(TAG, "AR = " + ar + ", normal layout.");
 			setContentView(R.layout.remote_xbox);
 		}
-		
 
-//		mViewFlipper = (ViewFlipper) findViewById(R.id.remote_flipper);
+		// mViewFlipper = (ViewFlipper) findViewById(R.id.remote_flipper);
 
 		if (mViewFlipper != null) {
 			mRemoteView = mViewFlipper.getChildAt(0);
@@ -126,8 +129,15 @@ public class RemoteActivity extends Activity {
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		// mConfigurationManager.initKeyguard(true);
 
-
 		setupButtons();
+
+		Button select = (Button) findViewById(R.id.RemoteXboxImgBtnSelect);
+		select.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				mRemoteController.onKeyDown(KeyEvent.KEYCODE_BUTTON_A,
+						new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BUTTON_A));
+			}
+		});
 	}
 
 	@Override
@@ -149,7 +159,8 @@ public class RemoteActivity extends Activity {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		boolean handled = (mKeyTracker != null)?mKeyTracker.doKeyDown(keyCode, event):false;
+		boolean handled = (mKeyTracker != null) ? mKeyTracker.doKeyDown(
+				keyCode, event) : false;
 		return handled || mRemoteController.onKeyDown(keyCode, event)
 				|| super.onKeyDown(keyCode, event);
 	}
@@ -157,7 +168,10 @@ public class RemoteActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		getSharedPreferences("global", Context.MODE_PRIVATE).edit().putInt(RemoteController.LAST_REMOTE_PREFNAME, RemoteController.LAST_REMOTE_BUTTON).commit();
+		getSharedPreferences("global", Context.MODE_PRIVATE)
+				.edit()
+				.putInt(RemoteController.LAST_REMOTE_PREFNAME,
+						RemoteController.LAST_REMOTE_BUTTON).commit();
 		mRemoteController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
 	}
@@ -175,60 +189,93 @@ public class RemoteActivity extends Activity {
 	private void setupButtons() {
 
 		// display
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnDisplay),ButtonCodes.REMOTE_DISPLAY);
+		mRemoteController.setupButton(
+				findViewById(R.id.RemoteXboxImgBtnDisplay),
+				ButtonCodes.REMOTE_DISPLAY);
 
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnVideo), ButtonCodes.REMOTE_MY_VIDEOS);
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnMusic), ButtonCodes.REMOTE_MY_MUSIC);
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnImages), ButtonCodes.REMOTE_MY_PICTURES);
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnTv), ButtonCodes.REMOTE_MY_TV);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnVideo),
+				ButtonCodes.REMOTE_MY_VIDEOS);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnMusic),
+				ButtonCodes.REMOTE_MY_MUSIC);
+		mRemoteController.setupButton(
+				findViewById(R.id.RemoteXboxImgBtnImages),
+				ButtonCodes.REMOTE_MY_PICTURES);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnTv),
+				ButtonCodes.REMOTE_MY_TV);
 
 		// seek back
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnSeekBack), ButtonCodes.REMOTE_REVERSE);
+		mRemoteController.setupButton(
+				findViewById(R.id.RemoteXboxImgBtnSeekBack),
+				ButtonCodes.REMOTE_REVERSE);
 		// play
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnPlay), ButtonCodes.REMOTE_PLAY);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnPlay),
+				ButtonCodes.REMOTE_PLAY);
 		// seek forward
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnSeekForward), ButtonCodes.REMOTE_FORWARD);
+		mRemoteController.setupButton(
+				findViewById(R.id.RemoteXboxImgBtnSeekForward),
+				ButtonCodes.REMOTE_FORWARD);
 
 		// previous
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnPrevious), ButtonCodes.REMOTE_SKIP_MINUS);
+		mRemoteController.setupButton(
+				findViewById(R.id.RemoteXboxImgBtnPrevious),
+				ButtonCodes.REMOTE_SKIP_MINUS);
 		// stop
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnStop), ButtonCodes.REMOTE_STOP);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnStop),
+				ButtonCodes.REMOTE_STOP);
 		// pause
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnPause), ButtonCodes.REMOTE_PAUSE);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnPause),
+				ButtonCodes.REMOTE_PAUSE);
 		// next
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnNext), ButtonCodes.REMOTE_SKIP_PLUS);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnNext),
+				ButtonCodes.REMOTE_SKIP_PLUS);
 
 		// title
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnTitle), ButtonCodes.REMOTE_TITLE);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnTitle),
+				ButtonCodes.REMOTE_TITLE);
 		// up
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnUp), ButtonCodes.REMOTE_UP);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnUp),
+				ButtonCodes.REMOTE_UP);
 		// info
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnInfo), ButtonCodes.REMOTE_INFO);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnInfo),
+				ButtonCodes.REMOTE_INFO);
 
 		// left
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnLeft), ButtonCodes.REMOTE_LEFT);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnLeft),
+				ButtonCodes.REMOTE_LEFT);
 		// select
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnSelect), ButtonCodes.REMOTE_SELECT);
+		mRemoteController.setupButton(
+				findViewById(R.id.RemoteXboxImgBtnSelect),
+				ButtonCodes.REMOTE_SELECT);
 		// right
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnRight), ButtonCodes.REMOTE_RIGHT);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnRight),
+				ButtonCodes.REMOTE_RIGHT);
 
 		// menu
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnMenu), ButtonCodes.REMOTE_MENU);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnMenu),
+				ButtonCodes.REMOTE_MENU);
 		// down
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnDown), ButtonCodes.REMOTE_DOWN);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnDown),
+				ButtonCodes.REMOTE_DOWN);
 		// back
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnBack), ButtonCodes.REMOTE_BACK);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnBack),
+				ButtonCodes.REMOTE_BACK);
 
 		// videos
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnVideo), ButtonCodes.REMOTE_MY_VIDEOS);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnVideo),
+				ButtonCodes.REMOTE_MY_VIDEOS);
 		// music
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnMusic), ButtonCodes.REMOTE_MY_MUSIC);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnMusic),
+				ButtonCodes.REMOTE_MY_MUSIC);
 		// pictures
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnImages), ButtonCodes.REMOTE_MY_PICTURES);
+		mRemoteController.setupButton(
+				findViewById(R.id.RemoteXboxImgBtnImages),
+				ButtonCodes.REMOTE_MY_PICTURES);
 		// tv
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnTv), ButtonCodes.REMOTE_MY_TV);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnTv),
+				ButtonCodes.REMOTE_MY_TV);
 		// settings
-		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnPower), ButtonCodes.REMOTE_POWER);
+		mRemoteController.setupButton(findViewById(R.id.RemoteXboxImgBtnPower),
+				ButtonCodes.REMOTE_POWER);
 	}
 
 	@Override
@@ -243,8 +290,11 @@ public class RemoteActivity extends Activity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		boolean handled = (mKeyTracker != null)?mKeyTracker.doKeyUp(keyCode, event):false;
-		return handled || super.onKeyUp(keyCode, event);
+		boolean handled = (mKeyTracker != null) ? mKeyTracker.doKeyUp(keyCode,
+				event) : false;
+		boolean result = handled || super.onKeyUp(keyCode, event);
+		setFocus();
+		return result;
 	}
 
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
@@ -253,14 +303,14 @@ public class RemoteActivity extends Activity {
 		startActivity(intent);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onTouchEvent(MotionEvent touchEvent) {
 		// ignore all that on hdpi displays
 		if (mViewFlipper == null) {
 			return false;
 		}
-		
+
 		// determine the current view and
 		// who is to the right and to the left.
 		final View currentView = mViewFlipper.getCurrentView();
@@ -287,64 +337,70 @@ public class RemoteActivity extends Activity {
 		}
 
 		switch (touchEvent.getAction()) {
-			case MotionEvent.ACTION_DOWN: 
-				// freezy: the mousepad seems to always flicker
-				// at the start of the move action (i.e. action_down)
-				// so i tried this but it doesn't seem to work.
-				// thats the only thing i can think of that keeps this
-				// feature from being 100%
-				/*
-				 * if(currentView != mMousePadView) {
-				 * mMousePadView.setVisibility(View.INVISIBLE); }
-				 */
-				mOldTouchValue = touchEvent.getX();
+		case MotionEvent.ACTION_DOWN:
+			// freezy: the mousepad seems to always flicker
+			// at the start of the move action (i.e. action_down)
+			// so i tried this but it doesn't seem to work.
+			// thats the only thing i can think of that keeps this
+			// feature from being 100%
+			/*
+			 * if(currentView != mMousePadView) {
+			 * mMousePadView.setVisibility(View.INVISIBLE); }
+			 */
+			mOldTouchValue = touchEvent.getX();
 			break;
-		
-			case MotionEvent.ACTION_UP: 
-				float currentX = touchEvent.getX();
-	
-				if (mOldTouchValue < currentX) {
-					mViewFlipper.setInAnimation(AnimationHelper.inFromLeftAnimation());
-					mViewFlipper.setOutAnimation(AnimationHelper.outToRightAnimation());
-					mViewFlipper.showPrevious();
-				}
-				if (mOldTouchValue > currentX) {
-					mViewFlipper.setInAnimation(AnimationHelper.inFromRightAnimation());
-					mViewFlipper.setOutAnimation(AnimationHelper.outToLeftAnimation());
-					mViewFlipper.showNext();
-				}
-	
+
+		case MotionEvent.ACTION_UP:
+			float currentX = touchEvent.getX();
+
+			if (mOldTouchValue < currentX) {
+				mViewFlipper.setInAnimation(AnimationHelper
+						.inFromLeftAnimation());
+				mViewFlipper.setOutAnimation(AnimationHelper
+						.outToRightAnimation());
+				mViewFlipper.showPrevious();
+			}
+			if (mOldTouchValue > currentX) {
+				mViewFlipper.setInAnimation(AnimationHelper
+						.inFromRightAnimation());
+				mViewFlipper.setOutAnimation(AnimationHelper
+						.outToLeftAnimation());
+				mViewFlipper.showNext();
+			}
 			break;
-		
-			case MotionEvent.ACTION_MOVE: 
-				leftView.setVisibility(View.VISIBLE);
-				rightView.setVisibility(View.VISIBLE);
-	
-				Log.d("current layout:", "left: "
-						+ Integer.toString(currentView.getLeft()) + " right: "
-						+ Integer.toString(currentView.getRight()));
-				Log.d("previous layout:", "left: "
-						+ Integer.toString(leftView.getLeft()) + " right: "
-						+ Integer.toString(leftView.getRight()));
-				Log.d("next layout:", "left: "
-						+ Integer.toString(rightView.getLeft()) + " right: "
-						+ Integer.toString(rightView.getRight()));
-	
-				// move the current view to the left or right.
-				currentView.layout((int) (touchEvent.getX() - mOldTouchValue),
-						currentView.getTop(),
-						(int) (touchEvent.getX() - mOldTouchValue) + 320,
-						currentView.getBottom());
-	
-				// place this view just left of the currentView
-				leftView.layout(currentView.getLeft() - 320, leftView.getTop(),
-						currentView.getLeft(), leftView.getBottom());
-	
-				// place this view just right of the currentView
-				rightView.layout(currentView.getRight(), rightView.getTop(),
-						currentView.getRight() + 320, rightView.getBottom());
+
+		case MotionEvent.ACTION_MOVE:
+			leftView.setVisibility(View.VISIBLE);
+			rightView.setVisibility(View.VISIBLE);
+
+			Log.d("current layout:",
+					"left: " + Integer.toString(currentView.getLeft())
+							+ " right: "
+							+ Integer.toString(currentView.getRight()));
+			Log.d("previous layout:",
+					"left: " + Integer.toString(leftView.getLeft())
+							+ " right: "
+							+ Integer.toString(leftView.getRight()));
+			Log.d("next layout:",
+					"left: " + Integer.toString(rightView.getLeft())
+							+ " right: "
+							+ Integer.toString(rightView.getRight()));
+
+			// move the current view to the left or right.
+			currentView.layout((int) (touchEvent.getX() - mOldTouchValue),
+					currentView.getTop(),
+					(int) (touchEvent.getX() - mOldTouchValue) + 320,
+					currentView.getBottom());
+
+			// place this view just left of the currentView
+			leftView.layout(currentView.getLeft() - 320, leftView.getTop(),
+					currentView.getLeft(), leftView.getBottom());
+
+			// place this view just right of the currentView
+			rightView.layout(currentView.getRight(), rightView.getTop(),
+					currentView.getRight() + 320, rightView.getBottom());
 			break;
-		
+
 		}
 		return false;
 	}
@@ -393,6 +449,13 @@ public class RemoteActivity extends Activity {
 			outtoRight.setDuration(350);
 			outtoRight.setInterpolator(new AccelerateInterpolator());
 			return outtoRight;
+		}
+	}
+
+	private void setFocus() {
+		View select = findViewById(R.id.RemoteXboxImgBtnSelect);
+		if (select != null) {
+			select.requestFocus();
 		}
 	}
 }
