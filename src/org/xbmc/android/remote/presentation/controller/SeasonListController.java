@@ -43,19 +43,18 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.Toast;
 
 public class SeasonListController extends ListController implements IController {
 
@@ -109,7 +108,6 @@ public class SeasonListController extends ListController implements IController 
 					final Season season = (Season) mList.getAdapter().getItem(((GridPosterItemView) view).position);
 					Intent nextActivity = new Intent(view.getContext(), ListActivity.class);
 					nextActivity.putExtra(ListController.EXTRA_SEASON, season);
-					nextActivity.putExtra(ListController.EXTRA_TVSHOW, mShow);
 					nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER, new EpisodeListController());
 					mActivity.startActivity(nextActivity);
 				}
@@ -125,7 +123,7 @@ public class SeasonListController extends ListController implements IController 
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title +" (" + value.size() + ")");
-					((GridView)mList).setAdapter(new SeasonAdapter(mActivity, value));
+					mList.setAdapter(new SeasonAdapter(mActivity, value));
 				} else {
 					setTitle(title);
 					setNoDataMessage("No seasons found.", R.drawable.icon_movie_dark);
@@ -200,7 +198,6 @@ public class SeasonListController extends ListController implements IController 
 		case ITEM_CONTEXT_BROWSE:
 			Intent nextActivity = new Intent(mActivity, ListActivity.class);
 			nextActivity.putExtra(ListController.EXTRA_SEASON, season);
-			nextActivity.putExtra(ListController.EXTRA_TVSHOW, mShow);
 			nextActivity.putExtra(ListController.EXTRA_LIST_CONTROLLER,
 					new EpisodeListController());
 			mActivity.startActivity(nextActivity);
@@ -300,7 +297,11 @@ public class SeasonListController extends ListController implements IController 
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		mTvManager = ManagerFactory.getTvManager(this);
-		mControlManager = ManagerFactory.getControlManager(this);
+		if (mTvManager != null) {
+			mTvManager.setController(this);
+		}
+		if (mControlManager != null) {
+			mControlManager.setController(this);
+		}
 	}
 }

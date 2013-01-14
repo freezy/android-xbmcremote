@@ -21,7 +21,6 @@
 
 package org.xbmc.api.data;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -29,9 +28,6 @@ import java.util.ArrayList;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.type.DirectoryMask;
-import org.xbmc.api.type.Sort;
-
-import android.graphics.Bitmap;
 
 
 /**
@@ -50,14 +46,14 @@ public interface IInfoClient extends IClient {
 	 * @param limit   Limit (0 for none)
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit, int mediaType, Sort sort);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit, int mediaType);
 	
 	/**
 	 * Returns all the contents of a directory
 	 * @param path    Path to the directory
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, int mediaType, Sort sort);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, int mediaType);
 
 	
 	/**
@@ -76,26 +72,11 @@ public interface IInfoClient extends IClient {
 	public String getCurrentlyPlayingThumbURI(INotifiableManager manager) throws MalformedURLException, URISyntaxException;
 	
 	/**
-	 * Returns a bitmap for the download URI
-	 * @return
-	 * @throws MalformedURLException
-	 * @throws URISyntaxException
-	 */
-	public Bitmap download(String downloadURI) throws MalformedURLException, URISyntaxException, IOException;
-	
-	
-	/**
-	 * Returns the system version
+	 * Returns any system info variable, see {@link org.xbmc.api.info.SystemInfo}
+	 * @param field Field to return
 	 * @return
 	 */
-	public String getSystemVersion(INotifiableManager manager);
-	
-	/**
-	 * Returns the api version
-	 * @param manager
-	 * @return
-	 */
-	public int getAPIVersion(INotifiableManager manager);
+	public String getSystemInfo(INotifiableManager manager, int field);
 	
 	/**
 	 * Returns a boolean GUI setting

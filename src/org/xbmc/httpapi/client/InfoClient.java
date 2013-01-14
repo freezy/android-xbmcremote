@@ -1,24 +1,17 @@
 package org.xbmc.httpapi.client;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.info.GuiSettings;
-import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.FileLocation;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.type.DirectoryMask;
 import org.xbmc.api.type.MediaType;
-import org.xbmc.api.type.Sort;
 import org.xbmc.httpapi.Connection;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 /**
  * The InfoClient basically takes care of everything else not covered by the
@@ -57,7 +50,7 @@ public class InfoClient implements IInfoClient {
 	 * @param mediaType MediaType
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit, int mediaType, Sort sort) {
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, DirectoryMask mask, int offset, int limit, int mediaType) {
 		ArrayList<String> result = new ArrayList<String>();
 
 		if (mediaType == MediaType.UNKNOWN) {
@@ -88,8 +81,8 @@ public class InfoClient implements IInfoClient {
 	 * @param path    Path to the directory
 	 * @return
 	 */
-	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, int mediaType, Sort sort) {
-		return this.getDirectory(manager, path, null, 0, 0, mediaType, sort);
+	public ArrayList<FileLocation> getDirectory(INotifiableManager manager, String path, int mediaType) {
+		return this.getDirectory(manager, path, null, 0, 0, mediaType);
 	}
 
 	
@@ -108,7 +101,6 @@ public class InfoClient implements IInfoClient {
 	}
 	
 	public String getCurrentlyPlayingThumbURI(INotifiableManager manager) throws MalformedURLException, URISyntaxException {
-		
 		final ArrayList<String> array = mConnection.getArray(manager, "GetCurrentlyPlaying", " ; ; ;true");
 		Boolean isSlideShow = false;
 		int thumbNum = 0;
@@ -130,13 +122,8 @@ public class InfoClient implements IInfoClient {
 	 * @param field Field to return
 	 * @return
 	 */
-	public String getSystemVersion(INotifiableManager manager) {
-		return mConnection.getString(manager, "GetSystemInfo", String.valueOf(SystemInfo.SYSTEM_BUILD_VERSION));
-	}
-	
-	public int getAPIVersion(INotifiableManager manager) {
-		// since this is basically the first API level
-		return 1;
+	public String getSystemInfo(INotifiableManager manager, int field) {
+		return mConnection.getString(manager, "GetSystemInfo", String.valueOf(field));
 	}
 	
 	/**
@@ -194,28 +181,4 @@ public class InfoClient implements IInfoClient {
 	public String getVideoInfo(INotifiableManager manager, int field) {
 		return mConnection.getString(manager, "GetVideoLabel", String.valueOf(field));
 	}
-	
-	public Bitmap download(String downloadURI) throws MalformedURLException,
-			URISyntaxException, IOException {
-		byte[] buffer = downloadByteArray(downloadURI);
-		
-		if (buffer == null || buffer.length == 0) {
-			return null;
-		}
-		return BitmapFactory.decodeByteArray(buffer, 0, buffer.length);
-
-	}	
-	private byte[] downloadByteArray(String pathToDownload) throws IOException, URISyntaxException {
-		Connection connection;	
-		final Host host = HostFactory.host;
-			if (host != null) {
-				connection = Connection.getInstance(host.addr, host.port);
-				connection.setAuth(host.user, host.pass);
-			} else {
-				connection = Connection.getInstance(null, 0);
-			}
-			
-			return connection.download(pathToDownload);
-	}
-	
 }

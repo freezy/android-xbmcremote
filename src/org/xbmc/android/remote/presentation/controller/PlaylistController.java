@@ -43,7 +43,6 @@ import org.xbmc.eventclient.ButtonCodes;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.VideoClient;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -63,7 +62,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 public class PlaylistController extends ListController implements IController, Callback {
 	
@@ -114,7 +112,9 @@ public class PlaylistController extends ListController implements IController, C
 			
 			mControlManager.getPlaylistId(new DataResponse<Integer>() {
 				public void run() {
-					updatePlaylist(value);
+					mPlayListId = value;
+					
+					updatePlaylist();
 				}
 			}, mActivity.getApplicationContext());			
 			
@@ -123,7 +123,14 @@ public class PlaylistController extends ListController implements IController, C
 					final PlaylistItem item = (PlaylistItem)mList.getAdapter().getItem(((OneLabelItemView)view).position);
 					final DataResponse<Boolean> doNothing = new DataResponse<Boolean>();
 					mControlManager.setPlaylistId(doNothing, mPlayListId < 0 ? 0 : mPlayListId, mActivity.getApplicationContext());
-					mControlManager.setPlaylistPos(doNothing, item.position, mActivity.getApplicationContext());
+					switch (mPlayListId) {
+					case MUSIC_PLAYLIST_ID:
+						mMusicManager.setPlaylistSong(doNothing, item.position, mActivity.getApplicationContext());
+						break;
+					case VIDEO_PLAYLIST_ID:
+						mVideoManager.setPlaylistVideo(doNothing, item.position, mActivity.getApplicationContext());
+						break;
+					}
 				}
 			});
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Song>());
@@ -131,12 +138,17 @@ public class PlaylistController extends ListController implements IController, C
 		}
 	}
 	
-	private void updatePlaylist(int playListId) {
-		switch (playListId) {
+	private void updatePlaylist() {
+		switch (mPlayListId) {
 		case MUSIC_PLAYLIST_ID:
-			mMusicManager.getPlaylist(new DataResponse<ArrayList<String>>() {
-	  	  		@SuppressLint("")
+			mMusicManager.getPlaylistPosition(new DataResponse<Integer>() {
 				public void run() {
+					mCurrentPosition = value;
+				}
+			}, mActivity.getApplicationContext());
+			
+			mMusicManager.getPlaylist(new DataResponse<ArrayList<String>>() {
+	  	  		public void run() {
 	  	  			if (value.size() > 0) {
 		  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
 		  	  			int i = 0;
@@ -145,7 +157,7 @@ public class PlaylistController extends ListController implements IController, C
 						}
 						setTitle("Music playlist (" + (value.size() > MusicClient.PLAYLIST_LIMIT ? MusicClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
 						mItemAdapter = new ItemAdapter(mPlaylistActivity, items);
-						((ListView)mList).setAdapter(mItemAdapter);
+						mList.setAdapter(mItemAdapter);
 						if (mCurrentPosition >= 0) {
 							mList.setSelection(mCurrentPosition);
 						}
@@ -153,13 +165,19 @@ public class PlaylistController extends ListController implements IController, C
 						setTitle("Music playlist");
 						setNoDataMessage("No tracks in playlist.", R.drawable.icon_playlist_dark);
 					}
+
 	  	  		}
 	  	  	}, mActivity.getApplicationContext());
 			break;
 		case VIDEO_PLAYLIST_ID:
-			mVideoManager.getPlaylist(new DataResponse<ArrayList<String>>() {
-	  	  		@SuppressLint("")
+			mVideoManager.getPlaylistPosition(new DataResponse<Integer>() {
 				public void run() {
+					mCurrentPosition = value;
+				}
+			}, mActivity.getApplicationContext());
+			
+			mVideoManager.getPlaylist(new DataResponse<ArrayList<String>>() {
+	  	  		public void run() {
 	  	  			if (value.size() > 0) {
 		  	  			final ArrayList<PlaylistItem> items = new ArrayList<PlaylistItem>();
 		  	  			int i = 0;
@@ -168,7 +186,7 @@ public class PlaylistController extends ListController implements IController, C
 						}
 						setTitle("Video playlist (" + (value.size() > VideoClient.PLAYLIST_LIMIT ? VideoClient.PLAYLIST_LIMIT + "+" : value.size()) + ")" );
 						mItemAdapter = new ItemAdapter(mPlaylistActivity, items);
-						((ListView)mList).setAdapter(mItemAdapter);
+						mList.setAdapter(mItemAdapter);
 						if (mCurrentPosition >= 0) {
 							mList.setSelection(mCurrentPosition);
 						}
@@ -216,7 +234,9 @@ public class PlaylistController extends ListController implements IController, C
 			final int playListId = data.getInt(NowPlayingPollerThread.BUNDLE_LAST_PLAYLIST);
 			if (playListId != mPlayListId) {
 				// music <-> video playlist changed
-				updatePlaylist(playListId);
+				mPlayListId = playListId;
+				
+				updatePlaylist();
 			}
 			return true;
 			
@@ -332,10 +352,10 @@ public class PlaylistController extends ListController implements IController, C
 			case ITEM_CONTEXT_REMOVE:
 				switch (mPlayListId) {
 				case MUSIC_PLAYLIST_ID:
-					mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.position, mActivity.getApplicationContext());
+					mMusicManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path, mActivity.getApplicationContext());
 					break;
 				case VIDEO_PLAYLIST_ID:
-					mVideoManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.position, mActivity.getApplicationContext());
+					mVideoManager.removeFromPlaylist(new DataResponse<Boolean>(), playlistItem.path, mActivity.getApplicationContext());
 					break;
 				}	
 				break;
@@ -432,10 +452,18 @@ public class PlaylistController extends ListController implements IController, C
 			}
 		}.start();
 		
-		mEventClient = ManagerFactory.getEventClientManager(this);
-		mMusicManager = ManagerFactory.getMusicManager(this);
-		mVideoManager = ManagerFactory.getVideoManager(this);
-		mControlManager = ManagerFactory.getControlManager(this);
+		if (mEventClient != null) {
+			mEventClient.setController(this);
+		}
+		if (mMusicManager != null) {
+			mMusicManager.setController(this);
+		}
+		if (mVideoManager != null) {
+			mVideoManager.setController(this);
+		}
+		if (mControlManager != null) {
+			mControlManager.setController(this);
+		}
 	}
 	
 	private static final long serialVersionUID = 755529227668553163L;

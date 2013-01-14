@@ -24,12 +24,9 @@ package org.xbmc.api.presentation;
 import org.xbmc.android.remote.business.Command;
 import org.xbmc.api.business.INotifiableManager;
 
-import android.content.Context;
-
 public interface INotifiableController {
 	public void onWrongConnectionState(int state, INotifiableManager manager, Command<?> source);
 	public void onError(Exception e);
 	public void onMessage(String message);
 	public void runOnUI(Runnable action);
-	public Context getApplicationContext();
 }

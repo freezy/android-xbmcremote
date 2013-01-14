@@ -90,9 +90,6 @@ public class SetupWizardPage3 extends WizardPage<Host> {
 			}
 			public void onError(Exception e) {
 			}
-			public Context getApplicationContext() {
-				return null;
-			}
 		};
 		retry.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {

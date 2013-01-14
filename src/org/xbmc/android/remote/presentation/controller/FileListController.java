@@ -43,17 +43,16 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class FileListController extends ListController implements IController {
 	
@@ -80,7 +79,6 @@ public class FileListController extends ListController implements IController {
 	
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 
-		mActivity = activity;
 		mInfoManager = ManagerFactory.getInfoManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
 		
@@ -222,10 +220,10 @@ public class FileListController extends ListController implements IController {
     /**
      * Provide the cursor for the list view.
      */
-	public void setListAdapter(ListAdapter adapter) {
+    public void setListAdapter(ListAdapter adapter) {
         synchronized (this) {
             mAdapter = adapter;
-            ((ListView)mList).setAdapter(adapter);
+            mList.setAdapter(adapter);
         }
     }
 
@@ -238,7 +236,7 @@ public class FileListController extends ListController implements IController {
 			mControlManager.queueFolder(new QueryResponse(mActivity, "Queueing folder " + loc.path, "Error queueing folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
 			break;
 		case ITEM_CONTEXT_PLAY:
-			mControlManager.playFolder(new QueryResponse(mActivity, "Playing folder " + loc.path, "Error playing folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
+			mControlManager.playFolder(new QueryResponse(mActivity, "Playing folder " + loc.path, "Error playint folder."), loc.path, MediaType.getPlaylistType(mMediaType), mActivity);
 			break;
 		}
 	}
@@ -264,8 +262,12 @@ public class FileListController extends ListController implements IController {
 	}
 
 	public void onActivityResume(Activity activity) {
-		mInfoManager = ManagerFactory.getInfoManager(this);
-		mControlManager = ManagerFactory.getControlManager(this);
+		if (mInfoManager != null) {
+			mInfoManager.setController(this);
+		}
+		if (mControlManager != null) {
+			mControlManager.setController(this);
+		}
 		super.onActivityResume(activity);
 	}
 	

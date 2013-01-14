@@ -23,8 +23,6 @@ package org.xbmc.api.object;
 
 import java.io.Serializable;
 
-import org.xbmc.android.jsonrpc.api.model.LibraryModel.GenreDetail;
-
 
 
 /**
@@ -44,13 +42,6 @@ public class Genre implements Serializable, INamedResource {
 		this.id = id;
 		this.name = name;
 	}
-	
-	public Genre(GenreDetail detail) {
-		this.id = detail.genreid;
-		this.name = detail.label;
-		this.thumbUri = detail.thumbnail;
-	}
-	
 
 	/**
 	 * Returns database ID.
@@ -71,8 +62,6 @@ public class Genre implements Serializable, INamedResource {
 	 * Database ID
 	 */
 	public int id;
-	
-	private String thumbUri;
 	/**
 	 * Genre name
 	 */

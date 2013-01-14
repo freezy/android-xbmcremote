@@ -31,7 +31,6 @@ import org.xbmc.android.remote.presentation.widget.JewelView;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
-import org.xbmc.android.util.StringUtil;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
@@ -44,23 +43,16 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnCreateContextMenuListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -72,10 +64,6 @@ import android.widget.Toast;
 public class MovieDetailsActivity extends Activity {
 	
 	private static final String NO_DATA = "-";
-
-	public static final int CAST_CONTEXT_IMDB = 1;
-	private static View selectedView;
-	private static Actor selectedAcotr;
 	
     private ConfigurationManager mConfigurationManager;
     private MovieDetailsController mMovieDetailsController;
@@ -126,8 +114,8 @@ public class MovieDetailsActivity extends Activity {
 		if (movie.rating > -1) {
 			((ImageView)findViewById(R.id.moviedetails_rating_stars)).setImageResource(sStarImages[(int)Math.round(movie.rating % 10)]);
 		}
-		((TextView)findViewById(R.id.moviedetails_director)).setText(StringUtil.join(",  ", movie.director));
-		((TextView)findViewById(R.id.moviedetails_genre)).setText(StringUtil.join(" / ", movie.genres));
+		((TextView)findViewById(R.id.moviedetails_director)).setText(movie.director);
+		((TextView)findViewById(R.id.moviedetails_genre)).setText(movie.genres);
 		((TextView)findViewById(R.id.moviedetails_runtime)).setText(movie.runtime);
 		((TextView)findViewById(R.id.moviedetails_rating)).setText(String.valueOf(movie.rating));
 		
@@ -191,7 +179,7 @@ public class MovieDetailsActivity extends Activity {
 						return;
 					}
 					numVotesView.setText(movie.numVotes > 0 ? " (" + movie.numVotes + " votes)" : "");
-					studioView.setText(movie.studio.size() == 0 ? NO_DATA : StringUtil.join(", ", movie.studio));
+					studioView.setText(movie.studio.equals("") ? NO_DATA : movie.studio);
 					plotView.setText(movie.plot.equals("") ? NO_DATA : movie.plot);
 					parentalView.setText(movie.rated.equals("") ? NO_DATA : movie.rated);
 					if (movie.trailerUrl != null && !movie.trailerUrl.equals("")) {
@@ -242,29 +230,6 @@ public class MovieDetailsActivity extends Activity {
 									mActivity.startActivity(nextActivity);
 								}
 							});
-							img.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
-								public void onCreateContextMenu(ContextMenu menu, View v,
-										ContextMenuInfo menuInfo) {
-									
-									selectedAcotr = (Actor) v.getTag();
-									selectedView = v;
-									
-									menu.setHeaderTitle(selectedAcotr.getShortName());
-									menu.add(0, CAST_CONTEXT_IMDB, 1, "Open IMDb").setOnMenuItemClickListener(new OnMenuItemClickListener() {
-										public boolean onMenuItemClick(MenuItem item) {
-											Intent intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("imdb:///find?s=nm&q=" + selectedAcotr.getName()));
-											if (selectedView.getContext().getPackageManager().resolveActivity(intentIMDb, PackageManager.MATCH_DEFAULT_ONLY) == null)
-											{
-										    	intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.imdb.com/find?s=nm&q=" + selectedAcotr.getName()));
-											}
-											selectedView.getContext().startActivity(intentIMDb);
-								 
-											return false;
-										}
-									});
-								}
-							});
-							
 							dataLayout.addView(view);
 							//n++;
 						}
@@ -280,8 +245,8 @@ public class MovieDetailsActivity extends Activity {
 		}
 
 		public void onActivityResume(Activity activity) {
-			mVideoManager = ManagerFactory.getVideoManager(this);
-			mControlManager = ManagerFactory.getControlManager(this);
+			mVideoManager.setController(this);
+			mControlManager.setController(this);
 		}
 	}
 

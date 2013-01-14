@@ -87,6 +87,6 @@ public class GestureController extends AbstractController implements INotifiable
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		mEventClientManager = ManagerFactory.getEventClientManager(this);
+		mEventClientManager.setController(this);
 	}
 }

@@ -31,7 +31,6 @@ import org.xbmc.android.remote.presentation.activity.TvShowDetailsActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
 import org.xbmc.android.remote.presentation.widget.FlexibleItemView;
 import org.xbmc.android.util.ImportUtilities;
-import org.xbmc.android.util.StringUtil;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.ISortableManager;
@@ -48,33 +47,28 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
 
 public class TvShowListController extends ListController implements IController {
 	
 	private static final int mThumbSize = ThumbSize.SMALL;
 	public static final int ITEM_CONTEXT_BROWSE = 1;
 	public static final int ITEM_CONTEXT_INFO = 2;
-	public static final int ITEM_CONTEXT_IMDB = 3;
 	
 	public static final int MENU_PLAY_ALL = 1;
 	public static final int MENU_SORT = 2;
@@ -137,7 +131,6 @@ public class TvShowListController extends ListController implements IController 
 	private void fetch() {
 		// tv show and episode both are using the same manager so set the sort key here
 		((ISortableManager)mTvManager).setSortKey(AbstractManager.PREF_SORT_KEY_SHOW);
-		((ISortableManager)mTvManager).setIgnoreArticle(PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext()).getBoolean(ISortableManager.SETTING_IGNORE_ARTICLE, true));
 		((ISortableManager)mTvManager).setPreferences(mActivity.getPreferences(Context.MODE_PRIVATE));
 
 		final String title = mActor != null ? mActor.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "TV Shows";
@@ -145,7 +138,7 @@ public class TvShowListController extends ListController implements IController 
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
-					((ListView)mList).setAdapter(new TvShowAdapter(mActivity, value));
+					mList.setAdapter(new TvShowAdapter(mActivity, value));
 				} else {
 					setTitle(title);
 					setNoDataMessage("No TV shows found.", R.drawable.icon_movie_dark);
@@ -202,7 +195,6 @@ public class TvShowListController extends ListController implements IController 
 		menu.setHeaderTitle(view.title);
 		menu.add(0, ITEM_CONTEXT_BROWSE, 1, "Browse TV Show");
 		menu.add(0, ITEM_CONTEXT_INFO, 2, "View Details");
-		menu.add(0, ITEM_CONTEXT_IMDB, 3, "Open IMDb");
 	}
 	
 	public void onContextItemSelected(MenuItem item) {
@@ -218,14 +210,6 @@ public class TvShowListController extends ListController implements IController 
 				Intent nextActivity = new Intent(mActivity, TvShowDetailsActivity.class);
 				nextActivity.putExtra(ListController.EXTRA_TVSHOW, show);
 				mActivity.startActivity(nextActivity);
-				break;
-			case ITEM_CONTEXT_IMDB:
-				Intent intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("imdb:///find?s=tt&q=" + show.getName()));
-				if (mActivity.getPackageManager().resolveActivity(intentIMDb, PackageManager.MATCH_DEFAULT_ONLY) == null)
-				{
-					intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.imdb.com/search/title?title=" + show.getShortName() + "&title_type=tv_series&release_date=" + show.firstAired));
-				}
-				mActivity.startActivity(intentIMDb);
 				break;
 			default:
 				return;
@@ -327,7 +311,7 @@ public class TvShowListController extends ListController implements IController 
 			view.position = position;
 			view.posterOverlay = show.watched ? mWatchedBitmap : null;
 			view.title = show.title;
-			view.subtitle = StringUtil.join(",", show.genre);
+			view.subtitle = show.genre;
 			view.subtitleRight = show.firstAired != null ? show.firstAired : "";
 			view.bottomtitle = show.numEpisodes + " episodes";
 			view.bottomright = String.valueOf(((float) Math.round(show.rating * 10)) / 10);
@@ -359,8 +343,12 @@ public class TvShowListController extends ListController implements IController 
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		mTvManager = ManagerFactory.getTvManager(this);
-		mControlManager = ManagerFactory.getControlManager(this);
+		if (mTvManager != null) {
+			mTvManager.setController(this);
+		}
+		if (mControlManager != null) {
+			mControlManager.setController(this);
+		}
 	}
 
 }

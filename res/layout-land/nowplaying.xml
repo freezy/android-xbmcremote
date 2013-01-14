@@ -34,13 +34,9 @@
 		</LinearLayout>
 		
 		<!-- ##### UPPER BODY ##### -->
-		<FrameLayout 
+		<FrameLayout android:id="@+id/home_upper"
 			android:layout_width="fill_parent" android:layout_height="fill_parent"
-			android:layout_above="@id/now_playing_bottombar" android:id="@+id/home_upper">
-                        <ImageView 
-                                android:layout_width="fill_parent" android:layout_height="fill_parent"
-                                android:scaleType="centerCrop" android:id="@+id/fanart"  android:paddingTop="36dip"/>
-
+			android:layout_above="@id/now_playing_bottombar">
 			<LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
 				<include layout="@layout/titlebar" />
 				<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="horizontal">

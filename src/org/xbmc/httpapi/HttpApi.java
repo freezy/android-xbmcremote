@@ -21,15 +21,12 @@
 
 package org.xbmc.httpapi;
 
-import org.xbmc.api.data.IConnectionManager;
 import org.xbmc.api.object.Host;
 import org.xbmc.httpapi.client.ControlClient;
 import org.xbmc.httpapi.client.InfoClient;
 import org.xbmc.httpapi.client.MusicClient;
 import org.xbmc.httpapi.client.TvShowClient;
 import org.xbmc.httpapi.client.VideoClient;
-
-import android.content.Context;
 
 /**
  * Wrapper class for our HTTP clients. The idea is to separate the loads of
@@ -96,9 +93,5 @@ public class HttpApi {
 		video.setHost(host);
 		control.setHost(host);
 		shows.setHost(host);
-	}
-	
-	public IConnectionManager getConnectionManager(Context context) {
-		throw new RuntimeException("I can't do this yet!");
 	}
 }

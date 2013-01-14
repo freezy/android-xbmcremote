@@ -29,32 +29,30 @@ import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.widget.OneLabelItemView;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
-import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Artist;
 import org.xbmc.api.type.ThumbSize;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class ActorListController extends ListController implements IController {
 	
 	private static final int mThumbSize = ThumbSize.SMALL;
+	public static final int TYPE_ALL = 1;
 	public static final int TYPE_MOVIE = 2;
 	public static final int TYPE_TVSHOW = 3;
 	public static final int TYPE_EPISODE = 4;
@@ -63,7 +61,6 @@ public class ActorListController extends ListController implements IController {
 	private final int mType;
 	
 	private IVideoManager mVideoManager;
-	private ITvShowManager mTvShowManager;
 	
 	public ActorListController(int type) {
 		mType = type;
@@ -72,7 +69,6 @@ public class ActorListController extends ListController implements IController {
 	public void onCreate(Activity activity, Handler handler, AbsListView list) {
 		
 		mVideoManager = ManagerFactory.getVideoManager(this);
-		mTvShowManager = ManagerFactory.getTvManager(this);
 		
 		if (!isCreated()) {
 			super.onCreate(activity, handler, list);
@@ -88,11 +84,10 @@ public class ActorListController extends ListController implements IController {
 			
 			final String title = mType == TYPE_MOVIE ? "Movie " : mType == TYPE_TVSHOW ? "TV " : "" + "Actors";
 			DataResponse<ArrayList<Actor>> response = new DataResponse<ArrayList<Actor>>() {
-				@SuppressLint("")
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
-						((ListView)mList).setAdapter(new ActorAdapter(mActivity, value));
+						mList.setAdapter(new ActorAdapter(mActivity, value));
 					} else {
 						setTitle(title);
 						setNoDataMessage("No actors found.", R.drawable.icon_artist_dark);
@@ -105,11 +100,14 @@ public class ActorListController extends ListController implements IController {
 			showOnLoading();
 			setTitle(title + "...");			
 			switch (mType) {
+				case TYPE_ALL:
+					mVideoManager.getActors(response, mActivity.getApplicationContext());
+					break;
 				case TYPE_MOVIE:
 					mVideoManager.getMovieActors(response, mActivity.getApplicationContext());
 					break;
 				case TYPE_TVSHOW:
-					mTvShowManager.getTvShowActors(response, mActivity.getApplicationContext());
+					mVideoManager.getTvShowActors(response, mActivity.getApplicationContext());
 					break;
 				case TYPE_EPISODE:
 					break;
@@ -176,15 +174,13 @@ public class ActorListController extends ListController implements IController {
 		if (mVideoManager != null) {
 			mVideoManager.setController(null);
 		}
-		if (mTvShowManager != null) {
-			mTvShowManager.setController(null);
-		}
 		super.onActivityPause();
 	}
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		mVideoManager = ManagerFactory.getVideoManager(this);
-		mTvShowManager = ManagerFactory.getTvManager(this);
+		if (mVideoManager != null) {
+			mVideoManager.setController(this);
+		}
 	}
 }

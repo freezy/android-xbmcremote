@@ -21,7 +21,6 @@
 
 package org.xbmc.api.object;
 
-import org.xbmc.android.jsonrpc.api.model.VideoModel.Cast;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
@@ -41,11 +40,6 @@ public class Actor extends Artist {
 	public Actor(int id, String name, String role) {
 		super(id, name);
 		this.role = role;
-	}
-	
-	public Actor(Cast member) {
-		super(-1, member.name);
-		this.role = member.role;
 	}
 	
 	/**

@@ -32,12 +32,12 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.OnHierarchyChangeListener;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
+import android.widget.AbsListView.OnScrollListener;
 
 /**
  * FastScrollView is meant for embedding {@link ListView}s that contain a large

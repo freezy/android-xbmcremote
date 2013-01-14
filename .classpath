@@ -2,7 +2,8 @@
 <classpath>
 	<classpathentry excluding="**/.svn/*" kind="src" path="src"/>
 	<classpathentry excluding="**/.svn/*" kind="src" path="gen"/>
+	<classpathentry excluding="**/.svn/*" kind="src" path="lib-src"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="lib" path="lib/jmdns.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

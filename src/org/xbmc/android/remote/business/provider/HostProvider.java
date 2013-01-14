@@ -45,7 +45,7 @@ public class HostProvider extends ContentProvider {
 
 	public static final String AUTHORITY = "org.xbmc.android.provider.remote";
 
-	private static final int DATABASE_VERSION = 5;
+	private static final int DATABASE_VERSION = 4;
 	private static final String DATABASE_NAME = "xbmc_hosts.db";
 	private static final String HOSTS_TABLE_NAME = "hosts";
 
@@ -80,9 +80,7 @@ public class HostProvider extends ContentProvider {
 					+ Hosts.ACCESS_POINT + " TEXT,"
 					+ Hosts.MAC_ADDR + " TEXT,"
 					+ Hosts.WOL_PORT + " INTEGER,"
-					+ Hosts.WOL_WAIT + " INTEGER,"
-					+ Hosts.JSONPORT + " INTEGER,"
-					+ Hosts.JSONAPI + " INTEGER"
+					+ Hosts.WOL_WAIT + " INTEGER"
 					+ ");");
 		}
 
@@ -114,16 +112,8 @@ public class HostProvider extends ContentProvider {
 				 + " INTEGER;";
 				 db.execSQL(altertable);
 				 Log.d(TAG, "executed: " + altertable);
-				 break;
-			case 4:
-				Log.d(TAG, "Upgrading database from version 4 to 5");
-				 altertable = "ALTER TABLE " + HOSTS_TABLE_NAME + " ADD COLUMN " + Hosts.JSONPORT
-						 + " INTEGER;";
-				 db.execSQL(altertable);
-				 altertable = "ALTER TABLE " + HOSTS_TABLE_NAME + " ADD COLUMN " + Hosts.JSONAPI
-						 + " INTEGER;";
-				 db.execSQL(altertable);
-				 //WARNING!!! ADD A break; BEFORE THE DEFAULT BLOCK OF THE DATABASE WILL BE DROPPED!!!				 
+				 
+				//WARNING!!! ADD A break; BEFORE THE DEFAULT BLOCK OF THE DATABASE WILL BE DROPPED!!! 
 				 break;
 			default: 
 				Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
@@ -229,12 +219,6 @@ public class HostProvider extends ContentProvider {
 		if (values.containsKey(Hosts.ESPORT) == false) {
 			values.put(Hosts.ESPORT, 0);
 		}
-		if (values.containsKey(Hosts.JSONPORT) == false) {
-			values.put(Hosts.JSONPORT, 0);
-		}
-		if (values.containsKey(Hosts.JSONAPI) == false) {
-			values.put(Hosts.JSONAPI, 0);
-		}
 		if (values.containsKey(Hosts.TIMEOUT) == false) {
 			values.put(Hosts.TIMEOUT, -1);
 		}
@@ -321,8 +305,6 @@ public class HostProvider extends ContentProvider {
 		sHostsProjectionMap.put(Hosts.USER, Hosts.USER);
 		sHostsProjectionMap.put(Hosts.PASS, Hosts.PASS);
 		sHostsProjectionMap.put(Hosts.ESPORT, Hosts.ESPORT);
-		sHostsProjectionMap.put(Hosts.JSONPORT, Hosts.JSONPORT);
-		sHostsProjectionMap.put(Hosts.JSONAPI, Hosts.JSONAPI);
 		sHostsProjectionMap.put(Hosts.TIMEOUT, Hosts.TIMEOUT);
 		sHostsProjectionMap.put(Hosts.WIFI_ONLY, Hosts.WIFI_ONLY);
 		sHostsProjectionMap.put(Hosts.ACCESS_POINT, Hosts.ACCESS_POINT);
@@ -387,24 +369,6 @@ public class HostProvider extends ContentProvider {
 		 * </P>
 		 */
 		public static final String ESPORT = "esport";
-		
-		/**
-		 * The websocket port
-		 * <P>
-		 * Type: INTEGER
-		 * </P>
-		 */
-		public static final String JSONPORT = "jsonPort";
-		
-		/**
-		 * Whether the JSON API is enabled
-		 * <P>
-		 * Type: INTEGER
-		 * </P>
-		 */
-		public static final String JSONAPI = "jsonApi";
-		
-		
 		
 		/**
 		 * The socket read timeout in milliseconds

@@ -115,6 +115,7 @@ public class MusicLibraryActivity extends SlidingTabActivity implements ViewTree
 		
 		mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			public void onTabChanged(String tabId) {
+				
 				initTab(tabId);
 				
 				final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

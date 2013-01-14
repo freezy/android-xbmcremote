@@ -79,33 +79,28 @@ public class ManagerThread extends Thread {
 	}
 	
 	public static InfoManager info(INotifiableController controller) {
-		final InfoManager im = new InfoManager();
-		im.setHandler(get().mHandler);
+		final InfoManager im = get().mInfoManager;
 		im.setController(controller);
 		return im;
 	}
 	public static ControlManager control(INotifiableController controller) {
-		final ControlManager cm = new ControlManager();
-		cm.setHandler(get().mHandler);
+		final ControlManager cm = get().mControlManager;
 		cm.setController(controller);
 		return cm;
 	}
 	public static MusicManager music(INotifiableController controller) {
-		final MusicManager mm = new MusicManager();
-		mm.setHandler(get().mHandler);
+		final MusicManager mm = get().mMusicManager;
 		mm.setController(controller);
 		return mm;
 	}
 	public static VideoManager video(INotifiableController controller) {
-		final VideoManager vm = new VideoManager();
-		vm.setHandler(get().mHandler);
+		final VideoManager vm = get().mVideoManager;
 		vm.setController(controller);
 		return vm;
 	}
 	
 	public static TvShowManager shows(INotifiableController controller) {
-		final TvShowManager shows =  new TvShowManager();
-		shows.setHandler(get().mHandler);
+		final TvShowManager shows = get().mTvShowManager;
 		shows.setController(controller);
 		return shows;
 	}

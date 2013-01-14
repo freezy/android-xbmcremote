@@ -12,6 +12,7 @@ import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.INotifiableManager;
+import org.xbmc.api.info.SystemInfo;
 import org.xbmc.api.object.Host;
 import org.xbmc.api.presentation.INotifiableController;
 
@@ -94,11 +95,8 @@ public class SetupWizardPageLogin extends WizardPage<Host> {
 					errorMsg.setText(R.string.setup_wizard_login_wrong);
 				}
 			}
-			public Context getApplicationContext() {
-				return null;
-			}
 		});
-		info.getSystemVersion(new DataResponse<String>() {
+		info.getSystemInfo(new DataResponse<String>() {
 			@Override
 			public void run() {
 				if(value != null && !value.equals("")) {
@@ -106,6 +104,6 @@ public class SetupWizardPageLogin extends WizardPage<Host> {
 					showNextPage();
 				}
 			}
-		}, getContext());
+		}, SystemInfo.SYSTEM_BUILD_VERSION, getContext());
 	}
 }

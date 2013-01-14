@@ -5,13 +5,10 @@ import java.util.ArrayList;
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Episode;
 import org.xbmc.api.object.Genre;
-import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Season;
 import org.xbmc.api.object.TvShow;
-import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 public interface ITvShowManager extends IManager{
 	
@@ -19,8 +16,9 @@ public interface ITvShowManager extends IManager{
 	public void getTvShowActors(DataResponse<ArrayList<Actor>> response, Context context) ;
 	public void getTvShowGenres(DataResponse<ArrayList<Genre>> response, Context context);
 	public void getTvShows(DataResponse<ArrayList<TvShow>> response, Genre genre, Context context);
-	public void getAllSeasons(DataResponse<ArrayList<Season>> response, Context context);
-	public void getAllEpisodes(DataResponse<ArrayList<Episode>> response, Context context);
+	public ArrayList<TvShow> getTvShows(Context context);
+	public ArrayList<Season> getAllSeasons(Context context);
+	public ArrayList<Episode> getAllEpisodes(Context context);
 	
 	/**
 	 * Gets all tv shows with the specified actor
@@ -43,6 +41,14 @@ public interface ITvShowManager extends IManager{
 	 * @param context
 	 */
 	public void getEpisodes(DataResponse<ArrayList<Episode>> response, TvShow show, Season season, Context context) ;
+	
+	/**
+	 * Gets all Episodes for the specified season
+	 * @param response
+	 * @param season
+	 * @param context
+	 */
+	public void getEpisodes(DataResponse<ArrayList<Episode>> response, Season season, Context context) ;
 	
 	/**
 	 * Gets all seasons for the specified show
@@ -69,14 +75,4 @@ public interface ITvShowManager extends IManager{
 	 * Put in here everything that has to be cleaned up after leaving an activity.
 	 */
 	public void postActivity();
-	
-	/**
-	 * Does the actual downloading of images into various caches
-	 * @param response
-	 * @param cover
-	 * @param thumbSize
-	 * @param context
-	 */
-	public void downloadCover(final DataResponse<Bitmap> response, ICoverArt cover, int thumbSize, Context context) throws WifiStateException;
-	
 }

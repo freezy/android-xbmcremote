@@ -9,8 +9,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint.Align;
 import android.graphics.Rect;
+import android.graphics.Paint.Align;
 import android.graphics.drawable.Drawable;
 
 public class FlexibleItemView extends FiveLabelsItemView {

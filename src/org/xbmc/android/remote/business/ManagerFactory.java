@@ -21,7 +21,6 @@
 
 package org.xbmc.android.remote.business;
 
-import org.xbmc.android.util.HostFactory;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.business.IInfoManager;
@@ -31,101 +30,25 @@ import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.presentation.INotifiableController;
 
 public abstract class ManagerFactory {
-
+	
 	private static EventClientManager sEventClientManager = null;
-
-	private  enum ApiType {
-		HTTP, JSON_FRODO
-	}
-
-	private static ApiType getApiType() {
-		
-		if(HostFactory.host !=null && HostFactory.host.jsonApi) {
-			return ApiType.JSON_FRODO;
-		}
-		return ApiType.HTTP;
-
-	}
 	
-	public static boolean isHttp() {
-		return ApiType.HTTP.equals(getApiType());
-	}
-	
-	public static boolean isFrodo() {
-		return ApiType.JSON_FRODO.equals(getApiType());
-	}
-
-	public static void resetClient() {
-		switch (getApiType()) {
-		case JSON_FRODO:
-			org.xbmc.android.remote.business.cm.AbstractManager.resetClient();
-			break;
-		}
-	}
-
 	public static IInfoManager getInfoManager(INotifiableController controller) {
-		switch (getApiType()) {
-		case JSON_FRODO:
-			org.xbmc.android.remote.business.cm.InfoManager manager = new org.xbmc.android.remote.business.cm.InfoManager();
-			manager.setController(controller);
-			return manager;
-		case HTTP:
-			return ManagerThread.info(controller);
-		}
-		return null;
+		return ManagerThread.info(controller);
 	}
-
-	public static IControlManager getControlManager(
-			INotifiableController controller) {
-		switch (getApiType()) {
-		case JSON_FRODO:
-			org.xbmc.android.remote.business.cm.ControlManager manager = new org.xbmc.android.remote.business.cm.ControlManager();
-			manager.setController(controller);
-			return manager;
-		case HTTP:
-			return ManagerThread.control(controller);
-		}
-		return null;
+	public static IControlManager getControlManager(INotifiableController controller) {
+		return ManagerThread.control(controller);
 	}
-
 	public static IVideoManager getVideoManager(INotifiableController controller) {
-		switch (getApiType()) {
-		case JSON_FRODO:
-			org.xbmc.android.remote.business.cm.VideoManager manager = new org.xbmc.android.remote.business.cm.VideoManager();
-			manager.setController(controller);
-			return manager;
-		case HTTP:
-			return ManagerThread.video(controller);
-		}
-		return null;
+		return ManagerThread.video(controller);
 	}
-
 	public static ITvShowManager getTvManager(INotifiableController controller) {
-		switch (getApiType()) {
-		case JSON_FRODO:
-			org.xbmc.android.remote.business.cm.TvShowManager manager = new org.xbmc.android.remote.business.cm.TvShowManager();
-			manager.setController(controller);
-			return manager;
-		case HTTP:
-			return ManagerThread.shows(controller);
-		}
-		return null;
+		return ManagerThread.shows(controller);
 	}
-
 	public static IMusicManager getMusicManager(INotifiableController controller) {
-		switch (getApiType()) {
-		case JSON_FRODO:
-			org.xbmc.android.remote.business.cm.MusicManager manager = new org.xbmc.android.remote.business.cm.MusicManager();
-			manager.setController(controller);
-			return manager;
-		case HTTP:
-			return ManagerThread.music(controller);
-		}
-		return null;
+		return ManagerThread.music(controller);
 	}
-
-	public static IEventClientManager getEventClientManager(
-			INotifiableController controller) {
+	public static IEventClientManager getEventClientManager(INotifiableController controller) {
 		if (sEventClientManager == null) {
 			sEventClientManager = new EventClientManager();
 		}

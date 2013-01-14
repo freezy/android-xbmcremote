@@ -25,8 +25,6 @@ import android.content.SharedPreferences;
 
 public interface ISortableManager {
 	
-	public static final String SETTING_IGNORE_ARTICLE = "setting_ignore_article";
-	
 	/**
 	 * Sets the static reference to the preferences object. Used to obtain
 	 * current sort values.
@@ -39,13 +37,5 @@ public interface ISortableManager {
 	 * @param sortKey
 	 */
 	public void setSortKey(int sortKey);
-	
-	
-	/**
-	 * Sets whether or not to ignore articles (global preference)
-	 * @param ignoreArticle
-	 */
-	public void setIgnoreArticle(boolean ignoreArticle);
-	
 	
 }

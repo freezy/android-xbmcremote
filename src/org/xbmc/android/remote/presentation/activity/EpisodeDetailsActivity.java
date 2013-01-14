@@ -29,7 +29,6 @@ import org.xbmc.android.remote.presentation.controller.ListController;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
-import org.xbmc.android.util.StringUtil;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
@@ -114,8 +113,8 @@ public class EpisodeDetailsActivity extends Activity {
 		}
 		((TextView)findViewById(R.id.tvepisodedetails_show)).setText(episode.showTitle);
 		((TextView)findViewById(R.id.tvepisodedetails_first_aired)).setText(episode.firstAired);
-		((TextView)findViewById(R.id.tvepisodedetails_director)).setText(StringUtil.join(", ", episode.director));
-		((TextView)findViewById(R.id.tvepisodedetails_writer)).setText(StringUtil.join(", ", episode.writer));
+		((TextView)findViewById(R.id.tvepisodedetails_director)).setText(episode.director);
+		((TextView)findViewById(R.id.tvepisodedetails_writer)).setText(episode.writer);
 		((TextView)findViewById(R.id.tvepisodedetails_rating)).setText(String.valueOf(episode.rating));
 		
 		mEpisodeDetailsController.setupPlayButton((Button)findViewById(R.id.tvepisodedetails_playbutton));
@@ -222,12 +221,13 @@ public class EpisodeDetailsActivity extends Activity {
 
 		public void onActivityPause() {
 			mShowManager.setController(null);
+//			mShowManager.postActivity();
 			mControlManager.setController(null);
 		}
 
 		public void onActivityResume(Activity activity) {
-			mShowManager = ManagerFactory.getTvManager(this);
-			mControlManager = ManagerFactory.getControlManager(this);
+			mShowManager.setController(this);
+			mControlManager.setController(this);
 		}
 	}
 

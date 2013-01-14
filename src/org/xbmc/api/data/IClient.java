@@ -38,5 +38,5 @@ public interface IClient {
 	 * Updates host info on the connection.
 	 * @param host
 	 */
-	public void setHost(Host host);	
+	public void setHost(Host host);
 }

@@ -24,7 +24,6 @@ package org.xbmc.api.object;
 import java.io.Serializable;
 import java.util.List;
 
-import org.xbmc.android.jsonrpc.api.model.VideoModel.SeasonDetail;
 import org.xbmc.android.util.Crc32;
 import org.xbmc.api.type.MediaType;
 
@@ -32,7 +31,6 @@ public class Season implements Serializable, ICoverArt {
 
 	public final int number;
 	public final boolean watched;
-	public final String thumbnail;
 	public final TvShow show;
 
 	public List<Episode> episodes = null;
@@ -41,24 +39,14 @@ public class Season implements Serializable, ICoverArt {
 		this.number = number;
 		this.watched = watched;
 		this.show = show;
-		this.thumbnail = null;
 	}
-	
-	public Season(SeasonDetail detail, TvShow show) {
-		this.number = detail.season;
-		this.watched = detail.watchedepisodes > 0;
-		this.show = show;
-		this.thumbnail = detail.thumbnail;
-	}
-	
 
 	private static final long serialVersionUID = -7652780720536304140L;
 
 	public long getCrc() {
 		// FileItem.cpp(1185)
 		// BGetCachedThumb("season"+seasonPath+GetLabel(),g_settings.GetVideoThumbFolder(),true);
-		return Crc32.computeLowerCase("season" + show.getPath()
-				+ getShortName());
+			return Crc32.computeLowerCase("season" + show.getPath() + getShortName());
 	}
 
 	public int getFallbackCrc() {
@@ -93,13 +81,5 @@ public class Season implements Serializable, ICoverArt {
 
 	public String toString() {
 		return getName();
-	}
-
-	public int getNumber() {
-		return number;
-	}
-	
-	public String getThumbnail() {
-		return thumbnail;
 	}
 }

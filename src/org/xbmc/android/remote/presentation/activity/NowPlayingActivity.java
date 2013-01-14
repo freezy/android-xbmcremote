@@ -34,7 +34,6 @@ import org.xbmc.api.object.Song;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.eventclient.ButtonCodes;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -49,7 +48,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -71,35 +69,34 @@ public class NowPlayingActivity extends Activity {
 
 	private static final int MENU_REMOTE = 303;
 	private static final int MENU_MONITOR_MODE = 304;
-
+	
 	public NowPlayingActivity() {
-		if (Integer.parseInt(VERSION.SDK) < 5) {
+		if(Integer.parseInt(VERSION.SDK) < 5) {
 			mKeyTracker = new KeyTracker(new OnLongPressBackKeyTracker() {
-
+	
 				@Override
 				public void onLongPressBack(int keyCode, KeyEvent event,
 						Stage stage, int duration) {
 					onKeyLongPress(keyCode, event);
 				}
-
+		
 				@Override
 				public void onShortPressBack(int keyCode, KeyEvent event,
 						Stage stage, int duration) {
 					callSuperOnKeyDown(keyCode, event);
 				}
-
+				
 			});
-		}
-		;
-	}
-
+		};
+	}	
+	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		// set display size
-		final Display display = getWindowManager().getDefaultDisplay();
-		ThumbSize.setScreenSize(display.getWidth(), display.getHeight());
-
+		final Display display = getWindowManager().getDefaultDisplay(); 
+		ThumbSize.setScreenSize(display.getWidth(), display.getHeight());	
+		
 		setContentView(R.layout.nowplaying);
 
 		mNowPlayingController = new NowPlayingController(this, new Handler());
@@ -111,18 +108,15 @@ public class NowPlayingActivity extends Activity {
 		mCounterLeftView = (TextView) findViewById(R.id.now_playing_counter_left);
 		mCounterRightView = (TextView) findViewById(R.id.now_playing_counter_right);
 		mPlayPauseView = (ImageButton) findViewById(R.id.MediaPlayPauseButton);
-
-		// JewelView jewelCase =
-		// (JewelView)findViewById(R.id.now_playing_jewelcase);
-
-		// RelativeLayout.LayoutParams layoutParams = new
-		// RelativeLayout.LayoutParams(arg0, arg1)
-		// layoutParams.height = 140;
-		// layoutParams.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
-
-		// / layoutParams.addRule(RelativeLayout.ABOVE,
-		// R.id.now_playing_bottombar);
-		// jewelCase.setLayoutParams(layoutParams);
+		
+//		JewelView jewelCase = (JewelView)findViewById(R.id.now_playing_jewelcase);
+		
+//		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(arg0, arg1)
+//		layoutParams.height = 140;
+//		layoutParams.width = RelativeLayout.LayoutParams.WRAP_CONTENT;
+		
+///		layoutParams.addRule(RelativeLayout.ABOVE, R.id.now_playing_bottombar);
+//		jewelCase.setLayoutParams(layoutParams);
 
 		// remove nasty top fading edge
 		FrameLayout topFrame = (FrameLayout) findViewById(android.R.id.content);
@@ -133,12 +127,13 @@ public class NowPlayingActivity extends Activity {
 
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 
-		mNowPlayingController.setupButtons(mSeekBar,
-				findViewById(R.id.MediaPreviousButton),
-				findViewById(R.id.MediaStopButton),
-				findViewById(R.id.MediaPlayPauseButton),
-				findViewById(R.id.MediaNextButton),
-				findViewById(R.id.MediaPlaylistButton));
+  	  	mNowPlayingController.setupButtons(mSeekBar,
+  	  		findViewById(R.id.MediaPreviousButton),
+  	  		findViewById(R.id.MediaStopButton),
+  	  		findViewById(R.id.MediaPlayPauseButton),
+  	  		findViewById(R.id.MediaNextButton),
+  	  		findViewById(R.id.MediaPlaylistButton)
+  	  	);
 
 	}
 
@@ -148,8 +143,7 @@ public class NowPlayingActivity extends Activity {
 		}
 	}
 
-	public void updateInfo(String topTitle, String bottomTitme,
-			String bottomSubtitle) {
+	public void updateInfo(String topTitle, String bottomTitme, String bottomSubtitle) {
 		mTopTitleView.setText(topTitle);
 		mBottomTitleView.setText(bottomTitme);
 		mBottomSubtitleView.setText(bottomSubtitle);
@@ -161,8 +155,7 @@ public class NowPlayingActivity extends Activity {
 		mCounterLeftView.setVisibility(View.VISIBLE);
 		mCounterLeftView.setText(Song.getDuration(time + 1));
 		mCounterRightView.setVisibility(View.VISIBLE);
-		mCounterRightView.setText(duration == 0 ? "unknown" : "-"
-				+ Song.getDuration(duration - time - 1));
+		mCounterRightView.setText(duration == 0 ? "unknown" : "-" + Song.getDuration(duration - time - 1));
 		mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
 	}
 
@@ -175,15 +168,6 @@ public class NowPlayingActivity extends Activity {
 		}
 	}
 
-	@SuppressLint("")
-	public void updateFanart(Bitmap fanart, int mediaType) {
-		final ImageView background = (ImageView) findViewById(R.id.fanart);
-		if (fanart == null) {
-			return;
-		}
-		background.setImageBitmap(fanart);
-	}
-
 	public void clear() {
 		mSeekBar.setEnabled(false);
 		mCounterLeftView.setVisibility(View.GONE);
@@ -194,10 +178,8 @@ public class NowPlayingActivity extends Activity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		menu.add(0, MENU_REMOTE, 0, "Remote control").setIcon(
-				R.drawable.menu_remote);
-		menu.add(0, MENU_MONITOR_MODE, 0, "Monitor mode").setIcon(
-				R.drawable.menu_view);
+		menu.add(0, MENU_REMOTE, 0, "Remote control").setIcon(R.drawable.menu_remote);
+		menu.add(0, MENU_MONITOR_MODE, 0, "Monitor mode").setIcon(R.drawable.menu_view);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -207,8 +189,7 @@ public class NowPlayingActivity extends Activity {
 		switch (item.getItemId()) {
 		case MENU_REMOTE:
 			final Intent intent;
-			if (getSharedPreferences("global", Context.MODE_PRIVATE).getInt(
-					RemoteController.LAST_REMOTE_PREFNAME, -1) == RemoteController.LAST_REMOTE_GESTURE) {
+			if (getSharedPreferences("global", Context.MODE_PRIVATE).getInt(RemoteController.LAST_REMOTE_PREFNAME, -1) == RemoteController.LAST_REMOTE_GESTURE) {
 				intent = new Intent(this, GestureRemoteActivity.class);
 			} else {
 				intent = new Intent(this, RemoteActivity.class);
@@ -225,27 +206,23 @@ public class NowPlayingActivity extends Activity {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		IEventClientManager client = ManagerFactory
-				.getEventClientManager(mNowPlayingController);
+		IEventClientManager client = ManagerFactory.getEventClientManager(mNowPlayingController);
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_VOLUME_UP:
-			client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false,
-					true, true, (short) 0, (byte) 0);
+			client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_PLUS, false, true, true, (short) 0, (byte) 0);
 			return true;
 		case KeyEvent.KEYCODE_VOLUME_DOWN:
-			client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false,
-					true, true, (short) 0, (byte) 0);
+			client.sendButton("R1", ButtonCodes.REMOTE_VOLUME_MINUS, false, true, true, (short) 0, (byte) 0);
 			return true;
 		case KeyEvent.KEYCODE_SEARCH:
 			switchMonitorMode();
 			return true;
-			/*
-			 * case KeyEvent.KEYCODE_PAGE_UP: switchMonitorMode(); return true;
-			 */
+/*		case KeyEvent.KEYCODE_PAGE_UP:
+			switchMonitorMode();
+			return true;*/
 		}
 		client.setController(null);
-		boolean handled = (mKeyTracker != null) ? mKeyTracker.doKeyDown(
-				keyCode, event) : false;
+		boolean handled = (mKeyTracker != null) ? mKeyTracker.doKeyDown(keyCode, event) : false;
 		return handled || super.onKeyDown(keyCode, event);
 	}
 
@@ -291,21 +268,19 @@ public class NowPlayingActivity extends Activity {
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		boolean handled = (mKeyTracker != null) ? mKeyTracker.doKeyUp(keyCode,
-				event) : false;
+		boolean handled = (mKeyTracker != null) ? mKeyTracker.doKeyUp(keyCode, event) : false;
 		return handled || super.onKeyUp(keyCode, event);
 	}
-
+	
 	@Override
 	public void onBackPressed() {
 		if (isTaskRoot()) {
-			Intent intent = new Intent(NowPlayingActivity.this,
-					HomeActivity.class);
+			Intent intent = new Intent(NowPlayingActivity.this, HomeActivity.class );
 			NowPlayingActivity.this.startActivity(intent);
 		}
-
+		
 		finish();
-
-		return;
+		
+	    return;
 	}
 }

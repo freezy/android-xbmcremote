@@ -36,7 +36,6 @@ import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.CacheType;
-import org.xbmc.api.type.Sort;
 import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.httpapi.WifiStateException;
@@ -58,6 +57,21 @@ public abstract class AbstractManager implements INotifiableManager {
 	
 	protected static final String TAG = "AbstractManager";
 	
+	public static final String PREF_SORT_BY_PREFIX = "sort_by_";
+	public static final String PREF_SORT_ORDER_PREFIX = "sort_order_";
+	
+	/* The idea of the sort keys is to remember different sort settings for
+	 * each type. In your controller, make sure you run setSortKey() in the
+	 * onCreate() method.
+	 */
+	public static final int PREF_SORT_KEY_ALBUM = 1;
+	public static final int PREF_SORT_KEY_ARTIST = 2;
+	public static final int PREF_SORT_KEY_SONG = 3;
+	public static final int PREF_SORT_KEY_GENRE = 4;
+	public static final int PREF_SORT_KEY_FILEMODE = 5;
+	public static final int PREF_SORT_KEY_SHOW = 6;
+	public static final int PREF_SORT_KEY_MOVIE = 7;
+	public static final int PREF_SORT_KEY_EPISODE = 8;
 	
 	protected INotifiableController mController = null;
 	
@@ -65,10 +79,8 @@ public abstract class AbstractManager implements INotifiableManager {
 	
 	protected SharedPreferences mPref;
 	protected int mCurrentSortKey;
-	protected boolean mCurrentIgnoreArticle;
 	
 	protected List<Runnable> failedRequests = new ArrayList<Runnable>();
-	
 	/**
 	 * Sets the handler used in the looping thread
 	 * @param handler
@@ -196,7 +208,7 @@ public abstract class AbstractManager implements INotifiableManager {
 	 */
 	public static boolean cacheCover(final ICoverArt cover, final INotifiableManager manager, final Context context) {
 		if (!DiskCacheThread.isInCache(cover, ThumbSize.MEDIUM)) {
-			return DownloadThread.download(new DataResponse<Bitmap>(), cover, ThumbSize.MEDIUM, null, manager, context, false);
+			return DownloadThread.download(null, cover, ThumbSize.MEDIUM, null, manager, context, false);
 		}
 		return false;
 	}
@@ -337,8 +349,9 @@ public abstract class AbstractManager implements INotifiableManager {
 		mCurrentSortKey = sortKey;
 	}
 	
-	public void setIgnoreArticle(boolean ignoreArticle) {
-		mCurrentIgnoreArticle = ignoreArticle;
+	public void post(Runnable runnable)
+	{
+		mHandler.post(runnable);
 	}
 	
 	/**
@@ -352,16 +365,6 @@ public abstract class AbstractManager implements INotifiableManager {
 			return mPref.getInt(PREF_SORT_BY_PREFIX + mCurrentSortKey, type);
 		}
 		return type;
-	}
-	
-	/**
-	 * Returns an object representing the current sort.
-	 * @param type sorting field
-	 * @return Sort
-	 */
-	public Sort getSort(int type) {
-		Log.e("AbstractManager", "Ignore Article: " + mCurrentIgnoreArticle);
-		return new Sort(getSortBy(type), getSortOrder(), mCurrentIgnoreArticle);
 	}
 	
 	/**
@@ -379,5 +382,4 @@ public abstract class AbstractManager implements INotifiableManager {
 	protected boolean getHideWatched(Context context) {
 		return context.getSharedPreferences("global", Context.MODE_PRIVATE).getBoolean("HideWatched", false);
 	}
-	
 }

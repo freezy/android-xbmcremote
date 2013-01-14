@@ -26,7 +26,6 @@ import org.xbmc.android.remote.business.CacheManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.presentation.controller.HomeController;
 import org.xbmc.android.remote.presentation.controller.HomeController.ProgressThread;
-import org.xbmc.android.remote.presentation.notification.NowPlayingNotificationManager;
 import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
 import org.xbmc.api.business.IEventClientManager;
@@ -82,29 +81,11 @@ public class HomeActivity extends Activity {
 	private IEventClientManager mEventClientManager;
 
 	private ProgressThread mProgressThread;
-	private ProgressDialog mProgressDialog;
-    
-//	private ConnectionManager mConnectionManager = null;
+    private ProgressDialog mProgressDialog;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-/*		mConnectionManager = new ConnectionManager(getApplicationContext(), new HostConfig("192.168.0.100"));
-		
-		final AudioLibrary.GetAlbums getAlbumsCall = new AudioLibrary.GetAlbums(null, null, 
-				AudioModel.AlbumFields.TITLE, AudioModel.AlbumFields.ARTISTID, AudioModel.AlbumFields.YEAR);
-		
-		mConnectionManager.call(getAlbumsCall, new ApiCallback<AudioModel.AlbumDetails>(){
-			public void onResponse(AbstractCall<AlbumDetails> apiCall) {
-				for (AlbumDetails album : apiCall.getResults()) {
-					Log.d(TAG, "Got album: " + album.title + " (" + album.year + ")");
-				}
-			}
-			public void onError(int code, String message, String hint) {
-				Log.d(TAG, "Error " + code + ": " + message);
-			}
-		});*/
-		
 		setContentView(R.layout.home);
 		
 		if (Build.VERSION.SDK_INT >= 9) {

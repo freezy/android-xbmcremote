@@ -25,12 +25,9 @@ import java.util.ArrayList;
 
 import org.xbmc.api.object.Actor;
 import org.xbmc.api.object.Genre;
-import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.object.Movie;
-import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 /**
  * This is the interface between the presentation layer and the business layer.
@@ -59,6 +56,12 @@ public interface IVideoManager extends IManager {
 	public ArrayList<Movie> getMovies(final Context context);
 	
 	/**
+	 * SYNCHRONOUSLY gets all movies from database
+	 * @return Movies in database with offset
+	 */
+	public ArrayList<Movie> getMovies(final Context context, int offset);
+	
+	/**
 	 * Gets all movies with an actor from database
 	 * @param response Response object
 	 * @param actor Actor
@@ -72,11 +75,17 @@ public interface IVideoManager extends IManager {
 	public void getMovies(final DataResponse<ArrayList<Movie>> response, final Genre genre, final Context context);
 	
 	/**
-	 * gets all actors from database.
-	 * @return All actors 
+	 * Gets all actors from database. Use {@link getMovieActors()} and
+	 * {@link getTvActors()} for filtered actors. 
+	 * @param response Response object
 	 */
 	public void getActors(final DataResponse<ArrayList<Actor>> response, final Context context);
 	
+	/**
+	 * SYNCHRONOUSLY gets all actors from database.
+	 * @return All actors 
+	 */
+	public ArrayList<Actor> getActors(final Context context);
 	
 	/**
 	 * Gets all movie actors from database
@@ -85,10 +94,23 @@ public interface IVideoManager extends IManager {
 	public void getMovieActors(final DataResponse<ArrayList<Actor>> response, final Context context);
 
 	/**
+	 * Gets all TV show actors from database
+	 * @param response Response object
+	 */
+	public void getTvShowActors(final DataResponse<ArrayList<Actor>> response, final Context context);
+	
+	/**
 	 * Gets all movie genres from database
 	 * @param response Response object
 	 */
 	public void getMovieGenres(final DataResponse<ArrayList<Genre>> response, final Context context);
+	
+	/**
+	 * Gets all tv show genres from the database
+	 * @param response Response object
+	 * @param context
+	 */
+	public void getTvShowGenres(final DataResponse< ArrayList<Genre>> response, final Context context);
 	
 	/**
 	 * Sets the media at playlist position to be the next item to be played.
@@ -102,7 +124,7 @@ public interface IVideoManager extends IManager {
 	 * @param position Complete path (including filename) of the media to be removed.
 	 * @return True on success, false otherwise.
 	 */
-	public void removeFromPlaylist(final DataResponse<Boolean> response, final int position, final Context context);
+	public void removeFromPlaylist(final DataResponse<Boolean> response, final String path, final Context context);
 	
 	/**
 	 * Returns an array of videos on the playlist. Empty array if nothing is playing.
@@ -121,12 +143,4 @@ public interface IVideoManager extends IManager {
 	 */
 	public void postActivity();
 	
-	/**
-	 * Does the actual downloading of images into various caches
-	 * @param response
-	 * @param cover
-	 * @param thumbSize
-	 * @param context
-	 */
-	public void downloadCover(final DataResponse<Bitmap> response, ICoverArt cover, int thumbSize, Context context) throws WifiStateException;
 }

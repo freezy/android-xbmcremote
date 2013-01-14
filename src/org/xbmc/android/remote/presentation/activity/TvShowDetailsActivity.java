@@ -30,7 +30,6 @@ import org.xbmc.android.remote.presentation.controller.TvShowListController;
 import org.xbmc.android.util.KeyTracker;
 import org.xbmc.android.util.KeyTracker.Stage;
 import org.xbmc.android.util.OnLongPressBackKeyTracker;
-import org.xbmc.android.util.StringUtil;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
@@ -43,23 +42,16 @@ import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnCreateContextMenuListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -70,10 +62,6 @@ import android.widget.TextView;
 public class TvShowDetailsActivity extends Activity {
 	
 	private static final String NO_DATA = "-";
-	
-	public static final int CAST_CONTEXT_IMDB = 1;
-	private static View selectedView;
-	private static Actor selectedAcotr;
 	
     private ConfigurationManager mConfigurationManager;
     private TvShowDetailsController mTvShowDetailsController;
@@ -106,7 +94,7 @@ public class TvShowDetailsActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tvdetails);
-		
+
 		// set display size
 		final Display display = getWindowManager().getDefaultDisplay(); 
 		ThumbSize.setScreenSize(display.getWidth(), display.getHeight());	
@@ -125,7 +113,7 @@ public class TvShowDetailsActivity extends Activity {
 			((ImageView)findViewById(R.id.tvdetails_rating_stars)).setImageResource(sStarImages[(int)Math.round(show.rating % 10)]);
 		}
 		((TextView)findViewById(R.id.tvdetails_first_aired)).setText(show.firstAired);
-		((TextView)findViewById(R.id.tvdetails_genre)).setText(StringUtil.join(",", show.genre));
+		((TextView)findViewById(R.id.tvdetails_genre)).setText(show.genre);
 		((TextView)findViewById(R.id.tvdetails_rating)).setText(String.valueOf(show.rating));
 		
 		mTvShowDetailsController.setupPlayButton((Button)findViewById(R.id.tvdetails_playbutton));
@@ -176,7 +164,7 @@ public class TvShowDetailsActivity extends Activity {
 				public void run() {
 					final TvShow show = value;
 					episodesVew.setText(show.numEpisodes + " (" + show.watchedEpisodes + " Watched - " + (show.numEpisodes - show.watchedEpisodes) + " Unwatched)");
-					studioView.setText(StringUtil.join(",", show.network));
+					studioView.setText(show.network);
 					parentalView.setText(show.contentRating.equals("") ? NO_DATA : show.contentRating);
 					plotView.setText(show.summary.equals("") ? NO_DATA : show.summary);
 					
@@ -207,31 +195,6 @@ public class TvShowDetailsActivity extends Activity {
 									mActivity.startActivity(nextActivity);
 								}
 							});
-							img.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
-								public void onCreateContextMenu(ContextMenu menu, View v,
-										ContextMenuInfo menuInfo) {
-									
-									selectedAcotr = (Actor) v.getTag();
-									selectedView = v;
-									
-								   // final FiveLabelsItemView view = (FiveLabelsItemView)((AdapterContextMenuInfo)menuInfo).targetView;
-									menu.setHeaderTitle(selectedAcotr.getShortName());
-									menu.add(0, CAST_CONTEXT_IMDB, 1, "Open IMDb").setOnMenuItemClickListener(new OnMenuItemClickListener(	) {
-										
-										public boolean onMenuItemClick(MenuItem item) {
-											Intent intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("imdb:///find?s=nm&q=" + selectedAcotr.getName()));
-											if (selectedView.getContext().getPackageManager().resolveActivity(intentIMDb, PackageManager.MATCH_DEFAULT_ONLY) == null)
-											{
-										    	intentIMDb = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.imdb.com/find?s=nm&q=" + selectedAcotr.getName()));
-											}
-											selectedView.getContext().startActivity(intentIMDb);
-								 
-											return false;
-										}
-									});
-								};
-							});
-						    
 							dataLayout.addView(view);
 						}
 					}
@@ -246,8 +209,8 @@ public class TvShowDetailsActivity extends Activity {
 		}
 
 		public void onActivityResume(Activity activity) {
-			mShowManager = ManagerFactory.getTvManager(this);
-			mControlManager = ManagerFactory.getControlManager(this);
+			mShowManager.setController(this);
+			mControlManager.setController(this);
 		}
 	}
 
