@@ -115,13 +115,9 @@ public class ConnectionFactory {
 	 * @return A reference to the NowPlaying Poller
 	 */
 	public static NowPlayingPollerThread getNowPlayingPoller(Context context) {
-		if (sNowPlayingPoller == null) {
+		if (sNowPlayingPoller == null || !sNowPlayingPoller.isAlive() || sNowPlayingPoller.getApplicationContext() != context) {
 			sNowPlayingPoller = new NowPlayingPollerThread(context);
 			sNowPlayingPoller.start();
-		}
-		if (!sNowPlayingPoller.isAlive()){
-			sNowPlayingPoller = new NowPlayingPollerThread(context);
-			sNowPlayingPoller.start();			
 		}
 		return sNowPlayingPoller;
 	}
