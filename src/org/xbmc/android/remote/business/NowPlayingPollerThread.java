@@ -116,6 +116,9 @@ public class NowPlayingPollerThread extends Thread {
 		};
 		mSubscribers = new HashSet<Handler>();
 	}
+	public Context getApplicationContext() {
+		return mControllerStub.getApplicationContext();
+	}
 	public void subscribe(final Handler handler) {
 		// update handler on the state of affairs
 		ManagerFactory.getControlManager(mControllerStub).getCurrentlyPlaying(new DataResponse<ICurrentlyPlaying>() {
