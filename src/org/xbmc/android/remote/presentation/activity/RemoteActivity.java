@@ -33,6 +33,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.util.Log;
@@ -183,6 +184,17 @@ public class RemoteActivity extends Activity {
 		mRemoteController.onActivityPause();
 	}
 
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+	    super.onConfigurationChanged(newConfig);
+	    if(newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO &&
+	    		newConfig.navigationHidden == Configuration.NAVIGATIONHIDDEN_NO){
+	    	mRemoteController.setExtendedSet(true);
+	    }else{
+	    	mRemoteController.setExtendedSet(false);
+	    }
+	}
+	
 	/**
 	 * Assigns the button events to the views.
 	 */

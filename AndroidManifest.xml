@@ -40,7 +40,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".presentation.activity.RemoteActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+		<activity android:name=".presentation.activity.RemoteActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:configChanges="keyboardHidden" />
 		<activity android:name=".presentation.activity.MusicLibraryActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".presentation.activity.MusicArtistActivity" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name=".presentation.activity.MusicGenreActivity" android:theme="@android:style/Theme.NoTitleBar" />

@@ -78,7 +78,7 @@ public class RemoteController extends AbstractController implements
 	private static final float MOTION_EVENT_MIN_DELTA_POSITION = 0.15f;
 
 	private static final long VIBRATION_LENGTH = 45;
-
+	
 	IEventClientManager mEventClientManager;
 	IInfoManager mInfoManager;
 	IControlManager mControl;
@@ -91,6 +91,8 @@ public class RemoteController extends AbstractController implements
 	private final Vibrator mVibrator;
 	private final boolean mDoVibrate;
 
+	private static boolean extendedSet;
+	
 	private int mEventServerInitialDelay = 750;
 
 	private Timer tmrKeyPress;
@@ -365,14 +367,24 @@ public class RemoteController extends AbstractController implements
 			mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_MENU,
 					false, true, true, (short) 0, (byte) 0);
 			return true;
+			
+		
 		case KeyEvent.KEYCODE_BUTTON_L1:
-			mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_REVERSE,
-					false, true, true, (short) 0, (byte) 0);
-			return true;
+			if(extendedSet){
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_REVERSE,
+						false, true, true, (short) 0, (byte) 0);
+				return true;
+			}else{
+				return false;
+			}
 		case KeyEvent.KEYCODE_BUTTON_R1:
-			mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_FORWARD,
-					false, true, true, (short) 0, (byte) 0);
-			return true;
+			if(extendedSet){
+				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_FORWARD,
+						false, true, true, (short) 0, (byte) 0);
+				return true;
+			}else{
+				return false;
+			}
 		default:
 			return false;
 		}
@@ -638,5 +650,13 @@ public class RemoteController extends AbstractController implements
 		mHandler = new Handler();
 		mEventClientManager.setController(this);
 		mInfoManager.setController(this);
+	}
+
+	public boolean isExtendedSet() {
+		return extendedSet;
+	}
+
+	public void setExtendedSet(boolean extendedSet) {
+		RemoteController.extendedSet = extendedSet;
 	}
 }
