@@ -187,7 +187,7 @@ public class RemoteActivity extends Activity {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 	    super.onConfigurationChanged(newConfig);
-	    if(newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO &&
+	    if(newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO ||
 	    		newConfig.navigationHidden == Configuration.NAVIGATIONHIDDEN_NO){
 	    	mRemoteController.setExtendedSet(true);
 	    }else{

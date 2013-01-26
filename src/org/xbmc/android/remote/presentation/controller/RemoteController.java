@@ -351,6 +351,15 @@ public class RemoteController extends AbstractController implements
 					ButtonCodes.KEYBOARD_BACKSPACE, false, true, true,
 					(short) 0, (byte) 0);
 			return true;
+		case KeyEvent.KEYCODE_BACK:
+			if(event.isAltPressed()) { 
+				mEventClientManager.sendButton("R1",
+					ButtonCodes.KEYBOARD_BACKSPACE, false, true, true,
+					(short) 0, (byte) 0);
+				return true;
+			}else{
+				return false;
+			}
 		case KeyEvent.KEYCODE_BUTTON_X:
 			mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_STOP,
 					false, true, true, (short) 0, (byte) 0);
@@ -366,9 +375,7 @@ public class RemoteController extends AbstractController implements
 		case KeyEvent.KEYCODE_BUTTON_SELECT:
 			mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_MENU,
 					false, true, true, (short) 0, (byte) 0);
-			return true;
-			
-		
+			return true;	
 		case KeyEvent.KEYCODE_BUTTON_L1:
 			if(extendedSet){
 				mEventClientManager.sendButton("R1", ButtonCodes.REMOTE_REVERSE,
