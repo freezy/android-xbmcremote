@@ -42,6 +42,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -121,6 +122,9 @@ public class RemoteController extends AbstractController implements
 			// });
 			// }
 		}, GuiSettings.Services.EVENT_SERVER_INITIAL_DELAY, context);
+				
+		extendedSet = context.getResources().getConfiguration().hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO ||
+				context.getResources().getConfiguration().NAVIGATIONHIDDEN_NO == Configuration.NAVIGATIONHIDDEN_NO;
 	}
 
 	public IGestureListener startGestureThread(final Context context) {
@@ -347,13 +351,13 @@ public class RemoteController extends AbstractController implements
 					false, true, true, (short) 0, (byte) 0);
 			return true;
 		case KeyEvent.KEYCODE_BUTTON_B:
-			mEventClientManager.sendButton("R1",
+			mEventClientManager.sendButton("KB",
 					ButtonCodes.KEYBOARD_BACKSPACE, false, true, true,
 					(short) 0, (byte) 0);
 			return true;
 		case KeyEvent.KEYCODE_BACK:
 			if(event.isAltPressed()) { 
-				mEventClientManager.sendButton("R1",
+				mEventClientManager.sendButton("KB",
 					ButtonCodes.KEYBOARD_BACKSPACE, false, true, true,
 					(short) 0, (byte) 0);
 				return true;

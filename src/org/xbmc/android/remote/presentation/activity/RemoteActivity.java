@@ -126,7 +126,7 @@ public class RemoteActivity extends Activity {
 		FrameLayout topFrame = (FrameLayout) findViewById(android.R.id.content);
 		topFrame.setForeground(null);
 		mRemoteController = new RemoteController(getApplicationContext());
-
+		
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 		// mConfigurationManager.initKeyguard(true);
 
