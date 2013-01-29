@@ -50,19 +50,20 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.ListAdapter;
+import android.widget.Toast;
 
 /**
  * TODO Once we move to 1.6+, waste the deprecated code. 
@@ -165,7 +166,7 @@ public class AlbumListController extends ListController implements IController {
 	private void setAdapter(ArrayList<Album> value) {
 		switch (mCurrentView) {
 			case VIEW_LIST:
-				mList.setAdapter(new AlbumAdapter(mActivity, value));
+				((AdapterView<ListAdapter>) mList).setAdapter(new AlbumAdapter(mActivity, value));
 				mList.setVisibility(View.VISIBLE);
 				if (mGrid != null) {
 					mGrid.setVisibility(View.GONE);
@@ -178,7 +179,7 @@ public class AlbumListController extends ListController implements IController {
 					mList.setVisibility(View.GONE);
 				} else {
 					mList.setVisibility(View.VISIBLE);
-					mList.setAdapter(new AlbumAdapter(mActivity, value));
+					((AdapterView<ListAdapter>) mList).setAdapter(new AlbumAdapter(mActivity, value));
 				}
 			break;
 		}

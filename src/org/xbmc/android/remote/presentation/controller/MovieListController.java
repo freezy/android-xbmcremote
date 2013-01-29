@@ -52,18 +52,19 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.Toast;
 
 public class MovieListController extends ListController implements IController {
 
@@ -141,7 +142,7 @@ public class MovieListController extends ListController implements IController {
 			public void run() {
 				if (value.size() > 0) {
 					setTitle(title + " (" + value.size() + ")");
-					mList.setAdapter(new MovieAdapter(mActivity, value));
+					((AdapterView<ListAdapter>) mList).setAdapter(new MovieAdapter(mActivity, value));
 				} else {
 					setTitle(title);
 					setNoDataMessage("No movies found.", R.drawable.icon_movie_dark);

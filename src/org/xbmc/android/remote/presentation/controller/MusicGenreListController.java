@@ -36,15 +36,16 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 
 public class MusicGenreListController extends ListController implements IController {
 	
@@ -80,7 +81,7 @@ public class MusicGenreListController extends ListController implements IControl
 				public void run() {
 					if (value.size() > 0) {
 						setTitle(title + " (" + value.size() + ")");
-						mList.setAdapter(new GenreAdapter(mActivity, value));
+						((AdapterView<ListAdapter>) mList).setAdapter(new GenreAdapter(mActivity, value));
 					} else {
 						setTitle(title);
 						setNoDataMessage("No genres found.", R.drawable.icon_genre_dark);
