@@ -333,7 +333,7 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				final IMusicClient mc = music(context);
 				final IControlClient cc = control(context);
 				final int playStatus = cc.getPlayState(MusicManager.this);
-				cc.setCurrentPlaylist(MusicManager.this, MusicClient.PLAYLIST_ID);
+				//cc.setCurrentPlaylist(MusicManager.this, MusicClient.PLAYLIST_ID);
 				final int playlistSize = mc.getPlaylistSize(MusicManager.this); 
 				int playPos = -1;
 				if (playlistSize == 0) {  // if playlist is empty, add the whole album
