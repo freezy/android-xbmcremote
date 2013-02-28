@@ -459,14 +459,15 @@ public class ControlClient extends Client implements IControlClient {
 				return nothingPlaying;
 			}
 			
-			if(getString(file_details, "type").equals("song")){
-				return MusicClient.getCurrentlyPlaying(player_details, file_details);
+		
+			if(getString(file_details, "type").equals("episode")){
+				return TvShowClient.getCurrentlyPlaying(player_details, file_details);			
 			}
-			else if(getString(file_details, "type").indexOf("video") != -1 || getString(file_details, "type").indexOf("movie") != -1){
+			else if(getString(player_details, "type").equals("video")){
 				return VideoClient.getCurrentlyPlaying(player_details, file_details);			
 			}
-			else if(getString(file_details, "type").equals("episode")){
-				return TvShowClient.getCurrentlyPlaying(player_details, file_details);			
+			if(getString(player_details, "type").equals("audio")){
+				return MusicClient.getCurrentlyPlaying(player_details, file_details);
 			}
 			else
 				return nothingPlaying;
