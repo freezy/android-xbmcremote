@@ -510,11 +510,12 @@ public class MusicManager extends AbstractManager implements IMusicManager, ISor
 				}
 				cc.stop(MusicManager.this);
 				mc.addToPlaylist(MusicManager.this, album, getSortBy(SortType.TRACK), getSortOrder());
-				cc.setCurrentPlaylist(MusicManager.this, MusicClient.PLAYLIST_ID);
 				if (playPos > 0) {
-					mc.playlistSetSong(MusicManager.this, playPos - 1);
-				}				
-				response.value = mc.playNext(MusicManager.this);
+					response.value = mc.playlistSetSong(MusicManager.this, playPos);
+				}
+				else{
+					response.value = cc.setCurrentPlaylist(MusicManager.this, MusicClient.PLAYLIST_ID);
+				}
 			}
 		});
 	}
