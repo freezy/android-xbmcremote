@@ -20,11 +20,19 @@ public class BigPictureNotificationBuilder extends LargeIconNotificationBuilder 
     @Override
     public Notification build(String title, String text, int icon, Bitmap thumb) {
         Notification.Builder superBuilder = super.getBuilder(title, text, icon, thumb);
-        Notification notification = new Notification.BigPictureStyle(superBuilder)
-            .bigPicture(thumb)
-            .bigLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
-            .setSummaryText(text)
-            .build();
-        return finalize(notification);
+        if(thumb == null){
+	        superBuilder
+	        	.setSmallIcon(icon)
+	        	.setContentText(text);
+	        return finalize(superBuilder.build());
+        }
+        else{
+	        Notification  notification = new Notification.BigPictureStyle(superBuilder)
+	            .bigPicture(thumb)
+	            .bigLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
+	            .setSummaryText(text)
+	            .build();
+	        return finalize(notification);
+        }
     }
 }
