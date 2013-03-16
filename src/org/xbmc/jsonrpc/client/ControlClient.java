@@ -82,14 +82,8 @@ public class ControlClient extends Client implements IControlClient {
 	 */
 	public boolean playFile(INotifiableManager manager, String filename, int playlistId) {
 		
-		if(clearPlaylist(manager, playlistId))
-			if(addToPlaylist(manager, filename, playlistId))
-				return play(manager, playlistId);
-			else
-				return false;
-		else
-			return false;		
-	}
+		return mConnection.getString(manager, "Player.Open", obj().p("item", obj().p("file", filename)).p("options", obj().p("resume", true))).equals("OK");
+}
 	
 	/**
 	 * Starts playing/showing the next media/image in the current playlist or,
