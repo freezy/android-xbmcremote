@@ -96,8 +96,10 @@ public class InfoClient extends Client implements IInfoClient {
 			return null;
 		
 		final JsonNode item = mConnection.getJson(manager, "Player.GetItem", obj().p("playerid", playerid).p(PARAM_PROPERTIES, arr().add("thumbnail"))).get("item");
-		
-		final JsonNode dl = mConnection.getJson(manager, "Files.PrepareDownload", obj().p("path", getString(item, "thumbnail")));
+
+		JsonNode dl = null;
+		if(getString(item, "thumbnail") != null && !getString(item, "thumbnail").equals(""))
+			dl = mConnection.getJson(manager, "Files.PrepareDownload", obj().p("path", getString(item, "thumbnail")));
 		if(dl != null){
 			JsonNode details = dl.get("details");
 			if(details != null)
