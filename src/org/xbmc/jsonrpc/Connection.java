@@ -320,8 +320,10 @@ public class Connection {
 			if (result == null) {
 				if (response.get(ERROR_FIELD) == null) {
 					throw new Exception("Weird JSON response, could not parse error.");
-				} else {
+				}else if(!response.get(ERROR_FIELD).get("message").getTextValue().equals("Invalid params.")){
 					throw new Exception(response.get(ERROR_FIELD).get("message").getTextValue());
+				}else{
+					Log.d(TAG, "Request returned Invalid Params.");
 				}
 			} else {
 				return response.get(RESULT_FIELD);

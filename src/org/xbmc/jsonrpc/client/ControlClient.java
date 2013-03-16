@@ -82,14 +82,8 @@ public class ControlClient extends Client implements IControlClient {
 	 */
 	public boolean playFile(INotifiableManager manager, String filename, int playlistId) {
 		
-		if(clearPlaylist(manager, playlistId))
-			if(addToPlaylist(manager, filename, playlistId))
-				return play(manager, playlistId);
-			else
-				return false;
-		else
-			return false;		
-	}
+		return mConnection.getString(manager, "Player.Open", obj().p("item", obj().p("file", filename)).p("options", obj().p("resume", true))).equals("OK");
+}
 	
 	/**
 	 * Starts playing/showing the next media/image in the current playlist or,
@@ -459,14 +453,15 @@ public class ControlClient extends Client implements IControlClient {
 				return nothingPlaying;
 			}
 			
-			if(getString(file_details, "type").equals("song")){
-				return MusicClient.getCurrentlyPlaying(player_details, file_details);
+		
+			if(getString(file_details, "type").equals("episode")){
+				return TvShowClient.getCurrentlyPlaying(player_details, file_details);			
 			}
-			else if(getString(file_details, "type").indexOf("video") != -1 || getString(file_details, "type").indexOf("movie") != -1){
+			else if(getString(player_details, "type").equals("video")){
 				return VideoClient.getCurrentlyPlaying(player_details, file_details);			
 			}
-			else if(getString(file_details, "type").equals("episode")){
-				return TvShowClient.getCurrentlyPlaying(player_details, file_details);			
+			if(getString(player_details, "type").equals("audio")){
+				return MusicClient.getCurrentlyPlaying(player_details, file_details);
 			}
 			else
 				return nothingPlaying;
