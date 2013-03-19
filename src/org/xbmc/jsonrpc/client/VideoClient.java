@@ -276,7 +276,7 @@ public class VideoClient extends Client implements IVideoClient {
 			private static final long serialVersionUID = 5036994329211476714L;
 			public String getTitle() {
 				String title =getString(item, "title");
-				if (title != null)
+				if (title != null && !title.equals(""))
 					return title;
 				String[] path = getString(item, "file").replaceAll("\\\\", "/").split("/");
 				return path[path.length - 1];
