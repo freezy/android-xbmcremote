@@ -24,6 +24,7 @@ package org.xbmc.android.remote.presentation.activity;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.CacheManager;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.business.receiver.AndroidBroadcastReceiver;
 import org.xbmc.android.remote.presentation.controller.HomeController;
 import org.xbmc.android.remote.presentation.controller.HomeController.ProgressThread;
 import org.xbmc.android.remote.presentation.notification.NowPlayingNotificationManager;
@@ -38,6 +39,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.Build;
@@ -114,6 +116,13 @@ public class HomeActivity extends Activity {
 				startActivity(new Intent(HomeActivity.this, AboutActivity.class));
 			}
 		});
+
+        // Listen for screen on and off broadcasts
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+
+        registerReceiver(new AndroidBroadcastReceiver(), filter);
 	}
 	
 
