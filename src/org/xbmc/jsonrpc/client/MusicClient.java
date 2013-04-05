@@ -405,6 +405,7 @@ public class MusicClient extends Client implements IMusicClient {
 	public ArrayList<Artist> getArtists(INotifiableManager manager, ObjNode obj, boolean albumArtistsOnly) {
 		
 		obj.p(PARAM_PROPERTIES, arr().add("thumbnail")).p("albumartistsonly", albumArtistsOnly);
+		obj = sort(obj, SortType.ARTIST, "descending");
 		final ArrayList<Artist> artists = new ArrayList<Artist>();
 		final JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetArtists", obj);
 		if(result != null){
