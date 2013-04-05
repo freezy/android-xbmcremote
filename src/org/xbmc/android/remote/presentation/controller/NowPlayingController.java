@@ -117,7 +117,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 						} catch (InterruptedException e) {
 							Log.e(TAG, Log.getStackTraceString(e));
 						}
-						ConnectionFactory.getNowPlayingPoller(mActivity.getApplicationContext()).subscribe(mNowPlayingHandler);					
+						ConnectionFactory.subscribeNowPlayingPollerThread(mActivity.getApplicationContext(), mNowPlayingHandler);
 					}
 				}.start();
 				return true;
@@ -200,7 +200,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 	}
 	
 	public void onActivityPause() {
-		ConnectionFactory.getNowPlayingPoller(mActivity.getApplicationContext()).unSubscribe(mNowPlayingHandler);
+		ConnectionFactory.unSubscribeNowPlayingPollerThread(mActivity.getApplicationContext(), mNowPlayingHandler, true);
 		if (mControlManager != null) {
 			mControlManager.setController(null);
 		}
@@ -212,7 +212,7 @@ public class NowPlayingController extends AbstractController implements INotifia
 		new Thread("nowplaying-spawning") {
 			@Override
 			public void run() {
-				ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
+				ConnectionFactory.subscribeNowPlayingPollerThread(activity.getApplicationContext(), mNowPlayingHandler);
 			}
 		}.start();
 		if (mControlManager != null) {
