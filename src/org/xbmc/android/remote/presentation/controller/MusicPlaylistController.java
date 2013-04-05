@@ -335,7 +335,7 @@ public class MusicPlaylistController extends ListController implements IControll
 	}
 	
 	public void onActivityPause() {
-		ConnectionFactory.getNowPlayingPoller(mActivity.getApplicationContext()).unSubscribe(mNowPlayingHandler);
+		ConnectionFactory.unSubscribeNowPlayingPollerThread(mActivity.getApplicationContext(), mNowPlayingHandler, true);
 		if (mMusicManager != null) {
 			mMusicManager.setController(null);
 			mMusicManager.postActivity();
@@ -351,7 +351,7 @@ public class MusicPlaylistController extends ListController implements IControll
 
 	public void onActivityResume(Activity activity) {
 		super.onActivityResume(activity);
-		ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
+		ConnectionFactory.subscribeNowPlayingPollerThread(activity.getApplicationContext(), mNowPlayingHandler);
 		if (mEventClient != null) {
 			mEventClient.setController(this);
 		}
