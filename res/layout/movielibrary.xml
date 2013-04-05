@@ -38,7 +38,7 @@
 			</LinearLayout>
 				
             <!-- Actors -->
-			<LinearLayout
+			<!-- <LinearLayout
 				android:id="@+id/actorlist_outer_layout" 
 				android:layout_width="fill_parent" android:layout_height="fill_parent"
 				android:orientation="vertical" android:fadingEdge="none" >
@@ -53,7 +53,7 @@
 						android:layout_width="fill_parent" 
 						style="@style/standard_list" />
 				</org.xbmc.android.widget.FastScrollView>
-			</LinearLayout>
+			</LinearLayout>-->
 			
             <!-- Genres -->
 			<LinearLayout
