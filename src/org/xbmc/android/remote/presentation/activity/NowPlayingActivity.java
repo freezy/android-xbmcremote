@@ -149,14 +149,17 @@ public class NowPlayingActivity extends Activity {
 		mBottomSubtitleView.setText(bottomSubtitle);
 	}
 
-	public void updateProgress(int duration, int time) {
+	public void updateProgress(int duration, int time, boolean paused) {
 		mSeekBar.setEnabled(duration != 0);
 
 		mCounterLeftView.setVisibility(View.VISIBLE);
 		mCounterLeftView.setText(Song.getDuration(time + 1));
 		mCounterRightView.setVisibility(View.VISIBLE);
 		mCounterRightView.setText(duration == 0 ? "unknown" : "-" + Song.getDuration(duration - time - 1));
-		mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
+		if(paused)
+			mPlayPauseView.setBackgroundResource(R.drawable.now_playing_play);
+		else
+			mPlayPauseView.setBackgroundResource(R.drawable.now_playing_pause);
 	}
 
 	public void updateCover(Bitmap cover, int mediaType) {
