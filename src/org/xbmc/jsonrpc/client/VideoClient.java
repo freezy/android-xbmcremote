@@ -21,8 +21,11 @@
 
 package org.xbmc.jsonrpc.client;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 
 import org.codehaus.jackson.JsonNode;
 import org.xbmc.api.business.INotifiableManager;
@@ -93,6 +96,15 @@ public class VideoClient extends Client implements IVideoClient {
 				if(playcount > 0 && hideWatched)
 					continue;
 				
+				int runtime = getInt(jsonMovie, "runtime");
+				String formatted_runtime = "";
+				if(runtime != -1){						
+					if(runtime >= 3600)
+						formatted_runtime = (runtime / 3600) + "hr ";
+					formatted_runtime += ((runtime % 3600) / 60) + "min";					
+				}
+				
+				
 				movies.add(new Movie(
 					getInt(jsonMovie, "movieid"),
 					getString(jsonMovie, "label"),
@@ -100,7 +112,7 @@ public class VideoClient extends Client implements IVideoClient {
 					"",
 					getString(jsonMovie, "file"),
 					getString(jsonMovie, "director"),
-					getString(jsonMovie, "runtime"),
+					formatted_runtime,
 					getString(jsonMovie, "genre"),
 					getDouble(jsonMovie, "rating"),
 					playcount,
