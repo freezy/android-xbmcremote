@@ -21,11 +21,8 @@
 
 package org.xbmc.jsonrpc.client;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.Locale;
 
 import org.codehaus.jackson.JsonNode;
 import org.xbmc.api.business.INotifiableManager;
