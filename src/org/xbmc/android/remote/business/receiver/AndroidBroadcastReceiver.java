@@ -27,7 +27,7 @@ import java.io.IOException;
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.Command;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.presentation.activity.NowPlayingNotificationManager;
+import org.xbmc.android.remote.presentation.notification.NowPlayingNotificationManager;
 import org.xbmc.android.util.SmsMmsMessage;
 import org.xbmc.android.util.SmsPopupUtils;
 import org.xbmc.api.business.DataResponse;
