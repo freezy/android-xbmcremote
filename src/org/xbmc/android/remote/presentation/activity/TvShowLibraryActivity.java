@@ -56,7 +56,7 @@ public class TvShowLibraryActivity extends SlidingTabActivity implements ViewTre
 	private SlidingTabHost mTabHost;
 	
 	private TvShowListController mTvShowController;
-	private ActorListController mActorController;
+	//private ActorListController mActorController;
 	private MovieGenreListController mGenresController;
 	private FileListController mFileController;
 	
@@ -83,7 +83,7 @@ public class TvShowLibraryActivity extends SlidingTabActivity implements ViewTre
 		
 		// add the tabs
 		mTabHost.addTab(mTabHost.newTabSpec("tab_tv", "TV Shows", R.drawable.st_tv_on, R.drawable.st_tv_off).setBigIcon(R.drawable.st_tv_over).setContent(R.id.tvshowlist_outer_layout));
-		mTabHost.addTab(mTabHost.newTabSpec("tab_actors", "Actors", R.drawable.st_actor_on, R.drawable.st_actor_off).setBigIcon(R.drawable.st_actor_over).setContent(R.id.actorlist_outer_layout));
+		//mTabHost.addTab(mTabHost.newTabSpec("tab_actors", "Actors", R.drawable.st_actor_on, R.drawable.st_actor_off).setBigIcon(R.drawable.st_actor_over).setContent(R.id.actorlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_genres", "Genres", R.drawable.st_genre_on, R.drawable.st_genre_off).setBigIcon(R.drawable.st_genre_over).setContent(R.id.genrelist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
 		
@@ -95,9 +95,9 @@ public class TvShowLibraryActivity extends SlidingTabActivity implements ViewTre
 		mTvShowController.findTitleView(findViewById(R.id.tvshowlist_outer_layout));
 		mTvShowController.findMessageView(findViewById(R.id.tvshowlist_outer_layout));
 
-		mActorController = new ActorListController(ActorListController.TYPE_TVSHOW);
-		mActorController.findTitleView(findViewById(R.id.actorlist_outer_layout));
-		mActorController.findMessageView(findViewById(R.id.actorlist_outer_layout));
+		//mActorController = new ActorListController(ActorListController.TYPE_TVSHOW);
+		//mActorController.findTitleView(findViewById(R.id.actorlist_outer_layout));
+		//mActorController.findMessageView(findViewById(R.id.actorlist_outer_layout));
 
 		mGenresController = new MovieGenreListController(MovieGenreListController.TYPE_TVSHOW);
 		mGenresController.findTitleView(findViewById(R.id.genrelist_outer_layout));
@@ -138,9 +138,9 @@ public class TvShowLibraryActivity extends SlidingTabActivity implements ViewTre
 		if (tabId.equals("tab_tv")) {
 			mTvShowController.onCreate(TvShowLibraryActivity.this, mHandler, (ListView)findViewById(R.id.tvshowlist_list));
 		}
-		if (tabId.equals("tab_actors")) {
-			mActorController.onCreate(TvShowLibraryActivity.this, mHandler, (ListView)findViewById(R.id.actorlist_list));
-		}
+		//if (tabId.equals("tab_actors")) {
+		//	mActorController.onCreate(TvShowLibraryActivity.this, mHandler, (ListView)findViewById(R.id.actorlist_list));
+		//}
 		if (tabId.equals("tab_genres")) {
 			mGenresController.onCreate(TvShowLibraryActivity.this, mHandler, (ListView)findViewById(R.id.genrelist_list));
 		}
@@ -157,13 +157,13 @@ public class TvShowLibraryActivity extends SlidingTabActivity implements ViewTre
 			case 0:
 				mTvShowController.onCreateOptionsMenu(menu);
 				break;
+			//case 1:
+			//	mActorController.onCreateOptionsMenu(menu);
+			//	break;
 			case 1:
-				mActorController.onCreateOptionsMenu(menu);
-				break;
-			case 2:
 				mGenresController.onCreateOptionsMenu(menu);
 				break;
-			case 3:
+			case 2:
 				mFileController.onCreateOptionsMenu(menu);
 				break;
 		}
@@ -180,13 +180,13 @@ public class TvShowLibraryActivity extends SlidingTabActivity implements ViewTre
 		case 0:
 			mTvShowController.onOptionsItemSelected(item);
 			break;
+		//case 1:
+		//	mActorController.onOptionsItemSelected(item);
+		//	break;
 		case 1:
-			mActorController.onOptionsItemSelected(item);
-			break;
-		case 2:
 			mGenresController.onOptionsItemSelected(item);
 			break;
-		case 3:
+		case 2:
 			mFileController.onOptionsItemSelected(item);
 			break;
 		}
@@ -220,13 +220,13 @@ public class TvShowLibraryActivity extends SlidingTabActivity implements ViewTre
 			case 0:
 				mTvShowController.onCreateContextMenu(menu, v, menuInfo);
 				break;
+			//case 1:
+			//	mActorController.onCreateContextMenu(menu, v, menuInfo);
+			//	break;
 			case 1:
-				mActorController.onCreateContextMenu(menu, v, menuInfo);
-				break;
-			case 2:
 				mGenresController.onCreateContextMenu(menu, v, menuInfo);
 				break;
-			case 3:
+			case 2:
 				mFileController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 		}
@@ -238,13 +238,13 @@ public class TvShowLibraryActivity extends SlidingTabActivity implements ViewTre
 		case 0:
 			mTvShowController.onContextItemSelected(item);
 			break;
+		//case 1:
+		//	mActorController.onContextItemSelected(item);
+		//	break;
 		case 1:
-			mActorController.onContextItemSelected(item);
-			break;
-		case 2:
 			mGenresController.onContextItemSelected(item);
 			break;
-		case 3:
+		case 2:
 			mFileController.onContextItemSelected(item);
 			break;
 		}
@@ -271,7 +271,7 @@ public class TvShowLibraryActivity extends SlidingTabActivity implements ViewTre
 	protected void onResume() {
 		super.onResume();
 		mTvShowController.onActivityResume(this);
-		mActorController.onActivityResume(this);
+		//mActorController.onActivityResume(this);
 		mGenresController.onActivityResume(this);
 		mFileController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
@@ -281,7 +281,7 @@ public class TvShowLibraryActivity extends SlidingTabActivity implements ViewTre
 	protected void onPause() {
 		super.onPause();
 		mTvShowController.onActivityPause();
-		mActorController.onActivityPause();
+		//mActorController.onActivityPause();
 		mGenresController.onActivityPause();
 		mFileController.onActivityPause();
 		mConfigurationManager.onActivityPause();

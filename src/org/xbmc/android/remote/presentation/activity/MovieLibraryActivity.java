@@ -23,7 +23,7 @@ package org.xbmc.android.remote.presentation.activity;
 
 import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.ManagerFactory;
-import org.xbmc.android.remote.presentation.controller.ActorListController;
+//import org.xbmc.android.remote.presentation.controller.ActorListController;
 import org.xbmc.android.remote.presentation.controller.FileListController;
 import org.xbmc.android.remote.presentation.controller.MovieGenreListController;
 import org.xbmc.android.remote.presentation.controller.MovieListController;
@@ -56,7 +56,7 @@ public class MovieLibraryActivity extends SlidingTabActivity implements ViewTree
 	private SlidingTabHost mTabHost;
 	
 	private MovieListController mMovieController;
-	private ActorListController mActorController;
+	//private ActorListController mActorController;
 	private MovieGenreListController mGenresController;
 	private FileListController mFileController;
 	
@@ -83,7 +83,7 @@ public class MovieLibraryActivity extends SlidingTabActivity implements ViewTree
 		
 		// add the tabs
 		mTabHost.addTab(mTabHost.newTabSpec("tab_movies", "Movies", R.drawable.st_movie_on, R.drawable.st_movie_off).setBigIcon(R.drawable.st_movie_over).setContent(R.id.movielist_outer_layout));
-		mTabHost.addTab(mTabHost.newTabSpec("tab_actors", "Actors", R.drawable.st_actor_on, R.drawable.st_actor_off).setBigIcon(R.drawable.st_actor_over).setContent(R.id.actorlist_outer_layout));
+		//mTabHost.addTab(mTabHost.newTabSpec("tab_actors", "Actors", R.drawable.st_actor_on, R.drawable.st_actor_off).setBigIcon(R.drawable.st_actor_over).setContent(R.id.actorlist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_genres", "Genres", R.drawable.st_genre_on, R.drawable.st_genre_off).setBigIcon(R.drawable.st_genre_over).setContent(R.id.genrelist_outer_layout));
 		mTabHost.addTab(mTabHost.newTabSpec("tab_files", "File Mode", R.drawable.st_filemode_on, R.drawable.st_filemode_off).setBigIcon(R.drawable.st_filemode_over).setContent(R.id.filelist_outer_layout));
 		
@@ -95,9 +95,9 @@ public class MovieLibraryActivity extends SlidingTabActivity implements ViewTree
 		mMovieController.findTitleView(findViewById(R.id.movielist_outer_layout));
 		mMovieController.findMessageView(findViewById(R.id.movielist_outer_layout));
 
-		mActorController = new ActorListController(ActorListController.TYPE_MOVIE);
-		mActorController.findTitleView(findViewById(R.id.actorlist_outer_layout));
-		mActorController.findMessageView(findViewById(R.id.actorlist_outer_layout));
+		//mActorController = new ActorListController(ActorListController.TYPE_MOVIE);
+		//mActorController.findTitleView(findViewById(R.id.actorlist_outer_layout));
+		//mActorController.findMessageView(findViewById(R.id.actorlist_outer_layout));
 
 		mGenresController = new MovieGenreListController(MovieGenreListController.TYPE_MOVIE);
 		mGenresController.findTitleView(findViewById(R.id.genrelist_outer_layout));
@@ -138,9 +138,9 @@ public class MovieLibraryActivity extends SlidingTabActivity implements ViewTree
 		if (tabId.equals("tab_movies")) {
 			mMovieController.onCreate(MovieLibraryActivity.this, mHandler, (ListView)findViewById(R.id.movielist_list));
 		}
-		if (tabId.equals("tab_actors")) {
-			mActorController.onCreate(MovieLibraryActivity.this, mHandler, (ListView)findViewById(R.id.actorlist_list));
-		}
+		//if (tabId.equals("tab_actors")) {
+		//	mActorController.onCreate(MovieLibraryActivity.this, mHandler, (ListView)findViewById(R.id.actorlist_list));
+		//}
 		if (tabId.equals("tab_genres")) {
 			mGenresController.onCreate(MovieLibraryActivity.this, mHandler, (ListView)findViewById(R.id.genrelist_list));
 		}
@@ -157,13 +157,13 @@ public class MovieLibraryActivity extends SlidingTabActivity implements ViewTree
 			case 0:
 				mMovieController.onCreateOptionsMenu(menu);
 				break;
+			//case 1:
+			//	mActorController.onCreateOptionsMenu(menu);
+			//	break;
 			case 1:
-				mActorController.onCreateOptionsMenu(menu);
-				break;
-			case 2:
 				mGenresController.onCreateOptionsMenu(menu);
 				break;
-			case 3:
+			case 2:
 				mFileController.onCreateOptionsMenu(menu);
 				break;
 		}
@@ -180,13 +180,13 @@ public class MovieLibraryActivity extends SlidingTabActivity implements ViewTree
 		case 0:
 			mMovieController.onOptionsItemSelected(item);
 			break;
+		//case 1:
+		//	mActorController.onOptionsItemSelected(item);
+		//	break;
 		case 1:
-			mActorController.onOptionsItemSelected(item);
-			break;
-		case 2:
 			mGenresController.onOptionsItemSelected(item);
 			break;
-		case 3:
+		case 2:
 			mFileController.onOptionsItemSelected(item);
 			break;
 		}
@@ -220,13 +220,13 @@ public class MovieLibraryActivity extends SlidingTabActivity implements ViewTree
 			case 0:
 				mMovieController.onCreateContextMenu(menu, v, menuInfo);
 				break;
+			//case 1:
+			//	mActorController.onCreateContextMenu(menu, v, menuInfo);
+			//	break;
 			case 1:
-				mActorController.onCreateContextMenu(menu, v, menuInfo);
-				break;
-			case 2:
 				mGenresController.onCreateContextMenu(menu, v, menuInfo);
 				break;
-			case 3:
+			case 2:
 				mFileController.onCreateContextMenu(menu, v, menuInfo);
 				break;
 		}
@@ -238,13 +238,13 @@ public class MovieLibraryActivity extends SlidingTabActivity implements ViewTree
 		case 0:
 			mMovieController.onContextItemSelected(item);
 			break;
+		//case 1:
+		//	mActorController.onContextItemSelected(item);
+		//	break;
 		case 1:
-			mActorController.onContextItemSelected(item);
-			break;
-		case 2:
 			mGenresController.onContextItemSelected(item);
 			break;
-		case 3:
+		case 2:
 			mFileController.onContextItemSelected(item);
 			break;
 		}
@@ -271,7 +271,7 @@ public class MovieLibraryActivity extends SlidingTabActivity implements ViewTree
 	protected void onResume() {
 		super.onResume();
 		mMovieController.onActivityResume(this);
-		mActorController.onActivityResume(this);
+		//mActorController.onActivityResume(this);
 		mGenresController.onActivityResume(this);
 		mFileController.onActivityResume(this);
 		mConfigurationManager.onActivityResume(this);
@@ -281,7 +281,7 @@ public class MovieLibraryActivity extends SlidingTabActivity implements ViewTree
 	protected void onPause() {
 		super.onPause();
 		mMovieController.onActivityPause();
-		mActorController.onActivityPause();
+		//mActorController.onActivityPause();
 		mGenresController.onActivityPause();
 		mFileController.onActivityPause();
 		mConfigurationManager.onActivityPause();
