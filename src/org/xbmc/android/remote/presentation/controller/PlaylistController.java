@@ -426,7 +426,7 @@ public class PlaylistController extends ListController implements IController, C
 	}
 	
 	public void onActivityPause() {
-		ConnectionFactory.getNowPlayingPoller(mActivity.getApplicationContext()).unSubscribe(mNowPlayingHandler);
+		ConnectionFactory.unSubscribeNowPlayingPollerThread(mActivity.getApplicationContext(), mNowPlayingHandler, true);
 		if (mMusicManager != null) {
 			mMusicManager.setController(null);
 			mMusicManager.postActivity();
@@ -449,7 +449,7 @@ public class PlaylistController extends ListController implements IController, C
 		new Thread("playlist-spawning") {
 			@Override
 			public void run() {
-				ConnectionFactory.getNowPlayingPoller(activity.getApplicationContext()).subscribe(mNowPlayingHandler);
+				ConnectionFactory.subscribeNowPlayingPollerThread(mActivity.getApplicationContext(), mNowPlayingHandler);
 			}
 		}.start();
 		

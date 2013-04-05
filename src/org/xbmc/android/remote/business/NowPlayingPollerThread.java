@@ -268,6 +268,9 @@ public class NowPlayingPollerThread extends Thread {
 					}
 				}
 			}
+			else{
+				this.interrupt();
+			}
 			try {
 				sleep(1000);
 			} catch (InterruptedException e) {
