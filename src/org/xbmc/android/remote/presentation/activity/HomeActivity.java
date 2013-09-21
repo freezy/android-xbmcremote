@@ -25,6 +25,7 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.business.CacheManager;
 import org.xbmc.android.remote.business.ManagerFactory;
 import org.xbmc.android.remote.business.receiver.AndroidBroadcastReceiver;
+import org.xbmc.android.remote.business.receiver.RemoteControlReceiver;
 import org.xbmc.android.remote.presentation.controller.HomeController;
 import org.xbmc.android.remote.presentation.controller.HomeController.ProgressThread;
 import org.xbmc.android.remote.presentation.notification.NowPlayingNotificationManager;
@@ -38,10 +39,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -85,7 +89,8 @@ public class HomeActivity extends Activity {
 
 	private ProgressThread mProgressThread;
     private ProgressDialog mProgressDialog;
-	
+
+    private AudioManager mAudioManager;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -121,8 +126,15 @@ public class HomeActivity extends Activity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_SCREEN_ON);
-
+        //Register Receivers
         registerReceiver(new AndroidBroadcastReceiver(), filter);
+
+        //Register for hardware media keys, if possible.
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        if (Build.VERSION.SDK_INT >= 8) {
+            // Start listening for button presses
+            mAudioManager.registerMediaButtonEventReceiver(new ComponentName(getPackageName(), RemoteControlReceiver.class.getName()));
+        }
 	}
 	
 
@@ -262,7 +274,14 @@ public class HomeActivity extends Activity {
 		mConfigurationManager.onActivityPause();
 		mEventClientManager.setController(null);
 	}
-	
+
+    @Override
+    protected void onDestroy() {
+        if (Build.VERSION.SDK_INT >= 8) {
+            // Stop listening for button presses
+            mAudioManager.registerMediaButtonEventReceiver(new ComponentName(getPackageName(), RemoteControlReceiver.class.getName()));
+        }
+    }
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
