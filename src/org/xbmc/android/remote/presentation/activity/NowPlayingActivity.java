@@ -155,7 +155,7 @@ public class NowPlayingActivity extends Activity {
 		mCounterLeftView.setVisibility(View.VISIBLE);
 		mCounterLeftView.setText(Song.getDuration(time + 1));
 		mCounterRightView.setVisibility(View.VISIBLE);
-		mCounterRightView.setText(duration == 0 ? "unknown" : "-" + Song.getDuration(duration - time - 1));
+		mCounterRightView.setText(duration <= 0 ? "unknown" : "-" + Song.getDuration(duration - time - 1));
 		if(paused)
 			mPlayPauseView.setBackgroundResource(R.drawable.now_playing_play);
 		else
