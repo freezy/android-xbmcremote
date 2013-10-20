@@ -367,11 +367,12 @@ public class VideoClient extends Client implements IVideoClient {
 		JsonNode jsonItems = mConnection.getJson(manager, "PlayList.GetItems", obj().p("playlistid", PLAYLIST_ID).p("limits", obj().p("start", 0).p("end", PLAYLIST_LIMIT)).p("properties", arr().add("file")));
 		JsonNode jsonSongs = jsonItems.get("items");
 		final ArrayList<String> files = new ArrayList<String>();
-		for (Iterator<JsonNode> i = jsonSongs.getElements(); i.hasNext();) {
-			JsonNode jsonSong = (JsonNode)i.next();
-			files.add(getString(jsonSong, "file")); 
+		if (jsonSongs != null) {
+			for (Iterator<JsonNode> i = jsonSongs.getElements(); i.hasNext();) {
+				JsonNode jsonSong = (JsonNode)i.next();
+				files.add(getString(jsonSong, "file"));
+			}
 		}
-			
 		return files;
 	}
 	
