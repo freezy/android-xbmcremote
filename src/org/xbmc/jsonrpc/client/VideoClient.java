@@ -84,8 +84,8 @@ public class VideoClient extends Client implements IVideoClient {
 		
 		final ArrayList<Movie> movies = new ArrayList<Movie>();
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetMovies", obj);
-		if(result.size() > 0){
-			final JsonNode jsonMovies = result.get("movies");
+		final JsonNode jsonMovies = result.get("movies");
+		if(jsonMovies != null){
 			for (Iterator<JsonNode> i = jsonMovies.getElements(); i.hasNext();) {
 				JsonNode jsonMovie = (JsonNode)i.next();
 				
@@ -229,8 +229,8 @@ public class VideoClient extends Client implements IVideoClient {
 		
 		final ArrayList<Genre> genres = new ArrayList<Genre>();
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetGenres", obj);
-		if(result.size() > 0){
-			final JsonNode jsonGenres = result.get("genres");
+		final JsonNode jsonGenres = result.get("genres");
+		if(jsonGenres != null){
 			for (Iterator<JsonNode> i = jsonGenres.getElements(); i.hasNext();) {
 				JsonNode jsonGenre = (JsonNode)i.next();
 				genres.add(new Genre(

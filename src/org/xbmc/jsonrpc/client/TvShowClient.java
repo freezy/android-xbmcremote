@@ -63,8 +63,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		
 		final ArrayList<TvShow> tvshows = new ArrayList<TvShow>();
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetTvShows", obj);
-		if(result.size() > 0){
-			final JsonNode jsonShows = result.get("tvshows");
+		final JsonNode jsonShows = result.get("tvshows");
+		if(jsonShows != null){
 			for (Iterator<JsonNode> i = jsonShows.getElements(); i.hasNext();) {
 				JsonNode jsonShow = (JsonNode)i.next();
 				
@@ -110,8 +110,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		
 		final ArrayList<Genre> genres = new ArrayList<Genre>();
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetGenres", obj);
-		if(result.size() > 0){
-			final JsonNode jsonGenres = result.get("genres");
+		final JsonNode jsonGenres = result.get("genres");
+		if(jsonGenres != null){
 			for (Iterator<JsonNode> i = jsonGenres.getElements(); i.hasNext();) {
 				JsonNode jsonGenre = (JsonNode)i.next();
 				genres.add(new Genre(
@@ -153,8 +153,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		
 		final ArrayList<Season> seasons = new ArrayList<Season>();
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetSeasons", obj);
-		if(result.size() > 0){
-			final JsonNode jsonSeasons = result.get("seasons");
+		final JsonNode jsonSeasons = result.get("seasons");
+		if(jsonSeasons != null){
 			for (Iterator<JsonNode> i = jsonSeasons.getElements(); i.hasNext();) {
 				
 				JsonNode jsonShow = (JsonNode)i.next();
@@ -215,8 +215,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		
 		final ArrayList<Episode> episodes = new ArrayList<Episode>();
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetRecentlyAddedEpisodes", obj);
-		if(result.size() > 0){
-			final JsonNode jsonEpisodes = result.get("episodes");
+		final JsonNode jsonEpisodes = result.get("episodes");
+		if(episodes != null){
 			for (Iterator<JsonNode> i = jsonEpisodes.getElements(); i.hasNext();) {
 				JsonNode jsonEpisode = (JsonNode)i.next();
 				
@@ -259,8 +259,8 @@ public class TvShowClient extends Client implements ITvShowClient {
 		
 		final ArrayList<Episode> episodes = new ArrayList<Episode>();
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetEpisodes", obj);
-		if(result.size() > 0){
-			final JsonNode jsonEpisodes = result.get("episodes");
+		final JsonNode jsonEpisodes = result.get("episodes");
+		if(jsonEpisodes != null){
 			for (Iterator<JsonNode> i = jsonEpisodes.getElements(); i.hasNext();) {
 				JsonNode jsonEpisode = (JsonNode)i.next();
 				

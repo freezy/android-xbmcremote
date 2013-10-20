@@ -343,8 +343,8 @@ public class MusicClient extends Client implements IMusicClient {
 		
 		final ArrayList<Album> albums = new ArrayList<Album>();
 		final JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetAlbums", obj);
-		if(result.size() > 0){
-			final JsonNode jsonAlbums = result.get("albums");
+		final JsonNode jsonAlbums = result.get("albums");
+		if(jsonAlbums != null){
 			for (Iterator<JsonNode> i = jsonAlbums.getElements(); i.hasNext();) {
 				JsonNode jsonAlbum = (JsonNode)i.next();
 				albums.add(new Album(
