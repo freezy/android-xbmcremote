@@ -226,10 +226,12 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<String>>(response, this) {
 			public void doRun() throws Exception{ 
 				response.value = video(context).getPlaylist(VideoManager.this);
-				final String firstEntry = response.value.get(0);
-				if (firstEntry != null && firstEntry.equals("[Empty]")) {
-					response.value = new ArrayList<String>();
-				} 
+				if (response.value.size() > 0) {
+					final String firstEntry = response.value.get(0);
+					if (firstEntry != null && firstEntry.equals("[Empty]")) {
+						response.value = new ArrayList<String>();
+					}
+				}
 			}
 		});
 	}
