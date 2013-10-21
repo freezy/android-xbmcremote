@@ -84,8 +84,8 @@ public class VideoClient extends Client implements IVideoClient {
 		
 		final ArrayList<Movie> movies = new ArrayList<Movie>();
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetMovies", obj);
-		if(result.size() > 0){
-			final JsonNode jsonMovies = result.get("movies");
+		final JsonNode jsonMovies = result.get("movies");
+		if(jsonMovies != null){
 			for (Iterator<JsonNode> i = jsonMovies.getElements(); i.hasNext();) {
 				JsonNode jsonMovie = (JsonNode)i.next();
 				
@@ -229,8 +229,8 @@ public class VideoClient extends Client implements IVideoClient {
 		
 		final ArrayList<Genre> genres = new ArrayList<Genre>();
 		final JsonNode result = mConnection.getJson(manager, "VideoLibrary.GetGenres", obj);
-		if(result.size() > 0){
-			final JsonNode jsonGenres = result.get("genres");
+		final JsonNode jsonGenres = result.get("genres");
+		if(jsonGenres != null){
 			for (Iterator<JsonNode> i = jsonGenres.getElements(); i.hasNext();) {
 				JsonNode jsonGenre = (JsonNode)i.next();
 				genres.add(new Genre(
@@ -367,11 +367,12 @@ public class VideoClient extends Client implements IVideoClient {
 		JsonNode jsonItems = mConnection.getJson(manager, "PlayList.GetItems", obj().p("playlistid", PLAYLIST_ID).p("limits", obj().p("start", 0).p("end", PLAYLIST_LIMIT)).p("properties", arr().add("file")));
 		JsonNode jsonSongs = jsonItems.get("items");
 		final ArrayList<String> files = new ArrayList<String>();
-		for (Iterator<JsonNode> i = jsonSongs.getElements(); i.hasNext();) {
-			JsonNode jsonSong = (JsonNode)i.next();
-			files.add(getString(jsonSong, "file")); 
+		if (jsonSongs != null) {
+			for (Iterator<JsonNode> i = jsonSongs.getElements(); i.hasNext();) {
+				JsonNode jsonSong = (JsonNode)i.next();
+				files.add(getString(jsonSong, "file"));
+			}
 		}
-			
 		return files;
 	}
 	
