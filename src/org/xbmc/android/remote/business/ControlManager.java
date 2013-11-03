@@ -302,4 +302,18 @@ public class ControlManager extends AbstractManager implements IControlManager, 
 			}
 		});
 	}
+
+	/**
+	 * Powers off the system.
+	 * @param response Response object
+	 * @param context Context reference
+	 */
+	public void powerOff(final DataResponse<Boolean> response, final Context context) {
+		mHandler.post(new Command<Boolean>(response, this) {
+			@Override
+			public void doRun() throws Exception {
+				response.value = control(context).powerOff(ControlManager.this);
+			}
+		});
+	}
 }
