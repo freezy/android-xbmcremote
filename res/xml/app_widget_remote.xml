@@ -2,11 +2,13 @@
 <appwidget-provider 
     	xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialLayout="@layout/widget_xbox"
+    android:initialKeyguardLayout="@layout/widget_xbox"
     android:minHeight="188dp"
     android:minWidth="200dp"
     android:minResizeHeight="118dp"
     android:resizeMode="vertical"
-    android:updatePeriodMillis="300000">
+    android:updatePeriodMillis="300000"
+    android:widgetCategory="keyguard|home_screen">
 
 </appwidget-provider>
 		
