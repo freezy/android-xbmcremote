@@ -8,7 +8,8 @@
     android:minResizeHeight="118dp"
     android:resizeMode="vertical"
     android:updatePeriodMillis="300000"
-    android:widgetCategory="keyguard|home_screen">
+    android:widgetCategory="keyguard|home_screen"
+    android:previewImage="@drawable/remote_xbox_widget_preview">
 
 </appwidget-provider>
 		
