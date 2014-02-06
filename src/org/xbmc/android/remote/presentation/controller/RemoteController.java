@@ -92,7 +92,10 @@ public class RemoteController extends AbstractController implements INotifiableC
 	
 	private int mEventServerInitialDelay = 750;
 	
-	private Timer tmrKeyPress;
+	private static Timer tmrKeyPress = new Timer();
+	private static String currKeyAction = "";
+	private static KeyPressTask currKeyTask = null;
+	
 	
 	final SharedPreferences prefs;
 	
@@ -115,6 +118,15 @@ public class RemoteController extends AbstractController implements INotifiableC
 //				});
 //			}
 		}, GuiSettings.Services.EVENT_SERVER_INITIAL_DELAY, context);
+		
+		if(currKeyTask != null){
+			currKeyTask.cancel();
+			currKeyTask = null;
+		}
+		if(currKeyAction != null){
+			mEventClientManager.sendButton("R1", currKeyAction, false, false, true, (short)0, (byte)0);
+			currKeyAction = "";
+		}
 	}
 
 	public IGestureListener startGestureThread(final Context context) {
@@ -452,29 +464,35 @@ public class RemoteController extends AbstractController implements INotifiableC
 				if (mDoVibrate) {
 					mVibrator.vibrate(VIBRATION_LENGTH);
 				}
+				
+				if(currKeyTask != null){
+					currKeyTask.cancel();
+				}
+				if(currKeyAction != ""){
+					mEventClientManager.sendButton("R1", mAction, false, false, true, (short)0, (byte)0);
+				}
 				mEventClientManager.sendButton("R1", mAction, !prefs.getBoolean("setting_send_repeats", false), true, true, (short)0, (byte)0);
+				currKeyAction = mAction;
 				
 				if (prefs.getBoolean("setting_send_repeats", false) && !prefs.getBoolean("setting_send_single_click", false)) {
-														
-					if (tmrKeyPress != null) {
-						tmrKeyPress.cancel();						
-					}
-					
 					int RepeatDelay = Integer.parseInt(prefs.getString("setting_repeat_rate", "250"));
 					
-					tmrKeyPress = new Timer();
-					tmrKeyPress.schedule(new KeyPressTask(mAction), RepeatDelay, RepeatDelay);					
+					currKeyTask = new KeyPressTask(mAction);
+					tmrKeyPress.schedule(currKeyTask, RepeatDelay, RepeatDelay);
 				}
 				
 				
 			} else if (event.getAction() == MotionEvent.ACTION_UP) {
 				Log.d(TAG, "onTouch - ACTION_UP");
 				v.playSoundEffect(AudioManager.FX_KEY_CLICK);
-				mEventClientManager.sendButton("R1", mAction, false, false, true, (short)0, (byte)0);
 				
-				if (tmrKeyPress != null) {
-					tmrKeyPress.cancel();						
-				}					
+				if(currKeyTask != null){
+					currKeyTask.cancel();
+					currKeyTask = null;
+				}
+				
+				mEventClientManager.sendButton("R1", mAction, false, false, true, (short)0, (byte)0);	
+				currKeyAction = "";
 			}
 			return false;
 		}			
