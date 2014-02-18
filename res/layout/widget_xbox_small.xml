@@ -3,7 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:orientation="vertical" 
+    android:orientation="vertical"
     android:padding="@dimen/widget_margin">
 
     <LinearLayout
@@ -93,90 +93,6 @@
             android:layout_height="fill_parent"
             android:layout_weight="95"
             android:background="@drawable/remote_xbox_widget_next" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/RemoteXboxWidgetRow5"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
-
-        <Button
-            android:id="@+id/RemoteXboxWidgetImgBtnTitle"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="99"
-            android:background="@drawable/remote_xbox_widget_title" />
-
-        <Button
-            android:id="@+id/RemoteXboxWidgetImgBtnUp"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="122"
-            android:background="@drawable/remote_xbox_widget_up" />
-
-        <Button
-            android:id="@+id/RemoteXboxWidgetImgBtnInfo"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="99"
-            android:background="@drawable/remote_xbox_widget_info" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/RemoteXboxWidgetRow6"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
-
-        <Button
-            android:id="@+id/RemoteXboxWidgetImgBtnLeft"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="99"
-            android:background="@drawable/remote_xbox_widget_left" />
-
-        <Button
-            android:id="@+id/RemoteXboxWidgetImgBtnSelect"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="122"
-            android:background="@drawable/remote_xbox_widget_select" />
-
-        <Button
-            android:id="@+id/RemoteXboxWidgetImgBtnRight"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="99"
-            android:background="@drawable/remote_xbox_widget_right" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/RemoteXboxWidgetRow7"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
-
-        <Button
-            android:id="@+id/RemoteXboxWidgetImgBtnMenu"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="99"
-            android:background="@drawable/remote_xbox_widget_menu" />
-
-        <Button
-            android:id="@+id/RemoteXboxWidgetImgBtnDown"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="122"
-            android:background="@drawable/remote_xbox_widget_down" />
-
-        <Button
-            android:id="@+id/RemoteXboxWidgetImgBtnBack"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="99"
-            android:background="@drawable/remote_xbox_widget_back" />
     </LinearLayout>
 
 </LinearLayout>

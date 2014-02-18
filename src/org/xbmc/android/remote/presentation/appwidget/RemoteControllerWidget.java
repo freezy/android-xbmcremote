@@ -4,11 +4,14 @@ import org.xbmc.android.remote.R;
 import org.xbmc.android.remote.presentation.controller.AppWidgetRemoteController;
 import org.xbmc.android.util.HostFactory;
 import org.xbmc.eventclient.ButtonCodes;
+
+import android.annotation.TargetApi;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -26,6 +29,9 @@ public class RemoteControllerWidget extends AppWidgetProvider {
 	public static final String EXTRA_ITEM = "com.example.android.stackwidget.EXTRA_ITEM";
 	public static final String ACTION_WIDGET_CONTROL = "org.xbmc.android.remote.WIDGET_CONTROL";
 	public static final String URI_SCHEME = "remote_controller_widget";
+
+	private int mWidgetLayoutId = R.layout.widget_xbox;
+
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
@@ -39,8 +45,7 @@ public class RemoteControllerWidget extends AppWidgetProvider {
 
 		// Loop for all widgets
 		for (int widgetId : allWidgetIds) {
-			RemoteViews remoteView = new RemoteViews(context.getPackageName(),
-					R.layout.widget_xbox);
+			RemoteViews remoteView = new RemoteViews(context.getPackageName(), mWidgetLayoutId);
 			attachPendingIntents(context, remoteView, widgetId);
 		}
 	}
@@ -167,4 +172,21 @@ public class RemoteControllerWidget extends AppWidgetProvider {
 		super.onReceive(context, intent);
 	}
 
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	@Override
+	public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
+		int minHeight = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
+
+		// https://developer.android.com/guide/practices/ui_guidelines/widget_design.html#cellstable
+		if (minHeight < 230) {
+			mWidgetLayoutId = R.layout.widget_xbox_small;
+		} else {
+			mWidgetLayoutId = R.layout.widget_xbox;
+		}
+
+		RemoteViews remoteView = new RemoteViews(context.getPackageName(), mWidgetLayoutId);
+		attachPendingIntents(context, remoteView, appWidgetId);
+
+		super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
+	}
 }
