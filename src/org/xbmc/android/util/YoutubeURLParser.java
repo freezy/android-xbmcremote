@@ -10,11 +10,12 @@ public class YoutubeURLParser {
 		if (playuri.getHost().endsWith("youtube.com") || playuri.getHost().endsWith("youtu.be")) {
 			// We'll need to get the v= parameter from the URL and use
 			// that to send to XBMC
-			final Pattern pattern = Pattern.compile("^http(:?s)?:\\/\\/(?:www\\.)?(?:youtube\\.com|youtu\\.be)\\/watch\\?(?=.*v=([\\w-]+))(?:\\S+)?$", Pattern.CASE_INSENSITIVE);
+			final Pattern pattern = Pattern.compile("^http(:?s)?:\\/\\/(?:www\\.)?(?:youtube\\.com|youtu\\.be)\\/(?:watch\\?(?=.*v=([\\w-]+))(?:\\S+)?$|([\\w-]+)(?:\\S+)?$)", Pattern.CASE_INSENSITIVE);
+//			final Pattern pattern = Pattern.compile("^http(:?s)?:\\/\\/(?:www\\.)?(?:youtube\\.com|youtu\\.be)\\/watch\\?(?=.*v=([\\w-]+))(?:\\S+)?$", Pattern.CASE_INSENSITIVE);
 //			final Pattern pattern = Pattern.compile(".*v=([a-z0-9_\\-]+)(?:&.)*", Pattern.CASE_INSENSITIVE);
 			final Matcher matcher = pattern.matcher(playuri.toString());
 			if (matcher.matches()) {
-				return matcher.group(2);
+				return matcher.group(2) != null ? matcher.group(2) : matcher.group(3);
 			}
 		}
 		return null;

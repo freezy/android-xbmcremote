@@ -148,6 +148,16 @@ public class UrlIntentController extends AbstractController implements IControll
 		return true;
 	}
 	
+	private static String hasURL(String path){
+		String[] words = path.split(" ");
+		for (String word : words) {
+			if (word.startsWith("http://") || word.startsWith("https://")) {
+				return word;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Checks the intent that created/resumed this activity. Used to see if we are being handed
 	 * an URL that should be passed to XBMC.
@@ -160,7 +170,7 @@ public class UrlIntentController extends AbstractController implements IControll
 			Log.i("CHECKINTENT", action);
 			if ( action.equals(UrlIntentActivity.ACTION) ){
 				//final String path = intent.getData().toString();
-				final String path = intent.getStringExtra(Intent.EXTRA_TEXT);
+				final String path = hasURL(intent.getStringExtra(Intent.EXTRA_TEXT));
 				final String subjectTxt = intent.getStringExtra(Intent.EXTRA_SUBJECT);
 				
 				if(isIMDB(subjectTxt)){
