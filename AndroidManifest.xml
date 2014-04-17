@@ -5,7 +5,7 @@
 	android:versionCode="1009" 
 	android:installLocation="auto">
 	
-	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="14" />
+	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="13" />
 	
 	<supports-screens
 		android:largeScreens="true"
