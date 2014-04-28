@@ -25,6 +25,7 @@ import org.xbmc.android.util.ClientFactory;
 import org.xbmc.api.business.DataResponse;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.data.IMusicClient;
+import org.xbmc.api.data.IProfileClient;
 import org.xbmc.api.data.ITvShowClient;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.presentation.INotifiableController;
@@ -90,7 +91,17 @@ abstract public class AbstractThread extends Thread {
 	protected static ITvShowClient tvshow(INotifiableManager manager, final Context context) throws WifiStateException {
 		return ClientFactory.getTvShowClient(manager, context);
 	}	
-	
+
+	/**
+	 * Returns the ProfileClient class
+	 * @param manager Manager referencet
+	 * @return
+	 * @throws WifiStateException 
+	 */
+	protected static IProfileClient profile(INotifiableManager manager, final Context context) throws WifiStateException {
+		return ClientFactory.getProfileClient(manager, context);
+	}	
+
 	/**
 	 * Calls the UI thread's callback code.
 	 * @param controller Controller reference

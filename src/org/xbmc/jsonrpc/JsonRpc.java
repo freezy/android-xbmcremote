@@ -25,6 +25,7 @@ import org.xbmc.api.object.Host;
 import org.xbmc.jsonrpc.client.ControlClient;
 import org.xbmc.jsonrpc.client.InfoClient;
 import org.xbmc.jsonrpc.client.MusicClient;
+import org.xbmc.jsonrpc.client.ProfileClient;
 import org.xbmc.jsonrpc.client.TvShowClient;
 import org.xbmc.jsonrpc.client.VideoClient;
 
@@ -64,6 +65,11 @@ public class JsonRpc {
 	public final TvShowClient shows;
 	
 	/**
+	 * Use this client for anything profile related
+	 */
+	public final ProfileClient profile;
+
+	/**
 	 * Construct with all paramaters
 	 * @param host    Connection data of the host
 	 * @param timeout Read timeout
@@ -82,6 +88,7 @@ public class JsonRpc {
 		video = new VideoClient(connection);
 		control = new ControlClient(connection);
 		shows = new TvShowClient(connection);
+		profile = new ProfileClient(connection);
 	}
 	
 	/**

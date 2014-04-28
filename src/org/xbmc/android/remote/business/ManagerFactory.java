@@ -25,6 +25,7 @@ import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.IMusicManager;
+import org.xbmc.api.business.IProfileManager;
 import org.xbmc.api.business.ITvShowManager;
 import org.xbmc.api.business.IVideoManager;
 import org.xbmc.api.presentation.INotifiableController;
@@ -47,6 +48,9 @@ public abstract class ManagerFactory {
 	}
 	public static IMusicManager getMusicManager(INotifiableController controller) {
 		return ManagerThread.music(controller);
+	}
+	public static IProfileManager getProfileManager(INotifiableController controller) {
+		return ManagerThread.profile(controller);
 	}
 	public static IEventClientManager getEventClientManager(INotifiableController controller) {
 		if (sEventClientManager == null) {

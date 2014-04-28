@@ -32,6 +32,7 @@ import org.xbmc.api.data.IControlClient;
 import org.xbmc.api.data.IEventClient;
 import org.xbmc.api.data.IInfoClient;
 import org.xbmc.api.data.IMusicClient;
+import org.xbmc.api.data.IProfileClient;
 import org.xbmc.api.data.ITvShowClient;
 import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.info.SystemInfo;
@@ -129,6 +130,19 @@ public abstract class ClientFactory {
 		}
 	}
 	
+	public static IProfileClient getProfileClient(INotifiableManager manager, Context context) throws WifiStateException {
+		assertWifiState(context);
+		probeQueryApiType(manager);
+		switch (sApiType) {
+		case API_TYPE_JSONRPC:
+			return createJsonClient(manager).profile;
+		case API_TYPE_UNSET:
+		case API_TYPE_HTTPIAPI:
+		default:
+			return null;
+		}
+	}
+
 	private static void assertWifiState(Context context) throws WifiStateException {
 		if (context != null && HostFactory.host != null && HostFactory.host.wifi_only){
 			final int state = WifiHelper.getInstance(context).getWifiState();

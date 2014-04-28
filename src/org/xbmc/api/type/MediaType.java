@@ -31,6 +31,7 @@ public abstract class MediaType {
 	public static final int VIDEO_TVSEASON = 23;
 	public static final int VIDEO_TVEPISODE = 24;
 	public static final int PICTURES = 3;
+	public static final int PROFILE = 4;
 	
 	public static String getName(int type) {
 		switch (type) {
@@ -44,6 +45,8 @@ public abstract class MediaType {
 				return "video";
 			case PICTURES:
 				return "pictures";
+			case PROFILE:
+				return "profile";
 			default:
 				return "";
 		}
@@ -90,6 +93,8 @@ public abstract class MediaType {
 				return "/Video";
 			case PICTURES:
 				return "/Pictures";
+			case PROFILE:
+				return "/Profile";
 			default:
 				return "";
 		}

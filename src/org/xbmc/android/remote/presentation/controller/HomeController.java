@@ -36,6 +36,7 @@ import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.MovieLibraryActivity;
 import org.xbmc.android.remote.presentation.activity.MusicLibraryActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
+import org.xbmc.android.remote.presentation.activity.ProfileActivity;
 import org.xbmc.android.remote.presentation.activity.RemoteActivity;
 import org.xbmc.android.remote.presentation.activity.TvShowLibraryActivity;
 import org.xbmc.android.remote.presentation.notification.NowPlayingNotificationManager;
@@ -106,6 +107,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	private static final int HOME_ACTION_WOL = 6;
 	private static final int HOME_ACTION_TVSHOWS = 7;
 	private static final int HOME_ACTION_POWERDOWN = 8;
+	private static final int HOME_ACTION_PROFILES = 9;
 	
 	private IInfoManager mInfoManager;
 	
@@ -218,6 +220,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	
 	private void setupMenuItems(GridView menuGrid) {
 		final HomeItem remote = new HomeItem(HOME_ACTION_REMOTE, R.drawable.icon_home_remote, "Remote Control", "Use as");
+		final HomeItem profiles = new HomeItem(HOME_ACTION_PROFILES, R.drawable.icon_home_profile, "Profiles", "List of");
 
 		final ArrayList<HomeItem> homeItems = new ArrayList<HomeItem>();
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
@@ -233,6 +236,8 @@ public class HomeController extends AbstractController implements INotifiableCon
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		homeItems.add(new HomeItem(HOME_ACTION_NOWPLAYING, R.drawable.icon_home_playing, "Now Playing", "See what's"));
 		homeItems.add(remote);
+		if (prefs.getBoolean("setting_show_home_profiles", false))
+			homeItems.add(profiles);
 		if (prefs.getBoolean("setting_show_home_powerdown", false))
 			homeItems.add(new HomeItem(HOME_ACTION_POWERDOWN, R.drawable.icon_home_power, "Power Off", "Turn your XBMC off"));
 		
@@ -284,6 +289,10 @@ public class HomeController extends AbstractController implements INotifiableCon
 							intent = new Intent(v.getContext(), RemoteActivity.class);
 						}
 						intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+						break;
+					case HOME_ACTION_PROFILES:
+						intent = new Intent(v.getContext(), ProfileActivity.class);
+						intent.putExtra(ListController.EXTRA_LIST_CONTROLLER, new ProfileListController());
 						break;
 					case HOME_ACTION_MUSIC:
 						intent = new Intent(v.getContext(), MusicLibraryActivity.class);
@@ -593,7 +602,7 @@ public class HomeController extends AbstractController implements INotifiableCon
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if (key.equals("setting_show_home_music") || key.equals("setting_show_home_movies") || key.equals("setting_show_home_tv") || key.equals("setting_show_home_pictures") || key.equals("setting_show_home_powerdown")) {
+		if (key.equals("setting_show_home_music") || key.equals("setting_show_home_movies") || key.equals("setting_show_home_tv") || key.equals("setting_show_home_pictures") || key.equals("setting_show_home_profiles") || key.equals("setting_show_home_powerdown")) {
 			setupMenuItems(mMenuGrid);
 		}
 	}

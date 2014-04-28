@@ -69,6 +69,11 @@
 			android:summary="Show the &quot;Browse your Pictures&quot; item"
 			android:enabled="true" android:defaultValue="true" />
 		<CheckBoxPreference
+			android:key="setting_show_home_profiles"
+			android:title="Show Profiles"
+			android:summary="Show the &quot;List of Profiles&quot; item"
+			android:enabled="true" android:defaultValue="false" />
+		<CheckBoxPreference
 			android:key="setting_show_home_powerdown"
 			android:title="Show Power Down"
 			android:summary="Display the Power Down Button"
