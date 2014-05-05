@@ -139,6 +139,14 @@ class DownloadThread extends AbstractThread {
 			case MediaType.PICTURES:
 				done(controller, response);
 				break;
+			case MediaType.PROFILE:
+				try {
+					bitmap = profile(manager, context).getCover(manager, cover, thumbSize);
+				} catch (WifiStateException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				break;
 			default:
 				done(controller, response);
 				break;
