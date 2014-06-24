@@ -105,6 +105,11 @@
                 android:resource="@xml/app_widget_remote" 
                 />
         </receiver>
+        <receiver android:name=".business.receiver.RemoteControlReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
 		
 		<provider android:name=".business.provider.HostProvider" android:authorities="org.xbmc.android.provider.remote" />
 		
