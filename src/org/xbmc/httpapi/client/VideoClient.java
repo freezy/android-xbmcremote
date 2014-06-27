@@ -444,6 +444,10 @@ public class VideoClient extends Client implements IVideoClient {
 				return " ORDER BY ROUND(c05, 2) " + sortOrder;
 			case SortType.DATE_ADDED:
 				return " ORDER BY files.idFile " + sortOrder;
+			/*	Implemented by Christian Frost	- begin	*/
+			case SortType.RUNTIME:
+				return " ORDER BY CAST(c11 as INT) " + sortOrder;
+			/*	Implemented by Christian Frost	- end	*/
 		}
 	}
 	
