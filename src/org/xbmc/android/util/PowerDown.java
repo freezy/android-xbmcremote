@@ -21,9 +21,9 @@
 
 package org.xbmc.android.util;
 
-import org.xbmc.android.remote.business.EventClientManager;
+import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.IControlManager;
 import org.xbmc.api.business.IEventClientManager;
-import org.xbmc.eventclient.ButtonCodes;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,8 +32,13 @@ import android.content.DialogInterface;
 public class PowerDown {
 	IEventClientManager mEventClientManager;
 	private Activity mActivity;
+	private final IControlManager cm;
 
-	public void ShowDialog(Activity activity) {
+	public PowerDown(IControlManager cm) {
+		this.cm = cm;
+	}
+
+	public void ShowDialog(final Activity activity) {
 		mActivity = activity;
 		AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 		builder.setMessage("Are you sure you want to power off?").setCancelable(false);
@@ -44,9 +49,7 @@ public class PowerDown {
 			}
 
 			private void Down() {
-				EventClientManager pdEventClientManager = new EventClientManager();
-				pdEventClientManager.sendButton("R1", ButtonCodes.REMOTE_POWER, false, true, true, (short) 0, (byte) 0);
-
+				cm.powerOff(new DataResponse<Boolean>(), activity.getApplicationContext());
 			}
 		}).setNegativeButton("No", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {

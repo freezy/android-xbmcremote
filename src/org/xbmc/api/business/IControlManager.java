@@ -180,4 +180,11 @@ public interface IControlManager extends IManager {
 	 * @return true on success, false otherwise.
 	 */
 	public void sendText(final DataResponse<Boolean> response, final String text, final Context context);
+
+	/**
+	 * Powers off the system.
+	 * @param response Response object
+	 * @param context Context reference
+	 */
+	public void powerOff(final DataResponse<Boolean> response, final Context context);
 }

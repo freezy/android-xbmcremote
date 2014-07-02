@@ -126,6 +126,15 @@ public class ControlClient extends Client implements IControlClient {
 	}
 	
 	/**
+	 * Powers off the system.
+	 * @param manager Manager reference
+	 * @return OK on success, false otherwise.
+	 */
+	public boolean powerOff(INotifiableManager manager) {
+		return mConnection.getString(manager, "System.Shutdown", null).equals("OK");
+	}
+
+	/**
 	 * Start playing the media file at the given URL
 	 * @param manager Manager reference
 	 * @param url An URL pointing to a supported media file

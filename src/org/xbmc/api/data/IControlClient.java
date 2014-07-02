@@ -75,6 +75,13 @@ public interface IControlClient extends IClient {
 	public boolean pause(INotifiableManager manager);
 	
 	/**
+	 * Powers off the system.
+	 * @param manager Manager reference
+	 * @return true on success, false otherwise.
+	 */
+	public boolean powerOff(INotifiableManager manager);
+
+	/**
 	 * Stops the currently playing media. 
 	 * @param manager Manager reference
 	 * @return true on success, false otherwise.
@@ -101,7 +108,7 @@ public interface IControlClient extends IClient {
 	 * Seeks to a position. If type is
 	 * <ul>
 	 * 	<li><code>absolute</code> - Sets the playing position of the currently 
-	 *		playing media as a percentage of the media�s length.</li>
+	 *		playing media as a percentage of the media's length.</li>
 	 *  <li><code>relative</code> - Adds/Subtracts the current percentage on to
 	 *		the current position in the song</li>
 	 * </ul> 
