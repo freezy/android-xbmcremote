@@ -82,6 +82,11 @@
 			android:entries="@array/KeyguardPreferenceEntries"
 			android:entryValues="@array/KeyguardPreferenceValues"
 			android:defaultValue="0" />
+		<CheckBoxPreference 
+		    android:key="setting_keep_screen_on"
+		    android:title="Keep Screen On"
+		    android:summary="Prevent the screen from turning off while app is running"
+		    android:defaultValue="false"/>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Miscellaneous options">
 		<CheckBoxPreference
