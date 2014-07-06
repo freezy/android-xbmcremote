@@ -1,0 +1,32 @@
+apply plugin: 'com.android.application'
+
+android {
+	compileSdkVersion 20
+	buildToolsVersion '20.0.0'
+
+	defaultConfig {
+		applicationId "org.xbmc.android.remote"
+		minSdkVersion 8
+		targetSdkVersion 20
+		versionCode 1009
+		versionName "1.0.9"
+	}
+	buildTypes {
+		release {
+			runProguard false
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+		}
+	}
+	packagingOptions {
+		exclude 'META-INF/LGPL2.1'
+		exclude 'META-INF/LICENSE'
+		exclude 'META-INF/NOTICE'
+	}
+}
+
+dependencies {
+	compile fileTree(dir: 'libs', include: ['*.jar'])
+	compile 'org.codehaus.jackson:jackson-mapper-lgpl:1.9.13'
+	compile 'ch.acra:acra:4.4.0'
+	compile 'javax.jmdns:jmdns:3.4.1'
+}

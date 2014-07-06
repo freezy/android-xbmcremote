@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@drawable/about_back">
+
+	<TableLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:paddingLeft="50dip"
+		android:paddingRight="50dip"
+		android:paddingTop="50dip"
+		android:stretchColumns="1">
+
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:layout_column="1"
+				android:padding="3dip"
+				android:text="Version"/>
+
+			<TextView
+				android:id="@+id/about_version"
+				android:gravity="right"
+				android:padding="3dip"
+				android:text="v0.0.0"
+				android:textColor="#ffffffff"/>
+		</TableRow>
+
+		<TableRow
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:layout_column="1"
+				android:padding="3dip"
+				android:text="Build"/>
+
+			<TextView
+				android:id="@+id/about_revision"
+				android:gravity="right"
+				android:padding="3dip"
+				android:text="Revision 0"
+				android:textColor="#ffffffff"/>
+		</TableRow>
+
+		<TextView
+			android:id="@+id/about_url_message"
+			android:gravity="center"
+			android:paddingTop="15dip"
+			android:textSize="12dip"/>
+	</TableLayout>
+</LinearLayout>

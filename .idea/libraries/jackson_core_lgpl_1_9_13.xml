@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="jackson-core-lgpl-1.9.13">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.codehaus.jackson/jackson-core-lgpl/1.9.13/daf3ed9350a24e505a9ef77a713b9e2b66135993/jackson-core-lgpl-1.9.13.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.codehaus.jackson/jackson-core-lgpl/1.9.13/6ed53c5ce78344e14296aa47769d67b10e1c7b2c/jackson-core-lgpl-1.9.13-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

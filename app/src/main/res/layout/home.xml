@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	android:paddingTop="10dip">
+
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical">
+
+		<LinearLayout
+			android:id="@+id/home_bottombar"
+			android:layout_width="fill_parent"
+			android:layout_height="60dip"
+			android:layout_alignParentBottom="true">
+
+			<Button
+				android:id="@+id/home_about_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@drawable/bottom_logo"/>
+
+			<Button
+				android:id="@+id/home_version_button"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:background="@drawable/bottom_text"
+				android:gravity="center_vertical|center_horizontal"
+				android:text="Version Info"
+				android:textColor="#ddffffff"
+				android:typeface="monospace"/>
+		</LinearLayout>
+
+		<FrameLayout
+			android:id="@+id/home_upper"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_above="@id/home_bottombar">
+
+			<GridView
+				android:id="@+id/HomeItemGridView"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"/>
+		</FrameLayout>
+	</RelativeLayout>
+</LinearLayout>

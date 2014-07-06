@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="fill_parent"
+			  android:layout_height="fill_parent"
+			  android:background="@drawable/shiny_black_back"
+			  android:orientation="horizontal">
+
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="horizontal">
+
+		<!-- ##### BOTTOM BAR ##### -->
+		<LinearLayout
+			android:id="@+id/now_playing_bottombar"
+			android:layout_width="fill_parent"
+			android:layout_height="60dip"
+			android:layout_alignParentBottom="true"
+			android:background="@drawable/bottombar_bg"
+			android:gravity="center_horizontal">
+
+			<RelativeLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true">
+
+				<ImageButton
+					android:id="@+id/MediaPreviousButton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:background="@drawable/now_playing_previous"/>
+
+				<ImageButton
+					android:id="@+id/MediaPlayPauseButton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_toRightOf="@id/MediaPreviousButton"
+					android:background="@drawable/now_playing_play"/>
+
+				<ImageButton
+					android:id="@+id/MediaStopButton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_toRightOf="@id/MediaPlayPauseButton"
+					android:background="@drawable/now_playing_stop"/>
+
+				<ImageButton
+					android:id="@+id/MediaNextButton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_toRightOf="@id/MediaStopButton"
+					android:background="@drawable/now_playing_next"/>
+
+				<ImageButton
+					android:id="@+id/MediaPlaylistButton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_toRightOf="@id/MediaNextButton"
+					android:background="@drawable/now_playing_playlist"/>
+			</RelativeLayout>
+		</LinearLayout>
+
+		<!-- ##### UPPER BODY ##### -->
+		<FrameLayout
+			android:id="@+id/home_upper"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_above="@id/now_playing_bottombar">
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:orientation="vertical">
+
+				<include layout="@layout/titlebar"/>
+
+				<RelativeLayout
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:orientation="horizontal">
+
+
+					<!-- ##### JEWEL CASE ##### -->
+					<LinearLayout
+						android:id="@+id/now_playing_jewelcontainer"
+						android:layout_width="wrap_content"
+						android:layout_height="fill_parent"
+						android:layout_alignParentLeft="true"
+						android:gravity="center_horizontal"
+						android:orientation="vertical">
+
+						<org.xbmc.android.remote.presentation.widget.JewelView
+							android:id="@+id/now_playing_jewelcase"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"/>
+					</LinearLayout>
+
+					<!-- ##### RIGHT BODY ##### -->
+					<LinearLayout
+						android:layout_width="wrap_content"
+						android:layout_height="fill_parent"
+						android:layout_alignParentRight="true"
+						android:layout_toRightOf="@+id/now_playing_jewelcontainer"
+						android:orientation="vertical">
+
+						<!-- ##### TOP TITLE ##### -->
+						<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="0px"
+							android:layout_weight="20"
+							android:orientation="horizontal">
+
+							<TextView
+								android:id="@+id/now_playing_top_title"
+								android:layout_width="fill_parent"
+								android:layout_height="wrap_content"
+								android:gravity="center_horizontal"
+								android:paddingTop="25dip"
+								android:singleLine="true"
+								android:textColor="#ffffffff"
+								android:textSize="18dip"
+								android:textStyle="bold"/>
+						</LinearLayout>
+
+
+						<!-- ##### SEEK BAR ##### -->
+						<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="0px"
+							android:layout_weight="8"
+							android:orientation="vertical"
+							android:paddingLeft="10dip"
+							android:paddingRight="10dip">
+
+							<SeekBar
+								android:id="@+id/now_playing_progessbar"
+								android:layout_width="fill_parent"
+								android:layout_height="wrap_content"
+								android:max="100"
+								android:paddingLeft="7dip"
+								android:paddingRight="7dip"
+								android:progressDrawable="@drawable/progressbar"
+								android:thumb="@drawable/pgbar_thumb"/>
+
+							<RelativeLayout
+								android:layout_width="fill_parent"
+								android:layout_height="wrap_content"
+								android:layout_marginTop="0dip">
+
+								<TextView
+									android:id="@+id/now_playing_counter_left"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:gravity="left"
+									android:singleLine="true"
+									android:textColor="#ffffffff"
+									android:textSize="12dip"/>
+
+								<TextView
+									android:id="@+id/now_playing_counter_right"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_alignParentRight="true"
+									android:gravity="right"
+									android:singleLine="true"
+									android:textColor="#ffffffff"
+									android:textSize="12dip"/>
+							</RelativeLayout>
+						</LinearLayout>
+
+						<!-- ##### BOTTOM TITLE ##### -->
+						<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="0px"
+							android:layout_weight="8"
+							android:orientation="horizontal">
+
+							<TextView
+								android:id="@+id/now_playing_bottom_title"
+								android:layout_width="fill_parent"
+								android:layout_height="wrap_content"
+								android:layout_marginTop="0dip"
+								android:ellipsize="end"
+								android:gravity="center_horizontal"
+								android:paddingLeft="25dip"
+								android:paddingRight="22dip"
+								android:singleLine="true"
+								android:textColor="#ffffffff"
+								android:textSize="16dip"/>
+						</LinearLayout>
+
+						<!-- ##### BOTTOM SUB TITLE ##### -->
+						<LinearLayout
+							android:layout_width="fill_parent"
+							android:layout_height="0px"
+							android:layout_weight="8"
+							android:orientation="horizontal">
+
+							<TextView
+								android:id="@+id/now_playing_bottom_subtitle"
+								android:layout_width="fill_parent"
+								android:layout_height="wrap_content"
+								android:layout_marginTop="0dip"
+								android:gravity="center_horizontal"
+								android:singleLine="true"
+								android:textSize="14dip"/>
+						</LinearLayout>
+					</LinearLayout>
+				</RelativeLayout>
+			</LinearLayout>
+		</FrameLayout>
+	</RelativeLayout>
+</LinearLayout>

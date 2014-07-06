@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	android:id="@+id/FrameLayout01"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:padding="16dip">
+
+		<TextView
+			android:id="@+id/TextView01"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/setup_wizard_es_explanation"></TextView>
+
+		<CheckBox
+			android:id="@+id/setup_wizard_enable_es"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="Enable EventServer"></CheckBox>
+
+		<TextView
+			android:id="@+id/TextView02"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="25dip"
+			android:text="@string/setup_wizard_es_change_port"></TextView>
+
+		<TextView
+			android:id="@+id/TextView03"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dip"
+			android:text="Port:"></TextView>
+
+		<EditText
+			android:id="@+id/setup_wizard_es_port"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="9777"></EditText>
+
+
+	</LinearLayout>
+	<!--<LinearLayout android:id="@+id/setup_wizard_es_overlay"
+		android:layout_width="fill_parent" 
+		android:layout_height="fill_parent"
+		android:background="#AA000000" 
+		android:textColor="#ffffffff"
+		android:padding="25dip">
+		<ProgressBar android:id="@+id/ProgressBar01"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical" 
+			android:indeterminate="true"></ProgressBar>
+		<TextView android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical" 
+			android:layout_width="fill_parent"
+			android:text="Trying to contact the EventServer.Please wait." android:id="@+id/setup_wizard_es_msg"></TextView>
+	</LinearLayout>
+-->
+</FrameLayout>

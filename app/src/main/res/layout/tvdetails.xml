@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical">
+
+	<include layout="@layout/titlebar"/>
+
+	<ScrollView
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:scrollbars="none">
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+
+			<ImageView
+				android:id="@+id/tvdetails_thumb"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:adjustViewBounds="true"
+				android:padding="0dip"
+				android:scaleType="centerInside"/>
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="-5dip"
+				android:gravity="center_horizontal"
+				android:orientation="horizontal">
+
+				<ImageView
+					android:id="@+id/tvdetails_rating_stars"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:padding="0dip"
+					android:src="@drawable/stars_0"/>
+
+				<TextView
+					android:id="@+id/tvdetails_rating"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:paddingLeft="4dip"
+					android:paddingTop="6dip"
+					android:textSize="18dip"
+					android:textStyle="bold"/>
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/tvdetails_datalayout"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				android:padding="20dip">
+				<!-- EPISODES -->
+				<TextView
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="EPISODES"/>
+
+				<TextView
+					android:id="@+id/tvdetails_episodes"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+				<!-- FIRST AIRED -->
+				<TextView
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="FIRST AIRED"/>
+
+				<TextView
+					android:id="@+id/tvdetails_first_aired"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+				<!-- GENRE -->
+				<TextView
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="GENRE"/>
+
+				<TextView
+					android:id="@+id/tvdetails_genre"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+				<!-- STUDIO -->
+				<TextView
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="STUDIO"/>
+
+				<TextView
+					android:id="@+id/tvdetails_studio"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="-"/>
+				<!-- PARENTAL RATING -->
+				<TextView
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="PARENTAL RATING"/>
+
+				<TextView
+					android:id="@+id/tvdetails_parental"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="-"/>
+				<!-- PLOT -->
+				<TextView
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="SUMMARY"/>
+
+				<TextView
+					android:id="@+id/tvdetails_plot"
+					style="@style/details_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="-"/>
+				<!-- CAST -->
+				<TextView
+					style="@style/details_label"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="CAST"/>
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal"
+				android:orientation="horizontal"
+				android:padding="20dip">
+
+				<Button
+					android:id="@+id/tvdetails_playbutton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:padding="7dip"
+					android:text="Play TV Show"/>
+			</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

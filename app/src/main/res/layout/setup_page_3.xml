@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	android:padding="15dip">
+
+	<TextView
+		android:id="@+id/setup_page3_msg"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"></TextView>
+
+	<Button
+		android:id="@+id/setup_page3_retry"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/setup_wizard_retry"
+		android:visibility="invisible"></Button>
+
+</LinearLayout>
