@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content">
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="10dip">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Name of this instance:"/>
+
+		<EditText
+			android:id="@+id/pref_name"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:capitalize="words"
+			android:maxLines="1"
+			android:text=""/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Host or IP address:"/>
+
+		<EditText
+			android:id="@+id/pref_host"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text=""/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="HTTP API port:"/>
+
+		<EditText
+			android:id="@+id/pref_port"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:inputType="number"
+			android:text=""/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Username:"/>
+
+		<EditText
+			android:id="@+id/pref_user"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text=""/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Password:"/>
+
+		<EditText
+			android:id="@+id/pref_pass"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:inputType="textPassword"
+			android:text=""/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="EventServer port:"/>
+
+		<EditText
+			android:id="@+id/pref_eventserver_port"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:inputType="number"
+			android:text=""/>
+
+		<CheckBox
+			android:id="@+id/pref_wifi_only"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:checked="false"
+			android:text="WiFi only"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Access Point:"/>
+
+		<EditText
+			android:id="@+id/pref_access_point"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text=""/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Mac Address:"/>
+
+		<EditText
+			android:id="@+id/pref_mac_addr"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text=""/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Socket read timeout in milliseconds"/>
+
+		<EditText
+			android:id="@+id/pref_timeout"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:inputType="number"
+			android:text=""/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Wait after WOL in seconds"/>
+
+		<EditText
+			android:id="@+id/pref_wol_wait"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:inputType="number"
+			android:text=""/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="WOL Port"/>
+
+		<EditText
+			android:id="@+id/pref_wol_port"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:inputType="number"
+			android:text=""/>
+	</LinearLayout>
+</ScrollView>

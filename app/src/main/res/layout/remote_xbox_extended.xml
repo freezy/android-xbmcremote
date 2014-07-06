@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="#000000"
+	android:orientation="vertical">
+
+	<LinearLayout
+		android:id="@+id/RemoteXboxRow1"
+		android:layout_width="match_parent"
+		android:layout_height="0px"
+		android:layout_alignParentTop="true"
+		android:layout_weight="96">
+
+		<ImageView
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_alignParentLeft="true"
+			android:layout_weight="148"
+			android:background="@drawable/remote_xbox__top_left"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnDisplay"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_centerHorizontal="false"
+			android:layout_centerInParent="true"
+			android:layout_weight="189"
+			android:background="@drawable/remote_xbox_display"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<ImageView
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_alignParentRight="true"
+			android:layout_weight="143"
+			android:background="@drawable/remote_xbox__top_right"/>
+	</LinearLayout>
+
+	<!-- this is the only row that is added compared to the normal "lowres" version of the layout. -->
+	<LinearLayout
+		android:id="@+id/RemoteXboxRowSections"
+		android:layout_width="match_parent"
+		android:layout_height="0px"
+		android:layout_weight="121">
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnVideo"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_alignParentLeft="true"
+			android:layout_weight="137"
+			android:background="@drawable/remote_xbox_video"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnMusic"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_weight="106"
+			android:background="@drawable/remote_xbox_music"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnImages"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_weight="105"
+			android:background="@drawable/remote_xbox_images"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnTv"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_alignParentRight="true"
+			android:layout_weight="132"
+			android:background="@drawable/remote_xbox_tv"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/RemoteXboxRow3"
+		android:layout_width="match_parent"
+		android:layout_height="0px"
+		android:layout_weight="112">
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnSeekBack"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_alignParentLeft="true"
+			android:layout_weight="171"
+			android:background="@drawable/remote_xbox_seek_back"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnPlay"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_centerInParent="true"
+			android:layout_weight="137"
+			android:background="@drawable/remote_xbox_play"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnSeekForward"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_alignParentRight="true"
+			android:layout_weight="172"
+			android:background="@drawable/remote_xbox_seek_forward"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/RemoteXboxRow4"
+		android:layout_width="match_parent"
+		android:layout_height="0px"
+		android:layout_weight="120">
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnPrevious"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_weight="142"
+			android:background="@drawable/remote_xbox_previous"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnStop"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_weight="98"
+			android:background="@drawable/remote_xbox_stop"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnPause"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_weight="97"
+			android:background="@drawable/remote_xbox_pause"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnNext"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_weight="148"
+			android:background="@drawable/remote_xbox_next"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/RemoteXboxRow5"
+		android:layout_width="match_parent"
+		android:layout_height="0px"
+		android:layout_weight="124">
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnTitle"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_weight="148"
+			android:background="@drawable/remote_xbox_title"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnUp"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_weight="184"
+			android:background="@drawable/remote_xbox_up"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnInfo"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_weight="148"
+			android:background="@drawable/remote_xbox_info"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/RemoteXboxRow6"
+		android:layout_width="match_parent"
+		android:layout_height="0px"
+		android:layout_weight="144">
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnLeft"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_weight="148"
+			android:background="@drawable/remote_xbox_left"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnSelect"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_weight="184"
+			android:background="@drawable/remote_xbox_select"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnRight"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_weight="148"
+			android:background="@drawable/remote_xbox_right"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/RemoteXboxRow7"
+		android:layout_width="match_parent"
+		android:layout_height="0px"
+		android:layout_alignParentBottom="true"
+		android:layout_weight="137">
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnMenu"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentRight="false"
+			android:layout_weight="148"
+			android:background="@drawable/remote_xbox_menu"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnDown"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentRight="false"
+			android:layout_centerInParent="true"
+			android:layout_weight="184"
+			android:background="@drawable/remote_xbox_down"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+
+		<Button
+			android:id="@+id/RemoteXboxImgBtnBack"
+			android:layout_width="0px"
+			android:layout_height="fill_parent"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentRight="true"
+			android:layout_weight="148"
+			android:background="@drawable/remote_xbox_back"
+			android:focusable="false"
+			android:focusableInTouchMode="false"/>
+	</LinearLayout>
+</LinearLayout>

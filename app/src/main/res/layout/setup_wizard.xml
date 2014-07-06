@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	android:id="@+id/setup_main_view"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<FrameLayout
+		android:id="@+id/setup_wizard_root"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+
+		<LinearLayout
+			android:id="@+id/setup_wizard_msg_overlay"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:background="#AA000000"
+			android:padding="25dip"
+			android:textColor="#ffffffff">
+
+			<ProgressBar
+				android:id="@+id/ProgressBar01"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:indeterminate="true"></ProgressBar>
+
+			<TextView
+				android:id="@+id/setup_wizard_msg"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:text=""></TextView>
+		</LinearLayout>
+	</FrameLayout>
+
+	<LinearLayout
+		android:id="@+id/setup_buttonbar"
+		style="@android:style/ButtonBar"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:orientation="horizontal">
+
+		<Button
+			android:id="@+id/setup_button_prev"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/wizard_previous"/>
+
+		<Button
+			android:id="@+id/setup_button_next"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/wizard_next"/>
+	</LinearLayout>
+</RelativeLayout>

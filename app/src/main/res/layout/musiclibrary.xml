@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.xbmc.android.widget.slidingtabs.SlidingTabHost
+	android:id="@id/slidingtabhost"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical">
+
+		<org.xbmc.android.widget.slidingtabs.SlidingTabWidget
+			android:id="@id/slidingtabs"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			/>
+
+		<FrameLayout
+			android:id="@id/slidingtabcontent"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_above="@id/slidingtabs">
+
+			<!-- Albums -->
+			<LinearLayout
+				android:id="@+id/albumlist_outer_layout"
+				xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:fadingEdge="none"
+				android:orientation="vertical">
+
+				<include layout="@layout/titlebar"/>
+
+				<include layout="@layout/listmessage"/>
+
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+
+					<ListView
+						android:id="@+id/albumlist_list"
+						style="@style/standard_list"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"/>
+					<!-- >GridView 
+						android:id="@+id/albumlist_grid"
+						android:layout_height="fill_parent"
+						android:layout_width="fill_parent"
+						android:numColumns="3" 
+						android:fadingEdge="none"
+						android:scrollbars="none"
+						android:visibility="gone" /-->
+				</org.xbmc.android.widget.FastScrollView>
+			</LinearLayout>
+
+			<!-- Files -->
+			<LinearLayout
+				android:id="@+id/filelist_outer_layout"
+				xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:fadingEdge="none"
+				android:orientation="vertical">
+
+				<include layout="@layout/titlebar"/>
+
+				<include layout="@layout/listmessage"/>
+
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+
+					<ListView
+						android:id="@+id/filelist_list"
+						style="@style/standard_list"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"/>
+				</org.xbmc.android.widget.FastScrollView>
+			</LinearLayout>
+
+			<!-- Artists -->
+			<LinearLayout
+				android:id="@+id/artists_outer_layout"
+				xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:fadingEdge="none"
+				android:orientation="vertical">
+
+				<include layout="@layout/titlebar"/>
+
+				<include layout="@layout/listmessage"/>
+
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+
+					<ListView
+						android:id="@+id/artists_list"
+						style="@style/standard_list"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"/>
+				</org.xbmc.android.widget.FastScrollView>
+			</LinearLayout>
+
+			<!-- Genres -->
+			<LinearLayout
+				android:id="@+id/genres_outer_layout"
+				xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:fadingEdge="none"
+				android:orientation="vertical">
+
+				<include layout="@layout/titlebar"/>
+
+				<include layout="@layout/listmessage"/>
+
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+
+					<ListView
+						android:id="@+id/genres_list"
+						style="@style/standard_list"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"/>
+				</org.xbmc.android.widget.FastScrollView>
+			</LinearLayout>
+
+			<!-- Compilations -->
+			<LinearLayout
+				android:id="@+id/compilations_outer_layout"
+				xmlns:android="http://schemas.android.com/apk/res/android"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:fadingEdge="none"
+				android:orientation="vertical">
+
+				<include layout="@layout/titlebar"/>
+
+				<include layout="@layout/listmessage"/>
+
+				<org.xbmc.android.widget.FastScrollView
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+
+					<ListView
+						android:id="@+id/compilations_list"
+						style="@style/standard_list"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"/>
+				</org.xbmc.android.widget.FastScrollView>
+			</LinearLayout>
+		</FrameLayout>
+	</RelativeLayout>
+</org.xbmc.android.widget.slidingtabs.SlidingTabHost>
