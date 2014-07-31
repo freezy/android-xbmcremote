@@ -409,13 +409,15 @@ public class MusicClient extends Client implements IMusicClient {
 		final JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetArtists", obj);
 		if(result != null){
 			final JsonNode jsonArtists = result.get("artists");
-			for (Iterator<JsonNode> i = jsonArtists.getElements(); i.hasNext();) {
-				JsonNode jsonArtist = (JsonNode)i.next();
-				artists.add(new Artist(
-					getInt(jsonArtist, "artistid"), 
-					getString(jsonArtist, "label"), 
-					getString(jsonArtist, "thumbnail", "") 
-				));
+			if (jsonArtists != null) {
+				for (Iterator<JsonNode> i = jsonArtists.getElements(); i.hasNext();) {
+					JsonNode jsonArtist = (JsonNode)i.next();
+					artists.add(new Artist(
+							getInt(jsonArtist, "artistid"), 
+							getString(jsonArtist, "label"), 
+							getString(jsonArtist, "thumbnail", "") 
+							));
+				}
 			}
 		}
 		return artists;
@@ -445,12 +447,14 @@ public class MusicClient extends Client implements IMusicClient {
 		final ArrayList<Genre> genres = new ArrayList<Genre>();
 		final JsonNode result = mConnection.getJson(manager, "AudioLibrary.GetGenres", sort(obj(), SortType.TITLE, "descending"));
 		final JsonNode jsonGenres = result.get("genres");
-		for (Iterator<JsonNode> i = jsonGenres.getElements(); i.hasNext();) {
-			JsonNode jsonGenre = (JsonNode)i.next();
-			genres.add(new Genre(
-				getInt(jsonGenre, "genreid"), 
-				getString(jsonGenre, "label") 
-			));
+		if (jsonGenres != null) {
+			for (Iterator<JsonNode> i = jsonGenres.getElements(); i.hasNext();) {
+				JsonNode jsonGenre = (JsonNode)i.next();
+				genres.add(new Genre(
+						getInt(jsonGenre, "genreid"), 
+						getString(jsonGenre, "label") 
+						));
+			}
 		}
 		return genres;
 	}

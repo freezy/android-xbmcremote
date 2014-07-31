@@ -91,7 +91,7 @@ public class MusicGenreListController extends ListController implements IControl
 			
 			mList.setOnKeyListener(new ListControllerOnKeyListener<Genre>());
 
-			setTitle("...");
+			setTitle(title + "...");
 			showOnLoading();
 			mMusicManager.getGenres(response, mActivity.getApplicationContext());			
 		}
