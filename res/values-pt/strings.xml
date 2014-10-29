@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setup_wizard_password">Senha</string>
+    <string name="setup_wizard_username">Usuário</string>
+    <string name="setup_wizard_retry">Tentar novamente</string>
+    <string name="setup_wizard_es_change_port">Você pode digitar outra porta para conectar no EventServer do XBMC.  Deixe como está se você não mudou a porta no XBMC.</string>
+    <string name="setup_wizard_es_explanation">O EventServer no XBMC é usado para controlá-lo remotamente. O controle remoto não vai funcionar sem o EventServer.</string>
+    <string name="setup_wizard_port">A porta do XBMC</string>
+    <string name="setup_wizard_ip_host">O IP ou host do XBMC</string>
+    <string name="wizard_next">Próximo</string>
+    <string name="wizard_previous">Anterior</string>
+    <string name="setup_wizard_connecting_wait">Tentando conectar no XBMC.
+Por favor aguarde.</string>
+    <string name="setup_wizard_cant_connect">Não foi possível conectar no XBMC. Por favor verifique o IP e a porta.
+
+O sistema informou:
+</string>
+    <string name="setup_wizard_checking_es_wait">Tentando ler o estado do seu EventServer.
+Por favor aguarde.</string>
+    <string name="setup_wizard_enable_es_wait">Habilitando EventServer.
+Por favor aguarde.</string>
+    <string name="setup_wizard_login_wrong">Usuário or password is wrong.
+Please check both and try again.</string>
+    <string name="setup_wizard_trying_mute">Tentando colocar o XBMC no mudo pelo EventServer para verificar se ele está disponível.
+Por favor aguarde.</string>
+    <string name="setup_wizard_muting_failed">Não foi possível colocar o XBMC no mudo através do EventServer.
+Por favor verifique se a porta UDP 9777 está fechada no seu firewall.
+Se você está conectando pelo 3G, certifique-se de que a porta UDP 9777 está encaminhada no seu roteador.</string>
+    <string name="setup_wizard_final_message">Funcionou. Você pode finalizar o assistente e começar a usar o controle remoto.
+
+Divirta-se.</string>
+    <string name="app_name">XBMC Remote</string>
+	<string name="app_receiver">XbmcBroadcastReceiver</string>
+	<string name="sms_received">SMS recebido</string>
+	<string name="alphabet">\u0020ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+	<string name="play_on_xbmc">Tocar no XBMC</string>
+	<string name="setup_wizard_hostname">O nome deste host</string>
+	<string name="add_from_barcode">Adicionar do código de barras</string>
+	<string name="generate_barcode">Gerar código de barras</string>
+	<string name="hosts_required">"Você precisa de pelo menos um host para usar essa funcionalidade.</string>
+	<string name="pick_host">Choose a Host</string>
+	<string name="ok">OK</string>
+	<string name="yes">Sim</string>
+	<string name="no">Não</string>
+	<string name="host_scan_error">Ocorreu um erro ao procurar por um host novo. Por favor verifique que você está usando um código de barras válido.</string>
+	<string name="added_host">\"%s\" adicionado com sucesso</string>
+	<string name="barcode_scanner_required">Você precisa instalar o scanner de código de barras para usar esta funcionalidade. Gostaria de instalar agora?</string>
+	<string name="make_sure_XBMC_webserver_is_enabled_and_XBMC_is_running">Certifique-se de que o servidor web do XBMC está habilitado e funcionando</string>
+</resources>
