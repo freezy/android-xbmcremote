@@ -1,0 +1,7 @@
+From: Corey Lee <lee.j.corey@gmail.com>
+Date: Wed, 26 Nov 2014 21:57:27 -0500
+Subject: [PATCH 0/3] 
+AbstractManager is a Large Class (Code Smell) and it has more than one responsibility.
+Therefore, we extracted Sort attributes and methods to a new class called SortPreferenceMedia.
+
+
