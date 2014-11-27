@@ -24,8 +24,8 @@ package org.xbmc.android.remote.presentation.controller;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.business.SortPreferenceMedia;
 import org.xbmc.android.remote.presentation.activity.MovieDetailsActivity;
 import org.xbmc.android.remote.presentation.activity.NowPlayingActivity;
 import org.xbmc.android.remote.presentation.widget.FiveLabelsItemView;
@@ -100,7 +100,7 @@ public class MovieListController extends ListController implements IController {
 		mVideoManager = ManagerFactory.getVideoManager(this);
 		mControlManager = ManagerFactory.getControlManager(this);
 		
-		((ISortableManager)mVideoManager).setSortKey(AbstractManager.PREF_SORT_KEY_MOVIE);
+		((ISortableManager)mVideoManager).setSortKey(SortPreferenceMedia.PREF_SORT_KEY_MOVIE);
 		((ISortableManager)mVideoManager).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		
 		final String sdError = ImportUtilities.assertSdCard();
@@ -273,57 +273,57 @@ public class MovieListController extends ListController implements IController {
 			break;
 		case MENU_SORT_BY_TITLE_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.TITLE);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.ORDER_ASC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.TITLE);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_TITLE_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.TITLE);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.ORDER_DESC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.TITLE);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_YEAR_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.YEAR);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.ORDER_ASC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.YEAR);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_YEAR_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.YEAR);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.ORDER_DESC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.YEAR);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_RATING_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.RATING);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.ORDER_ASC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.RATING);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_RATING_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.RATING);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.ORDER_DESC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.RATING);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_DATE_ADDED_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.DATE_ADDED);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.ORDER_ASC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.DATE_ADDED);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_DATE_ADDED_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.DATE_ADDED);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_MOVIE, SortType.ORDER_DESC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.DATE_ADDED);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_MOVIE, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;

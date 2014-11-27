@@ -1,0 +1,33 @@
+From 9e86e636cf41432feb3b61a15821b4c7f4f2bbea Mon Sep 17 00:00:00 2001
+From: Corey Lee <lee.j.corey@gmail.com>
+Date: Wed, 26 Nov 2014 23:42:11 -0500
+Subject: [PATCH 3/3] Removed Sort Methods From AbstractManager
+
+- Removed Unnecessary method getSortOrder from AbstractManager
+---
+ src/org/xbmc/android/remote/business/AbstractManager.java | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/src/org/xbmc/android/remote/business/AbstractManager.java b/src/org/xbmc/android/remote/business/AbstractManager.java
+index a4da556..ee036c5 100644
+--- a/src/org/xbmc/android/remote/business/AbstractManager.java
++++ b/src/org/xbmc/android/remote/business/AbstractManager.java
+@@ -317,15 +317,6 @@ public abstract class AbstractManager implements INotifiableManager {
+ 	{
+ 		mHandler.post(runnable);
+ 	}
+-
+-	/**
+-	 * Returns currently saved "sort by" value. If the preference was not set yet, or
+-	 * if the current sort key is not set, return "ASC".
+-	 * @return Sort order
+-	 */
+-	protected String getSortOrder() {
+-        return sortPreferenceMedia.getSortOrder();
+-    }
+ 	
+ 	protected boolean getHideWatched(Context context) {
+ 		return context.getSharedPreferences("global", Context.MODE_PRIVATE).getBoolean("HideWatched", false);
+-- 
+1.9.3 (Apple Git-50)
+

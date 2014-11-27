@@ -24,8 +24,8 @@ package org.xbmc.android.remote.presentation.controller;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.business.SortPreferenceMedia;
 import org.xbmc.android.remote.presentation.activity.GridActivity;
 import org.xbmc.android.remote.presentation.activity.ListActivity;
 import org.xbmc.android.remote.presentation.activity.TvShowDetailsActivity;
@@ -136,7 +136,7 @@ public class TvShowListController extends ListController implements IController 
 	
 	private void fetch() {
 		// tv show and episode both are using the same manager so set the sort key here
-		((ISortableManager)mTvManager).setSortKey(AbstractManager.PREF_SORT_KEY_SHOW);
+		((ISortableManager)mTvManager).setSortKey(SortPreferenceMedia.PREF_SORT_KEY_SHOW);
 		((ISortableManager)mTvManager).setPreferences(mActivity.getPreferences(Context.MODE_PRIVATE));
 
 		final String title = mActor != null ? mActor.name + " - " : mGenre != null ? mGenre.name + " - " : "" + "TV Shows";
@@ -256,43 +256,43 @@ public class TvShowListController extends ListController implements IController 
 			break;
 		case MENU_SORT_BY_TITLE_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.TITLE);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.ORDER_ASC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SHOW, SortType.TITLE);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SHOW, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_TITLE_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.TITLE);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.ORDER_DESC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SHOW, SortType.TITLE);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SHOW, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_YEAR_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.YEAR);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.ORDER_ASC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SHOW, SortType.YEAR);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SHOW, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_YEAR_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.YEAR);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.ORDER_DESC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SHOW, SortType.YEAR);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SHOW, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_RATING_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.RATING);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.ORDER_ASC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SHOW, SortType.RATING);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SHOW, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_RATING_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.RATING);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SHOW, SortType.ORDER_DESC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SHOW, SortType.RATING);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SHOW, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;

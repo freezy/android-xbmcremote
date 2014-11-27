@@ -36,12 +36,10 @@ import org.xbmc.api.data.IVideoClient;
 import org.xbmc.api.object.ICoverArt;
 import org.xbmc.api.presentation.INotifiableController;
 import org.xbmc.api.type.CacheType;
-import org.xbmc.api.type.SortType;
 import org.xbmc.api.type.ThumbSize;
 import org.xbmc.httpapi.WifiStateException;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
@@ -56,31 +54,14 @@ public abstract class AbstractManager implements INotifiableManager {
 	public static final Boolean DEBUG = false;
 	
 	protected static final String TAG = "AbstractManager";
-	
-	public static final String PREF_SORT_BY_PREFIX = "sort_by_";
-	public static final String PREF_SORT_ORDER_PREFIX = "sort_order_";
-	
-	/* The idea of the sort keys is to remember different sort settings for
-	 * each type. In your controller, make sure you run setSortKey() in the
-	 * onCreate() method.
-	 */
-	public static final int PREF_SORT_KEY_ALBUM = 1;
-	public static final int PREF_SORT_KEY_ARTIST = 2;
-	public static final int PREF_SORT_KEY_SONG = 3;
-	public static final int PREF_SORT_KEY_GENRE = 4;
-	public static final int PREF_SORT_KEY_FILEMODE = 5;
-	public static final int PREF_SORT_KEY_SHOW = 6;
-	public static final int PREF_SORT_KEY_MOVIE = 7;
-	public static final int PREF_SORT_KEY_EPISODE = 8;
-	
-	protected INotifiableController mController = null;
+
+    protected final SortPreferenceMedia sortPreferenceMedia = new SortPreferenceMedia();
+
+    protected INotifiableController mController = null;
 	
 	protected Handler mHandler;
-	
-	protected SharedPreferences mPref;
-	protected int mCurrentSortKey;
-	
-	protected List<Runnable> failedRequests = new ArrayList<Runnable>();
+
+    protected List<Runnable> failedRequests = new ArrayList<Runnable>();
 	/**
 	 * Sets the handler used in the looping thread
 	 * @param handler
@@ -331,52 +312,10 @@ public abstract class AbstractManager implements INotifiableManager {
 			}
 		});
 	}
-	
-	/**
-	 * Sets the static reference to the preferences object. Used to obtain
-	 * current sort values.
-	 * @param pref
-	 */
-	public void setPreferences(SharedPreferences pref) {
-		mPref = pref;
-	}
 
-	/**
-	 * Sets which kind of view is currently active.
-	 * @param sortKey
-	 */
-	public void setSortKey(int sortKey) {
-		mCurrentSortKey = sortKey;
-	}
-	
-	public void post(Runnable runnable)
+    public void post(Runnable runnable)
 	{
 		mHandler.post(runnable);
-	}
-	
-	/**
-	 * Returns currently saved "sort by" value. If the preference was not set yet, or
-	 * if the current sort key is not set, return default value.
-	 * @param type Default value
-	 * @return Sort by field
-	 */
-	protected int getSortBy(int type) {
-		if (mPref != null) {
-			return mPref.getInt(PREF_SORT_BY_PREFIX + mCurrentSortKey, type);
-		}
-		return type;
-	}
-	
-	/**
-	 * Returns currently saved "sort by" value. If the preference was not set yet, or
-	 * if the current sort key is not set, return "ASC".
-	 * @return Sort order
-	 */
-	protected String getSortOrder() {
-		if (mPref != null) {
-			return mPref.getString(PREF_SORT_ORDER_PREFIX + mCurrentSortKey, SortType.ORDER_ASC);
-		}
-		return SortType.ORDER_ASC;
 	}
 	
 	protected boolean getHideWatched(Context context) {

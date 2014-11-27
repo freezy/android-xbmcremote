@@ -24,8 +24,8 @@ package org.xbmc.android.remote.presentation.controller;
 import java.util.ArrayList;
 
 import org.xbmc.android.remote.R;
-import org.xbmc.android.remote.business.AbstractManager;
 import org.xbmc.android.remote.business.ManagerFactory;
+import org.xbmc.android.remote.business.SortPreferenceMedia;
 import org.xbmc.android.remote.presentation.widget.ThreeLabelsItemView;
 import org.xbmc.android.util.ImportUtilities;
 import org.xbmc.api.business.DataResponse;
@@ -95,7 +95,7 @@ public class SongListController extends ListController implements IController {
 		
 		mMusicManager = ManagerFactory.getMusicManager(this);
 		
-		((ISortableManager)mMusicManager).setSortKey(AbstractManager.PREF_SORT_KEY_SONG);
+		((ISortableManager)mMusicManager).setSortKey(SortPreferenceMedia.PREF_SORT_KEY_SONG);
 		((ISortableManager)mMusicManager).setPreferences(activity.getPreferences(Context.MODE_PRIVATE));
 		
 		final String sdError = ImportUtilities.assertSdCard();
@@ -276,57 +276,57 @@ public class SongListController extends ListController implements IController {
 			break;
 		case MENU_SORT_BY_ALBUM_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.ALBUM);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.ORDER_ASC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.ALBUM);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_ALBUM_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.ALBUM);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.ORDER_DESC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.ALBUM);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_ARTIST_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.ARTIST);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.ORDER_ASC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.ARTIST);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_ARTIST_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.ARTIST);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.ORDER_DESC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.ARTIST);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_TITLE_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.TITLE);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.ORDER_ASC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.TITLE);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_TITLE_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.TITLE);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.ORDER_DESC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.TITLE);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_FILENAME_ASC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.FILENAME);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.ORDER_ASC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.FILENAME);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.ORDER_ASC);
 			ed.commit();
 			fetch();
 			break;
 		case MENU_SORT_BY_FILENAME_DESC:
 			ed = mActivity.getPreferences(Context.MODE_PRIVATE).edit();
-			ed.putInt(AbstractManager.PREF_SORT_BY_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.FILENAME);
-			ed.putString(AbstractManager.PREF_SORT_ORDER_PREFIX + AbstractManager.PREF_SORT_KEY_SONG, SortType.ORDER_DESC);
+			ed.putInt(SortPreferenceMedia.PREF_SORT_BY_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.FILENAME);
+			ed.putString(SortPreferenceMedia.PREF_SORT_ORDER_PREFIX + SortPreferenceMedia.PREF_SORT_KEY_SONG, SortType.ORDER_DESC);
 			ed.commit();
 			fetch();
 			break;

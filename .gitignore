@@ -2,3 +2,5 @@
 /bin
 *.apk
 local.properties
+.idea/
+android-xbmcremote.iml

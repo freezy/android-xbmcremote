@@ -40,7 +40,7 @@ import android.content.Context;
  * 
  * @author Team XBMC
  */
-public class VideoManager extends AbstractManager implements IVideoManager, ISortableManager, INotifiableManager {
+public class VideoManager extends AbstractManager implements IVideoManager, INotifiableManager {
 	
 	/**
 	 * Updates the movie object with additional data (plot, cast, etc)
@@ -64,7 +64,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<Movie>>(response, this) {
 			@Override
 			public void doRun() throws Exception { 
-				response.value = video(context).getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
+				response.value = video(context).getMovies(VideoManager.this, sortPreferenceMedia.getSortBy(SortType.TITLE), sortPreferenceMedia.getSortOrder(), getHideWatched(context));
 			}
 		});
 	}
@@ -75,7 +75,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 */
 	public ArrayList<Movie> getMovies(final Context context) {
 		try {
-			return video(context).getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
+			return video(context).getMovies(VideoManager.this, sortPreferenceMedia.getSortBy(SortType.TITLE), sortPreferenceMedia.getSortOrder(), getHideWatched(context));
 		} catch (WifiStateException e) {
 			e.printStackTrace();
 		}
@@ -88,7 +88,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 	 */
 	public ArrayList<Movie> getMovies(final Context context, int offset) {
 		try {
-			return video(context).getMovies(VideoManager.this, getSortBy(SortType.TITLE), getSortOrder(), offset, getHideWatched(context));
+			return video(context).getMovies(VideoManager.this, sortPreferenceMedia.getSortBy(SortType.TITLE), sortPreferenceMedia.getSortOrder(), offset, getHideWatched(context));
 		} catch (WifiStateException e) {
 			e.printStackTrace();
 		}
@@ -104,7 +104,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<Movie>>(response, this) {
 			@Override
 			public void doRun() throws Exception { 
-				response.value = video(context).getMovies(VideoManager.this, actor, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
+				response.value = video(context).getMovies(VideoManager.this, actor, sortPreferenceMedia.getSortBy(SortType.TITLE), sortPreferenceMedia.getSortOrder(), getHideWatched(context));
 			}
 		});
 	}
@@ -118,7 +118,7 @@ public class VideoManager extends AbstractManager implements IVideoManager, ISor
 		mHandler.post(new Command<ArrayList<Movie>>(response, this) {
 			@Override
 			public void doRun() throws Exception { 
-				response.value = video(context).getMovies(VideoManager.this, genre, getSortBy(SortType.TITLE), getSortOrder(), getHideWatched(context));
+				response.value = video(context).getMovies(VideoManager.this, genre, sortPreferenceMedia.getSortBy(SortType.TITLE), sortPreferenceMedia.getSortOrder(), getHideWatched(context));
 			}
 		});
 	}
