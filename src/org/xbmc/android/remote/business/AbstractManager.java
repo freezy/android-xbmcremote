@@ -317,15 +317,6 @@ public abstract class AbstractManager implements INotifiableManager {
 	{
 		mHandler.post(runnable);
 	}
-
-	/**
-	 * Returns currently saved "sort by" value. If the preference was not set yet, or
-	 * if the current sort key is not set, return "ASC".
-	 * @return Sort order
-	 */
-	protected String getSortOrder() {
-        return sortPreferenceMedia.getSortOrder();
-    }
 	
 	protected boolean getHideWatched(Context context) {
 		return context.getSharedPreferences("global", Context.MODE_PRIVATE).getBoolean("HideWatched", false);
