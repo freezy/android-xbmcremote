@@ -176,24 +176,33 @@ public abstract class AbstractManager implements INotifiableManager {
 		mHandler.post(new Runnable() {
 			public void run() {
 				if (cover.getCrc() != 0L) {
-					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
-					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
-						if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] Trying memory (" + Crc32.formatAsHexLowerCase(cover.getCrc()) + ")");
-						getCoverFromMem(response, cover, thumbSize, defaultCover, context, getFromCacheOnly);
-					} else {
-						if (getFromCacheOnly) {
-							Log.e(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] ERROR: NOT downloading big covers is a bad idea because they are not cached!");
-							response.value = null;
-							onFinish(response);
-						} else {
-							if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] Downloading directly");
-							getCoverFromNetwork(response, cover, thumbSize, context);
-						}
-					}
+					
+					getCoverByThumbnailSize(response, cover, thumbSize,
+							defaultCover, context, getFromCacheOnly);
 				} else {
 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] no crc, skipping.");
 					response.value = null;
 					onFinish(response);
+				}
+			}
+
+			private void getCoverByThumbnailSize(
+					final DataResponse<Bitmap> response, final ICoverArt cover,
+					final int thumbSize, final Bitmap defaultCover,
+					final Context context, final boolean getFromCacheOnly) {
+				// first, try mem cache (only if size = small, other sizes aren't mem-cached.
+				if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
+					if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] Trying memory (" + Crc32.formatAsHexLowerCase(cover.getCrc()) + ")");
+					getCoverFromMem(response, cover, thumbSize, defaultCover, context, getFromCacheOnly);
+				} else {
+					if (getFromCacheOnly) {
+						Log.e(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] ERROR: NOT downloading big covers is a bad idea because they are not cached!");
+						response.value = null;
+						onFinish(response);
+					} else {
+						if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] Downloading directly");
+						getCoverFromNetwork(response, cover, thumbSize, context);
+					}
 				}
 			}
 		});
