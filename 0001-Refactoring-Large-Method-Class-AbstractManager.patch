@@ -1,0 +1,67 @@
+From 5642a0158aef466b308722e91c611ae313905a07 Mon Sep 17 00:00:00 2001
+From: Samer El-Achkar <samerelachkarmail@gmail.com>
+Date: Fri, 28 Nov 2014 14:24:55 -0500
+Subject: [PATCH 1/1]  Refactoring Large Method Class AbstractManager
+
+Extract method getCoverByThumbnailSize() from getCover()
+---
+ .../android/remote/business/AbstractManager.java   | 37 ++++++++++++++--------
+ 1 file changed, 23 insertions(+), 14 deletions(-)
+
+diff --git a/src/org/xbmc/android/remote/business/AbstractManager.java b/src/org/xbmc/android/remote/business/AbstractManager.java
+index a73c825..2ab116b 100644
+--- a/src/org/xbmc/android/remote/business/AbstractManager.java
++++ b/src/org/xbmc/android/remote/business/AbstractManager.java
+@@ -176,26 +176,35 @@ public abstract class AbstractManager implements INotifiableManager {
+ 		mHandler.post(new Runnable() {
+ 			public void run() {
+ 				if (cover.getCrc() != 0L) {
+-					// first, try mem cache (only if size = small, other sizes aren't mem-cached.
+-					if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
+-						if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] Trying memory (" + Crc32.formatAsHexLowerCase(cover.getCrc()) + ")");
+-						getCoverFromMem(response, cover, thumbSize, defaultCover, context, getFromCacheOnly);
+-					} else {
+-						if (getFromCacheOnly) {
+-							Log.e(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] ERROR: NOT downloading big covers is a bad idea because they are not cached!");
+-							response.value = null;
+-							onFinish(response);
+-						} else {
+-							if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] Downloading directly");
+-							getCoverFromNetwork(response, cover, thumbSize, context);
+-						}
+-					}
++					
++					getCoverByThumbnailSize(response, cover, thumbSize,
++							defaultCover, context, getFromCacheOnly);
+ 				} else {
+ 					if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] no crc, skipping.");
+ 					response.value = null;
+ 					onFinish(response);
+ 				}
+ 			}
++
++			private void getCoverByThumbnailSize(
++					final DataResponse<Bitmap> response, final ICoverArt cover,
++					final int thumbSize, final Bitmap defaultCover,
++					final Context context, final boolean getFromCacheOnly) {
++				// first, try mem cache (only if size = small, other sizes aren't mem-cached.
++				if (thumbSize == ThumbSize.SMALL || thumbSize == ThumbSize.MEDIUM) {
++					if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] Trying memory (" + Crc32.formatAsHexLowerCase(cover.getCrc()) + ")");
++					getCoverFromMem(response, cover, thumbSize, defaultCover, context, getFromCacheOnly);
++				} else {
++					if (getFromCacheOnly) {
++						Log.e(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] ERROR: NOT downloading big covers is a bad idea because they are not cached!");
++						response.value = null;
++						onFinish(response);
++					} else {
++						if (DEBUG) Log.i(TAG, "[" + cover.getId() + ThumbSize.getDir(thumbSize) + "] Downloading directly");
++						getCoverFromNetwork(response, cover, thumbSize, context);
++					}
++				}
++			}
+ 		});
+ 	}
+ 	
+-- 
+1.9.4.msysgit.2
+
