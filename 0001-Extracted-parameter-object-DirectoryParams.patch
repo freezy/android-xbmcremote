@@ -1,0 +1,123 @@
+From f88bae55960369603ab54feb52b09d298fad2555 Mon Sep 17 00:00:00 2001
+From: ephilippona <ephilippona@gmail.com>
+Date: Sun, 30 Nov 2014 21:47:12 -0500
+Subject: [PATCH] Extracted parameter object DirectoryParams
+
+Extracted parameter object DirectoryParams from the long parameter list
+in the getDirectory method in InfoManager. The parameter object
+includes the following attributes:
+ private final DataResponse<ArrayList<FileLocation>> response;
+    private final String path;
+    private final Context context;
+    private final int mediaType;
+---
+ .../xbmc/android/remote/business/InfoManager.java  | 20 +++++------
+ src/org/xbmc/api/business/DirectoryParams.java     | 41 ++++++++++++++++++++++
+ 2 files changed, 50 insertions(+), 11 deletions(-)
+ create mode 100644 src/org/xbmc/api/business/DirectoryParams.java
+
+diff --git a/src/org/xbmc/android/remote/business/InfoManager.java b/src/org/xbmc/android/remote/business/InfoManager.java
+index c12fbab..e3b17a7 100644
+--- a/src/org/xbmc/android/remote/business/InfoManager.java
++++ b/src/org/xbmc/android/remote/business/InfoManager.java
+@@ -24,6 +24,7 @@ package org.xbmc.android.remote.business;
+ import java.util.ArrayList;
+ 
+ import org.xbmc.api.business.DataResponse;
++import org.xbmc.api.business.DirectoryParams;
+ import org.xbmc.api.business.IInfoManager;
+ import org.xbmc.api.business.INotifiableManager;
+ import org.xbmc.api.object.FileLocation;
+@@ -70,18 +71,16 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
+ 	
+ 	/**
+ 	 * Returns the contents of a directory
+-	 * @param response Response object
+-	 * @param path     Path to the directory
+ 	 * @param mask     Mask to filter
+ 	 * @param offset   Offset (0 for none)
+ 	 * @param limit    Limit (0 for none)
+ 	 * @return
+ 	 */
+-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit, final Context context, final int mediaType) {
+-		mHandler.post(new Command<ArrayList<FileLocation>>(response, this){
++	public void getDirectory(final DirectoryParams directoryParams,final DirectoryMask mask, final int offset, final int limit) {
++		mHandler.post(new Command<ArrayList<FileLocation>>(directoryParams.getResponse(), this){
+ 			@Override
+ 			public void doRun() throws Exception {
+-				response.value = info(context).getDirectory(InfoManager.this, path, mask, offset, limit, mediaType);
++                directoryParams.getResponse().value = info(directoryParams.getContext()).getDirectory(InfoManager.this,  directoryParams.getPath(), mask, offset, limit, directoryParams.getMediaType());
+ 			}
+ 			
+ 		});
+@@ -89,15 +88,14 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
+ 	
+ 	/**
+ 	 * Returns the contents of a directory
+-	 * @param response Response object
+-	 * @param path     Path to the directory
+-	 * @return
++	 *
++     * @param directoryParams@return
+ 	 */
+-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final Context context, final int mediaType) {
+-		mHandler.post(new Command<ArrayList<FileLocation>>(response, this){
++	public void getDirectory(final DirectoryParams directoryParams) {
++		mHandler.post(new Command<ArrayList<FileLocation>>(directoryParams.getResponse(), this){
+ 			@Override
+ 			public void doRun() throws Exception {
+-				response.value = info(context).getDirectory(InfoManager.this, path, mediaType);
++                directoryParams.getResponse().value = info(directoryParams.getContext()).getDirectory(InfoManager.this, directoryParams.getPath(), directoryParams.getMediaType());
+ 			}
+ 			
+ 		});
+diff --git a/src/org/xbmc/api/business/DirectoryParams.java b/src/org/xbmc/api/business/DirectoryParams.java
+new file mode 100644
+index 0000000..807c03d
+--- /dev/null
++++ b/src/org/xbmc/api/business/DirectoryParams.java
+@@ -0,0 +1,41 @@
++package org.xbmc.api.business;
++
++import android.content.Context;
++
++import org.xbmc.api.object.FileLocation;
++
++import java.util.ArrayList;
++
++public class DirectoryParams {
++    private final DataResponse<ArrayList<FileLocation>> response;
++    private final String path;
++    private final Context context;
++    private final int mediaType;
++
++    /**
++     * @param response Response object
++     * @param path     Path to the directory
++     */
++    public DirectoryParams(DataResponse<ArrayList<FileLocation>> response, String path, Context context, int mediaType) {
++        this.response = response;
++        this.path = path;
++        this.context = context;
++        this.mediaType = mediaType;
++    }
++
++    public DataResponse<ArrayList<FileLocation>> getResponse() {
++        return response;
++    }
++
++    public String getPath() {
++        return path;
++    }
++
++    public Context getContext() {
++        return context;
++    }
++
++    public int getMediaType() {
++        return mediaType;
++    }
++}
+-- 
+1.9.3 (Apple Git-50)
+
