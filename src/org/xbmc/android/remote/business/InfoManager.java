@@ -24,6 +24,7 @@ package org.xbmc.android.remote.business;
 import java.util.ArrayList;
 
 import org.xbmc.api.business.DataResponse;
+import org.xbmc.api.business.DirectoryParams;
 import org.xbmc.api.business.IInfoManager;
 import org.xbmc.api.business.INotifiableManager;
 import org.xbmc.api.object.FileLocation;
@@ -70,18 +71,16 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	
 	/**
 	 * Returns the contents of a directory
-	 * @param response Response object
-	 * @param path     Path to the directory
 	 * @param mask     Mask to filter
 	 * @param offset   Offset (0 for none)
 	 * @param limit    Limit (0 for none)
 	 * @return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final DirectoryMask mask, final int offset, final int limit, final Context context, final int mediaType) {
-		mHandler.post(new Command<ArrayList<FileLocation>>(response, this){
+	public void getDirectory(final DirectoryParams directoryParams,final DirectoryMask mask, final int offset, final int limit) {
+		mHandler.post(new Command<ArrayList<FileLocation>>(directoryParams.getResponse(), this){
 			@Override
 			public void doRun() throws Exception {
-				response.value = info(context).getDirectory(InfoManager.this, path, mask, offset, limit, mediaType);
+                directoryParams.getResponse().value = info(directoryParams.getContext()).getDirectory(InfoManager.this,  directoryParams.getPath(), mask, offset, limit, directoryParams.getMediaType());
 			}
 			
 		});
@@ -89,15 +88,14 @@ public class InfoManager extends AbstractManager implements IInfoManager, INotif
 	
 	/**
 	 * Returns the contents of a directory
-	 * @param response Response object
-	 * @param path     Path to the directory
-	 * @return
+	 *
+     * @param directoryParams@return
 	 */
-	public void getDirectory(final DataResponse<ArrayList<FileLocation>> response, final String path, final Context context, final int mediaType) {
-		mHandler.post(new Command<ArrayList<FileLocation>>(response, this){
+	public void getDirectory(final DirectoryParams directoryParams) {
+		mHandler.post(new Command<ArrayList<FileLocation>>(directoryParams.getResponse(), this){
 			@Override
 			public void doRun() throws Exception {
-				response.value = info(context).getDirectory(InfoManager.this, path, mediaType);
+                directoryParams.getResponse().value = info(directoryParams.getContext()).getDirectory(InfoManager.this, directoryParams.getPath(), directoryParams.getMediaType());
 			}
 			
 		});
