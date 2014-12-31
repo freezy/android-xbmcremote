@@ -13,7 +13,7 @@
 		android:textColor="@drawable/listitem_title" 
 		android:ellipsize="end" 
 		android:marqueeRepeatLimit="1" 
-		android:lines="1" 
+		android:singleLine="true"
 		android:scrollHorizontally="true" 
 		android:paddingLeft="5px" 
 		android:paddingTop="14px"
