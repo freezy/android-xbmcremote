@@ -48,6 +48,8 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 
+import java.lang.reflect.InvocationTargetException;
+
 public abstract class AbsListActivity extends Activity {
 
 	private static final int MENU_NOW_PLAYING = 501;
@@ -90,13 +92,24 @@ public abstract class AbsListActivity extends Activity {
 		// remove nasty top fading edge
 		FrameLayout topFrame = (FrameLayout)findViewById(android.R.id.content);
 		topFrame.setForeground(null);
-		mListController = (ListController)getLastNonConfigurationInstance();
-		if (mListController == null) {
-			mListController = (ListController) getIntent().getSerializableExtra(ListController.EXTRA_LIST_CONTROLLER);
-			mListController.findTitleView(findViewById(R.id.blanklist_outer_layout));
-			mListController.findMessageView(findViewById(R.id.blanklist_outer_layout));
-			mListController.onCreate(this, new Handler(), (AbsListView)findViewById(R.id.blanklist_list));
+		mListController = (ListController) getIntent().getSerializableExtra(ListController.EXTRA_LIST_CONTROLLER);
+		// Create an empty object, this will restart the command. Useful for
+		//  screen rotation.
+		try {
+			final Class<?> clazz = mListController.getClass();
+			mListController = (ListController)clazz.getConstructor().newInstance();
+		} catch (InstantiationException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		} catch (InvocationTargetException e) {
+			throw new RuntimeException(e);
+		} catch (NoSuchMethodException e) {
+			throw new RuntimeException(e);
 		}
+		mListController.findTitleView(findViewById(R.id.blanklist_outer_layout));
+		mListController.findMessageView(findViewById(R.id.blanklist_outer_layout));
+		mListController.onCreate(this, new Handler(), (AbsListView) findViewById(R.id.blanklist_list));
 		mConfigurationManager = ConfigurationManager.getInstance(this);
 	}
 	
