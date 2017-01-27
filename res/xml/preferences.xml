@@ -103,6 +103,12 @@
 			android:entries="@array/SelectionPreferenceEntries"
 			android:entryValues="@array/SelectionPreferenceValues"
 			android:defaultValue="0" />
+		<CheckBoxPreference
+			android:key="setting_auto_queue_album"
+			android:title="Auto queue album"
+			android:summary="When playing a song (or queuing one when playlist is empty), if the song belong to an album, play the whole album, starting with the selected song."
+			android:selectable="true"
+			android:enabled="true" android:defaultValue="true" />	
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Remote Keypress">
 		<CheckBoxPreference
